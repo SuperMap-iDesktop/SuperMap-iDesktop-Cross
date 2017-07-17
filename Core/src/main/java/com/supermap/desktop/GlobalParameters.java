@@ -1123,7 +1123,7 @@ public class GlobalParameters {
 
 	public static boolean isLaunchUserExperiencePlan() {
 		// TODO: 2017/7/7 用户体验计划
-		return false;
+		return launchUserExperiencePlan;
 	}
 
 	public static void setLaunchUserExperiencePlan(boolean isLaunchUserExperiencePlan) {

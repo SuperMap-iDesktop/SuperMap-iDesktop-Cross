@@ -13,7 +13,6 @@ import java.awt.*;
  * Created by highsad on 2017/3/2.
  */
 public interface IGraphStorage {
-	IConnectionManager getConnectionManager();
 
 	GraphCanvas getCanvas();
 

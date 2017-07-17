@@ -23,7 +23,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Vector;
 
 /**
  * Created by xie on 2017/3/21.
@@ -102,13 +102,11 @@ public class WorkflowParser {
 								//TODO
 								//INodeConstriant now not exist in xml file,so add a new INodeConstriant
 //                                process.getInputs().followProcess(preProcess);
-								nodeMatrix.addConstraint(preProcess, process, new INodeConstraint() {
-								});
+//								nodeMatrix.addRelation(preProcess, process, IRelation.class);
 							}
 							if (null != process && null != nextProcess) {
 //                                nextProcess.getInputs().followProcess(process);
-								nodeMatrix.addConstraint(process, nextProcess, new INodeConstraint() {
-								});
+//								nodeMatrix.addRelation(process, nextProcess, IRelation.class);
 							}
 						}
 					}
@@ -126,7 +124,7 @@ public class WorkflowParser {
 
 	private MetaProcess getMetaProcess(String key, NodeMatrix nodeMatrix) {
 		MetaProcess result = null;
-		CopyOnWriteArrayList metaProcesses = nodeMatrix.getAllNodes();
+		Vector metaProcesses = nodeMatrix.getNodes();
 		for (int i = 0; i < metaProcesses.size(); i++) {
 			if (metaProcesses.get(i) instanceof MetaProcess && key.equals(((MetaProcess) metaProcesses.get(i)).getKey())) {
 				result = (MetaProcess) metaProcesses.get(i);
@@ -236,26 +234,26 @@ public class WorkflowParser {
 			String importType = key.replace(MetaKeys.IMPORT, "");
 			result = MetaProcessImportFactory.createMetaProcessImport(importType);
 		} else if (MetaKeys.DEMLAKE.equals(key)) {
-            result = new MetaProcessDEMLake();
-        } else if (MetaKeys.DEMBUILD.equals(key)) {
-            result = new MetaProcessDEMBuild();
-        }else if (MetaKeys.GRIDTOVECTOR.equals(key)) {
-            result = new MetaProcessRasterToVector();
-        }else if (MetaKeys.VECTORTOGRID.equals(key)) {
+			result = new MetaProcessDEMLake();
+		} else if (MetaKeys.DEMBUILD.equals(key)) {
+			result = new MetaProcessDEMBuild();
+		}else if (MetaKeys.GRIDTOVECTOR.equals(key)) {
+			result = new MetaProcessRasterToVector();
+		}else if (MetaKeys.VECTORTOGRID.equals(key)) {
 			result = new MetaProcessVectorToRaster();
-        }else if (MetaKeys.THINRASTER.equals(key)) {
-            result = new MetaProcessThinRaster();
-        } else if (MetaKeys.THIESSENPOLYGON.equals(key)) {
-            result = new MetaProcessThiessenPolygon();
-        }else if (MetaKeys.COMPUTEDISTANCE.equals(key)) {
-            result = new MetaProcessComputeDistance();
-        } else if (MetaKeys.EXPORTGRID.equals(key)) {
-            result = new MetaProcessExportGrid();
-        } else if (MetaKeys.EXPORTVECTOR.equals(key)) {
-            result = new MetaProcessExportVector();
-        } else {
-            result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
-        }
+		}else if (MetaKeys.THINRASTER.equals(key)) {
+			result = new MetaProcessThinRaster();
+		} else if (MetaKeys.THIESSENPOLYGON.equals(key)) {
+			result = new MetaProcessThiessenPolygon();
+		}else if (MetaKeys.COMPUTEDISTANCE.equals(key)) {
+			result = new MetaProcessComputeDistance();
+		} else if (MetaKeys.EXPORTGRID.equals(key)) {
+			result = new MetaProcessExportGrid();
+		} else if (MetaKeys.EXPORTVECTOR.equals(key)) {
+			result = new MetaProcessExportVector();
+		} else {
+			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
+		}
 
 
 		return result;

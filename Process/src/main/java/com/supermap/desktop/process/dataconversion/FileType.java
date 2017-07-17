@@ -83,7 +83,7 @@ public class FileType {
 			fileChoose = new SmFileChoose("DataImportFrame_ImportDirectories");
 			fileChoose.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		} else {
-			String importModule = "MetaProcessImport";
+			String importModule = "MetaProcessImport" + importType;
 			if (!SmFileChoose.isModuleExist(importModule)) {
 				if ("MapGIS".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(descriptionNew[4], "wat", "wan", "wal", "wap"));

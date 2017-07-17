@@ -1,5 +1,6 @@
 package com.supermap.desktop.userExperience;
 
+import com.alibaba.fastjson.JSONAware;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.interfaces.UserExperienceBean;
 import com.supermap.desktop.properties.CoreProperties;
@@ -10,7 +11,7 @@ import java.util.Locale;
 /**
  * @author XiaJT
  */
-public class DesktopUserExperienceInfo implements UserExperienceBean {
+public class DesktopUserExperienceInfo implements UserExperienceBean, JSONAware {
 
 	private static final String culture = Locale.getDefault().getDisplayLanguage();
 	private static final String optionSystem = System.getProperties().getProperty("os.name");
@@ -33,8 +34,8 @@ public class DesktopUserExperienceInfo implements UserExperienceBean {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("Culture", culture);
 		jsonObject.put("DesktopVersion", "9D");
-		jsonObject.put("FunctionInfoCtrlAction", functionInfo == null ? null : functionInfo.getJson());
-		jsonObject.put("LicenseInfo", licenseInfo == null ? null : licenseInfo.getJson());
+		jsonObject.put("FunctionInfoCtrlAction", functionInfo);
+		jsonObject.put("LicenseInfo", licenseInfo);
 		jsonObject.put("OptionSystem", optionSystem);
 		jsonObject.put("PlatForm", platForm);
 		jsonObject.put("ProductName", "SuperMap iDesktop Cross 9D");
@@ -60,5 +61,10 @@ public class DesktopUserExperienceInfo implements UserExperienceBean {
 
 	public void setLicenseInfo(LicenseInfo licenseInfo) {
 		this.licenseInfo = licenseInfo;
+	}
+
+	@Override
+	public String toJSONString() {
+		return getJson();
 	}
 }

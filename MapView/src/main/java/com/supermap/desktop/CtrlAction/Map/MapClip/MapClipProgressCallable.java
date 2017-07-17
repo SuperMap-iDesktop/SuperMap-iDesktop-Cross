@@ -106,7 +106,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 			// 目前，选择的用于裁剪的对象都被合并为一个大的georegion（选择对象裁剪），因此需要针对选择对象裁剪的拆分裁剪，提取单个小对象
 			GeoRegion bigRegion = (GeoRegion) ((Vector) (this.VectorInfo.get(0))).get(COLUMN_INDEX_USERREGION);
 			GeoRegion allRegions[];
-			if (this.selectedGeoregions != null) {
+			if (this.selectedGeoregions != null&&this.selectedGeoregions.size()>1) {
 				allRegions = new GeoRegion[this.selectedGeoregions.size()];
 				for (int i = 0; i < this.selectedGeoregions.size(); i++) {
 					GeoRegion tempRegion = new GeoRegion(this.selectedGeoregions.get(i));
@@ -167,7 +167,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 						//GeoRegion userRegion = (GeoRegion) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_USERREGION);
 						//组件：根据源投影坐标系与目标投影坐标系对几何对象进行投影转换，结果将直接改变源几何对象。
 						//GeoRegion copyRegion= new GeoRegion(allRegions[t]);
-						GeoRegion copyRegion = new GeoRegion(allRegions[t]);
+						GeoRegion copyRegion = new GeoRegion(allRegions[t].clone());
 						if (formMap.getMapControl().getMap().isDynamicProjection() &&
 								!sourceDataset.getPrjCoordSys().equals(formMap.getMapControl().getMap().getPrjCoordSys())) {
 							CoordSysTranslator.convert(copyRegion,
@@ -176,6 +176,16 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 									formMap.getMapControl().getMap().getDynamicPrjTransParameter(),
 									formMap.getMapControl().getMap().getDynamicPrjTransMethond());
 						}
+//						if (formMap.getMapControl().getMap().isDynamicProjection() &&
+//								sourceDataset.getPrjCoordSys()!=null &&
+//								sourceDataset.getPrjCoordSys().getType()!= PrjCoordSysType.PCS_NON_EARTH &&
+//								formMap.getMapControl().getMap().getPrjCoordSys().toXML()!=sourceDataset.getPrjCoordSys().toXML()) {
+//							CoordSysTranslator.convert(copyRegion,
+//									formMap.getMapControl().getMap().getPrjCoordSys(),
+//									sourceDataset.getPrjCoordSys(),
+//									new CoordSysTransParameter(),
+//									CoordSysTransMethod.MTH_POSITION_VECTOR);
+//						}
 						boolean isClipInRegion = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISCLIPINREGION);
 						boolean isEraseSource = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE);
 						boolean isExactClip = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE);
@@ -213,6 +223,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 							}
 						}
 					} catch (Exception e) {
+						//System.out.println(e.toString());
 						continue;
 					}
 				}

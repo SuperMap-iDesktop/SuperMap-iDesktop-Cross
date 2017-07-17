@@ -1,61 +1,46 @@
 package com.supermap.desktop.process.core;
 
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.process.events.*;
+import com.supermap.desktop.ui.mdi.exception.NullParameterException;
+
+import javax.swing.event.EventListenerList;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by xie on 2017/3/13.
- * <pre>NodeMatrix store your node info(INodeConstraint),
+ * <pre>NodeMatrix store your node info(IRelation),
  * EveryThing you like can be a node<pre/>
  */
-public class NodeMatrix {
+public class NodeMatrix<T extends Object> {
 
-	private volatile ConcurrentHashMap<Object, SecondNodeMatrix> nodeMatrix = new ConcurrentHashMap();
-
-	private volatile CopyOnWriteArrayList nodeList = new CopyOnWriteArrayList();
-
+	private Vector<T> nodes = new Vector();
+	private Vector<Map<T, IRelation<T>>> matrix = new Vector<>();
+	private EventListenerList listenerList = new EventListenerList();
 
 	public NodeMatrix() {
 
 	}
 
 	/**
-	 * Add node to nodeList
+	 * Add node to nodes
 	 *
 	 * @param node
 	 */
-	public synchronized void addNode(Object node) {
-		if (!this.nodeList.contains(node)) {
-			this.nodeList.add(node);
-		}
-	}
+	public synchronized void addNode(T node) {
+		Objects.requireNonNull(node);
 
-	/**
-	 * Remove node and next node's constraint
-	 *
-	 * @param node
-	 * @param nextNode
-	 * @return If constraint remove success return true,
-	 * else return false;
-	 */
-	public synchronized boolean removeNodeConstraint(Object node, Object nextNode) throws NodeException {
-		boolean hasRemoved = false;
-		if (!nodeList.contains(node) || !nodeList.contains(nextNode)) {
-			throw new NodeException("Node not exits");
-		}
-		if (nodeMatrix.containsKey(node)) {
-			SecondNodeMatrix secondNodeMatrix = nodeMatrix.get(node);
-			if (secondNodeMatrix.vector.containsKey(nextNode)) {
-				Object object = secondNodeMatrix.vector.get(nextNode);
-				object = null;
-				hasRemoved = true;
+		if (!this.nodes.contains(node)) {
+			MatrixNodeAddingEvent<T> addingEvent = new MatrixNodeAddingEvent<T>(this, node, false);
+			fireMatrixNodeAdding(addingEvent);
+
+			if (!addingEvent.isCancel()) {
+				this.nodes.add(node);
+				this.matrix.add(new ConcurrentHashMap<T, IRelation<T>>());
+				fireMatrixNodeAdded(new MatrixNodeAddedEvent<T>(this, node));
 			}
 		}
-		return hasRemoved;
 	}
 
 	/**
@@ -65,96 +50,154 @@ public class NodeMatrix {
 	 * @return If node remove success return true,
 	 * else return false;
 	 */
-	public synchronized boolean removeNode(Object node) throws NodeException {
-		boolean result = false;
-		if (!nodeList.contains(node)) {
-			throw new NodeException("Node not exits");
+	public synchronized void removeNode(T node) {
+		validateNode(node);
+
+		MatrixNodeRemovingEvent<T> removingEvent = new MatrixNodeRemovingEvent<>(this, node, false);
+		fireMatrixNodeRemoving(removingEvent);
+
+		if (removingEvent.isCancel()) {
+			return;
 		}
-		if (nodeMatrix.containsKey(node)) {
-			nodeMatrix.remove(node);
-			result = true;
-		} else {
-			int size = nodeList.size();
-			for (int i = 0; i < size; i++) {
-				if (nodeMatrix.containsKey(nodeList.get(i)) && nodeList.get(i) != node) {
-					if (nodeMatrix.get(nodeList.get(i)).vector.containsKey(node)) {
-						nodeMatrix.get(nodeList.get(i)).vector.remove(node);
-						result = true;
-					}
-				}
+
+		// remove values
+		int index = this.nodes.indexOf(node);
+
+		for (int i = 0, size = this.matrix.size(); i < size; i++) {
+			Map<T, IRelation<T>> map = this.matrix.get(i);
+
+			if (map.containsKey(node)) {
+				clearRelation(map.get(node));
+				removeRelation(map.get(node));
+				map.remove(node);
 			}
 		}
-		nodeList.remove(node);
-		return result;
+
+		Map<T, IRelation<T>> relations = this.matrix.get(index);
+		for (Map.Entry<T, IRelation<T>> entry :
+				relations.entrySet()) {
+			clearRelation(entry.getValue());
+			removeRelation(entry.getValue());
+		}
+
+		// remove node
+		this.matrix.get(index).clear();
+		this.matrix.remove(index);
+		this.nodes.remove(index);
+		fireMatrixNodeRemoved(new MatrixNodeRemovedEvent<T>(this, node));
 	}
 
 	/**
-	 * Get single nodes exits in matrix;
+	 * Get free nodes exiting in matrix;
 	 *
 	 * @return
 	 */
-	public synchronized CopyOnWriteArrayList getSingleNodes() {
-		CopyOnWriteArrayList result = new CopyOnWriteArrayList();
-		int nodeSize = nodeList.size();
-		for (int i = 0; i < nodeSize; i++) {
-			Object o = nodeList.get(i);
-			if (!nodeMatrix.containsKey(o) && !isContainsValue(o)) {
-				result.add(o);
-			}
-		}
-		return result;
-	}
+	public synchronized Vector<T> getFreeNodes() {
+		Vector<T> freeNodes = new Vector<>();
 
-	private boolean isContainsValue(Object o) {
-		Collection<SecondNodeMatrix> values = nodeMatrix.values();
-		for (SecondNodeMatrix value : values) {
-			if (value.vector.containsKey(o)) {
-				return true;
+		for (int i = 0, size = this.nodes.size(); i < size; i++) {
+			T node = this.nodes.get(i);
+
+			if (!isRelatedFormSomeone(node) && !isRelateToAnyone(node)) {
+				freeNodes.add(node);
 			}
 		}
-		return false;
+		return freeNodes;
 	}
 
 	/**
+	 * Returns <tt>true<tt/> if the specified node relates to any other node,<tt>false</tt> otherwise.
 	 *
-	 * If node has not previous or next node return true,else return false;
 	 * @param node
 	 * @return
 	 */
-	public synchronized boolean isSingleNode(Object node) {
-		boolean result = false;
-		if (nodeList.contains(node) && !nodeMatrix.containsKey(node)) {
-			result = true;
+	public synchronized boolean isRelateToAnyone(T node) {
+		validateNode(node);
+
+		int index = this.nodes.indexOf(node);
+		return this.matrix.get(index).size() > 0;
+	}
+
+	/**
+	 * Returns <tt>true<tt/> if the specified node is related from some other nodes,<tt>false</tt> otherwise.
+	 *
+	 * @param node
+	 * @return
+	 */
+	public synchronized boolean isRelatedFormSomeone(T node) {
+		validateNode(node);
+		boolean ret = false;
+
+		for (int i = 0, size = this.nodes.size(); i < size; i++) {
+			if (isRelateTo(this.nodes.get(i), node)) {
+				ret = true;
+				break;
+			}
 		}
-		return result;
+		return ret;
+	}
+
+	/**
+	 * Returns <tt>true</tt> if the specified fromNode relates to the specified toNode,<tt>false</tt> otherwise.
+	 *
+	 * @param fromNode
+	 * @param toNode
+	 * @return
+	 */
+	public synchronized boolean isRelateTo(T fromNode, T toNode) {
+		validateNode(fromNode);
+		validateNode(toNode);
+
+		int fromIndex = this.nodes.indexOf(fromNode);
+		Map<T, IRelation<T>> map = this.matrix.get(fromIndex);
+		return map.containsKey(toNode);
+	}
+
+	private void validateNode(T node) {
+		Objects.requireNonNull(node);
+		if (!this.nodes.contains(node)) {
+			throw new UnsupportedOperationException("Node not exits");
+		}
+	}
+
+	/**
+	 * If node has not previous or next node return true,else return false;
+	 *
+	 * @param node
+	 * @return
+	 */
+	public synchronized boolean isFreeNode(T node) {
+		return !isRelateToAnyone(node) && !isRelatedFormSomeone(node);
+	}
+
+	public synchronized boolean isLeadingNode(T node) {
+		return isLeadingNode(node, false);
+	}
+
+	public synchronized boolean isLeadingNode(T node, boolean exceptFreeNodes) {
+		validateNode(node);
+		return exceptFreeNodes ? !isRelatedFormSomeone(node) && isRelateToAnyone(node) : !isRelatedFormSomeone(node);
 	}
 
 	/**
 	 * 获得前一节点
 	 * Get node's previous nodes
+	 *
 	 * @param node
 	 * @return
 	 */
-	public synchronized CopyOnWriteArrayList getPreNodes(Object node) throws NodeException {
-		CopyOnWriteArrayList result = new CopyOnWriteArrayList();
-		if (!this.nodeList.contains(node)) {
-			throw new NodeException("Node note exists");
-		} else {
-			int nodeSize = nodeList.size();
-			for (int i = 0; i < nodeSize; i++) {
-				Object tempNode = nodeList.get(i);
-				if (nodeMatrix.containsKey(tempNode)) {
-					Iterator<Map.Entry<Object, INodeConstraint>> iterator = nodeMatrix.get(tempNode).vector.entrySet().iterator();
-					while (iterator.hasNext()) {
-						if (node == iterator.next().getKey()) {
-							result.add(tempNode);
-							break;
-						}
-					}
-				}
+	public synchronized Vector<T> getFromNodes(T node) {
+		validateNode(node);
+
+		Vector<T> fromNodes = new Vector<>();
+
+		for (int i = 0, size = this.matrix.size(); i < size; i++) {
+			Map<T, IRelation<T>> map = this.matrix.get(i);
+			if (map.containsKey(node)) {
+				fromNodes.add(node);
 			}
 		}
-		return result;
+		return fromNodes;
 	}
 
 	/**
@@ -163,45 +206,50 @@ public class NodeMatrix {
 	 * @param node
 	 * @return If null menu that no such node
 	 */
-	public synchronized CopyOnWriteArrayList getNextNodes(Object node) {
-		CopyOnWriteArrayList result = new CopyOnWriteArrayList();
-		if (!this.nodeList.contains(node)) {
-			return new CopyOnWriteArrayList();
-		} else if (nodeMatrix.containsKey(node)) {
-			Iterator<Map.Entry<Object, INodeConstraint>> iterator = nodeMatrix.get(node).vector.entrySet().iterator();
-			while (iterator.hasNext()) {
-				result.add(iterator.next().getKey());
-			}
+	public synchronized Vector<T> getToNodes(T node) {
+		validateNode(node);
+
+		Vector<T> toNodes = new Vector<>();
+
+		Map<T, IRelation<T>> map = this.matrix.get(this.nodes.indexOf(node));
+		for (T key :
+				map.keySet()) {
+			toNodes.add(key);
 		}
-		return result;
+		return toNodes;
 	}
 
 	/**
-	 * Get all start nodes
+	 * Get all leading nodes
 	 *
 	 * @return
 	 */
-	public synchronized CopyOnWriteArrayList getAllStartNodes() {
-		CopyOnWriteArrayList result = new CopyOnWriteArrayList();
-		int nodeSize = nodeList.size();
-		for (int i = 0; i < nodeSize; i++) {
-			Object tempNode = nodeList.get(i);
-			if (!nodeMatrix.containsKey(tempNode)) {
-				continue;
-			} else {
-				boolean hasNode = false;
-				for (SecondNodeMatrix matrix : nodeMatrix.values()) {
-					if (matrix.vector.containsKey(tempNode)) {
-						hasNode = true;
-						break;
+	public synchronized Vector<T> getLeadingNodes() {
+		return getLeadingNodes(false);
+	}
+
+	/**
+	 * Get all leading nodes
+	 *
+	 * @return
+	 */
+	public synchronized Vector<T> getLeadingNodes(boolean exceptFreeNodes) {
+		Vector<T> leadingNodes = new Vector<>();
+
+		for (int i = 0, size = this.nodes.size(); i < size; i++) {
+			T node = this.nodes.get(i);
+
+			if (!isRelatedFormSomeone(node)) {
+				if (exceptFreeNodes) {
+					if (isRelateToAnyone(node)) {
+						leadingNodes.add(node);
 					}
-				}
-				if (!hasNode) {
-					result.add(tempNode);
+				} else {
+					leadingNodes.add(node);
 				}
 			}
 		}
-		return result;
+		return leadingNodes;
 	}
 
 	/**
@@ -209,62 +257,287 @@ public class NodeMatrix {
 	 *
 	 * @return
 	 */
-	public synchronized CopyOnWriteArrayList getAllEndNodes() {
-		CopyOnWriteArrayList result = new CopyOnWriteArrayList();
-		int nodeSize = nodeList.size();
-		for (int i = 0; i < nodeSize; i++) {
-			Object tempNode = nodeList.get(i);
-			if (nodeMatrix.containsKey(tempNode)) {
-				continue;
-			} else {
-				boolean hasNode = true;
-				for (SecondNodeMatrix matrix : nodeMatrix.values()) {
-					if (matrix.vector.containsKey(tempNode)) {
-						hasNode = false;
-						break;
+	public synchronized Vector<T> getEndNodes() {
+		return getEndNodes(false);
+	}
+
+	/**
+	 * Get all end nodes
+	 *
+	 * @return
+	 */
+	public synchronized Vector<T> getEndNodes(boolean exceptFreeNodes) {
+		Vector<T> endNodes = new Vector<>();
+
+		for (int i = 0, size = this.nodes.size(); i < size; i++) {
+			T node = this.nodes.get(i);
+
+			if (!isRelateToAnyone(node)) {
+				if (exceptFreeNodes) {
+					if (isRelatedFormSomeone(node)) {
+						endNodes.add(node);
 					}
-				}
-				if (!hasNode) {
-					result.add(tempNode);
+				} else {
+					endNodes.add(node);
 				}
 			}
 		}
-		return result;
+		return endNodes;
+	}
+
+
+	public synchronized boolean contains(T node) {
+		return this.nodes.contains(node);
 	}
 
 	/**
-	 * Add constraint between two nodes
+	 * Add relation.
 	 *
-	 * @param node
-	 * @param nextNode
-	 * @param constraint
-	 * @return If node1 can add constraint with node2
+	 * @param relation
 	 */
-	public synchronized boolean addConstraint(Object node, Object nextNode, INodeConstraint constraint) {
-		if (!nodeList.contains(node) || !nodeList.contains(nextNode)) {
+	public synchronized void addRelation(IRelation<T> relation) {
+		validateNode(relation.getFrom());
+		validateNode(relation.getTo());
+
+		if (relation == null) {
+			throw new IllegalArgumentException("Relation can not be null.");
+		}
+
+		try {
+			removeRelation(relation.getFrom(), relation.getTo());
+			this.matrix.get(this.nodes.indexOf(relation.getFrom())).put(relation.getTo(), relation);
+			fireRelationAdded(new RelationAddedEvent<T>(this, relation));
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+	}
+
+	/**
+	 * Remove formNode and toNode's relation
+	 *
+	 * @param fromNode
+	 * @param toNode
+	 */
+	public synchronized void removeRelation(T fromNode, T toNode) {
+		validateNode(fromNode);
+		validateNode(toNode);
+
+		Map<T, IRelation<T>> relations = this.matrix.get(this.nodes.indexOf(fromNode));
+		if (relations.containsKey(toNode)) {
+			IRelation<T> relation = relations.get(toNode);
+
+			fireRelationRemoving(new RelationRemovingEvent<T>(this, relation));
+			clearRelation(relation);
+			relations.remove(toNode);
+			fireRelationRemoved(new RelationRemovedEvent<T>(this, fromNode, toNode));
+		}
+	}
+
+	public synchronized void removeRelation(IRelation<T> relation) {
+		if (relation == null) {
+			return;
+		}
+
+		if (containsRelation(relation)) {
+			T from = relation.getFrom();
+			T to = relation.getTo();
+
+			Map<T, IRelation<T>> relaionts = this.matrix.get(this.nodes.indexOf(from));
+			fireRelationRemoving(new RelationRemovingEvent<T>(this, relation));
+			clearRelation(relation);
+			relaionts.remove(to);
+			fireRelationRemoved(new RelationRemovedEvent<T>(this, from, to));
+		}
+	}
+
+	public synchronized boolean containsRelation(IRelation<T> relation) {
+		if (relation == null) {
 			return false;
 		}
-		if (nodeMatrix.containsKey(node)) {
-			nodeMatrix.get(node).vector.put(nextNode, constraint);
-		} else {
-			SecondNodeMatrix vectorInfo = new SecondNodeMatrix();
-			vectorInfo.vector.put(nextNode, constraint);
-			nodeMatrix.put(node, vectorInfo);
+
+		if (!this.nodes.contains(relation.getFrom()) || !this.nodes.contains(relation.getTo())) {
+			return false;
 		}
-		return true;
+
+		T from = relation.getFrom();
+		T to = relation.getTo();
+
+		Map<T, IRelation<T>> relations = this.matrix.get(this.nodes.indexOf(from));
+		if (relations.get(to) != relation) {
+			return false;
+		}
+
+		return relations.containsValue(relation);
 	}
 
-	public synchronized CopyOnWriteArrayList getAllNodes() {
-		return this.nodeList;
+	public synchronized IRelation<T> getRelation(T fromNode, T toNode) {
+		validateNode(fromNode);
+		validateNode(toNode);
+
+		Map<T, IRelation<T>> map = this.matrix.get(this.nodes.indexOf(fromNode));
+		return map.containsKey(toNode) ? map.get(toNode) : null;
 	}
 
-	/**
-	 * Constraint store your own constraint for nodes
-	 *
-	 * @param <C>
-	 */
-	class SecondNodeMatrix<C> {
-		private volatile Hashtable<Object, C> vector = new Hashtable<>();
+	public synchronized int getRelationCount() {
+		int count = 0;
+
+		for (int i = 0, size = this.matrix.size(); i < size; i++) {
+			count += this.matrix.get(i).size();
+		}
+		return count;
 	}
 
+	public synchronized Vector<T> getNodes() {
+		Vector<T> nodes = new Vector<>();
+
+		for (int i = 0, size = this.nodes.size(); i < size; i++) {
+			nodes.add(this.nodes.get(i));
+		}
+		return nodes;
+	}
+
+	public synchronized Vector<IRelation<T>> getRelations() {
+		Vector<IRelation<T>> relations = new Vector<>();
+
+		for (int i = 0, size = this.matrix.size(); i < size; i++) {
+			relations.addAll(this.matrix.get(i).values());
+		}
+		return relations;
+	}
+
+	public synchronized int getCount() {
+		return this.nodes.size();
+	}
+
+	private void clearRelation(IRelation relation) {
+		if (relation != null) {
+			relation.clear();
+		}
+	}
+
+	public void addMatrixNodeAddingListener(MatrixNodeAddingListener<T> listener) {
+		this.listenerList.add(MatrixNodeAddingListener.class, listener);
+	}
+
+	private void removeMatrixNodeAddingListener(MatrixNodeAddingListener<T> listener) {
+		this.listenerList.remove(MatrixNodeAddingListener.class, listener);
+	}
+
+	public void addMatrixNodeAddedListener(MatrixNodeAddedListener<T> listener) {
+		this.listenerList.add(MatrixNodeAddedListener.class, listener);
+	}
+
+	public void removeMatrixNodeAddedListener(MatrixNodeAddedListener<T> listener) {
+		this.listenerList.remove(MatrixNodeAddedListener.class, listener);
+	}
+
+	public void addMatrixNodeRemovingListener(MatrixNodeRemovingListener<T> listener) {
+		this.listenerList.add(MatrixNodeRemovingListener.class, listener);
+	}
+
+	public void removeMatrixNodeRemovingListener(MatrixNodeRemovingListener<T> listener) {
+		this.listenerList.remove(MatrixNodeRemovingListener.class, listener);
+	}
+
+	public void addMatrixNodeRemovedListener(MatrixNodeRemovedListener<T> listener) {
+		this.listenerList.add(MatrixNodeRemovedListener.class, listener);
+	}
+
+	public void removeMatrixNodeRemovedListener(MatrixNodeRemovedListener<T> listener) {
+		this.listenerList.remove(MatrixNodeRemovedListener.class, listener);
+	}
+
+	public void addRelationAddedListener(RelationAddedListener<T> listener) {
+		this.listenerList.add(RelationAddedListener.class, listener);
+	}
+
+	public void removeRelationAddedListener(RelationAddedListener<T> listener) {
+		this.listenerList.remove(RelationAddedListener.class, listener);
+	}
+
+	public void addRelationRemovingListener(RelationRemovingListener<T> listener) {
+		this.listenerList.add(RelationRemovingListener.class, listener);
+	}
+
+	public void removeRelationRemovingListener(RelationRemovingListener<T> listener) {
+		this.listenerList.remove(RelationRemovingListener.class, listener);
+	}
+
+	public void addRelationRemovedListener(RelationRemovedListener<T> listener) {
+		this.listenerList.add(RelationRemovedListener.class, listener);
+	}
+
+	public void removeRelationRemovedListener(RelationRemovedListener<T> listener) {
+		this.listenerList.remove(RelationRemovedListener.class, listener);
+	}
+
+	protected void fireMatrixNodeAdding(MatrixNodeAddingEvent<T> e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i = i - 2) {
+			if (listeners[i] == MatrixNodeAddingListener.class) {
+				((MatrixNodeAddingListener<T>) listeners[i + 1]).matrixNodeAdding(e);
+			}
+		}
+	}
+
+	protected void fireMatrixNodeAdded(MatrixNodeAddedEvent<T> e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i = i - 2) {
+			if (listeners[i] == MatrixNodeAddedListener.class) {
+				((MatrixNodeAddedListener<T>) listeners[i + 1]).matrixNodeAdded(e);
+			}
+		}
+	}
+
+	protected void fireMatrixNodeRemoving(MatrixNodeRemovingEvent<T> e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i = i - 2) {
+			if (listeners[i] == MatrixNodeRemovingListener.class) {
+				((MatrixNodeRemovingListener<T>) listeners[i + 1]).matrixNodeRemoving(e);
+			}
+		}
+	}
+
+	protected void fireMatrixNodeRemoved(MatrixNodeRemovedEvent<T> e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i = i - 2) {
+			if (listeners[i] == MatrixNodeRemovedListener.class) {
+				((MatrixNodeRemovedListener<T>) listeners[i + 1]).matrixNodeRemoved(e);
+			}
+		}
+	}
+
+	protected void fireRelationAdded(RelationAddedEvent<T> e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i = i - 2) {
+			if (listeners[i] == RelationAddedListener.class) {
+				((RelationAddedListener<T>) listeners[i + 1]).relationAdded(e);
+			}
+		}
+	}
+
+	protected void fireRelationRemoving(RelationRemovingEvent<T> e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i = i - 2) {
+			if (listeners[i] == RelationRemovingListener.class) {
+				((RelationRemovingListener<T>) listeners[i + 1]).relaitonRemoving(e);
+			}
+		}
+	}
+
+	protected void fireRelationRemoved(RelationRemovedEvent<T> e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i = i - 2) {
+			if (listeners[i] == RelationRemovedListener.class) {
+				((RelationRemovedListener<T>) listeners[i + 1]).relationRemoved(e);
+			}
+		}
+	}
 }

@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.interfaces.datas;
 
+import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -11,15 +12,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by highsad on 2017/3/22.
  */
 public class Outputs {
-	private IParameters parameters;
+	private IProcess process;
 	private ConcurrentHashMap<String, OutputData> datas = new ConcurrentHashMap<>();
 
-	public Outputs(IParameters parameters) {
-		this.parameters = parameters;
+	public Outputs(IProcess process) {
+		this.process = process;
+	}
+
+	public IProcess getProcess() {
+		return this.process;
 	}
 
 	public IParameters getParameters() {
-		return this.parameters;
+		return this.process.getParameters();
 	}
 
 	public OutputData getData(String name) {
@@ -45,7 +50,7 @@ public class Outputs {
 			return;
 		}
 
-		addData(new OutputData(name, type));
+		addData(new OutputData(this.process, name, type));
 	}
 
 	public OutputData[] getDatas() {
@@ -78,6 +83,10 @@ public class Outputs {
 			}
 		}
 		return result;
+	}
+
+	public boolean isContains(String name) {
+		return this.datas.containsKey(name);
 	}
 
 	public int getCount() {

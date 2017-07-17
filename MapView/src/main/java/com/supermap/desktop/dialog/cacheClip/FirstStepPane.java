@@ -114,7 +114,6 @@ public class FirstStepPane extends JPanel implements IState {
 	private JLabel labelServerName;
 	private JLabel labelDatabaseName;
 	private JLabel labelMutiTenseVersion;
-	private WarningOrHelpProvider helpProvider;
 	private WarningOrHelpProvider helpProviderForDatabaseName;
 	private WarningOrHelpProvider warningProviderPasswordNotSame;
 	public JCheckBox checkBoxFilterSelectionObjectInLayer;
@@ -348,7 +347,6 @@ public class FirstStepPane extends JPanel implements IState {
 		storeType.add(this.labelSaveType, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
 		storeType.add(this.comboBoxSaveType, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
 		storeType.add(this.labelServerName, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 0));
-		storeType.add(this.helpProvider, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 0));
 		storeType.add(this.textFieldServerName, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
 		storeType.add(this.labelDatabaseName, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 		storeType.add(this.helpProviderForDatabaseName, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 0));
@@ -520,7 +518,6 @@ public class FirstStepPane extends JPanel implements IState {
 	private void initPanelImageSaveOutputDisplay(String currentShowItem) {
 		if (currentShowItem.equals(MapViewProperties.getString("MapCache_SaveType_Compact")) || currentShowItem.equals(MapViewProperties.getString("MapCache_SaveType_Origin")) || currentShowItem.equals(MapViewProperties.getString("MapCache_SaveType_GeoPackage"))) {
 			this.labelServerName.setVisible(false);
-			this.helpProvider.setVisible(false);
 			this.textFieldServerName.setVisible(false);
 			this.labelDatabaseName.setVisible(false);
 			this.helpProviderForDatabaseName.setVisible(false);
@@ -554,7 +551,6 @@ public class FirstStepPane extends JPanel implements IState {
 
 		} else if (currentShowItem.equals(MapViewProperties.getString("MapCache_SaveType_MongoDB")) || currentShowItem.equals(MapViewProperties.getString("MapCache_SaveType_MongoDBMuti"))) {
 			this.labelServerName.setVisible(true);
-			this.helpProvider.setVisible(true);
 			this.textFieldServerName.setVisible(true);
 			this.textFieldServerName.setText(MapViewProperties.getString("MapCache_MongoDB_DefaultServerName"));
 			this.labelDatabaseName.setVisible(true);
@@ -912,7 +908,6 @@ public class FirstStepPane extends JPanel implements IState {
 		this.labelServerName = new JLabel();
 		this.labelDatabaseName = new JLabel();
 		this.labelMutiTenseVersion = new JLabel();
-		this.helpProvider = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_ServeNameHelp"), false);
 		this.helpProviderForDatabaseName = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_DatabaseNameHelp"), false);
 		this.warningProviderPasswordNotSame = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_PasswordIsNotSame"), true);
 		this.checkBoxFilterSelectionObjectInLayer = new JCheckBox();
