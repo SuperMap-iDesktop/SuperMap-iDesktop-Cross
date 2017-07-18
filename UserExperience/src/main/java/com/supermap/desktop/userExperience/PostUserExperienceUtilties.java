@@ -42,38 +42,32 @@ public class PostUserExperienceUtilties {
 					String[] lines = value.split(System.getProperty("line.separator"));
 					int count = 0;
 					JSONArray array = new JSONArray();
-					StringBuilder stringBuilder = new StringBuilder();
 					for (String line : lines) {
 						line = line.replace("{IP}", ip);
 						line = line.replace("{MACADDRESS}", macAddress);
 						array.add(JSONObject.parseObject(line));
-						if (count == 0) {
-							stringBuilder.append("[");
-						} else {
-							stringBuilder.append(",");
-						}
-						stringBuilder.append(line);
 
 						count++;
 						if (count == 49) {
-							stringBuilder.append("]");
-							StringEntity stringEntity = new StringEntity(stringBuilder.toString(), ContentType.APPLICATION_JSON);
+							StringEntity stringEntity = new StringEntity(array.toJSONString(), ContentType.APPLICATION_JSON);
+							array.clear();
 							httpPost.setEntity(stringEntity);
 							CloseableHttpResponse response = httpClient.execute(httpPost);
 							count = 0;
 							if (response.getStatusLine().getStatusCode() != 200) {
 								result = false;
 							}
+							response.close();
 						}
 					}
 					if (count != 0) {
-						stringBuilder.append("]");
-						StringEntity stringEntity = new StringEntity(stringBuilder.toString(), ContentType.APPLICATION_JSON);
+						StringEntity stringEntity = new StringEntity(array.toJSONString(), ContentType.APPLICATION_JSON);
 						httpPost.setEntity(stringEntity);
 						CloseableHttpResponse response = httpClient.execute(httpPost);
 						if (response.getStatusLine().getStatusCode() != 200) {
 							result = false;
 						}
+						response.close();
 					}
 				}
 			} catch (IOException e) {
