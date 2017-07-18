@@ -153,7 +153,7 @@ public class TasksManager {
 				return false;
 			}
 
-			if (this.status == WORKER_STATE_COMPLETED || this.status == WORKFLOW_STATE_INTERRUPTED) {
+			if (this.status == WORKFLOW_STATE_COMPLETED || this.status == WORKFLOW_STATE_INTERRUPTED) {
 				reset();
 			}
 
