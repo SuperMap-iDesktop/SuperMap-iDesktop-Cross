@@ -9,6 +9,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -17,6 +18,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 /**
@@ -45,9 +47,9 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 			parameterComboBox.setFieldVale(ParameterComboBox.comboBoxValue, comboBox.getSelectedItem());
 		}
 		initListeners(this.parameterComboBox);
-		label.setText(this.parameterComboBox.getDescribe());
+		label.setText(getDescribe());
 		label.setToolTipText(this.parameterComboBox.getDescribe());
-        label.setVisible(parameterComboBox.isDescriptionVisible());
+		label.setVisible(parameterComboBox.isDescriptionVisible());
 		comboBox.setRenderer(new ParameterComboBoxCellRender(this.parameterComboBox.getIConGetter()));
 
 		initLayout();
@@ -103,8 +105,20 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 		});
 	}
 
-    @Override
-    protected void descriptionVisibleChanged(boolean newValue) {
-        label.setVisible(newValue);
-    }
+	@Override
+	protected void descriptionVisibleChanged(boolean newValue) {
+		label.setVisible(newValue);
+	}
+
+	/**
+	 * @return
+	 */
+	private String getDescribe() {
+		String describe = parameterComboBox.getDescribe();
+		if (parameterComboBox.isRequisite()) {
+			return MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);
+		} else {
+			return describe;
+		}
+	}
 }

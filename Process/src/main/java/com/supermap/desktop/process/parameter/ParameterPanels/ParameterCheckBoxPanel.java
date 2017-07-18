@@ -6,6 +6,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -14,6 +15,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * @author XiaJT
@@ -28,7 +30,7 @@ public class ParameterCheckBoxPanel extends SwingPanel implements IParameterPane
 	public ParameterCheckBoxPanel(IParameter parameterCheckBox) {
 		super(parameterCheckBox);
 		this.parameterCheckBox = (ParameterCheckBox) parameterCheckBox;
-		checkBox.setText(this.parameterCheckBox.getDescribe());
+		checkBox.setText(getDescribe());
 		checkBox.setSelected(Boolean.valueOf(String.valueOf(this.parameterCheckBox.getSelectedItem())));
 		initLayout();
 		initListeners();
@@ -60,5 +62,17 @@ public class ParameterCheckBoxPanel extends SwingPanel implements IParameterPane
 				}
 			}
 		});
+	}
+
+	/**
+	 * @return
+	 */
+	private String getDescribe() {
+		String describe = parameterCheckBox.getDescribe();
+		if (parameterCheckBox.isRequisite()) {
+			return MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);
+		} else {
+			return describe;
+		}
 	}
 }
