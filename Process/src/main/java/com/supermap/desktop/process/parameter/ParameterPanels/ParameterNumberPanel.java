@@ -4,6 +4,9 @@ import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.ParameterNumber;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
+import com.supermap.desktop.properties.CommonProperties;
+
+import java.text.MessageFormat;
 
 /**
  * @author XiaJT
@@ -16,9 +19,20 @@ public class ParameterNumberPanel extends ParameterTextFieldPanel {
 	public ParameterNumberPanel(IParameter parameterNumber) {
 		super(parameterNumber);
 		this.parameterNumber = (ParameterNumber) parameterNumber;
-		label.setText(parameterNumber.getDescribe());
+		label.setText(getDescribe());
 		label.setToolTipText(this.parameterNumber.getToolTip());
 	}
 
+	/**
+	 * @return
+	 */
+	private String getDescribe() {
+		String describe = parameterNumber.getDescribe();
+		if (parameterNumber.isRequisite()) {
+			return MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);
+		} else {
+			return describe;
+		}
+	}
 
 }

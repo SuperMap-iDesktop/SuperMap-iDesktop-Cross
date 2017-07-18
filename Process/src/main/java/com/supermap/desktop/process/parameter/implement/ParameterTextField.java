@@ -13,6 +13,7 @@ import java.beans.PropertyChangeEvent;
 public class ParameterTextField extends AbstractParameter implements ISelectionParameter {
 	private String describe;
 
+
 	@ParameterField(name = PROPERTY_VALE)
 	private String value = "";
 
@@ -25,6 +26,7 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 	public ParameterTextField(String describe) {
 		this.describe = describe;
 	}
+
 
 	@Override
 	public String getType() {
@@ -46,6 +48,7 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 	public String getDescribe() {
 		return describe;
 	}
+
 
 	public ParameterTextField setDescribe(String describe) {
 		this.describe = describe;

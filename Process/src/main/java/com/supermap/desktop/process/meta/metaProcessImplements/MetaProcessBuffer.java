@@ -41,12 +41,6 @@ public class MetaProcessBuffer extends MetaProcess {
 	private ParameterCheckBox parameterRetainAttribute;
 	private ParameterSaveDataset parameterSaveDataset;
 
-	// 参数定义
-	private AbstractParameterObjects radiusUnit;
-	private AbstractParameterObjects radius;
-	private AbstractParameterObjects isUnion;
-	private AbstractParameterObjects isAttributeRetained;
-	private AbstractParameterObjects semicircleLineSegment;
 
 	public MetaProcessBuffer() {
 		initParameters();
@@ -91,13 +85,20 @@ public class MetaProcessBuffer extends MetaProcess {
 		datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameterBufferRange = new ParameterEnum(new EnumParser(BufferRadiusUnit.class, values, parameterDataNodes)).setDescribe(ProcessProperties.getString("Label_BufferRadius"));
 		parameterTextFieldLeftRadius = new ParameterTextField(ProcessProperties.getString("Label_Radius"));
-		parameterTextFieldRightRadius = new ParameterTextField(ProcessProperties.getString("String_rightRadius"));
+//		parameterTextFieldRightRadius = new ParameterTextField(ProcessProperties.getString("String_rightRadius"));
 		parameterUnionBuffer = new ParameterCheckBox(ProcessProperties.getString("String_UnionBufferItem"));
 		parameterRetainAttribute = new ParameterCheckBox(ProcessProperties.getString("String_RetainAttribute"));
 		parameterTextFieldSemicircleLineSegment = new ParameterNumber(ProcessProperties.getString("Label_SemicircleLineSegment"));
 		parameterTextFieldSemicircleLineSegment.setMaxBit(0);
 		parameterTextFieldSemicircleLineSegment.setMinValue(4);
 		parameterTextFieldSemicircleLineSegment.setMaxValue(200);
+		// 设置是否为必要参数-yuanR
+		parameterBufferRange.setRequisite(true);
+		parameterTextFieldLeftRadius.setRequisite(true);
+		parameterUnionBuffer.setRequisite(true);
+		parameterRetainAttribute.setRequisite(true);
+		parameterTextFieldSemicircleLineSegment.setRequisite(true);
+
 		parameterSaveDataset = new ParameterSaveDataset();
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
 		parameterCombineSourceData.addParameters(datasource, dataset);
@@ -160,17 +161,11 @@ public class MetaProcessBuffer extends MetaProcess {
 			datasetVector = (DatasetVector) dataset.getSelectedItem();
 		}
 
-		BufferRadiusUnit radiusUnitObject = (BufferRadiusUnit) parameterBufferRange.getSelectedData();
-		int radiusObject = Integer.valueOf((String) parameterTextFieldLeftRadius.getSelectedItem());
-		boolean isUnionObject = "true".equalsIgnoreCase((String) parameterUnionBuffer.getSelectedItem());
-		boolean isAttributeRetainedObject = "true".equalsIgnoreCase((String) parameterRetainAttribute.getSelectedItem());
-		int semicircleLineSegmentObject = Integer.valueOf(((String) parameterTextFieldSemicircleLineSegment.getSelectedItem()));
-
-		radiusUnit = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), parameterBufferRange.getSelectedData(), true);
-		radius = new AbstractParameterObjects(CommonProperties.getString("String_Length"), radiusObject, true);
-		isUnion = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), isUnionObject, true);
-		isAttributeRetained = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), isAttributeRetainedObject, true);
-		semicircleLineSegment = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), semicircleLineSegmentObject, true);
+		BufferRadiusUnit radiusUnit = (BufferRadiusUnit) parameterBufferRange.getSelectedData();
+		int radius = Integer.valueOf((String) parameterTextFieldLeftRadius.getSelectedItem());
+		boolean isUnion = "true".equalsIgnoreCase((String) parameterUnionBuffer.getSelectedItem());
+		boolean isAttributeRetained = "true".equalsIgnoreCase((String) parameterRetainAttribute.getSelectedItem());
+		int semicircleLineSegment = Integer.valueOf(((String) parameterTextFieldSemicircleLineSegment.getSelectedItem()));
 
 		Datasource resultDatasource = parameterSaveDataset.getResultDatasource();
 		String resultName = parameterSaveDataset.getDatasetName();
@@ -182,13 +177,13 @@ public class MetaProcessBuffer extends MetaProcess {
 		result.setPrjCoordSys(datasetVector.getPrjCoordSys());
 
 		BufferAnalystParameter parameter = new BufferAnalystParameter();
-		parameter.setRadiusUnit((BufferRadiusUnit) radiusUnit.getParameterObject());
-		parameter.setLeftDistance(radius.getParameterObject());
-		parameter.setRightDistance(radius.getParameterObject());
-		parameter.setSemicircleLineSegment((Integer) semicircleLineSegment.getParameterObject());
+		parameter.setRadiusUnit(radiusUnit);
+		parameter.setLeftDistance(radius);
+		parameter.setRightDistance(radius);
+		parameter.setSemicircleLineSegment(semicircleLineSegment);
 
 		BufferAnalyst.addSteppedListener(this.steppedListener);
-		isSuccessful = BufferAnalyst.createBuffer(datasetVector, result, parameter, (Boolean) isUnion.getParameterObject(), (Boolean) isAttributeRetained.getParameterObject());
+		isSuccessful = BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
 		BufferAnalyst.removeSteppedListener(this.steppedListener);
 
 		this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);

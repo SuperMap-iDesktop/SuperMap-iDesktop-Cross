@@ -4,8 +4,6 @@ import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.process.events.*;
 
 import javax.swing.event.EventListenerList;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
 /**
@@ -125,6 +123,17 @@ public class Workflow implements IWorkflow {
 
 	public boolean isLeadingProcess(IProcess process) {
 		return this.processMatrix.isLeadingNode(process);
+	}
+
+	public void reset() {
+		setEditable(true);
+		Vector<IProcess> processes = this.processMatrix.getNodes();
+
+		if (processes != null && processes.size() > 0) {
+			for (int i = 0; i < processes.size(); i++) {
+				processes.get(i).reset();
+			}
+		}
 	}
 
 	public void addWorkflowChangeListener(WorkflowChangeListener listener) {

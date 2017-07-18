@@ -9,7 +9,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
-import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
@@ -18,6 +18,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * @author XiaJT
@@ -33,7 +34,7 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 	public ParameterTextFieldPanel(final IParameter parameterTextField) {
 		super(parameterTextField);
 		this.parameterTextField = (ParameterTextField) parameterTextField;
-		label.setText(this.parameterTextField.getDescribe());
+		label.setText(getDescribe());
 		label.setToolTipText(this.parameterTextField.getDescribe());
 		label.setVisible(this.parameterTextField.isDescriptionVisible());
 		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
@@ -93,8 +94,20 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		});
 	}
 
-    @Override
-    protected void descriptionVisibleChanged(boolean newValue) {
-        label.setVisible(newValue);
-    }
+	@Override
+	protected void descriptionVisibleChanged(boolean newValue) {
+		label.setVisible(newValue);
+	}
+
+	/**
+	 * @return
+	 */
+	private String getDescribe() {
+		String describe = parameterTextField.getDescribe();
+		if (parameterTextField.isRequisite()) {
+			return MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);
+		} else {
+			return describe;
+		}
+	}
 }

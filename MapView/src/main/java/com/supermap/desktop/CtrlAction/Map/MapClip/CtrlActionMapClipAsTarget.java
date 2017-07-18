@@ -209,12 +209,12 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 		if (isChanged) {
 			geoRegion =geoClipRegion;
 			// 当获得GeoRegion后，弹出地图裁剪对话框
+			Layer layer = layers.get(layerChangeID);
+			Recordset recordset = layer.getSelection().toRecordset();
 			if (!isMutiObjectClip || selectedGeoregions.size() <= 1) {  //选择的对象如果跨图层或者选择对象的个数小于1，则不支持多对象拆分裁剪操作
-				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion);
+				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion,recordset);
 				dialogMapClip.showDialog();
 			} else {
-				Layer layer = layers.get(layerChangeID);
-				Recordset recordset = layer.getSelection().toRecordset();
 				FieldInfos fieldInfos = recordset.getFieldInfos();
 				int t=0;
 				for (int i = 0; i < fieldInfos.getCount(); i++) {

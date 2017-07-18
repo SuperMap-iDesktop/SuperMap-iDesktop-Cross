@@ -79,7 +79,7 @@ public class DialogMapClip extends SmDialog {
 	public static final int COLUMN_LAYER = 6;
 
 	private boolean isMutiObjectClip = false;
-	private Recordset selectedRecordset;
+	private Recordset selectedRecordset=null;
 	ArrayList<GeoRegion> selectedGeoregions= new ArrayList<>();
 	/**
 	 * 对JTable中model数据进行处理,得到适用于裁剪接口的数据
@@ -497,23 +497,19 @@ public class DialogMapClip extends SmDialog {
 					selectedRecordset.moveFirst();
 					String selectedCaptionFieldName = mapClipMultiObjectSplitPanel.getCurrentSelectedFieldName();
 					String appendCaptions[] = new String[selectedRecordset.getRecordCount()];
-					FieldInfos fieldInfos=selectedRecordset.getFieldInfos();
-					for (int i = 0; i < fieldInfos.getCount(); i++) {
-						System.out.println(fieldInfos.get(i).getCaption());
-					}
 					for (int i = 0; i < appendCaptions.length; i++) {
 						if (selectedRecordset.getFieldValue(selectedCaptionFieldName)==null ||StringUtilities.isNullOrEmpty(selectedRecordset.getFieldValue(selectedCaptionFieldName).toString())){
-							appendCaptions[i]="1";
+							appendCaptions[i]=selectedCaptionFieldName;
 						}else{
 							appendCaptions[i] = selectedRecordset.getFieldValue(selectedCaptionFieldName).toString();
 							appendCaptions[i] = appendCaptions[i].replace('.', '_');
 						}
 						selectedRecordset.moveNext();
 					}
-					selectedRecordset.dispose();
-					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap, appendCaptions,selectedGeoregions);
+					//selectedRecordset.dispose();
+					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap, appendCaptions,selectedGeoregions,selectedRecordset);
 				} else {
-					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap);
+					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap,selectedRecordset);
 				}
 				formProgress.doWork(mapClipProgressCallable);
 				// 获得采集后的数据集，添加到地图
@@ -556,6 +552,12 @@ public class DialogMapClip extends SmDialog {
 
 	public DialogMapClip(GeoRegion region) {
 		super();
+		commonPartCode(region);
+	}
+
+	public DialogMapClip(GeoRegion region,Recordset recordset) {
+		super();
+		this.selectedRecordset = recordset;
 		commonPartCode(region);
 	}
 

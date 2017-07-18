@@ -14,43 +14,43 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class ParameterEnum extends AbstractParameter implements ISelectionParameter {
 
-    private EnumParser parser;
+	private EnumParser parser;
 	@ParameterField(name = "value")
-    private Object value;
-    private String describe;
+	private Object value;
+	private String describe;
 
-    public ParameterEnum(EnumParser parser) {
-        this.parser = parser;
-    }
+	public ParameterEnum(EnumParser parser) {
+		this.parser = parser;
+	}
 
-    @Override
-    public String getType() {
-        return ParameterType.ENUM;
-    }
+	@Override
+	public String getType() {
+		return ParameterType.ENUM;
+	}
 
 
-    @Override
-    public void setSelectedItem(Object value) {
-        if (!(value instanceof ParameterDataNode)) {
-            CopyOnWriteArrayList<ParameterDataNode> items = parser.getEnumItems();
-            for (ParameterDataNode item : items) {
-                if ((value instanceof String && value.equals(item.getDescribe())) || item.getData() == value) {
-                    value = item;
-                    break;
-                }
-            }
-        }
-        if (value instanceof ParameterDataNode) {
-            Object oldValue = this.value;
-	        this.value = value;
-	        firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, this.value));
-        }
-    }
+	@Override
+	public void setSelectedItem(Object value) {
+		if (!(value instanceof ParameterDataNode)) {
+			CopyOnWriteArrayList<ParameterDataNode> items = parser.getEnumItems();
+			for (ParameterDataNode item : items) {
+				if ((value instanceof String && value.equals(item.getDescribe())) || item.getData() == value) {
+					value = item;
+					break;
+				}
+			}
+		}
+		if (value instanceof ParameterDataNode) {
+			Object oldValue = this.value;
+			this.value = value;
+			firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, this.value));
+		}
+	}
 
-    @Override
-    public Object getSelectedItem() {
-        return value;
-    }
+	@Override
+	public Object getSelectedItem() {
+		return value;
+	}
 
 	public Object getSelectedData() {
 		if (value != null && value instanceof ParameterDataNode) {
@@ -59,21 +59,21 @@ public class ParameterEnum extends AbstractParameter implements ISelectionParame
 		return value;
 	}
 
-    public EnumParser getEnumParser() {
-        return parser;
-    }
+	public EnumParser getEnumParser() {
+		return parser;
+	}
 
-    public String getDescribe() {
-        return describe;
-    }
+	public String getDescribe() {
+		return describe;
+	}
 
-    public ParameterEnum setDescribe(String describe) {
-        this.describe = describe;
-        return this;
-    }
+	public ParameterEnum setDescribe(String describe) {
+		this.describe = describe;
+		return this;
+	}
 
-    @Override
-    public void dispose() {
+	@Override
+	public void dispose() {
 
-    }
+	}
 }
