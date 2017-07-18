@@ -251,7 +251,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 	@Override
 	public void formShown(FormShownEvent e) {
-
+		Application.getActiveApplication().getOutput().output("test");
 	}
 
 	@Override
