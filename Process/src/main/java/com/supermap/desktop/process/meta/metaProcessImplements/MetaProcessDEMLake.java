@@ -27,6 +27,7 @@ import java.beans.PropertyChangeListener;
 public class MetaProcessDEMLake extends MetaProcess {
     private final static String DEM_DATA = "DEMData";
     private final static String LAKE_DATA = "LakeData";
+    private final static String OUTPUT_DATA = "OutputData";
 
     private ParameterDatasourceConstrained DEMDatasource;
     private ParameterSingleDataset DEMDataset;
@@ -109,6 +110,7 @@ public class MetaProcessDEMLake extends MetaProcess {
         this.parameters.setParameters(DEMDataCombine,lakeDataCombine,parameterSetting);
         this.parameters.addInputParameters(DEM_DATA, DatasetTypes.GRID,DEMDataCombine);
         this.parameters.addInputParameters(LAKE_DATA, DatasetTypes.REGION,lakeDataCombine);
+        this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID,DEMDataCombine);
 
 
         fieldOrValue.addPropertyListener(new PropertyChangeListener() {
@@ -149,6 +151,8 @@ public class MetaProcessDEMLake extends MetaProcess {
             } else if (fieldOrValue.getItemIndex(node) == 1) {
                 TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), Double.valueOf(heightValue.getSelectedItem().toString()));
             }
+            this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(DEMDataset.getSelectedItem());
+            isSuccessful = true;
 
             fireRunning(new RunningEvent(this, 100, "finished"));
         } catch (Exception e) {
