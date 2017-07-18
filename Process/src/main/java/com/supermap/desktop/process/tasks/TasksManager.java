@@ -8,6 +8,10 @@ import com.supermap.desktop.process.events.StatusChangeEvent;
 import com.supermap.desktop.process.events.StatusChangeListener;
 import com.supermap.desktop.process.events.WorkflowChangeEvent;
 import com.supermap.desktop.process.events.WorkflowChangeListener;
+import com.supermap.desktop.process.tasks.events.WorkerStateChangedEvent;
+import com.supermap.desktop.process.tasks.events.WorkerStateChangedListener;
+import com.supermap.desktop.process.tasks.events.WorkersChangedEvent;
+import com.supermap.desktop.process.tasks.events.WorkersChangedListener;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
@@ -91,18 +95,22 @@ public class TasksManager {
 		return status;
 	}
 
-	public Vector<ProcessWorker> getProcessWorkers(int workerState) {
-		if (!this.workerQueueMaps.containsKey(workerState)) {
-			return null;
-		}
+//	public Vector<ProcessWorker> getProcessWorkers(int workerState) {
+//		if (!this.workerQueueMaps.containsKey(workerState)) {
+//			return null;
+//		}
+//
+//		Vector<ProcessWorker> workers = new Vector<>();
+//		Vector<IProcess> processes = this.workerQueueMaps.get(workerState);
+//
+//		for (int i = 0; i < processes.size(); i++) {
+//			workers.add(this.workersMap.get(processes.get(i)));
+//		}
+//		return workers;
+//	}
 
-		Vector<ProcessWorker> workers = new Vector<>();
-		Vector<IProcess> processes = this.workerQueueMaps.get(workerState);
-
-		for (int i = 0; i < processes.size(); i++) {
-			workers.add(this.workersMap.get(processes.get(i)));
-		}
-		return workers;
+	public Workflow getWorkflow() {
+		return this.workflow;
 	}
 
 	public final static int[] getWorkerStates() {
@@ -128,7 +136,7 @@ public class TasksManager {
 			process.addStatusChangeListener(this.processStatusChangeListener);
 			this.workersMap.put(process, worker);
 			this.waiting.add(process);
-			fireWorkersChanged(new WorkersChangedEvent(this, this.workersMap.get(process), WorkersChangedEvent.ADD));
+			fireWorkersChanged(new WorkersChangedEvent(this, process, WorkersChangedEvent.ADD));
 		}
 	}
 
@@ -140,14 +148,14 @@ public class TasksManager {
 			ProcessWorker worker = this.workersMap.get(process);
 			process.removeStatusChangeListener(this.processStatusChangeListener);
 			this.workersMap.remove(process);
-			fireWorkersChanged(new WorkersChangedEvent(this, worker, WorkersChangedEvent.REMOVE));
+			fireWorkersChanged(new WorkersChangedEvent(this, process, WorkersChangedEvent.REMOVE));
 
 			// 执行过程中禁止删除节点，也就是说只有在前期构建工作流的时候可以，此时只有 waiting 队列
 			this.waiting.remove(process);
 		}
 	}
 
-	public boolean execute() {
+	public boolean run() {
 		try {
 			if (this.status == WORKFLOW_STATE_RUNNING) {
 				return false;
@@ -212,7 +220,12 @@ public class TasksManager {
 
 			if (processes != null && processes.size() > 0) {
 				for (int i = processes.size() - 1; i >= 0; i--) {
-					processes.get(i).reset();
+					IProcess process = processes.get(i);
+					// 重置 process 自身状态
+					process.reset();
+
+					// 重置 ProcessWorker
+					this.workersMap.put(process, new ProcessWorker(process));
 					moveProcess(processes.get(i), state, WORKER_STATE_WAITING);
 				}
 			}
@@ -443,7 +456,7 @@ public class TasksManager {
 				if (ready.size() > 0) {
 					for (int i = ready.size() - 1; i >= 0; i--) {
 						IProcess process = ready.get(i);
-						workersMap.get(process).doInBackground();
+						workersMap.get(process).execute();
 					}
 				}
 

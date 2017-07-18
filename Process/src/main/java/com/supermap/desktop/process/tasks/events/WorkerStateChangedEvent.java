@@ -1,4 +1,7 @@
-package com.supermap.desktop.process.tasks;
+package com.supermap.desktop.process.tasks.events;
+
+import com.supermap.desktop.process.tasks.ProcessWorker;
+import com.supermap.desktop.process.tasks.TasksManager;
 
 import java.util.EventObject;
 

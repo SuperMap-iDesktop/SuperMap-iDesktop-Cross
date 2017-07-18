@@ -2,9 +2,9 @@ package com.supermap.desktop.process.tasks;
 
 import javax.swing.*;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
+ * 由于 SwingWorker 自身限制，仅能执行一次，因此如果需要重复执行请构造一个新的 Worker
  * Created by highsad on 2017/6/22.
  */
 public abstract class Worker<V extends Object> extends SwingWorker<Boolean, V> {
