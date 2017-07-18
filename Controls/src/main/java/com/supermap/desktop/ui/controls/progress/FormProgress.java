@@ -295,6 +295,26 @@ public class FormProgress extends SmDialog implements IUpdateProgress {
 	}
 
 	@Override
+	public void updateProgress(final String message, final int percent, final String currentMessage) throws CancellationException {
+		if (this.isCancel) {
+			throw new CancellationException();
+		}
+
+		this.percent = percent;
+		this.remainTime = currentMessage;
+		this.message = message;
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				progressBar.setValue(percent);
+				labelRemaintime.setText(remainTime);
+				labelMessage.setText(message);
+			}
+		});
+	}
+
+	@Override
 	public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
 		// 默认实现，后续进行初始化操作
 	}

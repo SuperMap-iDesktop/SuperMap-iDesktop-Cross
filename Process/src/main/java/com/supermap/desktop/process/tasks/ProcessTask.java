@@ -257,6 +257,11 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 	}
 
 	@Override
+	public void updateProgress(String message, int percent, String currentMessage) throws CancellationException {
+		// do nothing
+	}
+
+	@Override
 	public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
 		//do nothing
 	}
