@@ -29,8 +29,8 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 	private Dataset resultDataset;
 	private Map resultMap;
 	private String appendCaptions[]; // 多对象拆分的结果名称标识
-	ArrayList<GeoRegion> selectedGeoregions= new ArrayList<>();
-	private Recordset selectedRecordset=null;
+	ArrayList<GeoRegion> selectedGeoregions = new ArrayList<>();
+	private Recordset selectedRecordset = null;
 
 	ArrayList<Dataset> datasetsArrayList;
 
@@ -53,12 +53,12 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 		private boolean isCancel = false;
 		private int count;
 		private int i;
-		private String datasetName;
+		private String runingLayerName;
 
-		PercentListener(int i, int count, String datasetName) {
+		PercentListener(int i, int count, String runingLayerName) {
 			this.count = count;
 			this.i = i;
-			this.datasetName = datasetName;
+			this.runingLayerName = runingLayerName;
 		}
 
 		public boolean isCancel() {
@@ -69,8 +69,10 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 		public void stepped(SteppedEvent arg0) {
 			try {
 				int totalPercent = (100 * (this.i - 1) + arg0.getPercent()) / count;
-				updateProgressTotal(arg0.getPercent(), arg0.getMessage(), totalPercent,
-						MessageFormat.format(MapViewProperties.getString("String_MapClip_ProgressCurrentLayer"), datasetName));
+//				updateProgressTotal(arg0.getPercent(),MessageFormat.format(MapViewProperties.getString("String_MapClip_ProgressCurrentLayer"), runingLayerName),
+//						totalPercent,arg0.getMessage()
+//						);
+				updateProgress(MessageFormat.format(MapViewProperties.getString("String_MapClip_HasRunLayer"), this.i,this.count), totalPercent,MapViewProperties.getString("String_MapClip_ProgressCurrentLayer") + this.runingLayerName);
 			} catch (CancellationException e) {
 				arg0.setCancel(true);
 				this.isCancel = true;
@@ -81,18 +83,18 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 	/**
 	 * @param vector
 	 */
-	public MapClipProgressCallable(Vector vector, Map saveMap,Recordset recordset) {
+	public MapClipProgressCallable(Vector vector, Map saveMap, Recordset recordset) {
 		this.VectorInfo = vector;
 		this.resultMap = saveMap;
-		this.selectedRecordset=recordset;
+		this.selectedRecordset = recordset;
 	}
 
-	public MapClipProgressCallable(Vector vector, Map saveMap, String appendCaptions[],ArrayList<GeoRegion> selectedGeoregions,Recordset recordset) {
+	public MapClipProgressCallable(Vector vector, Map saveMap, String appendCaptions[], ArrayList<GeoRegion> selectedGeoregions, Recordset recordset) {
 		this.VectorInfo = vector;
 		this.resultMap = saveMap;
 		this.appendCaptions = appendCaptions;
-		this.selectedGeoregions=selectedGeoregions;
-		this.selectedRecordset=recordset;
+		this.selectedGeoregions = selectedGeoregions;
+		this.selectedRecordset = recordset;
 	}
 
 	@Override
@@ -109,7 +111,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 			// 目前，选择的用于裁剪的对象都被合并为一个大的georegion（选择对象裁剪），因此需要针对选择对象裁剪的拆分裁剪，提取单个小对象
 			GeoRegion bigRegion = (GeoRegion) ((Vector) (this.VectorInfo.get(0))).get(COLUMN_INDEX_USERREGION);
 			GeoRegion allRegions[];
-			if (this.selectedGeoregions != null&&this.selectedGeoregions.size()>1) {
+			if (this.selectedGeoregions != null && this.selectedGeoregions.size() > 1) {
 				allRegions = new GeoRegion[this.selectedGeoregions.size()];
 				for (int i = 0; i < this.selectedGeoregions.size(); i++) {
 					GeoRegion tempRegion = new GeoRegion(this.selectedGeoregions.get(i));
@@ -136,14 +138,15 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 						this.resultMap.fromXML(origionMap.toXML());
 					}
 					this.resultMap.setName(origionSaveMapName + "_" + this.appendCaptions[t]);
-					if (!MapUtilities.checkAvailableMapName(this.resultMap.getName(),"")){
-						this.resultMap.setName(MapUtilities.getAvailableMapName(this.resultMap.getName()+"_1",false));
+					if (!MapUtilities.checkAvailableMapName(this.resultMap.getName(), "")) {
+						this.resultMap.setName(MapUtilities.getAvailableMapName(this.resultMap.getName() + "_1", false));
 					}
 				}
 				ArrayList<Dataset> datasetsClipped = new ArrayList<>();//裁剪过的数据集集合，避免一个数据集多次裁剪
 				for (int i = 0; i < this.VectorInfo.size(); i++) {
 					try {
 						Dataset dataset = (Dataset) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
+						Layer layer = (Layer) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_LAYER);
 						if (percentListener != null && percentListener.isCancel) {
 							this.resultMap = null;
 							if (datasetsArrayList != null && datasetsArrayList.size() > 0) {
@@ -161,10 +164,9 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 							VectorClip.addSteppedListener(percentListener);
 						} else {
 							percentListener.i = t * this.VectorInfo.size() + i + 1;
-							percentListener.datasetName = dataset.getName();
+							percentListener.runingLayerName = layer.getCaption();
 						}
 						String targetDatasetName;
-						Layer layer = (Layer) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_LAYER);
 						Dataset sourceDataset = (Dataset) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
 						PrjCoordSys prjCoordSys = sourceDataset.getPrjCoordSys();
 						//GeoRegion userRegion = (GeoRegion) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_USERREGION);
@@ -173,13 +175,13 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 						GeoRegion copyRegion = new GeoRegion(allRegions[t].clone());
 						if (formMap.getMapControl().getMap().isDynamicProjection() &&
 								!sourceDataset.getPrjCoordSys().equals(formMap.getMapControl().getMap().getPrjCoordSys())) {
-							if (this.selectedRecordset!=null) {
+							if (this.selectedRecordset != null) {
 								CoordSysTranslator.convert(copyRegion,
 										this.selectedRecordset.getDataset().getPrjCoordSys(),
 										sourceDataset.getPrjCoordSys(),
 										formMap.getMapControl().getMap().getDynamicPrjTransParameter(),
 										formMap.getMapControl().getMap().getDynamicPrjTransMethond());
-							}else{
+							} else {
 								CoordSysTranslator.convert(copyRegion,
 										formMap.getMapControl().getMap().getPrjCoordSys(),
 										sourceDataset.getPrjCoordSys(),
@@ -197,7 +199,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 						}
 						if (!datasetsClipped.contains(sourceDataset)) {
 							if (!targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
-									targetDatasetName = DatasetUtilities.getAvailableDatasetName(targetDatasource, targetDatasetName, null);
+								targetDatasetName = DatasetUtilities.getAvailableDatasetName(targetDatasource, targetDatasetName, null);
 							}
 							if (sourceDataset instanceof DatasetVector) {
 								this.resultDataset = VectorClip.clipDatasetVector((DatasetVector) sourceDataset, copyRegion, isClipInRegion,
@@ -239,7 +241,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 			this.createMapClip = false;
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			if (this.selectedRecordset!=null) {
+			if (this.selectedRecordset != null) {
 				this.selectedRecordset.dispose();
 			}
 			VectorClip.removeSteppedListener(percentListener);

@@ -6,6 +6,7 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.MetaProcessImportFactory;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
+import com.supermap.desktop.process.meta.metaProcessImplements.DataDispose.MetaProcessLinePolygonSmooth;
 import com.supermap.desktop.process.meta.metaProcessImplements.*;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -237,20 +238,30 @@ public class WorkflowParser {
 			result = new MetaProcessDEMLake();
 		} else if (MetaKeys.DEMBUILD.equals(key)) {
 			result = new MetaProcessDEMBuild();
-		}else if (MetaKeys.GRIDTOVECTOR.equals(key)) {
+		} else if (MetaKeys.GRIDTOVECTOR.equals(key)) {
 			result = new MetaProcessRasterToVector();
-		}else if (MetaKeys.VECTORTOGRID.equals(key)) {
+		} else if (MetaKeys.VECTORTOGRID.equals(key)) {
 			result = new MetaProcessVectorToRaster();
-		}else if (MetaKeys.THINRASTER.equals(key)) {
+		} else if (MetaKeys.THINRASTER.equals(key)) {
 			result = new MetaProcessThinRaster();
 		} else if (MetaKeys.THIESSENPOLYGON.equals(key)) {
 			result = new MetaProcessThiessenPolygon();
-		}else if (MetaKeys.COMPUTEDISTANCE.equals(key)) {
+		} else if (MetaKeys.COMPUTEDISTANCE.equals(key)) {
 			result = new MetaProcessComputeDistance();
 		} else if (MetaKeys.EXPORTGRID.equals(key)) {
 			result = new MetaProcessExportGrid();
 		} else if (MetaKeys.EXPORTVECTOR.equals(key)) {
 			result = new MetaProcessExportVector();
+		} else if (MetaKeys.AggregatePoints.equals(key)) {
+			//todo MetaProcessAggregatePoints()
+		} else if (MetaKeys.AggregatePolygons.equals(key)) {
+			//todo MetaProcessAggregatePolygons()
+		} else if (MetaKeys.VectorResample.equals(key)) {
+			//todo MetaProcessVectorResample()
+		} else if (MetaKeys.LinePolygonSmooth.equals(key)) {
+			result = new MetaProcessLinePolygonSmooth();
+		} else if (MetaKeys.EdgeMatch.equals(key)) {
+			//todo MetaProcessEdgeMatch()
 		} else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}
