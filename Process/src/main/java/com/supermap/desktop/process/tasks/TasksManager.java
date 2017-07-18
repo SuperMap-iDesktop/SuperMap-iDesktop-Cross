@@ -9,11 +9,14 @@ import com.supermap.desktop.process.events.StatusChangeListener;
 import com.supermap.desktop.process.events.WorkflowChangeEvent;
 import com.supermap.desktop.process.events.WorkflowChangeListener;
 
-import javax.swing.Timer;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -146,8 +149,12 @@ public class TasksManager {
 
 	public boolean execute() {
 		try {
-			if (this.status != WORKFLOW_STATE_NORMAL) {
+			if (this.status == WORKFLOW_STATE_RUNNING) {
 				return false;
+			}
+
+			if (this.status == WORKER_STATE_COMPLETED || this.status == WORKFLOW_STATE_INTERRUPTED) {
+				reset();
 			}
 
 			this.status = WORKFLOW_STATE_RUNNING;
