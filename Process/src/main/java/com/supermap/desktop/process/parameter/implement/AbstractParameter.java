@@ -32,12 +32,12 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 	public static final String PROPERTY_VALE = "value";
 	protected IParameters parameters;
 
-
 	public boolean isEnabled = true;
 
 	private EventListenerList listenerList = new EventListenerList();
 	private List<UpdateValueListener> updateValueListeners = new ArrayList<>();
 	private boolean isDescriptionVisible = true;
+	// 添加是否为必填参数属性，默认为非必填
 	private Boolean isRequisite = false;
 
 	@Override
@@ -274,6 +274,7 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 
 	/**
 	 * 控件所呈参数是否为必填参数
+	 * yuanR
 	 *
 	 * @return
 	 */
@@ -284,6 +285,7 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 
 	/**
 	 * 设置控件所呈参数是否为必填参数
+	 * yuanR
 	 *
 	 * @param isRequisite
 	 */
