@@ -227,6 +227,10 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		JPanel oldContainer = getPanel(oldState);
 		JPanel newContainer = getPanel(newState);
 
+		if (newState == TasksManager.WORKER_STATE_WAITING) {
+			progressPanel.reset();
+		}
+
 		if (oldContainer != null) {
 			oldContainer.remove(progressPanel);
 		}
@@ -254,17 +258,22 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 	}
 
 	@Override
-	public void workerStateChanged(WorkerStateChangedEvent e) {
+	public void workerStateChanged(final WorkerStateChangedEvent e) {
 		if (e.getManager() != this.tasksManager) {
 			return;
 		}
 
-		ProcessWorker worker = e.getProcessWorker();
+		final ProcessWorker worker = e.getProcessWorker();
 		if (worker == null) {
 			return;
 		}
 
-		moveWorker(worker, e.getOldState(), e.getNewState());
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				moveWorker(worker, e.getOldState(), e.getNewState());
+			}
+		});
 	}
 
 	@Override
