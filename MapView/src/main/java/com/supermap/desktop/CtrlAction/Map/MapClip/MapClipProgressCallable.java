@@ -30,6 +30,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 	private Map resultMap;
 	private String appendCaptions[]; // 多对象拆分的结果名称标识
 	ArrayList<GeoRegion> selectedGeoregions= new ArrayList<>();
+	private Recordset selectedRecordset=null;
 
 	ArrayList<Dataset> datasetsArrayList;
 
@@ -80,16 +81,18 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 	/**
 	 * @param vector
 	 */
-	public MapClipProgressCallable(Vector vector, Map saveMap) {
+	public MapClipProgressCallable(Vector vector, Map saveMap,Recordset recordset) {
 		this.VectorInfo = vector;
 		this.resultMap = saveMap;
+		this.selectedRecordset=recordset;
 	}
 
-	public MapClipProgressCallable(Vector vector, Map saveMap, String appendCaptions[],ArrayList<GeoRegion> selectedGeoregions) {
+	public MapClipProgressCallable(Vector vector, Map saveMap, String appendCaptions[],ArrayList<GeoRegion> selectedGeoregions,Recordset recordset) {
 		this.VectorInfo = vector;
 		this.resultMap = saveMap;
 		this.appendCaptions = appendCaptions;
 		this.selectedGeoregions=selectedGeoregions;
+		this.selectedRecordset=recordset;
 	}
 
 	@Override
@@ -170,22 +173,20 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 						GeoRegion copyRegion = new GeoRegion(allRegions[t].clone());
 						if (formMap.getMapControl().getMap().isDynamicProjection() &&
 								!sourceDataset.getPrjCoordSys().equals(formMap.getMapControl().getMap().getPrjCoordSys())) {
-							CoordSysTranslator.convert(copyRegion,
-									formMap.getMapControl().getMap().getPrjCoordSys(),
-									sourceDataset.getPrjCoordSys(),
-									formMap.getMapControl().getMap().getDynamicPrjTransParameter(),
-									formMap.getMapControl().getMap().getDynamicPrjTransMethond());
+							if (this.selectedRecordset!=null) {
+								CoordSysTranslator.convert(copyRegion,
+										this.selectedRecordset.getDataset().getPrjCoordSys(),
+										sourceDataset.getPrjCoordSys(),
+										formMap.getMapControl().getMap().getDynamicPrjTransParameter(),
+										formMap.getMapControl().getMap().getDynamicPrjTransMethond());
+							}else{
+								CoordSysTranslator.convert(copyRegion,
+										formMap.getMapControl().getMap().getPrjCoordSys(),
+										sourceDataset.getPrjCoordSys(),
+										formMap.getMapControl().getMap().getDynamicPrjTransParameter(),
+										formMap.getMapControl().getMap().getDynamicPrjTransMethond());
+							}
 						}
-//						if (formMap.getMapControl().getMap().isDynamicProjection() &&
-//								sourceDataset.getPrjCoordSys()!=null &&
-//								sourceDataset.getPrjCoordSys().getType()!= PrjCoordSysType.PCS_NON_EARTH &&
-//								formMap.getMapControl().getMap().getPrjCoordSys().toXML()!=sourceDataset.getPrjCoordSys().toXML()) {
-//							CoordSysTranslator.convert(copyRegion,
-//									formMap.getMapControl().getMap().getPrjCoordSys(),
-//									sourceDataset.getPrjCoordSys(),
-//									new CoordSysTransParameter(),
-//									CoordSysTransMethod.MTH_POSITION_VECTOR);
-//						}
 						boolean isClipInRegion = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISCLIPINREGION);
 						boolean isEraseSource = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE);
 						boolean isExactClip = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE);
@@ -196,7 +197,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 						}
 						if (!datasetsClipped.contains(sourceDataset)) {
 							if (!targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
-								targetDatasetName = DatasetUtilities.getAvailableDatasetName(targetDatasource, targetDatasetName, null);
+									targetDatasetName = DatasetUtilities.getAvailableDatasetName(targetDatasource, targetDatasetName, null);
 							}
 							if (sourceDataset instanceof DatasetVector) {
 								this.resultDataset = VectorClip.clipDatasetVector((DatasetVector) sourceDataset, copyRegion, isClipInRegion,
@@ -223,7 +224,6 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 							}
 						}
 					} catch (Exception e) {
-						//System.out.println(e.toString());
 						continue;
 					}
 				}
@@ -239,6 +239,9 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 			this.createMapClip = false;
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
+			if (this.selectedRecordset!=null) {
+				this.selectedRecordset.dispose();
+			}
 			VectorClip.removeSteppedListener(percentListener);
 			RasterClip.removeSteppedListener(percentListener);
 		}
