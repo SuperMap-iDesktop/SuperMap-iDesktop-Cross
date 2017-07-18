@@ -145,13 +145,17 @@ public class TasksManager {
 	 */
 	private void processRemoved(IProcess process) {
 		if (this.workersMap.containsKey(process)) {
-			ProcessWorker worker = this.workersMap.get(process);
 			process.removeStatusChangeListener(this.processStatusChangeListener);
 			this.workersMap.remove(process);
 			fireWorkersChanged(new WorkersChangedEvent(this, process, WorkersChangedEvent.REMOVE));
 
-			// 执行过程中禁止删除节点，也就是说只有在前期构建工作流的时候可以，此时只有 waiting 队列
+			// 执行过程中禁止删除节点
 			this.waiting.remove(process);
+			this.ready.remove(process);
+			this.cancelled.remove(process);
+			this.completed.remove(process);
+			this.exception.remove(process);
+			this.running.remove(process);
 		}
 	}
 

@@ -163,6 +163,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		this.panelReady.remove(this.map.get(worker));
 		this.panelRunning.remove(this.map.get(worker));
 		this.panelWaiting.remove(this.map.get(worker));
+		this.map.remove(worker);
 	}
 
 	private void clearPanels() {
