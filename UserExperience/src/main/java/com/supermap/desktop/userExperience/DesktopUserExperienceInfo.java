@@ -16,7 +16,7 @@ public class DesktopUserExperienceInfo implements UserExperienceBean, JSONAware 
 	private static final String culture = Locale.getDefault().getDisplayLanguage();
 	private static final String optionSystem = System.getProperties().getProperty("os.name");
 	private static final String platForm = System.getProperties().getProperty("os.version");
-	private static final String RESOLUTION_RATIO = Toolkit.getDefaultToolkit().getScreenSize().width + " * " + Toolkit.getDefaultToolkit().getScreenSize().height;
+	private static final String RESOLUTION_RATIO = Toolkit.getDefaultToolkit().getScreenSize().width + "*" + Toolkit.getDefaultToolkit().getScreenSize().height;
 
 	private FunctionInfo functionInfo;
 	private LicenseInfo licenseInfo;
@@ -33,9 +33,9 @@ public class DesktopUserExperienceInfo implements UserExperienceBean, JSONAware 
 	public String getJson() {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("Culture", culture);
-		jsonObject.put("DesktopVersion", "9D");
-		jsonObject.put("FunctionInfo", functionInfo == null ? "null" : functionInfo);
-		jsonObject.put("LicenseInfo", licenseInfo == null ? "null" : licenseInfo);
+		jsonObject.put("DesktopVersion", "900");
+		jsonObject.put("FunctionInfo", functionInfo);
+		jsonObject.put("LicenseInfo", licenseInfo);
 		jsonObject.put("OptionSystem", optionSystem);
 		jsonObject.put("PlatForm", platForm);
 		jsonObject.put("ProductName", "SuperMap iDesktop Cross 9D");

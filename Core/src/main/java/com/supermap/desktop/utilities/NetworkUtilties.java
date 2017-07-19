@@ -77,7 +77,6 @@ class Pinger {
 				return false;
 			}
 			in = new BufferedReader(new InputStreamReader(p.getInputStream()));   // 逐行检查输出,计算类似出现=23ms TTL=62字样的次数
-			int connectedCount = 0;
 			String line = null;
 			while ((line = in.readLine()) != null) {
 				if (getCheckResult(line)) {
@@ -85,10 +84,7 @@ class Pinger {
 				}
 			}
 			// 如果出现类似=23ms TTL=62这样的字样,出现的次数=测试次数则返回真
-		} catch (
-				Exception ex)
-
-		{
+		} catch (Exception ex) {
 			ex.printStackTrace();   // 出现异常则返回假
 			return false;
 		} finally {
@@ -108,10 +104,7 @@ class Pinger {
 	private static boolean getCheckResult(String line) {
 		Pattern pattern = Pattern.compile("(\\d+ms)(\\s+)(TTL=\\d+)", Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(line);
-		while (matcher.find()) {
-			return true;
-		}
-		return false;
+		return matcher.find();
 	}
 
 	public static void main(String[] args) {
