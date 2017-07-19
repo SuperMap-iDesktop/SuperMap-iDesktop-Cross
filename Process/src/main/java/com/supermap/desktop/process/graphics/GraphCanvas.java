@@ -12,7 +12,6 @@ import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.interaction.canvas.CanvasAction;
 import com.supermap.desktop.process.graphics.interaction.canvas.CanvasActionsManager;
 import com.supermap.desktop.process.graphics.interaction.canvas.CanvasTranslation;
-import com.supermap.desktop.process.graphics.interaction.canvas.GraphConnectAction;
 import com.supermap.desktop.process.graphics.interaction.canvas.GraphDragAction;
 import com.supermap.desktop.process.graphics.interaction.canvas.GraphRemoveAction;
 import com.supermap.desktop.process.graphics.interaction.canvas.MultiSelection;
@@ -20,7 +19,6 @@ import com.supermap.desktop.process.graphics.interaction.canvas.PopupMenuAction;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
 import com.supermap.desktop.process.graphics.interaction.graph.DefaultGraphEventHanderFactory;
 import com.supermap.desktop.process.graphics.interaction.graph.IGraphEventHandlerFactory;
-import com.supermap.desktop.process.graphics.storage.IConnectionManager;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.graphics.storage.ListGraphs;
 
@@ -319,17 +317,28 @@ public class GraphCanvas extends JComponent {
 			Rectangle visibleCanvasBounds = getVisibleCanvasRect();
 			double visibleW = visibleCanvasBounds.getWidth();
 			double visibleH = visibleCanvasBounds.getHeight();
-			Rectangle bounds = this.graphStorage.getBounds();
+			Rectangle bounds = null;
 
-			double scaleW = (visibleW / bounds.width - 1) * 100;
-			double scaleH = (visibleH / bounds.height - 1) * 100;
-			this.coordinateTransform.scale(Math.min(scaleH, scaleW) - this.coordinateTransform.getScaleValue());
-//			this.coordinateTransform.translate(visibleCanvasBounds.x - bounds.x, visibleCanvasBounds.y - bounds.y);
+			if (selection.size() > 0) {
+				IGraph[] selectedItems = selection.getSelectedItems();
+				for (IGraph selectedItem : selectedItems) {
+					if (bounds == null) {
+						bounds = selectedItem.getBounds();
+					} else {
+						bounds = bounds.union(selectedItem.getBounds());
+					}
+				}
+			} else {
+				bounds = this.graphStorage.getBounds();
+			}
+
+			double scaleW = (visibleW / bounds.width);
+			double scaleH = (visibleH / bounds.height);
+
+			this.coordinateTransform.scale((coordinateTransform.getScale() + 100) * (Math.min(scaleH, scaleW)) - 100 - (coordinateTransform.getScale()));
+
 			visibleCanvasBounds = getVisibleCanvasRect();
-			this.coordinateTransform.translate(visibleCanvasBounds.getCenterX() - bounds.getCenterX(), visibleCanvasBounds.getCenterY() - bounds.getCenterY());
-//			this.coordinateTransform.translateXTo(bounds.getX());
-//			this.coordinateTransform.translateYTo(bounds.getY());
-
+			this.coordinateTransform.translate((int) (visibleCanvasBounds.getCenterX() - bounds.getCenterX()), (int) (visibleCanvasBounds.getCenterY() - bounds.getCenterY()));
 			repaint();
 		}
 	}

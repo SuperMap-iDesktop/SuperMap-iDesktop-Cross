@@ -1,12 +1,15 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
+import com.supermap.data.Dataset;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.mapping.Map;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -68,6 +71,13 @@ public class BuildCache {
 			workspace.open(connectionInfo);
 			Map map = new Map(workspace);
 			map.open(mapName);
+			for (int i = 0; i < map.getLayers().getCount(); i++) {
+				Dataset tempDataset = map.getLayers().get(i).getDataset();
+				if (!tempDataset.isOpen()) {
+					log.writelog(MessageFormat.format(MapViewProperties.getString("String_DatasetIsOpened"), map.getLayers().get(i).getName(), tempDataset.getName()));
+					return;
+				}
+			}
 			File taskFiles = new File(taskPath);
 			if (taskFiles.exists()) {
 				File doingDir = new File(CacheUtilities.replacePath(taskFiles.getParent(), "doing"));

@@ -23,6 +23,9 @@ public class CtrlActionMultiProcessClipExecute extends CtrlAction {
 	@Override
 	protected void run() {
 		Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
+		if (!CacheUtilities.dynamicEffectClosed(map)) {
+			return;
+		}
 		if (CacheUtilities.volatileDatasource(map)) {
 			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCache"));
 			String[] params = {"Multi", "null", map.getName(), "null"};
