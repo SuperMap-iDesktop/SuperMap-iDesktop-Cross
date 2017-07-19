@@ -4,6 +4,7 @@ import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
@@ -134,6 +135,9 @@ public class MetaProcessVectorResample extends MetaProcess {
 
 	private void initParameterConstraint() {
 
+		DatasourceConstraint.getInstance().constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
@@ -158,6 +162,7 @@ public class MetaProcessVectorResample extends MetaProcess {
 				}
 			}
 		});
+
 //		// 当数据集改变时，根据数据集类型给予不同的单位值
 		dataset.addPropertyListener(new PropertyChangeListener() {
 			@Override

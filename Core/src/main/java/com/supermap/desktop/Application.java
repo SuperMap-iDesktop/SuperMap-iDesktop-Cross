@@ -232,7 +232,7 @@ public class Application {
 				@Override
 				public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
 					try {
-						resetWorkFlows();
+						resetWorkflows();
 					} catch (Exception e) {
 
 					}
@@ -242,7 +242,7 @@ public class Application {
 				@Override
 				public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
 					for (int i = workflows.size() - 1; i >= 0; i--) {
-						removeWorkFlowFormTree(workflows.get(i));
+						removeWorkflowFromTree(workflows.get(i));
 					}
 				}
 			});
@@ -305,7 +305,7 @@ public class Application {
 		return workflows;
 	}
 
-	public void resetWorkFlows() {
+	public void resetWorkflows() {
 		String desktopInfo = workspace.getDesktopInfo();
 
 		Document document = null;
@@ -317,7 +317,7 @@ public class Application {
 			// ignore
 		}
 		if (StringUtilities.isNullOrEmpty(desktopInfo) || document == null) {
-			String s = initWorkFlowXml();
+			String s = initWorkflowXml();
 
 			workspace.setDesktopInfo(s);
 			return;
@@ -347,7 +347,7 @@ public class Application {
 
 
 		if (StringUtilities.isNullOrEmpty(desktopInfo)) {
-			desktopInfo = initWorkFlowXml();
+			desktopInfo = initWorkflowXml();
 			workspace.setDesktopInfo(desktopInfo);
 		}
 		Document document = XmlUtilities.stringToDocument(desktopInfo);
@@ -366,7 +366,7 @@ public class Application {
 		workspace.setDesktopInfo(s);
 	}
 
-	private String initWorkFlowXml() {
+	private String initWorkflowXml() {
 		String description;
 		Document document = XmlUtilities.getEmptyDocument();
 		Element root = XmlUtilities.createRoot(document, "root");
@@ -386,26 +386,26 @@ public class Application {
 		fireWorkflowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.ADD, workFlow));
 	}
 
-	public void removeWorkFlow(IWorkflow workFlow) {
-		removeWorkFlowFormWorkspace(workFlow);
-		removeWorkFlowFormTree(workFlow);
+	public void removeWorkflow(IWorkflow workFlow) {
+		removeWorkflowFromWorkspace(workFlow);
+		removeWorkflowFromTree(workFlow);
 	}
 
-	private void removeWorkFlowFormTree(IWorkflow workFlow) {
+	private void removeWorkflowFromTree(IWorkflow workFlow) {
 		this.workflows.remove(workFlow);
 		fireWorkflowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.DELETE, workFlow));
 	}
 
-	private void removeWorkFlowFormWorkspace(IWorkflow workFlow) {
+	private void removeWorkflowFromWorkspace(IWorkflow workFlow) {
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
 		String desktopInfo = workspace.getDesktopInfo();
 		Document document = XmlUtilities.stringToDocument(desktopInfo);
 		Node root = document.getChildNodes().item(0);
-		Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
-		Element[] workFlowsArray = XmlUtilities.getChildElementNodesByName(workFlows, "WorkFlow");
+		Node workflows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
+		Element[] workFlowsArray = XmlUtilities.getChildElementNodesByName(workflows, "WorkFlow");
 		for (Element element : workFlowsArray) {
 			if (element.getAttribute("name").equals(workFlow.getName())) {
-				workFlows.removeChild(element);
+				workflows.removeChild(element);
 				break;
 			}
 		}
