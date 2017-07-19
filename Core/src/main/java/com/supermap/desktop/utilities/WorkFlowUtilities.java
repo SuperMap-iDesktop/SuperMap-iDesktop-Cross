@@ -27,7 +27,7 @@ public class WorkFlowUtilities {
 					IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 					for (int count = formManager.getCount() - 1; count >= 0; count--) {
 						IForm form = formManager.get(count);
-						if (form.getWindowType() == WindowType.WORK_FLOW && form.getText().equals(workflow.getName())) {
+						if (form.getWindowType() == WindowType.WORKFLOW && form.getText().equals(workflow.getName())) {
 							form.setNeedSave(false);
 							formManager.close(form);
 							break;
@@ -51,7 +51,7 @@ public class WorkFlowUtilities {
 
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 		for (int i = 0; i < formManager.getCount(); i++) {
-			if (formManager.get(i).getWindowType() == WindowType.WORK_FLOW && formManager.get(i).getText().equals(workFlowName)) {
+			if (formManager.get(i).getWindowType() == WindowType.WORKFLOW && formManager.get(i).getText().equals(workFlowName)) {
 				return true;
 			}
 		}

@@ -225,7 +225,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 						} else if (!WorkFlowUtilities.isWorkFlowNameExist(stringTextField)) {
 							IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 							for (int i = 0; i < formManager.getCount(); i++) {
-								if (formManager.get(i).getWindowType() == WindowType.WORK_FLOW && formManager.get(i).getText().equals(currentWorkFlowName)) {
+								if (formManager.get(i).getWindowType() == WindowType.WORKFLOW && formManager.get(i).getText().equals(currentWorkFlowName)) {
 									formManager.get(i).setText(stringTextField);
 								}
 							}

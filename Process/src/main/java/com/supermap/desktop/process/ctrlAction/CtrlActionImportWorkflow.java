@@ -8,14 +8,12 @@ import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import javax.swing.*;
 import java.io.File;

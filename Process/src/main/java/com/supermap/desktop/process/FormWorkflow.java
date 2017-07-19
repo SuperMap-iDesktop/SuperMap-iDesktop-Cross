@@ -137,7 +137,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 	@Override
 	public WindowType getWindowType() {
-		return WindowType.WORK_FLOW;
+		return WindowType.WORKFLOW;
 	}
 
 	public String serializeTo() {
