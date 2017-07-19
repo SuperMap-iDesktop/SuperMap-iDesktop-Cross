@@ -1,5 +1,6 @@
 package com.supermap.desktop.dialog.cacheClip;
 
+import com.supermap.data.Dataset;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
@@ -18,6 +19,7 @@ import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import java.awt.*;
@@ -177,11 +179,13 @@ public class DialogCacheBuilder extends JFrame {
 					if (newProcessCount > nowProcessCount) {
 						//Add new process
 						int newSize = newProcessCount - nowProcessCount;
-						if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Add"), String.valueOf(newSize))) == JOptionPane.OK_OPTION)
+						if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Add"), String.valueOf(newSize))) == JOptionPane.OK_OPTION) {
 							for (int i = 0; i < newSize; i++) {
 								buildCache.addProcess(params);
 							}
-
+						} else {
+							textFieldProcessCount.setText(String.valueOf(nowProcessCount));
+						}
 					} else if (newProcessCount < nowProcessCount) {
 						if (newProcessCount == 0) {
 							shutdownMapClip();
@@ -498,17 +502,19 @@ public class DialogCacheBuilder extends JFrame {
 		File taskDirectory = new File(taskPath);
 		File failedDirectory = new File(CacheUtilities.replacePath(taskDirectory.getParent(), "failed"));
 		File doingDirectory = new File(CacheUtilities.replacePath(taskDirectory.getParent(), "doing"));
-		if (doingDirectory.exists() && hasSciFiles(doingDirectory)
-				&& optionPane.showConfirmDialog(MapViewProperties.getString("String_WarningForDoing")) == JOptionPane.OK_OPTION) {
-			File[] doingSci = doingDirectory.listFiles();
-			for (int i = 0; i < doingSci.length; i++) {
-				doingSci[i].renameTo(new File(taskDirectory, doingSci[i].getName()));
+		if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
+			if (optionPane.showConfirmDialog(MapViewProperties.getString("String_WarningForDoing")) == JOptionPane.OK_OPTION) {
+				File[] doingSci = doingDirectory.listFiles();
+				for (int i = 0; i < doingSci.length; i++) {
+					doingSci[i].renameTo(new File(taskDirectory, doingSci[i].getName()));
+				}
+			} else {
+				return false;
 			}
-		} else {
-			return false;
 		}
 
-		if (StringUtilities.isNullOrEmpty(workspacePath) || !new File(workspacePath).exists() || !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
+		if (StringUtilities.isNullOrEmpty(workspacePath) || !new File(workspacePath).exists()
+				|| !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_WorkspaceNotExist"));
 			return false;
 		}
@@ -517,11 +523,13 @@ public class DialogCacheBuilder extends JFrame {
 			return false;
 		}
 
-		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) && Integer.valueOf(processCount) > 0)) {
+		if (StringUtilities.isNullOrEmpty(processCount) ||
+				!(StringUtilities.isInteger(processCount) && Integer.valueOf(processCount) > 0)) {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
 			textFieldProcessCount.requestFocus();
 			return false;
 		}
+
 		WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(workspacePath);
 		Workspace workspace = new Workspace();
 		workspace.open(connectionInfo);
@@ -533,18 +541,32 @@ public class DialogCacheBuilder extends JFrame {
 			}
 		}
 		if (!hasMap) {
-			optionPane.showConfirmDialog(MapViewProperties.getString("String_MapIsNotExist"));
+			optionPane.showErrorDialog(MapViewProperties.getString("String_MapIsNotExist"));
 			textFieldMapName.requestFocus();
 			return false;
+		} else {
+			Map map = new Map(workspace);
+			map.open(mapName);
+			for (int i = 0; i < map.getLayers().getCount(); i++) {
+				Dataset tempDataset = map.getLayers().get(i).getDataset();
+				if (null == tempDataset) {
+					new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_DatasetIsOpened"), map.getLayers().get(i).getName()));
+					System.exit(1);
+				}
+			}
 		}
 		if (!taskDirectory.exists() || !hasSciFiles(taskDirectory)) {
-			if (failedDirectory.exists() && hasSciFiles(failedDirectory)
-					&& optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
-				File[] failedSci = failedDirectory.listFiles();
-				for (int i = 0; i < failedSci.length; i++) {
-					failedSci[i].renameTo(new File(taskDirectory, failedSci[i].getName()));
+			if (failedDirectory.exists() && hasSciFiles(failedDirectory)) {
+				if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
+					File[] failedSci = failedDirectory.listFiles();
+					for (int i = 0; i < failedSci.length; i++) {
+						failedSci[i].renameTo(new File(taskDirectory, failedSci[i].getName()));
+					}
+				} else {
+					return false;
 				}
-			} else {
+			} else if ((!taskDirectory.exists() || !hasSciFiles(taskDirectory))
+					&& (!failedDirectory.exists() && !hasSciFiles(failedDirectory))) {
 				optionPane.showErrorDialog(MapViewProperties.getString("String_TaskNotExist"));
 				return false;
 			}

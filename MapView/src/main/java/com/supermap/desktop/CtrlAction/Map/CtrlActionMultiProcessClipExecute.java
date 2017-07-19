@@ -26,7 +26,7 @@ public class CtrlActionMultiProcessClipExecute extends CtrlAction {
 		if (!CacheUtilities.dynamicEffectClosed(map)) {
 			return;
 		}
-		if (CacheUtilities.volatileDatasource(map)) {
+		if (CacheUtilities.volatileDatasource()) {
 			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCache"));
 			String[] params = {"Multi", "null", map.getName(), "null"};
 			CacheUtilities.startProcess(params, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);

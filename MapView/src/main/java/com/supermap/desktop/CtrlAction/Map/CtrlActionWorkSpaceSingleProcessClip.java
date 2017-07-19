@@ -20,13 +20,14 @@ public class CtrlActionWorkSpaceSingleProcessClip extends CtrlAction {
 	@Override
 	protected void run() {
 		Map map = CacheUtilities.getWorkspaceSelectedMap();
-		if (CacheUtilities.volatileDatasource(map)) {
-			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
-			Map newMap = new Map(Application.getActiveApplication().getWorkspace());
-			newMap.fromXML(map.toXML());
-			mapCacheBuilder.setMap(newMap);
-			new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.SingleProcessClip, mapCacheBuilder).showDialog();
+		if (!CacheUtilities.dynamicEffectClosed(map)) {
+			return;
 		}
+		MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
+		Map newMap = new Map(Application.getActiveApplication().getWorkspace());
+		newMap.fromXML(map.toXML());
+		mapCacheBuilder.setMap(newMap);
+		new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.SingleProcessClip, mapCacheBuilder).showDialog();
 	}
 
 	@Override

@@ -21,7 +21,7 @@ public class CtrlActionMultiProcessClipNew extends CtrlAction {
 	@Override
 	protected void run() {
 		Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
-		if (CacheUtilities.volatileDatasource(map)) {
+		if (CacheUtilities.volatileDatasource()) {
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 			Map newMap = new Map(Application.getActiveApplication().getWorkspace());
 			newMap.fromXML(map.toXML());

@@ -210,6 +210,8 @@ public class CheckCache {
 			manager = new TileStorageManager();
 			if (!manager.open(connection)) {
 				log.writelog("error: mongo open failed!");
+				File failedSci = new File(CacheUtilities.replacePath(file.getParentFile().getParent(), "failed"));
+				file.renameTo(new File(failedSci, sciFilePath));
 				return;
 			}
 

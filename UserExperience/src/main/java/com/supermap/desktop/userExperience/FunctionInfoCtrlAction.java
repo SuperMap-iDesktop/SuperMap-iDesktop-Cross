@@ -4,14 +4,7 @@ import com.alibaba.fastjson.JSONAware;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.event.DesktopRuntimeEvent;
-import com.supermap.desktop.implement.ControlButton;
-import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.implement.SmButtonDropdown;
-import com.supermap.desktop.implement.SmCtrlActionButton;
-import com.supermap.desktop.implement.SmMenu;
-import com.supermap.desktop.implement.SmMenuItem;
-import com.supermap.desktop.implement.SmPopupMenu;
-import com.supermap.desktop.implement.SmToolbar;
+import com.supermap.desktop.implement.*;
 import com.supermap.desktop.interfaces.UserExperienceBean;
 
 import javax.swing.*;
@@ -82,7 +75,7 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 					functionGrade0 = UserExperienceProperties.getString("String_FrameMenu");
 					functionGrade1 = ((SmMenu) invoker).getText();
 					Container superParent = invoker.getParent();
-					if (superParent instanceof JPopupMenu) {
+					if (superParent instanceof JPopupMenu && ((JPopupMenu) superParent).getInvoker() instanceof SmMenu) {
 						functionGrade0 = UserExperienceProperties.getString("String_FrameChildMenu");
 						SmMenu menu = (SmMenu) ((JPopupMenu) superParent).getInvoker();
 						functionGrade2 = menu.getText();

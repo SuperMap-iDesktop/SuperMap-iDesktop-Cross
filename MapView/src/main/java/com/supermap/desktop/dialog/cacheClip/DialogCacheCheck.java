@@ -308,9 +308,9 @@ public class DialogCacheCheck extends JFrame {
 					anchorTop = writer.getIndexBounds().getTop();
 					tileSize = writer.getTileSize().value();
 				}
-//				CheckCache.main(params);
-				CheckCache checkCache = new CheckCache();
-				checkCache.startProcess(Integer.valueOf(processCount), params);
+				CheckCache.main(params);
+//				CheckCache checkCache = new CheckCache();
+//				checkCache.startProcess(Integer.valueOf(processCount), params);
 				getResult(cachePath, cacheRoot, cacheTaskPath, taskPath, parentPath, anchorLeft, anchorTop, tileSize, datasourcePath);
 
 			}

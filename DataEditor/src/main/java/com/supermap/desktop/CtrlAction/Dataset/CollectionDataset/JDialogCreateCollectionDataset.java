@@ -11,7 +11,6 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilities.CoreResources;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
@@ -41,13 +40,8 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	private JButton buttonCancel;
 	private JPanel panelTableInfo;
 	private JPanel panelBasicInfo;
-	private JPanel contentPane;
 	private JScrollPane scrollPane;
-
-
-	private final int COLUMN_CAPTION = 0;
-	private final int COLUMN_NAME = 1;
-	private final int COLUMN_STATE = 2;
+	private CollectionDatasetTableModel tableModel;
 
 
 	public JDialogCreateCollectionDataset() {
@@ -62,15 +56,27 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		registEvents();
 		this.setSize(new Dimension(800, 450));
 		this.setLocationRelativeTo(null);
+		this.componentList.add(this.buttonOK);
+		this.componentList.add(this.buttonCancel);
+		this.componentList.add(this.buttonAddDataset);
+		this.componentList.add(this.buttonSelectAll);
+		this.componentList.add(this.buttonInvertSelect);
+		this.componentList.add(this.buttonDelete);
+		this.componentList.add(this.buttonMoveToFirst);
+		this.componentList.add(this.buttonMoveToForeword);
+		this.componentList.add(this.buttonMoveToNext);
+		this.componentList.add(this.buttonMoveToLast);
+		this.componentList.add(this.buttonRefresh);
+		this.componentList.add(this.datasourceComboBox);
+		this.componentList.add(this.textFieldDatasetName);
+		this.componentList.add(this.charsetComboBox);
+		this.setFocusTraversalPolicy(this.policy);
 	}
 
 	private void initComponents() {
 		this.panelTableInfo = new JPanel();
 		this.panelBasicInfo = new JPanel();
 		this.scrollPane = new JScrollPane();
-		this.contentPane = new JPanel();
-		this.setContentPane(contentPane);
-		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.tableDatasetDisplay = new JTable();
 		this.labelDatasource = new JLabel();
 		this.datasourceComboBox = new DatasourceComboBox();
@@ -88,6 +94,10 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		this.buttonMoveToNext = new JButton();
 		this.buttonMoveToLast = new JButton();
 		this.buttonRefresh = new JButton();
+		this.tableModel = new CollectionDatasetTableModel();
+		this.tableDatasetDisplay.getTableHeader().setReorderingAllowed(false);
+		this.tableDatasetDisplay.setModel(this.tableModel);
+		this.tableDatasetDisplay.setRowHeight(23);
 		this.buttonOK = ComponentFactory.createButtonOK();
 		this.buttonCancel = ComponentFactory.createButtonCancel();
 		initToolBar();
@@ -123,7 +133,6 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		ComponentUIUtilities.setName(this.buttonCancel, "JDialogCreateCollectionDataset_buttonCancel");
 		ComponentUIUtilities.setName(this.toolBar, "JDialogCreateCollectionDataset_toolBar");
 		ComponentUIUtilities.setName(this.scrollPane, "JDialogCreateCollectionDataset_scrollPane");
-		ComponentUIUtilities.setName(this.contentPane, "JDialogCreateCollectionDataset_contentPane");
 	}
 
 	private void initResources() {
@@ -144,13 +153,15 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	private void initLayout() {
 		initPanelTableInfoLayout();
 		initPanelBasicInfoLayout();
+		this.getContentPane().setLayout(new GridBagLayout());
 		JPanel panelButton = new JPanel();
 		panelButton.setLayout(new GridBagLayout());
-		panelButton.add(this.buttonOK, new GridBagConstraintsHelper(5, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 10, 10).setWeight(0, 0));
-		panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(6, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 10, 10).setWeight(0, 0));
-		this.contentPane.add(this.panelTableInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(0.7, 1));
-		this.contentPane.add(this.panelBasicInfo, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(0.3, 1));
-//		this.contentPane.add(panelButton, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+		panelButton.add(this.buttonOK, new GridBagConstraintsHelper(0, 1, 1, 1).setInsets(0, 5, 10, 10));
+		panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(1, 1, 1, 1).setInsets(0, 5, 10, 10));
+		this.getContentPane().add(this.panelTableInfo, new GridBagConstraintsHelper(0, 0, 7, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0.7, 1).setInsets(10, 10, 5, 0));
+		this.getContentPane().add(this.panelBasicInfo, new GridBagConstraintsHelper(7, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0.3, 1).setInsets(10));
+		this.getContentPane().add(panelButton, new GridBagConstraintsHelper(0, 1, 10, 1).setAnchor(GridBagConstraints.EAST));
+
 	}
 
 	private void initPanelBasicInfoLayout() {
@@ -168,7 +179,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	private void initPanelTableInfoLayout() {
 		this.panelTableInfo.setLayout(new GridBagLayout());
 		this.panelTableInfo.add(this.toolBar, new GridBagConstraintsHelper(0, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-		this.panelTableInfo.add(this.scrollPane, new GridBagConstraintsHelper(0, 1, 3, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+		this.panelTableInfo.add(this.scrollPane, new GridBagConstraintsHelper(0, 1, 3, 4).setAnchor(GridBagConstraints.CENTER).setInsets(5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		this.scrollPane.setViewportView(this.tableDatasetDisplay);
 	}
 
