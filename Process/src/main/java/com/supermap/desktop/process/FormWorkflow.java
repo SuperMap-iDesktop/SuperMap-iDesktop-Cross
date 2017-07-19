@@ -28,6 +28,9 @@ import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.Dockbar;
+import com.supermap.desktop.utilities.XmlUtilities;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.swing.*;
 import java.awt.*;
@@ -129,6 +132,30 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	@Override
 	public WindowType getWindowType() {
 		return WindowType.WORK_FLOW;
+	}
+
+	public String serializeTo() {
+		Document doc = XmlUtilities.getEmptyDocument();
+
+		// 新建 WorkflowEntry
+		Element workflowEntryNode = doc.createElement("WorkflowEntry");
+		doc.appendChild(workflowEntryNode);
+
+		// 处理 Workflow
+		Element workflowNode = doc.createElement("Workflow");
+		this.workflow.serializeTo(workflowNode);
+		workflowEntryNode.appendChild(workflowNode);
+
+		// 处理 location
+		Element locationsNode = doc.createElement("Locations");
+		this.canvas.serializeTo(locationsNode);
+		workflowEntryNode.appendChild(locationsNode);
+
+		return XmlUtilities.nodeToString(doc, "UTF-8");
+	}
+
+	public void serializeFrom(String description) {
+
 	}
 
 	@Override

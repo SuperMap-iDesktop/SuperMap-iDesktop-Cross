@@ -43,6 +43,8 @@ public class ProcessActivator implements BundleActivator {
 		System.out.println("Hello SuperMap === Process!!");
 		setContext(bundleContext);
 		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Process", bundleContext.getBundle());
+		ProcessApplication.init();
+
 		Application.getActiveApplication().setWorkflowInitListener(new WorkflowInitListener() {
 			@Override
 			public IWorkflow init(Element element) {
@@ -52,6 +54,7 @@ public class ProcessActivator implements BundleActivator {
 				return workflow;
 			}
 		});
+
 		CommonToolkit.FormWrap.addNewWindowListener(new NewWindowListener() {
 			@Override
 			public void newWindow(NewWindowEvent evt) {

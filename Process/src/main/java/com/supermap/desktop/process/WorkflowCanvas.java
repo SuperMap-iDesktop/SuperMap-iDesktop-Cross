@@ -2,10 +2,14 @@ package com.supermap.desktop.process;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.core.*;
-import com.supermap.desktop.process.events.*;
+import com.supermap.desktop.process.events.RelationAddedEvent;
+import com.supermap.desktop.process.events.RelationAddedListener;
+import com.supermap.desktop.process.events.RelationRemovingEvent;
+import com.supermap.desktop.process.events.RelationRemovingListener;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
-import com.supermap.desktop.process.graphics.events.*;
+import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
+import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
@@ -15,6 +19,8 @@ import com.supermap.desktop.process.graphics.interaction.canvas.PopupMenuAction;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
@@ -214,6 +220,32 @@ public class WorkflowCanvas extends GraphCanvas
 
 				if (processLocConf.getOutputLocation(output.getName()) != null) {
 					outputGraph.setLocation(processLocConf.getOutputLocation(output.getName()));
+				}
+			}
+		}
+	}
+
+	public void serializeTo(Element locationsNode) {
+		Document doc = locationsNode.getOwnerDocument();
+
+		// 处理 Process
+		for (IProcess process :
+				this.processMap.keySet()) {
+			Element processLocNode = doc.createElement("Process");
+			processLocNode.setAttribute("Key", process.getKey());
+			processLocNode.setAttribute("LocationX", String.valueOf(this.processMap.get(process).getLocation().x));
+			processLocNode.setAttribute("LocationY", String.valueOf(this.processMap.get(process).getLocation().y));
+			locationsNode.appendChild(processLocNode);
+
+			// 处理 Output
+			OutputData[] outputs = process.getOutputs().getDatas();
+			for (int i = 0; i < outputs.length; i++) {
+				if (this.outputMap.containsKey(outputs[i])) {
+					Element outputLocNode = doc.createElement("Output");
+					outputLocNode.setAttribute("key", outputs[i].getName());
+					outputLocNode.setAttribute("LocationX", String.valueOf(this.outputMap.get(outputs[i]).getLocation().x));
+					outputLocNode.setAttribute("LocationY", String.valueOf(this.outputMap.get(outputs[i]).getLocation().y));
+					processLocNode.appendChild(outputLocNode);
 				}
 			}
 		}

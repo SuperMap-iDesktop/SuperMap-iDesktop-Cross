@@ -98,6 +98,41 @@ public class Workflow implements IWorkflow {
 		return XmlUtilities.nodeToString(workflowNode);
 	}
 
+	public void serializeTo(Element workflowNode) {
+		Document doc = workflowNode.getOwnerDocument();
+
+		// 处理 processes
+		Element processesNode = doc.createElement("processes");
+		Vector<IProcess> processes = this.processMatrix.getNodes();
+		for (int i = 0; i < processes.size(); i++) {
+			IProcess process = processes.get(i);
+			Element processNode = doc.createElement("process");
+			processNode.setAttribute("key", process.getKey());
+			processNode.setAttribute("className", process.getClass().getName());
+			processesNode.appendChild(processesNode);
+		}
+		workflowNode.appendChild(processesNode);
+
+		// 处理 relations
+		Element relationsNode = doc.createElement("relations");
+		Vector<IRelation<IProcess>> relations = this.processMatrix.getRelations();
+		for (int i = 0; i < relations.size(); i++) {
+			IRelation relation = relations.get(i);
+
+			// 目前只有一种数据匹配关系，先就只处理这一种关系的导入和导出
+			if (relation instanceof DataMatch) {
+				Element relationNode = doc.createElement("relation");
+				relationNode.setAttribute("className", relation.getClass().getName());
+				relationNode.setAttribute("fromKey", ((DataMatch) relation).getFrom().getKey());
+				relationNode.setAttribute("toKey", ((DataMatch) relation).getTo().getKey());
+				relationNode.setAttribute("fromOutputData", ((DataMatch) relation).getFromOutputData().getName());
+				relationNode.setAttribute("toInputData", ((DataMatch) relation).getToInputData().getName());
+				relationsNode.appendChild(relationNode);
+			}
+		}
+		workflowNode.appendChild(relationsNode);
+	}
+
 	@Override
 	public void serializeFrom(String xmlDescription) {
 
