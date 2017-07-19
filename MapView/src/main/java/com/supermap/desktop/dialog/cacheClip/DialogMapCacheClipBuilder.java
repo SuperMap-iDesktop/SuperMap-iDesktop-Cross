@@ -22,6 +22,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -39,6 +40,7 @@ import java.io.FilenameFilter;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -67,6 +69,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private JButton buttonStep;
 	public JButton buttonOk;
 	private JButton buttonCancel;
+	private String cacheName = "Cache";
 
 	private ActionListener cancelListener = new ActionListener() {
 		@Override
@@ -216,22 +219,26 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				|| cmdType == ResumeProcessClip) {
 			return result;
 		}
-		String cachePath = CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), "Cache");
-		if (!new File(cachePath).exists()) {
-			new File(cachePath).mkdir();
-		}
-		File file = new File(CacheUtilities.replacePath(cachePath, firstStepPane.textFieldCacheName.getText()));
-		if (file.exists() || file.isDirectory()) {
-			SmOptionPane smOptionPane = new SmOptionPane();
-			smOptionPane.showErrorDialog("\"" + firstStepPane.textFieldCacheName.getText() + "\"" + MapViewProperties.getString("MapCache_FileIsExitWarning"));
-			if (buttonStep.getText().equals(ControlsProperties.getString("String_LastWay"))) {
-				changePanel(false);
+		String[] cacheNames = new File(firstStepPane.fileChooserControlFileCache.getPath()).list(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.contains(cacheName);
 			}
-			getContentPane().repaint();
-			firstStepPane.textFieldCacheName.requestFocus();
-			result = false;
+		});
+		if (null == cacheNames || cacheNames.length == 0) {
+			new File(CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), cacheName)).mkdir();
 		} else {
-			file.mkdir();
+			ArrayList<Integer> index = new ArrayList<>();
+			for (int i = 0; i < cacheNames.length; i++) {
+				String tempCache = cacheNames[i];
+				String tempIndex = tempCache.substring(5, tempCache.length());
+				if (StringUtilities.isInteger(tempIndex)) {
+					index.add(Integer.valueOf(tempIndex));
+				}
+			}
+			Collections.sort(index);
+			cacheName = cacheName + (index.get(index.size() - 1) + 1);
+			new File(CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), cacheName)).mkdir();
 		}
 		return result;
 	}
@@ -345,7 +352,12 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				if (!valiteCacheFolderSave()) {
 					return;
 				}
-//				String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
+				if (cmdType == MultiUpdateProcessClip) {
+					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
+				}
+				if (!CacheUtilities.dynamicEffectClosed(mapCacheBuilder.getMap())) {
+					return;
+				}
 				String cachePath = firstStepPane.fileChooserControlFileCache.getPath();
 
 				String sciPath = "";
@@ -354,7 +366,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 //					tasksPath = CacheUtilities.replacePath(tasksPath, "update");
 					sciPath = CacheUtilities.replacePath(cachePath, mapCacheBuilder.getCacheName() + ".sci");
 				} else {
-					cachePath = CacheUtilities.replacePath(cachePath, "Cache");
+					cachePath = CacheUtilities.replacePath(cachePath, cacheName);
 					sciPath = CacheUtilities.replacePath(cachePath, mapCacheBuilder.getCacheName());
 					File sciDirectory = new File(sciPath);
 					if (!sciDirectory.exists()) {
@@ -365,9 +377,6 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					} else {
 						sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + ".sci");
 					}
-				}
-				if (cmdType == MultiUpdateProcessClip) {
-					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
 				}
 				if (null != mapCacheBuilder.getMap().getVisibleScales() && 0 != mapCacheBuilder.getMap().getVisibleScales().length) {
 					//地图存在固定比例从时的处理方式
@@ -446,6 +455,9 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		if (null == mapCacheBuilder.getMap()) {
 			mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
 		}
+		if (!CacheUtilities.dynamicEffectClosed(mapCacheBuilder.getMap())) {
+			return;
+		}
 		setMapCacheBuilderValueBeforeRun();
 		boolean result;
 		long startTime = System.currentTimeMillis();
@@ -508,7 +520,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			this.mapCacheBuilder.setVersion(MapCacheVersion.VERSION_50);
 			this.mapCacheBuilder.setCacheName(firstStepPane.textFieldCacheName.getText());
 			if (cmdType != SingleUpdateProcessClip) {
-				this.mapCacheBuilder.setOutputFolder(CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), "Cache"));
+				this.mapCacheBuilder.setOutputFolder(CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), cacheName));
 			} else {
 				this.mapCacheBuilder.setOutputFolder(firstStepPane.fileChooserControlFileCache.getPath());
 			}
