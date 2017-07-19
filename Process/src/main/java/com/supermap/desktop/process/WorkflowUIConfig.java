@@ -2,90 +2,98 @@ package com.supermap.desktop.process;
 
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+import org.w3c.dom.Element;
 
 import java.awt.*;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/7/5.
  */
 public class WorkflowUIConfig {
-	private Map<String, ProcessLocationConfig> processLocationMap = new ConcurrentHashMap<>();
-	private Map<String, ProcessSizeConfig> processSizeMap = new ConcurrentHashMap<>();
+	private Vector<ProcessLocationConfig> processLocations = new Vector<>();
+
+	public void addLocationConfig(ProcessLocationConfig locationConfig) {
+		if (!this.processLocations.contains(locationConfig) && !contains(locationConfig.getProcessKey(), locationConfig.getSerialID())) {
+			this.processLocations.add(locationConfig);
+		}
+	}
 
 	public Point getProcessLocation(IProcess process) {
 		if (process != null) {
-			return getProcessLocation(process.getKey());
+			return getProcessLocation(process.getKey(), process.getSerialID());
 		}
 
 		return null;
 	}
 
-	public Point getProcessLocation(String processKey) {
-		if (this.processLocationMap.containsKey(processKey)) {
-			return this.processLocationMap.get(processKey).getLocation();
+	public Point getProcessLocation(String processKey, int serialID) {
+		for (int i = 0; i < this.processLocations.size(); i++) {
+			ProcessLocationConfig config = this.processLocations.get(i);
+
+			if (StringUtilities.stringEquals(config.getProcessKey(), processKey) && config.getSerialID() == serialID) {
+				return config.getLocation();
+			}
 		}
 
 		return null;
 	}
 
-	public ProcessLocationConfig getProcessConfig(String processKey) {
-		return this.processLocationMap.get(processKey);
+	public ProcessLocationConfig getProcessConfig(String processKey, int serialID) {
+		for (int i = 0; i < this.processLocations.size(); i++) {
+			ProcessLocationConfig config = this.processLocations.get(i);
+
+			if (StringUtilities.stringEquals(config.getProcessKey(), processKey) && config.getSerialID() == serialID) {
+				return config;
+			}
+		}
+
+		return null;
 	}
 
-	public class ProcessLocationConfig {
-		private String processKey;
-		private Point location;
+	public boolean contains(String processKey, int serialID) {
+		for (int i = 0; i < this.processLocations.size(); i++) {
+			ProcessLocationConfig config = this.processLocations.get(i);
 
-		private Map<String, Point> outputsLoc = new ConcurrentHashMap<>();
-
-		public ProcessLocationConfig(String processKey) {
-			this(processKey, null);
-		}
-
-		public ProcessLocationConfig(String processKey, Point location) {
-			if (StringUtilities.isNullOrEmpty(processKey)) {
-				throw new IllegalArgumentException();
-			}
-
-			this.processKey = processKey;
-			this.location = location;
-		}
-
-		public String getProcessKey() {
-			return processKey;
-		}
-
-		public Point getLocation() {
-			return this.location;
-		}
-
-		public void setLocation(Point location) {
-			this.location = location;
-		}
-
-		public Point getOutputLocation(String outputName) {
-			if (this.outputsLoc.containsKey(outputName)) {
-				return this.outputsLoc.get(outputName);
-			}
-
-			return null;
-		}
-
-		public void setOutputLocation(String outputName, Point location) {
-			if (!StringUtilities.isNullOrEmpty(outputName)) {
-				this.outputsLoc.put(outputName, location);
+			if (StringUtilities.stringEquals(config.getProcessKey(), processKey) && config.getSerialID() == serialID) {
+				return true;
 			}
 		}
 
-		public void fromXML(String xml) {
+		return false;
+	}
 
+	public static WorkflowUIConfig serializeFrom(Element locationsNode) {
+		WorkflowUIConfig config = null;
+
+		Element[] processess = XmlUtilities.getChildElementNodesByName(locationsNode, "Process");
+		if (processess != null) {
+			config = new WorkflowUIConfig();
+
+			for (int i = 0; i < processess.length; i++) {
+				String processKey = processess[i].getAttribute("Key");
+				int serialID = Integer.valueOf(processess[i].getAttribute("SerialID"));
+				int locationX = Integer.valueOf(processess[i].getAttribute("LocationX"));
+				int locationY = Integer.valueOf(processess[i].getAttribute("LocationY"));
+				ProcessLocationConfig locationConfig = new ProcessLocationConfig(processKey, serialID, new Point(locationX, locationY));
+
+				Element[] outputs = XmlUtilities.getChildElementNodesByName(processess[i], "Output");
+				if (outputs != null) {
+					for (int j = 0; j < outputs.length; j++) {
+						String outputName = outputs[j].getAttribute("Key");
+						locationX = Integer.valueOf(outputs[j].getAttribute("LocationX"));
+						locationY = Integer.valueOf(outputs[j].getAttribute("LocationY"));
+						locationConfig.setOutputLocation(outputName, new Point(locationX, locationY));
+					}
+				}
+				config.addLocationConfig(locationConfig);
+			}
 		}
 
-		public String toXML() {
-			return null;
-		}
+		return config;
 	}
 
 	public class ProcessSizeConfig {

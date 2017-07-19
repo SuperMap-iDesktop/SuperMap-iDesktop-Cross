@@ -22,6 +22,21 @@ public abstract class AbstractProcess implements IProcess {
 	protected IProcessGroup parent;
 	private Inputs inputs = new Inputs(this);
 	private Outputs outputs = new Outputs(this);
+	private int serialID = 0;
+
+	public AbstractProcess() {
+		setSerialID(hashCode());
+	}
+
+	@Override
+	public int getSerialID() {
+		return this.serialID;
+	}
+
+	@Override
+	public void setSerialID(int serialID) {
+		this.serialID = serialID;
+	}
 
 	@Override
 	public abstract IParameters getParameters();

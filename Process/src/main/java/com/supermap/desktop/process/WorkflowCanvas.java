@@ -205,7 +205,7 @@ public class WorkflowCanvas extends GraphCanvas
 
 		for (IProcess process :
 				this.processMap.keySet()) {
-			WorkflowUIConfig.ProcessLocationConfig processLocConf = config.getProcessConfig(process.getKey());
+			ProcessLocationConfig processLocConf = config.getProcessConfig(process.getKey(), process.getSerialID());
 			IGraph processGraph = this.processMap.get(process);
 
 			if (processLocConf.getLocation() == null) {
@@ -216,7 +216,7 @@ public class WorkflowCanvas extends GraphCanvas
 			OutputData[] outputs = process.getOutputs().getDatas();
 			for (int i = 0; i < outputs.length; i++) {
 				OutputData output = outputs[i];
-				IGraph outputGraph = this.outputMap.get(output.getName());
+				IGraph outputGraph = this.outputMap.get(output);
 
 				if (processLocConf.getOutputLocation(output.getName()) != null) {
 					outputGraph.setLocation(processLocConf.getOutputLocation(output.getName()));
@@ -233,6 +233,7 @@ public class WorkflowCanvas extends GraphCanvas
 				this.processMap.keySet()) {
 			Element processLocNode = doc.createElement("Process");
 			processLocNode.setAttribute("Key", process.getKey());
+			processLocNode.setAttribute("SerialID", String.valueOf(process.getSerialID()));
 			processLocNode.setAttribute("LocationX", String.valueOf(this.processMap.get(process).getLocation().x));
 			processLocNode.setAttribute("LocationY", String.valueOf(this.processMap.get(process).getLocation().y));
 			locationsNode.appendChild(processLocNode);
@@ -242,7 +243,7 @@ public class WorkflowCanvas extends GraphCanvas
 			for (int i = 0; i < outputs.length; i++) {
 				if (this.outputMap.containsKey(outputs[i])) {
 					Element outputLocNode = doc.createElement("Output");
-					outputLocNode.setAttribute("key", outputs[i].getName());
+					outputLocNode.setAttribute("Key", outputs[i].getName());
 					outputLocNode.setAttribute("LocationX", String.valueOf(this.outputMap.get(outputs[i]).getLocation().x));
 					outputLocNode.setAttribute("LocationY", String.valueOf(this.outputMap.get(outputs[i]).getLocation().y));
 					processLocNode.appendChild(outputLocNode);

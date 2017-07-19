@@ -130,6 +130,12 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 
 	@Override
+	public void setText(String text) {
+		this.workflow.setName(text);
+		super.setText(text);
+	}
+
+	@Override
 	public WindowType getWindowType() {
 		return WindowType.WORK_FLOW;
 	}
@@ -139,6 +145,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 		// 新建 WorkflowEntry
 		Element workflowEntryNode = doc.createElement("WorkflowEntry");
+		workflowEntryNode.setAttribute("Name", getText());
 		doc.appendChild(workflowEntryNode);
 
 		// 处理 Workflow
@@ -154,12 +161,26 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		return XmlUtilities.nodeToString(doc, "UTF-8");
 	}
 
-	public static void serializeFrom(String description) {
+	public static FormWorkflow serializeFrom(String description) {
+		FormWorkflow formWorkflow = null;
 		Document doc = XmlUtilities.stringToDocument(description);
 		Element workflowEntryNode = (Element) XmlUtilities.getChildElementNodeByName(doc, "WorkflowEntry");
+		String name = workflowEntryNode.getAttribute("Name");
 
 		// 处理 Workflow
+		Workflow workflow = new Workflow(name);
 		Element workflowNode = (Element) XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Workflow");
+		workflow.serializeFrom(workflowNode);
+
+		// 解析 UIConfig
+		formWorkflow = new FormWorkflow(workflow);
+		Element uiConfigNode = (Element) XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Locations");
+		WorkflowUIConfig uiConfig = WorkflowUIConfig.serializeFrom(uiConfigNode);
+
+		if (uiConfig != null) {
+			formWorkflow.getCanvas().loadUIConfig(uiConfig);
+		}
+		return formWorkflow;
 	}
 
 	@Override
