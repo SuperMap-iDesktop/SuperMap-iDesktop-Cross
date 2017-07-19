@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
  */
 public class DemoParameterButton extends JButton {
 
+	private final String filePath;
 	private MouseListener mouseListener = new MouseListener() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -37,9 +38,9 @@ public class DemoParameterButton extends JButton {
 		}
 	};
 
-	public DemoParameterButton(String text, Icon icon) {
+	public DemoParameterButton(String text, Icon icon, String filePath) {
 		super(text, icon);
-
+		this.filePath = filePath;
 		Dimension preferredSizeNew = new Dimension(180, 130);
 		setPreferredSize(preferredSizeNew);
 		// 设置文字对于图片的位置
@@ -48,6 +49,10 @@ public class DemoParameterButton extends JButton {
 		// 设置其填充区域透明
 		setContentAreaFilled(false);
 		addMouseListener(mouseListener);
+	}
+
+	public String getFilePath() {
+		return filePath;
 	}
 }
 
