@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 
 public class FormProgressTotal extends JDialog implements IUpdateProgress {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final int DEFUALT_PROGRESSBAR_HEIGHT = 30;
@@ -71,7 +71,7 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 						.addComponent(this.labelRemaintime, 210, 210, 210)
 						.addContainerGap(10, Short.MAX_VALUE)
 						.addComponent(this.buttonCancel)));
-		
+
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
 				.addComponent(this.labelTotalMessage)
 				.addComponent(this.progressBar, DEFUALT_PROGRESSBAR_HEIGHT, DEFUALT_PROGRESSBAR_HEIGHT, DEFUALT_PROGRESSBAR_HEIGHT)
@@ -314,6 +314,11 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 	public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void updateProgress(String message, int percent, String currentMessage) throws CancellationException {
+		// do nothing
 	}
 
 	@Override

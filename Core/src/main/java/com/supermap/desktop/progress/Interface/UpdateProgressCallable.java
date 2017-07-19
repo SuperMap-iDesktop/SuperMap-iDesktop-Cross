@@ -5,9 +5,8 @@ import java.util.concurrent.CancellationException;
 
 /**
  * 提供进度更新信息的 Callable
- * 
- * @author highsad
  *
+ * @author highsad
  */
 public abstract class UpdateProgressCallable implements Callable<Boolean> {
 
@@ -23,7 +22,7 @@ public abstract class UpdateProgressCallable implements Callable<Boolean> {
 
 	/**
 	 * 单进度
-	 * 
+	 *
 	 * @param percent
 	 * @param remainTime
 	 * @param message
@@ -34,8 +33,20 @@ public abstract class UpdateProgressCallable implements Callable<Boolean> {
 	}
 
 	/**
+	 * 单进度
+	 *
+	 * @param percent
+	 * @param currentMessage 当前进度信息
+	 * @param message        总进度信息
+	 * @throws CancellationException
+	 */
+	public void updateProgress(String message, int percent, String currentMessage) throws CancellationException {
+		this.update.updateProgress(message, percent, currentMessage);
+	}
+
+	/**
 	 * 总进度
-	 * 
+	 *
 	 * @param percent
 	 * @param totalPercent
 	 * @param remainTime
@@ -48,7 +59,7 @@ public abstract class UpdateProgressCallable implements Callable<Boolean> {
 
 	/**
 	 * 总进度
-	 * 
+	 *
 	 * @param percent
 	 * @param currentMessage
 	 * @param totalPercent

@@ -8,14 +8,7 @@ import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.FormActivatedListener;
-import com.supermap.desktop.event.FormClosedEvent;
-import com.supermap.desktop.event.FormClosedListener;
-import com.supermap.desktop.event.FormClosingEvent;
-import com.supermap.desktop.event.FormClosingListener;
-import com.supermap.desktop.event.FormDeactivatedListener;
-import com.supermap.desktop.event.FormShownEvent;
-import com.supermap.desktop.event.FormShownListener;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
 import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
@@ -45,8 +38,9 @@ import java.util.ArrayList;
  * Created by highsad on 2017/1/6.
  */
 public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
-	private Workflow workflow;
+	private static final String PROCESS_TREE_CLASS_NAME = "com.supermap.desktop.process.core.ProcessManager";
 
+	private Workflow workflow;
 	private TasksManager tasksManager;
 	private WorkflowCanvas canvas;
 	private boolean isNeedSave = true;
@@ -54,7 +48,6 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	public FormWorkflow() {
 		this(ControlsProperties.getString("String_WorkFlows"));
 	}
-
 
 	public FormWorkflow(String name) {
 		super(name, null, null);
@@ -251,7 +244,11 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 	@Override
 	public void formShown(FormShownEvent e) {
-		Application.getActiveApplication().getOutput().output("test");
+		try {
+			Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(PROCESS_TREE_CLASS_NAME)).setVisible(true);
+		} catch (ClassNotFoundException e1) {
+			Application.getActiveApplication().getOutput().output(e1);
+		}
 	}
 
 	@Override
