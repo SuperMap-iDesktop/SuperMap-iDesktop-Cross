@@ -102,35 +102,51 @@ public class Workflow implements IWorkflow {
 		Document doc = workflowNode.getOwnerDocument();
 
 		// 处理 processes
-		Element processesNode = doc.createElement("processes");
+		Element processesNode = doc.createElement("Processes");
 		Vector<IProcess> processes = this.processMatrix.getNodes();
 		for (int i = 0; i < processes.size(); i++) {
 			IProcess process = processes.get(i);
-			Element processNode = doc.createElement("process");
-			processNode.setAttribute("key", process.getKey());
-			processNode.setAttribute("className", process.getClass().getName());
-			processesNode.appendChild(processesNode);
+			Element processNode = doc.createElement("Process");
+			processNode.setAttribute("Key", process.getKey());
+			processNode.setAttribute("ClassName", process.getClass().getName());
+			processesNode.appendChild(processNode);
 		}
 		workflowNode.appendChild(processesNode);
 
 		// 处理 relations
-		Element relationsNode = doc.createElement("relations");
+		Element relationsNode = doc.createElement("Relations");
 		Vector<IRelation<IProcess>> relations = this.processMatrix.getRelations();
 		for (int i = 0; i < relations.size(); i++) {
 			IRelation relation = relations.get(i);
 
 			// 目前只有一种数据匹配关系，先就只处理这一种关系的导入和导出
 			if (relation instanceof DataMatch) {
-				Element relationNode = doc.createElement("relation");
-				relationNode.setAttribute("className", relation.getClass().getName());
-				relationNode.setAttribute("fromKey", ((DataMatch) relation).getFrom().getKey());
-				relationNode.setAttribute("toKey", ((DataMatch) relation).getTo().getKey());
-				relationNode.setAttribute("fromOutputData", ((DataMatch) relation).getFromOutputData().getName());
-				relationNode.setAttribute("toInputData", ((DataMatch) relation).getToInputData().getName());
+				Element relationNode = doc.createElement("Relation");
+				relationNode.setAttribute("ClassName", relation.getClass().getName());
+				relationNode.setAttribute("FromKey", ((DataMatch) relation).getFrom().getKey());
+				relationNode.setAttribute("ToKey", ((DataMatch) relation).getTo().getKey());
+				relationNode.setAttribute("FromOutputData", ((DataMatch) relation).getFromOutputData().getName());
+				relationNode.setAttribute("ToInputData", ((DataMatch) relation).getToInputData().getName());
 				relationsNode.appendChild(relationNode);
 			}
 		}
 		workflowNode.appendChild(relationsNode);
+	}
+
+	public void serializeFrom(Element workflowNode) {
+
+		// 处理 Process
+		Element processesNode = (Element) XmlUtilities.getChildElementNodeByName(workflowNode, "processes");
+		Element[] processNodes = XmlUtilities.getChildElementNodesByName(processesNode, "process");
+		for (int i = 0; i < processNodes.length; i++) {
+			Element processNode = processNodes[i];
+			String processKey = processNode.getAttribute("Key");
+			IProcess process = WorkflowParser.getMetaProcess(processKey);
+			addProcess(process);
+		}
+
+		// 处理 Relation
+//		Element relationsNode = XmlUtilities.getChildElementNodeByName(workflowNode, "relations");
 	}
 
 	@Override

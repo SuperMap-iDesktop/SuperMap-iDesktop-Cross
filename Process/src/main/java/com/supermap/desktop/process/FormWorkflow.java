@@ -154,8 +154,12 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		return XmlUtilities.nodeToString(doc, "UTF-8");
 	}
 
-	public void serializeFrom(String description) {
+	public static void serializeFrom(String description) {
+		Document doc = XmlUtilities.stringToDocument(description);
+		Element workflowEntryNode = (Element) XmlUtilities.getChildElementNodeByName(doc, "WorkflowEntry");
 
+		// 处理 Workflow
+		Element workflowNode = (Element) XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Workflow");
 	}
 
 	@Override
