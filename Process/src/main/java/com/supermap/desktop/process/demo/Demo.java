@@ -30,7 +30,7 @@ public class Demo extends FormBaseChild {
 		this.setBackground(Color.WHITE);
 
 		DemoParameterButton demoParameterButton1 = new DemoParameterButton("变形金刚",
-				CoreResources.getIcon("/123/1.png"), "G:\\新建文件夹\\太极\\缠丝劲\\陈正雷新架一路83式缠丝劲练习.flv");
+				CoreResources.getIcon("/123/1.png"), "");
 		DemoParameterButton demoParameterButton2 = new DemoParameterButton("钢铁侠",
 				CoreResources.getIcon("/123/1.png"), "");
 		DemoParameterButton demoParameterButton3 = new DemoParameterButton("蜘蛛侠",
