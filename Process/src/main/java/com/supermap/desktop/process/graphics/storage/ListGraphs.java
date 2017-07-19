@@ -1,14 +1,17 @@
 package com.supermap.desktop.process.graphics.storage;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.events.*;
+import com.supermap.desktop.process.graphics.events.GraphBoundsChangedEvent;
+import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
+import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
+import com.supermap.desktop.process.graphics.events.GraphCreatingEvent;
+import com.supermap.desktop.process.graphics.events.GraphRemovedEvent;
+import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/3/2.
@@ -180,7 +183,8 @@ public class ListGraphs extends AbstractGraphStorage {
 
 	@Override
 	public Rectangle getBounds() {
-		return this.box;
+		computeBox();
+		return box;
 	}
 
 	private void graphBoundsChanged(GraphBoundsChangedEvent e) {
@@ -189,11 +193,12 @@ public class ListGraphs extends AbstractGraphStorage {
 	}
 
 	private void computeBox() {
-		for (int i = 0; i < this.graphs.size(); i++) {
+		this.box = null;
+		for (IGraph graph : this.graphs) {
 			if (this.box == null) {
-				this.box = this.graphs.get(i).getBounds();
+				this.box = graph.getBounds();
 			} else {
-				this.box = this.box.union(this.graphs.get(i).getBounds());
+				this.box = this.box.union(graph.getBounds());
 			}
 		}
 	}
