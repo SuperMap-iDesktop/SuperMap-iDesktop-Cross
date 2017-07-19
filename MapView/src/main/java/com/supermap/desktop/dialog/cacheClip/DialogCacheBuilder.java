@@ -549,9 +549,9 @@ public class DialogCacheBuilder extends JFrame {
 			map.open(mapName);
 			for (int i = 0; i < map.getLayers().getCount(); i++) {
 				Dataset tempDataset = map.getLayers().get(i).getDataset();
-				if (!tempDataset.isOpen()) {
-					new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_DatasetIsOpened"), map.getLayers().get(i).getName(), tempDataset.getName()));
-					return false;
+				if (null == tempDataset) {
+					new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_DatasetIsOpened"), map.getLayers().get(i).getName()));
+					System.exit(1);
 				}
 			}
 		}

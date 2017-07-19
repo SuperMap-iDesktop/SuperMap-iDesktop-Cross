@@ -24,9 +24,9 @@ public class CtrlActionWorkSpaceMultiProcessClipExecute extends CtrlAction {
 			return;
 		}
 		if (CacheUtilities.volatileDatasource()) {
-//			String[] params = {"Multi", "null", map.getName(), "null"};
-//			CacheUtilities.startProcess(params, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
-			new DialogCacheBuilder(DialogMapCacheClipBuilder.MultiProcessClip).setVisible(true);
+			String[] params = {"Multi", "null", map.getName(), "null"};
+			CacheUtilities.startProcess(params, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
+//			new DialogCacheBuilder(DialogMapCacheClipBuilder.MultiProcessClip).setVisible(true);
 		}
 	}
 
