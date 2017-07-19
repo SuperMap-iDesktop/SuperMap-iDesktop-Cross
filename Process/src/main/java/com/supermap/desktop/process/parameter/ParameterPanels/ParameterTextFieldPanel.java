@@ -28,6 +28,8 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 	private ISmTextFieldLegit smTextFieldLegit;
 	protected ParameterTextField parameterTextField;
 	protected JLabel label = new JLabel();
+
+	protected JLabel labelUnit = new JLabel();
 	protected SmTextFieldLegit textField = new SmTextFieldLegit();
 	protected boolean isSelectingItem = false;
 
@@ -66,6 +68,10 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		panel.setLayout(new GridBagLayout());
 		panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
 		panel.add(textField, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
+		if (parameterTextField.isSetUnit()) {
+			labelUnit.setText(parameterTextField.getUnit());
+			panel.add(labelUnit, new GridBagConstraintsHelper(2, 0, 1, 1).setInsets(3, 3, 3, 3));
+		}
 	}
 
 	private void initListeners() {
@@ -76,6 +82,10 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 					try {
 						isSelectingItem = true;
 						ParameterTextFieldPanel.this.textField.setText(evt.getNewValue() == null ? null : evt.getNewValue().toString());
+						// 当值改变时，同时改变其值得单位-yuanR
+						if (parameterTextField.isSetUnit()) {
+							labelUnit.setText(parameterTextField.getUnit());
+						}
 					} finally {
 						isSelectingItem = false;
 					}

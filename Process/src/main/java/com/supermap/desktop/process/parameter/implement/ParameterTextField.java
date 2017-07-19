@@ -12,6 +12,8 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterTextField extends AbstractParameter implements ISelectionParameter {
 	private String describe;
+	private String unit;
+	private Boolean isSetUnit = false;
 
 
 	@ParameterField(name = PROPERTY_VALE)
@@ -66,5 +68,35 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 	@Override
 	public void dispose() {
 
+	}
+
+	/**
+	 * 设置文本框中参数单位
+	 *
+	 * @param unit
+	 */
+	public void setUnit(String unit) {
+		this.isSetUnit = true;
+		String oldValue = this.unit;
+		this.unit = unit;
+		firePropertyChangeListener(new PropertyChangeEvent(this, "unit", oldValue, this.unit));
+	}
+
+	/**
+	 * 文本框中参数是否有单位
+	 *
+	 * @return
+	 */
+	public Boolean isSetUnit() {
+		return this.isSetUnit;
+	}
+
+	/**
+	 * '文本框中参数单位
+	 *
+	 * @return
+	 */
+	public String getUnit() {
+		return this.unit;
 	}
 }
