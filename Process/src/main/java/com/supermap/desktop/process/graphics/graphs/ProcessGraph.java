@@ -1,8 +1,15 @@
 package com.supermap.desktop.process.graphics.graphs;
 
 import com.alibaba.fastjson.JSONObject;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.WorkflowParser;
+import com.supermap.desktop.process.enums.RunningStatus;
+import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.events.RunningListener;
+import com.supermap.desktop.process.events.StatusChangeEvent;
+import com.supermap.desktop.process.events.StatusChangeListener;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.metaProcessImplements.EmptyMetaProcess;
@@ -10,6 +17,7 @@ import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import sun.swing.SwingUtilities2;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -18,6 +26,7 @@ import java.awt.*;
 public class ProcessGraph extends RectangleGraph {
 
 	private IProcess process;
+	private int percent;
 
 	private ProcessGraph() {
 		super(null);
@@ -26,8 +35,25 @@ public class ProcessGraph extends RectangleGraph {
 	public ProcessGraph(GraphCanvas canvas, IProcess process) {
 		super(canvas, 0, 0);
 		this.process = process;
-		if (getCanvas() != null) {
-		}
+		this.process.addRunningListener(new RunningListener() {
+			@Override
+			public void running(RunningEvent e) {
+				ProcessGraph.this.percent = e.getProgress();
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						getCanvas().repaint();
+					}
+				});
+			}
+		});
+
+		this.process.addStatusChangeListener(new StatusChangeListener() {
+			@Override
+			public void statusChange(StatusChangeEvent e) {
+				getCanvas().repaint();
+			}
+		});
 	}
 
 	@Override
@@ -61,6 +87,23 @@ public class ProcessGraph extends RectangleGraph {
 		double width = getWidth();
 		double height = getHeight();
 		g.drawString(tilte, DoubleUtilities.intValue(location.getX() + (width - fontWidth) / 2), DoubleUtilities.intValue(location.getY() + height / 2 + fontHeight / 2 - fontDescent));
+
+		// 绘制进度和 Process 状态
+		if (percent > 0 && percent < 100) {
+			g.setColor(Color.RED);
+			Rectangle rectangle = new Rectangle(getLocation().x, getLocation().y, getWidth() * percent / 100, 2);
+			((Graphics2D) g).fill(rectangle);
+		} else {
+			if (this.process.getStatus() == RunningStatus.COMPLETED) {
+				g.drawImage(((ImageIcon) ProcessResources.getIcon("/processresources/task/image_finish.png")).getImage(), getLocation().x + getWidth() - 20, getLocation().y + 2, 18, 18, null);
+			}
+		}
+//		font = new Font(ControlsProperties.getString("String_Boldface"), Font.BOLD, 10);
+//		String progress = this.percent + "%";
+//		fontHeight = getCanvas().getFontMetrics(font).getHeight();
+//		fontWidth = SwingUtilities2.stringWidth(getCanvas(), getCanvas().getFontMetrics(font), progress);
+//		location = new Point(getLocation().x + getWidth() - fontWidth - 4, getLocation().y + fontHeight + 4 - fontDescent);
+//		g.drawString(progress, location.x, location.y);
 	}
 
 	@Override

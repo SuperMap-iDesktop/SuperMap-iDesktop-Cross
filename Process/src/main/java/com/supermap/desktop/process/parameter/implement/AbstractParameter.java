@@ -13,6 +13,7 @@ import com.supermap.desktop.process.parameter.events.UpdateValueListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.datas.Irequisite;
 
 import javax.swing.event.EventListenerList;
 import java.beans.PropertyChangeEvent;
@@ -24,21 +25,22 @@ import java.util.List;
 /**
  * @author XiaJT
  */
-public abstract class AbstractParameter implements IParameter {
+public abstract class AbstractParameter implements IParameter, Irequisite {
 
 
 	protected IParameterPanel panel;
 	public static final String PROPERTY_VALE = "value";
 	protected IParameters parameters;
 
-
 	public boolean isEnabled = true;
 
 	private EventListenerList listenerList = new EventListenerList();
 	private List<UpdateValueListener> updateValueListeners = new ArrayList<>();
-    private boolean isDescriptionVisible = true;
+	private boolean isDescriptionVisible = true;
+	// 添加是否为必填参数属性，默认为非必填
+	private Boolean isRequisite = false;
 
-    @Override
+	@Override
 	public void addPanelPropertyChangedListener(PanelPropertyChangedListener panelPropertyChangedListener) {
 		listenerList.add(PanelPropertyChangedListener.class, panelPropertyChangedListener);
 	}
@@ -250,23 +252,45 @@ public abstract class AbstractParameter implements IParameter {
 		return this.isEnabled;
 	}
 
-    @Override
-    public boolean isDescriptionVisible() {
-        return isDescriptionVisible;
-    }
+	@Override
+	public boolean isDescriptionVisible() {
+		return isDescriptionVisible;
+	}
 
-    @Override
-    public void setDescriptionVisible(boolean isDescriptionVisible) {
-        if (this.isDescriptionVisible == isDescriptionVisible) {
-            return;
-        }
-        boolean oldValue = this.isDescriptionVisible;
-        this.isDescriptionVisible = isDescriptionVisible;
-        firePanelPropertyChangedListener(new PropertyChangeEvent(this,PanelPropertyChangedListener.DESCRIPTION_VISIBLE,oldValue,isDescriptionVisible));
-    }
+	@Override
+	public void setDescriptionVisible(boolean isDescriptionVisible) {
+		if (this.isDescriptionVisible == isDescriptionVisible) {
+			return;
+		}
+		boolean oldValue = this.isDescriptionVisible;
+		this.isDescriptionVisible = isDescriptionVisible;
+		firePanelPropertyChangedListener(new PropertyChangeEvent(this, PanelPropertyChangedListener.DESCRIPTION_VISIBLE, oldValue, isDescriptionVisible));
+	}
 
-    @Override
-    public String getDescribe() {
-        return null;
-    }
+	@Override
+	public String getDescribe() {
+		return null;
+	}
+
+	/**
+	 * 控件所呈参数是否为必填参数
+	 * yuanR
+	 *
+	 * @return
+	 */
+	@Override
+	public Boolean isRequisite() {
+		return this.isRequisite;
+	}
+
+	/**
+	 * 设置控件所呈参数是否为必填参数
+	 * yuanR
+	 *
+	 * @param isRequisite
+	 */
+	@Override
+	public void setRequisite(Boolean isRequisite) {
+		this.isRequisite = isRequisite;
+	}
 }

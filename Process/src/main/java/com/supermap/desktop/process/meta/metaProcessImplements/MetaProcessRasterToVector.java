@@ -114,13 +114,13 @@ public class MetaProcessRasterToVector extends MetaProcess {
 	}
 
 	private void initParametersState() {
-		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
+		Dataset datasetGrid = DatasetUtilities.getDefaultDataset(DatasetType.IMAGE,DatasetType.GRID);
 		if (datasetGrid != null) {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
-			sourceDataset.setDatasource(datasetGrid.getDatasource());
+			sourceDataset.setSelectedItem(datasetGrid);
 		}
 
-		resultDataset.setSelectedItem("VectorizeResult");
+		resultDataset.setSelectedItem("result_gridToVector");
 		comboBoxType.setItems(new ParameterDataNode(CommonProperties.getString("String_Item_Point"), DatasetType.POINT),
 				new ParameterDataNode(CommonProperties.getString("String_Item_Line"), DatasetType.LINE),
 				new ParameterDataNode(CommonProperties.getString("String_Item_Region"), DatasetType.REGION));
@@ -159,7 +159,6 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-
 		DatasourceConstraint.getInstance().constrained(resultDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 

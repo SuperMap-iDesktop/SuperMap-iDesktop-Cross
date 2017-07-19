@@ -42,7 +42,7 @@ public class WorkFlowUtilities {
 	}
 
 	public static boolean isWorkFlowNameExist(String workFlowName) {
-		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
+		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
 		for (IWorkflow workFlow : workFlows) {
 			if (workFlow.getName().equals(workFlowName)) {
 				return true;

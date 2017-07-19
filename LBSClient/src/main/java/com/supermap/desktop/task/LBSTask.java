@@ -186,4 +186,9 @@ public class LBSTask extends JPanel implements ILBSTask {
 
     }
 
+    @Override
+    public void updateProgress(String message, int percent, String currentMessage) throws CancellationException {
+        // do nothing
+    }
+
 }

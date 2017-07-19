@@ -1,8 +1,13 @@
 package com.supermap.desktop.process.tasks;
 
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.tasks.events.WorkerStateChangedEvent;
+import com.supermap.desktop.process.tasks.events.WorkerStateChangedListener;
+import com.supermap.desktop.process.tasks.events.WorkersChangedEvent;
+import com.supermap.desktop.process.tasks.events.WorkersChangedListener;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import java.awt.*;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Vector;
@@ -33,7 +38,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 	private JPanel panelCancelled;
 	private JPanel panelException;
 
-	private Map<ProcessWorker, SingleProgressPanel> map = new ConcurrentHashMap<>();
+	private Map<IProcess, SingleProgressPanel> map = new ConcurrentHashMap<>();
 
 	public TasksManagerPanel(TasksManager tasksManager) {
 		if (tasksManager == null) {
@@ -121,12 +126,12 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		int[] workerStates = TasksManager.getWorkerStates();
 		for (int i = 0; i < workerStates.length; i++) {
 			JPanel panel = getPanel(workerStates[i]);
-			Vector<ProcessWorker> workers = this.tasksManager.getProcessWorkers(workerStates[i]);
-			buildPanel(panel, workers);
+			Vector<IProcess> processes = this.tasksManager.getWorkflow().getProcesses();
+			buildPanel(panel, processes);
 		}
 	}
 
-	private void buildPanel(JPanel panel, Vector<ProcessWorker> workers) {
+	private void buildPanel(JPanel panel, Vector<IProcess> workers) {
 		if (panel == null || workers == null || workers.size() == 0) {
 			return;
 		}
@@ -136,18 +141,17 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		}
 	}
 
-	private void addNewWorker(JPanel panel, ProcessWorker worker) {
+	private void addNewWorker(JPanel panel, IProcess worker) {
 		if (this.map.containsKey(worker)) {
 			return;
 		}
 
-		SingleProgressPanel progressPanel = new SingleProgressPanel(worker);
-		worker.setView(progressPanel);
+		SingleProgressPanel progressPanel = new SingleProgressPanel(worker.getTitle());
 		this.map.put(worker, progressPanel);
 		panel.add(progressPanel);
 	}
 
-	private void removeWorker(ProcessWorker worker) {
+	private void removeWorker(IProcess worker) {
 		if (!this.map.containsKey(worker)) {
 			return;
 		}
@@ -158,6 +162,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		this.panelReady.remove(this.map.get(worker));
 		this.panelRunning.remove(this.map.get(worker));
 		this.panelWaiting.remove(this.map.get(worker));
+		this.map.remove(worker);
 	}
 
 	private void clearPanels() {
@@ -219,13 +224,19 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 			return;
 		}
 
-		if (!this.map.containsKey(worker)) {
+		if (!this.map.containsKey(worker.getProcess())) {
 			return;
 		}
 
-		SingleProgressPanel progressPanel = this.map.get(worker);
+		SingleProgressPanel progressPanel = this.map.get(worker.getProcess());
 		JPanel oldContainer = getPanel(oldState);
 		JPanel newContainer = getPanel(newState);
+
+		if (newState == TasksManager.WORKER_STATE_WAITING) {
+			progressPanel.reset();
+		} else if (newState == TasksManager.WORKER_STATE_READY) {
+			progressPanel.setWorker(worker);
+		}
 
 		if (oldContainer != null) {
 			oldContainer.remove(progressPanel);
@@ -243,28 +254,23 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		// this.buttonApply.setText(CommonProperties.getString("String_Button_Apply"));
 	}
 
-	public static void main(String[] args) {
-		TasksManagerContainer container = new TasksManagerContainer();
-
-		JFrame frame = new JFrame();
-		frame.getContentPane().setLayout(new BorderLayout());
-		frame.getContentPane().add(container, BorderLayout.CENTER);
-		frame.setSize(400, 900);
-		frame.setVisible(true);
-	}
-
 	@Override
-	public void workerStateChanged(WorkerStateChangedEvent e) {
+	public void workerStateChanged(final WorkerStateChangedEvent e) {
 		if (e.getManager() != this.tasksManager) {
 			return;
 		}
 
-		ProcessWorker worker = e.getProcessWorker();
+		final ProcessWorker worker = e.getProcessWorker();
 		if (worker == null) {
 			return;
 		}
 
-		moveWorker(worker, e.getOldState(), e.getNewState());
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				moveWorker(worker, e.getOldState(), e.getNewState());
+			}
+		});
 	}
 
 	@Override
@@ -273,7 +279,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 			return;
 		}
 
-		ProcessWorker worker = e.getProcessWorker();
+		IProcess worker = e.getProcess();
 
 		if (e.getOperation() == WorkersChangedEvent.ADD) {
 			addNewWorker(this.panelWaiting, worker);

@@ -122,7 +122,7 @@
                 <process key="ThiessenPolygon" name="泰森多边形"/>
                 <process key="ComputeDistance" name="距离计算"/>
             </process>
-            <process name="空间统计分析">
+            <process name="地统计分析">
                 <process name="度量地理分布">//SpatialMeasure
                     <process key="CentralElement" name="中心要素"/>
                     <process key="MeanCenter" name="平均中心"/>
@@ -146,6 +146,15 @@
                     <process key="geographicWeightedRegression" name="地理加权回归分析"/>
                 </process>
             </process>
+            <process name="数据处理">
+                <process key="AggregatePoints" name="点聚合"/>
+                <process key="AggregatePolygons" name="面聚合"/>
+                <process key="VectorResample" name="矢量重采样"/>
+                <process key="LinePolygonSmooth" name="线面光滑"/>
+                <process key="EdgeMatch" name="图幅接边"/>
+            </process>
+
+
             <!--<process name="水文分析">-->
             <!--<process key="FillingPseudoDepressions" name="填充伪洼地"/>-->
             <!--<process key="CalculatedFlowDirection" name="计算流向"/>-->

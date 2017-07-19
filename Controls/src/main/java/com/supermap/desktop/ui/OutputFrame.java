@@ -1,12 +1,14 @@
 package com.supermap.desktop.ui;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.DesktopRuntimeManager;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMain;
 import com.supermap.desktop.Interface.IOutput;
 import com.supermap.desktop.enums.InfoType;
+import com.supermap.desktop.event.DesktopRuntimeEvent;
 import com.supermap.desktop.ui.controls.Dockbar;
 import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.utilities.LogUtilities;
@@ -167,6 +169,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 			if (!GlobalParameters.isLogException()) {
 				return;
 			}
+			DesktopRuntimeManager.getInstance().fireDesktopRuntimeStateListener(new DesktopRuntimeEvent<>(exception, exception.getStackTrace(), DesktopRuntimeEvent.EXCEPTION));
 			LogUtilities.error(exception.getMessage(), exception);
 			output(exception.getMessage(), InfoType.Exception);
 			StackTraceElement[] elements = exception.getStackTrace();

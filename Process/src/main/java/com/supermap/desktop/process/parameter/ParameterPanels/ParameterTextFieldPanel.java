@@ -9,7 +9,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
-import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
@@ -18,6 +18,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * @author XiaJT
@@ -27,13 +28,15 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 	private ISmTextFieldLegit smTextFieldLegit;
 	protected ParameterTextField parameterTextField;
 	protected JLabel label = new JLabel();
+
+	protected JLabel labelUnit = new JLabel();
 	protected SmTextFieldLegit textField = new SmTextFieldLegit();
 	protected boolean isSelectingItem = false;
 
 	public ParameterTextFieldPanel(final IParameter parameterTextField) {
 		super(parameterTextField);
 		this.parameterTextField = (ParameterTextField) parameterTextField;
-		label.setText(this.parameterTextField.getDescribe());
+		label.setText(getDescribe());
 		label.setToolTipText(this.parameterTextField.getDescribe());
 		label.setVisible(this.parameterTextField.isDescriptionVisible());
 		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
@@ -65,6 +68,10 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		panel.setLayout(new GridBagLayout());
 		panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
 		panel.add(textField, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
+		if (parameterTextField.isSetUnit()) {
+			labelUnit.setText(parameterTextField.getUnit());
+			panel.add(labelUnit, new GridBagConstraintsHelper(2, 0, 1, 1).setInsets(3, 3, 3, 3));
+		}
 	}
 
 	private void initListeners() {
@@ -75,6 +82,10 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 					try {
 						isSelectingItem = true;
 						ParameterTextFieldPanel.this.textField.setText(evt.getNewValue() == null ? null : evt.getNewValue().toString());
+						// 当值改变时，同时改变其值得单位-yuanR
+						if (parameterTextField.isSetUnit()) {
+							labelUnit.setText(parameterTextField.getUnit());
+						}
 					} finally {
 						isSelectingItem = false;
 					}
@@ -93,8 +104,20 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		});
 	}
 
-    @Override
-    protected void descriptionVisibleChanged(boolean newValue) {
-        label.setVisible(newValue);
-    }
+	@Override
+	protected void descriptionVisibleChanged(boolean newValue) {
+		label.setVisible(newValue);
+	}
+
+	/**
+	 * @return
+	 */
+	private String getDescribe() {
+		String describe = parameterTextField.getDescribe();
+		if (parameterTextField.isRequisite()) {
+			return MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);
+		} else {
+			return describe;
+		}
+	}
 }

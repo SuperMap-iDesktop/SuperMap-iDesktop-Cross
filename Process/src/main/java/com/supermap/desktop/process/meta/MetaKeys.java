@@ -31,12 +31,12 @@ public class MetaKeys {
 	public static final String ISOPOINT = "ISOPoint";
 	public static final String DEMBUILD = "DEMBuild";
 	public static final String DEMLAKE = "DEMLake";
-    public static final String VECTORTOGRID = "VectorToGrid";
-    public static final String GRIDTOVECTOR = "GridToVector";
-    public static final String COMPUTEDISTANCE = "ComputeDistance";
-    public static final String THIESSENPOLYGON = "ThiessenPolygon";
-    public static final String THINRASTER = "ThinRaster";
-    public static final String PROCESS_GROUP = "ProcessGroup";
+	public static final String VECTORTOGRID = "VectorToGrid";
+	public static final String GRIDTOVECTOR = "GridToVector";
+	public static final String COMPUTEDISTANCE = "ComputeDistance";
+	public static final String THIESSENPOLYGON = "ThiessenPolygon";
+	public static final String THINRASTER = "ThinRaster";
+	public static final String PROCESS_GROUP = "ProcessGroup";
 	public static final String SQL_QUERY = "SqlQuery";
 	public static final String HydrologicalAnalysis = "HydrologicalAnalysis";
 	public static final String Empty = "empty";
@@ -69,6 +69,13 @@ public class MetaKeys {
 	public static final String incrementalAutoCorrelation = "incrementalAutoCorrelation";
 	public static final String AverageNearestNeighbor = "averageNearestNeighbor";
 	public static final String optimizedHotSpotAnalyst = "optimizedHotSpotAnalyst";
+
+	//数据处理-yuanR
+	public static final String AggregatePoints = "AggregatePoints";
+	public static final String AggregatePolygons = "AggregatePolygons";
+	public static final String VectorResample = "VectorResample";
+	public static final String EdgeMatch = "EdgeMatch";
+	public static final String LinePolygonSmooth = "LinePolygonSmooth";
 
 
 	// 大数据

@@ -38,6 +38,18 @@ public interface IUpdateProgress {
 
 	/**
 	 * 更新进度信息
+	 *
+	 * @param percent
+	 *            进度
+	 * @param currentMessage
+	 *            当前处理进度信息
+	 * @param message
+	 *            总进度信息
+	 */
+	void updateProgress(String message, int percent, String currentMessage ) throws CancellationException;
+
+	/**
+	 * 更新进度信息
 	 * 
 	 * @param percent
 	 *            进度

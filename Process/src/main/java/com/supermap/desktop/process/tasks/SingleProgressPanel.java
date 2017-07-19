@@ -1,9 +1,8 @@
 package com.supermap.desktop.process.tasks;
 
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
-import com.supermap.desktop.controls.utilities.ControlsResources;
-import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.progress.RoundProgressBar;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,16 +37,23 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 		}
 	};
 
-	public SingleProgressPanel(Worker<SingleProgress> worker) {
+	public SingleProgressPanel(String title) {
+		if (StringUtilities.isNullOrEmpty(title)) {
+			throw new NullPointerException("worker can not be null.");
+		}
+
+		initializeComponents();
+		initializeLayout();
+		this.labelTitle.setText(title);
+	}
+
+	public void setWorker(Worker<SingleProgress> worker) {
 		if (worker == null) {
 			throw new NullPointerException("worker can not be null.");
 		}
 
 		this.worker = worker;
 		this.worker.setView(this);
-		initializeComponents();
-		initializeLayout();
-		this.labelTitle.setText(this.worker.getTitle());
 	}
 
 	private void initializeComponents() {
@@ -99,17 +105,15 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 		this.setLayout(layout);
 	}
 
-	@Override
-	public void execute(Worker<SingleProgress> worker) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void execute() {
-		this.worker.execute();
-	}
-
 	public boolean cancel() {
 		return this.worker.cancel(false);
+	}
+
+	public void reset() {
+		this.progressBar.setProgress(0);
+		this.labelMessage.setText("");
+		this.labelRemaintime.setText("");
+		this.buttonRun.setProcedure(ButtonExecutor.READY);
 	}
 
 	@Override

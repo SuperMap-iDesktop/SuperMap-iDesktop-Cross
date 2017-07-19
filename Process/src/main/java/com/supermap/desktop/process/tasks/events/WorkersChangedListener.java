@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.tasks;
+package com.supermap.desktop.process.tasks.events;
 
 import java.util.EventListener;
 

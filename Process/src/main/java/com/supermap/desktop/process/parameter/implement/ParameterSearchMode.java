@@ -14,6 +14,7 @@ public class ParameterSearchMode extends AbstractParameter implements ISelection
 
 	@ParameterField(name = "value")
 	private ParameterSearchModeInfo selectedItem;
+    boolean isQuadTree = false;
 
 	@Override
 	public void setSelectedItem(Object item) {
@@ -44,4 +45,12 @@ public class ParameterSearchMode extends AbstractParameter implements ISelection
 	public String getDescribe() {
 		return "SearchMode";
 	}
+
+    public boolean isQuadTree() {
+        return isQuadTree;
+    }
+
+    public void setQuadTree(boolean quadTree) {
+        isQuadTree = quadTree;
+    }
 }

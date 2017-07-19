@@ -6,22 +6,6 @@ import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.process.FormWorkflow;
-import com.supermap.desktop.process.core.DirectConnect;
-import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.core.MatrixExecutor;
-import com.supermap.desktop.process.core.NodeMatrix;
-import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.connection.IGraphConnection;
-import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.graphs.OutputGraph;
-import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
-import com.supermap.desktop.process.graphics.storage.IConnectionManager;
-import com.supermap.desktop.process.graphics.storage.IGraphStorage;
-import com.supermap.desktop.process.tasks.ProcessTask;
-import com.supermap.desktop.process.tasks.TasksManagerContainer;
-import com.supermap.desktop.process.util.TaskUtil;
-
-import java.util.Vector;
 
 /**
  * Created by highsad on 2017/2/28.
@@ -43,7 +27,7 @@ public class CtrlActionRun extends CtrlAction {
 				}
 
 				FormWorkflow formWorkflow = (FormWorkflow) Application.getActiveApplication().getActiveForm();
-				formWorkflow.getTasksManager().execute();
+				formWorkflow.getTasksManager().run();
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
