@@ -139,7 +139,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		for (IWorkflow workFlow : workflows) {
 			if (workFlow.getName().equals(this.getText())) {
 				index = workflows.indexOf(workFlow);
-				Application.getActiveApplication().removeWorkFlow(workFlow);
+				Application.getActiveApplication().removeWorkflow(workFlow);
 				break;
 			}
 		}
