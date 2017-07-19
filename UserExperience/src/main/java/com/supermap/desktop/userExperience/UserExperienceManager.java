@@ -63,11 +63,26 @@ public class UserExperienceManager {
 				postExistFiles();
 				executedFunctionFile = getDefaultFile();
 				if (executedFunctionFile != null) {
+					initExceptionCtrlActions();
 					initializeLicenseInfo();
 					initializeLogsSendTimer();
+					DesktopRuntimeManager.getInstance().addRuntimeStateListener(desktopRuntimeListener);
 				}
 			}
 		});
+	}
+
+	private void initExceptionCtrlActions() {
+		FileLocker fileLocker = new FileLocker(executingFile);
+		try {
+			if (fileLocker.tryLock()) {
+//				fileLocker.getRandomAccessFile().
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			fileLocker.release();
+		}
 	}
 
 
@@ -127,7 +142,7 @@ public class UserExperienceManager {
 				if (file.exists()) {
 					FileLocker fileLocker = new FileLocker(file);
 					if (fileLocker.tryLock()) {
-						if (fileLocker.getRandomAccessFile().length() == 0) {
+						if (fileLocker.getRandomAccessFile().length() < maxFileSize) {
 							return fileLocker;
 						} else {
 							fileLocker.release();
@@ -169,9 +184,6 @@ public class UserExperienceManager {
 	}
 
 	public void start() {
-		if (executedFunctionFile != null) {
-			DesktopRuntimeManager.getInstance().addRuntimeStateListener(desktopRuntimeListener);
-		}
 	}
 
 	private void doPost() {

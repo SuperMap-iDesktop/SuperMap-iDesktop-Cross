@@ -71,14 +71,13 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 				// 右键菜单
 				functionGrade0 = UserExperienceProperties.getString("String_ContextMenu");
 				functionGrade1 = ((SmPopupMenu) parent).getText();
-				Component invoker = ((JPopupMenu) parent).getInvoker();
 			} else if (parent instanceof JPopupMenu) {
 				Component invoker = ((JPopupMenu) parent).getInvoker();
 				if (invoker instanceof ControlButton) {
 					// 下拉菜单
 					functionGrade0 = UserExperienceProperties.getString("String_ToolBar_ButtonDropdown");
 					functionGrade1 = ((SmButtonDropdown) invoker.getParent()).getText();
-					functionGrade2 = ((SmToolbar) invoker.getParent().getParent()).getText();
+					functionGrade3 = ((SmToolbar) invoker.getParent().getParent()).getText();
 				} else if (invoker instanceof SmMenu) {
 					functionGrade0 = UserExperienceProperties.getString("String_FrameMenu");
 					functionGrade1 = ((SmMenu) invoker).getText();
@@ -117,7 +116,9 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 		executeDateTime = 0;
 		isFinished = true;
 		message = exception.getMessage();
-		stackTrace = exception.getStackTrace()[0].toString();
+		for (int i = 0; i < 3; i++) {
+			stackTrace += exception.getStackTrace()[i].toString();
+		}
 
 	}
 
