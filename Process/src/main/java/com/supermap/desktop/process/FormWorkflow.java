@@ -28,7 +28,6 @@ import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.Dockbar;
-import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,13 +49,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	}
 
 	public FormWorkflow(String name) {
-		super(name, null, null);
-		if (StringUtilities.isNullOrEmpty(name)) {
-			name = ControlsProperties.getString("String_WorkFlows");
-		}
-		this.title = name;
-//		this.canvas = new WorkflowCanvas();
-		initializeComponents();
+		this(new Workflow(name));
 	}
 
 
@@ -68,7 +61,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		this.tasksManager = new TasksManager(this.workflow);
 
 		initializeComponents();
-		this.setText(workflow.getName());
+		setText(workflow.getName());
 		isNeedSave = false;
 	}
 
@@ -142,36 +135,38 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	public boolean save() {
 		boolean result = false;
 		int index = -1;
-		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
-		for (IWorkflow workFlow : workFlows) {
+		ArrayList<IWorkflow> workflows = Application.getActiveApplication().getWorkflows();
+		for (IWorkflow workFlow : workflows) {
 			if (workFlow.getName().equals(this.getText())) {
-				index = workFlows.indexOf(workFlow);
+				index = workflows.indexOf(workFlow);
 				Application.getActiveApplication().removeWorkFlow(workFlow);
 				break;
 			}
 		}
 
 		if (index == -1) {
+			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 			SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
 			dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
 			dialogSaveAs.setCurrentFormName(getText());
-			for (IWorkflow workFlow : Application.getActiveApplication().getWorkFlows()) {
+			dialogSaveAs.setTitle(ProcessProperties.getString("String_SaveWorkflow"));
+
+			for (IWorkflow workFlow : Application.getActiveApplication().getWorkflows()) {
 				dialogSaveAs.addExistNames(workFlow.getName());
 			}
-			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+
 			for (int i = 0; i < formManager.getCount(); i++) {
 				if (formManager.get(i) instanceof FormWorkflow && formManager.get(i) != this) {
 					dialogSaveAs.addExistNames(formManager.get(i).getText());
 				}
 			}
-			dialogSaveAs.setTitle(ProcessProperties.getString("String_SaveWorkFLow"));
 			if (dialogSaveAs.showDialog() == DialogResult.OK) {
 				this.setText(dialogSaveAs.getCurrentFormName());
-				Application.getActiveApplication().addWorkFlow(getWorkflow());
+				Application.getActiveApplication().addWorkflow(getWorkflow());
 				result = true;
 			}
 		} else {
-			Application.getActiveApplication().addWorkFlow(index, getWorkflow());
+			Application.getActiveApplication().addWorkflow(index, getWorkflow());
 			result = true;
 		}
 		isNeedSave = !result;
@@ -183,7 +178,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
 		dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
 		dialogSaveAs.setCurrentFormName(getText());
-		for (IWorkflow workFlow : Application.getActiveApplication().getWorkFlows()) {
+		for (IWorkflow workFlow : Application.getActiveApplication().getWorkflows()) {
 			dialogSaveAs.addExistNames(workFlow.getName());
 		}
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
@@ -195,7 +190,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		dialogSaveAs.setTitle(ProcessProperties.getString("Sting_SaveAsWorkFlow"));
 		if (dialogSaveAs.showDialog() == DialogResult.OK) {
 			this.setText(dialogSaveAs.getCurrentFormName());
-			Application.getActiveApplication().addWorkFlow(getWorkflow());
+			Application.getActiveApplication().addWorkflow(getWorkflow());
 			result = true;
 		}
 		isNeedSave = !result;
