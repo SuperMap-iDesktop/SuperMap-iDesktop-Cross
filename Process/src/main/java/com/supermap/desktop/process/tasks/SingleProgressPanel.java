@@ -37,18 +37,6 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 		}
 	};
 
-//	public SingleProgressPanel(Worker<SingleProgress> worker) {
-//		if (worker == null) {
-//			throw new NullPointerException("worker can not be null.");
-//		}
-//
-//		this.worker = worker;
-//		this.worker.setView(this);
-//		initializeComponents();
-//		initializeLayout();
-//		this.labelTitle.setText(this.worker.getTitle());
-//	}
-
 	public SingleProgressPanel(String title) {
 		if (StringUtilities.isNullOrEmpty(title)) {
 			throw new NullPointerException("worker can not be null.");

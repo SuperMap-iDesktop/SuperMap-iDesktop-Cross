@@ -8,7 +8,7 @@ public interface IWorkflow {
 
 	void setName(String name);
 
-	String toXML();
+	String serializeTo();
 
-	void fromXML(String xmlDescription);
+	void serializeFrom(String xmlDescription);
 }

@@ -1,31 +1,8 @@
 package com.supermap.desktop;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.Datasource;
-import com.supermap.data.Resources;
-import com.supermap.data.SymbolGroup;
-import com.supermap.data.Workspace;
-import com.supermap.data.WorkspaceClosingEvent;
-import com.supermap.data.WorkspaceClosingListener;
-import com.supermap.data.WorkspaceOpenedEvent;
-import com.supermap.data.WorkspaceOpenedListener;
-import com.supermap.desktop.Interface.ICtrlAction;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormMain;
-import com.supermap.desktop.Interface.IOutput;
-import com.supermap.desktop.Interface.ISplashForm;
-import com.supermap.desktop.Interface.IWorkflow;
-import com.supermap.desktop.event.ActiveDatasetsChangeEvent;
-import com.supermap.desktop.event.ActiveDatasetsChangeListener;
-import com.supermap.desktop.event.ActiveDatasourcesChangeEvent;
-import com.supermap.desktop.event.ActiveDatasourcesChangeListener;
-import com.supermap.desktop.event.FormActivatedListener;
-import com.supermap.desktop.event.FormLoadedListener;
-import com.supermap.desktop.event.ResourcesChangedEvent;
-import com.supermap.desktop.event.ResourcesChangedListener;
-import com.supermap.desktop.event.WorkFlowInitListener;
-import com.supermap.desktop.event.WorkFlowsChangedEvent;
-import com.supermap.desktop.event.WorkFlowsChangedListener;
+import com.supermap.data.*;
+import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.implement.Output;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
@@ -34,11 +11,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import javax.swing.event.EventListenerList;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EventObject;
-import java.util.HashMap;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * 应用程序类，实现启动主窗口、插件管理和代码段编译执行等功能。
@@ -53,14 +26,14 @@ public class Application {
 	private PluginManager pluginManager = null;
 	private ArrayList<Datasource> activeDatasources = new ArrayList<Datasource>();
 	private ArrayList<Dataset> activeDatasets = new ArrayList<Dataset>();
-	private ArrayList<IWorkflow> workFlows = new ArrayList<>();
+	private ArrayList<IWorkflow> workflows = new ArrayList<>();
 
 	private EventListenerList eventListenerList = new EventListenerList();
 	private ArrayList<FormLoadedListener> formLoadedListeners = new ArrayList<>();
 	private ArrayList<FormActivatedListener> formActivatedListeners = new ArrayList<FormActivatedListener>();
-	private ArrayList<WorkFlowsChangedListener> workFlowsChangedListeners = new ArrayList<>();
+	private ArrayList<WorkflowsChangedListener> workflowsChangedListeners = new ArrayList<>();
 
-	private WorkFlowInitListener workFlowInitListener;
+	private WorkflowInitListener workflowInitListener;
 	private Vector<ResourcesChangedListener> resourcesChangedListeners = new Vector<>();
 
 	/**
@@ -268,8 +241,8 @@ public class Application {
 			workspace.addClosingListener(new WorkspaceClosingListener() {
 				@Override
 				public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
-					for (int i = workFlows.size() - 1; i >= 0; i--) {
-						removeWorkFlowFormTree(workFlows.get(i));
+					for (int i = workflows.size() - 1; i >= 0; i--) {
+						removeWorkFlowFormTree(workflows.get(i));
 					}
 				}
 			});
@@ -328,8 +301,8 @@ public class Application {
 		}
 	}
 
-	public ArrayList<IWorkflow> getWorkFlows() {
-		return workFlows;
+	public ArrayList<IWorkflow> getWorkflows() {
+		return workflows;
 	}
 
 	public void resetWorkFlows() {
@@ -353,22 +326,22 @@ public class Application {
 			Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
 			Element[] workFlow = XmlUtilities.getChildElementNodesByName(workFlows, "WorkFlow");
 			for (Element element : workFlow) {
-				this.workFlows.add(fireWorkFlowInitListener(element));
+				this.workflows.add(fireWorkFlowInitListener(element));
 			}
 		}
-		fireWorkFlowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.RE_BUILD, workFlows.toArray(new IWorkflow[workFlows.size()])));
+		fireWorkflowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.RE_BUILD, workflows.toArray(new IWorkflow[workflows.size()])));
 	}
 
 	private IWorkflow fireWorkFlowInitListener(Element element) {
-		return workFlowInitListener.init(element);
+		return workflowInitListener.init(element);
 	}
 
-	public void addWorkFlow(IWorkflow workFlow) {
-		addWorkFlowInWorkspace(workFlow);
-		addWorkFlowInTree(workFlow);
+	public void addWorkflow(IWorkflow workFlow) {
+		addWorkflowInWorkspace(workFlow);
+		addWorkflowInTree(workFlow);
 	}
 
-	private void addWorkFlowInWorkspace(IWorkflow workFlow) {
+	private void addWorkflowInWorkspace(IWorkflow workFlow) {
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
 		String desktopInfo = workspace.getDesktopInfo();
 
@@ -386,7 +359,7 @@ public class Application {
 		}
 		Element workFlowNode = document.createElement("WorkFlow");
 		workFlowNode.setAttribute("name", workFlow.getName());
-		workFlowNode.setAttribute("value", workFlow.toXML());
+		workFlowNode.setAttribute("value", workFlow.serializeTo());
 		workFlows.appendChild(workFlowNode);
 		String s = XmlUtilities.nodeToString(document, "UTF-8");
 
@@ -403,14 +376,14 @@ public class Application {
 		return description;
 	}
 
-	private void addWorkFlowInTree(IWorkflow workFlow) {
-		this.workFlows.add(workFlow);
-		fireWorkFlowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.ADD, workFlow));
+	private void addWorkflowInTree(IWorkflow workFlow) {
+		this.workflows.add(workFlow);
+		fireWorkflowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.ADD, workFlow));
 	}
 
-	public void addWorkFlow(int index, IWorkflow workFlow) {
-		workFlows.add(index, workFlow);
-		fireWorkFlowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.ADD, workFlow));
+	public void addWorkflow(int index, IWorkflow workFlow) {
+		workflows.add(index, workFlow);
+		fireWorkflowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.ADD, workFlow));
 	}
 
 	public void removeWorkFlow(IWorkflow workFlow) {
@@ -419,8 +392,8 @@ public class Application {
 	}
 
 	private void removeWorkFlowFormTree(IWorkflow workFlow) {
-		this.workFlows.remove(workFlow);
-		fireWorkFlowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.DELETE, workFlow));
+		this.workflows.remove(workFlow);
+		fireWorkflowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.DELETE, workFlow));
 	}
 
 	private void removeWorkFlowFormWorkspace(IWorkflow workFlow) {
@@ -440,28 +413,28 @@ public class Application {
 		workspace.setDesktopInfo(s);
 	}
 
-	private void fireWorkFlowsChanged(WorkFlowsChangedEvent workFlowChangedEvent) {
-		for (WorkFlowsChangedListener workFlowsChangedListener : workFlowsChangedListeners) {
-			workFlowsChangedListener.workFlowsChanged(workFlowChangedEvent);
+	private void fireWorkflowsChanged(WorkFlowsChangedEvent workflowsChangedEvent) {
+		for (WorkflowsChangedListener workFlowsChangedListener : workflowsChangedListeners) {
+			workFlowsChangedListener.workFlowsChanged(workflowsChangedEvent);
 		}
 	}
 
-	public void addWorkFlowChangedListener(WorkFlowsChangedListener workFlowsChangedListener) {
-		if (!workFlowsChangedListeners.contains(workFlowsChangedListener)) {
-			workFlowsChangedListeners.add(workFlowsChangedListener);
+	public void addWorkflowsChangedListener(WorkflowsChangedListener workflowsChangedListener) {
+		if (!workflowsChangedListeners.contains(workflowsChangedListener)) {
+			workflowsChangedListeners.add(workflowsChangedListener);
 		}
 	}
 
-	public void removeWorkFlowChangedListener(WorkFlowsChangedListener workFlowsChangedListener) {
-		workFlowsChangedListeners.remove(workFlowsChangedListener);
+	public void removeWorkflowsChangedListener(WorkflowsChangedListener workflowsChangedListener) {
+		workflowsChangedListeners.remove(workflowsChangedListener);
 	}
 
-	public WorkFlowInitListener getWorkFlowInitListener() {
-		return workFlowInitListener;
+	public WorkflowInitListener getWorkflowInitListener() {
+		return workflowInitListener;
 	}
 
-	public void setWorkFlowInitListener(WorkFlowInitListener workFlowInitListener) {
-		this.workFlowInitListener = workFlowInitListener;
+	public void setWorkflowInitListener(WorkflowInitListener workflowInitListener) {
+		this.workflowInitListener = workflowInitListener;
 	}
 
 	public void setResourcesInfo(Resources currentResources, SymbolGroup currentSymbolGroup) {

@@ -8,7 +8,6 @@ import com.supermap.desktop.process.tasks.events.WorkersChangedListener;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import java.awt.*;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Vector;
@@ -253,16 +252,6 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 
 	private void initializeResources() {
 		// this.buttonApply.setText(CommonProperties.getString("String_Button_Apply"));
-	}
-
-	public static void main(String[] args) {
-		TasksManagerContainer container = new TasksManagerContainer();
-
-		JFrame frame = new JFrame();
-		frame.getContentPane().setLayout(new BorderLayout());
-		frame.getContentPane().add(container, BorderLayout.CENTER);
-		frame.setSize(400, 900);
-		frame.setVisible(true);
 	}
 
 	@Override

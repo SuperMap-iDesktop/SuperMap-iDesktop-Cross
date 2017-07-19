@@ -122,7 +122,7 @@
                 <process key="ThiessenPolygon" name="泰森多边形"/>
                 <process key="ComputeDistance" name="距离计算"/>
             </process>
-            <process name="空间统计分析">
+            <process name="地统计分析">
                 <process name="度量地理分布">//SpatialMeasure
                     <process key="CentralElement" name="中心要素"/>
                     <process key="MeanCenter" name="平均中心"/>

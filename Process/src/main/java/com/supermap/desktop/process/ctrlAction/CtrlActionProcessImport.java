@@ -54,7 +54,7 @@ public class CtrlActionProcessImport extends CtrlAction {
 				String name = root.getAttributes().getNamedItem("name").getNodeValue();
 
 				ArrayList<String> names = new ArrayList<>();
-				ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
+				ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
 				for (IWorkflow workFlow : workFlows) {
 					names.add(workFlow.getName());
 				}
@@ -68,7 +68,7 @@ public class CtrlActionProcessImport extends CtrlAction {
 				name = StringUtilities.getUniqueName(name, names);
 				Workflow workflow = new Workflow(name);
 
-				workflow.fromXML(XmlUtilities.nodeToString(document));
+				workflow.serializeFrom(XmlUtilities.nodeToString(document));
 				FormWorkflow formWorkflow = new FormWorkflow(workflow);
 				formWorkflow.setNeedSave(true);
 				Application.getActiveApplication().getMainFrame().getFormManager().add(formWorkflow);

@@ -17,7 +17,6 @@ import com.supermap.desktop.ui.controls.JFileChooserControl;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -80,21 +79,24 @@ public class DialogCacheBuilder extends JFrame {
 			if (hasTask()) {
 				shutdownMapClip();
 			} else {
-				ProcessManager.getInstance().removeAllProcess(taskPath, "doing");
 				DialogCacheBuilder.this.dispose();
-//				System.exit(1);
+				System.exit(1);
 			}
 		}
 	};
 
-	private void shutdownMapClip() {
-		taskPath = CacheUtilities.replacePath(fileChooserCachePath.getPath(), "task");
+	private String getTaskPath() {
+		String cacheTask = CacheUtilities.replacePath(fileChooserCachePath.getPath(), "CacheTask");
+		return CacheUtilities.replacePath(cacheTask, "task");
+	}
 
+	private void shutdownMapClip() {
+		taskPath = getTaskPath();
 		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(taskPath, "doing");
 			optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), taskPath));
 			DialogCacheBuilder.this.dispose();
-//			System.exit(1);
+			System.exit(1);
 		} else {
 			return;
 		}
@@ -110,8 +112,7 @@ public class DialogCacheBuilder extends JFrame {
 	private ActionListener refreshListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String cacheTask = CacheUtilities.replacePath(fileChooserCachePath.getPath(), "CacheTask");
-			String taskPath = CacheUtilities.replacePath(cacheTask, "task");
+			taskPath = getTaskPath();
 			if (!StringUtilities.isNullOrEmpty(taskPath)) {
 				File taskFile = new File(taskPath);
 				if (taskFile.exists()) {
@@ -352,7 +353,7 @@ public class DialogCacheBuilder extends JFrame {
 					shutdownMapClip();
 				} else {
 					DialogCacheBuilder.this.dispose();
-//					System.exit(1);
+					System.exit(1);
 				}
 			}
 		});
@@ -360,9 +361,8 @@ public class DialogCacheBuilder extends JFrame {
 	}
 
 	private boolean hasTask() {
-		String cacheTask = CacheUtilities.replacePath(fileChooserCachePath.getPath(), "CacheTask");
-		cacheTask = CacheUtilities.replacePath(cacheTask, "task");
-		File taskFile = new File(cacheTask);
+		taskPath = getTaskPath();
+		File taskFile = new File(taskPath);
 		File doingFile = null;
 		if (taskFile.exists()) {
 			doingFile = new File(CacheUtilities.replacePath(taskFile.getParent(), "doing"));
@@ -383,8 +383,7 @@ public class DialogCacheBuilder extends JFrame {
 			String workspacePath = fileChooserWorkspacePath.getPath();
 			workspacePath = CacheUtilities.replacePath(workspacePath);
 			String mapName = textFieldMapName.getText();
-			String cacheTask = CacheUtilities.replacePath(fileChooserCachePath.getPath(), "CacheTask");
-			taskPath = CacheUtilities.replacePath(cacheTask, "task");
+			taskPath = getTaskPath();
 			String cachePath = fileChooserCachePath.getPath();
 			cachePath = CacheUtilities.replacePath(cachePath);
 			String processCount = textFieldProcessCount.getText();
@@ -505,14 +504,10 @@ public class DialogCacheBuilder extends JFrame {
 			for (int i = 0; i < doingSci.length; i++) {
 				doingSci[i].renameTo(new File(taskDirectory, doingSci[i].getName()));
 			}
+		} else {
+			return false;
 		}
-		if (failedDirectory.exists() && hasSciFiles(failedDirectory)
-				&& optionPane.showConfirmDialog(MapViewProperties.getString("String_WarningForFailed")) == JOptionPane.OK_OPTION) {
-			File[] failedSci = failedDirectory.listFiles();
-			for (int i = 0; i < failedSci.length; i++) {
-				failedSci[i].renameTo(new File(taskDirectory, failedSci[i].getName()));
-			}
-		}
+
 		if (StringUtilities.isNullOrEmpty(workspacePath) || !new File(workspacePath).exists() || !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_WorkspaceNotExist"));
 			return false;
@@ -521,11 +516,7 @@ public class DialogCacheBuilder extends JFrame {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_MapNameIsNull"));
 			return false;
 		}
-		if (StringUtilities.isNullOrEmpty(cachePath) || !FileUtilities.isFilePath(cachePath) ||
-				StringUtilities.isNullOrEmpty(taskPath) || !taskDirectory.exists() || !hasSciFiles(taskDirectory)) {
-			optionPane.showErrorDialog(MapViewProperties.getString("String_CachePathNotExist"));
-			return false;
-		}
+
 		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) && Integer.valueOf(processCount) > 0)) {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
 			textFieldProcessCount.requestFocus();
@@ -545,6 +536,18 @@ public class DialogCacheBuilder extends JFrame {
 			optionPane.showConfirmDialog(MapViewProperties.getString("String_MapIsNotExist"));
 			textFieldMapName.requestFocus();
 			return false;
+		}
+		if (!taskDirectory.exists() || !hasSciFiles(taskDirectory)) {
+			if (failedDirectory.exists() && hasSciFiles(failedDirectory)
+					&& optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
+				File[] failedSci = failedDirectory.listFiles();
+				for (int i = 0; i < failedSci.length; i++) {
+					failedSci[i].renameTo(new File(taskDirectory, failedSci[i].getName()));
+				}
+			} else {
+				optionPane.showErrorDialog(MapViewProperties.getString("String_TaskNotExist"));
+				return false;
+			}
 		}
 		return result;
 	}
@@ -656,7 +659,7 @@ public class DialogCacheBuilder extends JFrame {
 		this.scrollPaneProgresses = null;
 		this.captionCount = null;
 		DialogCacheBuilder.this.dispose();
-//		System.exit(1);
+		System.exit(1);
 	}
 
 	public void setCaptions(CopyOnWriteArrayList<String> sourceCaptions) {
@@ -720,6 +723,7 @@ public class DialogCacheBuilder extends JFrame {
 					for (int i = 0; i < failedSci.length; i++) {
 						failedSci[i].renameTo(new File(taskFile, failedSci[i].getName()));
 					}
+					buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
 					return;
 				}
 			}
