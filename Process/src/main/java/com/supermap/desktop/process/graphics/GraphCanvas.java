@@ -34,7 +34,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -143,28 +142,12 @@ public class GraphCanvas extends JComponent {
 		return coordinateTransform;
 	}
 
-	public void setCoordinateTransform(CoordinateTransform coordinateTransform) {
-		this.coordinateTransform = coordinateTransform;
-	}
-
 	public IGraphStorage getGraphStorage() {
 		return graphStorage;
 	}
 
 	public void setGraphStorage(IGraphStorage graphStorage) {
 		this.graphStorage = graphStorage;
-	}
-
-	public void setSelectedDecorator(IGraph selectedDecorator) {
-
-	}
-
-	public void setHotDecorator(IGraph hotDecorator) {
-
-	}
-
-	public void setPreviewDecorator(IGraph previewDecorator) {
-
 	}
 
 	public Selection getSelection() {
@@ -288,16 +271,6 @@ public class GraphCanvas extends JComponent {
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	}
 
-	private Point2D panelToCanvas(Point point) {
-		return new Point2D.Double(point.getX(), point.getY());
-	}
-
-	private Point canvasToPanel(Point2D point2D) {
-		int panelX = Double.valueOf(point2D.getX()).intValue();
-		int panelY = Double.valueOf(point2D.getY()).intValue();
-		return new Point(panelX, panelY);
-	}
-
 	public IGraph[] findGraphs(Point point) {
 		return this.graphStorage.findGraphs(point);
 	}
@@ -314,11 +287,7 @@ public class GraphCanvas extends JComponent {
 
 	public void entireView() {
 		if (this.graphStorage.getCount() > 0) {
-			Rectangle visibleCanvasBounds = getVisibleCanvasRect();
-			double visibleW = visibleCanvasBounds.getWidth();
-			double visibleH = visibleCanvasBounds.getHeight();
 			Rectangle bounds = null;
-
 			if (selection.size() > 0) {
 				IGraph[] selectedItems = selection.getSelectedItems();
 				for (IGraph selectedItem : selectedItems) {
@@ -331,29 +300,20 @@ public class GraphCanvas extends JComponent {
 			} else {
 				bounds = this.graphStorage.getBounds();
 			}
-
-			double scaleW = (visibleW / bounds.width);
-			double scaleH = (visibleH / bounds.height);
-
-			this.coordinateTransform.scale((coordinateTransform.getScale() + 100) * (Math.min(scaleH, scaleW)) - 100 - (coordinateTransform.getScale()));
-
-			visibleCanvasBounds = getVisibleCanvasRect();
-			this.coordinateTransform.translate((int) (visibleCanvasBounds.getCenterX() - bounds.getCenterX()), (int) (visibleCanvasBounds.getCenterY() - bounds.getCenterY()));
-			repaint();
+			setVisibleBounds(bounds);
 		}
 	}
 
-	private void repaint(IGraph graph, Point point) {
-		if (graph.getLocation() != point) {
-			Rectangle dirtyRect = graph.getBounds();
-			double x = point.getX() - graph.getWidth() / 2;
-			double y = point.getY() - graph.getHeight() / 2;
-			Point location = new Point();
-			location.setLocation(x, y);
-			graph.setLocation(location);
-			repaint(dirtyRect);
-			repaint(graph.getBounds());
-		}
+	private void setVisibleBounds(Rectangle bounds) {
+		Rectangle visibleCanvasBounds = getVisibleCanvasRect();
+		double visibleW = visibleCanvasBounds.getWidth();
+		double visibleH = visibleCanvasBounds.getHeight();
+		double scaleW = (visibleW / bounds.width);
+		double scaleH = (visibleH / bounds.height);
+		this.coordinateTransform.scale((coordinateTransform.getScale() + 100) * (Math.min(scaleH, scaleW)) - 100 - (coordinateTransform.getScale()));
+		visibleCanvasBounds = getVisibleCanvasRect();
+		this.coordinateTransform.translate((int) (visibleCanvasBounds.getCenterX() - bounds.getCenterX()), (int) (visibleCanvasBounds.getCenterY() - bounds.getCenterY()));
+		repaint();
 	}
 
 	public void addGraphCreatingListener(GraphCreatingListener listener) {
