@@ -85,10 +85,18 @@ public class TasksManager {
 		this.workerQueueMaps.put(WORKER_STATE_COMPLETED, this.completed);
 		this.workerQueueMaps.put(WORKER_STATE_CANCELLED, this.cancelled);
 		this.workerQueueMaps.put(WORKER_STATE_EXCEPTION, this.exception);
+		loadWorkflow(workflow);
 
 		this.scheduler = new Timer(500, new SchedulerActionListener());
 //		this.executor = new DefaultWorkflowExecutor();
 		this.workflow.addWorkflowChangeListener(this.workflowChangeListener);
+	}
+
+	private void loadWorkflow(Workflow workflow) {
+		Vector<IProcess> processes = workflow.getProcesses();
+		for (int i = 0; i < processes.size(); i++) {
+			addNewProcess(processes.get(i));
+		}
 	}
 
 	public int getStatus() {
@@ -113,6 +121,10 @@ public class TasksManager {
 		return this.workflow;
 	}
 
+	public Vector<IProcess> getProcesses(int workerState) {
+		return this.workerQueueMaps.get(workerState);
+	}
+
 	public final static int[] getWorkerStates() {
 		return new int[]{WORKER_STATE_CANCELLED,
 				WORKER_STATE_COMPLETED,
@@ -131,6 +143,10 @@ public class TasksManager {
 //	}
 
 	private void processAdded(IProcess process) {
+		addNewProcess(process);
+	}
+
+	private void addNewProcess(IProcess process) {
 		if (!this.workersMap.containsKey(process)) {
 			ProcessWorker worker = new ProcessWorker(process);
 			process.addStatusChangeListener(this.processStatusChangeListener);

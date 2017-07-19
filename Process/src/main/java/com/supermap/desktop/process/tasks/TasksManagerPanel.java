@@ -126,7 +126,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		int[] workerStates = TasksManager.getWorkerStates();
 		for (int i = 0; i < workerStates.length; i++) {
 			JPanel panel = getPanel(workerStates[i]);
-			Vector<IProcess> processes = this.tasksManager.getWorkflow().getProcesses();
+			Vector<IProcess> processes = this.tasksManager.getProcesses(workerStates[i]);
 			buildPanel(panel, processes);
 		}
 	}
@@ -163,6 +163,8 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		this.panelRunning.remove(this.map.get(worker));
 		this.panelWaiting.remove(this.map.get(worker));
 		this.map.remove(worker);
+		validate();
+		repaint();
 	}
 
 	private void clearPanels() {

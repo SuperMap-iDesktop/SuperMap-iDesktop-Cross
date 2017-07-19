@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TasksManagerContainer extends JPanel implements ActiveFormChangedListener, FormClosedListener {
 	private Map<IFormWorkflow, TasksManagerPanel> managerPanelsMap = new ConcurrentHashMap<>();
 	private TasksManagerPanel currentPanel;
+	private JScrollPane scrollPane = new JScrollPane();
 
 	public TasksManagerContainer() {
 		initializeComponents();
@@ -25,6 +26,7 @@ public class TasksManagerContainer extends JPanel implements ActiveFormChangedLi
 
 	private void initializeComponents() {
 		setLayout(new BorderLayout());
+		add(this.scrollPane, BorderLayout.CENTER);
 	}
 
 	@Override
@@ -49,14 +51,19 @@ public class TasksManagerContainer extends JPanel implements ActiveFormChangedLi
 			}
 
 			this.currentPanel = panel;
-			add(panel, BorderLayout.CENTER);
+			scrollPane.setViewportView(panel);
+//			add(scrollPane, BorderLayout.CENTER);
 		} else {
 			if (this.currentPanel != null) {
-				remove(this.currentPanel);
+//				remove(this.currentPanel);
+//				remove(this.scrollPane);
+				this.scrollPane.setViewportView(null);
 			}
 
 			this.currentPanel = null;
 		}
+		validate();
+		repaint();
 	}
 
 	@Override
