@@ -1,8 +1,6 @@
 package com.supermap.desktop.process.tasks;
 
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
-import com.supermap.desktop.controls.utilities.ControlsResources;
-import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.progress.RoundProgressBar;
 
 import javax.swing.*;
@@ -110,6 +108,13 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 
 	public boolean cancel() {
 		return this.worker.cancel(false);
+	}
+
+	public void reset() {
+		this.progressBar.setProgress(0);
+		this.labelMessage.setText("");
+		this.labelRemaintime.setText("");
+		this.buttonRun.setProcedure(ButtonExecutor.READY);
 	}
 
 	@Override

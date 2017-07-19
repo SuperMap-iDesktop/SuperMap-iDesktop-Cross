@@ -9,6 +9,7 @@ import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.borderPanel.PanelButton;
+import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -79,8 +80,9 @@ public class DialogMapClip extends SmDialog {
 	public static final int COLUMN_LAYER = 6;
 
 	private boolean isMutiObjectClip = false;
-	private Recordset selectedRecordset=null;
-	ArrayList<GeoRegion> selectedGeoregions= new ArrayList<>();
+	private Recordset selectedRecordset = null;
+	ArrayList<GeoRegion> selectedGeoregions = new ArrayList<>();
+
 	/**
 	 * 对JTable中model数据进行处理,得到适用于裁剪接口的数据
 	 *
@@ -146,12 +148,12 @@ public class DialogMapClip extends SmDialog {
 		} else {
 			this.resultInfo = null;
 		}
-		if (this.deletedInfo != null && this.deletedInfo.size() >= 1 && this.resultMap != null) {
-			for (int i = 0; i < deletedInfo.size(); i++) {
-				Layer layer = (Layer) ((Vector) (this.deletedInfo.get(i))).get(COLUMN_INDEX_LAYERCAPTION);
-				MapUtilities.removeLayer(this.resultMap, layer.getName());
-			}
-		}
+//		if (this.deletedInfo != null && this.deletedInfo.size() >= 1 && this.resultMap != null) {
+//			for (int i = 0; i < deletedInfo.size(); i++) {
+//				Layer layer = (Layer) ((Vector) (this.deletedInfo.get(i))).get(COLUMN_INDEX_LAYERCAPTION);
+//				MapUtilities.removeLayer(this.resultMap, layer.getName());
+//			}
+//		}
 		//   过滤掉不支持的数据集类型
 		if (this.resultMap != null) {
 			ArrayList<Layer> layers = MapUtilities.getLayers(this.resultMap);
@@ -490,7 +492,7 @@ public class DialogMapClip extends SmDialog {
 			}
 			initResultVectorInfo();
 			if (resultInfo != null && resultInfo.size() > 0) {
-				FormProgressTotal formProgress = new FormProgressTotal();
+				FormProgress formProgress = new FormProgress();
 				formProgress.setTitle(MapViewProperties.getString("String_MapClip_MapClip"));
 
 				if (!StringUtilities.isNullOrEmpty(mapClipMultiObjectSplitPanel.getCurrentSelectedFieldName())) {
@@ -498,18 +500,18 @@ public class DialogMapClip extends SmDialog {
 					String selectedCaptionFieldName = mapClipMultiObjectSplitPanel.getCurrentSelectedFieldName();
 					String appendCaptions[] = new String[selectedRecordset.getRecordCount()];
 					for (int i = 0; i < appendCaptions.length; i++) {
-						if (selectedRecordset.getFieldValue(selectedCaptionFieldName)==null ||StringUtilities.isNullOrEmpty(selectedRecordset.getFieldValue(selectedCaptionFieldName).toString())){
-							appendCaptions[i]=selectedCaptionFieldName;
-						}else{
+						if (selectedRecordset.getFieldValue(selectedCaptionFieldName) == null || StringUtilities.isNullOrEmpty(selectedRecordset.getFieldValue(selectedCaptionFieldName).toString())) {
+							appendCaptions[i] = selectedCaptionFieldName;
+						} else {
 							appendCaptions[i] = selectedRecordset.getFieldValue(selectedCaptionFieldName).toString();
 							appendCaptions[i] = appendCaptions[i].replace('.', '_');
 						}
 						selectedRecordset.moveNext();
 					}
 					//selectedRecordset.dispose();
-					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap, appendCaptions,selectedGeoregions,selectedRecordset);
+					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap, appendCaptions, selectedGeoregions, selectedRecordset);
 				} else {
-					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap,selectedRecordset);
+					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap, selectedRecordset);
 				}
 				formProgress.doWork(mapClipProgressCallable);
 				// 获得采集后的数据集，添加到地图
@@ -555,19 +557,19 @@ public class DialogMapClip extends SmDialog {
 		commonPartCode(region);
 	}
 
-	public DialogMapClip(GeoRegion region,Recordset recordset) {
+	public DialogMapClip(GeoRegion region, Recordset recordset) {
 		super();
 		this.selectedRecordset = recordset;
 		commonPartCode(region);
 	}
 
-	public DialogMapClip(GeoRegion region, boolean isMutiObjectClip, String fieldCaptions[][], Recordset recordset,ArrayList<GeoRegion> selectedGeoregions) {
+	public DialogMapClip(GeoRegion region, boolean isMutiObjectClip, String fieldCaptions[][], Recordset recordset, ArrayList<GeoRegion> selectedGeoregions) {
 		super();
 		this.isMutiObjectClip = isMutiObjectClip;
 		this.selectedRecordset = recordset;
 		commonPartCode(region);
 		this.mapClipMultiObjectSplitPanel.setFieldCaption(fieldCaptions);
-		this.selectedGeoregions=selectedGeoregions;
+		this.selectedGeoregions = selectedGeoregions;
 	}
 
 	private void commonPartCode(GeoRegion region) {
