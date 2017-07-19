@@ -25,7 +25,7 @@ public class CtrlActionNewWorkflow extends CtrlAction {
 	public void run() {
 		FormWorkflow formWorkflow = new FormWorkflow(new Workflow("Workflow"));
 
-		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
+		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
 		ArrayList<String> names = new ArrayList<>();
 		for (IWorkflow workFlow : workFlows) {
 			names.add(workFlow.getName());

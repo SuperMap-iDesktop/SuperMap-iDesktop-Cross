@@ -13,9 +13,9 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
+import com.supermap.mapping.*;
 
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.io.File;
@@ -222,6 +222,34 @@ public class CacheUtilities {
 		}
 
 	}
+
+	public static boolean dynamicEffectClosed(Map map) {
+		boolean result = true;
+		int count = 0;
+		String dynamicEffectLayers = MapViewProperties.getString("String_DynamicEffectLayer") + "\n";
+		for (int i = 0; i < map.getLayers().getCount(); i++) {
+			Theme tempTheme = map.getLayers().get(i).getTheme();
+			if (tempTheme instanceof ThemeLabel && ((ThemeLabel) tempTheme).isFlowEnabled()) {
+				dynamicEffectLayers += map.getLayers().get(i).getName();
+				count++;
+			}
+			if (tempTheme instanceof ThemeGraph && ((ThemeGraph) tempTheme).isFlowEnabled()) {
+				dynamicEffectLayers += map.getLayers().get(i).getName();
+				count++;
+			}
+		}
+
+		if (count > 0) {
+			Application.getActiveApplication().getOutput().output(dynamicEffectLayers);
+			if (new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_isDisableDynamicEffect")) == JOptionPane.OK_OPTION) {
+				map.setDisableDynamicEffect(false);
+			} else {
+				result = false;
+			}
+		}
+		return result;
+	}
+
 
 	public static boolean isWindows() {
 		boolean isWindows = false;

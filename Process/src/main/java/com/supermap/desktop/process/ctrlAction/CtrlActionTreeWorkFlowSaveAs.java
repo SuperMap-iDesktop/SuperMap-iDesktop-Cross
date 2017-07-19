@@ -31,7 +31,7 @@ public class CtrlActionTreeWorkFlowSaveAs extends CtrlAction {
 		SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
 		dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
 		dialogSaveAs.setCurrentFormName(currentWorkFlow.getName());
-		for (IWorkflow workFlow : Application.getActiveApplication().getWorkFlows()) {
+		for (IWorkflow workFlow : Application.getActiveApplication().getWorkflows()) {
 			dialogSaveAs.addExistNames(workFlow.getName());
 		}
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
@@ -52,8 +52,8 @@ public class CtrlActionTreeWorkFlowSaveAs extends CtrlAction {
 				currentForm.setText(dialogSaveAs.getCurrentFormName());
 			}
 			Workflow workflow = new Workflow(dialogSaveAs.getCurrentFormName());
-			workflow.fromXML(currentWorkFlow.toXML());
-			Application.getActiveApplication().addWorkFlow(workflow);
+			workflow.serializeFrom(currentWorkFlow.serializeTo());
+			Application.getActiveApplication().addWorkflow(workflow);
 		}
 	}
 

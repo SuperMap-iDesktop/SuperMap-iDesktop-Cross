@@ -2,6 +2,9 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.process.events.*;
+import com.supermap.desktop.utilities.XmlUtilities;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.swing.event.EventListenerList;
 import java.util.Vector;
@@ -54,12 +57,49 @@ public class Workflow implements IWorkflow {
 	}
 
 	@Override
-	public String toXML() {
-		return null;
+	public String serializeTo() {
+		Document doc = XmlUtilities.stringToDocument("");
+
+		// 处理 workflow
+		Element workflowNode = doc.createElement("Workflow");
+		doc.appendChild(workflowNode);
+
+		// 处理 processes
+		Element processesNode = doc.createElement("processes");
+		Vector<IProcess> processes = this.processMatrix.getNodes();
+		for (int i = 0; i < processes.size(); i++) {
+			IProcess process = processes.get(i);
+			Element processNode = doc.createElement("process");
+			processNode.setAttribute("key", process.getKey());
+			processNode.setAttribute("className", process.getClass().getName());
+			processesNode.appendChild(processesNode);
+		}
+		workflowNode.appendChild(processesNode);
+
+		// 处理 relations
+		Element relationsNode = doc.createElement("relations");
+		Vector<IRelation<IProcess>> relations = this.processMatrix.getRelations();
+		for (int i = 0; i < relations.size(); i++) {
+			IRelation relation = relations.get(i);
+
+			// 目前只有一种数据匹配关系，先就只处理这一种关系的导入和导出
+			if (relation instanceof DataMatch) {
+				Element relationNode = doc.createElement("relation");
+				relationNode.setAttribute("className", relation.getClass().getName());
+				relationNode.setAttribute("fromKey", ((DataMatch) relation).getFrom().getKey());
+				relationNode.setAttribute("toKey", ((DataMatch) relation).getTo().getKey());
+				relationNode.setAttribute("fromOutputData", ((DataMatch) relation).getFromOutputData().getName());
+				relationNode.setAttribute("toInputData", ((DataMatch) relation).getToInputData().getName());
+				relationsNode.appendChild(relationNode);
+			}
+		}
+		workflowNode.appendChild(relationsNode);
+
+		return XmlUtilities.nodeToString(workflowNode);
 	}
 
 	@Override
-	public void fromXML(String xmlDescription) {
+	public void serializeFrom(String xmlDescription) {
 
 	}
 

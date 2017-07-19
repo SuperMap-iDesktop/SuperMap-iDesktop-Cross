@@ -8,7 +8,7 @@ import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
-import com.supermap.desktop.event.WorkFlowInitListener;
+import com.supermap.desktop.event.WorkflowInitListener;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.utilities.CursorUtilities;
 import org.osgi.framework.BundleActivator;
@@ -43,12 +43,12 @@ public class ProcessActivator implements BundleActivator {
 		System.out.println("Hello SuperMap === Process!!");
 		setContext(bundleContext);
 		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Process", bundleContext.getBundle());
-		Application.getActiveApplication().setWorkFlowInitListener(new WorkFlowInitListener() {
+		Application.getActiveApplication().setWorkflowInitListener(new WorkflowInitListener() {
 			@Override
 			public IWorkflow init(Element element) {
 				String name = element.getAttribute("name");
 				Workflow workflow = new Workflow(name);
-				workflow.fromXML(element.getAttribute("value"));
+				workflow.serializeFrom(element.getAttribute("value"));
 				return workflow;
 			}
 		});
@@ -83,7 +83,7 @@ public class ProcessActivator implements BundleActivator {
 			}
 
 			CursorUtilities.setWaitCursor();
-			ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
+			ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
 			for (IWorkflow workFlow : workFlows) {
 				if (workFlow.getName().equals(newWindowName)) {
 					formWorkflow = new FormWorkflow(workFlow);

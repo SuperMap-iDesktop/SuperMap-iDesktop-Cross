@@ -4,6 +4,7 @@ import com.supermap.data.*;
 import com.supermap.data.processing.CacheWriter;
 import com.supermap.data.processing.CompactFile;
 import com.supermap.data.processing.StorageType;
+import com.supermap.desktop.Application;
 import com.supermap.tilestorage.*;
 
 import javax.imageio.ImageIO;
@@ -323,7 +324,7 @@ public class CheckCache {
 				int bigCol = col / 128;
 				int currentCol = Math.min(right, (bigCol + 1) * 128 - 1);
 
-				String cfPath = cacheRoot + "/" + caption + "/" + bigRow + "/" + bigCol + ".cf";
+				String cfPath = cacheRoot + File.separator + caption + File.separator + bigRow + File.separator + bigCol + ".cf";
 				File cfFile = new File(cfPath);
 
 				//long starttime = System.nanoTime();
@@ -677,7 +678,7 @@ public class CheckCache {
 		return sciNames;
 	}
 
-	public void error2Udb(double anchorLeft, double anchorTop, int tileSize, String parentName) {
+	public static void error2Udb(double anchorLeft, double anchorTop, int tileSize, String parentName, String udbPath) {
 		String tempPath = CacheUtilities.replacePath(parentName, "temp");
 		File tempFile = new File(tempPath);
 		if (!tempFile.exists()) {
@@ -694,8 +695,6 @@ public class CheckCache {
 			System.out.println("no error file!");
 			return;
 		}
-		String checkPath = CacheUtilities.replacePath(parentName, "check");
-		String udbPath = CacheUtilities.replacePath(checkPath, "check.udb");
 		tempFile = new File(udbPath);
 		if (!tempFile.exists()) {
 			System.out.println("not found cache.udb file!");
@@ -819,7 +818,7 @@ public class CheckCache {
 			}
 			file.delete();
 		}
-
+		Application.getActiveApplication().getWorkspace().getDatasources().open(info);
 		ds.close();
 		workspace.close();
 		workspace.dispose();
