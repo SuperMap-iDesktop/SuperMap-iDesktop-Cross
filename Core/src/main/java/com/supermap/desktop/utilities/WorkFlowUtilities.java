@@ -33,7 +33,7 @@ public class WorkFlowUtilities {
 							break;
 						}
 					}
-					Application.getActiveApplication().removeWorkFlow(workflow);
+					Application.getActiveApplication().removeWorkflow(workflow);
 				}
 			}
 		} catch (Exception ex) {
