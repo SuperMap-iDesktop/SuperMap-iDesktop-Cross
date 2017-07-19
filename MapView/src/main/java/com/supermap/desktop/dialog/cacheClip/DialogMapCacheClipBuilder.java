@@ -229,6 +229,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			new File(CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), cacheName)).mkdir();
 		} else {
 			ArrayList<Integer> index = new ArrayList<>();
+			index.add(0);
 			for (int i = 0; i < cacheNames.length; i++) {
 				String tempCache = cacheNames[i];
 				String tempIndex = tempCache.substring(5, tempCache.length());
@@ -355,9 +356,6 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				if (cmdType == MultiUpdateProcessClip) {
 					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
 				}
-				if (!CacheUtilities.dynamicEffectClosed(mapCacheBuilder.getMap())) {
-					return;
-				}
 				String cachePath = firstStepPane.fileChooserControlFileCache.getPath();
 
 				String sciPath = "";
@@ -454,9 +452,6 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		}
 		if (null == mapCacheBuilder.getMap()) {
 			mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
-		}
-		if (!CacheUtilities.dynamicEffectClosed(mapCacheBuilder.getMap())) {
-			return;
 		}
 		setMapCacheBuilderValueBeforeRun();
 		boolean result;

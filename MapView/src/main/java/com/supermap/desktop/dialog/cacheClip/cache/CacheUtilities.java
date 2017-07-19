@@ -1,6 +1,7 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
-import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
+import com.supermap.data.EngineType;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
@@ -124,17 +125,19 @@ public class CacheUtilities {
 //		return pidNameSet;
 //	}
 
-	public static boolean volatileDatasource(Map map) {
+	public static boolean volatileDatasource() {
 		boolean result = true;
-		if (null != map.getLayers().get(0).getDataset()) {
-			//没有提供数据源,只是拆分任务的情况
-			Datasource datasource = map.getLayers().get(0).getDataset().getDatasource();
-			if (!datasource.isReadOnly()) {
-				SmOptionPane pane = new SmOptionPane();
-				pane.showConfirmDialog(MapViewProperties.getString("String_DatasourceOpenedNotReadOnly"));
-				result = false;
+		if (null != Application.getActiveApplication().getWorkspace().getDatasources()) {
+			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+			for (int i = 0; i < datasources.getCount(); i++) {
+				if (datasources.get(i).getEngineType() == EngineType.UDB && !datasources.get(i).isReadOnly()) {
+					SmOptionPane pane = new SmOptionPane();
+					pane.showConfirmDialog(MapViewProperties.getString("String_DatasourceOpenedNotReadOnly"));
+					result = false;
+					break;
+				}
 			}
-			datasource.getWorkspace().save();
+			Application.getActiveApplication().getWorkspace().save();
 			ToolbarUIUtilities.updataToolbarsState();
 		}
 		return result;
@@ -228,21 +231,33 @@ public class CacheUtilities {
 		int count = 0;
 		String dynamicEffectLayers = MapViewProperties.getString("String_DynamicEffectLayer") + "\n";
 		for (int i = 0; i < map.getLayers().getCount(); i++) {
-			Theme tempTheme = map.getLayers().get(i).getTheme();
-			if (tempTheme instanceof ThemeLabel && ((ThemeLabel) tempTheme).isFlowEnabled()) {
-				dynamicEffectLayers += map.getLayers().get(i).getName();
-				count++;
-			}
-			if (tempTheme instanceof ThemeGraph && ((ThemeGraph) tempTheme).isFlowEnabled()) {
-				dynamicEffectLayers += map.getLayers().get(i).getName();
-				count++;
+			if (null != map.getLayers().get(i).getTheme()) {
+				Theme tempTheme = map.getLayers().get(i).getTheme();
+				if (tempTheme instanceof ThemeLabel && ((ThemeLabel) tempTheme).isFlowEnabled()) {
+					dynamicEffectLayers += map.getLayers().get(i).getName() + "\n";
+					count++;
+				}
+				if (tempTheme instanceof ThemeGraph && ((ThemeGraph) tempTheme).isFlowEnabled()) {
+					dynamicEffectLayers += map.getLayers().get(i).getName() + "\n";
+					count++;
+				}
 			}
 		}
 
 		if (count > 0) {
 			Application.getActiveApplication().getOutput().output(dynamicEffectLayers);
 			if (new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_isDisableDynamicEffect")) == JOptionPane.OK_OPTION) {
-				map.setDisableDynamicEffect(false);
+				for (int i = 0; i < map.getLayers().getCount(); i++) {
+					if (null != map.getLayers().get(i).getTheme()) {
+						Theme tempTheme = map.getLayers().get(i).getTheme();
+						if (tempTheme instanceof ThemeLabel) {
+							((ThemeLabel) tempTheme).setFlowEnabled(false);
+						}
+						if (tempTheme instanceof ThemeGraph) {
+							((ThemeGraph) tempTheme).setFlowEnabled(false);
+						}
+					}
+				}
 			} else {
 				result = false;
 			}
