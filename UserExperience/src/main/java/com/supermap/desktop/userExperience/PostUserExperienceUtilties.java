@@ -83,8 +83,5 @@ public class PostUserExperienceUtilties {
 			return result;
 		}
 		return false;
-
 	}
-
-
 }

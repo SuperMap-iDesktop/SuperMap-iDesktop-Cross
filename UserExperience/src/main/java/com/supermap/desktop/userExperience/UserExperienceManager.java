@@ -54,16 +54,20 @@ public class UserExperienceManager {
 
 	private static final long maxFileSize = 8 * 1024 * 1024 * 10;
 
-
 	private Timer timer;
 
 	private UserExperienceManager() {
-		postExistFiles();
-		executedFunctionFile = getDefaultFile();
-		if (executedFunctionFile != null) {
-			initializeLicenseInfo();
-			initializeLogsSendTimer();
-		}
+		ThreadUtilties.execute(new Runnable() {
+			@Override
+			public void run() {
+				postExistFiles();
+				executedFunctionFile = getDefaultFile();
+				if (executedFunctionFile != null) {
+					initializeLicenseInfo();
+					initializeLogsSendTimer();
+				}
+			}
+		});
 	}
 
 
@@ -180,7 +184,6 @@ public class UserExperienceManager {
 					executedFile.getLockFile().delete();
 				}
 			});
-
 		}
 		doPost(executedFunctionFile);
 	}
@@ -215,7 +218,7 @@ public class UserExperienceManager {
 				// 暂不支持取消
 				break;
 			case DesktopRuntimeEvent.EXCEPTION:
-				addDoneJson(new UserExperienceBaseInfo(new DesktopUserExperienceInfo(new FunctionInfoCtrlAction(event))).getJson());
+				addDoneJson(new UserExperienceBaseInfo(new DesktopUserExperienceInfo(new FunctionInfoCtrlAction((Exception) event.getCurrentObject()))).getJson());
 				break;
 			case DesktopRuntimeEvent.STOP:
 				ctrlActionFinished(event);

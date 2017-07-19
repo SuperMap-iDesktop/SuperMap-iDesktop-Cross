@@ -62,7 +62,6 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 		if (event.getCurrentObject() instanceof CtrlAction) {
 			initCtrlAction(((CtrlAction) event.getCurrentObject()));
 		}
-
 	}
 
 	private void getFunctionGrade(IBaseItem caller) {
