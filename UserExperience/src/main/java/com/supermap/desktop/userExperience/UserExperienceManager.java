@@ -197,7 +197,13 @@ public class UserExperienceManager {
 				}
 			});
 		}
-		doPost(executedFunctionFile);
+		ThreadUtilties.execute(new Runnable() {
+			@Override
+			public void run() {
+				doPost(executedFunctionFile);
+			}
+		});
+
 	}
 
 	public void stop() {
@@ -294,7 +300,6 @@ public class UserExperienceManager {
 			while (!fileLocker.tryLock()) {
 				Thread.sleep(1000);
 			}
-
 			fileLocker.getRandomAccessFile().seek(0);
 			byte[] bytes = new byte[(int) fileLocker.getRandomAccessFile().length()];
 			fileLocker.getRandomAccessFile().read(bytes);

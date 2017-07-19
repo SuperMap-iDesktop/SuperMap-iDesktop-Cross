@@ -31,7 +31,7 @@ public class CanvasTranslation extends CanvasActionAdapter {
 	private GraphCanvas canvas;
 	private CoordinateTransform transform;
 	private Point start = null;
-	private double step = 20; // once the mouse middle button moved,this canvas zooms in or out for two percent.
+	private double step = 2; // once the mouse middle button moved,this canvas zooms in or out for two percent.
 
 	public CanvasTranslation(GraphCanvas canvas) {
 		this.canvas = canvas;
