@@ -70,7 +70,7 @@ public class InputParametersManager {
 	private void loadRelations(Vector<IRelation<IProcess>> relations) {
 		if (relations != null && relations.size() > 0) {
 			for (int i = 0; i < relations.size(); i++) {
-				if (relations.get(i) instanceof DataMatch) {
+				if ((relations.get(i) instanceof DataMatch) && relations.get(i).getTo() == this.parameters.getProcess()) {
 					bind(((DataMatch) relations.get(i)).getToInputData(), ((DataMatch) relations.get(i)).getFromOutputData());
 				}
 			}

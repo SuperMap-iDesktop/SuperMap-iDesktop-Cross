@@ -2,10 +2,11 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.events.*;
-import com.supermap.desktop.ui.mdi.exception.NullParameterException;
 
 import javax.swing.event.EventListenerList;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -194,7 +195,7 @@ public class NodeMatrix<T extends Object> {
 		for (int i = 0, size = this.matrix.size(); i < size; i++) {
 			Map<T, IRelation<T>> map = this.matrix.get(i);
 			if (map.containsKey(node)) {
-				fromNodes.add(node);
+				fromNodes.add(this.nodes.get(i));
 			}
 		}
 		return fromNodes;
