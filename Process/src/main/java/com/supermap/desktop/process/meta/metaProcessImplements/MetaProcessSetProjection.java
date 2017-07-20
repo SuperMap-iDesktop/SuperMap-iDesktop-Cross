@@ -10,7 +10,13 @@ import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstrai
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.implement.ParameterButton;
+import com.supermap.desktop.process.parameter.implement.ParameterCombine;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
+import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -119,8 +125,6 @@ public class MetaProcessSetProjection extends MetaProcess {
 			coordSysName.setSelectedItem("");
 			coordUnit.setSelectedItem("");
 			textAreaCoordInfo.setSelectedItem("");
-			parameterButton.setEnabled(false);
-
 		}
 	}
 
