@@ -5,7 +5,6 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.ProcessResources;
-import com.supermap.desktop.process.WorkflowCanvas;
 import com.supermap.desktop.process.core.DataMatch;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.Workflow;
@@ -25,6 +24,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author XiaJT
@@ -34,36 +35,42 @@ public class InputParametersManager {
 	private boolean isSelecting = false;
 	private boolean isDeleting = false;
 	private ArrayList<InputParameterDataNode> list = new ArrayList<>();
-	private ArrayList<PropertyChangeListener> listeners = new ArrayList<>();
+	private Map<String, ParameterComboBox> paramsMap = new ConcurrentHashMap<>();
+	private WorkflowChangeHandler workflowChangeHandler = new WorkflowChangeHandler();
+	private RelationAddedHandler relationAddedHandler = new RelationAddedHandler();
+	private RelationRemovingHandler relationRemovingHandler = new RelationRemovingHandler();
 
 	public InputParametersManager(IParameters parameters) {
 		this.parameters = parameters;
 	}
 
+	public void bindWorkflow(Workflow workflow) {
+		if (workflow != null) {
+			workflow.addWorkflowChangeListener(this.workflowChangeHandler);
+			workflow.addRelationAddedListener(this.relationAddedHandler);
+			workflow.addRelationRemovingListener(this.relationRemovingHandler);
+		}
+	}
+
+	public void unbindWorkflow(Workflow workflow) {
+		if (workflow != null) {
+			workflow.removeWorkflowChangeListener(this.workflowChangeHandler);
+			workflow.removeRelationAddedListener(this.relationAddedHandler);
+			workflow.removeRelationRemovingListener(this.relationRemovingHandler);
+		}
+	}
+
 	public void add(final String name, final IParameter... parameter) {
 		ParameterSwitch parameterSwitch = new ParameterSwitch();
 		parameterSwitch.setParameters(parameters);
-		final ParameterComboBox parameterComboBox = new ParameterComboBox();
-		parameterComboBox.setIConGetter(new IConGetter() {
-			private Icon icon = ProcessResources.getIcon("/processresources/ProcessOutputIcon.png");
 
-			@Override
-			public Icon getICon(ParameterDataNode parameterDataNode) {
-				return icon;
-			}
-		});
+		final ParameterComboBox parameterComboBox = new ParameterComboBox();
+		parameterComboBox.setIConGetter(newConGetter());
 		parameterComboBox.setParameters(parameters);
 		parameterComboBox.setDescribe(name + ":");
 		reloadParameterComboBox(parameterComboBox, parameters.getInputs().getData(name).getType());
 		parameterComboBox.addPropertyListener(new ParameterComboBoxPropertyChangeListener(name));
-
-		IForm activeForm = Application.getActiveApplication().getActiveForm();
-		if (activeForm instanceof FormWorkflow) {
-			WorkflowCanvas canvas = ((FormWorkflow) activeForm).getCanvas();
-			canvas.getWorkflow().addWorkflowChangeListener(new WorkflowChangeHandler(name, parameterComboBox));
-			canvas.getWorkflow().addRelationAddedListener(new RelationAddedHandler());
-			canvas.getWorkflow().addRelationRemovingListener(new RelationRemovingHandler());
-		}
+		this.paramsMap.put(name, parameterComboBox);
 
 		ParameterCombine combine = new ParameterCombine();
 		combine.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
@@ -87,14 +94,15 @@ public class InputParametersManager {
 		list.add(inputParameterDataNode);
 	}
 
-	private void firePropertyChangedListener(PropertyChangeEvent propertyChangeEvent) {
-		for (PropertyChangeListener listener : listeners) {
-			listener.propertyChange(propertyChangeEvent);
-		}
-	}
+	private IConGetter newConGetter() {
+		return new IConGetter() {
+			private Icon icon = ProcessResources.getIcon("/processresources/ProcessOutputIcon.png");
 
-	public void addPropertyChangedListener(PropertyChangeListener listener) {
-		this.listeners.add(listener);
+			@Override
+			public Icon getICon(ParameterDataNode parameterDataNode) {
+				return icon;
+			}
+		};
 	}
 
 	public void bind(InputData toInput, OutputData fromOutput) {
@@ -181,13 +189,6 @@ public class InputParametersManager {
 	}
 
 	private class WorkflowChangeHandler implements WorkflowChangeListener {
-		private String name;
-		private ParameterComboBox comboBox;
-
-		public WorkflowChangeHandler(String name, ParameterComboBox comboBox) {
-			this.name = name;
-			this.comboBox = comboBox;
-		}
 
 		@Override
 		public void workflowChange(WorkflowChangeEvent e) {
@@ -195,11 +196,16 @@ public class InputParametersManager {
 				if (e.getProcess() != parameters.getProcess()) {
 					OutputData[] outputs = e.getProcess().getOutputs().getDatas();
 
-					for (int i = 0; i < outputs.length; i++) {
-						OutputData output = outputs[i];
+					for (String name :
+							paramsMap.keySet()) {
+						ParameterComboBox comboBox = paramsMap.get(name);
 
-						if (parameters.getInputs().getData(name).getType().contains(output.getType())) {
-							this.comboBox.addItem(new ParameterDataNode(e.getProcess().getTitle() + "_" + output.getName(), output));
+						for (int i = 0; i < outputs.length; i++) {
+							OutputData output = outputs[i];
+
+							if (parameters.getInputs().getData(name).getType().contains(output.getType())) {
+								comboBox.addItem(new ParameterDataNode(e.getProcess().getTitle() + "_" + output.getName(), output));
+							}
 						}
 					}
 				}
@@ -210,8 +216,13 @@ public class InputParametersManager {
 					IProcess process = e.getProcess();
 					OutputData[] outputs = process.getOutputs().getDatas();
 
-					for (int i = 0; i < outputs.length; i++) {
-						this.comboBox.removeItem(outputs[i]);
+					for (String name :
+							paramsMap.keySet()) {
+						ParameterComboBox comboBox = paramsMap.get(name);
+
+						for (int i = 0; i < outputs.length; i++) {
+							comboBox.removeItem(outputs[i]);
+						}
 					}
 				} catch (Exception e1) {
 					Application.getActiveApplication().getOutput().output(e1);
