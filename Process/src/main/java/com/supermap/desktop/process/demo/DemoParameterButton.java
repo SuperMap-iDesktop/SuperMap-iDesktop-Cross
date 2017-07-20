@@ -41,6 +41,7 @@ public class DemoParameterButton extends JButton {
 	public DemoParameterButton(String text, Icon icon, String filePath) {
 		super(text, icon);
 		this.filePath = filePath;
+		setFont(new Font("楷体", Font.BOLD, 14));
 		Dimension preferredSizeNew = new Dimension(180, 130);
 		setPreferredSize(preferredSizeNew);
 		// 设置文字对于图片的位置
