@@ -26,14 +26,17 @@ public class Demo extends FormBaseChild {
 	// 视频文件默认目录为桌面 demoView文件夹
 	String path = "C://Users//Administrator//Desktop//demoView//";
 	String iconFileName = "/UserMeetingPhotos/";
-
 	String iDesktopCross = "Cross";
 	// 热点分析
-	String hotSpotAnalystName = ProcessProperties.getString("String_hotSpotAnalyst");
+	String hotSpotAnalystPath = path + ProcessProperties.getString("String_hotSpotAnalyst") + ".avi";
+	// 地统计分析
+	String spatialPath = path + ProcessProperties.getString("String_Spatial") + ".avi";
 
 
 	private DemoParameterButton hotSpotAnalystButton;
-	private DemoParameterButton demoParameterButton2;
+	private DemoParameterButton spatialButton;
+
+
 	private DemoParameterButton demoParameterButton3;
 	private DemoParameterButton demoParameterButton4;
 	private DemoParameterButton demoParameterButton5;
@@ -67,10 +70,17 @@ public class Demo extends FormBaseChild {
 
 	private void initParameter() {
 
-		hotSpotAnalystButton = new DemoParameterButton(hotSpotAnalystName,
-				CoreResources.getIcon(iconFileName + hotSpotAnalystName + ".png"), path + hotSpotAnalystName + ".mp4");
-		demoParameterButton2 = new DemoParameterButton("unKnown",
-				CoreResources.getIcon(iconFileName + iDesktopCross + ".png"), "");
+		// 热点分析
+		File hotSpotAnalystFile = new File(hotSpotAnalystPath);
+		hotSpotAnalystButton = new DemoParameterButton(hotSpotAnalystFile.getName(),
+				CoreResources.getIcon(iconFileName + ProcessProperties.getString("String_hotSpotAnalyst") + ".png"), hotSpotAnalystFile.getPath());
+
+		File spatialFile = new File(spatialPath);
+		spatialButton = new DemoParameterButton(spatialFile.getName(),
+				CoreResources.getIcon(iconFileName +  ProcessProperties.getString("String_Spatial") + ".png"), spatialFile.getPath());
+
+
+
 		demoParameterButton3 = new DemoParameterButton("unKnown",
 				CoreResources.getIcon(iconFileName + iDesktopCross + ".png"), "");
 		demoParameterButton4 = new DemoParameterButton("unKnown",
@@ -89,8 +99,8 @@ public class Demo extends FormBaseChild {
 	private void initLayout() {
 		this.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		this.add(hotSpotAnalystButton);
-		this.add(demoParameterButton2);
-		this.add(demoParameterButton3);
+		this.add(spatialButton);
+//		this.add(demoParameterButton3);
 //		this.add(demoParameterButton4);
 //		this.add(demoParameterButton5);
 //		this.add(demoParameterButton6);
@@ -101,7 +111,7 @@ public class Demo extends FormBaseChild {
 
 	private void initListener() {
 		hotSpotAnalystButton.addActionListener(actionListener);
-		demoParameterButton2.addActionListener(actionListener);
+		spatialButton.addActionListener(actionListener);
 		demoParameterButton3.addActionListener(actionListener);
 		demoParameterButton4.addActionListener(actionListener);
 		demoParameterButton5.addActionListener(actionListener);
