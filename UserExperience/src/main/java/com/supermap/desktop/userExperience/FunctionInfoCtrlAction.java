@@ -4,11 +4,20 @@ import com.alibaba.fastjson.JSONAware;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.event.DesktopRuntimeEvent;
-import com.supermap.desktop.implement.*;
+import com.supermap.desktop.implement.ControlButton;
+import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.implement.SmButtonDropdown;
+import com.supermap.desktop.implement.SmCtrlActionButton;
+import com.supermap.desktop.implement.SmMenu;
+import com.supermap.desktop.implement.SmMenuItem;
+import com.supermap.desktop.implement.SmPopupMenu;
+import com.supermap.desktop.implement.SmToolbar;
 import com.supermap.desktop.interfaces.UserExperienceBean;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -33,6 +42,31 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 	private long memoryIncrement;
 	private long memoryTotal = Runtime.getRuntime().totalMemory();
 	private CtrlAction ctrlAction;
+
+	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	public FunctionInfoCtrlAction(String action) {
+		JSONObject parse = JSONObject.parseObject(action);
+		caption = parse.getString("Caption");
+		ctrlActionName = parse.getString("CtrlActionName");
+		try {
+			executeDateTime = formatter.parse(parse.getString("ExecuteDateTime")).getTime();
+		} catch (ParseException e) {
+			// ignore
+			executeDateTime = System.currentTimeMillis();
+		}
+		functionGrade0 = parse.getString("FunctionGrade0");
+		functionGrade1 = parse.getString("FunctionGrade1");
+		functionGrade2 = parse.getString("FunctionGrade2");
+		functionGrade3 = parse.getString("FunctionGrade3");
+		isFinished = false;
+		memoryIncrement = 0;
+		memoryTotal = parse.getLong("MemoryTotal");
+		message = parse.getString("Message");
+		pluginName = parse.getString("PluginName");
+		stackTrace = parse.getString("StackTrace");
+		totalTime = 0;
+	}
 
 
 	public void initCtrlAction(CtrlAction ctrlAction) {
@@ -120,7 +154,7 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("Caption", caption);
 		jsonObject.put("CtrlActionName", ctrlActionName);
-		jsonObject.put("ExecuteDateTime", new Date(executeDateTime).toString());
+		jsonObject.put("ExecuteDateTime", formatter.format(new Date(executeDateTime)));
 		jsonObject.put("FunctionGrade0", functionGrade0);
 		jsonObject.put("FunctionGrade1", functionGrade1);
 		jsonObject.put("FunctionGrade2", functionGrade2);
@@ -135,7 +169,7 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 		jsonObject.put("PluginName", pluginName);
 //		jsonObject.put("ProcessCount", );
 		jsonObject.put("StackTrace", stackTrace);
-		jsonObject.put("TotalTime", new Date(totalTime));
+		jsonObject.put("TotalTime", totalTime);
 //		jsonObject.put("UserObjectIncerment", );
 //		jsonObject.put("UserObjectTotal", );
 		return jsonObject.toString();
