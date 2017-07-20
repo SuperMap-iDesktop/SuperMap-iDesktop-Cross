@@ -57,7 +57,6 @@ public class DemoParameterButton extends JButton {
 
 		addMouseListener(mouseListener);
 	}
-
 	public String getFilePath() {
 		return filePath;
 	}
