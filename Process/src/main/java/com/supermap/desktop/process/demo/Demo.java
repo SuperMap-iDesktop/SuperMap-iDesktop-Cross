@@ -3,6 +3,7 @@ package com.supermap.desktop.process.demo;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.ui.FormBaseChild;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -18,6 +19,11 @@ import java.io.IOException;
  */
 public class Demo extends FormBaseChild {
 
+	private static final int DEFAULT_WIDTH = 1440;
+	private static final int DEFAULT_HEIGHT = 700;
+
+	private final Timer timer;
+	private final LeftTimer moveTime;
 
 	public Demo() {
 		this(ProcessProperties.getString("String_Demo"), null, null);
@@ -39,13 +45,14 @@ public class Demo extends FormBaseChild {
 	private DemoParameterButton spatialButton;
 	private DemoParameterButton multiProcessClipButton;
 
+	private JLabel labelHotSpotAnalyst = new JLabel();
+	private JLabel labelSpatial = new JLabel();
+	private JLabel labelMultiProcessClip = new JLabel();
 
-//	private DemoParameterButton demoParameterButton4;
-//	private DemoParameterButton demoParameterButton5;
-//	private DemoParameterButton demoParameterButton6;
-//	private DemoParameterButton demoParameterButton7;
-//	private DemoParameterButton demoParameterButton8;
+	private JLabel[] currentPics;
 
+	private JPanel panelCenter = new JPanel();
+	private int currentIndex = 0;
 
 	ActionListener actionListener = new ActionListener() {
 		@Override
@@ -67,7 +74,29 @@ public class Demo extends FormBaseChild {
 		initLayout();
 		initListener();
 
+		timer = new Timer(5000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				moveLeft();
+			}
+		});
+		timer.setInitialDelay(1000);
+
+		moveTime = new LeftTimer();
 		this.setBackground(Color.WHITE);
+		timer.start();
+	}
+
+	private void moveLeft() {
+		int next = currentIndex + 1;
+		if (next == currentPics.length) {
+			next = 0;
+		}
+		moveTime.setCurrentComponent(currentPics[currentIndex]);
+		moveTime.setNextComponent(currentPics[next]);
+		currentIndex = next;
+		moveTime.start();
+
 	}
 
 	private void initParameter() {
@@ -96,19 +125,40 @@ public class Demo extends FormBaseChild {
 				multiProcessClipFile.getPath()
 		);
 
+		labelHotSpotAnalyst.setIcon(ProcessResources.getIcon(iconFileName + ProcessProperties.getString("String_hotSpotAnalyst") + ".png"));
+		labelSpatial.setIcon(ProcessResources.getIcon(iconFileName + ProcessProperties.getString("String_SpatialStatistics") + ".png"));
+		labelMultiProcessClip.setIcon(ProcessResources.getIcon(iconFileName + "duoJinChengQieTu.png"));
+		currentPics = new JLabel[]{
+				labelHotSpotAnalyst, labelSpatial, labelMultiProcessClip
+		};
 	}
 
 	private void initLayout() {
-		this.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
-		this.add(hotSpotAnalystButton);
-		this.add(spatialButton);
-		this.add(multiProcessClipButton);
+		panelCenter.setLayout(null);
+		panelCenter.setOpaque(false);
+		labelHotSpotAnalyst.setBounds(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		labelSpatial.setBounds(DEFAULT_WIDTH, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		labelMultiProcessClip.setBounds(DEFAULT_WIDTH, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
-//		this.add(demoParameterButton4);
-//		this.add(demoParameterButton5);
-//		this.add(demoParameterButton6);
-//		this.add(demoParameterButton7);
-//		this.add(demoParameterButton8);
+
+		panelCenter.add(labelHotSpotAnalyst);
+		panelCenter.add(labelSpatial);
+		panelCenter.add(labelMultiProcessClip);
+		panelCenter.setMinimumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+		panelCenter.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+
+		JPanel jPanelButton = new JPanel();
+		jPanelButton.setOpaque(false);
+		jPanelButton.setLayout(new GridBagLayout());
+		jPanelButton.add(hotSpotAnalystButton, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.EAST));
+		jPanelButton.add(spatialButton, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 0).setInsets(0, 5, 0, 0));
+		jPanelButton.add(multiProcessClipButton, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 0, 0));
+
+
+		this.setLayout(new GridBagLayout());
+		this.add(panelCenter, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setInsets(10, 0, 0, 0));
+		this.add(jPanelButton, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.NORTH));
+
 
 	}
 
@@ -116,11 +166,45 @@ public class Demo extends FormBaseChild {
 		hotSpotAnalystButton.addActionListener(actionListener);
 		spatialButton.addActionListener(actionListener);
 		multiProcessClipButton.addActionListener(actionListener);
-
-//		demoParameterButton4.addActionListener(actionListener);
-//		demoParameterButton5.addActionListener(actionListener);
-//		demoParameterButton6.addActionListener(actionListener);
-//		demoParameterButton7.addActionListener(actionListener);
-//		demoParameterButton8.addActionListener(actionListener);
 	}
+
+	class LeftTimer extends Timer {
+
+		private JComponent currentComponent;
+		private JComponent nextComponent;
+		private int step = 20;
+
+		public LeftTimer() {
+			super(1, null);
+			this.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (currentComponent != null && nextComponent != null) {
+						currentComponent.setLocation(currentComponent.getX() - step, 0);
+						nextComponent.setLocation(nextComponent.getX() - step, 0);
+						if (nextComponent.getX() <= 0) {
+							LeftTimer.this.stop();
+						}
+					}
+				}
+			});
+		}
+
+
+		public void setCurrentComponent(JComponent currentComponent) {
+			this.currentComponent = currentComponent;
+		}
+
+		public void setNextComponent(JComponent nextComponent) {
+			this.nextComponent = nextComponent;
+		}
+
+		@Override
+		public void start() {
+			currentComponent.setLocation(0, 0);
+			nextComponent.setLocation(DEFAULT_WIDTH, 0);
+			super.start();
+		}
+	}
+
 }
