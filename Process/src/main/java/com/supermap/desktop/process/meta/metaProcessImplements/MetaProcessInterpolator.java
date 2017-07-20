@@ -1,7 +1,24 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.analyst.spatialanalyst.*;
-import com.supermap.data.*;
+import com.supermap.analyst.spatialanalyst.Exponent;
+import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
+import com.supermap.analyst.spatialanalyst.InterpolationIDWParameter;
+import com.supermap.analyst.spatialanalyst.InterpolationKrigingParameter;
+import com.supermap.analyst.spatialanalyst.InterpolationParameter;
+import com.supermap.analyst.spatialanalyst.InterpolationRBFParameter;
+import com.supermap.analyst.spatialanalyst.Interpolator;
+import com.supermap.analyst.spatialanalyst.SearchMode;
+import com.supermap.analyst.spatialanalyst.VariogramMode;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
+import com.supermap.data.FieldType;
+import com.supermap.data.PixelFormat;
+import com.supermap.data.Rectangle2D;
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
@@ -12,7 +29,15 @@ import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
-import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.implement.ParameterCombine;
+import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterNumber;
+import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.implement.ParameterSearchMode;
+import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
@@ -26,7 +51,7 @@ import java.beans.PropertyChangeListener;
  * Created by xie on 2017/2/16.
  */
 public class MetaProcessInterpolator extends MetaProcess {
-	private final static String INPUT_DATA = "InputData";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String OUTPUT_DATA = "InterpolateResult";
 
 	private ParameterDatasourceConstrained parameterDatasource;
@@ -207,7 +232,9 @@ public class MetaProcessInterpolator extends MetaProcess {
 					, new ParameterCombine().addParameters(parameterStill, parameterRange, parameterNugget));
 		}
 
-		parameters.setParameters(sourceCombine, parameterField, targetCombine, boundsCombine, modeSetCombine, otherParamCombine);
+		parameters.setParameters(sourceCombine, parameterField, targetCombine
+//				, boundsCombine
+				, modeSetCombine, otherParamCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, targetCombine);
 	}
@@ -329,6 +356,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 			} else {
 				datasetVector = (DatasetVector) this.parameterDataset.getSelectedItem();
 			}
+			interpolationParameter.setBounds(datasetVector.getBounds());// // FIXME: 2017/7/20 范围问题
 			Datasource targetDatasource = parameterResultDatasetName.getResultDatasource();
 			String datasetName = parameterResultDatasetName.getDatasetName();
 			datasetName = targetDatasource.getDatasets().getAvailableDatasetName(datasetName);
