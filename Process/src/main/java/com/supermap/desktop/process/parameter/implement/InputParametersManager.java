@@ -1,23 +1,20 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.DataMatch;
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.IRelation;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.events.*;
-import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IConGetter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
@@ -25,6 +22,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -39,24 +37,100 @@ public class InputParametersManager {
 	private WorkflowChangeHandler workflowChangeHandler = new WorkflowChangeHandler();
 	private RelationAddedHandler relationAddedHandler = new RelationAddedHandler();
 	private RelationRemovingHandler relationRemovingHandler = new RelationRemovingHandler();
+	private ParameterComboBoxPropertyChangeListener parameterComboBoxPropertyChangeListener = new ParameterComboBoxPropertyChangeListener();
 
 	public InputParametersManager(IParameters parameters) {
 		this.parameters = parameters;
 	}
 
 	public void bindWorkflow(Workflow workflow) {
-		if (workflow != null) {
-			workflow.addWorkflowChangeListener(this.workflowChangeHandler);
-			workflow.addRelationAddedListener(this.relationAddedHandler);
-			workflow.addRelationRemovingListener(this.relationRemovingHandler);
+		if (workflow == null) {
+			return;
+		}
+
+		if (workflow != this.parameters.getProcess().getWorkflow()) {
+			throw new IllegalArgumentException();
+		}
+
+		loadProcesses(workflow.getProcesses());
+		loadRelations(workflow.getRelations());
+		workflow.addWorkflowChangeListener(this.workflowChangeHandler);
+		workflow.addRelationAddedListener(this.relationAddedHandler);
+		workflow.addRelationRemovingListener(this.relationRemovingHandler);
+	}
+
+	private void loadProcesses(Vector<IProcess> processes) {
+		if (processes != null && processes.size() > 0) {
+			for (int i = 0; i < processes.size(); i++) {
+				loadProcess(processes.get(i));
+			}
+		}
+	}
+
+	private void loadRelations(Vector<IRelation<IProcess>> relations) {
+		if (relations != null && relations.size() > 0) {
+			for (int i = 0; i < relations.size(); i++) {
+				if (relations.get(i) instanceof DataMatch) {
+					bind(((DataMatch) relations.get(i)).getToInputData(), ((DataMatch) relations.get(i)).getFromOutputData());
+				}
+			}
+		}
+	}
+
+	private void loadProcess(IProcess process) {
+		if (process != parameters.getProcess()) {
+			OutputData[] outputs = process.getOutputs().getDatas();
+
+			for (String name :
+					paramsMap.keySet()) {
+				ParameterComboBox comboBox = paramsMap.get(name);
+
+				for (int i = 0; i < outputs.length; i++) {
+					OutputData output = outputs[i];
+
+					if (parameters.getInputs().getData(name).getType().intersects(output.getType())) {
+						comboBox.addItem(new ParameterDataNode(process.getTitle() + "_" + output.getName(), output));
+					}
+				}
+			}
 		}
 	}
 
 	public void unbindWorkflow(Workflow workflow) {
-		if (workflow != null) {
+		if (workflow != null && workflow == parameters.getProcess().getWorkflow()) {
 			workflow.removeWorkflowChangeListener(this.workflowChangeHandler);
 			workflow.removeRelationAddedListener(this.relationAddedHandler);
 			workflow.removeRelationRemovingListener(this.relationRemovingHandler);
+			unloadProcesses(workflow.getProcesses());
+		}
+	}
+
+	private void unloadProcesses(Vector<IProcess> processes) {
+		if (processes != null && processes.size() > 0) {
+			for (int i = 0; i < processes.size(); i++) {
+				unloadProcess(processes.get(i));
+			}
+		}
+	}
+
+	private void unloadProcess(IProcess process) {
+		isDeleting = true;
+
+		try {
+			OutputData[] outputs = process.getOutputs().getDatas();
+
+			for (String name :
+					paramsMap.keySet()) {
+				ParameterComboBox comboBox = paramsMap.get(name);
+
+				for (int i = 0; i < outputs.length; i++) {
+					comboBox.removeItem(outputs[i]);
+				}
+			}
+		} catch (Exception e1) {
+			Application.getActiveApplication().getOutput().output(e1);
+		} finally {
+			isDeleting = false;
 		}
 	}
 
@@ -68,8 +142,8 @@ public class InputParametersManager {
 		parameterComboBox.setIConGetter(newConGetter());
 		parameterComboBox.setParameters(parameters);
 		parameterComboBox.setDescribe(name + ":");
-		reloadParameterComboBox(parameterComboBox, parameters.getInputs().getData(name).getType());
-		parameterComboBox.addPropertyListener(new ParameterComboBoxPropertyChangeListener(name));
+//		reloadParameterComboBox(parameterComboBox, parameters.getInputs().getData(name).getType());
+		parameterComboBox.addPropertyListener(this.parameterComboBoxPropertyChangeListener);
 		this.paramsMap.put(name, parameterComboBox);
 
 		ParameterCombine combine = new ParameterCombine();
@@ -138,20 +212,6 @@ public class InputParametersManager {
 		}
 	}
 
-	private void reloadParameterComboBox(ParameterComboBox parameterComboBox, Type type) {
-		parameterComboBox.removeAllItems();
-		IForm form = Application.getActiveApplication().getActiveForm();
-		if (!(form instanceof FormWorkflow)) {
-			return;
-		}
-		FormWorkflow activeForm = (FormWorkflow) form;
-		ArrayList<IGraph> allDataNode = activeForm.getAllDataNode(type);
-		for (IGraph graph : allDataNode) {
-			if (((OutputGraph) graph).getProcessGraph().getProcess() != this.parameters.getProcess())
-				parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) graph).getProcessGraph().getTitle() + "_" + ((OutputGraph) graph).getTitle(), graph));
-		}
-	}
-
 	class InputParameterDataNode {
 		String name;
 		IParameter[] parameter;
@@ -193,42 +253,9 @@ public class InputParametersManager {
 		@Override
 		public void workflowChange(WorkflowChangeEvent e) {
 			if (e.getType() == WorkflowChangeEvent.ADDED) {
-				if (e.getProcess() != parameters.getProcess()) {
-					OutputData[] outputs = e.getProcess().getOutputs().getDatas();
-
-					for (String name :
-							paramsMap.keySet()) {
-						ParameterComboBox comboBox = paramsMap.get(name);
-
-						for (int i = 0; i < outputs.length; i++) {
-							OutputData output = outputs[i];
-
-							if (parameters.getInputs().getData(name).getType().contains(output.getType())) {
-								comboBox.addItem(new ParameterDataNode(e.getProcess().getTitle() + "_" + output.getName(), output));
-							}
-						}
-					}
-				}
+				loadProcess(e.getProcess());
 			} else if (e.getType() == WorkflowChangeEvent.REMOVED) {
-				isDeleting = true;
-
-				try {
-					IProcess process = e.getProcess();
-					OutputData[] outputs = process.getOutputs().getDatas();
-
-					for (String name :
-							paramsMap.keySet()) {
-						ParameterComboBox comboBox = paramsMap.get(name);
-
-						for (int i = 0; i < outputs.length; i++) {
-							comboBox.removeItem(outputs[i]);
-						}
-					}
-				} catch (Exception e1) {
-					Application.getActiveApplication().getOutput().output(e1);
-				} finally {
-					isDeleting = false;
-				}
+				unloadProcess(e.getProcess());
 			}
 		}
 	}
@@ -257,11 +284,6 @@ public class InputParametersManager {
 	}
 
 	private class ParameterComboBoxPropertyChangeListener implements PropertyChangeListener {
-		private String name;
-
-		public ParameterComboBoxPropertyChangeListener(String name) {
-			this.name = name;
-		}
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
@@ -270,13 +292,12 @@ public class InputParametersManager {
 				if (isDeleting) {
 					newValue = null;
 				}
-//				firePropertyChangedListener(new PropertyChangeEvent(InputParametersManager.this, this.name, evt.getOldValue(), newValue));
 
-				if (!(Application.getActiveApplication().getActiveForm() instanceof FormWorkflow)) {
+				Workflow workflow = parameters.getProcess().getWorkflow();
+				if (workflow == null) {
 					return;
 				}
 
-				Workflow workflow = (Workflow) ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getWorkflow();
 				OutputData oldValue = (OutputData) evt.getOldValue();
 
 				if (newValue == null) {
@@ -284,9 +305,22 @@ public class InputParametersManager {
 					// 约束解除！
 					workflow.removeRelation(oldValue.getProcess(), InputParametersManager.this.parameters.getProcess());
 				} else {
+					String name = "";
+					for (String key :
+							paramsMap.keySet()) {
+						if (evt.getSource() == paramsMap.get(key)) {
+							name = key;
+							break;
+						}
+					}
+
+					if (StringUtilities.isNullOrEmpty(name)) {
+						return;
+					}
+
 					OutputData newOutput = (OutputData) newValue;
 					DataMatch newRelation = new DataMatch(newOutput.getProcess(), InputParametersManager.this.parameters.getProcess(),
-							newOutput.getName(), this.name);
+							newOutput.getName(), name);
 					workflow.addRelation(newRelation);
 				}
 			}
