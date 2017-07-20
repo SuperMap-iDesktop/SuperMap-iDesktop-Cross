@@ -320,7 +320,7 @@ public class TasksManager {
 			Vector<IProcess> preProcesses = this.workflow.getFromProcesses(process);
 
 			for (int i = 0; i < preProcesses.size(); i++) {
-				isReady = (preProcesses.get(i).getStatus() != RunningStatus.COMPLETED);
+				isReady = (preProcesses.get(i).getStatus() == RunningStatus.COMPLETED);
 				if (isReady == false) {
 					break;
 				}
