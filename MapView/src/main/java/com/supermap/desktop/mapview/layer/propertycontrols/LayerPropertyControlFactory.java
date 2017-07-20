@@ -10,6 +10,7 @@ public class LayerPropertyControlFactory {
 	private LayerImageParamPropertyControl imageParamPropertyControl;
 	private LayerStretchOptionPropertyControl stretchOptionPropertyControl;
 	private LayerGridParamPropertyControl gridParamPropertyControl;
+	private LayerHeatmapPropertyControl heatmapPropertyControl;
 
 	public AbstractLayerPropertyControl createLayerPropertyControl(LayerPropertyModel model) {
 		if (model instanceof LayerBasePropertyModel) {
@@ -54,6 +55,13 @@ public class LayerPropertyControlFactory {
 			gridParamPropertyControl.setLayerPropertyModel(model);
 			ComponentUIUtilities.setName(this.gridParamPropertyControl, "LayerPropertyControlFactory_gridParamPropertyControl");
 			return gridParamPropertyControl;
+		}else if (model instanceof LayerHeatmapPropertyModel) {
+			if (heatmapPropertyControl == null) {
+				heatmapPropertyControl = new LayerHeatmapPropertyControl();
+			}
+			heatmapPropertyControl.setLayerPropertyModel(model);
+			ComponentUIUtilities.setName(this.heatmapPropertyControl, "LayerPropertyControlFactory_heatmapPropertyControl");
+			return heatmapPropertyControl;
 		} else {
 			return null;
 		}
