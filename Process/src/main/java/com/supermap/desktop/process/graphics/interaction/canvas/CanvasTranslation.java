@@ -60,7 +60,8 @@ public class CanvasTranslation extends CanvasActionAdapter {
 		if (this.canvas.getVisibleRect().contains(scaleCenter)) {
 
 			// -1 for zooming in,1 form zooming out.
-			double validStep = e.getWheelRotation() == -1 ? this.transform.validateScale(this.step) : -1 * this.transform.validateScale(this.step);
+//			double validStep = e.getWheelRotation() == -1 ? this.transform.validateScale(this.step) : -1 * this.transform.validateScale(this.step);
+			double validStep = this.transform.validateScale(-1 * this.step * e.getWheelRotation());
 
 			// 缩放之后，在画布坐标系统下需要进行的位移量
 			double dx = (100 * scaleCenter.getX()) / (100 + this.transform.getScaleValue() + validStep) - (100 * scaleCenter.getX()) / (100 + this.transform.getScaleValue());

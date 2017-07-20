@@ -21,6 +21,7 @@ public class CtrlActionMapCacheCheck extends CtrlAction {
 	public void run() {
 		Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartCheckCache"));
 		CacheUtilities.startProcess(new String[]{}, DialogCacheCheck.class.getName(), LogWriter.CHECK_CACEH);
+//		new DialogCacheCheck().setVisible(true);
 	}
 
 	@Override

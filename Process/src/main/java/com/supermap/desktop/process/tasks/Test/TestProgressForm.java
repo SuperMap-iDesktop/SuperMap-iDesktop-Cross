@@ -55,7 +55,6 @@ public class TestProgressForm extends JDialog implements IWorkerView<SingleProgr
 		});
 	}
 
-	@Override
 	public void execute(Worker<SingleProgress> worker) {
 		this.worker = worker;
 		worker.setView(this);

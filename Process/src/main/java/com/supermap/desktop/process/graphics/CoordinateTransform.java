@@ -98,7 +98,7 @@ public class CoordinateTransform {
 		if (total >= this.maxScale) {
 			return this.maxScale - this.scale;
 		} else if (total <= this.minScale) {
-			return this.scale - this.minScale;
+			return this.minScale - this.scale;
 		} else {
 			return scale;
 		}

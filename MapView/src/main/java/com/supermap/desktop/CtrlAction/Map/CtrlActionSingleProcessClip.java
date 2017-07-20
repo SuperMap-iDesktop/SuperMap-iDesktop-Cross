@@ -21,13 +21,14 @@ public class CtrlActionSingleProcessClip extends CtrlAction {
 	@Override
 	protected void run() {
 		Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
-		if (CacheUtilities.volatileDatasource(map)) {
-			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
-			Map newMap = new Map(Application.getActiveApplication().getWorkspace());
-			newMap.fromXML(map.toXML());
-			mapCacheBuilder.setMap(newMap);
-			new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.SingleProcessClip, mapCacheBuilder).showDialog();
+		if (!CacheUtilities.dynamicEffectClosed(map)) {
+			return;
 		}
+		MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
+		Map newMap = new Map(Application.getActiveApplication().getWorkspace());
+		newMap.fromXML(map.toXML());
+		mapCacheBuilder.setMap(newMap);
+		new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.SingleProcessClip, mapCacheBuilder).showDialog();
 	}
 
 	@Override

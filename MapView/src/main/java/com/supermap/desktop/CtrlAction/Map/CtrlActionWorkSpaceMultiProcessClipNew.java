@@ -20,7 +20,7 @@ public class CtrlActionWorkSpaceMultiProcessClipNew extends CtrlAction {
 	@Override
 	protected void run() {
 		Map map = CacheUtilities.getWorkspaceSelectedMap();
-		if (CacheUtilities.volatileDatasource(map)) {
+		if (CacheUtilities.volatileDatasource()) {
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 			Map newMap = new Map(Application.getActiveApplication().getWorkspace());
 			newMap.fromXML(map.toXML());

@@ -17,6 +17,10 @@ public interface IProcess {
 
 	String getKey();
 
+	int getSerialID();
+
+	void setSerialID(int serialID);
+
 	IProcessGroup getParent();
 
 	void setParent(ProcessGroup parent);

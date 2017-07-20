@@ -16,7 +16,8 @@ import com.supermap.desktop.interfaces.UserExperienceBean;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * @author XiaJT
@@ -30,7 +31,7 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 	private String functionGrade0;
 	private String functionGrade1;
 	private String functionGrade2;
-	private String functionGrade3 = "";
+	private String functionGrade3;
 	private long executeDateTime;
 	private boolean isFinished;
 	private String message;
@@ -40,6 +41,28 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 	private long memoryIncrement;
 	private long memoryTotal = Runtime.getRuntime().totalMemory();
 	private CtrlAction ctrlAction;
+
+	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	public FunctionInfoCtrlAction(String action) throws ParseException {
+		isException = true;
+		JSONObject parse = null;
+		parse = JSONObject.parseObject(action);
+		caption = parse.getString("Caption");
+		ctrlActionName = parse.getString("CtrlActionName");
+		executeDateTime = parse.getLong("ExecuteDateTime");
+		functionGrade0 = parse.getString("FunctionGrade0");
+		functionGrade1 = parse.getString("FunctionGrade1");
+		functionGrade2 = parse.getString("FunctionGrade2");
+		functionGrade3 = parse.getString("FunctionGrade3");
+		isFinished = false;
+		memoryIncrement = 0;
+		memoryTotal = parse.getLong("MemoryTotal");
+		message = parse.getString("Message");
+		pluginName = parse.getString("PluginName");
+		stackTrace = parse.getString("StackTrace");
+		totalTime = 0;
+	}
 
 
 	public void initCtrlAction(CtrlAction ctrlAction) {
@@ -62,7 +85,6 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 		if (event.getCurrentObject() instanceof CtrlAction) {
 			initCtrlAction(((CtrlAction) event.getCurrentObject()));
 		}
-
 	}
 
 	private void getFunctionGrade(IBaseItem caller) {
@@ -72,19 +94,18 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 				// 右键菜单
 				functionGrade0 = UserExperienceProperties.getString("String_ContextMenu");
 				functionGrade1 = ((SmPopupMenu) parent).getText();
-				Component invoker = ((JPopupMenu) parent).getInvoker();
 			} else if (parent instanceof JPopupMenu) {
 				Component invoker = ((JPopupMenu) parent).getInvoker();
 				if (invoker instanceof ControlButton) {
 					// 下拉菜单
 					functionGrade0 = UserExperienceProperties.getString("String_ToolBar_ButtonDropdown");
 					functionGrade1 = ((SmButtonDropdown) invoker.getParent()).getText();
-					functionGrade2 = ((SmToolbar) invoker.getParent().getParent()).getText();
+					functionGrade3 = ((SmToolbar) invoker.getParent().getParent()).getText();
 				} else if (invoker instanceof SmMenu) {
 					functionGrade0 = UserExperienceProperties.getString("String_FrameMenu");
 					functionGrade1 = ((SmMenu) invoker).getText();
 					Container superParent = invoker.getParent();
-					if (superParent instanceof JPopupMenu) {
+					if (superParent instanceof JPopupMenu && ((JPopupMenu) superParent).getInvoker() instanceof SmMenu) {
 						functionGrade0 = UserExperienceProperties.getString("String_FrameChildMenu");
 						SmMenu menu = (SmMenu) ((JPopupMenu) superParent).getInvoker();
 						functionGrade2 = menu.getText();
@@ -118,7 +139,9 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 		executeDateTime = 0;
 		isFinished = true;
 		message = exception.getMessage();
-		stackTrace = exception.getStackTrace()[0].toString();
+		for (int i = 0; i < 3; i++) {
+			stackTrace += exception.getStackTrace()[i].toString();
+		}
 
 	}
 
@@ -127,7 +150,7 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("Caption", caption);
 		jsonObject.put("CtrlActionName", ctrlActionName);
-		jsonObject.put("ExecuteDateTime", new Date(executeDateTime).toString());
+		jsonObject.put("ExecuteDateTime", executeDateTime);
 		jsonObject.put("FunctionGrade0", functionGrade0);
 		jsonObject.put("FunctionGrade1", functionGrade1);
 		jsonObject.put("FunctionGrade2", functionGrade2);
@@ -142,7 +165,7 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 		jsonObject.put("PluginName", pluginName);
 //		jsonObject.put("ProcessCount", );
 		jsonObject.put("StackTrace", stackTrace);
-		jsonObject.put("TotalTime", new Date(totalTime));
+		jsonObject.put("TotalTime", totalTime);
 //		jsonObject.put("UserObjectIncerment", );
 //		jsonObject.put("UserObjectTotal", );
 		return jsonObject.toString();

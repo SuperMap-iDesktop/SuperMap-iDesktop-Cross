@@ -28,7 +28,9 @@ import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.Dockbar;
-import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,13 +52,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	}
 
 	public FormWorkflow(String name) {
-		super(name, null, null);
-		if (StringUtilities.isNullOrEmpty(name)) {
-			name = ControlsProperties.getString("String_WorkFlows");
-		}
-		this.title = name;
-//		this.canvas = new WorkflowCanvas();
-		initializeComponents();
+		this(new Workflow(name));
 	}
 
 
@@ -68,7 +64,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		this.tasksManager = new TasksManager(this.workflow);
 
 		initializeComponents();
-		this.setText(workflow.getName());
+		setText(workflow.getName());
 		isNeedSave = false;
 	}
 
@@ -134,44 +130,95 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 
 	@Override
+	public void setText(String text) {
+		this.workflow.setName(text);
+		super.setText(text);
+	}
+
+	@Override
 	public WindowType getWindowType() {
-		return WindowType.WORK_FLOW;
+		return WindowType.WORKFLOW;
+	}
+
+	public String serializeTo() {
+		Document doc = XmlUtilities.getEmptyDocument();
+
+		// 新建 WorkflowEntry
+		Element workflowEntryNode = doc.createElement("WorkflowEntry");
+		workflowEntryNode.setAttribute("Name", getText());
+		doc.appendChild(workflowEntryNode);
+
+		// 处理 Workflow
+		Element workflowNode = doc.createElement("Workflow");
+		this.workflow.serializeTo(workflowNode);
+		workflowEntryNode.appendChild(workflowNode);
+
+		// 处理 location
+		Element locationsNode = doc.createElement("Locations");
+		this.canvas.serializeTo(locationsNode);
+		workflowEntryNode.appendChild(locationsNode);
+
+		return XmlUtilities.nodeToString(doc, "UTF-8");
+	}
+
+	public static FormWorkflow serializeFrom(String description) {
+		FormWorkflow formWorkflow = null;
+		Document doc = XmlUtilities.stringToDocument(description);
+		Element workflowEntryNode = (Element) XmlUtilities.getChildElementNodeByName(doc, "WorkflowEntry");
+		String name = workflowEntryNode.getAttribute("Name");
+
+		// 处理 Workflow
+		Workflow workflow = new Workflow(name);
+		Element workflowNode = (Element) XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Workflow");
+		workflow.serializeFrom(workflowNode);
+
+		// 解析 UIConfig
+		formWorkflow = new FormWorkflow(workflow);
+		Element uiConfigNode = (Element) XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Locations");
+		WorkflowUIConfig uiConfig = WorkflowUIConfig.serializeFrom(uiConfigNode);
+
+		if (uiConfig != null) {
+			formWorkflow.getCanvas().loadUIConfig(uiConfig);
+		}
+		return formWorkflow;
 	}
 
 	@Override
 	public boolean save() {
 		boolean result = false;
 		int index = -1;
-		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
-		for (IWorkflow workFlow : workFlows) {
+		ArrayList<IWorkflow> workflows = Application.getActiveApplication().getWorkflows();
+		for (IWorkflow workFlow : workflows) {
 			if (workFlow.getName().equals(this.getText())) {
-				index = workFlows.indexOf(workFlow);
-				Application.getActiveApplication().removeWorkFlow(workFlow);
+				index = workflows.indexOf(workFlow);
+				Application.getActiveApplication().removeWorkflow(workFlow);
 				break;
 			}
 		}
 
 		if (index == -1) {
+			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 			SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
 			dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
 			dialogSaveAs.setCurrentFormName(getText());
-			for (IWorkflow workFlow : Application.getActiveApplication().getWorkFlows()) {
+			dialogSaveAs.setTitle(ProcessProperties.getString("String_SaveWorkflow"));
+
+			for (IWorkflow workFlow : Application.getActiveApplication().getWorkflows()) {
 				dialogSaveAs.addExistNames(workFlow.getName());
 			}
-			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+
 			for (int i = 0; i < formManager.getCount(); i++) {
 				if (formManager.get(i) instanceof FormWorkflow && formManager.get(i) != this) {
 					dialogSaveAs.addExistNames(formManager.get(i).getText());
 				}
 			}
-			dialogSaveAs.setTitle(ProcessProperties.getString("String_SaveWorkFLow"));
 			if (dialogSaveAs.showDialog() == DialogResult.OK) {
 				this.setText(dialogSaveAs.getCurrentFormName());
-				Application.getActiveApplication().addWorkFlow(getWorkflow());
+				Application.getActiveApplication().addWorkflow(getWorkflow());
 				result = true;
 			}
 		} else {
-			Application.getActiveApplication().addWorkFlow(index, getWorkflow());
+			Application.getActiveApplication().addWorkflow(index, getWorkflow());
 			result = true;
 		}
 		isNeedSave = !result;
@@ -183,7 +230,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
 		dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
 		dialogSaveAs.setCurrentFormName(getText());
-		for (IWorkflow workFlow : Application.getActiveApplication().getWorkFlows()) {
+		for (IWorkflow workFlow : Application.getActiveApplication().getWorkflows()) {
 			dialogSaveAs.addExistNames(workFlow.getName());
 		}
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
@@ -195,7 +242,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		dialogSaveAs.setTitle(ProcessProperties.getString("Sting_SaveAsWorkFlow"));
 		if (dialogSaveAs.showDialog() == DialogResult.OK) {
 			this.setText(dialogSaveAs.getCurrentFormName());
-			Application.getActiveApplication().addWorkFlow(getWorkflow());
+			Application.getActiveApplication().addWorkflow(getWorkflow());
 			result = true;
 		}
 		isNeedSave = !result;

@@ -3,11 +3,7 @@ package com.supermap.desktop.utilities;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CoreProperties;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -333,7 +329,7 @@ public class FileUtilities {
 	 * @return
 	 */
 	public static String getFileAlias(String filePath) {
-		String fileName = isFilePath(filePath) ? filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.length()) : null;
+		String fileName = isFilePath(filePath) ? filePath.substring(filePath.lastIndexOf(File.separator) + 1, filePath.length()) : null;
 		if (null == fileName || !fileName.contains(".")) {
 			return null;
 		}

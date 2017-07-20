@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 /**
@@ -54,15 +55,50 @@ public class UserExperienceManager {
 
 	private static final long maxFileSize = 8 * 1024 * 1024 * 10;
 
-
 	private Timer timer;
 
 	private UserExperienceManager() {
-		postExistFiles();
-		executedFunctionFile = getDefaultFile();
-		if (executedFunctionFile != null) {
-			initializeLicenseInfo();
-			initializeLogsSendTimer();
+		ThreadUtilties.execute(new Runnable() {
+			@Override
+			public void run() {
+				postExistFiles();
+				executedFunctionFile = getDefaultFile();
+				if (executedFunctionFile != null) {
+					initExceptionCtrlActions();
+					initializeLicenseInfo();
+					initializeLogsSendTimer();
+					DesktopRuntimeManager.getInstance().addRuntimeStateListener(desktopRuntimeListener);
+				}
+			}
+		});
+	}
+
+	private void initExceptionCtrlActions() {
+		FileLocker fileLocker = new FileLocker(executingFile);
+		try {
+			if (fileLocker.tryLock()) {
+				RandomAccessFile randomAccessFile = fileLocker.getRandomAccessFile();
+				if (randomAccessFile.length() > 0) {
+					randomAccessFile.seek(0);
+					byte[] bytes = new byte[((int) randomAccessFile.length())];
+					randomAccessFile.read(bytes);
+					String value = new String(bytes, "UTF-8");
+					String[] actions = value.split(System.getProperty("line.separator"));
+					for (String action : actions) {
+						try {
+							FunctionInfoCtrlAction functionInfoCtrlAction = new FunctionInfoCtrlAction(action);
+							addDoneJson(new UserExperienceBaseInfo(new DesktopUserExperienceInfo(functionInfoCtrlAction)).getJson());
+						} catch (Exception e) {
+							// ignore
+						}
+					}
+				}
+				randomAccessFile.setLength(0);
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			fileLocker.release();
 		}
 	}
 
@@ -123,7 +159,7 @@ public class UserExperienceManager {
 				if (file.exists()) {
 					FileLocker fileLocker = new FileLocker(file);
 					if (fileLocker.tryLock()) {
-						if (fileLocker.getRandomAccessFile().length() == 0) {
+						if (fileLocker.getRandomAccessFile().length() < maxFileSize) {
 							return fileLocker;
 						} else {
 							fileLocker.release();
@@ -165,9 +201,6 @@ public class UserExperienceManager {
 	}
 
 	public void start() {
-		if (executedFunctionFile != null) {
-			DesktopRuntimeManager.getInstance().addRuntimeStateListener(desktopRuntimeListener);
-		}
 	}
 
 	private void doPost() {
@@ -180,9 +213,14 @@ public class UserExperienceManager {
 					executedFile.getLockFile().delete();
 				}
 			});
-
 		}
-		doPost(executedFunctionFile);
+		ThreadUtilties.execute(new Runnable() {
+			@Override
+			public void run() {
+				doPost(executedFunctionFile);
+			}
+		});
+
 	}
 
 	public void stop() {
@@ -215,7 +253,7 @@ public class UserExperienceManager {
 				// 暂不支持取消
 				break;
 			case DesktopRuntimeEvent.EXCEPTION:
-				addDoneJson(new UserExperienceBaseInfo(new DesktopUserExperienceInfo(new FunctionInfoCtrlAction(event))).getJson());
+				addDoneJson(new UserExperienceBaseInfo(new DesktopUserExperienceInfo(new FunctionInfoCtrlAction((Exception) event.getCurrentObject()))).getJson());
 				break;
 			case DesktopRuntimeEvent.STOP:
 				ctrlActionFinished(event);
@@ -279,7 +317,6 @@ public class UserExperienceManager {
 			while (!fileLocker.tryLock()) {
 				Thread.sleep(1000);
 			}
-
 			fileLocker.getRandomAccessFile().seek(0);
 			byte[] bytes = new byte[(int) fileLocker.getRandomAccessFile().length()];
 			fileLocker.getRandomAccessFile().read(bytes);

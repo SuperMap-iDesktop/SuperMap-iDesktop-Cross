@@ -2,6 +2,10 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.process.events.*;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.swing.event.EventListenerList;
 import java.util.Vector;
@@ -54,17 +58,164 @@ public class Workflow implements IWorkflow {
 	}
 
 	@Override
-	public String toXML() {
-		return null;
+	public String serializeTo() {
+		Document doc = XmlUtilities.stringToDocument("");
+
+		// 处理 workflow
+		Element workflowNode = doc.createElement("Workflow");
+		doc.appendChild(workflowNode);
+
+		// 处理 processes
+		Element processesNode = doc.createElement("processes");
+		Vector<IProcess> processes = this.processMatrix.getNodes();
+		for (int i = 0; i < processes.size(); i++) {
+			IProcess process = processes.get(i);
+			Element processNode = doc.createElement("process");
+			processNode.setAttribute("key", process.getKey());
+			processNode.setAttribute("className", process.getClass().getName());
+			processesNode.appendChild(processesNode);
+		}
+		workflowNode.appendChild(processesNode);
+
+		// 处理 relations
+		Element relationsNode = doc.createElement("relations");
+		Vector<IRelation<IProcess>> relations = this.processMatrix.getRelations();
+		for (int i = 0; i < relations.size(); i++) {
+			IRelation relation = relations.get(i);
+
+			// 目前只有一种数据匹配关系，先就只处理这一种关系的导入和导出
+			if (relation instanceof DataMatch) {
+				Element relationNode = doc.createElement("relation");
+				relationNode.setAttribute("className", relation.getClass().getName());
+				relationNode.setAttribute("fromKey", ((DataMatch) relation).getFrom().getKey());
+				relationNode.setAttribute("toKey", ((DataMatch) relation).getTo().getKey());
+				relationNode.setAttribute("fromOutputData", ((DataMatch) relation).getFromOutputData().getName());
+				relationNode.setAttribute("toInputData", ((DataMatch) relation).getToInputData().getName());
+				relationsNode.appendChild(relationNode);
+			}
+		}
+		workflowNode.appendChild(relationsNode);
+
+		return XmlUtilities.nodeToString(workflowNode);
+	}
+
+	public void serializeTo(Element workflowNode) {
+		Document doc = workflowNode.getOwnerDocument();
+
+		// 处理 processes
+		Element processesNode = doc.createElement("Processes");
+		Vector<IProcess> processes = this.processMatrix.getNodes();
+		for (int i = 0; i < processes.size(); i++) {
+			IProcess process = processes.get(i);
+			Element processNode = doc.createElement("Process");
+			processNode.setAttribute("Key", process.getKey());
+			processNode.setAttribute("ClassName", process.getClass().getName());
+
+			// 一个工作流可能存在多个相同类型的 Process，此时导出就需要有一个标记，用以在导入的时候匹配
+			processNode.setAttribute("SerialID", String.valueOf(process.getSerialID()));
+			processesNode.appendChild(processNode);
+		}
+		workflowNode.appendChild(processesNode);
+
+		// 处理 relations
+		Element relationsNode = doc.createElement("Relations");
+		Vector<IRelation<IProcess>> relations = this.processMatrix.getRelations();
+		for (int i = 0; i < relations.size(); i++) {
+			IRelation relation = relations.get(i);
+
+			// 目前只有一种数据匹配关系，先就只处理这一种关系的导入和导出
+			if (relation instanceof DataMatch) {
+				Element relationNode = doc.createElement("Relation");
+				relationNode.setAttribute("ClassName", relation.getClass().getName());
+				relationNode.setAttribute("FromKey", ((DataMatch) relation).getFrom().getKey());
+				relationNode.setAttribute("FromSerialID", String.valueOf(((DataMatch) relation).getFrom().getSerialID()));
+				relationNode.setAttribute("ToKey", ((DataMatch) relation).getTo().getKey());
+				relationNode.setAttribute("ToSerialID", String.valueOf(((DataMatch) relation).getTo().getSerialID()));
+				relationNode.setAttribute("FromOutputData", ((DataMatch) relation).getFromOutputData().getName());
+				relationNode.setAttribute("ToInputData", ((DataMatch) relation).getToInputData().getName());
+				relationsNode.appendChild(relationNode);
+			}
+		}
+		workflowNode.appendChild(relationsNode);
+	}
+
+	public void serializeFrom(Element workflowNode) {
+
+		// 处理 Process
+		Element processesNode = (Element) XmlUtilities.getChildElementNodeByName(workflowNode, "Processes");
+		Element[] processNodes = XmlUtilities.getChildElementNodesByName(processesNode, "Process");
+		for (int i = 0; i < processNodes.length; i++) {
+			Element processNode = processNodes[i];
+			String processKey = processNode.getAttribute("Key");
+			int serialID = Integer.valueOf(processNode.getAttribute("SerialID"));
+			IProcess process = WorkflowParser.getMetaProcess(processKey);
+			process.setSerialID(serialID);
+			addProcess(process);
+		}
+
+		// 处理 Relation
+		Element relationsNode = (Element) XmlUtilities.getChildElementNodeByName(workflowNode, "Relations");
+		Element[] relationNodes = XmlUtilities.getChildElementNodesByName(relationsNode, "Relation");
+		for (int i = 0; i < relationNodes.length; i++) {
+			Element relationNode = relationNodes[i];
+			String className = relationNode.getAttribute("ClassName");
+
+			if (StringUtilities.stringEquals(className, DataMatch.class.getName())) {
+				String fromKey = relationNode.getAttribute("FromKey");
+				int fromSerialID = Integer.valueOf(relationNode.getAttribute("FromSerialID"));
+				IProcess from = getProcess(fromKey, fromSerialID);
+
+				String toKey = relationNode.getAttribute("ToKey");
+				int toSerialID = Integer.valueOf(relationNode.getAttribute("ToSerialID"));
+				IProcess to = getProcess(toKey, toSerialID);
+
+				if (from == null || to == null) {
+					continue;
+				}
+
+				String fromOutputData = relationNode.getAttribute("FromOutputData");
+				String toInputData = relationNode.getAttribute("ToInputData");
+				DataMatch dataMatch = new DataMatch(from, to, fromOutputData, toInputData);
+				addRelation(dataMatch);
+			}
+		}
+	}
+
+	public IProcess getProcess(String key, int serialID) {
+		IProcess ret = null;
+
+		Vector<IProcess> processes = getProcesses();
+		for (int i = 0; i < processes.size(); i++) {
+			IProcess process = processes.get(i);
+
+			if (StringUtilities.stringEquals(process.getKey(), key) && process.getSerialID() == serialID) {
+				ret = process;
+				break;
+			}
+		}
+		return ret;
 	}
 
 	@Override
-	public void fromXML(String xmlDescription) {
+	public void serializeFrom(String xmlDescription) {
 
 	}
 
 	public Vector<IRelation<IProcess>> getRelations() {
 		return this.processMatrix.getRelations();
+	}
+
+	public IProcess getProcess(String key) {
+		IProcess process = null;
+
+		Vector<IProcess> processes = this.processMatrix.getNodes();
+		for (int i = 0; i < processes.size(); i++) {
+			if (StringUtilities.stringEquals(processes.get(i).getKey(), key)) {
+				process = processes.get(i);
+				break;
+			}
+		}
+		return process;
 	}
 
 	public void addProcess(IProcess process) {

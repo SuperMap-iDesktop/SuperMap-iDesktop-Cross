@@ -42,8 +42,8 @@ import java.text.MessageFormat;
  * 叠加分析
  */
 public class MetaProcessOverlayAnalyst extends MetaProcess {
-	private final static String INPUT_DATA = "InputData";
-	private final static String OVERLAY_DATA = "OverlayData";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	private final static String OVERLAY_DATA = CommonProperties.getString("String_label_OverlayDataset");
 	private final static String OUTPUT_DATA = "OverlayResult";
 
 	private OverlayAnalystType analystType;

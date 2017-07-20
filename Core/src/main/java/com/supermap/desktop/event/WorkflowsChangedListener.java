@@ -3,6 +3,6 @@ package com.supermap.desktop.event;
 /**
  * @author XiaJT
  */
-public interface WorkFlowsChangedListener {
+public interface WorkflowsChangedListener {
 	void workFlowsChanged(WorkFlowsChangedEvent workFlowChangedEvent);
 }

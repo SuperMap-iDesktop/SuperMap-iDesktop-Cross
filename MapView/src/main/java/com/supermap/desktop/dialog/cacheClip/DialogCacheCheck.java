@@ -1,6 +1,9 @@
 package com.supermap.desktop.dialog.cacheClip;
 
+import com.supermap.data.DatasourceConnectionInfo;
+import com.supermap.data.EngineType;
 import com.supermap.data.processing.CacheWriter;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
@@ -70,7 +73,7 @@ public class DialogCacheCheck extends JFrame {
 		File taskFile = new File(taskPath, "build");
 		File doingFile = null;
 		if (taskFile.exists()) {
-			doingFile = new File(CacheUtilities.replacePath(taskPath, "doing"));
+			doingFile = new File(CacheUtilities.replacePath(taskPath, "checking"));
 		}
 		return null != doingFile && hasSciFiles(doingFile);
 	}
@@ -80,7 +83,7 @@ public class DialogCacheCheck extends JFrame {
 		String taskPath = CacheUtilities.replacePath(fileChooseCachePath.getPath(), "CacheTask");
 		taskPath = CacheUtilities.replacePath(taskPath, "build");
 		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
-			ProcessManager.getInstance().removeAllProcess(taskPath, "doing");
+			ProcessManager.getInstance().removeAllProcess(taskPath, "checking");
 			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessCheckFinished"), taskPath));
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			DialogCacheCheck.this.dispose();
@@ -238,7 +241,7 @@ public class DialogCacheCheck extends JFrame {
 			}
 		}
 		if (StringUtilities.isNullOrEmpty(sciPath) || !FileUtilities.isFilePath(sciPath) || !hasSciFiles(sciDirectory)) {
-			optionPane.showConfirmDialog(MapViewProperties.getString("String_CachePathNotExist"));
+			optionPane.showConfirmDialog(MapViewProperties.getString("String_TaskNotExist"));
 			return false;
 		}
 		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || processCount.equals("0"))) {
@@ -271,7 +274,7 @@ public class DialogCacheCheck extends JFrame {
 				}
 			}
 			if (null == cacheRoot) {
-				new SmOptionPane().showErrorDialog("String_CachePathNotExist");
+				new SmOptionPane().showErrorDialog("String_TaskNotExist");
 				return;
 			}
 			String processCount = textFieldProcessCount.getText();
@@ -287,12 +290,13 @@ public class DialogCacheCheck extends JFrame {
 				double anchorLeft = -1;
 				double anchorTop = -1;
 				int tileSize = -1;
+				String checkPath = CacheUtilities.replacePath(cacheTaskPath, "check");
+				String datasourcePath = CacheUtilities.replacePath(checkPath, "check.udb");
 				if (checkBoxSaveErrorData.isSelected()) {
 					ArrayList<String> sciNames = CheckCache.getSciFileList(taskPath);
 					File scifile = new File(sciNames.get(0));
 					parentPath = scifile.getParentFile().getParent();
-					String checkPath = CacheUtilities.replacePath(parentPath, "check");
-					String datasourcePath = CacheUtilities.replacePath(checkPath, "check.udb");
+
 					File datasourceFile = new File(datasourcePath);
 					if (!datasourceFile.exists()) {
 						System.out.println(datasourcePath + " not exists!");
@@ -304,43 +308,63 @@ public class DialogCacheCheck extends JFrame {
 					anchorTop = writer.getIndexBounds().getTop();
 					tileSize = writer.getTileSize().value();
 				}
-				((JButton) e.getSource()).setCursor(new Cursor(Cursor.WAIT_CURSOR));
-				CheckCache checkCache = new CheckCache();
-//				checkCache.main(params);
-				checkCache.startProcess(Integer.valueOf(processCount), params);
-				((JButton) e.getSource()).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-				//Ensure all sci files has been checked
-				File sciFile = new File(taskPath);
-				String checkingPath = CacheUtilities.replacePath(sciFile.getParent(), "doing");
-				while (!FileUtilities.isDirEmpty(taskPath)) {
-					Thread.sleep(2000);
-				}
-				while (!FileUtilities.isDirEmpty(checkingPath)) {
-					Thread.sleep(2000);
-				}
+				CheckCache.main(params);
+//				CheckCache checkCache = new CheckCache();
+//				checkCache.startProcess(Integer.valueOf(processCount), params);
+				getResult(cachePath, cacheRoot, cacheTaskPath, taskPath, parentPath, anchorLeft, anchorTop, tileSize, datasourcePath);
 
-				if (null != parentPath && checkBoxSaveErrorData.isSelected()) {
-					checkCache.error2Udb(anchorLeft, anchorTop, tileSize, parentPath);
-				}
-				boolean cacheBuild = checkBoxCacheBuild.isSelected();
-				if (cacheBuild) {
-					File cacheFile = new File(cacheRoot);
-					File errorFile = new File(CacheUtilities.replacePath(cacheTaskPath, "failed"));
-					//有错误则重新切图
-					if (null != errorFile && errorFile.list(CacheUtilities.getFilter()).length > 0 && tileSize != -1) {
-						String[] tempParams = {"Multi", "null", cacheFile.getName(), cachePath};
-						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
-					} else {
-						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_CacheCheckSuccess"));
-					}
-				}
-				dialogDispose();
 			}
 		} catch (Exception ex) {
 			if (null != ex.getMessage()) {
 				new SmOptionPane().showConfirmDialog(ex.getMessage());
 			}
 		}
+	}
+
+	private void getResult(final String cachePath, final String cacheRoot, final String cacheTaskPath, final String taskPath, final String parentPath,
+	                       final double anchorLeft, final double anchorTop, final int tileSize, final String datasourcePath) throws InterruptedException {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					//Ensure all sci files has been checked
+					String checkingPath = CacheUtilities.replacePath(cacheTaskPath, "checking");
+					while (!FileUtilities.isDirEmpty(taskPath)) {
+						Thread.sleep(2000);
+					}
+					while (!FileUtilities.isDirEmpty(checkingPath)) {
+						Thread.sleep(2000);
+					}
+
+					if (null != parentPath && checkBoxSaveErrorData.isSelected()) {
+						CheckCache.error2Udb(anchorLeft, anchorTop, tileSize, parentPath, datasourcePath);
+					}
+					DatasourceConnectionInfo info = new DatasourceConnectionInfo();
+					info.setServer(datasourcePath);
+					info.setAlias("check");
+					info.setEngineType(EngineType.UDB);
+					Application.getActiveApplication().getWorkspace().getDatasources().open(info);
+					boolean cacheBuild = checkBoxCacheBuild.isSelected();
+					if (cacheBuild) {
+						File cacheFile = new File(cacheRoot);
+						File errorFile = new File(CacheUtilities.replacePath(cacheTaskPath, "failed"));
+						//有错误则重新切图
+						if (null != errorFile && errorFile.list(CacheUtilities.getFilter()).length > 0 && tileSize != -1) {
+							String[] tempParams = {"Multi", "null", cacheFile.getName(), cachePath};
+							CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
+						} else {
+							new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_CacheCheckSuccess"));
+						}
+					}
+					dialogDispose();
+				} catch (Exception ex) {
+					if (null != ex.getMessage()) {
+						new SmOptionPane().showConfirmDialog(ex.getMessage());
+					}
+				}
+			}
+		}, "thread").start();
 	}
 
 	private void dialogDispose() {

@@ -1,12 +1,15 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
+import com.supermap.data.Dataset;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.mapping.Map;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**

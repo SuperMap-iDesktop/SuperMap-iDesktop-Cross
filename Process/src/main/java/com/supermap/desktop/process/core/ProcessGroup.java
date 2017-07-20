@@ -130,6 +130,16 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	}
 
 	@Override
+	public int getSerialID() {
+		return 0;
+	}
+
+	@Override
+	public void setSerialID(int serialID) {
+
+	}
+
+	@Override
 	public Inputs getInputs() {
 		return null;
 	}
