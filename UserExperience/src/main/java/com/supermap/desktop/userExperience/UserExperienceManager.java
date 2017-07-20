@@ -85,9 +85,15 @@ public class UserExperienceManager {
 					String value = new String(bytes, "UTF-8");
 					String[] actions = value.split(System.getProperty("line.separator"));
 					for (String action : actions) {
-						addDoneJson(new UserExperienceBaseInfo(new DesktopUserExperienceInfo(new FunctionInfoCtrlAction(action))).getJson());
+						try {
+							FunctionInfoCtrlAction functionInfoCtrlAction = new FunctionInfoCtrlAction(action);
+							addDoneJson(new UserExperienceBaseInfo(new DesktopUserExperienceInfo(functionInfoCtrlAction)).getJson());
+						} catch (Exception e) {
+							// ignore
+						}
 					}
 				}
+				randomAccessFile.setLength(0);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
