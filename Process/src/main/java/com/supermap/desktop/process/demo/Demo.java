@@ -1,8 +1,8 @@
 package com.supermap.desktop.process.demo;
 
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.ui.FormBaseChild;
-import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -25,24 +25,26 @@ public class Demo extends FormBaseChild {
 
 	// 视频文件默认目录为桌面 demoView文件夹
 	String path = "C://Users//Administrator//Desktop//demoView//";
+	// 图片库文件夹名
 	String iconFileName = "/UserMeetingPhotos/";
-	String iDesktopCross = "Cross";
 	// 热点分析
 	String hotSpotAnalystPath = path + ProcessProperties.getString("String_hotSpotAnalyst") + ".avi";
 	// 地统计分析
-	String spatialPath = path + ProcessProperties.getString("String_Spatial") + ".avi";
+	String spatialPath = path + ProcessProperties.getString("String_SpatialStatistics") + ".avi";
+	// 多进程切图
+	String multiProcessClipPath = path + ProcessProperties.getString("String_MultiProcessClip") + ".avi";
 
 
 	private DemoParameterButton hotSpotAnalystButton;
 	private DemoParameterButton spatialButton;
+	private DemoParameterButton multiProcessClipButton;
 
 
-	private DemoParameterButton demoParameterButton3;
-	private DemoParameterButton demoParameterButton4;
-	private DemoParameterButton demoParameterButton5;
-	private DemoParameterButton demoParameterButton6;
-	private DemoParameterButton demoParameterButton7;
-	private DemoParameterButton demoParameterButton8;
+//	private DemoParameterButton demoParameterButton4;
+//	private DemoParameterButton demoParameterButton5;
+//	private DemoParameterButton demoParameterButton6;
+//	private DemoParameterButton demoParameterButton7;
+//	private DemoParameterButton demoParameterButton8;
 
 
 	ActionListener actionListener = new ActionListener() {
@@ -72,27 +74,27 @@ public class Demo extends FormBaseChild {
 
 		// 热点分析
 		File hotSpotAnalystFile = new File(hotSpotAnalystPath);
-		hotSpotAnalystButton = new DemoParameterButton(hotSpotAnalystFile.getName(),
-				CoreResources.getIcon(iconFileName + ProcessProperties.getString("String_hotSpotAnalyst") + ".png"), hotSpotAnalystFile.getPath());
+		hotSpotAnalystButton = new DemoParameterButton(
+				ProcessProperties.getString("String_hotSpotAnalyst"),
+				ProcessResources.getIcon(iconFileName + ProcessProperties.getString("String_hotSpotAnalyst") + ".png"),
+				hotSpotAnalystFile.getPath()
+		);
 
-		File spatialFile = new File(spatialPath);
-		spatialButton = new DemoParameterButton(spatialFile.getName(),
-				CoreResources.getIcon(iconFileName +  ProcessProperties.getString("String_Spatial") + ".png"), spatialFile.getPath());
+		// 地统计分析
+		File spatialStatisticsFile = new File(spatialPath);
+		spatialButton = new DemoParameterButton(
+				ProcessProperties.getString("String_SpatialStatistics"),
+				ProcessResources.getIcon(iconFileName + ProcessProperties.getString("String_SpatialStatistics") + ".png"),
+				spatialStatisticsFile.getPath()
+		);
 
-
-
-		demoParameterButton3 = new DemoParameterButton("unKnown",
-				CoreResources.getIcon(iconFileName + iDesktopCross + ".png"), "");
-		demoParameterButton4 = new DemoParameterButton("unKnown",
-				CoreResources.getIcon(iconFileName + iDesktopCross + ".png"), "");
-		demoParameterButton5 = new DemoParameterButton("unKnown",
-				CoreResources.getIcon(iconFileName + iDesktopCross + ".png"), "");
-		demoParameterButton6 = new DemoParameterButton("unKnown",
-				CoreResources.getIcon(iconFileName + iDesktopCross + ".png"), "");
-		demoParameterButton7 = new DemoParameterButton("unKnown",
-				CoreResources.getIcon(iconFileName + iDesktopCross + ".png"), "");
-		demoParameterButton8 = new DemoParameterButton("unKnown",
-				CoreResources.getIcon(iconFileName + iDesktopCross + ".png"), "");
+		// 多进程切图
+		File multiProcessClipFile = new File(multiProcessClipPath);
+		multiProcessClipButton = new DemoParameterButton(
+				ProcessProperties.getString("String_MultiProcessClip"),
+				ProcessResources.getIcon(iconFileName + ProcessProperties.getString("String_MultiProcessClip") + ".png"),
+				multiProcessClipFile.getPath()
+		);
 
 	}
 
@@ -100,7 +102,8 @@ public class Demo extends FormBaseChild {
 		this.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		this.add(hotSpotAnalystButton);
 		this.add(spatialButton);
-//		this.add(demoParameterButton3);
+		this.add(multiProcessClipButton);
+
 //		this.add(demoParameterButton4);
 //		this.add(demoParameterButton5);
 //		this.add(demoParameterButton6);
@@ -112,11 +115,12 @@ public class Demo extends FormBaseChild {
 	private void initListener() {
 		hotSpotAnalystButton.addActionListener(actionListener);
 		spatialButton.addActionListener(actionListener);
-		demoParameterButton3.addActionListener(actionListener);
-		demoParameterButton4.addActionListener(actionListener);
-		demoParameterButton5.addActionListener(actionListener);
-		demoParameterButton6.addActionListener(actionListener);
-		demoParameterButton7.addActionListener(actionListener);
-		demoParameterButton8.addActionListener(actionListener);
+		multiProcessClipButton.addActionListener(actionListener);
+
+//		demoParameterButton4.addActionListener(actionListener);
+//		demoParameterButton5.addActionListener(actionListener);
+//		demoParameterButton6.addActionListener(actionListener);
+//		demoParameterButton7.addActionListener(actionListener);
+//		demoParameterButton8.addActionListener(actionListener);
 	}
 }
