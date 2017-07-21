@@ -31,7 +31,7 @@ public class DemoParameterButton extends JButton {
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			setContentAreaFilled(true);
+//			setContentAreaFilled(true);
 		}
 
 		@Override
