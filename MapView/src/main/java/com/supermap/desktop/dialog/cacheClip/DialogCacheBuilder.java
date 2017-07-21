@@ -399,20 +399,6 @@ public class DialogCacheBuilder extends JFrame {
 			if (!validateValue(taskPath, workspacePath, mapName, processCount)) {
 				buttonCreate.setEnabled(true);
 			} else {
-				//开始切图前对文件加锁,如果文件已经加锁则表示有进程正在使用,否则表示为以前进程挂了没有处理的
-				File doingDirectory = new File(CacheUtilities.replacePath(CacheUtilities.replacePath(fileChooserCachePath.getPath(), "CacheTask"), "doing"));
-				if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
-					File[] doingFailedSci = doingDirectory.listFiles();
-					for (File doingSci : doingFailedSci) {
-						//文件加了锁说明文件正在被用于切图任务
-						FileLocker locker = new FileLocker(doingSci);
-						if (locker.tryLock()) {
-							//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将该任务移到task目录下,重新切图
-							locker.release();
-							doingSci.renameTo(new File(taskPath, doingSci.getName()));
-						}
-					}
-				}
 				doBuildCache(cachePath);
 			}
 		} catch (Exception ex) {
@@ -504,6 +490,7 @@ public class DialogCacheBuilder extends JFrame {
 		}
 		buildCache = new BuildCache();
 		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
+//		BuildCache.main(params);
 	}
 
 	private int getSubSciCount(String[] sciNames, String s) {
@@ -605,6 +592,21 @@ public class DialogCacheBuilder extends JFrame {
 
 						if (taskFinished(CacheUtilities.replacePath(finalParentPath, "task"))) {
 							break;
+						}else{
+							//实时检查doing目录下的文件是否加锁,如果文件已经加锁则表示有进程正在使用,否则表示为以前进程挂了没有处理的
+							File doingDirectory = new File(CacheUtilities.replacePath(finalCachePath, "doing"));
+							if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
+								File[] doingFailedSci = doingDirectory.listFiles();
+								for (File doingSci : doingFailedSci) {
+									//文件加了锁说明文件正在被用于切图任务
+									FileLocker locker = new FileLocker(doingSci);
+									if (locker.tryLock()) {
+										//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将该任务移到task目录下,重新切图
+										locker.release();
+										doingSci.renameTo(new File(taskPath, doingSci.getName()));
+									}
+								}
+							}
 						}
 						//Sleep,then refresh progressBars
 						if (finalTotalSciLength > 1000) {

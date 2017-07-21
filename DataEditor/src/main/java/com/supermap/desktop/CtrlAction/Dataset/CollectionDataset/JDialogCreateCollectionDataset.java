@@ -134,6 +134,13 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 					}
 				}
 			}
+			JDialogCreateCollectionDataset.this.dispose();
+		}
+	};
+	private ActionListener cancelListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JDialogCreateCollectionDataset.this.dispose();
 		}
 	};
 
@@ -578,6 +585,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		this.buttonMoveLast.addActionListener(moveLastListener);
 		this.buttonRefresh.addActionListener(refreshListener);
 		this.buttonOK.addActionListener(createListener);
+		this.buttonCancel.addActionListener(cancelListener);
 	}
 
 	private void removeEvents() {
@@ -590,6 +598,8 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		this.buttonMoveDown.removeActionListener(moveDownListener);
 		this.buttonMoveLast.removeActionListener(moveLastListener);
 		this.buttonRefresh.removeActionListener(refreshListener);
+		this.buttonOK.removeActionListener(createListener);
+		this.buttonCancel.removeActionListener(cancelListener);
 	}
 
 }
