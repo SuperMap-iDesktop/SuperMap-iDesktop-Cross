@@ -15,7 +15,15 @@ public interface IProcess {
 
 	RunningStatus getStatus();
 
+	Workflow getWorkflow();
+
+	void setWorkflow(Workflow workflow);
+
 	String getKey();
+
+	int getSerialID();
+
+	void setSerialID(int serialID);
 
 	IProcessGroup getParent();
 

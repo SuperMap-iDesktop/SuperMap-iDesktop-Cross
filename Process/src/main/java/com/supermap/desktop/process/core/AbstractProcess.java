@@ -19,9 +19,42 @@ public abstract class AbstractProcess implements IProcess {
 
 	private volatile RunningStatus status = RunningStatus.NORMAL;
 	private EventListenerList listenerList = new EventListenerList();
+	private Workflow workflow;
 	protected IProcessGroup parent;
 	private Inputs inputs = new Inputs(this);
 	private Outputs outputs = new Outputs(this);
+	private int serialID = 0;
+
+	public AbstractProcess() {
+		setSerialID(hashCode());
+	}
+
+	@Override
+	public int getSerialID() {
+		return this.serialID;
+	}
+
+	@Override
+	public void setSerialID(int serialID) {
+		this.serialID = serialID;
+	}
+
+	@Override
+	public Workflow getWorkflow() {
+		return this.workflow;
+	}
+
+	@Override
+	public void setWorkflow(Workflow workflow) {
+		if (this.workflow != null && this.workflow != workflow) {
+			getParameters().unbindWorkflow(this.workflow);
+		}
+		this.workflow = workflow;
+
+		if (this.workflow != null) {
+			getParameters().bindWorkflow(this.workflow);
+		}
+	}
 
 	@Override
 	public abstract IParameters getParameters();

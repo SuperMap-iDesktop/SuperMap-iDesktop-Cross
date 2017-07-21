@@ -28,6 +28,9 @@ import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.Dockbar;
+import com.supermap.desktop.utilities.XmlUtilities;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.swing.*;
 import java.awt.*;
@@ -127,8 +130,57 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 
 	@Override
+	public void setText(String text) {
+		this.workflow.setName(text);
+		super.setText(text);
+	}
+
+	@Override
 	public WindowType getWindowType() {
-		return WindowType.WORK_FLOW;
+		return WindowType.WORKFLOW;
+	}
+
+	public String serializeTo() {
+		Document doc = XmlUtilities.getEmptyDocument();
+
+		// 新建 WorkflowEntry
+		Element workflowEntryNode = doc.createElement("WorkflowEntry");
+		workflowEntryNode.setAttribute("Name", getText());
+		doc.appendChild(workflowEntryNode);
+
+		// 处理 Workflow
+		Element workflowNode = doc.createElement("Workflow");
+		this.workflow.serializeTo(workflowNode);
+		workflowEntryNode.appendChild(workflowNode);
+
+		// 处理 location
+		Element locationsNode = doc.createElement("Locations");
+		this.canvas.serializeTo(locationsNode);
+		workflowEntryNode.appendChild(locationsNode);
+
+		return XmlUtilities.nodeToString(doc, "UTF-8");
+	}
+
+	public static FormWorkflow serializeFrom(String description) {
+		FormWorkflow formWorkflow = null;
+		Document doc = XmlUtilities.stringToDocument(description);
+		Element workflowEntryNode = (Element) XmlUtilities.getChildElementNodeByName(doc, "WorkflowEntry");
+		String name = workflowEntryNode.getAttribute("Name");
+
+		// 处理 Workflow
+		Workflow workflow = new Workflow(name);
+		Element workflowNode = (Element) XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Workflow");
+		workflow.serializeFrom(workflowNode);
+
+		// 解析 UIConfig
+		formWorkflow = new FormWorkflow(workflow);
+		Element uiConfigNode = (Element) XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Locations");
+		WorkflowUIConfig uiConfig = WorkflowUIConfig.serializeFrom(uiConfigNode);
+
+		if (uiConfig != null) {
+			formWorkflow.getCanvas().loadUIConfig(uiConfig);
+		}
+		return formWorkflow;
 	}
 
 	@Override

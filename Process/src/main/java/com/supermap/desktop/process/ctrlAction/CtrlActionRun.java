@@ -22,9 +22,7 @@ public class CtrlActionRun extends CtrlAction {
 		try {
 			if (Application.getActiveApplication().getActiveForm() instanceof FormWorkflow) {
 				IDockbar tasksContainer = Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(TASKS_CONTAINER));
-				if (!tasksContainer.isVisible()) {
-					tasksContainer.setVisible(true);
-				}
+				tasksContainer.setVisible(true);
 
 				FormWorkflow formWorkflow = (FormWorkflow) Application.getActiveApplication().getActiveForm();
 				formWorkflow.getTasksManager().run();

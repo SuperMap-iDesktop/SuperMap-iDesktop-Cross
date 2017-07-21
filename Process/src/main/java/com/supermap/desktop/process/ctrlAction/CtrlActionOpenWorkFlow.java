@@ -23,7 +23,7 @@ public class CtrlActionOpenWorkFlow extends CtrlAction {
 	@Override
 	public void run() {
 		String name = ((IWorkflow) ((TreeNodeData) ((DefaultMutableTreeNode) UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getLastSelectedPathComponent()).getUserObject()).getData()).getName();
-		IFormWorkflow iFormWorkflow = (IFormWorkflow) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.WORK_FLOW, name);
+		IFormWorkflow iFormWorkflow = (IFormWorkflow) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.WORKFLOW, name);
 	}
 
 	@Override

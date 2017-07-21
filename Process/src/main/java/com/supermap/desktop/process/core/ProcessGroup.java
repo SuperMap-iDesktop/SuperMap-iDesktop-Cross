@@ -123,10 +123,30 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 		return null;
 	}
 
+	@Override
+	public Workflow getWorkflow() {
+		return null;
+	}
+
+	@Override
+	public void setWorkflow(Workflow workflow) {
+
+	}
+
 	//region 无用方法
 	@Override
 	public String getKey() {
 		return MetaKeys.PROCESS_GROUP;
+	}
+
+	@Override
+	public int getSerialID() {
+		return 0;
+	}
+
+	@Override
+	public void setSerialID(int serialID) {
+
 	}
 
 	@Override

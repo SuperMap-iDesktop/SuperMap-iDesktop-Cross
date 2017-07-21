@@ -255,6 +255,8 @@ public class ToolbarManager implements IToolbarManager {
 			windowType = WindowType.TABULAR;
 		} else if ("SuperMap.Desktop.FormTransformation".equalsIgnoreCase(controlCalss)) {
 			windowType = WindowType.TRANSFORMATION;
+		} else if ("SuperMap.Desktop.FormWorkflow".equalsIgnoreCase(controlCalss)) {
+			windowType = WindowType.WORKFLOW;
 		}
 
 		return windowType;

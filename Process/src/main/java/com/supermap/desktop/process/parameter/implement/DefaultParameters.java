@@ -1,22 +1,12 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.connection.IGraphConnection;
-import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.graphs.OutputGraph;
-import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
-import com.supermap.desktop.process.graphics.storage.IGraphStorage;
-import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.parameter.ParameterPanels.EmptyParameterPanel;
-import com.supermap.desktop.process.parameter.events.ValueProviderBindEvent;
-import com.supermap.desktop.process.parameter.events.ValueProviderBindListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
-import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
@@ -25,8 +15,6 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +33,16 @@ public class DefaultParameters implements IParameters {
 	public DefaultParameters(IProcess process) {
 		this.process = process;
 		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));
+	}
+
+	@Override
+	public void bindWorkflow(Workflow workflow) {
+		this.inputParametersManager.bindWorkflow(workflow);
+	}
+
+	@Override
+	public void unbindWorkflow(Workflow workflow) {
+		this.inputParametersManager.unbindWorkflow(workflow);
 	}
 
 	@Override

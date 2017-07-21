@@ -43,6 +43,8 @@ public class ProcessActivator implements BundleActivator {
 		System.out.println("Hello SuperMap === Process!!");
 		setContext(bundleContext);
 		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Process", bundleContext.getBundle());
+		ProcessApplication.init();
+
 		Application.getActiveApplication().setWorkflowInitListener(new WorkflowInitListener() {
 			@Override
 			public IWorkflow init(Element element) {
@@ -52,6 +54,7 @@ public class ProcessActivator implements BundleActivator {
 				return workflow;
 			}
 		});
+
 		CommonToolkit.FormWrap.addNewWindowListener(new NewWindowListener() {
 			@Override
 			public void newWindow(NewWindowEvent evt) {
@@ -62,7 +65,7 @@ public class ProcessActivator implements BundleActivator {
 
 	private void newWindowEvent(NewWindowEvent evt) {
 		WindowType type = evt.getNewWindowType();
-		if (type == WindowType.WORK_FLOW) {
+		if (type == WindowType.WORKFLOW) {
 			IFormWorkflow formProcess = showProcess(evt.getNewWindowName());
 			evt.setNewWindow(formProcess);
 		}
@@ -74,7 +77,7 @@ public class ProcessActivator implements BundleActivator {
 		try {
 			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 			for (int i = 0; i < formManager.getCount(); i++) {
-				if (formManager.get(i).getWindowType() == WindowType.WORK_FLOW && formManager.get(i).getText().equals(newWindowName)) {
+				if (formManager.get(i).getWindowType() == WindowType.WORKFLOW && formManager.get(i).getText().equals(newWindowName)) {
 					if (formManager.getActiveForm() != formManager.get(i)) {
 						formManager.setActiveForm(formManager.get(i));
 					}

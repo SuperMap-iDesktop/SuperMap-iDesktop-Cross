@@ -1952,7 +1952,7 @@ public class CommonToolkit {
 				} else if (form instanceof IFormLBSControl) {
 					type = WindowType.LBSCONTROL;
 				} else if (form instanceof IFormWorkflow) {
-					type = WindowType.WORK_FLOW;
+					type = WindowType.WORKFLOW;
 				}
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);

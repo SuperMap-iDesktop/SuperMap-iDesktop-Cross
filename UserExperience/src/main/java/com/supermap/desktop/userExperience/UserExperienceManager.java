@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 /**
@@ -76,7 +77,23 @@ public class UserExperienceManager {
 		FileLocker fileLocker = new FileLocker(executingFile);
 		try {
 			if (fileLocker.tryLock()) {
-//				fileLocker.getRandomAccessFile().
+				RandomAccessFile randomAccessFile = fileLocker.getRandomAccessFile();
+				if (randomAccessFile.length() > 0) {
+					randomAccessFile.seek(0);
+					byte[] bytes = new byte[((int) randomAccessFile.length())];
+					randomAccessFile.read(bytes);
+					String value = new String(bytes, "UTF-8");
+					String[] actions = value.split(System.getProperty("line.separator"));
+					for (String action : actions) {
+						try {
+							FunctionInfoCtrlAction functionInfoCtrlAction = new FunctionInfoCtrlAction(action);
+							addDoneJson(new UserExperienceBaseInfo(new DesktopUserExperienceInfo(functionInfoCtrlAction)).getJson());
+						} catch (Exception e) {
+							// ignore
+						}
+					}
+				}
+				randomAccessFile.setLength(0);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
