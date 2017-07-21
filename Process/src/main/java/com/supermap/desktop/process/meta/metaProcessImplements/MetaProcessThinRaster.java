@@ -88,13 +88,13 @@ public class MetaProcessThinRaster extends MetaProcess{
 	}
 
 	private void initParametersState() {
-		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
+		Dataset datasetGrid = DatasetUtilities.getDefaultDataset(DatasetType.GRID,DatasetType.IMAGE);
 		if (datasetGrid != null) {
 			this.sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
-			this.sourceDataset.setDatasource(datasetGrid.getDatasource());
+			this.sourceDataset.setSelectedItem(datasetGrid);
 		}
 
-		resultDataset.setSelectedItem("ThinRaster");
+		resultDataset.setSelectedItem("result_thinRaster");
 		textFieldNoValue.setSelectedItem("-9999");
 		textFieldNoValueTolerance.setSelectedItem("0");
 		textFieldNoValueTolerance.setMinValue(0);

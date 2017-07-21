@@ -62,7 +62,7 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		this.sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 
 		this.boundaryDatasource = new ParameterDatasourceConstrained();
-		this.boundaryDatasource.setDescribe(CommonProperties.getString("String_BoundaryData"));
+		this.boundaryDatasource.setDescribe(CommonProperties.getString("String_BoundaryDatasource"));
 		this.boundaryDataset=new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
 		this.boundaryDataset.setDescribe(CommonProperties.getString("String_BoundaryDataset"));
 
@@ -129,7 +129,7 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		this.textCellSize.setMinValue(0);
 		this.textCellSize.setIsIncludeMin(false);
 		this.comboBoxPixelFormat.setSelectedItem(new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT32), PixelFormat.BIT32));
-		this.resultDataset.setSelectedItem("ConversionGridResult");
+		this.resultDataset.setSelectedItem("result_vectorToGrid");
 	}
 
 	private void initParameterConstrint() {
