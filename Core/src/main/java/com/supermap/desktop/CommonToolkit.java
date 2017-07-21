@@ -47,6 +47,7 @@ public class CommonToolkit {
 		}
 		return tolerance;
 	}
+
 	public static class ApplicationInfoWrap {
 		private ApplicationInfoWrap() {
 			// 不提供构造函数
@@ -623,8 +624,7 @@ public class CommonToolkit {
 		/**
 		 * 根据字符集资源字符串获取对应的字符集类型
 		 *
-		 * @param charsetString
-		 *            字符集名称
+		 * @param charsetString 字符集名称
 		 * @return 字符集类型
 		 */
 		public static Charset getCharset(String charsetString) {
@@ -738,8 +738,7 @@ public class CommonToolkit {
 		/**
 		 * 根据数据集类型资源字符串获取对应的数据集类型
 		 *
-		 * @param typeName
-		 *            数据集类型字符串
+		 * @param typeName 数据集类型字符串
 		 * @return 数据集类型
 		 */
 		public static DatasetType findType(String typeName) {
@@ -764,8 +763,7 @@ public class CommonToolkit {
 		/**
 		 * 根据数据集类型获取对应的资源字符串
 		 *
-		 * @param type
-		 *            数据集类型
+		 * @param type 数据集类型
 		 * @return 数据集类型字符串
 		 */
 		public static String findName(DatasetType type) {
@@ -786,8 +784,7 @@ public class CommonToolkit {
 		/**
 		 * 验证数据集类型是否存在于枚举中
 		 *
-		 * @param type
-		 *            数据集类型
+		 * @param type 数据集类型
 		 * @return
 		 */
 		public static boolean isValidType(DatasetType type) {
@@ -1386,8 +1383,7 @@ public class CommonToolkit {
 		/**
 		 * 根据编码类型资源字符串获取对应的编码类型
 		 *
-		 * @param typeName
-		 *            编码类型
+		 * @param typeName 编码类型
 		 * @return 指定的编码
 		 */
 		public static EncodeType findType(String typeName) {
@@ -1412,8 +1408,7 @@ public class CommonToolkit {
 		/**
 		 * 根据编码类型获取对应的资源字符串
 		 *
-		 * @param type
-		 *            编码类型
+		 * @param type 编码类型
 		 * @return 编码名称
 		 */
 		public static String findName(EncodeType type) {
@@ -1457,9 +1452,8 @@ public class CommonToolkit {
 		/**
 		 * 根据指定的文件后缀获取相应的文件引擎类型
 		 *
-         * @param
-         *
-         * @return 对应的引擎类型
+		 * @param
+		 * @return 对应的引擎类型
 		 */
 		private EngineTypeWrap() {
 			// 不提供构造函数
@@ -1908,8 +1902,7 @@ public class CommonToolkit {
 		/**
 		 * 发送创建子窗体的事件
 		 *
-		 * @param windowType
-		 *            子窗口类型
+		 * @param windowType 子窗口类型
 		 * @return
 		 */
 		public static IForm fireNewWindowEvent(WindowType windowType) {
@@ -1919,10 +1912,8 @@ public class CommonToolkit {
 		/**
 		 * 发送创建子窗体的事件
 		 *
-		 * @param windowType
-		 *            子窗口类型
-		 * @param name
-		 *            指定的窗口名称，如果是地图、场景或者布局子窗体，则默认打开指定名称的地图、布局或者场景。
+		 * @param windowType 子窗口类型
+		 * @param name       指定的窗口名称，如果是地图、场景或者布局子窗体，则默认打开指定名称的地图、布局或者场景。
 		 * @return
 		 */
 		public static IForm fireNewWindowEvent(WindowType windowType, String name) {
@@ -1958,7 +1949,7 @@ public class CommonToolkit {
 					type = WindowType.SCENE;
 				} else if (form instanceof IFormTabular) {
 					type = WindowType.TABULAR;
-				}else if(form instanceof IFormLBSControl){
+				} else if (form instanceof IFormLBSControl) {
 					type = WindowType.LBSCONTROL;
 				} else if (form instanceof IFormWorkflow) {
 					type = WindowType.WORK_FLOW;
@@ -4638,8 +4629,9 @@ public class CommonToolkit {
 			datasetImage.put(DatasetType.WCS, fileParentPath + "Image_DatasetWCS_Normal.png");
 			datasetImage.put(DatasetType.WMS, fileParentPath + "Image_DatasetWMS_Normal.png");
 			datasetImage.put(DatasetType.TEXTURE, fileParentPath + "Image_DataseSimpleDataset_Normal.png");
-            datasetImage.put(DatasetType.VOLUME, fileParentPath + "Image_DatasetVOLUME_Normal.png");
-            String filePathTopo = fileParentPath + "TopologyDatasetRelations/Image_TopologyDatasetRelations_Normal.png";
+			datasetImage.put(DatasetType.VOLUME, fileParentPath + "Image_DatasetVOLUME_Normal.png");
+			datasetImage.put(DatasetType.VECTORCOLLECTION, fileParentPath + "Image_DatasetUnknown_Normal.png");
+			String filePathTopo = fileParentPath + "TopologyDatasetRelations/Image_TopologyDatasetRelations_Normal.png";
 			datasetImage.put(DatasetType.TOPOLOGY, filePathTopo);
 		}
 
@@ -4673,8 +4665,8 @@ public class CommonToolkit {
 		/**
 		 * 根据数据集中文名得到数据集图标所在的相对路径
 		 *
-         * @param datasetTypeName
-         * @return
+		 * @param datasetTypeName
+		 * @return
 		 */
 		public static String getImageIconPath(String datasetTypeName) {
 			DatasetType type = DatasetTypeWrap.findType(datasetTypeName);

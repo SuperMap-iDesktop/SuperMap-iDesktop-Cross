@@ -9,6 +9,7 @@ import com.supermap.desktop.implement.CtrlAction;
 
 /**
  * Created by xie on 2017/7/19.
+ * 新建数据集集合
  */
 public class CtrlActionNewCollectionDataset extends CtrlAction {
 	public CtrlActionNewCollectionDataset(IBaseItem caller, IForm formClass) {
@@ -17,8 +18,10 @@ public class CtrlActionNewCollectionDataset extends CtrlAction {
 
 	@Override
 	protected void run() {
-			new JDialogCreateCollectionDataset().showDialog();
+		//0表示创建的是矢量数据集集合
+		new JDialogCreateCollectionDataset(0).showDialog();
 	}
+
 	@Override
 	public boolean enable() {
 		boolean enable = false;

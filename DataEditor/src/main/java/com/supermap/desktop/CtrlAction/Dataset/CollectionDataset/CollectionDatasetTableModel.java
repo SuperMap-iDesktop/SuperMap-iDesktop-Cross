@@ -13,17 +13,29 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 	/**
 	 *
 	 */
-	public final int COLUMN_CAPTION = 0;
-	private final int COLUMN_NAME = 1;
-	private final int COLUMN_STATE = 2;
+	private int collectionType;
 
-	private String[] title = {CommonProperties.getString("String_Field_Caption"),
-			CommonProperties.getString("String_FieldName"),
-			CommonProperties.getString("String_State")};
+	public final int VECTOR_COLLECTION_TYPE = 0;
+	public final int IMAGE_COLLECTION_TYPE = 1;
+
+	public final int COLUMN_IMAGE_CAPTION = 0;
+	public final int COLUMN_IMAGE_NAME = 1;
+	public final int COLUMN_IMAGE_STATE = 2;
+
+	public final int COLUMN_VECTOR_NAME = 0;
+	public final int COLUMN_VECTOR_STATE = 1;
+
+	private String[] title = null;
 	private ArrayList<DatasetInfo> datasetInfos = new ArrayList<>();
 
-	public CollectionDatasetTableModel() {
+	public CollectionDatasetTableModel(int collectionType) {
 		super();
+		title = collectionType == IMAGE_COLLECTION_TYPE ?
+				new String[]{CommonProperties.getString("String_Field_Caption"),
+						CommonProperties.getString("String_FieldName"),
+						CommonProperties.getString("String_State")} :
+				new String[]{CommonProperties.getString("String_FieldName"),
+						CommonProperties.getString("String_State")};
 	}
 
 	@Override
@@ -38,12 +50,12 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 
 	public void addRow(DatasetInfo fileInfo) {
 		this.datasetInfos.add(fileInfo);
-		fireTableRowsInserted(COLUMN_CAPTION, getRowCount());
+		fireTableRowsInserted(0, getRowCount());
 	}
 
 	public void removeRow(int i) {
 		datasetInfos.remove(i);
-		fireTableRowsDeleted(COLUMN_CAPTION, getRowCount());
+		fireTableRowsDeleted(0, getRowCount());
 	}
 
 	public void removeRows(int[] rows) {
@@ -53,13 +65,13 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 				removeInfo.add(datasetInfos.get(rows[i]));
 			}
 			datasetInfos.removeAll(removeInfo);
-			fireTableRowsDeleted(COLUMN_CAPTION, getRowCount());
+			fireTableRowsDeleted(0, getRowCount());
 		}
 	}
 
 	public void updateRows(List<DatasetInfo> tempFileInfos) {
 		this.datasetInfos = (ArrayList<DatasetInfo>) tempFileInfos;
-		fireTableRowsUpdated(COLUMN_CAPTION, getRowCount());
+		fireTableRowsUpdated(0, getRowCount());
 	}
 
 	@Override
@@ -74,7 +86,7 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		if (columnIndex == COLUMN_CAPTION) {
+		if (collectionType == IMAGE_COLLECTION_TYPE && columnIndex == COLUMN_IMAGE_CAPTION) {
 			return true;
 		}
 		return false;
@@ -98,16 +110,48 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		DatasetInfo datasetInfo = datasetInfos.get(rowIndex);
-		if (columnIndex == COLUMN_CAPTION) {
-			return datasetInfo.getCapiton();
-		}
-		if (columnIndex == COLUMN_NAME) {
-			return datasetInfo.getName();
-		}
-		if (columnIndex == COLUMN_STATE) {
-			return datasetInfo.getState();
+		if (collectionType == IMAGE_COLLECTION_TYPE) {
+			if (columnIndex == COLUMN_IMAGE_CAPTION) {
+				return datasetInfo.getCapiton();
+			}
+			if (columnIndex == COLUMN_IMAGE_NAME) {
+				return datasetInfo.getName();
+			}
+			if (columnIndex == COLUMN_IMAGE_STATE) {
+				return datasetInfo.getState();
+			}
+		} else {
+			if (columnIndex == COLUMN_VECTOR_NAME) {
+				return datasetInfo.getName();
+			}
+			if (columnIndex == COLUMN_VECTOR_STATE) {
+				return datasetInfo.getState();
+			}
 		}
 		return "";
+	}
+
+	@Override
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+//		super.setValueAt(aValue, rowIndex, columnIndex);
+		if (collectionType == IMAGE_COLLECTION_TYPE) {
+			if (columnIndex == COLUMN_IMAGE_CAPTION) {
+				datasetInfos.get(rowIndex).setCapiton((String) aValue);
+			}
+			if (columnIndex == COLUMN_IMAGE_NAME) {
+				datasetInfos.get(rowIndex).setName((String) aValue);
+			}
+			if (columnIndex == COLUMN_IMAGE_STATE) {
+				datasetInfos.get(rowIndex).setState((String) aValue);
+			}
+		} else {
+			if (columnIndex == COLUMN_VECTOR_NAME) {
+				datasetInfos.get(rowIndex).setName((String) aValue);
+			}
+			if (columnIndex == COLUMN_VECTOR_STATE) {
+				datasetInfos.get(rowIndex).setState((String) aValue);
+			}
+		}
 	}
 
 	public ArrayList<DatasetInfo> getDatasetInfos() {

@@ -77,7 +77,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalButtonActionListener actionListener = new LocalButtonActionListener();
 	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
-//	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
+	//	private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mouseReleased(MouseEvent arg0) {
@@ -89,14 +89,14 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 				ThemeUtil.initComboBox(comboBoxExpression, themeLabel.getLabelExpression(), datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArray, false, false);
 				comboBoxExpression.addItemListener(itemListener);
-			}else if(arg0.getSource().equals(comboBoxOffsetX.getComponent(0))){
+			} else if (arg0.getSource().equals(comboBoxOffsetX.getComponent(0))) {
 				//处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
 				comboBoxOffsetX.removeItemListener(itemListener);
 				// 刷新水平偏移量字段信息
 				ThemeUtil.initComboBox(comboBoxOffsetX, themeLabel.getOffsetX(), datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArrayForOffsetX, true, true);
 				comboBoxOffsetX.addItemListener(itemListener);
-			}else if(arg0.getSource().equals(comboBoxOffsetY.getComponent(0))){
+			} else if (arg0.getSource().equals(comboBoxOffsetY.getComponent(0))) {
 				// 刷新垂直偏移量字段信息
 				//处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
 				comboBoxOffsetY.removeItemListener(itemListener);
@@ -184,9 +184,9 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化控件名称
 	 */
 	private void setComponentName() {
-		ComponentUIUtilities.setName(this.comboBoxExpression,"ThemeLabelPropertyPanel_comboBoxExpression");
-		ComponentUIUtilities.setName(this.comboBoxBGShape,"ThemeLabelPropertyPanel_comboBoxBGShape");
-		ComponentUIUtilities.setName(this.checkBoxFlowVisual,"ThemeLabelPropertyPanel_checkBoxFlowVisual");
+		ComponentUIUtilities.setName(this.comboBoxExpression, "ThemeLabelPropertyPanel_comboBoxExpression");
+		ComponentUIUtilities.setName(this.comboBoxBGShape, "ThemeLabelPropertyPanel_comboBoxBGShape");
+		ComponentUIUtilities.setName(this.checkBoxFlowVisual, "ThemeLabelPropertyPanel_checkBoxFlowVisual");
 	}
 
 	private void initComboBoxLabelExpression() {
@@ -197,8 +197,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	/**
 	 * 背景设置布局入口
 	 *
-	 * @param panelBGSet
-	 *            背景设置面板
+	 * @param panelBGSet 背景设置面板
 	 */
 	private void initPanelBGSet(JPanel panelBGSet) {
 		//@formatter:off
@@ -215,10 +214,10 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化背景形状下拉框
 	 */
 	private void initComboBoxBackGround() {
-		this.comboBoxBGShape.setModel(new DefaultComboBoxModel<>(new String[] { MapViewProperties.getString("String_ColorTable_Default"),
+		this.comboBoxBGShape.setModel(new DefaultComboBoxModel<>(new String[]{MapViewProperties.getString("String_ColorTable_Default"),
 				MapViewProperties.getString("String_ThemeLabelBackShape_Rect"), MapViewProperties.getString("String_ThemeLabelBackShape_BoundRect"),
 				MapViewProperties.getString("String_ThemeLabelBackShape_Ellipse"), MapViewProperties.getString("String_ThemeLabelBackShape_Diamond"),
-				MapViewProperties.getString("String_ThemeLabelBackShape_Triangle"), MapViewProperties.getString("String_ThemeLabelBackShape_Marker") }));
+				MapViewProperties.getString("String_ThemeLabelBackShape_Triangle"), MapViewProperties.getString("String_ThemeLabelBackShape_Marker")}));
 		LabelBackShape labelBackShape = themeLabel.getBackShape();
 		if (labelBackShape == LabelBackShape.NONE) {
 			this.comboBoxBGShape.setSelectedIndex(0);
@@ -252,8 +251,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	/**
 	 * 偏移量设置布局入口
 	 *
-	 * @param panelLabelOffset
-	 *            偏移量设置面板
+	 * @param panelLabelOffset 偏移量设置面板
 	 */
 	private void initPanelLabelOffset(JPanel panelLabelOffset) {
 		//@formatter:off
@@ -280,8 +278,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化偏移量单位下拉框
 	 */
 	private void initComboBoxUnity() {
-		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<>(new String[] { MapViewProperties.getString("String_ThemeLabelOffsetUnit_Millimeter"),
-				MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map") }));
+		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<>(new String[]{MapViewProperties.getString("String_ThemeLabelOffsetUnit_Millimeter"),
+				MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map")}));
 		if (this.themeLabel.isOffsetFixed()) {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 		} else {
@@ -310,8 +308,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	/**
 	 * 效果设置布局入口
 	 *
-	 * @param panelLabelEffectSet
-	 *            效果设置面板
+	 * @param panelLabelEffectSet 效果设置面板
 	 */
 	private void initPanelLabelEffectSet(JPanel panelLabelEffectSet) {
 		//@formatter:off
@@ -338,6 +335,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		// 如果数据集类型为点，不允许流动显示
 		if (datasetVector.getType() == DatasetType.POINT || datasetVector.getType() == DatasetType.POINT3D) {
 			this.checkBoxFlowVisual.setEnabled(false);
+			this.checkBoxFlowVisual.setSelected(false);
 		} else {
 			this.checkBoxFlowVisual.setEnabled(true);
 			this.checkBoxFlowVisual.setSelected(themeLabel.isFlowEnabled());
@@ -355,8 +353,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化文本避让下拉框
 	 */
 	private void initComboboxAutoAvoidance() {
-		this.comboBoxAutoAvoidance.setModel(new DefaultComboBoxModel<>(new String[] { MapViewProperties.getString("String_AllDirectionsAvoided"),
-				MapViewProperties.getString("String_TwoDirectionsAvoided") }));
+		this.comboBoxAutoAvoidance.setModel(new DefaultComboBoxModel<>(new String[]{MapViewProperties.getString("String_AllDirectionsAvoided"),
+				MapViewProperties.getString("String_TwoDirectionsAvoided")}));
 		boolean isAutoAvoidance = themeLabel.isAllDirectionsOverlappedAvoided();
 		if (isAutoAvoidance) {
 			this.comboBoxAutoAvoidance.setSelectedIndex(1);
@@ -369,8 +367,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 初始化数值文本精度下拉框
 	 */
 	private void initComboBoxTextPrecision() {
-		this.comboBoxTextPrecision.setModel(new DefaultComboBoxModel<>(new String[] { "", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001",
-				"0.0000001", "0.00000001", "0.000000001", "0.0000000001" }));
+		this.comboBoxTextPrecision.setModel(new DefaultComboBoxModel<>(new String[]{"", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001", "0.000001",
+				"0.0000001", "0.00000001", "0.000000001", "0.0000000001"}));
 		this.comboBoxTextPrecision.setSelectedItem(themeLabel.getNumericPrecision() + 1);
 	}
 

@@ -253,7 +253,7 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 	private JTextField jTextFieldUserName;
 	private JTextField jTextFieldDatasourceAlias;
 	private JCheckBox jCheckBoxReadonly;
-	private String DatasourceAlias;
+	private String datasourceAlias;
 	private transient EngineType engineType;
 
 	private JLabel jLabelEmptyServer;
@@ -289,8 +289,8 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 	 */
 	private void setjTextFieldDatasourceAlias(EngineType engineType) {
 
-		DatasourceAlias = engineType.name();
-		jTextFieldDatasourceAlias.setText(DatasourceAlias);
+		datasourceAlias = engineType.name();
+		jTextFieldDatasourceAlias.setText(datasourceAlias);
 	}
 
 	/**
