@@ -23,8 +23,8 @@ import java.util.TimerTask;
  */
 public class Demo extends FormBaseChild {
 
-	private static final int DEFAULT_WIDTH = 1440;
-	private static final int DEFAULT_HEIGHT = 700;
+	private static final int DEFAULT_WIDTH = 1200;
+	private static final int DEFAULT_HEIGHT = 800;
 
 	private final java.util.Timer timer;
 	private final MoveTimer moveTime;
