@@ -17,8 +17,13 @@ import java.net.URL;
  */
 class DatasetVectorNodeDecorator implements TreeNodeDecorator {
 
+	protected NodeDataType type;
+	public DatasetVectorNodeDecorator(NodeDataType type){
+		this.type = type;
+	}
+
 	public void decorate(JLabel label, TreeNodeData data) {
-		if (data.getType().equals(NodeDataType.DATASET_VECTOR)) {
+		if (data.getType().equals(type)) {
 			DatasetVector datasetVector = (DatasetVector) data.getData();
 			label.setText(datasetVector.getName());
 			ImageIcon icon = (ImageIcon) label.getIcon();
