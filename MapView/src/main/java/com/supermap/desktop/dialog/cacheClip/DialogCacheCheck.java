@@ -17,6 +17,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.JFileChooserControl;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -308,11 +309,24 @@ public class DialogCacheCheck extends JFrame {
 					anchorTop = writer.getIndexBounds().getTop();
 					tileSize = writer.getTileSize().value();
 				}
-				CheckCache.main(params);
-//				CheckCache checkCache = new CheckCache();
-//				checkCache.startProcess(Integer.valueOf(processCount), params);
+//				CheckCache.main(params);
+				//开始检查前对文件加锁,如果文件已经加锁则表示有进程正在使用,否则表示为以前进程挂了没有处理的
+				File doingDirectory = new File(CacheUtilities.replacePath(cacheTaskPath, "checking"));
+				if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
+					File[] doingFailedSci = doingDirectory.listFiles();
+					for (File doingSci : doingFailedSci) {
+						//文件加了锁说明文件正在被用于检查任务
+						FileLocker locker = new FileLocker(doingSci);
+						if (locker.tryLock()) {
+							//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将该任务移到build目录下,重新切图
+							locker.release();
+							doingSci.renameTo(new File(taskPath, doingSci.getName()));
+						}
+					}
+				}
+				CheckCache checkCache = new CheckCache();
+				checkCache.startProcess(Integer.valueOf(processCount), params);
 				getResult(cachePath, cacheRoot, cacheTaskPath, taskPath, parentPath, anchorLeft, anchorTop, tileSize, datasourcePath);
-
 			}
 		} catch (Exception ex) {
 			if (null != ex.getMessage()) {
@@ -323,48 +337,48 @@ public class DialogCacheCheck extends JFrame {
 
 	private void getResult(final String cachePath, final String cacheRoot, final String cacheTaskPath, final String taskPath, final String parentPath,
 	                       final double anchorLeft, final double anchorTop, final int tileSize, final String datasourcePath) throws InterruptedException {
-		new Thread(new Runnable() {
+			new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				try {
-					//Ensure all sci files has been checked
-					String checkingPath = CacheUtilities.replacePath(cacheTaskPath, "checking");
-					while (!FileUtilities.isDirEmpty(taskPath)) {
-						Thread.sleep(2000);
-					}
-					while (!FileUtilities.isDirEmpty(checkingPath)) {
-						Thread.sleep(2000);
-					}
+				@Override
+				public void run() {
+					try {
+						//Ensure all sci files has been checked
+						String checkingPath = CacheUtilities.replacePath(cacheTaskPath, "checking");
+						while (!FileUtilities.isDirEmpty(taskPath)) {
+							Thread.sleep(2000);
+						}
+						while (!FileUtilities.isDirEmpty(checkingPath)) {
+							Thread.sleep(2000);
+						}
 
-					if (null != parentPath && checkBoxSaveErrorData.isSelected()) {
-						CheckCache.error2Udb(anchorLeft, anchorTop, tileSize, parentPath, datasourcePath);
-					}
-					DatasourceConnectionInfo info = new DatasourceConnectionInfo();
-					info.setServer(datasourcePath);
-					info.setAlias("check");
-					info.setEngineType(EngineType.UDB);
-					Application.getActiveApplication().getWorkspace().getDatasources().open(info);
-					boolean cacheBuild = checkBoxCacheBuild.isSelected();
-					if (cacheBuild) {
-						File cacheFile = new File(cacheRoot);
-						File errorFile = new File(CacheUtilities.replacePath(cacheTaskPath, "failed"));
-						//有错误则重新切图
-						if (null != errorFile && errorFile.list(CacheUtilities.getFilter()).length > 0 && tileSize != -1) {
-							String[] tempParams = {"Multi", "null", cacheFile.getName(), cachePath};
-							CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
-						} else {
-							new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_CacheCheckSuccess"));
+						if (null != parentPath && checkBoxSaveErrorData.isSelected()) {
+							CheckCache.error2Udb(anchorLeft, anchorTop, tileSize, parentPath, datasourcePath);
+						}
+						DatasourceConnectionInfo info = new DatasourceConnectionInfo();
+						info.setServer(datasourcePath);
+						info.setAlias("check");
+						info.setEngineType(EngineType.UDB);
+						Application.getActiveApplication().getWorkspace().getDatasources().open(info);
+						boolean cacheBuild = checkBoxCacheBuild.isSelected();
+						if (cacheBuild) {
+							File cacheFile = new File(cacheRoot);
+							File errorFile = new File(CacheUtilities.replacePath(cacheTaskPath, "failed"));
+							//有错误则重新切图
+							if (null != errorFile && errorFile.list(CacheUtilities.getFilter()).length > 0 && tileSize != -1) {
+								String[] tempParams = {"Multi", "null", cacheFile.getName(), cachePath};
+								CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
+							} else {
+								new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_CacheCheckSuccess"));
+							}
+						}
+						dialogDispose();
+					} catch (Exception ex) {
+						if (null != ex.getMessage()) {
+							new SmOptionPane().showConfirmDialog(ex.getMessage());
 						}
 					}
-					dialogDispose();
-				} catch (Exception ex) {
-					if (null != ex.getMessage()) {
-						new SmOptionPane().showConfirmDialog(ex.getMessage());
-					}
 				}
-			}
-		}, "thread").start();
+			}, "thread").start();
 	}
 
 	private void dialogDispose() {

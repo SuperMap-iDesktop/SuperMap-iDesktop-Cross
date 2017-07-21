@@ -234,11 +234,11 @@ public class CacheUtilities {
 			if (null != map.getLayers().get(i).getTheme()) {
 				Theme tempTheme = map.getLayers().get(i).getTheme();
 				if (tempTheme instanceof ThemeLabel && ((ThemeLabel) tempTheme).isFlowEnabled()) {
-					dynamicEffectLayers += map.getLayers().get(i).getName() + "\n";
+					dynamicEffectLayers += map.getLayers().get(i).getCaption() + "\n";
 					count++;
 				}
 				if (tempTheme instanceof ThemeGraph && ((ThemeGraph) tempTheme).isFlowEnabled()) {
-					dynamicEffectLayers += map.getLayers().get(i).getName() + "\n";
+					dynamicEffectLayers += map.getLayers().get(i).getCaption() + "\n";
 					count++;
 				}
 			}
@@ -251,10 +251,10 @@ public class CacheUtilities {
 					if (null != map.getLayers().get(i).getTheme()) {
 						Theme tempTheme = map.getLayers().get(i).getTheme();
 						if (tempTheme instanceof ThemeLabel) {
-							((ThemeLabel) tempTheme).setFlowEnabled(false);
+							((ThemeLabel) map.getLayers().get(i).getTheme()).setFlowEnabled(false);
 						}
 						if (tempTheme instanceof ThemeGraph) {
-							((ThemeGraph) tempTheme).setFlowEnabled(false);
+							((ThemeGraph) map.getLayers().get(i).getTheme()).setFlowEnabled(false);
 						}
 					}
 				}
