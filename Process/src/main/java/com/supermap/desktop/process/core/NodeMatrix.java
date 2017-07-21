@@ -61,23 +61,20 @@ public class NodeMatrix<T extends Object> {
 			return;
 		}
 
-		// remove values
-		int index = this.nodes.indexOf(node);
-
 		for (int i = 0, size = this.matrix.size(); i < size; i++) {
 			Map<T, IRelation<T>> map = this.matrix.get(i);
 
 			if (map.containsKey(node)) {
-				clearRelation(map.get(node));
 				removeRelation(map.get(node));
 				map.remove(node);
 			}
 		}
 
+		// remove values
+		int index = this.nodes.indexOf(node);
 		Map<T, IRelation<T>> relations = this.matrix.get(index);
 		for (Map.Entry<T, IRelation<T>> entry :
 				relations.entrySet()) {
-			clearRelation(entry.getValue());
 			removeRelation(entry.getValue());
 		}
 
