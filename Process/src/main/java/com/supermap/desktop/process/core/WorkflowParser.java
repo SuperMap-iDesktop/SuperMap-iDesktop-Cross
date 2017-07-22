@@ -263,6 +263,8 @@ public class WorkflowParser {
 			result = new MetaProcessLinePolygonSmooth();
 		} else if (MetaKeys.EdgeMatch.equals(key)) {
 			//todo MetaProcessEdgeMatch()
+		} else if (MetaKeys.PickupBorder.equals(key)) {
+			result = new MetaProcessPickupBorder();
 		} else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}
