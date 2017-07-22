@@ -28,13 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 
@@ -228,9 +222,7 @@ public class SnapSettingDialog extends SmDialog {
 		private void moveToForward() {
 			int[] selectRows = tableSnapMode.getSelectedRows();
 			int size = selectRows.length;
-			if (0 == size) {
-				return;
-			} else if (1 <= size && 0 == selectRows[0]) {
+			if (0 == size || (1 <= size && 0 == selectRows[0])) {
 				return;
 			} else {
 				int index = selectRows[0];

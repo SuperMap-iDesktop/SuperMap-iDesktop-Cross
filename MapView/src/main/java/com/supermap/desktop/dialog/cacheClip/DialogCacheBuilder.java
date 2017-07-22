@@ -18,6 +18,7 @@ import com.supermap.desktop.ui.controls.JFileChooserControl;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Map;
 
@@ -74,6 +75,8 @@ public class DialogCacheBuilder extends JFrame {
 	private CopyOnWriteArrayList<Integer> captionCount;
 	private Thread updateThread;
 	private SmOptionPane optionPane = new SmOptionPane();
+
+	private static Object resultLock = new Object();
 
 	private ActionListener closeListener = new ActionListener() {
 		@Override
@@ -393,9 +396,23 @@ public class DialogCacheBuilder extends JFrame {
 			String processCount = textFieldProcessCount.getText();
 			boolean isAppending = this.cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip;
 			params = new String[]{taskPath, workspacePath, mapName, cachePath, processCount, String.valueOf(isAppending)};
-			if (!validateValue(taskPath, workspacePath, mapName, cachePath, processCount)) {
+			if (!validateValue(taskPath, workspacePath, mapName, processCount)) {
 				buttonCreate.setEnabled(true);
 			} else {
+				//开始切图前对文件加锁,如果文件已经加锁则表示有进程正在使用,否则表示为以前进程挂了没有处理的
+				File doingDirectory = new File(CacheUtilities.replacePath(CacheUtilities.replacePath(fileChooserCachePath.getPath(), "CacheTask"), "doing"));
+				if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
+					File[] doingFailedSci = doingDirectory.listFiles();
+					for (File doingSci : doingFailedSci) {
+						//文件加了锁说明文件正在被用于切图任务
+						FileLocker locker = new FileLocker(doingSci);
+						if (locker.tryLock()) {
+							//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将该任务移到task目录下,重新切图
+							locker.release();
+							doingSci.renameTo(new File(taskPath, doingSci.getName()));
+						}
+					}
+				}
 				doBuildCache(cachePath);
 			}
 		} catch (Exception ex) {
@@ -411,10 +428,12 @@ public class DialogCacheBuilder extends JFrame {
 		File[] scis = null;
 		if (cachePath.exists()) {
 			File[] tempFiles = cachePath.listFiles();
-			for (int i = 0; i < tempFiles.length; i++) {
-				if (!tempFiles[i].getName().equals("CacheTask")) {
-					scis = tempFiles[i].listFiles();
-					break;
+			if (null != tempFiles) {
+				for (int i = 0; i < tempFiles.length; i++) {
+					if (!tempFiles[i].getName().equals("CacheTask")) {
+						scis = tempFiles[i].listFiles();
+						break;
+					}
 				}
 			}
 		}
@@ -497,21 +516,10 @@ public class DialogCacheBuilder extends JFrame {
 		return result;
 	}
 
-	private boolean validateValue(String taskPath, String workspacePath, String mapName, String cachePath, String processCount) {
+	private boolean validateValue(String taskPath, String workspacePath, String mapName, String processCount) {
 		boolean result = true;
 		File taskDirectory = new File(taskPath);
 		File failedDirectory = new File(CacheUtilities.replacePath(taskDirectory.getParent(), "failed"));
-		File doingDirectory = new File(CacheUtilities.replacePath(taskDirectory.getParent(), "doing"));
-		if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
-			if (optionPane.showConfirmDialog(MapViewProperties.getString("String_WarningForDoing")) == JOptionPane.OK_OPTION) {
-				File[] doingSci = doingDirectory.listFiles();
-				for (int i = 0; i < doingSci.length; i++) {
-					doingSci[i].renameTo(new File(taskDirectory, doingSci[i].getName()));
-				}
-			} else {
-				return false;
-			}
-		}
 
 		if (StringUtilities.isNullOrEmpty(workspacePath) || !new File(workspacePath).exists()
 				|| !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
@@ -704,56 +712,58 @@ public class DialogCacheBuilder extends JFrame {
 		this.repaint();
 	}
 
-	public synchronized void getResult(String cachePath, long startTime) {
-		boolean result = false;
-		File resultDir = new File(cachePath);
-		String resultPath = "";
-		if (resultDir.isDirectory()) {
-			File[] files = resultDir.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].getName().equals(params[BuildCache.MAPNAME_INDEX])) {
-					resultPath = files[i].getAbsolutePath();
-					result = true;
-					break;
-				}
-			}
-		}
-		if (result) {
-			long endTime = System.currentTimeMillis();
-			long totalTime = endTime - startTime;
-			long hour = 0;
-			long minutes = 0;
-			long second = 0;
-			if (totalTime >= 3600000) {
-				hour = totalTime / 3600000;
-				minutes = (totalTime % 3600000) / 60000;
-				second = ((totalTime % 3600000) % 60000) / 1000;
-			} else if (totalTime >= 60000) {
-				minutes = totalTime / 60000;
-				second = (totalTime % 60000) / 1000;
-			} else {
-				second = totalTime / 1000;
-			}
-
-			File failedFile = new File(CacheUtilities.replacePath(CacheUtilities.replacePath(cachePath, "CacheTask"), "failed"));
-			File taskFile = new File(CacheUtilities.replacePath(CacheUtilities.replacePath(cachePath, "CacheTask"), "task"));
-			if (failedFile.exists() && null != failedFile.list() && failedFile.list().length > 0) {
-				if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath())) == JOptionPane.OK_OPTION) {
-					buttonCreate.setEnabled(true);
-					resetPathInfo();
-					File[] failedSci = failedFile.listFiles();
-					for (int i = 0; i < failedSci.length; i++) {
-						failedSci[i].renameTo(new File(taskFile, failedSci[i].getName()));
+	public void getResult(String cachePath, long startTime) {
+		synchronized (resultLock) {
+			boolean result = false;
+			File resultDir = new File(cachePath);
+			String resultPath = "";
+			if (resultDir.isDirectory()) {
+				File[] files = resultDir.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					if (files[i].getName().equals(params[BuildCache.MAPNAME_INDEX])) {
+						resultPath = files[i].getAbsolutePath();
+						result = true;
+						break;
 					}
-					buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
-					return;
 				}
 			}
-			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath, hour, minutes, second));
-		} else {
-			new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_MultiCacheFailed"));
+			if (result) {
+				long endTime = System.currentTimeMillis();
+				long totalTime = endTime - startTime;
+				long hour = 0;
+				long minutes = 0;
+				long second = 0;
+				if (totalTime >= 3600000) {
+					hour = totalTime / 3600000;
+					minutes = (totalTime % 3600000) / 60000;
+					second = ((totalTime % 3600000) % 60000) / 1000;
+				} else if (totalTime >= 60000) {
+					minutes = totalTime / 60000;
+					second = (totalTime % 60000) / 1000;
+				} else {
+					second = totalTime / 1000;
+				}
+
+				File failedFile = new File(CacheUtilities.replacePath(CacheUtilities.replacePath(cachePath, "CacheTask"), "failed"));
+				File taskFile = new File(CacheUtilities.replacePath(CacheUtilities.replacePath(cachePath, "CacheTask"), "task"));
+				if (failedFile.exists() && null != failedFile.list() && failedFile.list().length > 0) {
+					if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath())) == JOptionPane.OK_OPTION) {
+						buttonCreate.setEnabled(true);
+						resetPathInfo();
+						File[] failedSci = failedFile.listFiles();
+						for (int i = 0; i < failedSci.length; i++) {
+							failedSci[i].renameTo(new File(taskFile, failedSci[i].getName()));
+						}
+						buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
+						return;
+					}
+				}
+				new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath, hour, minutes, second));
+			} else {
+				new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_MultiCacheFailed"));
+			}
+			disposeInfo();
 		}
-		disposeInfo();
 	}
 
 	public static void main(String[] args) {

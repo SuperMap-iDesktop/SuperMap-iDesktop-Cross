@@ -31,12 +31,12 @@ public class DemoParameterButton extends JButton {
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			setContentAreaFilled(true);
+//			setContentAreaFilled(true);
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			setContentAreaFilled(false);
+//			setContentAreaFilled(false);
 		}
 	};
 
@@ -57,8 +57,14 @@ public class DemoParameterButton extends JButton {
 
 		addMouseListener(mouseListener);
 	}
+
 	public String getFilePath() {
 		return filePath;
+	}
+
+	public String getName() {
+		String text = filePath.split("\\.")[0];
+		return text;
 	}
 }
 

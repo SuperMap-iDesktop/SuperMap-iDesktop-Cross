@@ -1300,6 +1300,25 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		}
 		DatasetType type = dataset.getType();
 		datasetNode = new DefaultMutableTreeNode(datasetNodeData);
+		if (type == DatasetType.VECTORCOLLECTION && ((DatasetVector) dataset).getCollectionDatasetInfos().size() > 0) {
+//			//添加矢量数据集集合的子集
+//			ArrayList<CollectionDatasetInfo> collectionDatasetInfos = ((DatasetVector) dataset).getCollectionDatasetInfos();
+//			for (int i = 0; i < collectionDatasetInfos.size(); i++) {
+//				CollectionDatasetInfo collectionDatasetInfo = collectionDatasetInfos.get(i);
+//				DatasourceConnectionInfo connectionInfo = collectionDatasetInfo.getDatasourceConnectInfo();
+//				if (null != connectionInfo) {
+//					Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(connectionInfo.getAlias());
+//					if (null != datasource) {
+//						Dataset childDataset = datasource.getDatasets().get(collectionDatasetInfo.getDatasetName());
+//						if (null != childDataset && childDataset.isOpen()) {
+//							TreeNodeData childDatasetNodeData = new TreeNodeData(childDataset, NodeDataType.DATASET_VECTOR_ITEM);
+//							DefaultMutableTreeNode childDatasetNode = new DefaultMutableTreeNode(childDatasetNodeData);
+//							datasetNode.add(childDatasetNode);
+//						}
+//					}
+//				}
+//			}
+		}
 		if (type.equals(DatasetType.NETWORK) || type.equals(DatasetType.NETWORK3D)) {
 			// 添加网络数据集的子数据集
 			DatasetVector datasetVector = (DatasetVector) dataset;
@@ -2080,8 +2099,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 				// Make sure we aren't already scrolled all the way down
 				if (tree.getHeight() - treeVisibleRectangle.y != vp.getHeight()) {
-		            /*
-                     * Get Y coordinate for scrolling down
+				    /*
+				     * Get Y coordinate for scrolling down
 					 */
 					if (vp.getHeight() - vpMousePosition.y < 30 && vp.getHeight() - vpMousePosition.y > 0) {
 						newY = treeVisibleRectangle.y + (30 + vpMousePosition.y - vp.getHeight()) * 2;
@@ -2090,8 +2109,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 				// Make sure we aren't already scrolled all the way up
 				if (newY == null && treeVisibleRectangle.y != 0) {
-	                /*
-                     * Get Y coordinate for scrolling up
+				    /*
+				     * Get Y coordinate for scrolling up
 					 */
 					if (30 > vpMousePosition.y && vpMousePosition.y > 0) {
 						newY = treeVisibleRectangle.y - (30 - vpMousePosition.y) * 2;

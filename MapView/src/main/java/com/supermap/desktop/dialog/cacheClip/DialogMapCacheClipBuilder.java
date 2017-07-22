@@ -225,7 +225,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				return name.contains(cacheName);
 			}
 		});
-		if (null == cacheNames || cacheNames.length == 0) {
+		if (null == cacheNames || cacheNames.length == 0 || !hasCacheName(cacheNames)) {
 			new File(CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), cacheName)).mkdir();
 		} else {
 			ArrayList<Integer> index = new ArrayList<>();
@@ -238,8 +238,22 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				}
 			}
 			Collections.sort(index);
+
 			cacheName = cacheName + (index.get(index.size() - 1) + 1);
 			new File(CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), cacheName)).mkdir();
+		}
+		return result;
+	}
+
+	private boolean hasCacheName(String[] cacheNames) {
+		boolean result = false;
+		if (null != cacheNames && cacheNames.length > 0) {
+			for (int i = 0; i < cacheNames.length; i++) {
+				if (cacheNames[i].equals(cacheName)) {
+					result = true;
+					break;
+				}
+			}
 		}
 		return result;
 	}

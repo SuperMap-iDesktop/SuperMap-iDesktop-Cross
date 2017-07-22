@@ -219,10 +219,12 @@ public class Workflow implements IWorkflow {
 	}
 
 	public void addProcess(IProcess process) {
+		process.setWorkflow(this);
 		this.processMatrix.addNode(process);
 	}
 
 	public void removeProcess(IProcess process) {
+		process.setWorkflow(null);
 		this.processMatrix.removeNode(process);
 	}
 

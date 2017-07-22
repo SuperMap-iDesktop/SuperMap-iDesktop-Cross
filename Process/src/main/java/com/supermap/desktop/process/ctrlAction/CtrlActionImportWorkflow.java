@@ -13,7 +13,6 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import javax.swing.*;
 import java.io.File;
@@ -40,8 +39,6 @@ public class CtrlActionImportWorkflow extends CtrlAction {
 			String filePath = fileChoose.getFilePath();
 			if (!StringUtilities.isNullOrEmpty(filePath) && new File(filePath).exists()) {
 				Document document = XmlUtilities.getDocument(filePath);
-				Element workflowEntryNode = (Element) XmlUtilities.getChildElementNodeByName(document, "WorkflowEntry");
-				String name = workflowEntryNode.getAttribute("Name");
 
 				ArrayList<String> names = new ArrayList<>();
 				ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
@@ -57,7 +54,7 @@ public class CtrlActionImportWorkflow extends CtrlAction {
 				}
 
 				FormWorkflow formWorkflow = FormWorkflow.serializeFrom(XmlUtilities.nodeToString(document));
-				name = StringUtilities.getUniqueName(formWorkflow.getText(), names);
+				String name = StringUtilities.getUniqueName(formWorkflow.getText(), names);
 				formWorkflow.setText(name);
 				formWorkflow.setNeedSave(true);
 				Application.getActiveApplication().getMainFrame().getFormManager().add(formWorkflow);
