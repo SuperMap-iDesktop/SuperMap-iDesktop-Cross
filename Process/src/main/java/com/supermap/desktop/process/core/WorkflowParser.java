@@ -6,6 +6,7 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.MetaProcessImportFactory;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
+import com.supermap.desktop.process.meta.metaProcessImplements.DataDispose.MetaProcessEdgeMatch;
 import com.supermap.desktop.process.meta.metaProcessImplements.DataDispose.MetaProcessLinePolygonSmooth;
 import com.supermap.desktop.process.meta.metaProcessImplements.DataDispose.MetaProcessVectorResample;
 import com.supermap.desktop.process.meta.metaProcessImplements.*;
@@ -262,7 +263,7 @@ public class WorkflowParser {
 		} else if (MetaKeys.LinePolygonSmooth.equals(key)) {
 			result = new MetaProcessLinePolygonSmooth();
 		} else if (MetaKeys.EdgeMatch.equals(key)) {
-			//todo MetaProcessEdgeMatch()
+			result = new MetaProcessEdgeMatch();
 		} else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}
