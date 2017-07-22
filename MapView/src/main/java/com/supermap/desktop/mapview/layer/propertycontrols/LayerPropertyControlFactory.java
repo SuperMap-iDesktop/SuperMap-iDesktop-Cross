@@ -10,6 +10,8 @@ public class LayerPropertyControlFactory {
 	private LayerImageParamPropertyControl imageParamPropertyControl;
 	private LayerStretchOptionPropertyControl stretchOptionPropertyControl;
 	private LayerGridParamPropertyControl gridParamPropertyControl;
+	private LayerHeatmapPropertyControl heatmapPropertyControl;
+	private LayerGridAggregationPropertyControl gridAggregationPropertyControl;
 
 	public AbstractLayerPropertyControl createLayerPropertyControl(LayerPropertyModel model) {
 		if (model instanceof LayerBasePropertyModel) {
@@ -54,7 +56,21 @@ public class LayerPropertyControlFactory {
 			gridParamPropertyControl.setLayerPropertyModel(model);
 			ComponentUIUtilities.setName(this.gridParamPropertyControl, "LayerPropertyControlFactory_gridParamPropertyControl");
 			return gridParamPropertyControl;
-		} else {
+		}else if (model instanceof LayerHeatmapPropertyModel) {
+			if (heatmapPropertyControl == null) {
+				heatmapPropertyControl = new LayerHeatmapPropertyControl();
+			}
+			heatmapPropertyControl.setLayerPropertyModel(model);
+			ComponentUIUtilities.setName(this.heatmapPropertyControl, "LayerPropertyControlFactory_heatmapPropertyControl");
+			return heatmapPropertyControl;
+		} else if (model instanceof LayerGridAggregationPropertyModel) {
+			if (gridAggregationPropertyControl == null) {
+				gridAggregationPropertyControl = new LayerGridAggregationPropertyControl();
+			}
+			gridAggregationPropertyControl.setLayerPropertyModel(model);
+			ComponentUIUtilities.setName(this.gridAggregationPropertyControl, "LayerPropertyControlFactory_gridAggregationPropertyControl");
+			return gridAggregationPropertyControl;
+		}else {
 			return null;
 		}
 	}
