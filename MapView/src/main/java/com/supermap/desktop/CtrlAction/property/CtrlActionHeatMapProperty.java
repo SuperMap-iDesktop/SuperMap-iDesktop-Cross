@@ -1,7 +1,6 @@
 package com.supermap.desktop.CtrlAction.property;
 
-import com.sun.prism.paint.*;
-import com.sun.prism.paint.Color;
+
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -9,7 +8,6 @@ import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.colorScheme.ColorScheme;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.layer.propertycontrols.LayerPropertyContainer;

@@ -15,6 +15,7 @@ public class LayerPropertyModelFactory {
 	private static final int LAYER_IMAGE = 8;
 	private static final int LAYERGROUP = 16;
 	private static final int LAYER_HEATMAP=32;
+	private static final int LAYER_GRID_AGGREGATION=64;
 
 	private LayerPropertyModelFactory() {
 		// 工具类，不提供构造方法
@@ -33,7 +34,9 @@ public class LayerPropertyModelFactory {
 				break;
 			}else if (layer instanceof LayerHeatmap){
 				layerType |= LAYER_HEATMAP;
-			} else if (layer.getAdditionalSetting() != null ) {
+			}else if (layer instanceof LayerGridAggregation){
+				layerType |= LAYER_GRID_AGGREGATION;
+			}  else if (layer.getAdditionalSetting() != null ) {
 				if (layer.getAdditionalSetting().getType() == LayerSettingType.VECTOR) {
 					layerType |= LAYER_VECTOR;
 				} else if (layer.getAdditionalSetting().getType() == LayerSettingType.GRID) {
@@ -72,6 +75,10 @@ public class LayerPropertyModelFactory {
 			models.add(new LayerBasePropertyModel(layers,formMap));
 			models.add(new LayerRelocateDatasetPropertyModel(layers,formMap));
 			models.add(new LayerHeatmapPropertyModel(layers,formMap));
+		} else if (layerType == LAYER_GRID_AGGREGATION){
+			models.add(new LayerBasePropertyModel(layers,formMap));
+			models.add(new LayerRelocateDatasetPropertyModel(layers,formMap));
+			models.add(new LayerGridAggregationPropertyModel(layers,formMap));
 		} else {
 			models.add(new LayerBasePropertyModel(layers, formMap));
 			models.add(new LayerRelocateDatasetPropertyModel(layers, formMap));

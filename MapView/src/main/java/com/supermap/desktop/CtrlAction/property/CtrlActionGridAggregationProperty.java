@@ -13,7 +13,6 @@ import com.supermap.desktop.mapview.layer.propertycontrols.LayerPropertyContaine
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGridAggregation;
-import com.supermap.mapping.LayerHeatmap;
 
 /**
  * Created by lixiaoyao on 2017/7/18.
@@ -91,6 +90,21 @@ public class CtrlActionGridAggregationProperty extends CtrlAction {
 //				System.out.println(e);
 //				System.out.println("11111111111111111111111111111");
 //			}
+
+//			System.out.println("test height:输出height默认值");
+//			System.out.println(layerGridAggregation.getGridHeight());
+//			layerGridAggregation.setGridHeight(12);
+//			layerGridAggregation.updateData();
+//			System.out.println("height设置为12后的结果");
+//			System.out.println(layerGridAggregation.getGridHeight());
+//
+//			System.out.println("test width:输出width默认值");
+//			System.out.println(layerGridAggregation.getGridwidth());
+//			layerGridAggregation.setGridWidth(12);
+//			layerGridAggregation.updateData();
+//			System.out.println("width设置为12后的结果");
+//			System.out.println(layerGridAggregation.getGridwidth());
+
 
 			UICommonToolkit.getLayersManager().getLayersTree().reload();
 			if (layerGridAggregation != null) {

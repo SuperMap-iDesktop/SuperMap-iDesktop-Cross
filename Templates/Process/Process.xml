@@ -152,6 +152,10 @@
                 <process key="VectorResample" name="矢量重采样"/>
                 <process key="LinePolygonSmooth" name="线面光滑"/>
                 <process key="EdgeMatch" name="图幅接边"/>
+                <process key="PickupBorder" name="提取边界线"/>
+                <process key="DualLineToCenterLine" name="双线中心线"/>
+                <process key="RegionToCenterLine" name="面中心线"/>
+                <process key="RegionTrunkToCenterLine" name="面主干中心线"/>
             </process>
 
 

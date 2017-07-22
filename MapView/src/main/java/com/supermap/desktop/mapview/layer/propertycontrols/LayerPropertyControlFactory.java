@@ -11,6 +11,7 @@ public class LayerPropertyControlFactory {
 	private LayerStretchOptionPropertyControl stretchOptionPropertyControl;
 	private LayerGridParamPropertyControl gridParamPropertyControl;
 	private LayerHeatmapPropertyControl heatmapPropertyControl;
+	private LayerGridAggregationPropertyControl gridAggregationPropertyControl;
 
 	public AbstractLayerPropertyControl createLayerPropertyControl(LayerPropertyModel model) {
 		if (model instanceof LayerBasePropertyModel) {
@@ -62,7 +63,14 @@ public class LayerPropertyControlFactory {
 			heatmapPropertyControl.setLayerPropertyModel(model);
 			ComponentUIUtilities.setName(this.heatmapPropertyControl, "LayerPropertyControlFactory_heatmapPropertyControl");
 			return heatmapPropertyControl;
-		} else {
+		} else if (model instanceof LayerGridAggregationPropertyModel) {
+			if (gridAggregationPropertyControl == null) {
+				gridAggregationPropertyControl = new LayerGridAggregationPropertyControl();
+			}
+			gridAggregationPropertyControl.setLayerPropertyModel(model);
+			ComponentUIUtilities.setName(this.gridAggregationPropertyControl, "LayerPropertyControlFactory_gridAggregationPropertyControl");
+			return gridAggregationPropertyControl;
+		}else {
 			return null;
 		}
 	}
