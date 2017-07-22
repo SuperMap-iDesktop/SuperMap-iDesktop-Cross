@@ -282,8 +282,12 @@ public class UserExperienceManager {
 	private void addDoneJson(String json) {
 		synchronized (lock) {
 			try {
-				executedFunctionFile.getRandomAccessFile().write((json + System.getProperty("line.separator")).getBytes());
-				if (executedFunctionFile.getRandomAccessFile().length() > maxFileSize) {
+				RandomAccessFile randomAccessFile = executedFunctionFile.getRandomAccessFile();
+				if (randomAccessFile.length() > 0) {
+					randomAccessFile.seek(randomAccessFile.length());
+				}
+				randomAccessFile.write((json + System.getProperty("line.separator")).getBytes());
+				if (randomAccessFile.length() > maxFileSize) {
 					executedFiles.add(executedFunctionFile);
 					executedFunctionFile = getDefaultFile();
 				}
@@ -300,7 +304,7 @@ public class UserExperienceManager {
 				Thread.sleep(1000);
 			}
 			if (fileLocker.getRandomAccessFile().length() > 0) {
-				fileLocker.getRandomAccessFile().seek(fileLocker.getRandomAccessFile().length() - 1);
+				fileLocker.getRandomAccessFile().seek(fileLocker.getRandomAccessFile().length());
 			}
 			fileLocker.getRandomAccessFile().write((json + System.getProperty("line.separator")).getBytes());
 		} catch (Exception e) {
