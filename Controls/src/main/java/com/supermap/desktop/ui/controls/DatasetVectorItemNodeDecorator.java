@@ -9,4 +9,9 @@ public class DatasetVectorItemNodeDecorator extends DatasetVectorNodeDecorator{
 	public DatasetVectorItemNodeDecorator(NodeDataType type) {
 		super(type);
 	}
+
+	@Override
+	public void decorate(JLabel label, TreeNodeData data) {
+		super.decorate(label, data);
+	}
 }

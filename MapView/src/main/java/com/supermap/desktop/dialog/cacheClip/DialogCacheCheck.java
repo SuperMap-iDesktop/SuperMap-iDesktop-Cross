@@ -233,14 +233,6 @@ public class DialogCacheCheck extends JFrame {
 		boolean result = true;
 		SmOptionPane optionPane = new SmOptionPane();
 		File sciDirectory = new File(sciPath);
-		File doingDirectory = new File(CacheUtilities.replacePath(sciDirectory.getParent(), "checking"));
-		if (doingDirectory.exists() && hasSciFiles(doingDirectory)
-				&& optionPane.showConfirmDialog(MapViewProperties.getString("String_WarningForChecking")) == JOptionPane.OK_OPTION) {
-			File[] doingSci = doingDirectory.listFiles();
-			for (int i = 0; i < doingSci.length; i++) {
-				doingSci[i].renameTo(new File(sciDirectory, doingSci[i].getName()));
-			}
-		}
 		if (StringUtilities.isNullOrEmpty(sciPath) || !FileUtilities.isFilePath(sciPath) || !hasSciFiles(sciDirectory)) {
 			optionPane.showConfirmDialog(MapViewProperties.getString("String_TaskNotExist"));
 			return false;
@@ -309,23 +301,9 @@ public class DialogCacheCheck extends JFrame {
 					anchorTop = writer.getIndexBounds().getTop();
 					tileSize = writer.getTileSize().value();
 				}
-//				CheckCache.main(params);
-				//开始检查前对文件加锁,如果文件已经加锁则表示有进程正在使用,否则表示为以前进程挂了没有处理的
-				File doingDirectory = new File(CacheUtilities.replacePath(cacheTaskPath, "checking"));
-				if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
-					File[] doingFailedSci = doingDirectory.listFiles();
-					for (File doingSci : doingFailedSci) {
-						//文件加了锁说明文件正在被用于检查任务
-						FileLocker locker = new FileLocker(doingSci);
-						if (locker.tryLock()) {
-							//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将该任务移到build目录下,重新切图
-							locker.release();
-							doingSci.renameTo(new File(taskPath, doingSci.getName()));
-						}
-					}
-				}
-				CheckCache checkCache = new CheckCache();
-				checkCache.startProcess(Integer.valueOf(processCount), params);
+				CheckCache.main(params);
+//				CheckCache checkCache = new CheckCache();
+//				checkCache.startProcess(Integer.valueOf(processCount), params);
 				getResult(cachePath, cacheRoot, cacheTaskPath, taskPath, parentPath, anchorLeft, anchorTop, tileSize, datasourcePath);
 			}
 		} catch (Exception ex) {
@@ -348,6 +326,20 @@ public class DialogCacheCheck extends JFrame {
 							Thread.sleep(2000);
 						}
 						while (!FileUtilities.isDirEmpty(checkingPath)) {
+							//实时检查checking目录下的文件是否加锁,如果文件已经加锁则表示有进程正在使用,否则表示为以前进程挂了没有处理的
+							File doingDirectory = new File(CacheUtilities.replacePath(cacheTaskPath, "checking"));
+							if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
+								File[] doingFailedSci = doingDirectory.listFiles();
+								for (File doingSci : doingFailedSci) {
+									//文件加了锁说明文件正在被用于检查任务
+									FileLocker locker = new FileLocker(doingSci);
+									if (locker.tryLock()) {
+										//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将该任务移到build目录下,重新切图
+										locker.release();
+										doingSci.renameTo(new File(taskPath, doingSci.getName()));
+									}
+								}
+							}
 							Thread.sleep(2000);
 						}
 
