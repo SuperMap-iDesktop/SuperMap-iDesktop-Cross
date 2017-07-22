@@ -7,6 +7,7 @@ import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
 import com.supermap.desktop.utilities.*;
@@ -115,11 +116,12 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	private ActionListener createListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Datasource datasource = datasourceComboBox.getSelectedDatasource();
+			final Datasource datasource = datasourceComboBox.getSelectedDatasource();
 			DatasetVectorInfo info = new DatasetVectorInfo();
 			String datasetName = datasource.getDatasets().getAvailableDatasetName(textFieldDatasetName.getText());
 			info.setName(datasetName);
 			info.setType(DatasetType.VECTORCOLLECTION);
+
 			DatasetVector vector = datasource.getDatasets().create(info);
 			vector.setCharset(CharsetUtilities.valueOf(charsetComboBox.getSelectedItem().toString()));
 			ArrayList<DatasetInfo> datasetInfos = tableModel.getDatasetInfos();
@@ -135,6 +137,12 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 				}
 			}
 			JDialogCreateCollectionDataset.this.dispose();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+				}
+			});
 		}
 	};
 	private ActionListener cancelListener = new ActionListener() {
@@ -447,7 +455,17 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		this.scrollPane = new JScrollPane();
 		this.tableDatasetDisplay = new JTable();
 		this.labelDatasource = new JLabel();
-		this.datasourceComboBox = new DatasourceComboBox();
+		ArrayList<Datasource> datasourceArray = new ArrayList<>();
+		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+		if (null != datasources) {
+			for (int i = 0; i < datasources.getCount(); i++) {
+				//当前只支持POSTGERSQL类型的数据源,后续修改
+				if (datasources.get(i).getEngineType().equals(EngineType.POSTGRESQL)) {
+					datasourceArray.add(datasources.get(i));
+				}
+			}
+		}
+		this.datasourceComboBox = new DatasourceComboBox(datasourceArray);
 		this.labelDatasetName = new JLabel();
 		this.textFieldDatasetName = new JTextField();
 		this.toolBar = new JToolBar();
