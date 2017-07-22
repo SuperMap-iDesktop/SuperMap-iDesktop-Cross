@@ -189,7 +189,7 @@ public class UserExperienceManager {
 	}
 
 	private void initializeLogsSendTimer() {
-		timer = new Timer(60 * 60 * 1000, new ActionListener() {
+		timer = new Timer(2 * 60 * 1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				doPost();
@@ -218,6 +218,13 @@ public class UserExperienceManager {
 			@Override
 			public void run() {
 				doPost(executedFunctionFile);
+				synchronized (lock) {
+					try {
+						executedFunctionFile.getRandomAccessFile().setLength(0);
+					} catch (IOException e) {
+						Application.getActiveApplication().getOutput().output(e);
+					}
+				}
 			}
 		});
 
