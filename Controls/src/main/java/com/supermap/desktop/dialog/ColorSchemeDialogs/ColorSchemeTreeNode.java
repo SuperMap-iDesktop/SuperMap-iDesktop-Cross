@@ -24,7 +24,7 @@ public class ColorSchemeTreeNode extends DefaultMutableTreeNode implements Clone
 	private String name;
 	private String filePath;
 
-	private static final String[] DIRECTORY_NAMES = new String[]{"Grid_DEM", "Grid_HillShade", "Map_ThemeGraduatedSymbol"
+	private static final String[] DIRECTORY_NAMES = new String[]{"Grid_DEM","Map_GridAggregation","Grid_HillShade", "Map_ThemeGraduatedSymbol"
 			, "Map_ThemeGraph", "Map_ThemeRange", "Map_ThemeUnique", "Other_Gradien", "Other_Random"}; // Typo: Gradien 好像是Gradient,保持一致不修改
 
 	public ColorSchemeTreeNode(ColorSchemeTreeNode parent) {

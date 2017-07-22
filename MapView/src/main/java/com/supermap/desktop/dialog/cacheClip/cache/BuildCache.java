@@ -1,15 +1,13 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
-import com.supermap.data.Dataset;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
-import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.mapping.Map;
 
 import java.io.File;
-import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -58,9 +56,6 @@ public class BuildCache {
 			String workspacePath = params[WORKSPACEPATH_INDEX];
 			String mapName = params[MAPNAME_INDEX];
 			String cachePath = params[CACHEPATH_INDEX];
-//			String mergeCount = "1";
-//			if (params.length > MERGESCICOUNT_INDEX && !params[MERGESCICOUNT_INDEX].equals("0"))
-//				mergeCount = params[MERGESCICOUNT_INDEX];
 			String isAppendingStr = params[ISAPPENDING_INDEX];
 			boolean isAppending = Boolean.valueOf(isAppendingStr);
 			//Instance LogWriter
@@ -77,18 +72,6 @@ public class BuildCache {
 				if (!doingDir.exists()) {
 					doingDir.mkdir();
 				}
-//				else {
-//					File[] doingFailedSci = doingDir.listFiles();
-//					for (File doingSci : doingFailedSci) {
-//						//文件加了锁说明文件正在被用于切图任务
-//						FileLocker locker = new FileLocker(doingSci);
-//						if (locker.tryLock()) {
-//							//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将改任务移到task目录下,重新切图
-//							locker.release();
-//							doingSci.renameTo(new File(taskFiles, doingSci.getName()));
-//						}
-//					}
-//				}
 				do {
 					long start = System.currentTimeMillis();
 					//Recalculate sci file length
@@ -116,9 +99,33 @@ public class BuildCache {
 					}
 					log.writelog(String.format("get doing sci, cost(ms):%d", System.currentTimeMillis() - start));
 					//Second step:get sci file from doing dir and build cache
+					HashMap<String, FileLocker> lockerHashMap  = new HashMap<>();
+					HashMap<String, MapCacheBuilder> cacheBuilderHashMap = new HashMap<>();
+					for (int i = 0; i < doingSciNames.size(); i++) {
+						//将数组中的sci文件全部加锁，执行完一个再释放锁
+						String sciName = doingSciNames.get(i);
+						File sci = new File(sciName);
+						if (!sci.exists()) {
+							return;
+						}
+						//加锁前先创建MapCacheBuilder(builder.fromConfigFile()需要用到sci文件)
+						MapCacheBuilder builder = new MapCacheBuilder();
+						builder.setMap(map);
+						builder.fromConfigFile(sciName);
+						builder.setOutputFolder(cachePath);
+						builder.setCacheName(builder.getCacheName());
+						builder.resumable(false);
+						builder.setIsAppending(isAppending);
+						cacheBuilderHashMap.put(sciName, builder);
+						FileLocker locker = new FileLocker(sci);
+						if (locker.tryLock()) {
+							//加锁成功将文件添加到hashmap中
+							lockerHashMap.put(sciName, locker);
+						}
+					}
 					for (int i = 0; i < doingSciNames.size(); i++) {
 						String sciName = doingSciNames.get(i);
-						build(cachePath, log, map, sciName, isAppending);
+						build(cacheBuilderHashMap.get(sciName), lockerHashMap.get(sciName), new File(sciName), log, isAppending);
 					}
 
 				} while (sciLength != 0);
@@ -149,38 +156,18 @@ public class BuildCache {
 		return renameSuccess;
 	}
 
-	private void build(String cachePath, LogWriter log, Map map, String sciName, boolean isAppending) {
-		File sci = new File(sciName);
-		if (!sci.exists()) {
-			return;
-		}
-
-
-		log.writelog(String.format("start sciName:%s , PID:%s", sciName, LogWriter.getPID()));
-		if (!sci.exists()) {
-			log.writelog(String.format("sciFile: %s does not exist. Maybe has done at before running. ", sciName));
-		}
+	private void build(MapCacheBuilder builder, FileLocker locker, File sci, LogWriter log, boolean isAppending) {
+		log.writelog(String.format("start sciName:%s , PID:%s", sci.getName(), LogWriter.getPID()));
 		long oneStart = System.currentTimeMillis();
-		MapCacheBuilder builder = new MapCacheBuilder();
-		builder.setMap(map);
-		builder.fromConfigFile(sciName);
 
-		builder.setOutputFolder(cachePath);
-		builder.setCacheName(builder.getCacheName());
-		builder.resumable(false);
-
-		builder.setIsAppending(isAppending);
-		boolean result = false;
-		FileLocker locker = new FileLocker(sci);
-		if (locker.tryLock()) {
-			if (isAppending) {
-				result = builder.build();
-			} else {
-				result = builder.buildWithoutConfigFile();
-			}
-			locker.release();
-			//释放锁
+		boolean result;
+		if (isAppending) {
+			result = builder.build();
+		} else {
+			result = builder.buildWithoutConfigFile();
 		}
+		//释放锁
+		locker.release();
 		builder.dispose();
 		if (result) {
 			File doneDir = new File(CacheUtilities.replacePath(sci.getParentFile().getParent(), "build"));
@@ -197,6 +184,6 @@ public class BuildCache {
 		}
 
 		long end = System.currentTimeMillis();
-		log.writelog(String.format("%s %s done,PID:%s, cost(ms):%d, done", sciName, String.valueOf(result), LogWriter.getPID(), end - oneStart));
+		log.writelog(String.format("%s %s done,PID:%s, cost(ms):%d, done", sci.getName(), String.valueOf(result), LogWriter.getPID(), end - oneStart));
 	}
 }

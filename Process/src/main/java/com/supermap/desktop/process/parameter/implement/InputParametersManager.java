@@ -298,12 +298,14 @@ public class InputParametersManager {
 					return;
 				}
 
-				OutputData oldValue = (OutputData) evt.getOldValue();
+				OutputData oldValue = (OutputData) ((ParameterDataNode) evt.getOldValue()).getData();
 
 				if (newValue == null) {
 
 					// 约束解除！
-					workflow.removeRelation(oldValue.getProcess(), InputParametersManager.this.parameters.getProcess());
+					if (workflow.contains(oldValue.getProcess())) {
+						workflow.removeRelation(oldValue.getProcess(), InputParametersManager.this.parameters.getProcess());
+					}
 				} else {
 					String name = "";
 					for (String key :
