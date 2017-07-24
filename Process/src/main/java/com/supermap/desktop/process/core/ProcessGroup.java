@@ -123,6 +123,16 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 		return null;
 	}
 
+	@Override
+	public Workflow getWorkflow() {
+		return null;
+	}
+
+	@Override
+	public void setWorkflow(Workflow workflow) {
+
+	}
+
 	//region 无用方法
 	@Override
 	public String getKey() {

@@ -76,6 +76,10 @@ public class MetaKeys {
 	public static final String VectorResample = "VectorResample";
 	public static final String EdgeMatch = "EdgeMatch";
 	public static final String LinePolygonSmooth = "LinePolygonSmooth";
+	public static final String PickupBorder="PickupBorder";
+	public static final String DualLineToCenterLine="DualLineToCenterLine";
+	public static final String RegionToCenterLine="RegionToCenterLine";
+	public static final String RegionTrunkToCenterLine="RegionTrunkToCenterLine";
 
 	//类型转换
 	public static final String Conversion_PointToLine = "Conversion_PointToLine";

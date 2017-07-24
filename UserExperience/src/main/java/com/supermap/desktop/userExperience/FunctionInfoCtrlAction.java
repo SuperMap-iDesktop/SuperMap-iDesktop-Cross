@@ -18,7 +18,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * @author XiaJT
@@ -32,7 +31,7 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 	private String functionGrade0;
 	private String functionGrade1;
 	private String functionGrade2;
-	private String functionGrade3 = "";
+	private String functionGrade3;
 	private long executeDateTime;
 	private boolean isFinished;
 	private String message;
@@ -45,16 +44,13 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	public FunctionInfoCtrlAction(String action) {
-		JSONObject parse = JSONObject.parseObject(action);
+	public FunctionInfoCtrlAction(String action) throws ParseException {
+		isException = true;
+		JSONObject parse = null;
+		parse = JSONObject.parseObject(action);
 		caption = parse.getString("Caption");
 		ctrlActionName = parse.getString("CtrlActionName");
-		try {
-			executeDateTime = formatter.parse(parse.getString("ExecuteDateTime")).getTime();
-		} catch (ParseException e) {
-			// ignore
-			executeDateTime = System.currentTimeMillis();
-		}
+		executeDateTime = parse.getLong("ExecuteDateTime");
 		functionGrade0 = parse.getString("FunctionGrade0");
 		functionGrade1 = parse.getString("FunctionGrade1");
 		functionGrade2 = parse.getString("FunctionGrade2");
@@ -154,7 +150,7 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("Caption", caption);
 		jsonObject.put("CtrlActionName", ctrlActionName);
-		jsonObject.put("ExecuteDateTime", formatter.format(new Date(executeDateTime)));
+		jsonObject.put("ExecuteDateTime", executeDateTime);
 		jsonObject.put("FunctionGrade0", functionGrade0);
 		jsonObject.put("FunctionGrade1", functionGrade1);
 		jsonObject.put("FunctionGrade2", functionGrade2);

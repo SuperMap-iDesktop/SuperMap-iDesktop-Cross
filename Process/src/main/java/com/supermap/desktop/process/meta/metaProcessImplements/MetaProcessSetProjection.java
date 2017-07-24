@@ -10,13 +10,7 @@ import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstrai
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.ParameterButton;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -125,8 +119,6 @@ public class MetaProcessSetProjection extends MetaProcess {
 			coordSysName.setSelectedItem("");
 			coordUnit.setSelectedItem("");
 			textAreaCoordInfo.setSelectedItem("");
-			parameterButton.setEnabled(false);
-
 		}
 	}
 
@@ -184,18 +176,27 @@ public class MetaProcessSetProjection extends MetaProcess {
 
 	@Override
 	public boolean execute() {
-		Dataset src = null;
-		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
-			src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
-		} else {
-			src = (Dataset) this.parameterSingleDataset.getSelectedItem();
+		boolean ret = true;
+
+		try {
+			Dataset src = null;
+			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
+				src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+			} else {
+				src = (Dataset) this.parameterSingleDataset.getSelectedItem();
+			}
+			fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
+			if (prj != null) {
+				src.setPrjCoordSys(prj);
+				String prjCoorSysInfo = PrjCoordSysUtilities.getDescription(prj);
+				textAreaCoordInfo.setSelectedItem(prjCoorSysInfo);
+				fireRunning(new RunningEvent(this, 100, "重设投影坐标系成功。"));
+				this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(src);
+			}
+		} catch (Exception e) {
+			ret = false;
 		}
-		fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
-		if (prj != null) {
-			src.setPrjCoordSys(prj);
-			String prjCoorSysInfo = PrjCoordSysUtilities.getDescription(prj);
-			textAreaCoordInfo.setSelectedItem(prjCoorSysInfo);
-		}
-		return true;
+
+		return ret;
 	}
 }

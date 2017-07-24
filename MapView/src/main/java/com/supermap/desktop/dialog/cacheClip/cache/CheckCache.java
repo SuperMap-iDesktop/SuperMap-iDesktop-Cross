@@ -5,6 +5,7 @@ import com.supermap.data.processing.CacheWriter;
 import com.supermap.data.processing.CompactFile;
 import com.supermap.data.processing.StorageType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.tilestorage.*;
 
 import javax.imageio.ImageIO;
@@ -90,16 +91,6 @@ public class CheckCache {
 			System.out.println("sci file not found!");
 			return;
 		}
-//		if (this.error2udb) {
-//			File scifile = new File(sciNames.get(0));
-//			String checkPath = CacheUtilities.replacePath(scifile.getParentFile().getParent(), "check");
-//			String datasourcePath = CacheUtilities.replacePath(checkPath, "check.udb");
-//			File datasourceFile = new File(datasourcePath);
-//			if (!datasourceFile.exists()) {
-//				System.out.println(datasourcePath + " not exists!");
-//				return;
-//			}
-//		}
 		this.boundaryCheck = boundaryRegion != null;
 		CacheWriter writer = new CacheWriter();
 		writer.FromConfigFile(sciNames.get(0));
@@ -113,18 +104,7 @@ public class CheckCache {
 			if (!checkingDir.exists()) {
 				checkingDir.mkdir();
 			}
-//			else {
-//				File[] checkingScis = checkingDir.listFiles();
-//				for (File checkingSci : checkingScis) {
-//					FileLocker locker = new FileLocker(checkingSci);
-//					//文件加了锁说明文件正在被用于检查任务
-//					if (locker.tryLock()) {
-//						//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将改任务移到build目录下,重新检查
-//						locker.release();
-//						checkingSci.renameTo(new File(sciPath, checkingSci.getName()));
-//					}
-//				}
-//			}
+
 			do {
 				//Recalculate sci file length
 				String[] sciFileNames = sciPath.list(CacheUtilities.getFilter());
@@ -149,9 +129,27 @@ public class CheckCache {
 					}
 				}
 				//Second step:get sci file from doing dir and build cache
+				HashMap<String, CacheWriter> writerHashMap  = new HashMap<>();
+				HashMap<String, FileLocker> lockerHashMap = new HashMap<>();
+				for (int i = 0; i < doingSciNames.size(); i++) {
+					//将数组中的sci文件全部加锁，执行完一个再释放锁
+					String sciName = doingSciNames.get(i);
+					CacheWriter cacheFile = new CacheWriter();
+					cacheFile.FromConfigFile(sciName);
+					writerHashMap.put(sciName, cacheFile);
+					File file = new File(sciName);
+					if (!file.exists()) {
+						return;
+					}
+					FileLocker locker = new FileLocker(file);
+					if (locker.tryLock()) {
+						lockerHashMap.put(sciName, locker);
+					}
+//					check(cacheRoot, sciName);
+				}
 				for (int i = 0; i < doingSciNames.size(); i++) {
 					String sciName = doingSciNames.get(i);
-					check(cacheRoot, sciName);
+					check(sciName, new File(sciName), writerHashMap.get(sciName), lockerHashMap.get(sciName));
 				}
 			} while (sciLength != 0);
 //			if (this.error2udb && null != parentPath) {
@@ -163,8 +161,7 @@ public class CheckCache {
 	}
 
 	private boolean checkingSci(String sciFileName, File doingDir, CopyOnWriteArrayList<String> doingSciNames) {
-		String sciName = sciFileName;
-		File sci = new File(sciName);
+		File sci = new File(sciFileName);
 		boolean renameSuccess = sci.renameTo(new File(doingDir, sci.getName()));
 		if (renameSuccess) {
 			doingSciNames.add(CacheUtilities.replacePath(doingDir.getAbsolutePath(), sci.getName()));
@@ -172,19 +169,11 @@ public class CheckCache {
 		return renameSuccess;
 	}
 
-	public void check(String cacheRoot, String sciFile) {
-
-		File file = new File(sciFile);
-		if (!file.exists()) {
-			return;
-		}
-
+	public void check(String cacheRoot, File file, CacheWriter cacheFile, FileLocker locker) {
 		LogWriter log = LogWriter.getInstance(LogWriter.CHECK_CACEH);
 		sciFilePath = file.getName();
 		errorWriter = null;
 
-		CacheWriter cacheFile = new CacheWriter();
-		cacheFile.FromConfigFile(sciFile);
 		cacheRoot = cacheRoot + File.separator +
 				cacheFile.parseTileFormat() + "_" +
 				cacheFile.getTileSize().value() + "_" +
@@ -218,9 +207,7 @@ public class CheckCache {
 			TileStorageInfo infoMongo = manager.getInfo();
 			resolutionsMongo = infoMongo.getResolutions();
 		}
-//		FileLocker locker = new FileLocker(file);
-//		//文件锁添加成功则执行检查任务
-//		if (locker.tryLock()) {
+		//文件锁添加成功则执行检查任务
 		boolean result = true;
 		for (Double scale : cacheFile.getCacheScaleCaptions().keySet()) {
 			String caption = cacheFile.getCacheScaleCaptions().get(scale);
@@ -275,9 +262,8 @@ public class CheckCache {
 				}
 				errorWriter = null;
 			}
-//			}
-//			//检查完成后,释放文件锁
-//			locker.release();
+			//检查完成后,释放文件锁
+			locker.release();
 			if (result) {
 				File doneDir = new File(CacheUtilities.replacePath(file.getParentFile().getParent(), "checked"));
 				if (!doneDir.exists()) {

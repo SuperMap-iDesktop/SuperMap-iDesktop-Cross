@@ -33,7 +33,9 @@ public class ParameterColorPanel extends SwingPanel implements IParameterPanel {
 		label.setText(this.parameterColor.getDescribe());
 		label.setToolTipText(this.parameterColor.getDescribe());
 		initLayout();
+		this.componentDropDown.setColor(((ParameterColor) parameterColor).getInitColor());
 		initListeners();
+
 	}
 
 	private void initListeners() {
@@ -57,7 +59,7 @@ public class ParameterColorPanel extends SwingPanel implements IParameterPanel {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (!isSelectedItem){
 					isSelectedItem = true;
-					componentDropDown.selectColor((Color)evt.getNewValue());
+					ParameterColorPanel.this.componentDropDown.selectColor((Color)evt.getNewValue());
 					isSelectedItem = false;
 				}
 			}
