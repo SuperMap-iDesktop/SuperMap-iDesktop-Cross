@@ -265,7 +265,13 @@ public class WorkflowParser {
 			//todo MetaProcessEdgeMatch()
 		} else if (MetaKeys.PickupBorder.equals(key)) {
 			result = new MetaProcessPickupBorder();
-		} else {
+		} else if (MetaKeys.DualLineToCenterLine.equals(key)) {
+			result = new MetaProcessDualLineToCenterLine();
+		} else if (MetaKeys.RegionToCenterLine.equals(key)) {
+			result = new MetaProcessRegionToCenterLine();
+		}else if (MetaKeys.RegionTrunkToCenterLine.equals(key)) {
+			result = new MetaProcessRegionTrunkToCenterLine();
+		}else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}
 
