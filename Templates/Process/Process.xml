@@ -153,6 +153,24 @@
                 <process key="LinePolygonSmooth" name="线面光滑"/>
                 <process key="EdgeMatch" name="图幅接边"/>
             </process>
+            <process name="类型转换">
+                <process name="点、线、面类型互转">
+                    <process key="Conversion_LineToPoint" name="线数据->点数据"/>
+                    <process key="Conversion_LineToRegion" name="线数据->面数据"/>
+                    <process key="Conversion_RegionToPoint" name="面数据->点数据"/>
+                    <process key="Conversion_RegionToLine" name="面数据->线数据"/>
+                </process>
+                <process name="属性数据与空间数据互转">
+                    <process key="Conversion_FieldToText" name="字段->文本数据"/>
+                    <process key="Conversion_TextToPoint" name="文本数据->点数据"/>
+                    <process key="Conversion_TabularToPoint" name="属性->点数据"/>
+                </process>
+                <process name="CAD数据、复合数据与简单数据互转">
+                    <process key="Conversion_CADToSimple" name="CAD->简单数据"/>
+                    <process key="Conversion_SimpleToCAD" name="简单数据->CAD"/>
+                </process>
+
+            </process>
 
 
             <!--<process name="水文分析">-->

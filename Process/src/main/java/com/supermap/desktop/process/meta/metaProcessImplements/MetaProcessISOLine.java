@@ -21,7 +21,7 @@ public class MetaProcessISOLine extends MetaProcessISO {
 
 	@Override
 	protected String getDefaultResultName() {
-		return "ISOLine";
+		return "result_ISOLine";
 	}
 
 

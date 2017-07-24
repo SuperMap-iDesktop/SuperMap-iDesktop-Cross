@@ -10,6 +10,7 @@ import com.supermap.desktop.process.meta.metaProcessImplements.DataDispose.MetaP
 import com.supermap.desktop.process.meta.metaProcessImplements.DataDispose.MetaProcessVectorResample;
 import com.supermap.desktop.process.meta.metaProcessImplements.*;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.*;
+import com.supermap.desktop.process.meta.metaProcessImplements.typeConversion.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
@@ -261,6 +262,24 @@ public class WorkflowParser {
 			result = new MetaProcessVectorResample();
 		} else if (MetaKeys.LinePolygonSmooth.equals(key)) {
 			result = new MetaProcessLinePolygonSmooth();
+		} else if (MetaKeys.Conversion_LineToPoint.equals(key)) {
+			result = new MetaProcessLineToPoint();
+		} else if (MetaKeys.Conversion_RegionToPoint.equals(key)) {
+			result = new MetaProcessRegionToPoint();
+		} else if (MetaKeys.Conversion_LineToRegion.equals(key)) {
+			result = new MetaProcessLineToRegion();
+		} else if (MetaKeys.Conversion_RegionToLine.equals(key)) {
+			result = new MetaProcessRegionToLine();
+		} else if (MetaKeys.Conversion_TabularToPoint.equals(key)) {
+			result = new MetaProcessTabularToPoint();
+		} else if (MetaKeys.Conversion_CADToSimple.equals(key)) {
+			result = new MetaProcessCADToSimple();
+		} else if (MetaKeys.Conversion_SimpleToCAD.equals(key)) {
+			result = new MetaProcessSimpleToCAD();
+		} else if (MetaKeys.Conversion_FieldToText.equals(key)) {
+			result = new MetaProcessFieldToText();
+		} else if (MetaKeys.Conversion_TextToPoint.equals(key)) {
+			result = new MetaProcessTextToPoint();
 		} else if (MetaKeys.EdgeMatch.equals(key)) {
 			//todo MetaProcessEdgeMatch()
 		} else {

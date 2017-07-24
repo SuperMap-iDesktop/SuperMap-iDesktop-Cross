@@ -20,7 +20,7 @@ public class MetaProcessISORegion extends MetaProcessISO {
 
 	@Override
 	protected String getDefaultResultName() {
-		return "ISORegion";
+		return "result_ISORegion";
 	}
 
 	@Override
