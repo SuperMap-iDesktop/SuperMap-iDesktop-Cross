@@ -1301,23 +1301,23 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		DatasetType type = dataset.getType();
 		datasetNode = new DefaultMutableTreeNode(datasetNodeData);
 		if (type == DatasetType.VECTORCOLLECTION && ((DatasetVector) dataset).getCollectionDatasetInfos().size() > 0) {
-//			//添加矢量数据集集合的子集
-//			ArrayList<CollectionDatasetInfo> collectionDatasetInfos = ((DatasetVector) dataset).getCollectionDatasetInfos();
-//			for (int i = 0; i < collectionDatasetInfos.size(); i++) {
-//				CollectionDatasetInfo collectionDatasetInfo = collectionDatasetInfos.get(i);
-//				DatasourceConnectionInfo connectionInfo = collectionDatasetInfo.getDatasourceConnectInfo();
-//				if (null != connectionInfo) {
-//					Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(connectionInfo.getAlias());
-//					if (null != datasource) {
-//						Dataset childDataset = datasource.getDatasets().get(collectionDatasetInfo.getDatasetName());
-//						if (null != childDataset && childDataset.isOpen()) {
-//							TreeNodeData childDatasetNodeData = new TreeNodeData(childDataset, NodeDataType.DATASET_VECTOR_ITEM);
-//							DefaultMutableTreeNode childDatasetNode = new DefaultMutableTreeNode(childDatasetNodeData);
-//							datasetNode.add(childDatasetNode);
-//						}
-//					}
-//				}
-//			}
+			//添加矢量数据集集合的子集
+			ArrayList<CollectionDatasetInfo> collectionDatasetInfos = ((DatasetVector) dataset).getCollectionDatasetInfos();
+			for (int i = 0; i < collectionDatasetInfos.size(); i++) {
+				CollectionDatasetInfo collectionDatasetInfo = collectionDatasetInfos.get(i);
+				DatasourceConnectionInfo connectionInfo = collectionDatasetInfo.getDatasourceConnectInfo();
+				if (null != connectionInfo) {
+					Datasource datasource = getDatasource(connectionInfo);
+					if (null != datasource) {
+						Dataset childDataset = datasource.getDatasets().get(collectionDatasetInfo.getDatasetName());
+						if (null != childDataset) {
+							TreeNodeData childDatasetNodeData = new TreeNodeData(childDataset, NodeDataType.DATASET_VECTOR_ITEM);
+							DefaultMutableTreeNode childDatasetNode = new DefaultMutableTreeNode(childDatasetNodeData);
+							datasetNode.add(childDatasetNode);
+						}
+					}
+				}
+			}
 		}
 		if (type.equals(DatasetType.NETWORK) || type.equals(DatasetType.NETWORK3D)) {
 			// 添加网络数据集的子数据集
@@ -1371,6 +1371,25 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		// 使用下面的方式来刷新 Node，而不要使用 updateUI 来整个刷新 UGDJ-243
 		this.treeModelTemp.insertNodeInto(datasetNode, datasourceNode, datasourceNode.getChildCount());
 		return datasetNode;
+	}
+
+	private Datasource getDatasource(DatasourceConnectionInfo connectionInfo) {
+		Datasource result = null;
+		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+		if (null != datasources) {
+			for (int i = 0; i < datasources.getCount(); i++) {
+				DatasourceConnectionInfo tempInfo = datasources.get(i).getConnectionInfo();
+				if (connectionInfo.getServer().equals(tempInfo.getServer()) &&
+						connectionInfo.getEngineType().equals(tempInfo.getEngineType())
+						&& connectionInfo.getDatabase().equals(tempInfo.getDatabase())
+						&& connectionInfo.getUser().equals(tempInfo.getUser())
+						&& connectionInfo.getPassword().equals(tempInfo.getPassword())) {
+					result = datasources.get(i);
+					break;
+				}
+			}
+		}
+		return result;
 	}
 
 	private void fillImageCollectionNodes(DatasetImageCollection imageCollection, DefaultMutableTreeNode datasetNode) {

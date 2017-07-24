@@ -98,7 +98,7 @@ class WorkspaceTreeCellRenderer extends DefaultTreeCellRenderer {
 
 		ArrayList<ArrayList<TreeNodeDecorator>> vectorItemDecoratorList = new ArrayList<ArrayList<TreeNodeDecorator>>();
 		ArrayList<TreeNodeDecorator> vectorItemList = new ArrayList<TreeNodeDecorator>();
-		vectorList.add(new DatasetVectorItemNodeDecorator(NodeDataType.DATASET_VECTOR_ITEM));
+		vectorItemList.add(new DatasetVectorItemNodeDecorator(NodeDataType.DATASET_VECTOR_ITEM));
 		vectorItemDecoratorList.add(vectorItemList);
 		decoratorsMap.put(NodeDataType.DATASET_VECTOR_ITEM, vectorItemDecoratorList);
 

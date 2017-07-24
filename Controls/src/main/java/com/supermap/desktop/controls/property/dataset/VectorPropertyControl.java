@@ -1,10 +1,6 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import com.supermap.data.Charset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.EngineType;
-import com.supermap.data.SpatialIndexType;
-import com.supermap.data.Tolerance;
+import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
@@ -40,13 +36,15 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	private static final int DEFAULT_COMPONENT_WIDTH = 150;
 
 
-
 	private JLabel labelRecordCount;
 	private SMFormattedTextField textFieldRecordCount;
 	private JLabel labelSpatialIndexType;
 	private JTextField textFieldSpatialIndexType;
 	private JLabel labelCharset;
 	private ComboBoxCharset comboBoxCharset;
+	private JLabel labelDatasetCount;
+	private JTextField textFieldDatasetCount;
+	private SmButton buttonSetDatasetCount;
 	private JCheckBox checkBoxIsReadOnly;
 	private JCheckBox checkBoxIsFileCache;
 	private JButton buttonClearCache;
@@ -168,6 +166,10 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		this.textFieldSpatialIndexType.setEditable(false);
 		this.labelCharset = new JLabel("Charset:");
 		this.comboBoxCharset = new ComboBoxCharset();
+		this.labelDatasetCount = new JLabel();
+		this.textFieldDatasetCount = new JTextField();
+		this.buttonSetDatasetCount = new SmButton();
+
 		this.checkBoxIsReadOnly = new JCheckBox("IsReadOnly");
 		this.checkBoxIsFileCache = new JCheckBox("IsFileCache");
 		this.buttonClearCache = new JButton("ClearCache");
@@ -185,9 +187,13 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		panelVectorParam.add(labelCharset, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
 		panelVectorParam.add(comboBoxCharset, new GridBagConstraintsHelper(1, 2, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
 
-		panelVectorParam.add(checkBoxIsReadOnly, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 10, 0).setAnchor(GridBagConstraints.WEST));
-		panelVectorParam.add(checkBoxIsFileCache, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 0, 10, 0));
-		panelVectorParam.add(buttonClearCache, new GridBagConstraintsHelper(2, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setInsets(5, 5, 10, 10));
+		panelVectorParam.add(labelDatasetCount, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelVectorParam.add(textFieldDatasetCount, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
+		panelVectorParam.add(buttonSetDatasetCount, new GridBagConstraintsHelper(2, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelVectorParam.add(checkBoxIsReadOnly, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 10, 0).setAnchor(GridBagConstraints.WEST));
+		panelVectorParam.add(checkBoxIsFileCache, new GridBagConstraintsHelper(1, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 0, 10, 0));
+		panelVectorParam.add(buttonClearCache, new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setInsets(5, 5, 10, 10));
 
 		NumberFormat numberInstance = NumberFormat.getNumberInstance();
 		numberInstance.setMaximumFractionDigits(20);
@@ -244,6 +250,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		this.add(panelButton, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
 
 	}
+
 	private void setComponentName() {
 		ComponentUIUtilities.setName(this.labelRecordCount, "VectorPropertyControl_labelRecordCount");
 		ComponentUIUtilities.setName(this.textFieldRecordCount, "VectorPropertyControl_textFieldRecordCount");
@@ -268,7 +275,11 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		ComponentUIUtilities.setName(this.buttonClearTolerance, "VectorPropertyControl_buttonClearTolerance");
 		ComponentUIUtilities.setName(this.buttonReset, "VectorPropertyControl_buttonReset");
 		ComponentUIUtilities.setName(this.buttonApply, "VectorPropertyControl_buttonApply");
+		ComponentUIUtilities.setName(this.labelDatasetCount, "VectorPropertyControl_labelDatasetCount");
+		ComponentUIUtilities.setName(this.textFieldDatasetCount, "VectorPropertyControl_textFieldDatasetCount");
+		ComponentUIUtilities.setName(this.buttonSetDatasetCount, "VectorPropertyControl_buttonSetDatasetCount");
 	}
+
 	private void initializeResources() {
 		this.labelRecordCount.setText(ControlsProperties.getString("String_LabelRecordsetCount"));
 		this.labelSpatialIndexType.setText(ControlsProperties.getString("String_LabelSpatialIndexType"));
@@ -285,6 +296,8 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		this.buttonClearTolerance.setText(CoreProperties.getString(CoreProperties.Clear));
 		this.buttonReset.setText(CommonProperties.getString(CommonProperties.Reset));
 		this.buttonApply.setText(CommonProperties.getString(CommonProperties.Apply));
+		this.labelDatasetCount.setText(ControlsProperties.getString("String_Label_DatasetCount"));
+		this.buttonSetDatasetCount.setText(ControlsProperties.getString("String_Button_Setting"));
 	}
 
 	private void reset() {
@@ -309,6 +322,19 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		this.textFieldSmallPolygon.setValue(this.smallPolygon);
 		this.textFieldDangle.setValue(this.dangle);
 		this.textFieldExtend.setValue(this.extend);
+		if (this.datasetVector.getType().equals(DatasetType.VECTORCOLLECTION)) {
+			this.textFieldDatasetCount.setEnabled(false);
+			if (this.datasetVector.getCollectionDatasetCount() > 0) {
+				this.textFieldDatasetCount.setText(String.valueOf(this.datasetVector.getCollectionDatasetCount()));
+			}
+			this.labelDatasetCount.setVisible(true);
+			this.textFieldDatasetCount.setVisible(true);
+			this.buttonSetDatasetCount.setVisible(true);
+		} else {
+			this.labelDatasetCount.setVisible(false);
+			this.textFieldDatasetCount.setVisible(false);
+			this.buttonSetDatasetCount.setVisible(false);
+		}
 	}
 
 	private void registerEvents() {

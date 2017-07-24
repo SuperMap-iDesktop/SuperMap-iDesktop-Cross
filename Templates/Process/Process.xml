@@ -2,7 +2,6 @@
 <root xmlns="http://www.supermap.com.cn/desktop" version="9.0.x">
     <process name="流程控制" iconPath="">
         <process key="" name="本地" iconPath="/processresources/Process/native.png">
-            <process key="Buffer" name="缓冲区分析"/>
             <process name="数据导入">
                 <process name="AutoCAD交换格式">
                     <process key="ImportDXF" name=".DXF"/>
@@ -102,8 +101,6 @@
                 <process key="OverlayAnalyst_UPDATE" name="更新"/>
                 <process key="OverlayAnalyst_XOR" name="对称差"/>
             </process>
-            <process key="SpatialIndex" name="重构空间索引"/>
-            <process key="SqlQuery" name="Sql查询"/>
             <process name="表面分析">
                 <process key="ISOLine" name="提取等值线"/>
                 <process key="ISOPoint" name="点数据提取等值线"/>
@@ -157,7 +154,9 @@
                 <process key="RegionToCenterLine" name="面中心线"/>
                 <process key="RegionTrunkToCenterLine" name="面主干中心线"/>
             </process>
-
+            <process key="SpatialIndex" name="重构空间索引"/>
+            <process key="SqlQuery" name="Sql查询"/>
+            <process key="Buffer" name="缓冲区分析"/>
 
             <!--<process name="水文分析">-->
             <!--<process key="FillingPseudoDepressions" name="填充伪洼地"/>-->

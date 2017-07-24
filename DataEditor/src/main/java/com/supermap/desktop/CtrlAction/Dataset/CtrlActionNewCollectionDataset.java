@@ -1,6 +1,7 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
 import com.supermap.data.Datasource;
+import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.Dataset.CollectionDataset.JDialogCreateCollectionDataset;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -28,7 +29,8 @@ public class CtrlActionNewCollectionDataset extends CtrlAction {
 		Datasource[] datasources = Application.getActiveApplication().getActiveDatasources();
 		if (datasources != null && datasources.length > 0) {
 			for (Datasource datasource : datasources) {
-				if (null != datasource && !datasource.isReadOnly()) {
+				//暂时只支持postgerSql的引擎类型
+				if (null != datasource && !datasource.isReadOnly() && datasource.getEngineType().equals(EngineType.POSTGRESQL)) {
 					enable = true;
 					break;
 				}
