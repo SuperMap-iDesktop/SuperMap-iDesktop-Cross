@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1499847984126
+Bnd-LastModified: 1500896624536
 Build-Jdk: 1.7.0_80
-Built-By: Administrator
+Built-By: highsad
 Bundle-Activator: com.supermap.desktop.controls.ControlsActivator
 Bundle-ClassPath: .,lib/commons-lang-2.6.jar
 Bundle-ManifestVersion: 2
@@ -69,7 +69,7 @@ Export-Package: com.supermap.desktop.controls.colorScheme;version="1.0.0
  com.supermap.desktop.ui.controls.textStyle;version="1.0.0",com.supermap
  .desktop.ui.controls.ToolBarJmenu;version="1.0.0",com.supermap.desktop.
  ui.controls.toolTip;version="1.0.0",com.supermap.desktop.ui.enums;versi
- on="1.0.0",com.supermap.desktop.ui.lbs.Interface;version="1.0.0",com.supermap.desktop.ui.lbs.impl;version="1.0.0";uses:=
+ on="1.0.0",com.supermap.desktop.ui.lbs.Interface;version="1.0.0";uses:=
  "com.supermap.desktop.ui.lbs.params",com.supermap.desktop.ui.lbs.params
  ;version="1.0.0",com.supermap.desktop.ui.lbs.ui;version="1.0.0";uses:="
  com.supermap.desktop.ui.controls",com.supermap.desktop.ui.mdi.action;ve
