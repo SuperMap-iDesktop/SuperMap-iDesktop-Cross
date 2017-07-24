@@ -36,6 +36,7 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 	public ParameterComboBoxPanel(IParameter parameterComboBox) {
 		super(parameterComboBox);
 		this.parameterComboBox = ((ParameterComboBox) parameterComboBox);
+		this.comboBox.setName("ParameterComboBoxPanel_" + parameterComboBox.getDescribe());
 		ArrayList<ParameterDataNode> items = this.parameterComboBox.getItems();
 		if (items != null && items.size() > 0) {
 			for (ParameterDataNode item : items) {
