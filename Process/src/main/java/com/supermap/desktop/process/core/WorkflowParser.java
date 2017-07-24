@@ -6,9 +6,10 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.MetaProcessImportFactory;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.meta.metaProcessImplements.DataDispose.MetaProcessEdgeMatch;
-import com.supermap.desktop.process.meta.metaProcessImplements.DataDispose.MetaProcessLinePolygonSmooth;
-import com.supermap.desktop.process.meta.metaProcessImplements.DataDispose.MetaProcessVectorResample;
+import com.supermap.desktop.process.meta.metaProcessImplements.DataRun.MetaProcessAggregatePoints;
+import com.supermap.desktop.process.meta.metaProcessImplements.DataRun.MetaProcessEdgeMatch;
+import com.supermap.desktop.process.meta.metaProcessImplements.DataRun.MetaProcessLinePolygonSmooth;
+import com.supermap.desktop.process.meta.metaProcessImplements.DataRun.MetaProcessVectorResample;
 import com.supermap.desktop.process.meta.metaProcessImplements.*;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.*;
 import com.supermap.desktop.process.meta.metaProcessImplements.typeConversion.*;
@@ -256,9 +257,7 @@ public class WorkflowParser {
 		} else if (MetaKeys.EXPORTVECTOR.equals(key)) {
 			result = new MetaProcessExportVector();
 		} else if (MetaKeys.AggregatePoints.equals(key)) {
-			//todo MetaProcessAggregatePoints()
-		} else if (MetaKeys.AggregatePolygons.equals(key)) {
-			//todo MetaProcessAggregatePolygons()
+			result = new MetaProcessAggregatePoints();
 		} else if (MetaKeys.VectorResample.equals(key)) {
 			result = new MetaProcessVectorResample();
 		} else if (MetaKeys.LinePolygonSmooth.equals(key)) {
@@ -283,16 +282,15 @@ public class WorkflowParser {
 			result = new MetaProcessTextToPoint();
 		} else if (MetaKeys.EdgeMatch.equals(key)) {
 			result = new MetaProcessEdgeMatch();
-			//todo MetaProcessEdgeMatch()
 		} else if (MetaKeys.PickupBorder.equals(key)) {
 			result = new MetaProcessPickupBorder();
 		} else if (MetaKeys.DualLineToCenterLine.equals(key)) {
 			result = new MetaProcessDualLineToCenterLine();
 		} else if (MetaKeys.RegionToCenterLine.equals(key)) {
 			result = new MetaProcessRegionToCenterLine();
-		}else if (MetaKeys.RegionTrunkToCenterLine.equals(key)) {
+		} else if (MetaKeys.RegionTrunkToCenterLine.equals(key)) {
 			result = new MetaProcessRegionTrunkToCenterLine();
-		}else {
+		} else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}
 

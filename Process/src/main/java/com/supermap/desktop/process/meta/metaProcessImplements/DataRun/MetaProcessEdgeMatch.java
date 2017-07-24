@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.meta.metaProcessImplements.DataDispose;
+package com.supermap.desktop.process.meta.metaProcessImplements.DataRun;
 
 import com.supermap.analyst.spatialanalyst.EdgeMatchMode;
 import com.supermap.analyst.spatialanalyst.EdgeMatchParameter;

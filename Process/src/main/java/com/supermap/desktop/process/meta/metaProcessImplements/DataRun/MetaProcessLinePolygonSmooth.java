@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.meta.metaProcessImplements.DataDispose;
+package com.supermap.desktop.process.meta.metaProcessImplements.DataRun;
 
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
@@ -89,7 +89,7 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 			isSuccessful = datasetVector.smooth(smoothness, true);
 			datasetVector.removeSteppedListener(this.steppedListener);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
 		} finally {
 
 		}
