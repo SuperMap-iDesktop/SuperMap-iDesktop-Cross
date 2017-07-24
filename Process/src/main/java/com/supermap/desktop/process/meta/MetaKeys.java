@@ -70,9 +70,8 @@ public class MetaKeys {
 	public static final String AverageNearestNeighbor = "averageNearestNeighbor";
 	public static final String optimizedHotSpotAnalyst = "optimizedHotSpotAnalyst";
 
-	//数据处理-yuanR
+	//数据处理
 	public static final String AggregatePoints = "AggregatePoints";
-	public static final String AggregatePolygons = "AggregatePolygons";
 	public static final String VectorResample = "VectorResample";
 	public static final String EdgeMatch = "EdgeMatch";
 	public static final String LinePolygonSmooth = "LinePolygonSmooth";
