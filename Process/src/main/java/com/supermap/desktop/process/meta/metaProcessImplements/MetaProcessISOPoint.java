@@ -82,7 +82,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 			sourceDatasource.setSelectedItem(datasetVector.getDatasource());
 			sourceDataset.setSelectedItem(datasetVector);
 			targetDataset.setResultDatasource(datasetVector.getDatasource());
-			targetDataset.setSelectedItem(datasetVector.getDatasource().getDatasets().getAvailableDatasetName("result_line"));
+			targetDataset.setSelectedItem(datasetVector.getDatasource().getDatasets().getAvailableDatasetName("result_ISOPoint"));
 			this.fields.setSelectedItem("SmUserID");
 			reloadValue();
 		}

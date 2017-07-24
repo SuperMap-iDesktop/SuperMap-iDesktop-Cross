@@ -116,7 +116,7 @@ public class BindWindow implements IBindWindow {
 		int selectRow = -1;
 		int rowCount = this.formTabular.getjTableTabular().getRowCount();
 		for (int i = 0; i < rowCount; i++) {
-			if (addRow == this.formTabular.getjTableTabular().getValueAt(i, 0)) {
+			if (addRow == (int)this.formTabular.getjTableTabular().getValueAt(i, 0)) {
 				selectRow = i;
 			}
 		}
