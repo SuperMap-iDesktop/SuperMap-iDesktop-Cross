@@ -10,7 +10,6 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.borderPanel.PanelButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -493,7 +492,7 @@ public class DialogMapClip extends SmDialog {
 			initResultVectorInfo();
 			if (resultInfo != null && resultInfo.size() > 0) {
 				FormProgress formProgress = new FormProgress();
-				formProgress.setTitle(MapViewProperties.getString("String_MapClip_MapClip"));
+				formProgress.setTitle(MapViewProperties.getString("String_MapClip"));
 
 				if (!StringUtilities.isNullOrEmpty(mapClipMultiObjectSplitPanel.getCurrentSelectedFieldName())) {
 					selectedRecordset.moveFirst();
@@ -689,7 +688,7 @@ public class DialogMapClip extends SmDialog {
 	}
 
 	private void initResources() {
-		this.setTitle(MapViewProperties.getString("String_MapClip_MapClip"));
+		this.setTitle(MapViewProperties.getString("String_MapClip"));
 		this.buttonAddLayers.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_AddItem.png"));
 		this.buttonAddLayers.setToolTipText(MapViewProperties.getString("String_MapClip_AddLayers"));
 		this.buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));

@@ -118,6 +118,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		if (datasetGrid != null) {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
+			//System.out.println(datasetGrid.getName());
 		}
 
 		resultDataset.setSelectedItem("result_gridToVector");
@@ -146,6 +147,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		textFieldGridValueTolerance.setMinValue(0);
 		textFieldGridValueTolerance.setIsIncludeMin(true);
 		gridDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetGrid);
+		comboBoxBackColor.setSelectedItem(Color.WHITE);
 
 		textFieldColorTolerance.setSelectedItem("0");
 		textFieldColorTolerance.setMinValue(0);

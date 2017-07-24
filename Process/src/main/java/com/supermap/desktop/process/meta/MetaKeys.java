@@ -70,9 +70,8 @@ public class MetaKeys {
 	public static final String AverageNearestNeighbor = "averageNearestNeighbor";
 	public static final String optimizedHotSpotAnalyst = "optimizedHotSpotAnalyst";
 
-	//数据处理-yuanR
+	//数据处理
 	public static final String AggregatePoints = "AggregatePoints";
-	public static final String AggregatePolygons = "AggregatePolygons";
 	public static final String VectorResample = "VectorResample";
 	public static final String EdgeMatch = "EdgeMatch";
 	public static final String LinePolygonSmooth = "LinePolygonSmooth";
@@ -80,6 +79,22 @@ public class MetaKeys {
 	public static final String DualLineToCenterLine="DualLineToCenterLine";
 	public static final String RegionToCenterLine="RegionToCenterLine";
 	public static final String RegionTrunkToCenterLine="RegionTrunkToCenterLine";
+
+	//类型转换
+	public static final String Conversion_PointToLine = "Conversion_PointToLine";
+	public static final String Conversion_LineToPoint = "Conversion_LineToPoint";
+	public static final String Conversion_LineToRegion = "Conversion_LineToRegion";
+	public static final String Conversion_RegionToLine = "Conversion_RegionToLine";
+	public static final String Conversion_RegionToPoint = "Conversion_RegionToPoint";
+	public static final String Conversion_CADToSimple = "Conversion_CADToSimple";
+	public static final String Conversion_CADToModel = "Conversion_CADToModel";
+	public static final String Conversion_SimpleToCAD = "Conversion_SimpleToCAD";
+	public static final String Conversion_EPSToSimple = "Conversion_EPSToSimple";
+	public static final String Conversion_FieldToText = "Conversion_FieldToText";
+	public static final String Conversion_TextToFiled = "Conversion_TextToFiled";
+	public static final String Conversion_TextToPoint = "Conversion_TextToPoint";
+	public static final String Conversion_TabularToPoint = "Conversion_TabularToPoint";
+	public static final String Conversion_TabularPointToRegion = "Conversion_TabularPointToRegion";
 
 	// 大数据
 	public static final String HEAT_MAP = "HeatMap";

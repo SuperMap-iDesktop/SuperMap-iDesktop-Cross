@@ -189,8 +189,8 @@ public class UserExperienceManager {
 	}
 
 	private void initializeLogsSendTimer() {
-		timer = new Timer(2 * 60 * 1000, new ActionListener() {
-			@Override
+        timer = new Timer(60 * 60 * 1000, new ActionListener() {
+            @Override
 			public void actionPerformed(ActionEvent e) {
 				doPost();
 			}
