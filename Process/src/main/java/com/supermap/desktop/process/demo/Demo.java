@@ -8,10 +8,7 @@ import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -27,15 +24,15 @@ public class Demo extends FormBaseChild {
 
 	private static final int DEFAULT_DEMO_WIDTH = 1440;
 	private static final int DEFAULT_DEMO_HEIGHT = 800;
-
 	private static final int DEFAULT_BIGICON_WIDTH = 1440;
-	private static final int DEFAULT_BIGICON_HEIGHT = 650;
+	private static final int DEFAULT_BIGICON_HEIGHT = 625;
 	private static final int DEFAULT_SMALLICON_WIDTH = 200;
 	private static final int DEFAULT_SMALLICON_HEIGHT = 140;
+	private static final int DEFAULT_STEP = 45;
+	private static final int NEXT_EXECUTION_TIME = 6000;
 
 	private final java.util.Timer timer;
 	private final MoveTimer moveTime;
-	private static final int nextExecutionTime = 6000;
 
 	public Demo() {
 		this(ProcessProperties.getString("String_Demo"), null, null);
@@ -46,8 +43,6 @@ public class Demo extends FormBaseChild {
 
 	private ArrayList<DemoParameterButton> videoButtons = new ArrayList<>();
 	private ArrayList<DemoParameterButton> buttons = new ArrayList<>();
-	private ArrayList<ImageIcon> imageIconsSmall = new ArrayList<>();
-	private ArrayList<JLabel> currentPics;
 
 	private JPanel mainPanel = new JPanel();
 	private JPanel panelCenter = new JPanel();
@@ -57,8 +52,10 @@ public class Demo extends FormBaseChild {
 	private int currentIndex = 0;
 	private TimerTask timerTask;
 
-	// 轮播按钮点击监听
-	ActionListener actionListener = new ActionListener() {
+	/**
+	 * 播放视频监听事件
+	 */
+	private ActionListener actionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String filePath = ((DemoParameterButton) e.getSource()).getFilePath();
@@ -78,87 +75,58 @@ public class Demo extends FormBaseChild {
 	private ActionListener moveButtonActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
+			// 重置自动轮播时间
+			resetTimerTime();
+			removeListener();
 			if (videoButtons.size() > 0) {
-				removeListener();
+				moveTime.setDefaultStep(DEFAULT_STEP);
 				if (e.getSource().equals(buttonRight)) {
 					int next = currentIndex + 1;
 					if (next >= videoButtons.size()) {
 						next = 0;
 					}
-					moveTime.setDefaultStep(50);
 					moveLeft(next);
-					resetTimerTime();
 				} else if (e.getSource().equals(buttonLeft)) {
 					int next = currentIndex - 1;
 					if (next < 0) {
 						next = videoButtons.size() - 1;
 					}
-					moveTime.setDefaultStep(50);
 					moveRight(next);
-					resetTimerTime();
 				}
 			}
 		}
 	};
 
-
-	// 导航按钮监听
-	MouseListener navigatorButtonMouseListener = new MouseListener() {
-
-
+	MouseListener mouseExitedListener = new MouseAdapter() {
 		@Override
 		public void mouseExited(MouseEvent e) {
 			((DemoParameterButton) e.getSource()).setContentAreaFilled(false);
 		}
-
+	};
+	MouseListener mouseEntered = new MouseAdapter() {
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			removeListener();
-			// 当鼠标进入了其中一个导航按钮
-			try {
-				String name = ((DemoParameterButton) e.getSource()).getText();
-				int next = -1;
-				String videoName;
+			resetTimerTime();
+			String name = ((DemoParameterButton) e.getSource()).getText();
+			int next = -1;
+			String videoName;
+			for (int i = 0; i < videoButtons.size(); i++) {
+				videoName = videoButtons.get(i).getName();
+				if (videoName.equals(name)) {
+					next = i;
+					break;
+				}
+			}
+			if (next != -1) {
 				for (int i = 0; i < videoButtons.size(); i++) {
-					videoName = videoButtons.get(i).getName();
-					if (videoName.equals(name)) {
-						next = i;
-						break;
+					if (i != next) {
+						videoButtons.get(i).setLocation(-DEFAULT_DEMO_WIDTH, 0);
+					} else {
+						videoButtons.get(i).setLocation(0, 0);
 					}
 				}
-				if (next != -1) {
-					moveTime.setDefaultStep(50);
-					moveLeft(next);
-					resetTimerTime();
-				}
-			} catch (Exception e1) {
-
-			} finally {
-				((DemoParameterButton) e.getSource()).setContentAreaFilled(true);
 			}
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-
-		}
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			String filePath = ((DemoParameterButton) e.getSource()).getFilePath();
-			try {
-				if (!StringUtilities.isNullOrEmpty(filePath)) {
-					Desktop.getDesktop().open(new File(filePath));
-				}
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			clearButtonAreaFill(next);
 		}
 	};
 
@@ -176,31 +144,15 @@ public class Demo extends FormBaseChild {
 				if (next >= videoButtons.size()) {
 					next = 0;
 				}
-				moveTime.setDefaultStep(50);
+				moveTime.setDefaultStep(DEFAULT_STEP / 5);
 				moveLeft(next);
 			}
 		};
 
-		this.setBackground(Color.WHITE);
 		if (videoButtons.size() > 0) {
-			timer.schedule(timerTask, 1000, nextExecutionTime);
+			timer.schedule(timerTask, 1000, NEXT_EXECUTION_TIME);
 		}
 	}
-
-	private void moveLeft(int next) {
-		moveTime.setCurrentComponent(videoButtons.get(currentIndex));
-		moveTime.setNextComponent(videoButtons.get(next));
-		currentIndex = next;
-		moveTime.startLeft();
-	}
-
-	private void moveRight(int next) {
-		moveTime.setCurrentComponent(videoButtons.get(currentIndex));
-		moveTime.setNextComponent(videoButtons.get(next));
-		currentIndex = next;
-		moveTime.startRight();
-	}
-
 
 	private void initParameter() {
 		try {
@@ -267,13 +219,11 @@ public class Demo extends FormBaseChild {
 		jPanelButton.setOpaque(false);
 		jPanelButton.setLayout(new FlowLayout());
 		for (int i = 0; i < buttons.size(); i++) {
-			Dimension smallButtonSize = new Dimension(DEFAULT_SMALLICON_WIDTH, DEFAULT_SMALLICON_HEIGHT);
+			Dimension smallButtonSize = new Dimension(DEFAULT_SMALLICON_WIDTH + 5, DEFAULT_SMALLICON_HEIGHT);
 			buttons.get(i).setPreferredSize(smallButtonSize);
 			buttons.get(i).setMaximumSize(smallButtonSize);
 			buttons.get(i).setMinimumSize(smallButtonSize);
-
 			jPanelButton.add(buttons.get(i));
-			buttons.get(i).addMouseListener(navigatorButtonMouseListener);
 		}
 
 		Dimension mainPanelSize = new Dimension(DEFAULT_DEMO_WIDTH, DEFAULT_DEMO_HEIGHT);
@@ -285,6 +235,7 @@ public class Demo extends FormBaseChild {
 		mainPanel.add(jPanelButton, BorderLayout.SOUTH);
 
 		this.add(mainPanel);
+		this.setBackground(Color.WHITE);
 	}
 
 
@@ -292,24 +243,49 @@ public class Demo extends FormBaseChild {
 		for (DemoParameterButton videoButton : videoButtons) {
 			videoButton.addActionListener(actionListener);
 		}
+		for (DemoParameterButton button : buttons) {
+			button.addActionListener(actionListener);
+			button.addMouseListener(mouseEntered);
+			// 把鼠标移出事件单独添加监听，确保每次都奏效
+			button.addMouseListener(mouseExitedListener);
+		}
 		buttonLeft.addActionListener(moveButtonActionListener);
 		buttonRight.addActionListener(moveButtonActionListener);
 	}
 
+	private void moveLeft(int next) {
+		moveTime.setCurrentComponent(videoButtons.get(currentIndex));
+		moveTime.setNextComponent(videoButtons.get(next));
+		currentIndex = next;
+		moveTime.startLeft();
+	}
+
+	private void moveRight(int next) {
+		moveTime.setCurrentComponent(videoButtons.get(currentIndex));
+		moveTime.setNextComponent(videoButtons.get(next));
+		currentIndex = next;
+		moveTime.startRight();
+	}
+
+	/**
+	 * 去除所有导航按钮的选中渲染
+	 */
+	private void clearButtonAreaFill(int currentIndex) {
+		for (DemoParameterButton button : buttons) {
+			button.setContentAreaFilled(false);
+			button.setSelected(false);
+		}
+		buttons.get(currentIndex).setContentAreaFilled(true);
+		buttons.get(currentIndex).setSelected(true);
+	}
 
 	private void reLoadListener() {
 		removeListener();
-		for (DemoParameterButton button : buttons) {
-			button.addMouseListener(navigatorButtonMouseListener);
-		}
 		buttonRight.addActionListener(moveButtonActionListener);
 		buttonLeft.addActionListener(moveButtonActionListener);
 	}
 
 	private void removeListener() {
-		for (DemoParameterButton button : buttons) {
-			button.removeMouseListener(navigatorButtonMouseListener);
-		}
 		buttonRight.removeActionListener(moveButtonActionListener);
 		buttonLeft.removeActionListener(moveButtonActionListener);
 	}
@@ -319,7 +295,7 @@ public class Demo extends FormBaseChild {
 		try {
 			Field period = clazz.getDeclaredField("nextExecutionTime");
 			period.setAccessible(true);
-			period.set(timerTask, System.currentTimeMillis() + nextExecutionTime);
+			period.set(timerTask, System.currentTimeMillis() + NEXT_EXECUTION_TIME);
 		} catch (Exception e) {
 			// ignore
 		}
@@ -341,15 +317,14 @@ public class Demo extends FormBaseChild {
 		public JComponent nextComponent;
 
 		public void setDefaultStep(int step) {
-			this.DefaultStep = step;
+			this.defaultStep = step;
 		}
 
-		private int DefaultStep = 100;
-
-		private int step = DefaultStep;
+		private int defaultStep = DEFAULT_STEP;
+		private int step = DEFAULT_STEP;
 
 		public MoveTimer() {
-			super(1, null);
+			super(10, null);
 			this.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -382,14 +357,14 @@ public class Demo extends FormBaseChild {
 		}
 
 		public void startLeft() {
-			step = DefaultStep;
+			step = defaultStep;
 			moveTime.getCurrentComponent().setLocation(0, 0);
 			moveTime.getNextComponent().setLocation(DEFAULT_BIGICON_WIDTH, 0);
 			start();
 		}
 
 		public void startRight() {
-			step = -DefaultStep;
+			step = -defaultStep;
 			currentComponent.setLocation(0, 0);
 			nextComponent.setLocation(-DEFAULT_BIGICON_WIDTH, 0);
 			start();
@@ -398,6 +373,8 @@ public class Demo extends FormBaseChild {
 		@Override
 		public void start() {
 			super.start();
+			//设置导航按钮的选中渲染跟随
+			clearButtonAreaFill(currentIndex);
 		}
 	}
 }
