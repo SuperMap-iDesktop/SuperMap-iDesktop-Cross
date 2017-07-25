@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.meta.metaProcessImplements.DataDispose;
+package com.supermap.desktop.process.meta.metaProcessImplements.DataRun;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
@@ -222,7 +222,7 @@ public class MetaProcessVectorResample extends MetaProcess {
 			isSuccessful = datasetVector.resample(resampleInformation, true, isSaveSmallGeometry);
 			datasetVector.removeSteppedListener(this.steppedListener);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
 		} finally {
 
 		}

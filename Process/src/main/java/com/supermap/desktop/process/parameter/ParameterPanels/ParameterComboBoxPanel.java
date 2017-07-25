@@ -11,6 +11,7 @@ import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,6 +36,7 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 	public ParameterComboBoxPanel(IParameter parameterComboBox) {
 		super(parameterComboBox);
 		this.parameterComboBox = ((ParameterComboBox) parameterComboBox);
+		this.comboBox.setName("ParameterComboBoxPanel_" + parameterComboBox.getDescribe());
 		ArrayList<ParameterDataNode> items = this.parameterComboBox.getItems();
 		if (items != null && items.size() > 0) {
 			for (ParameterDataNode item : items) {
@@ -57,11 +59,16 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 
 	private void initLayout() {
 		label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
-		comboBox.setPreferredSize(new Dimension(20, 23));
+		comboBox.setPreferredSize(new Dimension(50, 23));
 		comboBox.setEnabled(parameterComboBox.isEnabled());
 		panel.setLayout(new GridBagLayout());
+
 		panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
 		panel.add(comboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
+		// 当描述为空时，不显示其label-yuanR
+		if (StringUtilities.isNullOrEmpty(parameterComboBox.getDescribe())) {
+			label.setVisible(false);
+		}
 	}
 
 	private void initListeners(ParameterComboBox parameterComboBox) {
