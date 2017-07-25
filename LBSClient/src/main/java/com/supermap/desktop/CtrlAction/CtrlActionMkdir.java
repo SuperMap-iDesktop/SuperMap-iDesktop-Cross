@@ -6,7 +6,6 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLBSControl;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.http.upload.LocalCreateFile;
-import com.supermap.desktop.ui.lbs.impl.CreateFile;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.controls.DialogResult;

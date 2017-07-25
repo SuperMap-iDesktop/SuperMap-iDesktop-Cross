@@ -1,6 +1,6 @@
 package com.supermap.desktop.http.callable;
 
-import com.supermap.desktop.ui.lbs.impl.FileInfo;
+import com.supermap.desktop.ui.lbs.FileInfo;
 
 import java.util.EventObject;
 
