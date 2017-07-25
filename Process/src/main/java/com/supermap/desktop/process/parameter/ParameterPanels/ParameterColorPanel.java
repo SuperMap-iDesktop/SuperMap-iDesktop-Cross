@@ -9,6 +9,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ComponentDropDown;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
@@ -16,6 +17,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * Created by lixiaoyao on 2017/7/6.
@@ -30,7 +32,7 @@ public class ParameterColorPanel extends SwingPanel implements IParameterPanel {
 	public ParameterColorPanel(IParameter parameterColor) {
 		super(parameterColor);
 		this.parameterColor = (ParameterColor) parameterColor;
-		label.setText(this.parameterColor.getDescribe());
+		label.setText(getDescribe());
 		label.setToolTipText(this.parameterColor.getDescribe());
 		initLayout();
 		this.componentDropDown.setColor(((ParameterColor) parameterColor).getInitColor());
@@ -72,5 +74,17 @@ public class ParameterColorPanel extends SwingPanel implements IParameterPanel {
 		panel.setLayout(new GridBagLayout());
 		panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
 		panel.add(componentDropDown, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
+	}
+
+	/**
+	 * @return
+	 */
+	private String getDescribe() {
+		String describe = parameterColor.getDescribe();
+		if (parameterColor.isRequisite()) {
+			return MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);
+		} else {
+			return describe;
+		}
 	}
 }

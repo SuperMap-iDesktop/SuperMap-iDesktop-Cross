@@ -26,7 +26,7 @@ import java.beans.PropertyChangeListener;
  * Created by Chen on 2017/6/30 0030.
  */
 public class MetaProcessRasterToVector extends MetaProcess {
-	private final static String INPUT_DATA = "InputData";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");;
 	private final static String OUTPUT_DATA = "ExtractResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
@@ -138,22 +138,27 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		vertorizeLineSetting.setEnabled(comboBoxType.getSelectedData() == DatasetType.LINE);
 
 		textFieldNoValue.setSelectedItem("-9999");
+		textFieldNoValue.setRequisite(true);
 		textFieldNoValueTolerance.setSelectedItem("0");
 		textFieldNoValueTolerance.setMinValue(0);
 		textFieldNoValueTolerance.setIsIncludeMin(true);
+		textFieldNoValueTolerance.setRequisite(true);
 		textFieldGridField.setSelectedItem("value");
+		textFieldGridField.setRequisite(true);
 		textFieldGridValue.setSelectedItem("0");
 		textFieldGridValueTolerance.setSelectedItem("0");
 		textFieldGridValueTolerance.setMinValue(0);
 		textFieldGridValueTolerance.setIsIncludeMin(true);
 		gridDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetGrid);
 		comboBoxBackColor.setSelectedItem(Color.WHITE);
+		comboBoxBackColor.setRequisite(true);
 
 		textFieldColorTolerance.setSelectedItem("0");
 		textFieldColorTolerance.setMinValue(0);
 		textFieldColorTolerance.setMaxValue(255);
 		textFieldColorTolerance.setIsIncludeMin(true);
 		textFieldColorTolerance.setIncludeMax(true);
+		textFieldColorTolerance.setRequisite(true);
 		imageDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetImage);
 	}
 
@@ -254,7 +259,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 				if (comboBoxBackColor.getSelectedItem()==null){
 					Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_GridToVector_NotSetColor"));
 				}else {
-					System.out.println((long) ((Color) comboBoxBackColor.getSelectedItem()).getRGB());
+					//System.out.println((long) ((Color) comboBoxBackColor.getSelectedItem()).getRGB());
 					analystParameter.setBackOrNoValue((long) ((Color) comboBoxBackColor.getSelectedItem()).getRGB());
 				}
 				analystParameter.setBackOrNoValueTolerance(Double.valueOf(textFieldColorTolerance.getSelectedItem().toString()));

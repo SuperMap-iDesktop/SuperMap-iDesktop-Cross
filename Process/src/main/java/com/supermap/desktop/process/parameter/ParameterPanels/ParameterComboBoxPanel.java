@@ -53,7 +53,6 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 		comboBox.setRenderer(new ParameterComboBoxCellRender(this.parameterComboBox.getIConGetter()));
 
 		initLayout();
-
 	}
 
 	private void initLayout() {
