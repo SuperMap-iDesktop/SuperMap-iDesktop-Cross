@@ -49,8 +49,8 @@ Export-Package: com.supermap.desktop.controls.colorScheme;version="1.0.0
  esktop.ui.controls.CellRenders;version="1.0.0",com.supermap.desktop.ui.
  controls.ChooseTable;version="1.0.0",com.supermap.desktop.ui.controls.c
  omboBox;version="1.0.0",com.supermap.desktop.ui.controls.ComponentBorde
- rPanel;version="1.0.0",com.supermap.desktop.ui.controls.datasetChoose;v
- ersion="1.0.0";uses:="com.supermap.desktop.ui.controls,com.supermap.des
+ rPanel;version="1.0.0",com.supermap.desktop.ui.controls.datasetChoose;version="1.0.0",com.supermap.desktop.ui.controls.CollectionDataset;
+ version="1.0.0";uses:="com.supermap.desktop.ui.controls,com.supermap.des
  ktop.ui.controls.SortTable,com.supermap.desktop.ui.controls.button",com
  .supermap.desktop.ui.controls.dialogs.dialogJoinItems;version="1.0.0";u
  ses:="com.supermap.desktop.ui.controls",com.supermap.desktop.ui.control
@@ -69,8 +69,8 @@ Export-Package: com.supermap.desktop.controls.colorScheme;version="1.0.0
  com.supermap.desktop.ui.controls.textStyle;version="1.0.0",com.supermap
  .desktop.ui.controls.ToolBarJmenu;version="1.0.0",com.supermap.desktop.
  ui.controls.toolTip;version="1.0.0",com.supermap.desktop.ui.enums;versi
- on="1.0.0",com.supermap.desktop.ui.lbs.Interface;version="1.0.0";uses:=
- "com.supermap.desktop.ui.lbs.params",com.supermap.desktop.ui.lbs.params
+ on="1.0.0",com.supermap.desktop.ui.lbs.Interface;version="1.0.0",com.supermap.desktop.ui.lbs.impl;
+ version="1.0.0";uses:="com.supermap.desktop.ui.lbs.params",com.supermap.desktop.ui.lbs.params
  ;version="1.0.0",com.supermap.desktop.ui.lbs.ui;version="1.0.0";uses:="
  com.supermap.desktop.ui.controls",com.supermap.desktop.ui.mdi.action;ve
  rsion="1.0.0";uses:="com.supermap.desktop.ui.mdi,com.supermap.desktop.u
