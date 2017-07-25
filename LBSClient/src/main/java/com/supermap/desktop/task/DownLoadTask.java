@@ -7,8 +7,8 @@ import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.http.download.BatchDownloadFile;
 import com.supermap.desktop.http.download.DownloadUtils;
-import com.supermap.desktop.ui.lbs.impl.FileInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.ui.lbs.FileInfo;
 import com.supermap.desktop.utilities.CommonUtilities;
 import com.supermap.desktop.utilities.ManagerXMLParser;
 
