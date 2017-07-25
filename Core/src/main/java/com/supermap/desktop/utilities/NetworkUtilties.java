@@ -12,82 +12,92 @@ import java.net.UnknownHostException;
 
 public class NetworkUtilties {
 	public static boolean ping(String hostName) {
-        return new Pinger(hostName, 2, 300).isReachable();
-    }
-
-	public static String getIpAddress() throws UnknownHostException {
-		return InetAddress.getLocalHost().getHostAddress();
+		return new Pinger(hostName, 2, 300).isReachable();
 	}
 
-	public static String getMacAddress() throws SocketException, UnknownHostException {
-        if (SystemPropertyUtilities.isLinux()) {
-            return getLinuxMacAddress();
-        } else if (SystemPropertyUtilities.isLinux()) {
-            return getWindows7MacAddress();
-        }
-        return "";
-    }
+	public static String getIpAddress() throws UnknownHostException {
+		String hostAddress = null;
+		try {
+			hostAddress = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			return "";
+		}
+		return hostAddress;
+	}
 
-    private static String getWindows7MacAddress() throws SocketException, UnknownHostException {
-        byte[] mac = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
-        StringBuffer sb = new StringBuffer("");
-        for (int i = 0; i < mac.length; i++) {
-            if (i != 0) {
-                sb.append("-");
-            }
-            //字节转换为整数
-            int temp = mac[i] & 0xff;
-            String str = Integer.toHexString(temp);
-            if (str.length() == 1) {
-                sb.append("0" + str);
-            } else {
-                sb.append(str);
-            }
-        }
-        return sb.toString().toUpperCase();
-    }
+	public static String getMacAddress() {
+		try {
+			if (SystemPropertyUtilities.isLinux()) {
+				return getLinuxMacAddress();
+			} else if (SystemPropertyUtilities.isLinux()) {
+				return getWindows7MacAddress();
+			}
+		} catch (Exception e) {
+			return "";
+		}
+		return "";
+	}
 
-    private static String[] linuxMacAddressNames = new String[]{
-            "hwaddr", CoreProperties.getString("String_MacAddress")
-    };
+	private static String getWindows7MacAddress() throws SocketException, UnknownHostException {
+		byte[] mac = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
+		StringBuffer sb = new StringBuffer("");
+		for (int i = 0; i < mac.length; i++) {
+			if (i != 0) {
+				sb.append("-");
+			}
+			//字节转换为整数
+			int temp = mac[i] & 0xff;
+			String str = Integer.toHexString(temp);
+			if (str.length() == 1) {
+				sb.append("0" + str);
+			} else {
+				sb.append(str);
+			}
+		}
+		return sb.toString().toUpperCase();
+	}
 
-    private static String getLinuxMacAddress() {
-        String mac = null;
-        BufferedReader bufferedReader = null;
-        Process process = null;
-        try {
-            // linux下的命令，一般取eth0作为本地主网卡
-            process = Runtime.getRuntime().exec("ifconfig eth0");
-            // 显示信息中包含有mac地址信息
-            bufferedReader = new BufferedReader(new InputStreamReader(
-                    process.getInputStream()));
-            String line = null;
-            int index = -1;
-            while ((line = bufferedReader.readLine()) != null) {
-                // 寻找标示字符串
-                for (String linuxMacAddressName : linuxMacAddressNames) {
-                    index = line.toLowerCase().indexOf(linuxMacAddressName);
-                    if (index >= 0) {// 找到了
-                        // 取出mac地址并去除2边空格
-                        mac = line.substring(index + linuxMacAddressName.length() + 1).trim();
-                        break;
-                    }
-                }
+	private static String[] linuxMacAddressNames = new String[]{
+			"hwaddr", CoreProperties.getString("String_MacAddress"), "ether"
+	};
 
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (bufferedReader != null) {
-                    bufferedReader.close();
-                }
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-        return mac;
-    }
+	private static String getLinuxMacAddress() {
+		String mac = null;
+		BufferedReader bufferedReader = null;
+		Process process = null;
+		try {
+			// linux下的命令，一般取eth0作为本地主网卡
+			process = Runtime.getRuntime().exec("ifconfig eth0");
+			// 显示信息中包含有mac地址信息
+			bufferedReader = new BufferedReader(new InputStreamReader(
+					process.getInputStream()));
+			String line = null;
+			int index = -1;
+			while ((line = bufferedReader.readLine()) != null) {
+				// 寻找标示字符串
+				for (String linuxMacAddressName : linuxMacAddressNames) {
+					index = line.toLowerCase().indexOf(linuxMacAddressName);
+					if (index >= 0) {// 找到了
+						// 取出mac地址并去除2边空格
+						mac = line.substring(index + linuxMacAddressName.length() + 1).trim();
+						break;
+					}
+				}
+
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (bufferedReader != null) {
+					bufferedReader.close();
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		return mac;
+	}
 
 
 }
@@ -121,8 +131,8 @@ class Pinger {
 	public boolean isReachable() {
 		BufferedReader in = null;
 		Runtime r = Runtime.getRuntime();  // 将要执行的ping命令,此命令是windows格式的命令
-        String pingCommand = "ping " + remoteIpAddress;
-        try {
+		String pingCommand = "ping " + remoteIpAddress;
+		try {
 			// 执行命令并获取输出
 			Process p = r.exec(pingCommand);
 			if (p == null) {
@@ -151,11 +161,11 @@ class Pinger {
 	}
 
 	/**
-     * 若line含有18ms字样,说明已经ping通,返回1,否則返回0.  * @param line  * @return
-     */
+	 * 若line含有18ms字样,说明已经ping通,返回1,否則返回0.  * @param line  * @return
+	 */
 	private static boolean getCheckResult(String line) {
-        return line.toLowerCase().contains("ms");
-    }
+		return line.toLowerCase().contains("ms");
+	}
 
 	public static void main(String[] args) {
 		Pinger p = new Pinger("log.supermap.com", 4, 5000);
