@@ -21,6 +21,7 @@ public class FileTypeLocale {
             DataConversionProperties.getString("string_filetype_grid"),
             DataConversionProperties.getString("string_filetype_lidar"),
             DataConversionProperties.getString("string_filetype_vct"),
+            DataConversionProperties.getString("string_filetype_geojson"),
             DataConversionProperties.getString("string_filetype_gpx")
     };
     private static final String[] descriptionNewForLinux = {
@@ -33,19 +34,20 @@ public class FileTypeLocale {
             DataConversionProperties.getString("string_filetypeForLinux_kml"),
             DataConversionProperties.getString("string_filetypeForLinux_grid"),
             DataConversionProperties.getString("string_filetypeForLinux_vct"),
+            DataConversionProperties.getString("string_filetype_geojson"),
             DataConversionProperties.getString("string_filetype_gpx")};
     // 文件类型匹配数组
     private static final String[] extensionsNew = {"dxf", "dwg", "grd", "txt",
             "shp", "tab", "mif", "kml", "kmz", "wat", "wal", "wap", "wan",
             "csv", "bmp", "jpg", "jpeg", "jp2", "jpk", "png", "gif", "img", "raw", "sit",
             "tif", "tiff", "b", "wor", "osgb", "bip", "bil", "bsq", "sid", "dem",
-            "e00", "3ds", "x", "vct", "dbf", "gjb", "dgn", "ecw","gpx"};
+            "e00", "3ds", "x", "vct", "dbf", "gjb", "dgn", "ecw","json","gpx"};
     // linux系统匹配的文件类型
     private static final String[] extensionsNewForLinux = {"grd", "txt",
             "shp", "tab", "mif", "kml", "kmz", "csv", "bmp", "jpg", "jpeg", "jp2", "jpk", "ecw",
             "png", "gif", "img", "raw", "sit", "tif", "tiff",
             "bip", "bil", "bsq", "dem", "e00", "wor", "vct", "ecw",
-            "3ds","gpx"};
+            "3ds","json","gpx"};
 
     public static String[] getDescriptionnew() {
         return descriptionNew;
@@ -115,5 +117,6 @@ public class FileTypeLocale {
     public static final String FBX_STRING = ".fbx";
     public static final String PRJ_STRING = ".prj";
     public static final String XML_STRING = ".xml";
+    public static final String GEOJSON_STRING=".json";
     public static final String GPX_STRING=".gpx";
 }

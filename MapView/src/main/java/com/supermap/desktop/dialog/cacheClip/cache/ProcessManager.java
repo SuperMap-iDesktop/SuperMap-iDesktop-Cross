@@ -52,9 +52,12 @@ public class ProcessManager {
 			if (doingDirectory.exists()) {
 				File[] doingScis = doingDirectory.listFiles();
 				for (int i = 0; i < doingScis.length; i++) {
-					doingScis[i].renameTo(new File(taskFiles, doingScis[i].getName()));
+					while (true) {
+						if (doingScis[i].renameTo(new File(taskFiles, doingScis[i].getName()))) {
+							break;
+						}
+					}
 				}
-				Thread.sleep(100);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -31,19 +31,11 @@ public class CheckCache {
 	private static final int INDEX_CACHEROOT = 0;
 	private static final int INDEX_SCIPATH = 1;
 	//	private static final int INDEX_MERGETASKCOUNT = 2;
-	private static final int INDEX_ERROR2UDB = 3;
-	private static final int INDEX_BOUNDARYREGION = 4;
+	private static final int INDEX_ERROR2UDB = 2;
+	private static final int INDEX_BOUNDARYREGION = 3;
 
 	public void startProcess(int processCount, String[] params) {
 		try {
-//			if (0 == processCount) {
-//				main(params);
-//			} else {
-//				for (int i = 0; i < processCount; i++) {
-//					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.CHECK_CACEH);
-//					Thread.sleep(2000);
-//				}
-//			}
 			if (processCount > 0) {
 				for (int i = 0; i < processCount; i++) {
 					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.CHECK_CACEH);
@@ -74,16 +66,8 @@ public class CheckCache {
 	private void checkCache(String[] params) {
 		String cacheRoot = params[INDEX_CACHEROOT];
 		String scipath = params[INDEX_SCIPATH];
-//		int mergeTaskCount = 0;
-//		if (params.length > 2) {
-//			mergeTaskCount = Integer.valueOf(params[INDEX_MERGETASKCOUNT]);
-//		}
-		if (params.length > 3) {
-			this.error2udb = Boolean.valueOf(params[INDEX_ERROR2UDB]);
-		}
-		if (params.length > 4) {
-			this.boundaryRegion = Toolkit.GeoJsonToGemetry(params[INDEX_BOUNDARYREGION]);
-		}
+		this.error2udb = Boolean.valueOf(params[INDEX_ERROR2UDB]);
+		this.boundaryRegion = Toolkit.GeoJsonToGemetry(params[INDEX_BOUNDARYREGION]);
 
 		ArrayList<String> sciNames = getSciFileList(scipath);
 
@@ -129,7 +113,7 @@ public class CheckCache {
 					}
 				}
 				//Second step:get sci file from doing dir and build cache
-				HashMap<String, CacheWriter> writerHashMap  = new HashMap<>();
+				HashMap<String, CacheWriter> writerHashMap = new HashMap<>();
 				HashMap<String, FileLocker> lockerHashMap = new HashMap<>();
 				for (int i = 0; i < doingSciNames.size(); i++) {
 					//将数组中的sci文件全部加锁，执行完一个再释放锁
@@ -149,7 +133,7 @@ public class CheckCache {
 				}
 				for (int i = 0; i < doingSciNames.size(); i++) {
 					String sciName = doingSciNames.get(i);
-					check(sciName, new File(sciName), writerHashMap.get(sciName), lockerHashMap.get(sciName));
+					check(cacheRoot, new File(sciName), writerHashMap.get(sciName), lockerHashMap.get(sciName));
 				}
 			} while (sciLength != 0);
 //			if (this.error2udb && null != parentPath) {

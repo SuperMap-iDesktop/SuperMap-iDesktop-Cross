@@ -93,6 +93,8 @@ public class FiletypeUtilities {
 			fileType = DataConversionProperties.getString("String_FormImport_ArcGIS");
 		} else if (filePath.equalsIgnoreCase(FileTypeLocale.GPX_STRING)) {
 			fileType = DataConversionProperties.getString("String_FormImport_GPX");
+		} else if (filePath.equalsIgnoreCase(FileTypeLocale.GEOJSON_STRING)) {
+			fileType = DataConversionProperties.getString("String_FormImport_GEOJSON");
 		} else if (fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetype_lidar"))) {
 			// LIDAR文件(*.txt)
 			fileType = DataConversionProperties.getString("String_FormImport_FilterLIDAR");

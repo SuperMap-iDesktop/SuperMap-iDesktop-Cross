@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1499847958760
+Bnd-LastModified: 1500706815968
 Build-Jdk: 1.7.0_80
 Built-By: Administrator
 Bundle-ClassPath: .,lib/org.apache.felix.framework-5.4.0.jar,lib/org.apa
