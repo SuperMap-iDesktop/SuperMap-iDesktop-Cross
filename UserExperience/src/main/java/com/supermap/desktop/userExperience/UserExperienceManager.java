@@ -189,8 +189,8 @@ public class UserExperienceManager {
 	}
 
 	private void initializeLogsSendTimer() {
-		timer = new Timer(60 * 60 * 1000, new ActionListener() {
-			@Override
+        timer = new Timer(60 * 60 * 1000, new ActionListener() {
+            @Override
 			public void actionPerformed(ActionEvent e) {
 				doPost();
 			}
@@ -218,6 +218,13 @@ public class UserExperienceManager {
 			@Override
 			public void run() {
 				doPost(executedFunctionFile);
+				synchronized (lock) {
+					try {
+						executedFunctionFile.getRandomAccessFile().setLength(0);
+					} catch (IOException e) {
+						Application.getActiveApplication().getOutput().output(e);
+					}
+				}
 			}
 		});
 
@@ -282,8 +289,12 @@ public class UserExperienceManager {
 	private void addDoneJson(String json) {
 		synchronized (lock) {
 			try {
-				executedFunctionFile.getRandomAccessFile().write((json + System.getProperty("line.separator")).getBytes());
-				if (executedFunctionFile.getRandomAccessFile().length() > maxFileSize) {
+				RandomAccessFile randomAccessFile = executedFunctionFile.getRandomAccessFile();
+				if (randomAccessFile.length() > 0) {
+					randomAccessFile.seek(randomAccessFile.length());
+				}
+				randomAccessFile.write((json + System.getProperty("line.separator")).getBytes());
+				if (randomAccessFile.length() > maxFileSize) {
 					executedFiles.add(executedFunctionFile);
 					executedFunctionFile = getDefaultFile();
 				}
@@ -300,7 +311,7 @@ public class UserExperienceManager {
 				Thread.sleep(1000);
 			}
 			if (fileLocker.getRandomAccessFile().length() > 0) {
-				fileLocker.getRandomAccessFile().seek(fileLocker.getRandomAccessFile().length() - 1);
+				fileLocker.getRandomAccessFile().seek(fileLocker.getRandomAccessFile().length());
 			}
 			fileLocker.getRandomAccessFile().write((json + System.getProperty("line.separator")).getBytes());
 		} catch (Exception e) {

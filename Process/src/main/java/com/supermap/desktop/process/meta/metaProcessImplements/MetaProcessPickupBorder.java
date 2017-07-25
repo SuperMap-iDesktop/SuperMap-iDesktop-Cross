@@ -23,7 +23,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
  */
 public class MetaProcessPickupBorder extends MetaProcess {
 
-	private final static String INPUT_DATA = "InputData";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String OUTPUT_DATA = "PickupResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
@@ -77,7 +77,7 @@ public class MetaProcessPickupBorder extends MetaProcess {
 				dataset.setSelectedItem(defaultDataset);
 			}
 			saveDataset.setResultDatasource(defaultDataset.getDatasource());
-			saveDataset.setSelectedItem(defaultDataset.getDatasource().getDatasets().getAvailableDatasetName("result_PickupBorderResult"));
+			saveDataset.setSelectedItem(defaultDataset.getDatasource().getDatasets().getAvailableDatasetName("result_PickupBorder"));
 		}
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
@@ -109,7 +109,7 @@ public class MetaProcessPickupBorder extends MetaProcess {
 			if (this.isPreProcessed.getSelectedItem().equals("true")) {
 				isPreProcess = true;
 			}
-			System.out.println(isPreProcess);
+
 			TopologyProcessing.addSteppedListener(steppedListener);
 			Dataset result = TopologyProcessing.pickupBorder(src, this.saveDataset.getResultDatasource(), datasetName, isPreProcess);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);

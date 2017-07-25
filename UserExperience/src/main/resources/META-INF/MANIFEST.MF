@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1500706853662
+Bnd-LastModified: 1500896645788
 Build-Jdk: 1.7.0_80
-Built-By: Administrator
+Built-By: highsad
 Bundle-Activator: com.supermap.desktop.userExperience.UserExperienceActi
  vator
 Bundle-ManifestVersion: 2
