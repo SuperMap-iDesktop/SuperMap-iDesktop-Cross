@@ -48,6 +48,6 @@ public class MetaProcessCentralElement extends MetaProcessSpatialMeasure {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.CentralElement;
+		return MetaKeys.CENTRAL_ELEMENT;
 	}
 }

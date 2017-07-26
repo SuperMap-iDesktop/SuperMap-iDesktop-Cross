@@ -116,6 +116,6 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.AverageNearestNeighbor;
+		return MetaKeys.AVERAGE_NEAREST_NEIGHBOR;
 	}
 }

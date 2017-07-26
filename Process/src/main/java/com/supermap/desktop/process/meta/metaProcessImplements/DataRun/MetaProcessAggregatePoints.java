@@ -146,43 +146,7 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
 			isSuccessful = dataset!=null;
 			fireRunning(new RunningEvent(MetaProcessAggregatePoints.this, 100, "finished"));
-
-//			Recordset recordset = src.getRecordset(false, CursorType.STATIC);
-//
-//			Point2Ds point2Ds = new Point2Ds();
-//			while (!recordset.isEOF()) {
-//				GeoPoint geoPoint = (GeoPoint) recordset.getGeometry();
-//				Point2D point2D = new Point2D(geoPoint.getX(), geoPoint.getY());
-//				point2Ds.add(point2D);
-//				recordset.moveNext();
-//			}
-//
-//			PrjCoordSys prjCoordSys = src.getPrjCoordSys();
-//			Double distance = Double.valueOf(parameterNumberDistance.getSelectedItem().toString());
-//			Unit unit = (Unit) parameterComboBoxUnit.getSelectedData();
-//			int minPilePointCount = Integer.valueOf(parameterNumberMinPilePointCount.getSelectedItem().toString());
-//
-//			// 组件给的接口貌似有问题-yuanR
-//			int[] ints = Geometrist.aggregatePoints(point2Ds, prjCoordSys, distance, unit, minPilePointCount);
-//			GeoRegion[] geoRegions = Geometrist.aggregatePointsToRegions(point2Ds, prjCoordSys, distance, unit, minPilePointCount);
-//
-//
-//			// 新建数据集
-//			if (geoRegions.length > 0) {
-//				DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo(saveDataset.getDatasetName(), DatasetType.REGION);
-//				datasetVectorInfo.setEncodeType(src.getEncodeType());
-//				DatasetVector newDataset = saveDataset.getResultDatasource().getDatasets().create(datasetVectorInfo);
-//
-//				Recordset recordsetResult = newDataset.getRecordset(false, CursorType.DYNAMIC);
-//
-//				for (int i = 0; i < geoRegions.length; i++) {
-//					recordsetResult.addNew((Geometry) geoRegions[i]);
-//					recordsetResult.refresh();
-//				}
-//			} else {
-//				isSuccessful = false;
-//			}
-
+			
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

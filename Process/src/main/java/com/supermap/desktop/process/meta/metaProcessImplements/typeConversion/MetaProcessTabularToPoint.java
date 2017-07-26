@@ -7,7 +7,6 @@ import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
-import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -15,7 +14,6 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.RecordsetUtilities;
 
-import java.text.MessageFormat;
 import java.util.Map;
 
 public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
@@ -157,7 +155,7 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
 
     @Override
     public String getKey() {
-        return MetaKeys.Conversion_TabularToPoint;
+        return MetaKeys.CONVERSION_TABULAR_TO_POINT;
     }
 
     @Override

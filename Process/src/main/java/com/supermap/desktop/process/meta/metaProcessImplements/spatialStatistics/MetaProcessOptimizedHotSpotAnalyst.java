@@ -163,6 +163,6 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.optimizedHotSpotAnalyst;
+		return MetaKeys.OPTIMIZED_HOT_SPOT_ANALYST;
 	}
 }

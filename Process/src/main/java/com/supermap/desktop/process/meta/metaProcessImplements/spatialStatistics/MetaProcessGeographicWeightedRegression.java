@@ -217,6 +217,6 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.geographicWeightedRegression;
+		return MetaKeys.GEOGRAPHIC_WEIGHTED_REGRESSION;
 	}
 }

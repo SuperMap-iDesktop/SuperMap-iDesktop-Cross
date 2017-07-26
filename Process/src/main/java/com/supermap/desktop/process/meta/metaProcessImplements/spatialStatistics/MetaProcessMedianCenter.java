@@ -48,6 +48,6 @@ public class MetaProcessMedianCenter extends MetaProcessSpatialMeasure {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.MedianCenter;
+		return MetaKeys.MEDIAN_CENTER;
 	}
 }

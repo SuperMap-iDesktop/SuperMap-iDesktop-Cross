@@ -31,6 +31,6 @@ public class EmptyMetaProcess extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.Empty;
+		return MetaKeys.EMPTY;
 	}
 }

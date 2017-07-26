@@ -133,7 +133,7 @@ public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
 
     @Override
     public String getKey() {
-        return MetaKeys.Conversion_SimpleToCAD;
+        return MetaKeys.CONVERSION_SIMPLE_TO_CAD;
     }
 
     @Override
