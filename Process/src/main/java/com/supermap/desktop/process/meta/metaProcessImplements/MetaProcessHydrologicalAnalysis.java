@@ -83,6 +83,6 @@ public class MetaProcessHydrologicalAnalysis extends MetaProcessGroup {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.HYDROLOGICAL_ANALYSIS;
+		return MetaKeys.HYDROLOGICAL_ANALYST;
 	}
 }
