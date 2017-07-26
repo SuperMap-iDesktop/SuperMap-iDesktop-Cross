@@ -21,10 +21,11 @@ import com.supermap.desktop.utilities.DatasetUtilities;
  * 度量地理分布 父类
  */
 public abstract class MetaProcessSpatialMeasure extends MetaProcess {
-	private static final String INPUT_SOURCE_DATASET = "SourceDataset";
+	private static final String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
 	protected ParameterDatasource datasource = new ParameterDatasource();
 	protected ParameterSaveDataset parameterSaveDataset;
 	protected String OUTPUT_DATASET = "SpatialMeasureResult";
+	protected String resultName;
 	protected ParameterSingleDataset dataset;
 	protected SpatialMeasureMeasureParameter measureParameter = new SpatialMeasureMeasureParameter(getKey());
 
@@ -36,9 +37,7 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 		initParameterConstraint();
 	}
 
-	protected void initHook() {
-
-	}
+	protected abstract void initHook();
 
 	/**
 	 * 根据不同的功能给予相应的DatasetComboBox
@@ -58,7 +57,7 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 		parameterCombineSource.setDescribe(CommonProperties.getString("String_ColumnHeader_SourceData"));
 
 		parameterSaveDataset = new ParameterSaveDataset();
-		parameterSaveDataset.setDatasetName("result_spatialMeasure");
+		parameterSaveDataset.setDatasetName(resultName);
 		ParameterCombine parameterCombineResult = new ParameterCombine();
 		parameterCombineResult.addParameters(parameterSaveDataset);
 		parameterCombineResult.setDescribe(CommonProperties.getString("String_ResultSet"));

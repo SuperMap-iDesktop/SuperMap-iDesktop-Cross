@@ -165,7 +165,7 @@ public class StatisticsFieldPanel extends JPanel {
 					boolean fieldInfoAddOnce = false;
 					ArrayList<StatisticsType> supportedStatisticsType = getSupportedStatisticsType(fieldInfo.getType());
 					for (StatisticsType statisticsType : supportedStatisticsType) {
-						StatisticsFieldInfo statisticsFieldInfo = new StatisticsFieldInfo(fieldInfo.getName(), fieldInfo.getType(), statisticsType);
+						StatisticsFieldInfo statisticsFieldInfo = new StatisticsFieldInfo(fieldInfo.getCaption(), fieldInfo.getType(), statisticsType);
 						this.statisticsFieldInfoAll.add(statisticsFieldInfo);//添加所有合理的字段、统计组合
 						if (!fieldInfoAddOnce) {
 							this.statisticsFieldInfoIncluded.add(statisticsFieldInfo);//默认初始化表格只显示每个字段一次
@@ -320,7 +320,7 @@ public class StatisticsFieldPanel extends JPanel {
 		buttonDel.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
 
 		buttonScreening.setToolTipText(CommonProperties.getString(CommonProperties.fieldScreening));
-		buttonAddNew.setToolTipText(CommonProperties.getString(CommonProperties.AddNew));
+		buttonAddNew.setToolTipText(CommonProperties.getString(CommonProperties.AddField));
 		buttonSelectAll.setToolTipText(CommonProperties.getString(CommonProperties.selectAll));
 		buttonSelectInvert.setToolTipText(CommonProperties.getString(CommonProperties.selectInverse));
 		buttonDel.setToolTipText(CommonProperties.getString(CommonProperties.Delete));
@@ -498,6 +498,7 @@ public class StatisticsFieldPanel extends JPanel {
 		private ArrayList<StatisticsFieldInfo> selectedInfos = new ArrayList<>();
 
 		public JDialogAdd() {
+			this.setTitle(CommonProperties.getString("String_FieldScreening"));
 			this.initComponent();
 			this.initLayout();
 			this.registerListener();

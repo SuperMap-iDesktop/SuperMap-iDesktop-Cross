@@ -26,8 +26,8 @@ import java.beans.PropertyChangeListener;
  * Created by Chen on 2017/6/30 0030.
  */
 public class MetaProcessRasterToVector extends MetaProcess {
-	private final static String INPUT_DATA = "InputData";
-	private final static String OUTPUT_DATA = "ExtractResult";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	private final static String OUTPUT_DATA = "RasterToVectorResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
@@ -268,7 +268,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 
 			fireRunning(new RunningEvent(MetaProcessRasterToVector.this, 100, "finished"));
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			ConversionAnalyst.removeSteppedListener(steppedListener);
 		}

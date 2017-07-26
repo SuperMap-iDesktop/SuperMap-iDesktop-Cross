@@ -263,23 +263,23 @@ public class WorkflowParser {
 			result = new MetaProcessVectorResample();
 		} else if (MetaKeys.LinePolygonSmooth.equals(key)) {
 			result = new MetaProcessLinePolygonSmooth();
-		} else if (MetaKeys.Conversion_LineToPoint.equals(key)) {
+		} else if (MetaKeys.CONVERSION_LINE_TO_POINT.equals(key)) {
 			result = new MetaProcessLineToPoint();
-		} else if (MetaKeys.Conversion_RegionToPoint.equals(key)) {
+		} else if (MetaKeys.CONVERSION_REGION_TO_POINT.equals(key)) {
 			result = new MetaProcessRegionToPoint();
-		} else if (MetaKeys.Conversion_LineToRegion.equals(key)) {
+		} else if (MetaKeys.CONVERSION_LINE_TO_REGION.equals(key)) {
 			result = new MetaProcessLineToRegion();
-		} else if (MetaKeys.Conversion_RegionToLine.equals(key)) {
+		} else if (MetaKeys.CONVERSION_REGION_TO_LINE.equals(key)) {
 			result = new MetaProcessRegionToLine();
-		} else if (MetaKeys.Conversion_TabularToPoint.equals(key)) {
+		} else if (MetaKeys.CONVERSION_TABULAR_TO_POINT.equals(key)) {
 			result = new MetaProcessTabularToPoint();
-		} else if (MetaKeys.Conversion_CADToSimple.equals(key)) {
+		} else if (MetaKeys.CONVERSION_CAD_TO_SIMPLE.equals(key)) {
 			result = new MetaProcessCADToSimple();
-		} else if (MetaKeys.Conversion_SimpleToCAD.equals(key)) {
+		} else if (MetaKeys.CONVERSION_SIMPLE_TO_CAD.equals(key)) {
 			result = new MetaProcessSimpleToCAD();
-		} else if (MetaKeys.Conversion_FieldToText.equals(key)) {
+		} else if (MetaKeys.CONVERSION_FIELD_TO_TEXT.equals(key)) {
 			result = new MetaProcessFieldToText();
-		} else if (MetaKeys.Conversion_TextToPoint.equals(key)) {
+		} else if (MetaKeys.CONVERSION_TEXT_TO_POINT.equals(key)) {
 			result = new MetaProcessTextToPoint();
 		} else if (MetaKeys.EdgeMatch.equals(key)) {
 			result = new MetaProcessEdgeMatch();

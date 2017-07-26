@@ -148,7 +148,7 @@ public class MetaProcessSingleQuery extends MetaProcess {
 			fireRunning(new RunningEvent(this, 100, "finished"));
 			parameters.getOutputs().getData("QueryResult").setValue("");
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+			Application.getActiveApplication().getOutput().output(e);
 			return false;
 		} finally {
 			CursorUtilities.setDefaultCursor();

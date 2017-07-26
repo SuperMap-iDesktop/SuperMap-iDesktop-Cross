@@ -82,20 +82,20 @@ public class MetaKeys {
 	public static final String RegionTrunkToCenterLine="RegionTrunkToCenterLine";
 
 	//类型转换
-	public static final String Conversion_PointToLine = "Conversion_PointToLine";
-	public static final String Conversion_LineToPoint = "Conversion_LineToPoint";
-	public static final String Conversion_LineToRegion = "Conversion_LineToRegion";
-	public static final String Conversion_RegionToLine = "Conversion_RegionToLine";
-	public static final String Conversion_RegionToPoint = "Conversion_RegionToPoint";
-	public static final String Conversion_CADToSimple = "Conversion_CADToSimple";
-	public static final String Conversion_CADToModel = "Conversion_CADToModel";
-	public static final String Conversion_SimpleToCAD = "Conversion_SimpleToCAD";
-	public static final String Conversion_EPSToSimple = "Conversion_EPSToSimple";
-	public static final String Conversion_FieldToText = "Conversion_FieldToText";
-	public static final String Conversion_TextToFiled = "Conversion_TextToFiled";
-	public static final String Conversion_TextToPoint = "Conversion_TextToPoint";
-	public static final String Conversion_TabularToPoint = "Conversion_TabularToPoint";
-	public static final String Conversion_TabularPointToRegion = "Conversion_TabularPointToRegion";
+	public static final String CONVERSION_POINT_TO_LINE = "CONVERSION_POINT_TO_LINE";
+	public static final String CONVERSION_LINE_TO_POINT = "CONVERSION_LINE_TO_POINT";
+	public static final String CONVERSION_LINE_TO_REGION = "CONVERSION_LINE_TO_REGION";
+	public static final String CONVERSION_REGION_TO_LINE = "CONVERSION_REGION_TO_LINE";
+	public static final String CONVERSION_REGION_TO_POINT = "CONVERSION_REGION_TO_POINT";
+	public static final String CONVERSION_CAD_TO_SIMPLE = "CONVERSION_CAD_TO_SIMPLE";
+	public static final String CONVERSION_CAD_TO_MODEL = "CONVERSION_CAD_TO_MODEL";
+	public static final String CONVERSION_SIMPLE_TO_CAD = "CONVERSION_SIMPLE_TO_CAD";
+	public static final String CONVERSION_EPS_TO_SIMPLE = "CONVERSION_EPS_TO_SIMPLE";
+	public static final String CONVERSION_FIELD_TO_TEXT = "CONVERSION_FIELD_TO_TEXT";
+	public static final String CONVERSION_TEXT_TO_FILED = "CONVERSION_TEXT_TO_FILED";
+	public static final String CONVERSION_TEXT_TO_POINT = "CONVERSION_TEXT_TO_POINT";
+	public static final String CONVERSION_TABULAR_TO_POINT = "CONVERSION_TABULAR_TO_POINT";
+	public static final String CONVERSION_TABULAR_POINT_TO_REGION = "CONVERSION_TABULAR_POINT_TO_REGION";
 
 	// 大数据
 	public static final String HEAT_MAP = "HeatMap";

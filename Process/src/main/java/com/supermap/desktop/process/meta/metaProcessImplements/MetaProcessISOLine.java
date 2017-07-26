@@ -13,8 +13,10 @@ import com.supermap.desktop.properties.CommonProperties;
  * Created by xie on 2017/3/6.
  */
 public class MetaProcessISOLine extends MetaProcessISO {
-
-
+	@Override
+	protected void initHook() {
+		OUTPUT_DATA = "ISOLineResult";
+	}
 
 	public MetaProcessISOLine() {
 	}

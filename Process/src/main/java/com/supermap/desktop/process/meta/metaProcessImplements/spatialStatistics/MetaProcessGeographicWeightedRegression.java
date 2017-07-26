@@ -38,7 +38,7 @@ import java.beans.PropertyChangeListener;
  * @author XiaJT
  */
 public class MetaProcessGeographicWeightedRegression extends MetaProcess {
-	private static final String INPUT_SOURCE_DATASET = "SourceDataset";
+	private static final String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
 	private static final String OUTPUT_DATASET = "GeographicWeightedRegression";
 
 	private ParameterDatasourceConstrained datasourceConstraint = new ParameterDatasourceConstrained();

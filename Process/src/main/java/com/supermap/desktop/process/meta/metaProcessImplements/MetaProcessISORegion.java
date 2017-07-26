@@ -43,4 +43,8 @@ public class MetaProcessISORegion extends MetaProcessISO {
 		return parameters.getPanel();
 	}
 
+	@Override
+	protected void initHook() {
+		OUTPUT_DATA = "ISORegionResult";
+	}
 }

@@ -145,7 +145,7 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 
     @Override
     public String getKey() {
-        return MetaKeys.Conversion_FieldToText;
+        return MetaKeys.CONVERSION_FIELD_TO_TEXT;
     }
 
     @Override
