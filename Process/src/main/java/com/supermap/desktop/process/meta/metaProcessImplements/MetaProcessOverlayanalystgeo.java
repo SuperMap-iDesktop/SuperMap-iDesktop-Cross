@@ -148,7 +148,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 			fireRunning(new RunningEvent(this, 100, "finished"));
 			parameters.getOutputs().getData("OverlayResult").setValue("");// TODO: 2017/6/26 也许没结果,but
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+			Application.getActiveApplication().getOutput().output(e);
 			return false;
 		} finally {
 			CursorUtilities.setDefaultCursor();

@@ -39,7 +39,7 @@ public class MetaProcessHotSpotAnalyst extends MetaProcessAnalyzingPatterns {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.hotSpotAnalyst;
+		return MetaKeys.HOT_SPOT_ANALYST;
 	}
 
 	@Override

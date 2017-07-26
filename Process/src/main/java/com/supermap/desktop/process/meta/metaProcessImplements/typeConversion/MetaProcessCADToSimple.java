@@ -2,9 +2,6 @@ package com.supermap.desktop.process.meta.metaProcessImplements.typeConversion;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.geometry.Abstract.IGeometry;
-import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -158,7 +155,7 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 
     @Override
     public String getKey() {
-        return MetaKeys.Conversion_CADToSimple;
+        return MetaKeys.CONVERSION_CAD_TO_SIMPLE;
     }
 
     @Override

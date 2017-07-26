@@ -241,6 +241,6 @@ public class MetaProcessVectorResample extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.VectorResample;
+		return MetaKeys.VECTOR_RESAMPLE;
 	}
 }

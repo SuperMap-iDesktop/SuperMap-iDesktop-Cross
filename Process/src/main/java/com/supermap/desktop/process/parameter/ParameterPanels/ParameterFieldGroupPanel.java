@@ -190,8 +190,10 @@ public class ParameterFieldGroupPanel extends SwingPanel {
 				int count = fieldInfos.getCount();
 				FieldType[] fieldType = parameterFieldGroup.getFieldType();
 				for (int i = 0; i < count; i++) {
-					if (ArrayUtilities.isArrayContains(fieldType, fieldInfos.get(i).getType())) {
-						tableDatas.add(new TableData(fieldInfos.get(i)));
+					if (fieldType == null || ArrayUtilities.isArrayContains(fieldType, fieldInfos.get(i).getType())) {
+						if (!fieldInfos.get(i).isSystemField() || parameterFieldGroup.isShowSystemField()) {
+							tableDatas.add(new TableData(fieldInfos.get(i)));
+						}
 					}
 				}
 			}

@@ -28,9 +28,8 @@ import java.beans.PropertyChangeListener;
 public class MetaProcessVectorToRaster extends MetaProcess {
 
 	private final static String SOURCE_DATA = CommonProperties.getString("String_GroupBox_SourceData");
-	;
-	private final static String BOUNDARY_DATA = CommonProperties.getString("String_GroupBox_BoundaryData");
-	private final static String OUTPUT_DATA = "ExtractResult";
+	private final static String BOUNDARY_DATA = CommonProperties.getString("String_BoundaryData");
+	private final static String OUTPUT_DATA = "VectorToRasterResult";
 
 	//  输入数据
 	private ParameterDatasourceConstrained sourceDatasource;
@@ -62,9 +61,8 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 
 	public MetaProcessVectorToRaster() {
 		initParameters();
-		initParameterConstrint();
 		initParametersState();
-
+		initParameterConstrint();
 		registerListener();
 	}
 
@@ -253,7 +251,7 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 			fireRunning(new RunningEvent(MetaProcessVectorToRaster.this, 100, "finished"));
 
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			ConversionAnalyst.removeSteppedListener(steppedListener);
 		}

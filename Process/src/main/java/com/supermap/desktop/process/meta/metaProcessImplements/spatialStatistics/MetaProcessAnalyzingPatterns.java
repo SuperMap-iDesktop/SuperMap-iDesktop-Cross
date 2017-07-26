@@ -18,7 +18,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
  * @author XiaJT
  */
 public abstract class MetaProcessAnalyzingPatterns extends MetaProcess {
-	private static final String INPUT_SOURCE_DATASET = "SourceDataset";
+	private static final String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
 	protected ParameterDatasource datasource = new ParameterDatasource();
 	protected ParameterSingleDataset dataset = new ParameterSingleDataset(DatasetTypeUtilities.getDatasetTypeVector());
 	protected ParameterPatternsParameter parameterPatternsParameter = new ParameterPatternsParameter(getKey());

@@ -38,8 +38,8 @@ public class MetaKeys {
 	public static final String THINRASTER = "ThinRaster";
 	public static final String PROCESS_GROUP = "ProcessGroup";
 	public static final String SQL_QUERY = "SqlQuery";
-	public static final String HydrologicalAnalysis = "HydrologicalAnalysis";
-	public static final String Empty = "empty";
+	public static final String HYDROLOGICAL_ANALYST = "HydrologicalAnalyst";
+	public static final String EMPTY = "Empty";
 
 	// 水文分析
 	public static final String FillingPseudoDepressions = "FillingPseudoDepressions";
@@ -55,53 +55,54 @@ public class MetaKeys {
 	public static final String ConnectedDrainage = "ConnectedDrainage";
 
 	// 空间统计分析
-	public static final String CentralElement = "CentralElement";
-	public static final String MeanCenter = "MeanCenter";
-	public static final String MedianCenter = "MedianCenter";
-	public static final String Directional = "Directional";
-	public static final String LinearDirectionalMean = "LinearDirectionalMean";
-	public static final String StandardDistance = "StandardDistance";
-	public static final String autoCorrelation = "autoCorrelation";
-	public static final String highOrLowClustering = "highOrLowClustering";
-	public static final String clusterOutlierAnalyst = "clusterOutlierAnalyst";
-	public static final String hotSpotAnalyst = "hotSpotAnalyst";
-	public static final String geographicWeightedRegression = "geographicWeightedRegression";
-	public static final String incrementalAutoCorrelation = "incrementalAutoCorrelation";
-	public static final String AverageNearestNeighbor = "averageNearestNeighbor";
-	public static final String optimizedHotSpotAnalyst = "optimizedHotSpotAnalyst";
+	public static final String CENTRAL_ELEMENT = "CentralElement";
+	public static final String MEAN_CENTER = "MeanCenter";
+	public static final String MEDIAN_CENTER = "MedianCenter";
+	public static final String DIRECTIONAL = "Directional";
+	public static final String LINEAR_DIRECTIONAL_MEAN = "LinearDirectionalMean";
+	public static final String STANDARD_DISTANCE = "StandardDistance";
+	public static final String AUTO_CORRELATION = "AutoCorrelation";
+	public static final String HIGH_OR_LOW_CLUSTERING = "HighOrLowClustering";
+	public static final String CLUSTER_OUTLIER_ANALYST = "ClusterOutlierAnalyst";
+	public static final String HOT_SPOT_ANALYST = "HotSpotAnalyst";
+	public static final String GEOGRAPHIC_WEIGHTED_REGRESSION = "GeographicWeightedRegression";
+	public static final String INCREMENTAL_AUTO_CORRELATION = "IncrementalAutoCorrelation";
+	public static final String AVERAGE_NEAREST_NEIGHBOR = "AverageNearestNeighbor";
+	public static final String OPTIMIZED_HOT_SPOT_ANALYST = "OptimizedHotSpotAnalyst";
 
 	//数据处理
-	public static final String AggregatePoints = "AggregatePoints";
-	public static final String VectorResample = "VectorResample";
-	public static final String EdgeMatch = "EdgeMatch";
-	public static final String LinePolygonSmooth = "LinePolygonSmooth";
-	public static final String PickupBorder="PickupBorder";
-	public static final String DualLineToCenterLine="DualLineToCenterLine";
-	public static final String RegionToCenterLine="RegionToCenterLine";
-	public static final String RegionTrunkToCenterLine="RegionTrunkToCenterLine";
+	public static final String AGGREGATE_POINTS = "AggregatePoints";
+	public static final String VECTOR_RESAMPLE = "VectorResample";
+	public static final String EDGE_MATCH = "EdgeMatch";
+	public static final String LINE_POLYGON_SMOOTH = "LinePolygonSmooth";
+	public static final String PICKUP_BORDER = "PickupBorder";
+	public static final String DUALLINE_TO_CENTERLINE = "DualLineToCenterLine";
+	public static final String REGION_TO_CENTERLINE = "RegionToCenterLine";
+	public static final String REGION_TRUNK_TO_CENTERLINE = "RegionTrunkToCenterLine";
+	public static final String RAREFY_POINTS = "RarefyPoints";
 
 	//类型转换
-	public static final String Conversion_PointToLine = "Conversion_PointToLine";
-	public static final String Conversion_LineToPoint = "Conversion_LineToPoint";
-	public static final String Conversion_LineToRegion = "Conversion_LineToRegion";
-	public static final String Conversion_RegionToLine = "Conversion_RegionToLine";
-	public static final String Conversion_RegionToPoint = "Conversion_RegionToPoint";
-	public static final String Conversion_CADToSimple = "Conversion_CADToSimple";
-	public static final String Conversion_CADToModel = "Conversion_CADToModel";
-	public static final String Conversion_SimpleToCAD = "Conversion_SimpleToCAD";
-	public static final String Conversion_EPSToSimple = "Conversion_EPSToSimple";
-	public static final String Conversion_FieldToText = "Conversion_FieldToText";
-	public static final String Conversion_TextToFiled = "Conversion_TextToFiled";
-	public static final String Conversion_TextToPoint = "Conversion_TextToPoint";
-	public static final String Conversion_TabularToPoint = "Conversion_TabularToPoint";
-	public static final String Conversion_TabularPointToRegion = "Conversion_TabularPointToRegion";
+	public static final String CONVERSION_POINT_TO_LINE = "Conversion_PointToLine";
+	public static final String CONVERSION_LINE_TO_POINT = "Conversion_LineToPoint";
+	public static final String CONVERSION_LINE_TO_REGION = "Conversion_LineToRegion";
+	public static final String CONVERSION_REGION_TO_POINT = "Conversion_RegionToPoint";
+	public static final String CONVERSION_REGION_TO_LINE = "Conversion_RegionToLine";
+	public static final String CONVERSION_CAD_TO_SIMPLE = "Conversion_CADToSimple";
+	public static final String CONVERSION_CAD_TO_MODEL = "Conversion_CADToModel";
+	public static final String CONVERSION_SIMPLE_TO_CAD = "Conversion_SimpleToCAD";
+	public static final String CONVERSION_EPS_TO_SIMPLE = "Conversion_EPSToSimple";
+	public static final String CONVERSION_FIELD_TO_TEXT = "Conversion_FieldToText";
+	public static final String CONVERSION_TEXT_TO_FILED = "Conversion_TextToField";
+	public static final String CONVERSION_TEXT_TO_POINT = "Conversion_TextToPoint";
+	public static final String CONVERSION_TABULAR_TO_POINT = "Conversion_TabularToPoint";
+	public static final String CONVERSION_TABULARPOINT_TO_REGION = "Conversion_TabularPointToRegion";
 
 	// 大数据
 	public static final String HEAT_MAP = "HeatMap";
 	public static final String SIMPLE_DENSITY = "SimpleDensity";
 	public static final String KERNEL_DENSITY = "KernelDensity";
-	public static final String OVERLAYANALYSTGEO = "overlayanalystgeo";
-	public static final String SINGLE_QUERY = "singleQuery";
+	public static final String OVERLAYANALYSTGEO = "Overlayanalystgeo";
+	public static final String SINGLE_QUERY = "SingleQuery";
 
 	public static final String USER_DEFINE_PROJECTION = "UserDefineProjection";
 }

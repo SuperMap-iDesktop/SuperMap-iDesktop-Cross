@@ -13,6 +13,7 @@ import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.implement.SmPopupMenu;
 import com.supermap.desktop.implement.SmToolbar;
 import com.supermap.desktop.interfaces.UserExperienceBean;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -68,6 +69,9 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean,
 	public void initCtrlAction(CtrlAction ctrlAction) {
 		this.ctrlAction = ctrlAction;
 		caption = ctrlAction.getCaller().getText();
+		if(StringUtilities.isNullOrEmpty(caption) && ctrlAction.getCaller() instanceof Component){
+			caption = ((Component)ctrlAction.getCaller()).getName();
+		}
 		ctrlActionName = ctrlAction.getClass().getName();
 		isException = false;
 		pluginName = ctrlAction.getClass().getClassLoader().toString();

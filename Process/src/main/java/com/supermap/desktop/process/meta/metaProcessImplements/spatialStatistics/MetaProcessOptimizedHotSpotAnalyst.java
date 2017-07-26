@@ -22,7 +22,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
  * @author XiaJT
  */
 public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
-	private static final String INPUT_SOURCE_DATASET = "SourceDataset";
+	private static final String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String OUTPUT_DATASET = "OptimizedHotSpotResult";
 	private ParameterDatasource parameterDatasource = new ParameterDatasource();
 	private ParameterSingleDataset parameterSingleDataset = new ParameterSingleDataset(DatasetType.REGION, DatasetType.POINT);
@@ -163,6 +163,6 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.optimizedHotSpotAnalyst;
+		return MetaKeys.OPTIMIZED_HOT_SPOT_ANALYST;
 	}
 }

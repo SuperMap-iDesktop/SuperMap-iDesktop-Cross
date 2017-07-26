@@ -26,8 +26,8 @@ import java.beans.PropertyChangeListener;
  * Created by Chen on 2017/6/30 0030.
  */
 public class MetaProcessRasterToVector extends MetaProcess {
-	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");;
-	private final static String OUTPUT_DATA = "ExtractResult";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	private final static String OUTPUT_DATA = "RasterToVectorResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
@@ -118,7 +118,15 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		if (datasetGrid != null) {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
-			//System.out.println(datasetGrid.getName());
+			gridDatasetSetting.setEnabled(datasetGrid instanceof DatasetGrid);
+			imageDatasetSetting.setEnabled(datasetGrid instanceof DatasetImage);
+			textFieldGridValue.setEnabled(false);
+			textFieldGridValueTolerance.setEnabled(false);
+			if (datasetGrid instanceof DatasetGrid){
+				textFieldNoValue.setSelectedItem(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue());
+			}else if (datasetGrid instanceof DatasetImage){
+				textFieldNoValue.setSelectedItem("16777215");
+			}
 		}
 
 		resultDataset.setSelectedItem("result_gridToVector");
@@ -137,7 +145,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		checkBoxThinRaster.setSelectedItem(true);
 		vertorizeLineSetting.setEnabled(comboBoxType.getSelectedData() == DatasetType.LINE);
 
-		textFieldNoValue.setSelectedItem("-9999");
+		//textFieldNoValue.setSelectedItem("-9999");
 		textFieldNoValue.setRequisite(true);
 		textFieldNoValueTolerance.setSelectedItem("0");
 		textFieldNoValueTolerance.setMinValue(0);
@@ -159,7 +167,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		textFieldColorTolerance.setIsIncludeMin(true);
 		textFieldColorTolerance.setIncludeMax(true);
 		textFieldColorTolerance.setRequisite(true);
-		imageDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetImage);
+		//imageDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetImage);
 	}
 
 	private void initParameterConstraint() {
@@ -273,7 +281,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 
 			fireRunning(new RunningEvent(MetaProcessRasterToVector.this, 100, "finished"));
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			ConversionAnalyst.removeSteppedListener(steppedListener);
 		}

@@ -1,7 +1,6 @@
 package com.supermap.desktop.process.graphics.graphs;
 
 import com.alibaba.fastjson.JSONObject;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.WorkflowParser;
@@ -119,7 +118,7 @@ public class ProcessGraph extends RectangleGraph {
 	protected void formXmlHook(JSONObject xml) {
 		super.formXmlHook(xml);
 		String key = (String) xml.get("process");
-		if (key.equals(MetaKeys.Empty) && !StringUtilities.isNullOrEmpty((String) xml.get("title"))) {
+		if (key.equals(MetaKeys.EMPTY) && !StringUtilities.isNullOrEmpty((String) xml.get("title"))) {
 			process = new EmptyMetaProcess((String) xml.get("title"));
 		} else {
 			process = WorkflowParser.getMetaProcess(key);
