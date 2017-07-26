@@ -112,7 +112,7 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.RegionTrunkToCenterLine;
+		return MetaKeys.REGION_TRUNK_TO_CENTERLINE;
 	}
 
 	@Override

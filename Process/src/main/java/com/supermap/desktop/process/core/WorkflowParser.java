@@ -6,10 +6,7 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.MetaProcessImportFactory;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.meta.metaProcessImplements.DataRun.MetaProcessAggregatePoints;
-import com.supermap.desktop.process.meta.metaProcessImplements.DataRun.MetaProcessEdgeMatch;
-import com.supermap.desktop.process.meta.metaProcessImplements.DataRun.MetaProcessLinePolygonSmooth;
-import com.supermap.desktop.process.meta.metaProcessImplements.DataRun.MetaProcessVectorResample;
+import com.supermap.desktop.process.meta.metaProcessImplements.DataRun.*;
 import com.supermap.desktop.process.meta.metaProcessImplements.*;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.*;
 import com.supermap.desktop.process.meta.metaProcessImplements.typeConversion.*;
@@ -256,11 +253,13 @@ public class WorkflowParser {
 			result = new MetaProcessExportGrid();
 		} else if (MetaKeys.EXPORTVECTOR.equals(key)) {
 			result = new MetaProcessExportVector();
-		} else if (MetaKeys.AggregatePoints.equals(key)) {
+		} else if (MetaKeys.AGGREGATE_POINTS.equals(key)) {
 			result = new MetaProcessAggregatePoints();
-		} else if (MetaKeys.VectorResample.equals(key)) {
+		} else if (MetaKeys.RAREFY_POINTS.equals(key)) {
+			result = new MetaProcessRarefyPoints();
+		} else if (MetaKeys.VECTOR_RESAMPLE.equals(key)) {
 			result = new MetaProcessVectorResample();
-		} else if (MetaKeys.LinePolygonSmooth.equals(key)) {
+		} else if (MetaKeys.LINE_POLYGON_SMOOTH.equals(key)) {
 			result = new MetaProcessLinePolygonSmooth();
 		} else if (MetaKeys.Conversion_LineToPoint.equals(key)) {
 			result = new MetaProcessLineToPoint();
@@ -280,15 +279,15 @@ public class WorkflowParser {
 			result = new MetaProcessFieldToText();
 		} else if (MetaKeys.Conversion_TextToPoint.equals(key)) {
 			result = new MetaProcessTextToPoint();
-		} else if (MetaKeys.EdgeMatch.equals(key)) {
+		} else if (MetaKeys.EDGE_MATCH.equals(key)) {
 			result = new MetaProcessEdgeMatch();
-		} else if (MetaKeys.PickupBorder.equals(key)) {
+		} else if (MetaKeys.PICKUP_BORDER.equals(key)) {
 			result = new MetaProcessPickupBorder();
-		} else if (MetaKeys.DualLineToCenterLine.equals(key)) {
+		} else if (MetaKeys.DUALLINE_TO_CENTERLINE.equals(key)) {
 			result = new MetaProcessDualLineToCenterLine();
-		} else if (MetaKeys.RegionToCenterLine.equals(key)) {
+		} else if (MetaKeys.REGION_TO_CENTERLINE.equals(key)) {
 			result = new MetaProcessRegionToCenterLine();
-		} else if (MetaKeys.RegionTrunkToCenterLine.equals(key)) {
+		} else if (MetaKeys.REGION_TRUNK_TO_CENTERLINE.equals(key)) {
 			result = new MetaProcessRegionTrunkToCenterLine();
 		} else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));

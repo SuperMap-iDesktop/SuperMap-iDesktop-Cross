@@ -145,6 +145,7 @@
             </process>
             <process name="数据处理">
                 <process key="AggregatePoints" name="点密度聚合"/>
+                <process key="RarefyPoints" name="点抽稀"/>
                 <process key="VectorResample" name="矢量重采样"/>
                 <process key="LinePolygonSmooth" name="线面光滑"/>
                 <process key="EdgeMatch" name="图幅接边"/>

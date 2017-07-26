@@ -18,7 +18,7 @@ public class MetaProcessDualLineToCenterLine extends MetaProcessCenterLine {
 	}
 
 	public String getSonKey(){
-		return MetaKeys.DualLineToCenterLine;
+		return MetaKeys.DUALLINE_TO_CENTERLINE;
 	}
 
 	public String getSonTitle(){

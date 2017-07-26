@@ -118,7 +118,15 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		if (datasetGrid != null) {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
-			//System.out.println(datasetGrid.getName());
+			gridDatasetSetting.setEnabled(datasetGrid instanceof DatasetGrid);
+			imageDatasetSetting.setEnabled(datasetGrid instanceof DatasetImage);
+			textFieldGridValue.setEnabled(false);
+			textFieldGridValueTolerance.setEnabled(false);
+			if (datasetGrid instanceof DatasetGrid){
+				textFieldNoValue.setSelectedItem(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue());
+			}else if (datasetGrid instanceof DatasetImage){
+				textFieldNoValue.setSelectedItem("16777215");
+			}
 		}
 
 		resultDataset.setSelectedItem("result_gridToVector");
@@ -137,7 +145,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		checkBoxThinRaster.setSelectedItem(true);
 		vertorizeLineSetting.setEnabled(comboBoxType.getSelectedData() == DatasetType.LINE);
 
-		textFieldNoValue.setSelectedItem("-9999");
+		//textFieldNoValue.setSelectedItem("-9999");
 		textFieldNoValue.setRequisite(true);
 		textFieldNoValueTolerance.setSelectedItem("0");
 		textFieldNoValueTolerance.setMinValue(0);
@@ -149,7 +157,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		textFieldGridValueTolerance.setSelectedItem("0");
 		textFieldGridValueTolerance.setMinValue(0);
 		textFieldGridValueTolerance.setIsIncludeMin(true);
-		gridDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetGrid);
+		//gridDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetGrid);
 		comboBoxBackColor.setSelectedItem(Color.WHITE);
 		comboBoxBackColor.setRequisite(true);
 
@@ -159,7 +167,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		textFieldColorTolerance.setIsIncludeMin(true);
 		textFieldColorTolerance.setIncludeMax(true);
 		textFieldColorTolerance.setRequisite(true);
-		imageDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetImage);
+		//imageDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetImage);
 	}
 
 	private void initParameterConstraint() {
