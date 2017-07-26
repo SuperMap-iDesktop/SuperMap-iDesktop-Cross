@@ -338,7 +338,8 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 
 			DatasourceConnectionInfo datasourceConnectionInfo = new DatasourceConnectionInfo();
 			datasourceConnectionInfo.setEngineType(EngineType.POSTGRESQL);
-			datasourceConnectionInfo.setDriver(server);
+			datasourceConnectionInfo.setServer(server);
+			datasourceConnectionInfo.setDriver(driver);
 			datasourceConnectionInfo.setUser(user);
 			datasourceConnectionInfo.setPassword(password);
 			datasourceConnectionInfo.setDatabase(database);
