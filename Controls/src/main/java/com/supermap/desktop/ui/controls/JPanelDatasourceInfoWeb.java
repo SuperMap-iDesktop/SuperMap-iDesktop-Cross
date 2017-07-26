@@ -317,6 +317,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 
 	private void openBigDataStorePG(Datasource datasource) {
 		if (datasource != null) {
+			String datasourceAlias = datasource.getAlias();
 			Workspace workspace = null;
 			if (datasource.getDatasets().getCount() <= 0) {
 				datasource.getDatasets().create(new DatasetVectorInfo("new_point", DatasetType.POINT));
@@ -327,25 +328,11 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 				datasourceConnectionInfo.setAlias("datasource");
 				datasource = workspace.getDatasources().open(datasourceConnectionInfo);
 			}
-			String description = datasource.getDatasets().get(0).getDescription();
-			Document rootNode = XmlUtilities.stringToDocument(description);
-			Node datasourceNode = rootNode.getChildNodes().item(0);
-			String server = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:Server").getChildNodes().item(0).getNodeValue();
-			String driver = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:Driver").getChildNodes().item(0).getNodeValue();
-			String database = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:Database").getChildNodes().item(0).getNodeValue();
-			String user = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:User").getChildNodes().item(0).getNodeValue();
-			String password = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:Password").getChildNodes().item(0).getNodeValue();
 
-			DatasourceConnectionInfo datasourceConnectionInfo = new DatasourceConnectionInfo();
-			datasourceConnectionInfo.setEngineType(EngineType.POSTGRESQL);
-			datasourceConnectionInfo.setServer(server);
-			datasourceConnectionInfo.setDriver(driver);
-			datasourceConnectionInfo.setUser(user);
-			datasourceConnectionInfo.setPassword(password);
-			datasourceConnectionInfo.setDatabase(database);
-			datasourceConnectionInfo.setAlias(DatasourceUtilities.getAvailableDatasourceAlias((datasource.getAlias() + "_PG"), 0));
-			Application.getActiveApplication().getWorkspace().getDatasources().open(datasourceConnectionInfo);
-
+			for (int i = 0; i < datasource.getDatasets().getCount(); i++) {
+				String description = datasource.getDatasets().get(0).getDescription();
+				openDatasetPG(description, datasourceAlias);
+			}
 			if (workspace != null) {
 				workspace.getDatasources().get(0).getDatasets().delete(0);
 				workspace.getDatasources().close(0);
@@ -353,6 +340,26 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 				workspace.dispose();
 			}
 		}
+	}
+
+	private void openDatasetPG(String description, String datasourceAlias) {
+		Document rootNode = XmlUtilities.stringToDocument(description);
+		Node datasourceNode = rootNode.getChildNodes().item(0);
+		String server = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:Server").getChildNodes().item(0).getNodeValue();
+		String driver = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:Driver").getChildNodes().item(0).getNodeValue();
+		String database = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:Database").getChildNodes().item(0).getNodeValue();
+		String user = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:User").getChildNodes().item(0).getNodeValue();
+		String password = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:Password").getChildNodes().item(0).getNodeValue();
+
+		DatasourceConnectionInfo datasourceConnectionInfo = new DatasourceConnectionInfo();
+		datasourceConnectionInfo.setEngineType(EngineType.POSTGRESQL);
+		datasourceConnectionInfo.setServer(server);
+		datasourceConnectionInfo.setDriver(driver);
+		datasourceConnectionInfo.setUser(user);
+		datasourceConnectionInfo.setPassword(password);
+		datasourceConnectionInfo.setDatabase(database);
+		datasourceConnectionInfo.setAlias(DatasourceUtilities.getAvailableDatasourceAlias((datasourceAlias + "_" + "server"), 0));
+		Application.getActiveApplication().getWorkspace().getDatasources().open(datasourceConnectionInfo);
 	}
 
 	private void initResources() {
