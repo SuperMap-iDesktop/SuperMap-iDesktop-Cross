@@ -17,6 +17,7 @@ public class MetaProcessCentralElement extends MetaProcessSpatialMeasure {
 
 	protected void initHook() {
 		OUTPUT_DATASET = "CentralElementResult";
+		resultName = "result_centralElement";
 	}
 
 	@Override

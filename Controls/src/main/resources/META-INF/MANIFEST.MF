@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1500952826172
+Bnd-LastModified: 1500963082330
 Build-Jdk: 1.7.0_80
 Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.controls.ControlsActivator
@@ -71,9 +71,9 @@ Export-Package: com.supermap.desktop.controls.colorScheme;version="1.0.0
  extStyle;version="1.0.0",com.supermap.desktop.ui.controls.ToolBarJmenu;
  version="1.0.0",com.supermap.desktop.ui.controls.toolTip;version="1.0.0
  ",com.supermap.desktop.ui.enums;version="1.0.0",com.supermap.desktop.ui
- .lbs;uses:="com.supermap.desktop.ui.controls.mutiTable.component,com.su
- permap.desktop.ui.lbs.Interface,com.supermap.desktop.ui.lbs.params";ver
- sion="1.0.0",com.supermap.desktop.ui.lbs.Interface;version="1.0.0";uses
+ .lbs;version="1.0.0";uses:="com.supermap.desktop.ui.controls.mutiTable.
+ component,com.supermap.desktop.ui.lbs.Interface,com.supermap.desktop.ui
+ .lbs.params",com.supermap.desktop.ui.lbs.Interface;version="1.0.0";uses
  :="com.supermap.desktop.ui.lbs.params",com.supermap.desktop.ui.lbs.para
  ms;version="1.0.0",com.supermap.desktop.ui.lbs.ui;version="1.0.0";uses:
  ="com.supermap.desktop.ui.controls",com.supermap.desktop.ui.mdi.action;

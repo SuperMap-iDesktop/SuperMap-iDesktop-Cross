@@ -69,7 +69,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 		parameterTextFieldDistanceTolerance.setToolTip(ProcessProperties.getString("String_DistanceTolerance") + " {-1, [0, +∞) }");
 		parameterTextFieldExponent.setDescribe(ProcessProperties.getString("String_Exponent"));
 		parameterCheckBoxFDRAdjusted.setDescribe(ProcessProperties.getString("String_FDRAdjusted"));
-		parameterFile.setDescribe(ProcessProperties.getString("String_SWM"));
+		parameterFile.setDescribe(ProcessProperties.getString("String_Label_SWM"));
 		parameterTextFieldKNeighbors.setMinValue(1);
 		parameterTextFieldKNeighbors.setMaxBit(0);
 

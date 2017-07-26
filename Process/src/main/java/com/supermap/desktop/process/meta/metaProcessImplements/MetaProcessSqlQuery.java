@@ -34,8 +34,8 @@ import java.util.ArrayList;
  * sql查询简单实现
  */
 public class MetaProcessSqlQuery extends MetaProcess {
-	private final static String INPUT_DATA = "InputData";
-	private final static String OUTPUT_DATA = "QueryResult";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	private final static String OUTPUT_DATA = "SqlQueryResult";
 	private ParameterDatasourceConstrained datasource;
 	private ParameterSingleDataset dataset;
 	private ParameterTextArea parameterAttributeFilter;

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1500952846082
+Bnd-LastModified: 1500963102766
 Build-Jdk: 1.7.0_80
-Built-By: highsad
+Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.process.ProcessActivator
 Bundle-ClassPath: .,lib/jhotdraw-7.4.1.jar
 Bundle-ManifestVersion: 2
@@ -65,9 +65,9 @@ Export-Package: com.supermap.desktop.process.constraint.annotation;versi
  map.desktop.process.messageBus;version="1.0.0",com.supermap.desktop.pro
  cess.meta;version="1.0.0";uses:="com.supermap.desktop.process.core,com.
  supermap.desktop.process.parameter.interfaces",com.supermap.desktop.pro
- cess.meta.metaProcessImplements.DataRun;uses:="com.supermap.desktop.pro
- cess.meta,com.supermap.desktop.process.parameter.interfaces";version="1
- .0.0",com.supermap.desktop.process.meta.metaProcessImplements;version="
+ cess.meta.metaProcessImplements.DataRun;version="1.0.0";uses:="com.supe
+ rmap.desktop.process.meta,com.supermap.desktop.process.parameter.interf
+ aces",com.supermap.desktop.process.meta.metaProcessImplements;version="
  1.0.0";uses:="com.supermap.desktop.process.dataconversion,com.supermap.
  desktop.process.meta,com.supermap.desktop.process.meta.metaProcessImple
  ments.spatialStatistics,com.supermap.desktop.process.parameter.interfac

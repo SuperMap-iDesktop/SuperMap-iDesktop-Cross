@@ -2,8 +2,8 @@ package com.supermap.desktop.iml;
 
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Interface.IExportSettingFactory;
-import com.supermap.desktop.UserDefineType.ExportSettingGPX;
-import com.supermap.desktop.UserDefineType.UserDefineFileType;
+import com.supermap.desktop.implement.UserDefineType.ExportSettingGPX;
+import com.supermap.desktop.implement.UserDefineType.UserDefineFileType;
 
 /**
  * Created by xie on 2016/10/28.

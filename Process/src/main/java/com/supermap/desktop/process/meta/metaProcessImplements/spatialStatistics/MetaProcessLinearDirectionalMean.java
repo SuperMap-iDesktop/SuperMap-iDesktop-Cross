@@ -19,6 +19,7 @@ public class MetaProcessLinearDirectionalMean extends MetaProcessSpatialMeasure 
 
 	protected void initHook() {
 		OUTPUT_DATASET = "LinearDirectionalMeanResult";
+		resultName = "result_linearDirectionalMean";
 	}
 
 	@Override

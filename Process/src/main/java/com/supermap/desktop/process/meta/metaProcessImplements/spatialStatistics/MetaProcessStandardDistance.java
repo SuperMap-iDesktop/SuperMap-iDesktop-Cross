@@ -15,6 +15,7 @@ public class MetaProcessStandardDistance extends MetaProcessSpatialMeasure{
     }
 
     protected void initHook() {
+        resultName = "result_standardDistance";
         OUTPUT_DATASET = "STANDARD_DISTANCE";
     }
 

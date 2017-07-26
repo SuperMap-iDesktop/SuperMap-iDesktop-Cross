@@ -3,7 +3,7 @@ package com.supermap.desktop.baseUI;
 import com.supermap.data.Charset;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Interface.IImportSettingSourceInfo;
-import com.supermap.desktop.UserDefineType.ImportSettingGPX;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.importUI.ImportFilePropertiesDialog;

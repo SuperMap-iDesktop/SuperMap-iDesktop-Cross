@@ -1,4 +1,4 @@
-package com.supermap.desktop.UserDefineType;
+package com.supermap.desktop.implement.UserDefineType;
 
 /**
  * Created by xie on 2017/3/28.

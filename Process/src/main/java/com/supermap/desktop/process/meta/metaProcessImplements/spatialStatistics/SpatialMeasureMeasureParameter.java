@@ -73,17 +73,17 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		if (metaKeys.equals(MetaKeys.DIRECTIONAL)) {
 			this.addParameters(parameterEllipseSizeComboBox);
 		}
-		if (metaKeys.equals(MetaKeys.LINEAR_DIRECTIONAL_MEAN)) {
-			this.addParameters(parameterIgnoreDirectionCheckBox);
-		}
 		if (metaKeys.equals(MetaKeys.DIRECTIONAL) || metaKeys.equals(MetaKeys.STANDARD_DISTANCE)) {
 			this.addParameters(parameterEllipseSizeComboBox);
 		}
+		this.addParameters(parameterGroupFieldComboBox);
+		this.addParameters(parameterWeightFieldComboBox);
 		if (metaKeys.equals(MetaKeys.CENTRAL_ELEMENT)) {
 			this.addParameters(parameterSelfWeightFieldComboBox);
 		}
-		this.addParameters(parameterGroupFieldComboBox);
-		this.addParameters(parameterWeightFieldComboBox);
+		if (metaKeys.equals(MetaKeys.LINEAR_DIRECTIONAL_MEAN)) {
+			this.addParameters(parameterIgnoreDirectionCheckBox);
+		}
 		this.addParameters(parameterStatisticsTypesLabel);
 		this.addParameters(parameterStatisticsTypesUserDefine);
 	}
