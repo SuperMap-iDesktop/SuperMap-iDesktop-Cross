@@ -99,7 +99,7 @@ public class BuildCache {
 					}
 					log.writelog(String.format("get doing sci, cost(ms):%d", System.currentTimeMillis() - start));
 					//Second step:get sci file from doing dir and build cache
-					HashMap<String, FileLocker> lockerHashMap  = new HashMap<>();
+					HashMap<String, FileLocker> lockerHashMap = new HashMap<>();
 					HashMap<String, MapCacheBuilder> cacheBuilderHashMap = new HashMap<>();
 					for (int i = 0; i < doingSciNames.size(); i++) {
 						//将数组中的sci文件全部加锁，执行完一个再释放锁
@@ -112,7 +112,7 @@ public class BuildCache {
 						MapCacheBuilder builder = new MapCacheBuilder();
 						builder.setMap(map);
 						builder.fromConfigFile(sciName);
-						builder.setOutputFolder(cachePath);
+						builder.setOutputFolder(new File(cachePath).getParent());
 						builder.setCacheName(builder.getCacheName());
 						builder.resumable(false);
 						builder.setIsAppending(isAppending);

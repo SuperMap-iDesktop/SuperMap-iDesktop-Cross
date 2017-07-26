@@ -8,8 +8,8 @@ import com.supermap.desktop.dialog.RenameDialog;
 import com.supermap.desktop.http.upload.LocalCreateFile;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.lbs.impl.HDFSDefine;
-import com.supermap.desktop.ui.lbs.impl.HDFSTableModel;
+import com.supermap.desktop.ui.lbs.HDFSDefine;
+import com.supermap.desktop.ui.lbs.HDFSTableModel;
 import com.supermap.desktop.utilities.StringUtilities;
 
 public class CtrlActionRename extends CtrlAction {

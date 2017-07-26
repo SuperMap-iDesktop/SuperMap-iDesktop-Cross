@@ -145,7 +145,7 @@ public class MetaProcessThinRaster extends MetaProcess{
 
 			fireRunning(new RunningEvent(MetaProcessThinRaster.this, 100, "finished"));
 		}catch (Exception e){
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+			Application.getActiveApplication().getOutput().output(e);
 		}finally {
 			ConversionAnalyst.removeSteppedListener(steppedListener);
 		}

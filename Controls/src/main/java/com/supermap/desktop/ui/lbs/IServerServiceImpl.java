@@ -1,4 +1,4 @@
-package com.supermap.desktop.ui.lbs.impl;
+package com.supermap.desktop.ui.lbs;
 
 import com.alibaba.fastjson.JSON;
 import com.supermap.desktop.Application;

@@ -2,7 +2,7 @@ package com.supermap.desktop.http.download;
 
 import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.http.LogUtils;
-import com.supermap.desktop.ui.lbs.impl.FileInfo;
+import com.supermap.desktop.ui.lbs.FileInfo;
 import com.supermap.desktop.utilities.ManagerXMLParser;
 
 import java.io.*;
