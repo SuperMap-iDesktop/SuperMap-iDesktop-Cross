@@ -71,14 +71,15 @@ public class MetaKeys {
 	public static final String optimizedHotSpotAnalyst = "optimizedHotSpotAnalyst";
 
 	//数据处理
-	public static final String AggregatePoints = "AggregatePoints";
-	public static final String VectorResample = "VectorResample";
-	public static final String EdgeMatch = "EdgeMatch";
-	public static final String LinePolygonSmooth = "LinePolygonSmooth";
-	public static final String PickupBorder="PickupBorder";
-	public static final String DualLineToCenterLine="DualLineToCenterLine";
-	public static final String RegionToCenterLine="RegionToCenterLine";
-	public static final String RegionTrunkToCenterLine="RegionTrunkToCenterLine";
+	public static final String AGGREGATE_POINTS = "AggregatePoints";
+	public static final String VECTOR_RESAMPLE = "VectorResample";
+	public static final String EDGE_MATCH = "EdgeMatch";
+	public static final String LINE_POLYGON_SMOOTH = "LinePolygonSmooth";
+	public static final String PICKUP_BORDER ="PickupBorder";
+	public static final String DUALLINE_TO_CENTERLINE ="DualLineToCenterLine";
+	public static final String REGION_TO_CENTERLINE ="RegionToCenterLine";
+	public static final String REGION_TRUNK_TO_CENTERLINE ="RegionTrunkToCenterLine";
+	public static final String RAREFY_POINTS ="RarefyPoints";
 
 	//类型转换
 	public static final String Conversion_PointToLine = "Conversion_PointToLine";

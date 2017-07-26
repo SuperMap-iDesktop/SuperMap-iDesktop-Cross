@@ -108,7 +108,7 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.LinePolygonSmooth;
+		return MetaKeys.LINE_POLYGON_SMOOTH;
 	}
 
 }

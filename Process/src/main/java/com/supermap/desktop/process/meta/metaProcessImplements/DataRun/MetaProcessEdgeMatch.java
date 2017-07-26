@@ -194,6 +194,6 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.EdgeMatch;
+		return MetaKeys.EDGE_MATCH;
 	}
 }
