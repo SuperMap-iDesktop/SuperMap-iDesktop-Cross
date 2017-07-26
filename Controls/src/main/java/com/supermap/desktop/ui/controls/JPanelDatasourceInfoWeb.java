@@ -24,6 +24,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 /**
  * @author Administrator
@@ -329,9 +330,13 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 				datasource = workspace.getDatasources().open(datasourceConnectionInfo);
 			}
 
+			ArrayList<String> dataBaseNames = new ArrayList<>();
 			for (int i = 0; i < datasource.getDatasets().getCount(); i++) {
 				String description = datasource.getDatasets().get(0).getDescription();
-				openDatasetPG(description, datasourceAlias);
+				if (!dataBaseNames.contains(description)) {
+					openDatasetPG(description, datasourceAlias);
+					dataBaseNames.add(description);
+				}
 			}
 			if (workspace != null) {
 				workspace.getDatasources().get(0).getDatasets().delete(0);
@@ -358,7 +363,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 		datasourceConnectionInfo.setUser(user);
 		datasourceConnectionInfo.setPassword(password);
 		datasourceConnectionInfo.setDatabase(database);
-		datasourceConnectionInfo.setAlias(DatasourceUtilities.getAvailableDatasourceAlias((datasourceAlias + "_" + "server"), 0));
+		datasourceConnectionInfo.setAlias(DatasourceUtilities.getAvailableDatasourceAlias((datasourceAlias + "_" + server), 0));
 		Application.getActiveApplication().getWorkspace().getDatasources().open(datasourceConnectionInfo);
 	}
 
