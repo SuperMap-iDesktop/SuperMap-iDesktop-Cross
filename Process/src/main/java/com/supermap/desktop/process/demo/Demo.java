@@ -79,6 +79,11 @@ public class Demo extends FormBaseChild {
 			resetTimerTime();
 			removeListener();
 			if (videoButtons.size() > 0) {
+				// 防止自动轮播被卡停
+				if (moveTime.getCurrentComponent().getLocation().getX() < 0.0) {
+					System.out.println(moveTime.getCurrentComponent().getLocation().getX());
+					moveTime.getCurrentComponent().setLocation(-DEFAULT_DEMO_WIDTH, 0);
+				}
 				moveTime.setDefaultStep(DEFAULT_STEP);
 				if (e.getSource().equals(buttonRight)) {
 					int next = currentIndex + 1;
