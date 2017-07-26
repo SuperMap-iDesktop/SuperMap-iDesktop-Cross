@@ -1,12 +1,6 @@
 package com.supermap.desktop.ui.controls;
 
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasource;
-import com.supermap.data.DatasourceConnectionInfo;
-import com.supermap.data.Datasources;
-import com.supermap.data.EngineType;
-import com.supermap.data.Workspace;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
@@ -332,7 +326,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 
 			ArrayList<String> dataBaseNames = new ArrayList<>();
 			for (int i = 0; i < datasource.getDatasets().getCount(); i++) {
-				String description = datasource.getDatasets().get(0).getDescription();
+				String description = datasource.getDatasets().get(i).getDescription();
 				if (!dataBaseNames.contains(description)) {
 					openDatasetPG(description, datasourceAlias);
 					dataBaseNames.add(description);
@@ -363,7 +357,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 		datasourceConnectionInfo.setUser(user);
 		datasourceConnectionInfo.setPassword(password);
 		datasourceConnectionInfo.setDatabase(database);
-		datasourceConnectionInfo.setAlias(DatasourceUtilities.getAvailableDatasourceAlias((datasourceAlias + "_" + server), 0));
+		datasourceConnectionInfo.setAlias(DatasourceUtilities.getAvailableDatasourceAlias((datasourceAlias + "_" + database), 0));
 		Application.getActiveApplication().getWorkspace().getDatasources().open(datasourceConnectionInfo);
 	}
 
