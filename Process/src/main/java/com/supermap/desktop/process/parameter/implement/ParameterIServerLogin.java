@@ -2,8 +2,8 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.lbs.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
-import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.params.IServerLoginInfo;
 import org.apache.http.impl.client.CloseableHttpClient;
 

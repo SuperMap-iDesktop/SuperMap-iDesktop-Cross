@@ -49,6 +49,6 @@ public class MetaProcessDirectional extends MetaProcessSpatialMeasure {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.Directional;
+		return MetaKeys.DIRECTIONAL;
 	}
 }

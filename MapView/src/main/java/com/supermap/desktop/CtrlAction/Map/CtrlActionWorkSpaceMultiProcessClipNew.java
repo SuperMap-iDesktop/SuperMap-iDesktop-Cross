@@ -7,6 +7,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClipBuilder;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.mapping.Map;
 
 /**
@@ -20,7 +21,11 @@ public class CtrlActionWorkSpaceMultiProcessClipNew extends CtrlAction {
 	@Override
 	protected void run() {
 		Map map = CacheUtilities.getWorkspaceSelectedMap();
+		if (!CacheUtilities.dynamicEffectClosed(map)) {
+			return;
+		}
 		if (CacheUtilities.volatileDatasource()) {
+			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheNew"));
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 			Map newMap = new Map(Application.getActiveApplication().getWorkspace());
 			newMap.fromXML(map.toXML());

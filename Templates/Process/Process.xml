@@ -129,23 +129,23 @@
                     <process key="StandardDistance" name="标准距离"/>
                 </process>
                 <process name="分析模式">//AnalyzingPatterns
-                    <process key="autoCorrelation" name="空间自相关"/>
-                    <process key="highOrLowClustering" name="高低值聚类"/>
-                    <process key="incrementalAutoCorrelation" name="增量空间自相关"/>
-                    <process key="averageNearestNeighbor" name="平均最近邻"/>
+                    <process key="AutoCorrelation" name="空间自相关"/>
+                    <process key="HighOrLowClustering" name="高低值聚类"/>
+                    <process key="IncrementalAutoCorrelation" name="增量空间自相关"/>
+                    <process key="AverageNearestNeighbor" name="平均最近邻"/>
                 </process>
                 <process name="聚类分布">//ClusteringDistributions
-                    <process key="clusterOutlierAnalyst" name="聚类和异常值分析"/>
-                    <process key="hotSpotAnalyst" name="热点分析"/>
-                    <process key="optimizedHotSpotAnalyst" name="优化的热点分析"/>
+                    <process key="ClusterOutlierAnalyst" name="聚类和异常值分析"/>
+                    <process key="HotSpotAnalyst" name="热点分析"/>
+                    <process key="OptimizedHotSpotAnalyst" name="优化的热点分析"/>
                 </process>
                 <process name="空间关系建模">//SpatialRelModeling
-                    <process key="geographicWeightedRegression" name="地理加权回归分析"/>
+                    <process key="GeographicWeightedRegression" name="地理加权回归分析"/>
                 </process>
             </process>
             <process name="数据处理">
-                <process key="AggregatePoints" name="点聚合"/>
-                <process key="AggregatePolygons" name="面聚合"/>
+                <process key="AggregatePoints" name="点密度聚合"/>
+                <process key="RarefyPoints" name="点抽稀"/>
                 <process key="VectorResample" name="矢量重采样"/>
                 <process key="LinePolygonSmooth" name="线面光滑"/>
                 <process key="EdgeMatch" name="图幅接边"/>
@@ -159,19 +159,20 @@
             <process key="Buffer" name="缓冲区分析"/>
             <process name="类型转换">
                 <process name="点、线、面类型互转">
-                    <process key="CONVERSION_LINE_TO_POINT" name="线数据->点数据"/>
-                    <process key="CONVERSION_LINE_TO_REGION" name="线数据->面数据"/>
-                    <process key="CONVERSION_REGION_TO_POINT" name="面数据->点数据"/>
-                    <process key="CONVERSION_REGION_TO_LINE" name="面数据->线数据"/>
+                    <process key="Conversion_LineToPoint" name="线数据->点数据"/>
+                    <process key="Conversion_LineToRegion" name="线数据->面数据"/>
+                    <process key="Conversion_RegionToPoint" name="面数据->点数据"/>
+                    <process key="Conversion_RegionToLine" name="面数据->线数据"/>
                 </process>
                 <process name="属性数据与空间数据互转">
-                    <process key="CONVERSION_FIELD_TO_TEXT" name="字段->文本数据"/>
-                    <process key="CONVERSION_TEXT_TO_POINT" name="文本数据->点数据"/>
-                    <process key="CONVERSION_TABULAR_TO_POINT" name="属性->点数据"/>
+                    <process key="Conversion_FieldToText" name="字段->文本数据"/>
+                    <process key="Conversion_TextToField" name="文本数据->字段"/>
+                    <process key="Conversion_TextToPoint" name="文本数据->点数据"/>
+                    <process key="Conversion_TabularToPoint" name="属性->点数据"/>
                 </process>
                 <process name="CAD数据、复合数据与简单数据互转">
-                    <process key="CONVERSION_CAD_TO_SIMPLE" name="CAD->简单数据"/>
-                    <process key="CONVERSION_SIMPLE_TO_CAD" name="简单数据->CAD"/>
+                    <process key="Conversion_CADToSimple" name="CAD->简单数据"/>
+                    <process key="Conversion_SimpleToCAD" name="简单数据->CAD"/>
                 </process>
 
             </process>
@@ -227,7 +228,7 @@
             <process key="SimpleDensity" name="简单点密度分析"/>
             <process key="KernelDensity" name="核密度分析"/>
             <process key="overlayanalystgeo" name="单对象叠加分析"/>
-            <process key="singleQuery" name="单对象查询"/>
+            <process key="SingleQuery" name="单对象查询"/>
             <process key="GridRegionAggregation" name="网格面聚合分析"/>
             <process key="PolygonAggregation" name="多边形聚合分析"/>
 

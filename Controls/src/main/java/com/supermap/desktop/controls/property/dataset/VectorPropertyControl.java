@@ -9,6 +9,7 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.CollectionDataset.JDialogCreateCollectionDataset;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxCharset;
@@ -120,6 +121,8 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 				buttonResetClicked();
 			} else if (e.getSource() == buttonApply) {
 				buttonApplyClicked();
+			} else if (e.getSource() == buttonSetDatasetCount) {
+				buttonAddDatasetToCollection();
 			}
 		}
 	};
@@ -351,6 +354,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		this.buttonClearTolerance.addActionListener(this.actionListener);
 		this.buttonReset.addActionListener(this.actionListener);
 		this.buttonApply.addActionListener(this.actionListener);
+		this.buttonSetDatasetCount.addActionListener(this.actionListener);
 	}
 
 	private void unregisterEvents() {
@@ -367,6 +371,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		this.buttonClearTolerance.removeActionListener(this.actionListener);
 		this.buttonReset.removeActionListener(this.actionListener);
 		this.buttonApply.removeActionListener(this.actionListener);
+		this.buttonSetDatasetCount.removeActionListener(this.actionListener);
 	}
 
 	private void setComponentsEnabled() {
@@ -497,5 +502,12 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 			this.datasetVector.getTolerance().setExtend(this.extend);
 		}
 		setComponentsEnabled();
+	}
+
+	private void buttonAddDatasetToCollection() {
+		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0);
+		createCollectionDataset.isSetDatasetCollectionCount(true);
+		createCollectionDataset.setDatasetVector(this.datasetVector);
+		createCollectionDataset.showDialog();
 	}
 }

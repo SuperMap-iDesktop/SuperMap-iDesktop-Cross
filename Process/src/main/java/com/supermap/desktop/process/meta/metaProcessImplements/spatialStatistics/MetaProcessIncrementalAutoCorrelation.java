@@ -111,7 +111,7 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.incrementalAutoCorrelation;
+		return MetaKeys.INCREMENTAL_AUTO_CORRELATION;
 	}
 
 	@Override

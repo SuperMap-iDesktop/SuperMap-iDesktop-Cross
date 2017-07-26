@@ -132,7 +132,7 @@ public class MetaProcessPickupBorder extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.PickupBorder;
+		return MetaKeys.PICKUP_BORDER;
 	}
 
 	@Override

@@ -120,6 +120,10 @@ public class ImportSettingFactory implements IImportSettingFactory {
             importSetting = new ImportSettingModelFBX();
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.GPX_STRING)) {
             importSetting = new ImportSettingGPX();
+        }else if (fileType.equalsIgnoreCase(FileTypeLocale.GEOJSON_STRING)){
+            //默认设置导入空数据集为true
+            importSetting = new ImportSettingGeoJson();
+            ((ImportSettingGeoJson) importSetting).setImportEmptyDataset(true);
         }
         if (null != importSetting) {
             //初始化设置

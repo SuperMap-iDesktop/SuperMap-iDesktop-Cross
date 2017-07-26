@@ -28,7 +28,7 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 	private ParameterComboBox parameterDistanceMethodComboBox = new ParameterComboBox();//距离计算方法类型。仅对中心要素有效。暂只支持欧式距离。
 	private ParameterComboBox parameterEllipseSizeComboBox = new ParameterComboBox();//椭圆大小类型,仅对方向分布有效。
 	private ParameterCheckBox parameterIgnoreDirectionCheckBox = new ParameterCheckBox();//是否忽略起点和终点的方向,仅对线性方向平均值有效。
-	private ParameterFieldComboBox parameterGroupFieldComboBox = new ParameterFieldComboBox().setShowNullValue(true);//分组字段,可以为数值型、时间型、文本型。
+	private ParameterFieldComboBox parameterGroupFieldComboBox = new ParameterFieldComboBox().setShowNullValue(true);//分组字段,可以为数值型、时间型、文本型、宽字符。
 	private ParameterFieldComboBox parameterSelfWeightFieldComboBox = new ParameterFieldComboBox().setShowNullValue(true);//设置自身权重字段的名称。仅数值字段有效。暂仅对中心要素有效。
 	private ParameterFieldComboBox parameterWeightFieldComboBox = new ParameterFieldComboBox().setShowNullValue(true);//权重字段的名称
 	private ParameterLabel parameterStatisticsTypesLabel = new ParameterLabel();//统计类型的集合
@@ -44,7 +44,7 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 
 	protected void initParameters() {
 		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
-		parameterGroupFieldComboBox.setFieldType(new FieldType[]{FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE, FieldType.TEXT, FieldType.DATETIME});
+		parameterGroupFieldComboBox.setFieldType(new FieldType[]{FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE, FieldType.TEXT, FieldType.DATETIME,FieldType.WTEXT});
 		parameterSelfWeightFieldComboBox.setFieldType(fieldType);
 		parameterWeightFieldComboBox.setFieldType(fieldType);
 
@@ -67,19 +67,21 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 	}
 
 	private void initLayout() {
-		if (metaKeys.equals(MetaKeys.Directional)) {
+		if (metaKeys.equals(MetaKeys.CENTRAL_ELEMENT)) {
+			this.addParameters(parameterDistanceMethodComboBox);
+		}
+		if (metaKeys.equals(MetaKeys.DIRECTIONAL)) {
 			this.addParameters(parameterEllipseSizeComboBox);
 		}
-		if (metaKeys.equals(MetaKeys.Directional) || metaKeys.equals(MetaKeys.StandardDistance)) {
+		if (metaKeys.equals(MetaKeys.DIRECTIONAL) || metaKeys.equals(MetaKeys.STANDARD_DISTANCE)) {
 			this.addParameters(parameterEllipseSizeComboBox);
 		}
 		this.addParameters(parameterGroupFieldComboBox);
 		this.addParameters(parameterWeightFieldComboBox);
-		if (metaKeys.equals(MetaKeys.CentralElement)) {
+		if (metaKeys.equals(MetaKeys.CENTRAL_ELEMENT)) {
 			this.addParameters(parameterSelfWeightFieldComboBox);
-			this.addParameters(parameterDistanceMethodComboBox);
 		}
-		if (metaKeys.equals(MetaKeys.LinearDirectionalMean)) {
+		if (metaKeys.equals(MetaKeys.LINEAR_DIRECTIONAL_MEAN)) {
 			this.addParameters(parameterIgnoreDirectionCheckBox);
 		}
 		this.addParameters(parameterStatisticsTypesLabel);
@@ -112,13 +114,13 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 
 	public MeasureParameter getMeasureParameter() {
 		MeasureParameter measureParameter = new MeasureParameter();
-		if (metaKeys.equals(MetaKeys.CentralElement)) {
+		if (metaKeys.equals(MetaKeys.CENTRAL_ELEMENT)) {
 			measureParameter.setDistanceMethod((DistanceMethod) parameterDistanceMethodComboBox.getSelectedData());
 		}
-		if (metaKeys.equals(MetaKeys.Directional) || metaKeys.equals(MetaKeys.StandardDistance)) {
+		if (metaKeys.equals(MetaKeys.DIRECTIONAL) || metaKeys.equals(MetaKeys.STANDARD_DISTANCE)) {
 			measureParameter.setEllipseSize((EllipseSize) parameterEllipseSizeComboBox.getSelectedData());
 		}
-		if (metaKeys.equals(MetaKeys.LinearDirectionalMean)) {
+		if (metaKeys.equals(MetaKeys.LINEAR_DIRECTIONAL_MEAN)) {
 			boolean isIgnoreDirection = "true".equalsIgnoreCase((String) parameterIgnoreDirectionCheckBox.getSelectedItem());
 			measureParameter.setOrientation(isIgnoreDirection);
 		}

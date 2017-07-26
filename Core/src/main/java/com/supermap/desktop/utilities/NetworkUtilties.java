@@ -1,5 +1,7 @@
 package com.supermap.desktop.utilities;
 
+import com.supermap.desktop.properties.CoreProperties;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,8 +9,6 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class NetworkUtilties {
 	public static boolean ping(String hostName) {
@@ -16,10 +16,29 @@ public class NetworkUtilties {
 	}
 
 	public static String getIpAddress() throws UnknownHostException {
-		return InetAddress.getLocalHost().getHostAddress();
+		String hostAddress = null;
+		try {
+			hostAddress = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			return "";
+		}
+		return hostAddress;
 	}
 
-	public static String getMacAddress() throws SocketException, UnknownHostException {
+	public static String getMacAddress() {
+		try {
+			if (SystemPropertyUtilities.isLinux()) {
+				return getLinuxMacAddress();
+			} else if (SystemPropertyUtilities.isLinux()) {
+				return getWindows7MacAddress();
+			}
+		} catch (Exception e) {
+			return "";
+		}
+		return "";
+	}
+
+	private static String getWindows7MacAddress() throws SocketException, UnknownHostException {
 		byte[] mac = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
 		StringBuffer sb = new StringBuffer("");
 		for (int i = 0; i < mac.length; i++) {
@@ -37,6 +56,49 @@ public class NetworkUtilties {
 		}
 		return sb.toString().toUpperCase();
 	}
+
+	private static String[] linuxMacAddressNames = new String[]{
+			"hwaddr", CoreProperties.getString("String_MacAddress"), "ether"
+	};
+
+	private static String getLinuxMacAddress() {
+		String mac = null;
+		BufferedReader bufferedReader = null;
+		Process process = null;
+		try {
+			// linux下的命令，一般取eth0作为本地主网卡
+			process = Runtime.getRuntime().exec("ifconfig eth0");
+			// 显示信息中包含有mac地址信息
+			bufferedReader = new BufferedReader(new InputStreamReader(
+					process.getInputStream()));
+			String line = null;
+			int index = -1;
+			while ((line = bufferedReader.readLine()) != null) {
+				// 寻找标示字符串
+				for (String linuxMacAddressName : linuxMacAddressNames) {
+					index = line.toLowerCase().indexOf(linuxMacAddressName);
+					if (index >= 0) {// 找到了
+						// 取出mac地址并去除2边空格
+						mac = line.substring(index + linuxMacAddressName.length() + 1).trim();
+						break;
+					}
+				}
+
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (bufferedReader != null) {
+					bufferedReader.close();
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		return mac;
+	}
+
 
 }
 
@@ -69,7 +131,7 @@ class Pinger {
 	public boolean isReachable() {
 		BufferedReader in = null;
 		Runtime r = Runtime.getRuntime();  // 将要执行的ping命令,此命令是windows格式的命令
-		String pingCommand = "ping " + remoteIpAddress + " -n " + pingTimes + " -w " + timeOut;
+		String pingCommand = "ping " + remoteIpAddress;
 		try {
 			// 执行命令并获取输出
 			Process p = r.exec(pingCommand);
@@ -99,12 +161,10 @@ class Pinger {
 	}
 
 	/**
-	 * 若line含有=18ms TTL=16字样,说明已经ping通,返回1,否則返回0.  * @param line  * @return
+	 * 若line含有18ms字样,说明已经ping通,返回1,否則返回0.  * @param line  * @return
 	 */
 	private static boolean getCheckResult(String line) {
-		Pattern pattern = Pattern.compile("(\\d+ms)(\\s+)(TTL=\\d+)", Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(line);
-		return matcher.find();
+		return line.toLowerCase().contains("ms");
 	}
 
 	public static void main(String[] args) {

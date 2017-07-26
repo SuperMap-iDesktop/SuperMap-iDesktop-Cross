@@ -51,7 +51,7 @@ public class MetaProcessLinearDirectionalMean extends MetaProcessSpatialMeasure 
 
 	@Override
 	public String getKey() {
-		return MetaKeys.LinearDirectionalMean;
+		return MetaKeys.LINEAR_DIRECTIONAL_MEAN;
 	}
 }
 

@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.meta.metaProcessImplements.DataDispose;
+package com.supermap.desktop.process.meta.metaProcessImplements.DataRun;
 
 import com.supermap.analyst.spatialanalyst.EdgeMatchMode;
 import com.supermap.analyst.spatialanalyst.EdgeMatchParameter;
@@ -194,6 +194,6 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.EdgeMatch;
+		return MetaKeys.EDGE_MATCH;
 	}
 }

@@ -8,6 +8,8 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.ui.controls.labels.SmURLLabel;
+import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -48,6 +50,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 	private JLabel labelMapDelayUnit;
 
 	private JCheckBox checkBoxUserExperience;
+	private SmURLLabel userExperienceLabel;
 
 
 //	/**
@@ -129,7 +132,9 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		};
 
 		checkBoxUserExperience = new JCheckBox();
-		checkBoxUserExperience.setText(FrameProperties.getString("String_JoinUserExperience"));
+		checkBoxUserExperience.setText(FrameProperties.getString("String_LaunchUserExperiencePlan"));
+
+		userExperienceLabel = new SmURLLabel(PathUtilities.getFullPathName("../Resources/Frame/Html/UserExperience.html", false), FrameProperties.getString("String_WhatIsUserExperiencePlan"));
 	}
 
 	@Override
@@ -164,7 +169,8 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		this.add(smTextFieldMapDelay, new GridBagConstraintsHelper(1, 9, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 		this.add(labelMapDelayUnit, new GridBagConstraintsHelper(2, 9, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 
-		this.add(checkBoxUserExperience, new GridBagConstraintsHelper(0, 10, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(checkBoxUserExperience, new GridBagConstraintsHelper(0, 10, 2, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(userExperienceLabel, new GridBagConstraintsHelper(2, 10, 1, 1).setWeight(1, 0).setInsets(5, 20, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setIpad(0, 8));
 
 		this.add(new JPanel(), new GridBagConstraintsHelper(0, 11, 3, 1).setWeight(1, 1).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 	}

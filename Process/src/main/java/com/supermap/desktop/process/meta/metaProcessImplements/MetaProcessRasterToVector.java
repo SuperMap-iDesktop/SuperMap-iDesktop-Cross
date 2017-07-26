@@ -118,7 +118,15 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		if (datasetGrid != null) {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
-			//System.out.println(datasetGrid.getName());
+			gridDatasetSetting.setEnabled(datasetGrid instanceof DatasetGrid);
+			imageDatasetSetting.setEnabled(datasetGrid instanceof DatasetImage);
+			textFieldGridValue.setEnabled(false);
+			textFieldGridValueTolerance.setEnabled(false);
+			if (datasetGrid instanceof DatasetGrid){
+				textFieldNoValue.setSelectedItem(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue());
+			}else if (datasetGrid instanceof DatasetImage){
+				textFieldNoValue.setSelectedItem("16777215");
+			}
 		}
 
 		resultDataset.setSelectedItem("result_gridToVector");
@@ -137,24 +145,29 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		checkBoxThinRaster.setSelectedItem(true);
 		vertorizeLineSetting.setEnabled(comboBoxType.getSelectedData() == DatasetType.LINE);
 
-		textFieldNoValue.setSelectedItem("-9999");
+		//textFieldNoValue.setSelectedItem("-9999");
+		textFieldNoValue.setRequisite(true);
 		textFieldNoValueTolerance.setSelectedItem("0");
 		textFieldNoValueTolerance.setMinValue(0);
 		textFieldNoValueTolerance.setIsIncludeMin(true);
+		textFieldNoValueTolerance.setRequisite(true);
 		textFieldGridField.setSelectedItem("value");
+		textFieldGridField.setRequisite(true);
 		textFieldGridValue.setSelectedItem("0");
 		textFieldGridValueTolerance.setSelectedItem("0");
 		textFieldGridValueTolerance.setMinValue(0);
 		textFieldGridValueTolerance.setIsIncludeMin(true);
 		gridDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetGrid);
 		comboBoxBackColor.setSelectedItem(Color.WHITE);
+		comboBoxBackColor.setRequisite(true);
 
 		textFieldColorTolerance.setSelectedItem("0");
 		textFieldColorTolerance.setMinValue(0);
 		textFieldColorTolerance.setMaxValue(255);
 		textFieldColorTolerance.setIsIncludeMin(true);
 		textFieldColorTolerance.setIncludeMax(true);
-		imageDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetImage);
+		textFieldColorTolerance.setRequisite(true);
+		//imageDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetImage);
 	}
 
 	private void initParameterConstraint() {
@@ -254,7 +267,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 				if (comboBoxBackColor.getSelectedItem()==null){
 					Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_GridToVector_NotSetColor"));
 				}else {
-					System.out.println((long) ((Color) comboBoxBackColor.getSelectedItem()).getRGB());
+					//System.out.println((long) ((Color) comboBoxBackColor.getSelectedItem()).getRGB());
 					analystParameter.setBackOrNoValue((long) ((Color) comboBoxBackColor.getSelectedItem()).getRGB());
 				}
 				analystParameter.setBackOrNoValueTolerance(Double.valueOf(textFieldColorTolerance.getSelectedItem().toString()));

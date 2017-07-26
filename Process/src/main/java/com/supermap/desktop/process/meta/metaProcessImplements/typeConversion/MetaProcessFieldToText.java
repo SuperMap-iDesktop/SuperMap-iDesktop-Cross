@@ -22,6 +22,7 @@ import java.util.Map;
 
 /**
  * Created By Chens on 2017/7/22 0022
+ * 字段转文本数据
  */
 public class MetaProcessFieldToText extends MetaProcessTypeConversion {
     private static final String INPUT_DATA = "InputData";

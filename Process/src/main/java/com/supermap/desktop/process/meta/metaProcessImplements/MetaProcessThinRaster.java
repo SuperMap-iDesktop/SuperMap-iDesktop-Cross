@@ -92,13 +92,20 @@ public class MetaProcessThinRaster extends MetaProcess{
 		if (datasetGrid != null) {
 			this.sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			this.sourceDataset.setSelectedItem(datasetGrid);
+			if (datasetGrid instanceof DatasetGrid){
+				textFieldNoValue.setSelectedItem(((DatasetGrid)datasetGrid).getNoValue());
+			}else {
+				textFieldNoValue.setSelectedItem("16777215");
+			}
 		}
 
 		resultDataset.setSelectedItem("result_thinRaster");
-		textFieldNoValue.setSelectedItem("-9999");
+		//textFieldNoValue.setSelectedItem("-9999");
+		textFieldNoValue.setRequisite(true);
 		textFieldNoValueTolerance.setSelectedItem("0");
 		textFieldNoValueTolerance.setMinValue(0);
 		textFieldNoValueTolerance.setIsIncludeMin(true);
+		textFieldNoValueTolerance.setRequisite(true);
 	}
 
 	private void registerListener() {

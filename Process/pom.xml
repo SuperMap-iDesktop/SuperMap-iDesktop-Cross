@@ -56,7 +56,7 @@
                         ***************************************************
                         -->
                         <Bundle-Activator>com.supermap.desktop.process.ProcessActivator</Bundle-Activator>
-
+                        <Export-Package>{local-packages}</Export-Package>
                         <!--
                         此处配置的是 OSGI bundle 间的运行时依赖，Core、Control 为 SuperMap iDesktop Cross 的核心库，为必填依赖。
                         -->
@@ -87,6 +87,15 @@
                     <overWriteIfNewer>true</overWriteIfNewer>
                     <overWriteReleases>false</overWriteReleases>
                     <overWriteSnapshots>false</overWriteSnapshots>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+
+                    <!--jar 生成到指定的路径-->
+                    <outputDirectory>${project.basedir}/../bundles/require_bundles/</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

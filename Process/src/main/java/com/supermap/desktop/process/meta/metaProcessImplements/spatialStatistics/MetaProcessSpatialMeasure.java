@@ -44,7 +44,7 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 	 * 例如：线性方向平均值只能处理线类型数据集-yuanR
 	 */
 	private void initDatasetComboBox() {
-		if (getKey().equals(MetaKeys.LinearDirectionalMean)) {
+		if (getKey().equals(MetaKeys.LINEAR_DIRECTIONAL_MEAN)) {
 			dataset = new ParameterSingleDataset(DatasetType.LINE);
 		} else {
 			dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
@@ -63,7 +63,7 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 		parameterCombineResult.setDescribe(CommonProperties.getString("String_ResultSet"));
 
 		parameters.setParameters(parameterCombineSource, measureParameter, parameterCombineResult);
-		parameters.addInputParameters(INPUT_SOURCE_DATASET,getKey().equals(MetaKeys.LinearDirectionalMean)? DatasetTypes.LINE:DatasetTypes.SIMPLE_VECTOR, parameterCombineSource);
+		parameters.addInputParameters(INPUT_SOURCE_DATASET,getKey().equals(MetaKeys.LINEAR_DIRECTIONAL_MEAN)? DatasetTypes.LINE:DatasetTypes.SIMPLE_VECTOR, parameterCombineSource);
 		parameters.addOutputParameters(OUTPUT_DATASET, DatasetTypes.VECTOR, parameterCombineResult);
 	}
 

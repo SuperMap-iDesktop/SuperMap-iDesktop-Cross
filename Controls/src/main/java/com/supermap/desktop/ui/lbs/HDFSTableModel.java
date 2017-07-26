@@ -1,4 +1,4 @@
-package com.supermap.desktop.ui.lbs.impl;
+package com.supermap.desktop.ui.lbs;
 
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 

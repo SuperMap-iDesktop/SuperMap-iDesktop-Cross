@@ -10,25 +10,19 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.DefaultValueTextField;
+import com.supermap.desktop.ui.lbs.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
-import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
-import com.supermap.desktop.ui.lbs.impl.WebHDFS;
+import com.supermap.desktop.ui.lbs.WebHDFS;
 import com.supermap.desktop.ui.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
 import com.supermap.desktop.ui.lbs.ui.JDialogHDFSFiles;
 import com.supermap.ui.Action;
-import com.supermap.ui.MapControl;
-import com.supermap.ui.TrackMode;
-import com.supermap.ui.TrackedEvent;
-import com.supermap.ui.TrackedListener;
+import com.supermap.ui.*;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 /**
  * Created by xie on 2017/1/11.

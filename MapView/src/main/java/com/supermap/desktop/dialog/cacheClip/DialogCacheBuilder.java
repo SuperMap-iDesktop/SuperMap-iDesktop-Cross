@@ -19,9 +19,9 @@ import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.FileLocker;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Map;
 
 import javax.swing.*;
@@ -87,23 +87,30 @@ public class DialogCacheBuilder extends JFrame {
 				shutdownMapClip();
 			} else {
 				DialogCacheBuilder.this.dispose();
-				System.exit(1);
+				killProcess();
 			}
 		}
 	};
 
-	private String getTaskPath() {
-		String cacheTask = CacheUtilities.replacePath(fileChooserCachePath.getPath(), "CacheTask");
-		return CacheUtilities.replacePath(cacheTask, "task");
+
+	private String getTaskPath(String childPath) {
+		//获取缓存任务根路径
+		String result = null;
+		File rootFile = new File(fileChooserCachePath.getPath());
+		if (rootFile.exists()) {
+			String cacheTask = CacheUtilities.replacePath(rootFile.getParent(), DialogMapCacheClipBuilder.CacheTask);
+			result = CacheUtilities.replacePath(cacheTask, childPath);
+		}
+		return result;
 	}
 
 	private void shutdownMapClip() {
-		taskPath = getTaskPath();
+		taskPath = getTaskPath("task");
 		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(taskPath, "doing");
 			optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), taskPath));
 			DialogCacheBuilder.this.dispose();
-			System.exit(1);
+			killProcess();
 		} else {
 			return;
 		}
@@ -119,7 +126,7 @@ public class DialogCacheBuilder extends JFrame {
 	private ActionListener refreshListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			taskPath = getTaskPath();
+			taskPath = getTaskPath("task");
 			if (!StringUtilities.isNullOrEmpty(taskPath)) {
 				File taskFile = new File(taskPath);
 				if (taskFile.exists()) {
@@ -362,7 +369,7 @@ public class DialogCacheBuilder extends JFrame {
 					shutdownMapClip();
 				} else {
 					DialogCacheBuilder.this.dispose();
-					System.exit(1);
+					killProcess();
 				}
 			}
 		});
@@ -370,11 +377,13 @@ public class DialogCacheBuilder extends JFrame {
 	}
 
 	private boolean hasTask() {
-		taskPath = getTaskPath();
-		File taskFile = new File(taskPath);
+		taskPath = getTaskPath("task");
 		File doingFile = null;
-		if (taskFile.exists()) {
-			doingFile = new File(CacheUtilities.replacePath(taskFile.getParent(), "doing"));
+		if (null != taskPath) {
+			File taskFile = new File(taskPath);
+			if (taskFile.exists()) {
+				doingFile = new File(getTaskPath("doing"));
+			}
 		}
 		return null != doingFile && hasSciFiles(doingFile);
 	}
@@ -392,7 +401,7 @@ public class DialogCacheBuilder extends JFrame {
 			String workspacePath = fileChooserWorkspacePath.getPath();
 			workspacePath = CacheUtilities.replacePath(workspacePath);
 			String mapName = textFieldMapName.getText();
-			taskPath = getTaskPath();
+			taskPath = getTaskPath("task");
 			String cachePath = fileChooserCachePath.getPath();
 			cachePath = CacheUtilities.replacePath(cachePath);
 			String processCount = textFieldProcessCount.getText();
@@ -413,18 +422,7 @@ public class DialogCacheBuilder extends JFrame {
 	public String getCacheSci() {
 		String result = null;
 		File cachePath = new File(fileChooserCachePath.getPath());
-		File[] scis = null;
-		if (cachePath.exists()) {
-			File[] tempFiles = cachePath.listFiles();
-			if (null != tempFiles) {
-				for (int i = 0; i < tempFiles.length; i++) {
-					if (!tempFiles[i].getName().equals("CacheTask")) {
-						scis = tempFiles[i].listFiles();
-						break;
-					}
-				}
-			}
-		}
+		File[] scis = cachePath.listFiles();
 		if (null != scis) {
 			for (int i = 0; i < scis.length; i++) {
 				if (scis[i].getName().endsWith(".sci")) {
@@ -490,9 +488,27 @@ public class DialogCacheBuilder extends JFrame {
 		} else {
 			optionPane.showErrorDialog("No sci file");
 		}
+		renameDoingFile();
 		buildCache = new BuildCache();
 		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
 //		BuildCache.main(params);
+	}
+
+	private void renameDoingFile() {
+		//实时检查doing目录下的文件是否加锁,如果文件已经加锁则表示有进程正在使用,否则表示为以前进程挂了没有处理的
+		File doingDirectory = new File(getTaskPath("doing"));
+		if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
+			File[] doingFailedSci = doingDirectory.listFiles();
+			for (File doingSci : doingFailedSci) {
+				//文件加了锁说明文件正在被用于切图任务
+				FileLocker locker = new FileLocker(doingSci);
+				if (locker.tryLock()) {
+					//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将该任务移到task目录下,重新切图
+					locker.release();
+					doingSci.renameTo(new File(taskPath, doingSci.getName()));
+				}
+			}
+		}
 	}
 
 	private int getSubSciCount(String[] sciNames, String s) {
@@ -508,7 +524,6 @@ public class DialogCacheBuilder extends JFrame {
 	private boolean validateValue(String taskPath, String workspacePath, String mapName, String processCount) {
 		boolean result = true;
 		File taskDirectory = new File(taskPath);
-		File failedDirectory = new File(CacheUtilities.replacePath(taskDirectory.getParent(), "failed"));
 
 		if (StringUtilities.isNullOrEmpty(workspacePath) || !new File(workspacePath).exists()
 				|| !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
@@ -544,17 +559,16 @@ public class DialogCacheBuilder extends JFrame {
 		} else {
 			Map map = new Map(workspace);
 			map.open(mapName);
-			ArrayList<Layer> layers=map.getLayers().getAllLayers(false);
+			ArrayList<Layer> layers = MapUtilities.getLayers(map);
 			for (int i = 0; i < layers.size(); i++) {
-				if (!(layers.get(i) instanceof LayerGroup)) {
-					Dataset tempDataset = map.getLayers().get(i).getDataset();
-					if (null == tempDataset) {
-						new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_DatasetIsOpened"), layers.get(i).getName()));
-						System.exit(1);
-					}
+				Dataset tempDataset = layers.get(i).getDataset();
+				if (null == tempDataset) {
+					new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_DatasetIsOpened"), layers.get(i).getName()));
+					killProcess();
 				}
 			}
 		}
+		File failedDirectory = new File(getTaskPath("failed"));
 		if (!taskDirectory.exists() || !hasSciFiles(taskDirectory)) {
 			if (failedDirectory.exists() && hasSciFiles(failedDirectory)) {
 				if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
@@ -592,23 +606,6 @@ public class DialogCacheBuilder extends JFrame {
 			public void run() {
 				try {
 					startTime = System.currentTimeMillis();
-					while (!taskFinished(CacheUtilities.replacePath(finalParentPath, "task"))) {
-						//实时检查doing目录下的文件是否加锁,如果文件已经加锁则表示有进程正在使用,否则表示为以前进程挂了没有处理的
-						File doingDirectory = new File(CacheUtilities.replacePath(finalCachePath, "doing"));
-						if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
-							File[] doingFailedSci = doingDirectory.listFiles();
-							for (File doingSci : doingFailedSci) {
-								//文件加了锁说明文件正在被用于切图任务
-								FileLocker locker = new FileLocker(doingSci);
-								if (locker.tryLock()) {
-									//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将该任务移到task目录下,重新切图
-									locker.release();
-									doingSci.renameTo(new File(taskPath, doingSci.getName()));
-								}
-							}
-							TimeUnit.SECONDS.sleep(20);
-						}
-					}
 					while (true) {
 						refreshProgress(finalParentPath, finalTotalSciLength);
 
@@ -698,7 +695,7 @@ public class DialogCacheBuilder extends JFrame {
 		this.scrollPaneProgresses = null;
 		this.captionCount = null;
 		DialogCacheBuilder.this.dispose();
-		System.exit(1);
+		killProcess();
 	}
 
 	public void setCaptions(CopyOnWriteArrayList<String> sourceCaptions) {
@@ -725,16 +722,8 @@ public class DialogCacheBuilder extends JFrame {
 		synchronized (resultLock) {
 			boolean result = false;
 			File resultDir = new File(cachePath);
-			String resultPath = "";
-			if (resultDir.isDirectory()) {
-				File[] files = resultDir.listFiles();
-				for (int i = 0; i < files.length; i++) {
-					if (files[i].getName().equals(params[BuildCache.MAPNAME_INDEX])) {
-						resultPath = files[i].getAbsolutePath();
-						result = true;
-						break;
-					}
-				}
+			if (resultDir.list().length>1){
+				result = true;
 			}
 			if (result) {
 				long endTime = System.currentTimeMillis();
@@ -753,8 +742,8 @@ public class DialogCacheBuilder extends JFrame {
 					second = totalTime / 1000;
 				}
 
-				File failedFile = new File(CacheUtilities.replacePath(CacheUtilities.replacePath(cachePath, "CacheTask"), "failed"));
-				File taskFile = new File(CacheUtilities.replacePath(CacheUtilities.replacePath(cachePath, "CacheTask"), "task"));
+				File failedFile = new File(getTaskPath("failed"));
+				File taskFile = new File(getTaskPath("task"));
 				if (failedFile.exists() && null != failedFile.list() && failedFile.list().length > 0) {
 					if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath())) == JOptionPane.OK_OPTION) {
 						buttonCreate.setEnabled(true);
@@ -767,7 +756,7 @@ public class DialogCacheBuilder extends JFrame {
 						return;
 					}
 				}
-				new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath, hour, minutes, second));
+				new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), cachePath, hour, minutes, second));
 			} else {
 				new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_MultiCacheFailed"));
 			}
@@ -808,5 +797,8 @@ public class DialogCacheBuilder extends JFrame {
 		return dialogCacheBuilder;
 	}
 
+	private void killProcess() {
+		System.exit(1);
+	}
 
 }

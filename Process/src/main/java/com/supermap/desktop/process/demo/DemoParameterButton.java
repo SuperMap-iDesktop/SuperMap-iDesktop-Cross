@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.demo;
 
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,17 +10,20 @@ import java.awt.*;
  * Created by yuanR on 2017/7/19 0019.
  */
 public class DemoParameterButton extends JButton {
-
 	private final String filePath;
+	private String name;
 
+
+	public DemoParameterButton(Icon icon, String filePath, String name) {
+		this(null, icon, filePath);
+		this.name = name;
+	}
 
 	public DemoParameterButton(String text, Icon icon, String filePath) {
 		super(text, icon);
 		this.filePath = filePath;
 		// 黑体，加粗、14号字
 		setFont(new Font(ProcessProperties.getString("String_KAIU_TTF"), Font.BOLD, 14));
-		Dimension preferredSizeNew = new Dimension(180, 130);
-		setPreferredSize(preferredSizeNew);
 		// 设置文字对于图片的位置
 		setHorizontalTextPosition(SwingConstants.CENTER);
 		setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -34,8 +38,11 @@ public class DemoParameterButton extends JButton {
 	}
 
 	public String getName() {
-		String text = filePath.split("\\.")[0];
-		return text;
+		if (!StringUtilities.isNullOrEmpty(this.name)) {
+			return this.name;
+		} else {
+			return null;
+		}
 	}
 }
 

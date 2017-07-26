@@ -47,6 +47,17 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 	// 结果数据
 	private ParameterSaveDataset resultDataset;
 	private ParameterCombine resultData;
+	ParameterDataNode parameterDataNodeSingle = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.SINGLE), PixelFormat.SINGLE);
+	ParameterDataNode parameterDataNodeDouble = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.DOUBLE), PixelFormat.DOUBLE);
+	ParameterDataNode parameterDataNodeBit8 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT8), PixelFormat.BIT8);
+	ParameterDataNode parameterDataNodeBit16 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT16), PixelFormat.BIT16);
+	ParameterDataNode parameterDataNodeBit32 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT32), PixelFormat.BIT32);
+	ParameterDataNode parameterDataNodeBit64 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT64), PixelFormat.BIT64);
+	ParameterDataNode parameterDataNodeUbit1 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT1), PixelFormat.UBIT1);
+	ParameterDataNode parameterDataNodeUbit4 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT4), PixelFormat.UBIT4);
+	ParameterDataNode parameterDataNodeUbit8 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT8), PixelFormat.UBIT8);
+	ParameterDataNode parameterDataNodeUbit16 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT16), PixelFormat.UBIT16);
+	ParameterDataNode parameterDataNodeUbit32 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT32), PixelFormat.UBIT32);
 
 	public MetaProcessVectorToRaster() {
 		initParameters();
@@ -63,7 +74,7 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 
 		this.boundaryDatasource = new ParameterDatasourceConstrained();
 		this.boundaryDatasource.setDescribe(CommonProperties.getString("String_BoundaryDatasource"));
-		this.boundaryDataset=new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
+		this.boundaryDataset = new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
 		this.boundaryDataset.setDescribe(CommonProperties.getString("String_BoundaryDataset"));
 
 		this.resultDataset = new ParameterSaveDataset();
@@ -80,19 +91,19 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		this.sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
 		this.sourceData.addParameters(this.sourceDatasource, this.sourceDataset);
 
-		this.boundaryData =new ParameterCombine();
+		this.boundaryData = new ParameterCombine();
 		this.boundaryData.setDescribe(CommonProperties.getString("String_BoundaryData"));
-		this.boundaryData.addParameters(this.boundaryDatasource,this.boundaryDataset);
+		this.boundaryData.addParameters(this.boundaryDatasource, this.boundaryDataset);
 
 		this.parameterSetting = new ParameterCombine();
 		this.parameterSetting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		this.parameterSetting.addParameters(this.comboBoxValueField,this.comboBoxPixelFormat, this.textCellSize);
+		this.parameterSetting.addParameters(this.comboBoxValueField, this.comboBoxPixelFormat, this.textCellSize);
 
 		this.resultData = new ParameterCombine();
 		this.resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		this.resultData.addParameters(this.resultDataset);
 
-		this.parameters.setParameters(this.sourceData,this.boundaryData, this.parameterSetting, this.resultData);
+		this.parameters.setParameters(this.sourceData, this.boundaryData, this.parameterSetting, this.resultData);
 		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.POINT, sourceData);
 		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.LINE, sourceData);
 		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.REGION, sourceData);
@@ -103,32 +114,31 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 
 	private void initParametersState() {
 		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
+		this.comboBoxValueField.setFieldType(fieldType);
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
 		if (datasetVector != null) {
 			this.sourceDatasource.setSelectedItem(datasetVector.getDatasource());
-			this.sourceDataset.setDatasource(datasetVector.getDatasource());
+			this.sourceDataset.setSelectedItem(datasetVector);
 			this.boundaryDatasource.setSelectedItem(datasetVector.getDatasource());
 			this.boundaryDataset.setDatasource(datasetVector.getDatasource());
+			Rectangle2D bounds = datasetVector.getBounds();
+			double maxEdge = bounds.getHeight();
+			if (bounds.getWidth() > bounds.getHeight()) {
+				maxEdge = bounds.getWidth();
+			}
+			double cellSize = maxEdge / 500;
+			this.textCellSize.setSelectedItem(cellSize);
+			this.comboBoxValueField.setDataset(datasetVector);
+			this.comboBoxValueField.setSelectedItem("SmUserID");
 		}
 
-		this.comboBoxValueField.setFieldType(fieldType);
+		this.comboBoxPixelFormat.setItems(parameterDataNodeSingle, parameterDataNodeDouble, parameterDataNodeBit8,
+				parameterDataNodeBit16, parameterDataNodeBit32, parameterDataNodeBit64, parameterDataNodeUbit1,
+				parameterDataNodeUbit4, parameterDataNodeUbit8, parameterDataNodeUbit16, parameterDataNodeUbit32);
 
-		this.comboBoxPixelFormat.setItems(new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.SINGLE), PixelFormat.SINGLE),
-				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.DOUBLE), PixelFormat.DOUBLE),
-				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT8), PixelFormat.BIT8),
-				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT16), PixelFormat.BIT16),
-				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT32), PixelFormat.BIT32),
-				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT64), PixelFormat.BIT64),
-				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT1), PixelFormat.UBIT1),
-				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT4), PixelFormat.UBIT4),
-				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT8), PixelFormat.UBIT8),
-				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT16), PixelFormat.UBIT16),
-				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT32), PixelFormat.UBIT32)
-		);
-		this.textCellSize.setSelectedItem("1");
 		this.textCellSize.setMinValue(0);
 		this.textCellSize.setIsIncludeMin(false);
-		this.comboBoxPixelFormat.setSelectedItem(new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT32), PixelFormat.BIT32));
+		this.comboBoxPixelFormat.setSelectedItem(parameterDataNodeBit32);
 		this.resultDataset.setSelectedItem("result_vectorToGrid");
 	}
 
@@ -171,15 +181,15 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 				if (comboBoxValueField.getSelectedItem() != null && evt.getNewValue() instanceof FieldInfo) {
 					FieldInfo fieldInfo = (FieldInfo) evt.getNewValue();
 					if (fieldInfo.getType() == FieldType.INT16) {
-						comboBoxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(PixelFormat.BIT16));
+						comboBoxPixelFormat.setSelectedItem(parameterDataNodeBit16);
 					} else if (fieldInfo.getType() == FieldType.INT32) {
-						comboBoxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(PixelFormat.BIT32));
+						comboBoxPixelFormat.setSelectedItem(parameterDataNodeBit32);
 					} else if (fieldInfo.getType() == FieldType.INT64) {
-						comboBoxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(PixelFormat.BIT64));
+						comboBoxPixelFormat.setSelectedItem(parameterDataNodeBit64);
 					} else if (fieldInfo.getType() == FieldType.DOUBLE) {
-						comboBoxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(PixelFormat.DOUBLE));
+						comboBoxPixelFormat.setSelectedItem(parameterDataNodeDouble);
 					} else if (fieldInfo.getType() == FieldType.SINGLE) {
-						comboBoxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(PixelFormat.SINGLE));
+						comboBoxPixelFormat.setSelectedItem(parameterDataNodeSingle);
 					}
 				}
 			}

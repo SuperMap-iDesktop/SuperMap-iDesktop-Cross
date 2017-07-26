@@ -38,6 +38,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 	public ParameterFieldComboBoxPanel(IParameter parameter) {
 		super(parameter);
 		this.parameterFieldComboBox = (ParameterFieldComboBox) parameter;
+		comboBox.setName("ParameterFieldComboBoxPanel_" + parameter.getDescribe());
 		parameterFieldComboBox.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {

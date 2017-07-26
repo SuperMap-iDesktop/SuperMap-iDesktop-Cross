@@ -5,7 +5,6 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dialog.cacheClip.DialogCacheBuilder;
-import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClipBuilder;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.dialog.cacheClip.cache.LogWriter;
 import com.supermap.desktop.implement.CtrlAction;
@@ -23,11 +22,8 @@ public class CtrlActionMultiProcessClipExecute extends CtrlAction {
 	@Override
 	protected void run() {
 		Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
-		if (!CacheUtilities.dynamicEffectClosed(map)) {
-			return;
-		}
 		if (CacheUtilities.volatileDatasource()) {
-			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCache"));
+			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheExecute"));
 			String[] params = {"Multi", "null", map.getName(), "null"};
 			CacheUtilities.startProcess(params, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 		}

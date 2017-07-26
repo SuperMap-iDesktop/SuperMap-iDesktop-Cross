@@ -1,4 +1,4 @@
-package com.supermap.desktop.CtrlAction.Dataset.CollectionDataset;
+package com.supermap.desktop.ui.controls.CollectionDataset;
 
 import com.supermap.desktop.properties.CommonProperties;
 

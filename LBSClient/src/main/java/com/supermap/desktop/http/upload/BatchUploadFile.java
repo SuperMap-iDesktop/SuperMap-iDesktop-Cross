@@ -2,11 +2,11 @@ package com.supermap.desktop.http.upload;
 
 import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.ui.lbs.impl.WebHDFS;
-import com.supermap.desktop.ui.lbs.impl.CreateFile;
 import com.supermap.desktop.http.LogUtils;
-import com.supermap.desktop.ui.lbs.impl.FileInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.ui.lbs.CreateFile;
+import com.supermap.desktop.ui.lbs.FileInfo;
+import com.supermap.desktop.ui.lbs.WebHDFS;
 import com.supermap.desktop.utilities.ManagerXMLParser;
 import com.supermap.desktop.utilities.StringUtilities;
 

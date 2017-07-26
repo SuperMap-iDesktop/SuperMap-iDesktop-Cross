@@ -57,7 +57,8 @@ public class LocalFileUtilities {
                         SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[9], "dem", "bil", "raw", "bsq", "bip", "b"),
                         SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[10], "txt"),
                         SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[11], "dgn", "vct"),
-                        SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[12], "gpx")
+                        SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[12], "json"),
+                        SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[13], "gpx")
                 );
                 SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
                         DataConversionProperties.getString("String_FileType"), "CommonFunction", "OpenMany");
@@ -72,7 +73,8 @@ public class LocalFileUtilities {
                         SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[6], "kml", "kmz"),
                         SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[7], "dem", "bil", "raw", "bsq", "bip"),
                         SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[8], "vct"),
-                        SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[9], "gpx")
+                        SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[9], "json"),
+                        SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[10], "gpx")
                 );
                 SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
                         DataConversionProperties.getString("String_FileType"), "CommonFunction", "OpenMany");
