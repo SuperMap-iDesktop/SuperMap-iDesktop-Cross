@@ -1,4 +1,4 @@
-package com.supermap.desktop.UserDefineType;
+package com.supermap.desktop.implement.UserDefineType;
 
 import com.supermap.data.*;
 import com.supermap.data.conversion.ImportSettingSCV;

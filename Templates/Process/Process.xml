@@ -65,6 +65,12 @@
                 <process name="LIDAR文件">
                     <process key="ImportLIDAR" name=".TXT"/>
                 </process>
+                <process name="GEOJSON文件">
+                    <process key="ImportGEOJSON" name=".JSON"/>
+                </process>
+                <process name="GPS文件">
+                    <process key="ImportGPS" name=".GPS"/>
+                </process>
                 <process name="中国标准矢量格式">
                     <process key="ImportDGN" name=".DGN"/>
                     <process key="ImportVCT" name=".VCT"/>

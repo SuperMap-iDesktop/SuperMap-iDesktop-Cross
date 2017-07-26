@@ -18,7 +18,6 @@ import com.supermap.desktop.ui.controls.JFileChooserControl;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
@@ -76,7 +75,6 @@ public class DialogCacheBuilder extends JFrame {
 	private CopyOnWriteArrayList<String> captions;
 	private CopyOnWriteArrayList<Integer> captionCount;
 	private Thread updateThread;
-	private SmOptionPane optionPane = new SmOptionPane();
 
 	private static Object resultLock = new Object();
 
@@ -94,21 +92,15 @@ public class DialogCacheBuilder extends JFrame {
 
 
 	private String getTaskPath(String childPath) {
-		//获取缓存任务根路径
-		String result = null;
-		File rootFile = new File(fileChooserCachePath.getPath());
-		if (rootFile.exists()) {
-			String cacheTask = CacheUtilities.replacePath(rootFile.getParent(), DialogMapCacheClipBuilder.CacheTask);
-			result = CacheUtilities.replacePath(cacheTask, childPath);
-		}
+		String cacheTask = CacheUtilities.replacePath(fileChooserCachePath.getPath(), DialogMapCacheClipBuilder.CacheTask);
+		String result = CacheUtilities.replacePath(cacheTask, childPath);
 		return result;
 	}
 
 	private void shutdownMapClip() {
 		taskPath = getTaskPath("task");
-		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
+		if (new SmOptionPane().showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(taskPath, "doing");
-			optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), taskPath));
 			DialogCacheBuilder.this.dispose();
 			killProcess();
 		} else {
@@ -167,7 +159,7 @@ public class DialogCacheBuilder extends JFrame {
 			try {
 				String newProcessStr = textFieldProcessCount.getText();
 				if (StringUtilities.isInteger(newProcessStr) && Integer.valueOf(newProcessStr) < 0) {
-					optionPane.showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
+					new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
 					return;
 				}
 				if (StringUtilities.isInteger(newProcessStr) || "0".equals(newProcessStr)) {
@@ -212,7 +204,9 @@ public class DialogCacheBuilder extends JFrame {
 					}
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				if (null != ex.getMessage()) {
+					new SmOptionPane().showConfirmDialog(ex.getMessage());
+				}
 			}
 		}
 	};
@@ -312,7 +306,7 @@ public class DialogCacheBuilder extends JFrame {
 		this.labelWorkspacePath.setText(MapViewProperties.getString("String_WorkspacePath"));
 		this.labelMapName.setText(MapViewProperties.getString("String_Label_MapName"));
 		this.labelProcessCount.setText(MapViewProperties.getString("String_ProcessCount"));
-		this.labelCachePath.setText(MapViewProperties.getString("String_CachePath"));
+		this.labelCachePath.setText(MapViewProperties.getString("MapCache_LabelCachePath"));
 		this.labelTotalProgress.setText(ControlsProperties.getString("String_ProgressControl_TotalProgress"));
 		this.labelDetailProgressInfo.setText(MapViewProperties.getString("String_DetailProcessInfo"));
 		this.buttonCreate.setText(MapViewProperties.getString("String_BatchAddColorTableOKButton"));
@@ -402,8 +396,7 @@ public class DialogCacheBuilder extends JFrame {
 			workspacePath = CacheUtilities.replacePath(workspacePath);
 			String mapName = textFieldMapName.getText();
 			taskPath = getTaskPath("task");
-			String cachePath = fileChooserCachePath.getPath();
-			cachePath = CacheUtilities.replacePath(cachePath);
+			String cachePath = CacheUtilities.getCachePath(fileChooserCachePath.getPath());
 			String processCount = textFieldProcessCount.getText();
 			boolean isAppending = this.cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip;
 			params = new String[]{taskPath, workspacePath, mapName, cachePath, processCount, String.valueOf(isAppending)};
@@ -421,7 +414,8 @@ public class DialogCacheBuilder extends JFrame {
 
 	public String getCacheSci() {
 		String result = null;
-		File cachePath = new File(fileChooserCachePath.getPath());
+		if (null!=CacheUtilities.getCachePath(fileChooserCachePath.getPath())){
+		File cachePath = new File(CacheUtilities.getCachePath(fileChooserCachePath.getPath()));
 		File[] scis = cachePath.listFiles();
 		if (null != scis) {
 			for (int i = 0; i < scis.length; i++) {
@@ -429,6 +423,7 @@ public class DialogCacheBuilder extends JFrame {
 					result = scis[i].getAbsolutePath();
 				}
 			}
+		}
 		}
 		return result;
 	}
@@ -486,30 +481,14 @@ public class DialogCacheBuilder extends JFrame {
 				updateProcesses(parentStr, cachePath, totalSciLength);
 			}
 		} else {
-			optionPane.showErrorDialog("No sci file");
+			new SmOptionPane().showErrorDialog("No sci file");
 		}
-		renameDoingFile();
+		CacheUtilities.renameDoingFile(getTaskPath("doing"), taskPath);
 		buildCache = new BuildCache();
 		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
 //		BuildCache.main(params);
 	}
 
-	private void renameDoingFile() {
-		//实时检查doing目录下的文件是否加锁,如果文件已经加锁则表示有进程正在使用,否则表示为以前进程挂了没有处理的
-		File doingDirectory = new File(getTaskPath("doing"));
-		if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
-			File[] doingFailedSci = doingDirectory.listFiles();
-			for (File doingSci : doingFailedSci) {
-				//文件加了锁说明文件正在被用于切图任务
-				FileLocker locker = new FileLocker(doingSci);
-				if (locker.tryLock()) {
-					//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将该任务移到task目录下,重新切图
-					locker.release();
-					doingSci.renameTo(new File(taskPath, doingSci.getName()));
-				}
-			}
-		}
-	}
 
 	private int getSubSciCount(String[] sciNames, String s) {
 		int result = 0;
@@ -527,17 +506,17 @@ public class DialogCacheBuilder extends JFrame {
 
 		if (StringUtilities.isNullOrEmpty(workspacePath) || !new File(workspacePath).exists()
 				|| !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
-			optionPane.showErrorDialog(MapViewProperties.getString("String_WorkspaceNotExist"));
+			new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WorkspaceNotExist"));
 			return false;
 		}
 		if (StringUtilities.isNullOrEmpty(mapName)) {
-			optionPane.showErrorDialog(MapViewProperties.getString("String_MapNameIsNull"));
+			new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_MapNameIsNull"));
 			return false;
 		}
 
 		if (StringUtilities.isNullOrEmpty(processCount) ||
 				!(StringUtilities.isInteger(processCount) && Integer.valueOf(processCount) > 0)) {
-			optionPane.showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
+			new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
 			textFieldProcessCount.requestFocus();
 			return false;
 		}
@@ -553,7 +532,7 @@ public class DialogCacheBuilder extends JFrame {
 			}
 		}
 		if (!hasMap) {
-			optionPane.showErrorDialog(MapViewProperties.getString("String_MapIsNotExist"));
+			new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_MapIsNotExist"));
 			textFieldMapName.requestFocus();
 			return false;
 		} else {
@@ -571,7 +550,7 @@ public class DialogCacheBuilder extends JFrame {
 		File failedDirectory = new File(getTaskPath("failed"));
 		if (!taskDirectory.exists() || !hasSciFiles(taskDirectory)) {
 			if (failedDirectory.exists() && hasSciFiles(failedDirectory)) {
-				if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
+				if (new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
 					File[] failedSci = failedDirectory.listFiles();
 					for (int i = 0; i < failedSci.length; i++) {
 						failedSci[i].renameTo(new File(taskDirectory, failedSci[i].getName()));
@@ -581,7 +560,7 @@ public class DialogCacheBuilder extends JFrame {
 				}
 			} else if ((!taskDirectory.exists() || !hasSciFiles(taskDirectory))
 					&& (!failedDirectory.exists() && !hasSciFiles(failedDirectory))) {
-				optionPane.showErrorDialog(MapViewProperties.getString("String_TaskNotExist"));
+				new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_TaskNotExist"));
 				return false;
 			}
 		}
@@ -722,7 +701,7 @@ public class DialogCacheBuilder extends JFrame {
 		synchronized (resultLock) {
 			boolean result = false;
 			File resultDir = new File(cachePath);
-			if (resultDir.list().length>1){
+			if (resultDir.list().length > 1) {
 				result = true;
 			}
 			if (result) {
@@ -745,7 +724,7 @@ public class DialogCacheBuilder extends JFrame {
 				File failedFile = new File(getTaskPath("failed"));
 				File taskFile = new File(getTaskPath("task"));
 				if (failedFile.exists() && null != failedFile.list() && failedFile.list().length > 0) {
-					if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath())) == JOptionPane.OK_OPTION) {
+					if (new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath())) == JOptionPane.OK_OPTION) {
 						buttonCreate.setEnabled(true);
 						resetPathInfo();
 						File[] failedSci = failedFile.listFiles();
