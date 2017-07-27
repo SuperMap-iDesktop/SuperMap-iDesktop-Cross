@@ -66,7 +66,7 @@
                     <process key="ImportLIDAR" name=".TXT"/>
                 </process>
                 <process name="GEOJSON文件">
-                    <process key="ImportGEOJSON" name=".JSON"/>
+                    <process key="ImportGEOJSON" name=".GEOJSON"/>
                 </process>
                 <process name="GPS文件">
                     <process key="ImportGPS" name=".GPS"/>

@@ -5,6 +5,7 @@ import com.supermap.data.EncodeType;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
@@ -457,9 +458,7 @@ public class ImportParameterCreator implements IParameterCreator {
 		reflectInfoCharset.parameter = parameterCharset;
 
 		boolean hasCharsetParameter = true;
-		if (importSetting instanceof ImportSettingDXF || importSetting instanceof ImportSettingDWG
-//		fixme		|| importSetting instanceof ImportSettingGPX
-				) {
+		if (importSetting instanceof ImportSettingDXF || importSetting instanceof ImportSettingDWG || importSetting instanceof ImportSettingGPX) {
 			hasCharsetParameter = false;
 		}
 		sourceInfo.add(reflectInfoFilePath);
@@ -549,14 +548,23 @@ public class ImportParameterCreator implements IParameterCreator {
 
 		ReflectInfo reflectInfoImportMode = new ReflectInfo();
 		reflectInfoImportMode.methodName = "setImportMode";
-		parameterImportMode = new ParameterEnum(new EnumParser(ImportMode.class, ReflectInfoImportModelValue, importModel)).setDescribe(ProcessProperties.getString("Label_ImportMode"));
-		parameterImportMode.setSelectedItem(ProcessProperties.getString("String_FormImport_None"));
-		reflectInfoImportMode.parameter = parameterImportMode;
-		resultInfo.add(reflectInfoImportMode);
+		if (!(importSetting instanceof ImportSettingGPX)) {
+			parameterImportMode = new ParameterEnum(new EnumParser(ImportMode.class, ReflectInfoImportModelValue, importModel)).setDescribe(ProcessProperties.getString("Label_ImportMode"));
+			parameterImportMode.setSelectedItem(ProcessProperties.getString("String_FormImport_None"));
+			reflectInfoImportMode.parameter = parameterImportMode;
+			resultInfo.add(reflectInfoImportMode);
+		}
 		parameterCombineResultSet = new ParameterCombine();
 		parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
-		ParameterCombine parameterCombineSecond = parameterEncodeType != null ? new ParameterCombine(ParameterCombine.VERTICAL).addParameters(parameterEncodeType, parameterImportMode) : new ParameterCombine().addParameters(parameterImportMode);
 		ParameterCombine parameterCombineSaveResult = new ParameterCombine(ParameterCombine.VERTICAL).addParameters(parameterDatasource, this.parameterDataset);
+		ParameterCombine parameterCombineSecond;
+		if (null != parameterEncodeType && null != parameterImportMode) {
+			parameterCombineSecond = new ParameterCombine(ParameterCombine.VERTICAL).addParameters(parameterEncodeType, parameterImportMode);
+		} else if (null != parameterImportMode) {
+			parameterCombineSecond = new ParameterCombine(ParameterCombine.VERTICAL).addParameters(parameterImportMode);
+		} else {
+			parameterCombineSecond = new ParameterCombine();
+		}
 		parameterCombineResultSet.addParameters(
 				parameterCombineSaveResult,
 				parameterCombineSecond
@@ -576,8 +584,6 @@ public class ImportParameterCreator implements IParameterCreator {
 		ParameterCombine parameterCombineDatasetIndex = new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterSpatialIndex, parameterFieldIndex);
 		//导入数据集类型
 		ReflectInfo reflectInfoDatasetType = new ReflectInfo();
-
-		//// FIXME: 2017/4/25 ImportSettingGPX是DataConversion下定义的，找不到依赖
 
 		if (importSetting instanceof ImportSettingCSV) {
 			resultInfo.clear();
@@ -622,19 +628,28 @@ public class ImportParameterCreator implements IParameterCreator {
 		} else if (importSetting instanceof ImportSettingTAB || importSetting instanceof ImportSettingMIF
 				|| importSetting instanceof ImportSettingDWG || importSetting instanceof ImportSettingDXF
 				|| importSetting instanceof ImportSettingKML || importSetting instanceof ImportSettingKMZ
-				|| importSetting instanceof ImportSettingMAPGIS || importSetting instanceof ImportSettingDGN) {
+				|| importSetting instanceof ImportSettingMAPGIS || importSetting instanceof ImportSettingDGN
+				|| importSetting instanceof ImportSettingGeoJson) {
 			parameterDatasetTypeEnum = createDatasetTypeEnum(importSetting);
 			reflectInfoDatasetType = new ReflectInfo();
 			reflectInfoDatasetType.methodName = "setImportingAsCAD";
 			reflectInfoDatasetType.parameter = parameterDatasetTypeEnum;
 			parameterCombineResultSet = new ParameterCombine();
 			parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
-			parameterCombineResultSet.addParameters(
-					parameterCombineSaveResult,
-					parameterCombineSecond,
-					parameterDatasetTypeEnum,
-					parameterCombineDatasetIndex
-			);
+			if (importSetting instanceof ImportSettingGeoJson) {
+				parameterCombineResultSet.addParameters(
+						parameterCombineSaveResult,
+						parameterCombineSecond,
+						parameterDatasetTypeEnum
+				);
+			} else {
+				parameterCombineResultSet.addParameters(
+						parameterCombineSaveResult,
+						parameterCombineSecond,
+						parameterDatasetTypeEnum,
+						parameterCombineDatasetIndex
+				);
+			}
 			resultInfo.clear();
 			resultInfo.add(targetDatasetName);
 			resultInfo.add(targetDatasource);
@@ -777,7 +792,8 @@ public class ImportParameterCreator implements IParameterCreator {
 		} else if (importSetting instanceof ImportSettingTAB || importSetting instanceof ImportSettingMIF
 				|| importSetting instanceof ImportSettingDWG || importSetting instanceof ImportSettingDXF
 				|| importSetting instanceof ImportSettingKML || importSetting instanceof ImportSettingKMZ
-				|| importSetting instanceof ImportSettingMAPGIS || importSetting instanceof ImportSettingDGN) {
+				|| importSetting instanceof ImportSettingMAPGIS || importSetting instanceof ImportSettingDGN
+				|| importSetting instanceof ImportSettingGeoJson) {
 			result.setSupportedDatasetTypes(new String[]{ProcessProperties.getString("String_DatasetType_CAD")});
 			result.setSimpleDatasetShown(true);//显示简单数据集选项
 		} else if (importSetting instanceof ImportSettingJPG || importSetting instanceof ImportSettingJP2 ||
@@ -804,7 +820,7 @@ public class ImportParameterCreator implements IParameterCreator {
 				|| importSetting instanceof ImportSettingTEMSClutter || importSetting instanceof ImportSettingVCT
 				|| importSetting instanceof ImportSettingRAW || importSetting instanceof ImportSettingGJB
 				|| importSetting instanceof ImportSettingTEMSVector || importSetting instanceof ImportSettingTEMSBuildingVector
-				|| importSetting instanceof ImportSettingFileGDBVector) {
+				|| importSetting instanceof ImportSettingFileGDBVector || importSetting instanceof ImportSettingGeoJson) {
 			parser.setEnumNames(new String[]{"NONE", "BYTE", "INT16", "INT24", "INT32"});
 			parser.setChName(new String[]{
 					EncodeTypeUtilities.toString(EncodeType.NONE),
