@@ -129,7 +129,7 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 			}
 			double cellSize = maxEdge / 500;
 			this.textCellSize.setSelectedItem(cellSize);
-			this.comboBoxValueField.setDataset(datasetVector);
+			this.comboBoxValueField.setFieldName(datasetVector);
 			this.comboBoxValueField.setSelectedItem("SmUserID");
 		}
 

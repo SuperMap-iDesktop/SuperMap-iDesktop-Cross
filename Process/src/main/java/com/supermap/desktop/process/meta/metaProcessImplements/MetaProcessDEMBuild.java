@@ -153,6 +153,7 @@ public class MetaProcessDEMBuild extends MetaProcess{
         if (datasetVector != null) {
             sourceDatasources.setSelectedItem(datasetVector.getDatasource());
             sourceDataset.setSelectedItem(datasetVector);
+            comboBoxSourceField.setFieldName((DatasetVector)datasetVector);
         }
         comboBoxSourceField.setFieldType(fieldType);
 

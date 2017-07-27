@@ -43,10 +43,8 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
         if (dataset != null) {
             inputDatasource.setSelectedItem(dataset.getDatasource());
             inputDataset.setSelectedItem(dataset);
-            comboBoxConnect.setDataset((DatasetVector) dataset);
+            comboBoxConnect.setFieldName((DatasetVector) dataset);
         }
-        FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
-        comboBoxConnect.setFieldType(fieldType);
         outputData.setSelectedItem("result_PointToLine");
 
         ParameterCombine inputCombine = new ParameterCombine();
@@ -122,6 +120,7 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
             String fieldName = comboBoxConnect.getFieldName();
 
             Recordset recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
+
             ArrayList<Point2Ds> point2DsArrayList = new ArrayList<>();
             ArrayList<Object> fieldValues = new ArrayList<>();
             ArrayList<Map<String, Object>> valueList = new ArrayList<>();
@@ -131,16 +130,18 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
                     geoPoint = (GeoPoint) recordsetInput.getGeometry();
                     Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
                     Object currentFieldValue = recordsetInput.getFieldValue(fieldName);
-                    if (point2DsArrayList.size() > 0) {
+                    if (fieldValues.size() > 0) {
                         for (int i = 0; i < fieldValues.size(); i++) {
-                            if (currentFieldValue==(fieldValues.get(i))) {
+                            if (currentFieldValue == (fieldValues.get(i))||currentFieldValue.equals(fieldValues.get(i))) {
                                 point2DsArrayList.get(i).add(new Point2D(geoPoint.getX(), geoPoint.getY()));
+                                break;
                             } else {
                                 fieldValues.add(currentFieldValue);
                                 valueList.add(value);
                                 Point2Ds point2Ds = new Point2Ds();
                                 point2Ds.add(new Point2D(geoPoint.getX(), geoPoint.getY()));
                                 point2DsArrayList.add(point2Ds);
+                                break;
                             }
                         }
                     } else {
@@ -150,6 +151,8 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
                         point2Ds.add(new Point2D(geoPoint.getX(), geoPoint.getY()));
                         point2DsArrayList.add(point2Ds);
                     }
+
+
                 }finally {
                     if (geoPoint != null) {
                         geoPoint.dispose();
@@ -158,9 +161,11 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
                 recordsetInput.moveNext();
             }
             for (int i = 0; i < point2DsArrayList.size(); i++) {
-                GeoLine geoLine = new GeoLine(point2DsArrayList.get(i));
-                recordsetResult.addNew(geoLine, valueList.get(i));
-                geoLine.dispose();
+                if (point2DsArrayList.get(i).getCount() > 1) {
+                    GeoLine geoLine = new GeoLine(point2DsArrayList.get(i));
+                    recordsetResult.addNew(geoLine, valueList.get(i));
+                    geoLine.dispose();
+                }
             }
             recordsetResult.getBatch().update();
             recordsetInput.close();

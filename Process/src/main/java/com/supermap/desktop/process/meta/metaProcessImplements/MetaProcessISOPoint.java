@@ -85,7 +85,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 			sourceDataset.setSelectedItem(datasetVector);
 			targetDataset.setResultDatasource(datasetVector.getDatasource());
 			targetDataset.setSelectedItem(datasetVector.getDatasource().getDatasets().getAvailableDatasetName("result_ISOPoint"));
-			this.fields.setSelectedItem("SmUserID");
+			fields.setFieldName((DatasetVector) datasetVector);
 			reloadValue();
 		}
 		ParameterDataNode selectedInterpolateType = new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_IDW"), TerrainInterpolateType.IDW);

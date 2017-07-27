@@ -39,6 +39,8 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
         if (datasetVector != null) {
             inputDatasource.setSelectedItem(datasetVector.getDatasource());
             inputDataset.setSelectedItem(datasetVector);
+            comboBoxY.setFieldName(datasetVector);
+            comboBoxX.setFieldName(datasetVector);
         }
         FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
         comboBoxX.setFieldType(fieldType);
