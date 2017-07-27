@@ -245,7 +245,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 		if (datasetVector != null) {
 			parameterDatasource.setSelectedItem(datasetVector.getDatasource());
 			parameterDataset.setSelectedItem(datasetVector);
-			parameterInterpolatorFields.setDataset(((DatasetVector) datasetVector));
+			parameterInterpolatorFields.setFieldName((DatasetVector) datasetVector);
 			/*FieldInfos fieldInfos = ((DatasetVector) datasetVector).getFieldInfos();
 			for (int i = 0; i < fieldInfos.getCount(); i++) {
 				if (!fieldInfos.get(i).isSystemField()) {

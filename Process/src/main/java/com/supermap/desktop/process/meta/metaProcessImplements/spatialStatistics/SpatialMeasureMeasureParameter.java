@@ -103,9 +103,9 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 	}
 
 	private void datasetChanged() {
-		parameterGroupFieldComboBox.setDataset(currentDataset);
-		parameterSelfWeightFieldComboBox.setDataset(currentDataset);
-		parameterWeightFieldComboBox.setDataset(currentDataset);
+		parameterGroupFieldComboBox.setFieldName(currentDataset);
+		parameterSelfWeightFieldComboBox.setFieldName(currentDataset);
+		parameterWeightFieldComboBox.setFieldName(currentDataset);
 		parameterStatisticsTypesUserDefine.setDataset(currentDataset);
 		parameterStatisticsTypesUserDefine.setEnabled(currentDataset != null);
 	}

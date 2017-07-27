@@ -44,6 +44,7 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
         if (dataset != null) {
             inputDatasource.setSelectedItem(dataset.getDatasource());
             inputDataset.setSelectedItem(dataset);
+            fieldComboBox.setFieldName((DatasetVector) dataset);
         }
         outputData.setSelectedItem("result_fieldToText");
 

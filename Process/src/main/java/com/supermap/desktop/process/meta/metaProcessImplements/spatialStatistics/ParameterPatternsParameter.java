@@ -193,8 +193,8 @@ public class ParameterPatternsParameter extends ParameterCombine {
 	}
 
 	private void datasetChanged() {
-		parameterAssessmentFieldComboBox.setDataset(currentDataset);
-		parameterSelfWeightFieldComboBox.setDataset(currentDataset);
+		parameterAssessmentFieldComboBox.setFieldName(currentDataset);
+		parameterSelfWeightFieldComboBox.setFieldName(currentDataset);
 	}
 
 	private void initParameterConstraint() {
