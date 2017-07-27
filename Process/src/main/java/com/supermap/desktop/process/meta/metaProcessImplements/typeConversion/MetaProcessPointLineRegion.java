@@ -19,15 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversion{
-    private static final String INPUT_DATA = "InputData";
     protected static String OUTPUT_DATA = "OutputData";
 
     private DatasetType inputType;
     private DatasetType outputType;
-
-    private ParameterDatasourceConstrained inputDatasource;
-    private ParameterSingleDataset inputDataset;
-    private ParameterSaveDataset outputData;
 
     public MetaProcessPointLineRegion(DatasetType inputType, DatasetType outputType) {
         this.inputType = inputType;

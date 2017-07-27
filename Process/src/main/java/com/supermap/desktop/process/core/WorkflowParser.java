@@ -261,6 +261,8 @@ public class WorkflowParser {
 			result = new MetaProcessVectorResample();
 		} else if (MetaKeys.LINE_POLYGON_SMOOTH.equals(key)) {
 			result = new MetaProcessLinePolygonSmooth();
+		} else if (MetaKeys.CONVERSION_POINT_TO_LINE.equals(key)) {
+			result = new MetaProcessPointToLine();
 		} else if (MetaKeys.CONVERSION_LINE_TO_POINT.equals(key)) {
 			result = new MetaProcessLineToPoint();
 		} else if (MetaKeys.CONVERSION_REGION_TO_POINT.equals(key)) {
@@ -281,6 +283,8 @@ public class WorkflowParser {
 			result = new MetaProcessTextToField();
 		} else if (MetaKeys.CONVERSION_TEXT_TO_POINT.equals(key)) {
 			result = new MetaProcessTextToPoint();
+		} else if (MetaKeys.CONVERSION_EPS_TO_SIMPLE.equals(key)) {
+			result = new MetaProcessEPSToSimple();
 		} else if (MetaKeys.EDGE_MATCH.equals(key)) {
 			result = new MetaProcessEdgeMatch();
 		} else if (MetaKeys.PICKUP_BORDER.equals(key)) {

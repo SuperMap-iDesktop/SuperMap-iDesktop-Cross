@@ -3,43 +3,51 @@ package com.supermap.desktop.process.meta.metaProcessImplements.typeConversion;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.RecordsetUtilities;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * Created By Chens on 2017/7/22 0022
+ * Created By Chens on 2017/7/24 0024
  */
-public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
-    private static final String OUTPUT_DATA = "SimpleToCADResult";
+public class MetaProcessPointToLine extends MetaProcessTypeConversion {
+    private static final String OUTPUT_DATA = "PointToLineResult";
 
-    public MetaProcessSimpleToCAD() {
+    private ParameterDatasourceConstrained inputDatasource;
+    private ParameterSingleDataset inputDataset;
+    private ParameterSaveDataset outputData;
+    private ParameterFieldComboBox comboBoxConnect;
+
+    public MetaProcessPointToLine() {
         initParameters();
         initParameterConstraint();
     }
 
     private void initParameters() {
         inputDatasource = new ParameterDatasourceConstrained();
-        inputDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.MODEL);
+        inputDataset = new ParameterSingleDataset(DatasetType.POINT);
         outputData = new ParameterSaveDataset();
+        comboBoxConnect = new ParameterFieldComboBox(ProcessProperties.getString("String_ConnectionField"));
 
-        Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.MODEL);
+        Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT);
         if (dataset != null) {
             inputDatasource.setSelectedItem(dataset.getDatasource());
             inputDataset.setSelectedItem(dataset);
+            comboBoxConnect.setDataset((DatasetVector) dataset);
         }
-        outputData.setSelectedItem("result_simpleToCAD");
+        FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
+        comboBoxConnect.setFieldType(fieldType);
+        outputData.setSelectedItem("result_PointToLine");
 
         ParameterCombine inputCombine = new ParameterCombine();
         inputCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
@@ -47,21 +55,38 @@ public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
         ParameterCombine outputCombine = new ParameterCombine();
         outputCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
         outputCombine.addParameters(outputData);
+        ParameterCombine settingCombine = new ParameterCombine();
+        settingCombine.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
+        settingCombine.addParameters(comboBoxConnect);
 
-        parameters.setParameters(inputCombine, outputCombine);
-        parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR,inputCombine);
-        parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.CAD,outputCombine);
+        parameters.setParameters(inputCombine,settingCombine,outputCombine);
+        parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT,inputCombine);
+        parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE,outputCombine);
     }
 
     private void initParameterConstraint() {
         EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
         equalDatasourceConstraint.constrained(inputDatasource,ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
         equalDatasourceConstraint.constrained(inputDataset,ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+
+        EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
+        equalDatasetConstraint.constrained(inputDataset,ParameterSingleDataset.DATASET_FIELD_NAME);
+        equalDatasetConstraint.constrained(comboBoxConnect,ParameterFieldComboBox.DATASET_FIELD_NAME);
     }
 
     @Override
     public IParameters getParameters() {
         return parameters;
+    }
+
+    @Override
+    public String getKey() {
+        return MetaKeys.CONVERSION_POINT_TO_LINE;
+    }
+
+    @Override
+    public String getTitle() {
+        return ProcessProperties.getString("String_Title_PointToLine");
     }
 
     @Override
@@ -80,7 +105,7 @@ public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
             }
             DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
             datasetVectorInfo.setName(outputData.getResultDatasource().getDatasets().getAvailableDatasetName(outputData.getDatasetName()));
-            datasetVectorInfo.setType(DatasetType.CAD);
+            datasetVectorInfo.setType(DatasetType.LINE);
             DatasetVector resultDataset = outputData.getResultDatasource().getDatasets().create(datasetVectorInfo);
             resultDataset.setPrjCoordSys(src.getPrjCoordSys());
             for (int i = 0; i < src.getFieldInfos().getCount(); i++) {
@@ -94,23 +119,53 @@ public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
             recordsetResult.getBatch().setMaxRecordCount(2000);
             recordsetResult.getBatch().begin();
 
+            String fieldName = comboBoxConnect.getFieldName();
+
             Recordset recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
+            ArrayList<Point2Ds> point2DsArrayList = new ArrayList<>();
+            ArrayList<Object> fieldValues = new ArrayList<>();
+            ArrayList<Map<String, Object>> valueList = new ArrayList<>();
             while (!recordsetInput.isEOF()) {
-                Geometry geometry = null;
+                GeoPoint geoPoint = null;
                 try {
-                    geometry = recordsetInput.getGeometry();
+                    geoPoint = (GeoPoint) recordsetInput.getGeometry();
                     Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-                    recordsetResult.addNew(geometry, value);
+                    Object currentFieldValue = recordsetInput.getFieldValue(fieldName);
+                    if (point2DsArrayList.size() > 0) {
+                        for (int i = 0; i < fieldValues.size(); i++) {
+                            if (currentFieldValue==(fieldValues.get(i))) {
+                                point2DsArrayList.get(i).add(new Point2D(geoPoint.getX(), geoPoint.getY()));
+                            } else {
+                                fieldValues.add(currentFieldValue);
+                                valueList.add(value);
+                                Point2Ds point2Ds = new Point2Ds();
+                                point2Ds.add(new Point2D(geoPoint.getX(), geoPoint.getY()));
+                                point2DsArrayList.add(point2Ds);
+                            }
+                        }
+                    } else {
+                        fieldValues.add(currentFieldValue);
+                        valueList.add(value);
+                        Point2Ds point2Ds = new Point2Ds();
+                        point2Ds.add(new Point2D(geoPoint.getX(), geoPoint.getY()));
+                        point2DsArrayList.add(point2Ds);
+                    }
                 }finally {
-                    if (geometry != null) {
-                        geometry.dispose();
+                    if (geoPoint != null) {
+                        geoPoint.dispose();
                     }
                 }
                 recordsetInput.moveNext();
             }
+            for (int i = 0; i < point2DsArrayList.size(); i++) {
+                GeoLine geoLine = new GeoLine(point2DsArrayList.get(i));
+                recordsetResult.addNew(geoLine, valueList.get(i));
+                geoLine.dispose();
+            }
             recordsetResult.getBatch().update();
             recordsetInput.close();
             recordsetInput.dispose();
+            isSuccessful = resultDataset != null;
             this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
             fireRunning(new RunningEvent(this,100,"finish"));
         } catch (Exception e) {
@@ -124,15 +179,5 @@ public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
         }
 
         return isSuccessful;
-    }
-
-    @Override
-    public String getKey() {
-        return MetaKeys.CONVERSION_SIMPLE_TO_CAD;
-    }
-
-    @Override
-    public String getTitle() {
-        return ProcessProperties.getString("String_Title_SimpleToCAD");
     }
 }
