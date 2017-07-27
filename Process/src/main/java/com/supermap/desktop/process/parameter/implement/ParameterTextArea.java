@@ -14,6 +14,8 @@ public class ParameterTextArea extends AbstractParameter implements ISelectionPa
 
 	@ParameterField(name = "value")
 	private String selectItem;
+	private boolean isLineWrap=false;
+	private boolean isWrapStyleWord=false;
 
     public ParameterTextArea() {
         this("");
@@ -55,4 +57,20 @@ public class ParameterTextArea extends AbstractParameter implements ISelectionPa
     public void dispose() {
 
     }
+
+    public void setLineWrap(boolean lineWrap){
+    	this.isLineWrap=lineWrap;
+    }
+
+    public boolean isLineWrap(){
+    	return this.isLineWrap;
+    }
+
+	public void setWrapStyleWord(boolean wrapStyleWord){
+		this.isWrapStyleWord=wrapStyleWord;
+	}
+
+	public boolean isWrapStyleWord(){
+		return this.isWrapStyleWord;
+	}
 }

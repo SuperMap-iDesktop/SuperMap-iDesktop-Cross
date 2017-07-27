@@ -97,7 +97,12 @@ public class ParameterTextAreaPanel extends SwingPanel implements IParameterPane
 	    if (!StringUtilities.isNullOrEmpty((String) parameterTextArea.getSelectedItem())) {
 		    this.textArea.setText((String) parameterTextArea.getSelectedItem());
         }
-
+        if (parameterTextArea.isLineWrap()){
+	    	this.textArea.setLineWrap(parameterTextArea.isLineWrap());
+        }
+        if (parameterTextArea.isWrapStyleWord()){
+        	this.textArea.setWrapStyleWord(parameterTextArea.isWrapStyleWord());
+        }
     }
 
 }
