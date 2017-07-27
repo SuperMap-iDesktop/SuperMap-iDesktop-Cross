@@ -143,7 +143,7 @@
                 <process name="聚类分布">//ClusteringDistributions
                     <process key="ClusterOutlierAnalyst" name="聚类和异常值分析"/>
                     <process key="HotSpotAnalyst" name="热点分析"/>
-                    <process key="OptimizedHotSpotAnalyst" name="优化的热点分析"/>
+                    <!-- <process key="OptimizedHotSpotAnalyst" name="优化的热点分析"/>-->
                 </process>
                 <process name="空间关系建模">//SpatialRelModeling
                     <process key="GeographicWeightedRegression" name="地理加权回归分析"/>
@@ -161,6 +161,7 @@
                 <process key="RegionTrunkToCenterLine" name="面主干中心线"/>
             </process>
             <process key="SpatialIndex" name="重构空间索引"/>
+            <process key="FieldIndex" name="字段索引"/>
             <process key="SqlQuery" name="Sql查询"/>
             <process key="Buffer" name="缓冲区分析"/>
             <process name="类型转换">

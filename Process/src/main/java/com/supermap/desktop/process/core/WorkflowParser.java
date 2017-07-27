@@ -257,7 +257,9 @@ public class WorkflowParser {
 			result = new MetaProcessAggregatePoints();
 		} else if (MetaKeys.RAREFY_POINTS.equals(key)) {
 			result = new MetaProcessRarefyPoints();
-		} else if (MetaKeys.VECTOR_RESAMPLE.equals(key)) {
+		} else if (MetaKeys.FIELD_INDEX.equals(key)) {
+			result = new MetaProcessFieldIndex();
+		}else if (MetaKeys.VECTOR_RESAMPLE.equals(key)) {
 			result = new MetaProcessVectorResample();
 		} else if (MetaKeys.LINE_POLYGON_SMOOTH.equals(key)) {
 			result = new MetaProcessLinePolygonSmooth();
