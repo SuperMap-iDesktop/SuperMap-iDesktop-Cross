@@ -18,6 +18,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.PixelFormatUtilities;
+import sun.font.TrueTypeFont;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -106,9 +107,9 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		this.resultData.addParameters(this.resultDataset);
 
 		this.parameters.setParameters(this.sourceData, this.boundaryData, this.parameterSetting, this.resultData);
-		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.POINT, sourceData);
-		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.LINE, sourceData);
-		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.REGION, sourceData);
+//		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.POINT, sourceData);
+//		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.LINE, sourceData);
+		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.SIMPLE_VECTOR, sourceData);
 		this.parameters.addInputParameters(BOUNDARY_DATA, DatasetTypes.REGION, boundaryData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultData);
 
@@ -142,6 +143,9 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		this.textCellSize.setIsIncludeMin(false);
 		this.comboBoxPixelFormat.setSelectedItem(parameterDataNodeBit32);
 		this.resultDataset.setSelectedItem("result_vectorToGrid");
+		this.comboBoxValueField.setRequisite(true);
+		this.textCellSize.setRequisite(true);
+		this.comboBoxPixelFormat.setRequisite(true);
 	}
 
 	private void initParameterConstrint() {
@@ -172,6 +176,7 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 					}
 					double cellSize = maxEdge / 500;
 					textCellSize.setSelectedItem(cellSize);
+					comboBoxValueField.setSelectedItem("SmUserID");
 				}
 			}
 		});
