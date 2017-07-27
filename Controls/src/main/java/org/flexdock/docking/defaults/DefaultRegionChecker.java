@@ -351,7 +351,7 @@ public class DefaultRegionChecker implements RegionChecker, DockingConstants {
      * {@code getSiblingPreference(Dockable d, String region)}.
      * {@code getSiblingPreference(Dockable d, String region)} attempts to
      * invoke {@code getDockingProperties()} on the {@code Dockable} to resolve
-     * a {@code DockablePropertySet} instance and return from its
+     * a {@code DockablePropertySet} newProcess and return from its
      * {@code getSiblingSize(String region)} method.
      * <p>
      * If the specified {@code Component} is {@code null}, no {@code Dockable}

@@ -41,7 +41,7 @@ import javax.swing.SwingUtilities;
 public class RootPane extends JRootPane implements MouseListener, MouseMotionListener {
     private static int CORNER_MARGIN = 5;
 
-    // instance data
+    // newProcess data
     private int currentResizeRegion;
     private Rectangle mMouseLimits;
     private Cursor mLastCursor;
@@ -89,7 +89,7 @@ public class RootPane extends JRootPane implements MouseListener, MouseMotionLis
         // 1) The acceptable mouse limits (Rectangle) during the drag.  These have
         //    different meanings, depending on which corner or edge is being dragged,
         //    but generally translate into bounds that prevent us from doing things
-        //    like, for instance, dragging the SOUTH_EAST corner anywhere above the
+        //    like, for newProcess, dragging the SOUTH_EAST corner anywhere above the
         //    NORTH or left of WEST frame edges (taking min-frame-size into account).
         // 2) The current mouse offset relative to the frame-edge about to be dragged.
         //    Subsequent MOUSE_DRAGGED events will report the location of the mouse,

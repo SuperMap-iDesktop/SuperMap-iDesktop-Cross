@@ -19,47 +19,47 @@ Export-Package: com.supermap.desktop.process.constraint.annotation;versi
  1.0.0";uses:="com.supermap.desktop.process.parameter.interfaces",com.su
  permap.desktop.process.core;version="1.0.0";uses:="com.supermap.desktop
  .process.enums,com.supermap.desktop.process.events,com.supermap.desktop
- .process.loader,com.supermap.desktop.process.meta,com.supermap.desktop.
+ .process.loader,com.supermap.desktop.WorkflowView.meta,com.supermap.desktop.
  process.parameter.interfaces,com.supermap.desktop.process.parameter.int
- erfaces.datas,com.supermap.desktop.process.ui",com.supermap.desktop.pro
+ erfaces.datas,com.supermap.desktop.WorkflowView.ui",com.supermap.desktop.pro
  cess.ctrlAction;version="1.0.0";uses:="com.supermap.desktop.process.met
- a",com.supermap.desktop.process.dataconversion;version="1.0.0";uses:="c
+ a",com.supermap.desktop.WorkflowView.meta.dataconversion;version="1.0.0";uses:="c
  om.supermap.desktop.process.meta.metaProcessImplements,com.supermap.des
- ktop.process.parameter.interfaces",com.supermap.desktop.process.demo;ve
+ ktop.process.parameter.interfaces",com.supermap.desktop.WorkflowView.demo;ve
  rsion="1.0.0",com.supermap.desktop.process.enums;version="1.0.0",com.su
  permap.desktop.process.events;version="1.0.0";uses:="com.supermap.deskt
  op.process.core,com.supermap.desktop.process.enums",com.supermap.deskto
  p.process;version="1.0.0";uses:="com.supermap.desktop.process.core,com.
- supermap.desktop.process.events,com.supermap.desktop.process.graphics,c
+ supermap.desktop.process.events,com.supermap.desktop.WorkflowView.graphics,c
  om.supermap.desktop.process.graphics.events,com.supermap.desktop.proces
- s.graphics.graphs,com.supermap.desktop.process.graphics.interaction.can
+ s.graphics.graphs,com.supermap.desktop.WorkflowView.graphics.interaction.can
  vas,com.supermap.desktop.process.parameter.interfaces.datas.types,com.s
  upermap.desktop.process.tasks,org.osgi.framework",com.supermap.desktop.
  process.graphics;version="1.0.0";uses:="com.supermap.desktop.process.gr
- aphics.events,com.supermap.desktop.process.graphics.graphs,com.supermap
+ aphics.events,com.supermap.desktop.WorkflowView.graphics.graphs,com.supermap
  .desktop.process.graphics.interaction.canvas,com.supermap.desktop.proce
- ss.graphics.storage",com.supermap.desktop.process.graphics.connection;v
- ersion="1.0.0";uses:="com.supermap.desktop.process.graphics,com.superma
+ ss.graphics.storage",com.supermap.desktop.WorkflowView.graphics.connection;v
+ ersion="1.0.0";uses:="com.supermap.desktop.WorkflowView.graphics,com.superma
  p.desktop.process.graphics.graphs",com.supermap.desktop.process.graphic
- s.events;version="1.0.0";uses:="com.supermap.desktop.process.graphics,c
+ s.events;version="1.0.0";uses:="com.supermap.desktop.WorkflowView.graphics,c
  om.supermap.desktop.process.graphics.connection,com.supermap.desktop.pr
- ocess.graphics.graphs,com.supermap.desktop.process.graphics.interaction
- .canvas,com.supermap.desktop.process.graphics.storage",com.supermap.des
+ ocess.graphics.graphs,com.supermap.desktop.WorkflowView.graphics.interaction
+ .canvas,com.supermap.desktop.WorkflowView.graphics.storage",com.supermap.des
  ktop.process.graphics.graphs;version="1.0.0";uses:="com.supermap.deskto
- p.process.core,com.supermap.desktop.process.graphics,com.supermap.deskt
- op.process.graphics.connection,com.supermap.desktop.process.graphics.ev
- ents,com.supermap.desktop.process.graphics.graphs.decorators,com.superm
+ p.process.core,com.supermap.desktop.WorkflowView.graphics,com.supermap.deskt
+ op.process.graphics.connection,com.supermap.desktop.WorkflowView.graphics.ev
+ ents,com.supermap.desktop.WorkflowView.graphics.graphs.decorators,com.superm
  ap.desktop.process.parameter.interfaces.datas",com.supermap.desktop.pro
  cess.graphics.graphs.decorators;version="1.0.0";uses:="com.supermap.des
- ktop.process.graphics,com.supermap.desktop.process.graphics.graphs",com
+ ktop.process.graphics,com.supermap.desktop.WorkflowView.graphics.graphs",com
  .supermap.desktop.process.graphics.interaction.canvas;version="1.0.0";u
  ses:="com.supermap.desktop.process,com.supermap.desktop.process.graphic
- s,com.supermap.desktop.process.graphics.events,com.supermap.desktop.pro
- cess.graphics.graphs",com.supermap.desktop.process.graphics.interaction
- .graph;version="1.0.0";uses:="com.supermap.desktop.process.graphics.gra
- phs",com.supermap.desktop.process.graphics.storage;version="1.0.0";uses
- :="com.supermap.desktop.process.graphics,com.supermap.desktop.process.g
- raphics.connection,com.supermap.desktop.process.graphics.events,com.sup
+ s,com.supermap.desktop.WorkflowView.graphics.events,com.supermap.desktop.pro
+ cess.graphics.graphs",com.supermap.desktop.WorkflowView.graphics.interaction
+ .graph;version="1.0.0";uses:="com.supermap.desktop.WorkflowView.graphics.gra
+ phs",com.supermap.desktop.WorkflowView.graphics.storage;version="1.0.0";uses
+ :="com.supermap.desktop.WorkflowView.graphics,com.supermap.desktop.process.g
+ raphics.connection,com.supermap.desktop.WorkflowView.graphics.events,com.sup
  ermap.desktop.process.graphics.graphs",com.supermap.desktop.process.loa
  der;version="1.0.0";uses:="com.supermap.desktop.process.core",com.super
  map.desktop.process.messageBus;version="1.0.0",com.supermap.desktop.pro
@@ -67,14 +67,14 @@ Export-Package: com.supermap.desktop.process.constraint.annotation;versi
  supermap.desktop.process.parameter.interfaces",com.supermap.desktop.pro
  cess.meta.metaProcessImplements.DataRun;uses:="com.supermap.desktop.pro
  cess.meta,com.supermap.desktop.process.parameter.interfaces";version="1
- .0.0",com.supermap.desktop.process.meta.metaProcessImplements;version="
- 1.0.0";uses:="com.supermap.desktop.process.dataconversion,com.supermap.
- desktop.process.meta,com.supermap.desktop.process.meta.metaProcessImple
+ .0.0",com.supermap.desktop.WorkflowView.meta.metaProcessImplements;version="
+ 1.0.0";uses:="com.supermap.desktop.WorkflowView.meta.dataconversion,com.supermap.
+ desktop.process.meta,com.supermap.desktop.WorkflowView.meta.metaProcessImple
  ments.spatialStatistics,com.supermap.desktop.process.parameter.interfac
- es",com.supermap.desktop.process.meta.metaProcessImplements.spatialStat
- istics;version="1.0.0";uses:="com.supermap.desktop.process.meta",com.su
+ es",com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStat
+ istics;version="1.0.0";uses:="com.supermap.desktop.WorkflowView.meta",com.su
  permap.desktop.process.meta.metaProcessImplements.spatialStatistics.Sta
- tisticsField;version="1.0.0",com.supermap.desktop.process.meta.metaProc
+ tisticsField;version="1.0.0",com.supermap.desktop.WorkflowView.meta.metaProc
  essImplements.typeConversion;version="1.0.0";uses:="com.supermap.deskto
  p.process.meta,com.supermap.desktop.process.parameter.interfaces,com.su
  permap.desktop.process.parameter.interfaces.datas.types",com.supermap.d
@@ -91,8 +91,8 @@ Export-Package: com.supermap.desktop.process.constraint.annotation;versi
  permap.desktop.process.parameter.interfaces.datas,com.supermap.desktop.
  process.parameter.interfaces.datas.types",com.supermap.desktop.process.
  parameter;version="1.0.0";uses:="com.supermap.desktop.process.parameter
- .interfaces",com.supermap.desktop.process.parameter.ParameterPanels;ver
- sion="1.0.0";uses:="com.supermap.desktop.process.meta.metaProcessImplem
+ .interfaces",com.supermap.desktop.process.parameters.ParameterPanels;ver
+ sion="1.0.0";uses:="com.supermap.desktop.WorkflowView.meta.metaProcessImplem
  ents.spatialStatistics.StatisticsField,com.supermap.desktop.process.par
  ameter.events,com.supermap.desktop.process.parameter.interfaces",com.su
  permap.desktop.process.tasks;version="1.0.0";uses:="com.supermap.deskto
@@ -100,7 +100,7 @@ Export-Package: com.supermap.desktop.process.constraint.annotation;versi
  desktop.process.tasks.events;version="1.0.0";uses:="com.supermap.deskto
  p.process.core,com.supermap.desktop.process.tasks",com.supermap.desktop
  .process.tasks.Test;version="1.0.0";uses:="com.supermap.desktop.process
- .tasks",com.supermap.desktop.process.ui;version="1.0.0",com.supermap.de
+ .tasks",com.supermap.desktop.WorkflowView.ui;version="1.0.0",com.supermap.de
  sktop.process.util;version="1.0.0";uses:="com.supermap.desktop.process,
  com.supermap.desktop.process.core,com.supermap.desktop.process.tasks"
 Import-Package: org.osgi.framework;version="[1.8,2)",org.osgi.util.track

@@ -6,7 +6,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 
 import javax.swing.*;

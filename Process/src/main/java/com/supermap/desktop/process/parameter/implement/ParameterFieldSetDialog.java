@@ -3,6 +3,7 @@ package com.supermap.desktop.process.parameter.implement;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 
 import java.beans.PropertyChangeEvent;
 

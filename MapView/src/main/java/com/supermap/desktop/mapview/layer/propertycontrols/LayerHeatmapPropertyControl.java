@@ -9,7 +9,7 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerHeatmapPropertyModel;
 import com.supermap.desktop.ui.SMSpinner;
 import com.supermap.desktop.ui.controls.ComponentDropDown;
-import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.utilities.StringUtilities;
 

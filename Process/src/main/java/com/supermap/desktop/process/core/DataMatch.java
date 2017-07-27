@@ -2,8 +2,8 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
-import com.supermap.desktop.ui.mdi.exception.NullParameterException;
 import com.supermap.desktop.utilities.StringUtilities;
+import org.apache.commons.lang.NullArgumentException;
 
 /**
  * Created by highsad on 2017/6/29.
@@ -17,7 +17,7 @@ public class DataMatch implements IRelation<IProcess> {
 
 	public DataMatch(IProcess from, IProcess to, String fromDataName, String toDataName) {
 		if (from == null || to == null || StringUtilities.isNullOrEmpty(fromDataName) || StringUtilities.isNullOrEmpty(toDataName)) {
-			throw new NullParameterException("parameter can not be null.");
+			throw new NullArgumentException("parameter can not be null.");
 		}
 
 		if (from == to) {

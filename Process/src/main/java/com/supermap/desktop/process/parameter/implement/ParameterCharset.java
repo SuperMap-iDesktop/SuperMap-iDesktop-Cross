@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.data.Charset;
-import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.properties.CharsetProperties;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class ParameterCharset extends ParameterComboBox {
 
 	public ParameterCharset() {
-		this(ControlsProperties.getString("String_LabelCharset"));//"字符集:"
+		this(ProcessProperties.getString("String_LabelCharset"));//"字符集:"
 	}
 
 	public ParameterCharset(String describe) {

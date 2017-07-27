@@ -8,9 +8,9 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.ui.lbs.IServerServiceImpl;
-import com.supermap.desktop.ui.lbs.Interface.IServerService;
-import com.supermap.desktop.ui.lbs.params.IServerLoginInfo;
+import com.supermap.desktop.lbs.IServerServiceImpl;
+import com.supermap.desktop.lbs.Interface.IServerService;
+import com.supermap.desktop.lbs.params.IServerLoginInfo;
 import com.supermap.desktop.utilities.StringUtilities;
 import org.apache.http.impl.client.CloseableHttpClient;
 

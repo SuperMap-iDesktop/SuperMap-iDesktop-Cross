@@ -149,7 +149,7 @@ public class DockingUtility implements DockingConstants {
             return (DockingPort) deepestComponent;
 
         // getAncestorOfClass() will either return a null or a Container that is
-        // also an instance of
+        // also an newProcess of
         // DockingPort. Since Container is a subclass of Component, we're fine
         // in returning both
         // cases.

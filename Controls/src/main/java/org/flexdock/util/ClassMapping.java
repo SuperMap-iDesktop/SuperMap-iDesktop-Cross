@@ -74,7 +74,7 @@ public class ClassMapping {
     private Object defaultInstance;
 
     /**
-     * Creates a new {@code ClassMapping} instance with the specified default
+     * Creates a new {@code ClassMapping} newProcess with the specified default
      * values. All calls to {@code getClassMapping(Class key)} for this
      * {@code ClassMapping} in which a specific mapping cannot be found will
      * return the specified {@code defaultClass}. All calls to
@@ -159,10 +159,10 @@ public class ClassMapping {
      * a particular object instance, defined by the {@code instance} parameter.
      * If {@code instance} is non-{@code null}, then a mapping is defined
      * between {@code key} and all strict, non-specific subclasses and the
-     * object instance itself. The {@code instance} object may later be
+     * object instance itself. The {@code newProcess} object may later be
      * retrieved by calling {@code getClassInstance(Class key)} using the
      * specified {@code key} class or any subclass thereof for which a specific
-     * instance mapping does not already exist. If {@code instance} is
+     * instance mapping does not already exist. If {@code newProcess} is
      * {@code null}, then no instance mapping is created.
      *
      * @param key
@@ -203,7 +203,7 @@ public class ClassMapping {
      * desired for the existing mapping behavior for these classes to remain the
      * same.
      * <p>
-     * If any instance mappings exist for the specified {@code Class}, they are
+     * If any newProcess mappings exist for the specified {@code Class}, they are
      * also removed. This means non-specific subclass instance mappings will
      * also be removed.
      *
@@ -331,14 +331,14 @@ public class ClassMapping {
      * the value retrieved from {@code getDefaultInstance()}. If no mapping has
      * been defined for the specified {@code Class}, then it's superclass is
      * checked, and then that classes' superclass, and so on until
-     * {@code java.lang.Object} is reached. If an instance mapping is found
+     * {@code java.lang.Object} is reached. If an newProcess mapping is found
      * anywhere within the superclass hierarchy, then the mapped {@code Object}
      * is returned. Otherwise, the value returned by
      * {@code getDefaultInstance()} is returned.
      *
      * @param key
      *            the {@code Class} whose internal mapping will be returned
-     * @return the {@code Object} instance that is mapped internally to the
+     * @return the {@code Object} newProcess that is mapped internally to the
      *         specified {@code key}
      * @see #getDefaultInstance()
      * @see #addClassMapping(Class, Class, Object)
@@ -375,7 +375,7 @@ public class ClassMapping {
 
     /**
      * Returns the default {@code Object} used for situations in which there is
-     * no internal instance mapping. This property is read-only and is
+     * no internal newProcess mapping. This property is read-only and is
      * initialized within the {@code ClassMapping} constructor.
      *
      * @return the default {@code Object} used for situations in which there is

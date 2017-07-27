@@ -2828,7 +2828,7 @@ public class _Toolkit {
 //    {
 //        boolean result = false;
 //        if (System.ComponentModel.LicenseManager.UsageMode == LicenseUsageMode.Designtime
-//            || Process.GetCurrentProcess().ProcessName.ToLower().Equals(UI.Properties.ControlsResources.String_VSProcessName))
+//            || process.GetCurrentProcess().ProcessName.ToLower().Equals(UI.Properties.ControlsResources.String_VSProcessName))
 //        {
 //            result = true;
 //        }

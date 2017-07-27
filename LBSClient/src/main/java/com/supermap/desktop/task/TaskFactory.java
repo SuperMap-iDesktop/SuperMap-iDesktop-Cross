@@ -3,7 +3,7 @@ package com.supermap.desktop.task;
 import com.supermap.Interface.ILBSTask;
 import com.supermap.Interface.ITaskFactory;
 import com.supermap.Interface.TaskEnum;
-import com.supermap.desktop.ui.lbs.FileInfo;
+import com.supermap.desktop.lbs.FileInfo;
 
 public class TaskFactory implements ITaskFactory {
     private static TaskFactory taskFactory;

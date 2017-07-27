@@ -72,9 +72,9 @@ Export-Package: com.supermap.desktop.controls.colorScheme;version="1.0.0
  version="1.0.0",com.supermap.desktop.ui.controls.toolTip;version="1.0.0
  ",com.supermap.desktop.ui.enums;version="1.0.0",com.supermap.desktop.ui
  .lbs;uses:="com.supermap.desktop.ui.controls.mutiTable.component,com.su
- permap.desktop.ui.lbs.Interface,com.supermap.desktop.ui.lbs.params";ver
- sion="1.0.0",com.supermap.desktop.ui.lbs.Interface;version="1.0.0";uses
- :="com.supermap.desktop.ui.lbs.params",com.supermap.desktop.ui.lbs.para
+ permap.desktop.ui.lbs.Interface,com.supermap.desktop.lbs.params";ver
+ sion="1.0.0",com.supermap.desktop.lbs.Interface;version="1.0.0";uses
+ :="com.supermap.desktop.lbs.params",com.supermap.desktop.ui.lbs.para
  ms;version="1.0.0",com.supermap.desktop.ui.lbs.ui;version="1.0.0";uses:
  ="com.supermap.desktop.ui.controls",com.supermap.desktop.ui.mdi.action;
  version="1.0.0";uses:="com.supermap.desktop.ui.mdi,com.supermap.desktop

@@ -5,7 +5,7 @@ import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.http.download.DownloadUtils;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
-import com.supermap.desktop.ui.lbs.FileInfo;
+import com.supermap.desktop.lbs.FileInfo;
 import com.supermap.desktop.utilities.ManagerXMLParser;
 
 import java.util.concurrent.CancellationException;

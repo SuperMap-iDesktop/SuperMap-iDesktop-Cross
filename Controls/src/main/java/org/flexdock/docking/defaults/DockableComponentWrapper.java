@@ -244,7 +244,7 @@ public class DockableComponentWrapper implements Dockable {
 
     /**
      * Returns the persistent ID of this {@code DockableComponentWrapper}
-     * instance provided when this object was instantiated.
+     * newProcess provided when this object was instantiated.
      *
      * @return the persistent ID of this {@code DockableComponentWrapper}
      * @see Dockable#getPersistentId()
@@ -419,7 +419,7 @@ public class DockableComponentWrapper implements Dockable {
      * action is taken.
      * <p>
      * If the {@code Component} returned by {@code getComponent()} is an
-     * instance of {@code JComponent}, then this method will dispatch to that
+     * newProcess of {@code JComponent}, then this method will dispatch to that
      * {@code JComponent's} {@code putClientProperty(Object, Object)} method.
      * Otherwise, this {@code DockableComponentWrapper} will provide its own
      * internal mapping of client properties.

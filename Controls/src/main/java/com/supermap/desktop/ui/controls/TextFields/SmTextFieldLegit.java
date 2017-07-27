@@ -1,5 +1,7 @@
 package com.supermap.desktop.ui.controls.TextFields;
 
+import com.supermap.desktop.Interface.ISmTextFieldLegit;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;

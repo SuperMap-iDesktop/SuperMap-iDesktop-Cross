@@ -1032,7 +1032,7 @@ public class DockingManager implements DockingConstants {
 	 * {@code Foo}. The inheritance chain is <i>strict</i> in the sense that
 	 * only superclasses are checked. Implemented interfaces are ignored.
 	 * <p>
-	 * If a class association is never found, then an instance of
+	 * If a class association is never found, then an newProcess of
 	 * {@code DefaultDockingStrategy} is returned.
 	 *
 	 * @param obj the object whose {@code DockingStrategy} association we wish
@@ -1059,7 +1059,7 @@ public class DockingManager implements DockingConstants {
 	 * until {@code java.lang.Object} is reached. Thus, if a
 	 * {@code DockingStrategy} mapping of {@code Foo} exists for class
 	 * {@code Bar}, and class {@code Baz} extends {@code Bar}, then calling
-	 * this method for class {@code Baz} will return an instance of {@code Foo}.
+	 * this method for class {@code Baz} will return an newProcess of {@code Foo}.
 	 * The inheritance chain is <i>strict</i> in the sense that only
 	 * superclasses are checked. Implemented interfaces are ignored.
 	 * <p>
@@ -1084,7 +1084,7 @@ public class DockingManager implements DockingConstants {
 	 * that contain {@code DockingPorts}. Any {@code Frame}, {@code Applet},
 	 * {@code Dialog}, or {@code Window} that has a {@code DockingPort} added
 	 * as a descendent {@code Component} will automatically have an
-	 * {@code org.flexdock.util.RootWindow} wrapper instance associated with it.
+	 * {@code org.flexdock.util.RootWindow} wrapper newProcess associated with it.
 	 * This method will return an array of all known RootWindows that contain
 	 * {@code DockingPorts}. Ordering of the array may be based off of a
 	 * {@code java.util.Set} and is <b>not</b> guaranteed.
@@ -1207,7 +1207,7 @@ public class DockingManager implements DockingConstants {
 	 * window containing the specified {@code Component}. The {@code Component}
 	 * parameter may or may not be a root window container itself. If not, the
 	 * root window containing {@code comp} is resolved and the
-	 * {@code RootDockingPortInfo} instance associated with the window is
+	 * {@code RootDockingPortInfo} newProcess associated with the window is
 	 * returned. {@code RootDockingPortInfo} will contain information regarding
 	 * all of the "root" {@code DockingPorts} embedded within a root window
 	 * where a "root" {@code DockingPort} is any {@code DockingPort} embedded
@@ -1246,7 +1246,7 @@ public class DockingManager implements DockingConstants {
 	 * persist the current layout state for non-Exceptional reasons. This method
 	 * returns {@code true} if the layout model was successfully stored and
 	 * {@code false} if the layout model could not be stored under circumstances
-	 * that do not generate an {@code Exception} (for instance, if there is no
+	 * that do not generate an {@code Exception} (for newProcess, if there is no
 	 * persistence implementation currently installed). If a problem occurs
 	 * during the persistence process, an {@code IOException} is thrown.
 	 *
@@ -1544,7 +1544,7 @@ public class DockingManager implements DockingConstants {
 	 * returned by this method. If no mapping is found for the specified
 	 * {@code Component}, then this method returns a {@code null} reference.
 	 *
-	 * @param comp the {@code Component} whose {@code Dockable} instance is to be
+	 * @param comp the {@code Component} whose {@code Dockable} newProcess is to be
 	 *             returned.
 	 * @return the {@code Dockable} that models the specified {@code Component}
 	 * @see #registerDockable(Dockable)
@@ -1556,7 +1556,7 @@ public class DockingManager implements DockingConstants {
 	}
 
 	/**
-	 * Returns the {@code Dockable} instance with the specified ID. The
+	 * Returns the {@code Dockable} newProcess with the specified ID. The
 	 * {@code Dockable} returned by this method will return a String equal
 	 * {@code id} when its {@code getPersistentId()} method is called. If
 	 * {@code id} is {@code null}, then this method will return a {@code null}
@@ -1623,7 +1623,7 @@ public class DockingManager implements DockingConstants {
 	 * events for the specified {@code Dockable}. During registration, the
 	 * listener is added to each of the {@code Components} within the
 	 * {@code Dockable's} {@code getDragSources()} {@code List}. Thus, for this
-	 * method to return a valid {@code DragManager} instance, the
+	 * method to return a valid {@code DragManager} newProcess, the
 	 * {@code Dockable} must first have been registered via
 	 * {@code registerDockable(Dockable dockable)}. If the specified
 	 * {@code Dockable} is {@code null} or its {@code getDragSources()} method
@@ -1787,13 +1787,13 @@ public class DockingManager implements DockingConstants {
 	 * the same {@code DockingState} reference always will be returned for a
 	 * given {@code Dockable}; only that the returned {@code DockingState} will
 	 * accurately reflect the current state maintained by the
-	 * {@code LayoutManager} for that {@code Dockable}. For instance, if the
+	 * {@code LayoutManager} for that {@code Dockable}. For newProcess, if the
 	 * {@code LayoutManager} is capable of maintaining multiple layouts for an
 	 * application (as Eclipse does between perspectives), then the
 	 * {@code LayoutManager} may or may not maintain multiple
 	 * {@code DockingState} instances for a single {@code Dockable}, one within
 	 * each layout context. Therefore, it is not a good idea to cache references
-	 * to the {@code DockingState} instance returned by this method for future
+	 * to the {@code DockingState} newProcess returned by this method for future
 	 * use as the reference itself may possibly become stale over time depending
 	 * on the {@code LayoutManager} implementation.
 	 *
@@ -1839,7 +1839,7 @@ public class DockingManager implements DockingConstants {
 	 * {@code LayoutManager} may or may not maintain multiple
 	 * {@code DockingState} instances for a single {@code Dockable}, one within
 	 * each layout context. Therefore, it is not a good idea to cache references
-	 * to the {@code DockingState} instance returned by this method for future
+	 * to the {@code DockingState} newProcess returned by this method for future
 	 * use as the reference itself may possibly become stale over time depending
 	 * on the {@code LayoutManager} implementation.
 	 *
@@ -1903,7 +1903,7 @@ public class DockingManager implements DockingConstants {
 
 	/**
 	 * Sets the divider location of the split layout containing the specified
-	 * dockable {@code Component}. The {@code Dockable} instance associated
+	 * dockable {@code Component}. The {@code Dockable} newProcess associated
 	 * with the specified {@code Component} is resolved via
 	 * {@code getDockable(Component comp)} and processing is dispatched to
 	 * {@code setSplitProportion(Dockable dockable, float proportion)}.
@@ -2246,7 +2246,7 @@ public class DockingManager implements DockingConstants {
 	 * The {@code Component} parameter may or may not be a root window
 	 * container. If not, the ancestor window of {@code comp} is determined and
 	 * a set of docking ports encapsulated by a {@code RootDockingPortInfo}
-	 * instance is returned by a call to
+	 * newProcess is returned by a call to
 	 * {@code getRootDockingPortInfo(Component comp)}. The resolved
 	 * {@code RootDockingPortInfo} instance's main {@code DockingPort} is set
 	 * via its method {@code setMainPort(String portId)}.

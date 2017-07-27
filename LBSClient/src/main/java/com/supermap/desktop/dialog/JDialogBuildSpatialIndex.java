@@ -6,7 +6,7 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.lbs.WebHDFS;
+import com.supermap.desktop.lbs.WebHDFS;
 import com.supermap.desktop.ui.lbs.ui.JDialogHDFSFiles;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.ui.Action;

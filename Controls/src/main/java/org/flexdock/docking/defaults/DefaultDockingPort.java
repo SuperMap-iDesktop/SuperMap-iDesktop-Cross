@@ -144,7 +144,7 @@ import org.flexdock.util.Utilities;
  *
  * Border management after docking and undocking operations are accomplished
  * using a {@code BorderManager}. {@code setBorderManager()} may be used to set
- * the border manager instance and customize border management.
+ * the border manager newProcess and customize border management.
  *
  * @author Christopher Butler
  *
@@ -492,7 +492,7 @@ public class DefaultDockingPort extends JPanel implements DockingPort,
      * issues the appropriate call to the assigned {@code BorderManager}
      * instance describing the container state. This method will issue a call to
      * 1 of the 4 following methods on the assigned {@code BorderManager}
-     * instance, passing {@code this} as the method argument:
+     * newProcess, passing {@code this} as the method argument:
      * <p>
      * {@code managePortNullChild(DockingPort port)}
      * {@code managePortSimpleChild(DockingPort port)}
@@ -1177,9 +1177,9 @@ public class DefaultDockingPort extends JPanel implements DockingPort,
 
     /**
      * Returns a {@code String} identifier that is unique to
-     * {@code DockingPorts} within a JVM instance, but persistent across JVM
+     * {@code DockingPorts} within a JVM newProcess, but persistent across JVM
      * instances. This is used for configuration mangement, allowing the JVM to
-     * recognize a {@code DockingPort} instance within an application instance,
+     * recognize a {@code DockingPort} newProcess within an application newProcess,
      * persist the ID, and recall it in later application instances. The ID
      * should be unique within an appliation instance so that there are no
      * collisions with other {@code DockingPort} instances, but it should also

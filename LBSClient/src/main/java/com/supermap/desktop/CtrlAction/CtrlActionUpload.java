@@ -15,9 +15,9 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.task.TaskFactory;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.ui.lbs.FileInfo;
-import com.supermap.desktop.ui.lbs.HDFSDefine;
-import com.supermap.desktop.ui.lbs.WebHDFS;
+import com.supermap.desktop.lbs.FileInfo;
+import com.supermap.desktop.lbs.HDFSDefine;
+import com.supermap.desktop.lbs.WebHDFS;
 import com.supermap.desktop.utilities.CommonUtilities;
 import com.supermap.desktop.utilities.CursorUtilities;
 

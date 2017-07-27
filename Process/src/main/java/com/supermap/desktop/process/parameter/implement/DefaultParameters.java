@@ -3,7 +3,6 @@ package com.supermap.desktop.process.parameter.implement;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.Workflow;
-import com.supermap.desktop.process.parameter.ParameterPanels.EmptyParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -32,7 +31,7 @@ public class DefaultParameters implements IParameters {
 
 	public DefaultParameters(IProcess process) {
 		this.process = process;
-		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));
+		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameters.ParameterPanels", "SuperMap.Desktop.process"));
 	}
 
 	@Override

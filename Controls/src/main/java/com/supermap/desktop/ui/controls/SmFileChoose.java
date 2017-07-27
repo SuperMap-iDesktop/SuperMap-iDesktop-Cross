@@ -133,12 +133,12 @@ public class SmFileChoose extends JFileChooser {
 		return flag;
 	}
 
-	public static String createFileFilter(String filterName, String... filters) {
+	public static String createFileFilter(String filterName, String... extensions) {
 		StringBuilder fileFilter = new StringBuilder();
 		fileFilter.append(filterName).append('|');
-		for (int i = 0; i < filters.length; i++) {
-			fileFilter.append(filters[i]);
-			if (i != filters.length - 1) {
+		for (int i = 0; i < extensions.length; i++) {
+			fileFilter.append(extensions[i]);
+			if (i != extensions.length - 1) {
 				fileFilter.append("+");
 			}
 		}
@@ -523,7 +523,7 @@ public class SmFileChoose extends JFileChooser {
 	/**
 	 * 获得设置的默认路径
 	 */
-	public String getModuleLastPath(){
+	public String getModuleLastPath() {
 		return moduleLastPath;
 	}
 }

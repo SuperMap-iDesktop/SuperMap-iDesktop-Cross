@@ -21,9 +21,6 @@ import java.util.ArrayList;
  * Created by highsad on 2016/12/19.
  */
 public class ProcessActivator implements BundleActivator {
-	private static final String processTreeClassName = "com.supermap.desktop.process.core.ProcessManager";
-	private static final String ParameterManagerClassName = "com.supermap.desktop.process.ParameterManager";
-
 	private static BundleContext CONTEXT;
 
 	static BundleContext getContext() {
@@ -40,72 +37,10 @@ public class ProcessActivator implements BundleActivator {
  * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
  */
 	public void start(BundleContext bundleContext) throws Exception {
-		System.out.println("Hello SuperMap === Process!!");
+		System.out.println("Hello SuperMap === process!!");
 		setContext(bundleContext);
-		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Process", bundleContext.getBundle());
+		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.process", bundleContext.getBundle());
 		ProcessApplication.init();
-
-		Application.getActiveApplication().setWorkflowInitListener(new WorkflowInitListener() {
-			@Override
-			public IWorkflow init(Element element) {
-				String name = element.getAttribute("name");
-				Workflow workflow = new Workflow(name);
-				workflow.serializeFrom(element.getAttribute("value"));
-				return workflow;
-			}
-		});
-
-		CommonToolkit.FormWrap.addNewWindowListener(new NewWindowListener() {
-			@Override
-			public void newWindow(NewWindowEvent evt) {
-				newWindowEvent(evt);
-			}
-		});
-	}
-
-	private void newWindowEvent(NewWindowEvent evt) {
-		WindowType type = evt.getNewWindowType();
-		if (type == WindowType.WORKFLOW) {
-			IFormWorkflow formProcess = showProcess(evt.getNewWindowName());
-			evt.setNewWindow(formProcess);
-		}
-	}
-
-	private IFormWorkflow showProcess(String newWindowName) {
-		FormWorkflow formWorkflow = null;
-
-		try {
-			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
-			for (int i = 0; i < formManager.getCount(); i++) {
-				if (formManager.get(i).getWindowType() == WindowType.WORKFLOW && formManager.get(i).getText().equals(newWindowName)) {
-					if (formManager.getActiveForm() != formManager.get(i)) {
-						formManager.setActiveForm(formManager.get(i));
-					}
-					return null;
-				}
-			}
-
-			CursorUtilities.setWaitCursor();
-			ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
-			for (IWorkflow workFlow : workFlows) {
-				if (workFlow.getName().equals(newWindowName)) {
-					formWorkflow = new FormWorkflow(workFlow);
-					break;
-				}
-			}
-			if (formWorkflow == null) {
-				formWorkflow = new FormWorkflow(newWindowName);
-			}
-			formManager.showChildForm(formWorkflow);
-			Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(processTreeClassName)).setVisible(true);
-			Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(ParameterManagerClassName)).setVisible(true);
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-		} finally {
-			CursorUtilities.setDefaultCursor();
-		}
-
-		return formWorkflow;
 	}
 
 	/*
@@ -115,6 +50,6 @@ public class ProcessActivator implements BundleActivator {
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
 		setContext(null);
-		System.out.println("Goodbye SuperMap === Process!!");
+		System.out.println("Goodbye SuperMap === process!!");
 	}
 }

@@ -1,25 +1,5 @@
 package com.supermap.desktop.process.parameter.implement;
 
-import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.process.FormWorkflow;
-import com.supermap.desktop.process.ProcessResources;
-import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.connection.IGraphConnection;
-import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
-import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
-import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
-import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
-import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.graphs.OutputGraph;
-import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
-import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.interfaces.IConGetter;
-import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
-
-import javax.swing.*;
-import java.util.ArrayList;
 
 /**
  * @author XiaJT

@@ -10,7 +10,7 @@ import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.WorkspaceComponentManager;
-import com.supermap.desktop.ui.enums.OverlayAnalystType;
+import com.supermap.desktop.utilities.OverlayAnalystType;
 
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;

@@ -3,7 +3,6 @@ package com.supermap.desktop.process.core;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.events.StatusChangeListener;
-import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
@@ -136,7 +135,7 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	//region 无用方法
 	@Override
 	public String getKey() {
-		return MetaKeys.PROCESS_GROUP;
+		return "ProcessGroup";
 	}
 
 	@Override

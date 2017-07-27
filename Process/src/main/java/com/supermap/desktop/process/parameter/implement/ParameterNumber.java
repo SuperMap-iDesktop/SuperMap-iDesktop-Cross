@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.utilities.StringUtilities;
 
 /**

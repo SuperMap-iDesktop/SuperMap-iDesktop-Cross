@@ -4,7 +4,6 @@ import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListe
 import com.supermap.desktop.process.parameter.events.PanelPropertyChangedListener;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
 import com.supermap.desktop.process.parameter.events.UpdateValueListener;
-import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;

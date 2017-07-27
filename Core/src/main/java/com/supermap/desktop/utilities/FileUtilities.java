@@ -454,4 +454,31 @@ public class FileUtilities {
 		}
 		return result;
 	}
+
+	public static String buildFileFilter(String filterName, String... extensions) {
+		StringBuilder fileFilter = new StringBuilder();
+		fileFilter.append(filterName).append('|');
+		for (int i = 0; i < extensions.length; i++) {
+			fileFilter.append(extensions[i]);
+			if (i != extensions.length - 1) {
+				fileFilter.append("+");
+			}
+		}
+		return fileFilter.toString();
+	}
+
+	public static String buildFileFilters(String... fileFilters) {
+		StringBuilder bufferFileFilter = new StringBuilder();
+		for (String fileFilter : fileFilters) {
+			if (fileFilter == null || fileFilter.length() <= 0) {
+				continue;
+			}
+			bufferFileFilter.append(fileFilter);
+			bufferFileFilter.append("#");
+		}
+		if (bufferFileFilter.length() > 0) {
+			bufferFileFilter.deleteCharAt(bufferFileFilter.length() - 1);
+		}
+		return bufferFileFilter.toString();
+	}
 }

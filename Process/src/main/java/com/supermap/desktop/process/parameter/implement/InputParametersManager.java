@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.DataMatch;
 import com.supermap.desktop.process.core.IProcess;
@@ -147,7 +147,7 @@ public class InputParametersManager {
 		this.paramsMap.put(name, parameterComboBox);
 
 		ParameterCombine combine = new ParameterCombine();
-		combine.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
+		combine.setDescribe(ProcessProperties.getString("String_SourceDataset"));
 		combine.addParameters(parameterComboBox);
 		ArrayList<IParameter> sources = new ArrayList<>();
 		if (parameter.length == 1) {

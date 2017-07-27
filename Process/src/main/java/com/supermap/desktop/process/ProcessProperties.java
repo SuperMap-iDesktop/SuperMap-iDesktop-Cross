@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
  */
 public class ProcessProperties extends Properties {
 
-	public static final String PROCESS = "Process";
+	public static final String PROCESS = "process";
 
 	public static final String getString(String key) {
 		return getString(PROCESS, key);
