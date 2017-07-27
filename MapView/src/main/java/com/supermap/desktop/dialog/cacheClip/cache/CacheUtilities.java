@@ -65,7 +65,6 @@ public class CacheUtilities {
 		}
 		return enable;
 	}
-
 	/**
 	 * get selected workspcace map
 	 *
