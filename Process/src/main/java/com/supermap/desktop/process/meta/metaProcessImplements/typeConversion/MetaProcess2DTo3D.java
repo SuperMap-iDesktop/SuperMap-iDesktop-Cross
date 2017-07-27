@@ -1,10 +1,7 @@
 package com.supermap.desktop.process.meta.metaProcessImplements.typeConversion;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.geometry.Abstract.IGeometry;
-import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
@@ -12,7 +9,6 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.RecordsetUtilities;
@@ -32,15 +28,18 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 
 	public MetaProcess2DTo3D(DatasetType inputType) {
 		this.inputType = inputType;
-		initParameters();
-		initParameterConstraint();
 		if (inputType.equals(DatasetType.POINT)) {
 			outputType = DatasetType.POINT3D;
+			OUTPUT_DATA = "Point2Dto3DResult";
 		} else if (inputType.equals(DatasetType.LINE)) {
 			outputType = DatasetType.LINE3D;
+			OUTPUT_DATA = "Line2Dto3DResult";
 		} else if (inputType.equals(DatasetType.REGION)) {
 			outputType = DatasetType.REGION3D;
+			OUTPUT_DATA = "Region2Dto3DResult";
 		}
+		initParameters();
+		initParameterConstraint();
 	}
 
 	private void initParameters() {
@@ -210,14 +209,46 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 		boolean isConvert = true;
 		if (geometry instanceof GeoPoint) {
 			GeoPoint geoPoint = (GeoPoint) geometry;
-//			GeoPoint3D geoPoint3D=new GeoPoint3D()
+			GeoPoint3D geoPoint3D = new GeoPoint3D(geoPoint.getX(), geoPoint.getY(), Double.valueOf(zCoordinate.toString()));
+			recordsetResult.addNew(geoPoint3D, value);
+			geoPoint3D.dispose();
+			geoPoint.dispose();
+		} else if (geometry instanceof GeoRegion) {
+			GeoRegion geoRegion = (GeoRegion) geometry;
+			for (int i = 0; i < geoRegion.getPartCount(); i++) {
+				Point2Ds point2Ds = geoRegion.getPart(i);
+				Point3Ds point3Ds = new Point3Ds();
+				for (int j = 0; j < point2Ds.getCount(); j++) {
+					point3Ds.add(new Point3D(point2Ds.getItem(j).getX(), point2Ds.getItem(j).getY(), Double.valueOf(zCoordinate.toString())));
+				}
+				GeoRegion3D geoRegion3D = new GeoRegion3D(point3Ds);
+				recordsetResult.addNew(geoRegion3D, value);
+				geoRegion3D.dispose();
+			}
+			geoRegion.dispose();
 		}
-//TODO
 		return isConvert;
 	}
 
 	private boolean convert(Recordset recordsetResult, Geometry geometry, Map<String, Object> value,Object fromCoordinate,Object toCoordinate) {
-		//TODO
-		return false;
+		boolean isConvert = true;
+		if (geometry instanceof GeoLine) {
+			GeoLine geoLine = (GeoLine) geometry;
+			for (int i = 0; i < geoLine.getPartCount(); i++) {
+				Point2Ds point2Ds = geoLine.getPart(i);
+				double increment = (Double.valueOf(fromCoordinate.toString()) - Double.valueOf(toCoordinate.toString())) / point2Ds.getCount();
+				Point3Ds point3Ds = new Point3Ds();
+				for (int j = 0; j < point2Ds.getCount(); j++) {
+					point3Ds.add(new Point3D(point2Ds.getItem(j).getX(), point2Ds.getItem(j).getY(), (Double.valueOf(fromCoordinate.toString()) + increment * j)));
+				}
+				GeoLine3D geoLine3D = new GeoLine3D(point3Ds);
+				recordsetResult.addNew(geoLine3D, value);
+				geoLine3D.dispose();
+			}
+			geoLine.dispose();
+		} else {
+			isConvert = false;
+		}
+		return isConvert;
 	}
 }
