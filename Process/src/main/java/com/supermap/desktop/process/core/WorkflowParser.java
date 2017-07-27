@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
+import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.MetaProcessImportFactory;
@@ -287,6 +288,18 @@ public class WorkflowParser {
 			result = new MetaProcessTextToPoint();
 		} else if (MetaKeys.CONVERSION_EPS_TO_SIMPLE.equals(key)) {
 			result = new MetaProcessEPSToSimple();
+		} else if (MetaKeys.CONVERSION_POINT3D_TO_2D.equals(key)) {
+			result = new MetaProcessPoint3DTo2D();
+		} else if (MetaKeys.CONVERSION_LINE3D_TO_2D.equals(key)) {
+			result = new MetaProcessLine3DTo2D();
+		} else if (MetaKeys.CONVERSION_REGION3D_TO_2D.equals(key)) {
+			result = new MetaProcessRegion3DTo2D();
+		} else if (MetaKeys.CONVERSION_POINT2D_TO_3D.equals(key)) {
+			result = new MetaProcess2DTo3D(DatasetType.POINT);
+		} else if (MetaKeys.CONVERSION_LINE2D_TO_3D.equals(key)) {
+			result = new MetaProcess2DTo3D(DatasetType.LINE);
+		} else if (MetaKeys.CONVERSION_REGION2D_TO_3D.equals(key)) {
+			result = new MetaProcess2DTo3D(DatasetType.REGION);
 		} else if (MetaKeys.EDGE_MATCH.equals(key)) {
 			result = new MetaProcessEdgeMatch();
 		} else if (MetaKeys.PICKUP_BORDER.equals(key)) {

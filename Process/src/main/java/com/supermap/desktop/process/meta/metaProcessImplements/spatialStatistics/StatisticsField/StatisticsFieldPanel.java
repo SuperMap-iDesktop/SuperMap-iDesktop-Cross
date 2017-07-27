@@ -518,6 +518,8 @@ public class StatisticsFieldPanel extends JPanel {
 			buttonSelectInvert = new SmButton();
 			buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 			buttonSelectInvert.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
+			buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
+			buttonSelectInvert.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
 			buttonOK.setText(CommonProperties.getString(CommonProperties.OK));
 			buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 			scrollPane = new JScrollPane();

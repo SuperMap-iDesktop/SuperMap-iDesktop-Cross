@@ -18,6 +18,10 @@ import com.supermap.desktop.utilities.RecordsetUtilities;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 当只有源数据及结果数据，且输入输出数据集类型都只有一种时，可用此模板
+ * by Chens
+ */
 public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversion{
     protected static String OUTPUT_DATA = "OutputData";
 
