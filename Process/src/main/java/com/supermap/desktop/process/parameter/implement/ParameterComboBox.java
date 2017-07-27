@@ -28,6 +28,7 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 	protected ParameterDataNode value;
 
 	private IConGetter iConGetter;
+	private boolean isEditable = true;
 
 	public ParameterComboBox() {
 		this("");
@@ -164,5 +165,13 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 
 	public void setIConGetter(IConGetter iConGetter) {
 		this.iConGetter = iConGetter;
+	}
+
+	public boolean isEditable() {
+		return this.isEditable;
+	}
+
+	public void setEditable(boolean isEditable) {
+		this.isEditable = isEditable;
 	}
 }

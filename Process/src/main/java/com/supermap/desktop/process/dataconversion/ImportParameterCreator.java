@@ -18,7 +18,9 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
+import java.io.File;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -44,6 +46,7 @@ public class ImportParameterCreator implements IParameterCreator {
 
 	@Override
 	public CopyOnWriteArrayList<ReflectInfo> create(Object importSetting) {
+		//转换参数设置
 		parameterCombineParamSet = null;
 		CopyOnWriteArrayList<ReflectInfo> result = new CopyOnWriteArrayList<>();
 		if (importSetting instanceof ImportSettingRAW || importSetting instanceof ImportSettingTEMSClutter
@@ -330,6 +333,10 @@ public class ImportParameterCreator implements IParameterCreator {
 			setColorIndexFilePath.methodName = "setColorIndexFilePath";
 			ParameterFile colorIndex = new ParameterFile(CommonProperties.getString("String_ColorIndexFile"));
 			colorIndex.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_color"), "wat")), "ColorIndexFile"));
+			String filePath = ((ImportSettingMAPGIS) importSetting).getColorIndexFilePath();
+			if (!StringUtilities.isNullOrEmpty(filePath)) {
+				colorIndex.setSelectedItem(new File(filePath).getAbsolutePath());
+			}
 			setColorIndexFilePath.parameter = colorIndex;
 
 			result.add(setColorIndexFilePath);
@@ -441,6 +448,7 @@ public class ImportParameterCreator implements IParameterCreator {
 
 	@Override
 	public CopyOnWriteArrayList<ReflectInfo> createSourceInfo(Object o, final String importType) {
+		//源文件信息设置
 		CopyOnWriteArrayList<ReflectInfo> sourceInfo = new CopyOnWriteArrayList<>();
 		ImportSetting importSetting = null;
 		if (o instanceof ImportSetting) {
@@ -483,6 +491,7 @@ public class ImportParameterCreator implements IParameterCreator {
 
 	@Override
 	public CopyOnWriteArrayList<ReflectInfo> createResult(Object o, final String importType) {
+		//结果设置
 		CopyOnWriteArrayList<ReflectInfo> resultInfo = new CopyOnWriteArrayList<>();
 		ImportSetting importSetting = null;
 		if (o instanceof ImportSetting) {
