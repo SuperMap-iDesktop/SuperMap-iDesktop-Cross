@@ -69,7 +69,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 		parameterTextFieldDistanceTolerance.setToolTip(ProcessProperties.getString("String_DistanceTolerance") + " {-1, [0, +∞) }");
 		parameterTextFieldExponent.setDescribe(ProcessProperties.getString("String_Exponent"));
 		parameterCheckBoxFDRAdjusted.setDescribe(ProcessProperties.getString("String_FDRAdjusted"));
-		parameterFile.setDescribe(ProcessProperties.getString("String_SWM"));
+		parameterFile.setDescribe(ProcessProperties.getString("String_Label_SWM"));
 		parameterTextFieldKNeighbors.setMinValue(1);
 		parameterTextFieldKNeighbors.setMaxBit(0);
 
@@ -169,12 +169,12 @@ public class ParameterPatternsParameter extends ParameterCombine {
 		});
 
 		this.addParameters(parameterAssessmentFieldComboBox, parameterComboBoxConceptModel, parameterDistanceMethod);
-		if (metaKeys.equals(MetaKeys.hotSpotAnalyst) || metaKeys.equals(MetaKeys.optimizedHotSpotAnalyst)) {
+		if (metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST) || metaKeys.equals(MetaKeys.OPTIMIZED_HOT_SPOT_ANALYST)) {
 			this.addParameters(parameterSelfWeightFieldComboBox);
 		} else {
 			this.addParameters(parameterCheckBoxStandardization);
 		}
-		if (metaKeys.equals(MetaKeys.hotSpotAnalyst) || metaKeys.equals(MetaKeys.optimizedHotSpotAnalyst) || metaKeys.equals(MetaKeys.clusterOutlierAnalyst)) {
+		if (metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST) || metaKeys.equals(MetaKeys.OPTIMIZED_HOT_SPOT_ANALYST) || metaKeys.equals(MetaKeys.CLUSTER_OUTLIER_ANALYST)) {
 			this.addParameters(parameterCheckBoxFDRAdjusted);
 		}
 		this.addParameters(parameterSwitchMain);
@@ -225,10 +225,10 @@ public class ParameterPatternsParameter extends ParameterCombine {
 		} else if (conceptualizationModel == ConceptualizationModel.SPATIALWEIGHTMATRIXFILE) {
 			patternsParameter.setFilePath((String) parameterFile.getSelectedItem());
 		}
-		if (metaKeys.equals(MetaKeys.hotSpotAnalyst) || metaKeys.equals(MetaKeys.clusterOutlierAnalyst)) {
+		if (metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST) || metaKeys.equals(MetaKeys.CLUSTER_OUTLIER_ANALYST)) {
 			patternsParameter.setFDRAdjusted(Boolean.valueOf((String) parameterCheckBoxFDRAdjusted.getSelectedItem()));
 		}
-		if (metaKeys.equals(MetaKeys.hotSpotAnalyst)) {
+		if (metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST)) {
 			patternsParameter.setSelfWeightFieldName(parameterSelfWeightFieldComboBox.getFieldName());
 		} else {
 			patternsParameter.setStandardization(Boolean.valueOf((String) parameterCheckBoxStandardization.getSelectedItem()));

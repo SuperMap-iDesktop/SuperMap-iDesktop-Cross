@@ -578,7 +578,7 @@ public class ImportParameterCreator implements IParameterCreator {
 		ReflectInfo reflectInfoDatasetType = new ReflectInfo();
 
 		//// FIXME: 2017/4/25 ImportSettingGPX是DataConversion下定义的，找不到依赖
-//        if (importSetting instanceof ImportSettingCSV || importSetting instanceof ImportSettingGPX) {
+
 		if (importSetting instanceof ImportSettingCSV) {
 			resultInfo.clear();
 			resultInfo.add(targetDatasource);

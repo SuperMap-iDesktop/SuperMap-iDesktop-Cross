@@ -2,15 +2,13 @@ package com.supermap.desktop.localUtilities;
 
 import com.supermap.data.DatasetVector;
 import com.supermap.data.conversion.FileType;
-import com.supermap.desktop.UserDefineType.GPXAnalytic;
-import com.supermap.desktop.UserDefineType.UserDefineFileType;
+import com.supermap.desktop.implement.UserDefineType.GPXAnalytic;
+import com.supermap.desktop.implement.UserDefineType.UserDefineFileType;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
-import com.supermap.desktop.geometry.Abstract.IFlatFeature;
 import com.supermap.desktop.iml.ExportFileInfo;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;

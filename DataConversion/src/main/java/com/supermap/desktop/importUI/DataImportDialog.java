@@ -6,7 +6,7 @@ import com.supermap.desktop.Interface.IImportPanelFactory;
 import com.supermap.desktop.Interface.IImportSettingFactory;
 import com.supermap.desktop.Interface.IPanelImport;
 import com.supermap.desktop.Interface.IPanelModel;
-import com.supermap.desktop.UserDefineType.ImportSettingGPX;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.*;

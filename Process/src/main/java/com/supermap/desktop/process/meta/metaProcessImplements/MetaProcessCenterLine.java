@@ -131,7 +131,7 @@ public abstract class MetaProcessCenterLine extends MetaProcess {
 				fireRunning(new RunningEvent(MetaProcessCenterLine.this, 100, "finished"));
 			}
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+			Application.getActiveApplication().getOutput().output(e);
 		}finally {
 			Generalization.removeSteppedListener(steppedListener);
 		}

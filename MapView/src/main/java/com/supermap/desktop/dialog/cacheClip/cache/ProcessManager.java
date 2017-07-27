@@ -1,5 +1,7 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
+import com.supermap.desktop.utilities.FileLocker;
+
 import java.io.File;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +44,7 @@ public class ProcessManager {
 
 	public void removeAllProcess(String taskPath, String path) {
 		try {
-			dispose();
+			removeProcesses();
 			String doingPath = null;
 			File taskFiles = new File(taskPath);
 			if (taskFiles.exists()) {
@@ -50,14 +52,7 @@ public class ProcessManager {
 			}
 			File doingDirectory = new File(doingPath);
 			if (doingDirectory.exists()) {
-				File[] doingScis = doingDirectory.listFiles();
-				for (int i = 0; i < doingScis.length; i++) {
-					while (true) {
-						if (doingScis[i].renameTo(new File(taskFiles, doingScis[i].getName()))) {
-							break;
-						}
-					}
-				}
+				CacheUtilities.renameFiles(taskPath,doingDirectory);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -67,42 +62,22 @@ public class ProcessManager {
 	/**
 	 * @param params
 	 * @param newProcessCount
-	 * @param sciPath
+	 * @param taskPath
 	 */
-	public void removeProcess(String[] params, int newProcessCount, String sciPath) {
+	public void removeProcess(String[] params, int newProcessCount, String taskPath) {
 		try {
-			for (int i = threadList.size() - 1; i >= 0; i--) {
-				threadList.get(i).process.destroy();
-			}
-			Thread.sleep(2 * 1000);
-			threadList.clear();
-			File taskFiles = new File(sciPath);
+			removeProcesses();
+			File taskFiles = new File(taskPath);
 			String doingPath = null;
 			if (taskFiles.exists()) {
-				doingPath = CacheUtilities.replacePath(taskFiles.getParentFile().getAbsolutePath(), "doing");
+				doingPath = CacheUtilities.replacePath(taskFiles.getParent(), "doing");
+			} else {
+				return;
 			}
 
-//			String logFolder = ".\\temp_log\\";
-//			if (CacheUtilities.isLinux()) {
-//				logFolder = "./temp_log/";
-//			}
-//			File logDirectory = new File(logFolder);
-//			CopyOnWriteArrayList<String> undoScis = new CopyOnWriteArrayList<>();
-//			if (logDirectory.exists() && logDirectory.isDirectory()) {
-////				int mergeSciCount = Integer.valueOf(params[BuildCache.MERGESCICOUNT_INDEX]);
-//				undoScis = getUndoScis(logDirectory, 3);
-//			}
 			LogWriter.removeAllLogs();
 			File doingDirectory = new File(doingPath);
-			if (doingDirectory.exists()) {
-				File[] doingScis = doingDirectory.listFiles();
-				for (int i = 0; i < doingScis.length; i++) {
-//					for (int j = 0; j < undoScis.size(); j++) {
-//						if (undoScis.get(j).contains(doingScis[i].getName()))
-					doingScis[i].renameTo(new File(taskFiles, doingScis[i].getName()));
-//					}
-				}
-			}
+			CacheUtilities.renameFiles(taskPath, doingDirectory);
 			BuildCache buildCache = new BuildCache();
 			buildCache.startProcess(newProcessCount, params);
 		} catch (Throwable throwable) {
@@ -110,59 +85,26 @@ public class ProcessManager {
 		}
 	}
 
-//	private CopyOnWriteArrayList<String> getUndoScis(File logDirectory, int mergeCount) throws IOException {
-//		CopyOnWriteArrayList<String> result = new CopyOnWriteArrayList<>();
-//		try {
-//			File[] logfiles = logDirectory.listFiles();
-//			for (int i = 0; i < logfiles.length; i++) {
-//				CopyOnWriteArrayList<String> doingSci = new CopyOnWriteArrayList<>();
-//				if (logfiles[i].getName().contains(LogWriter.BUILD_CACHE)) {
-//					InputStream stream = new FileInputStream(logfiles[i]);
-//					String osName = System.getProperty("os.name").toLowerCase();
-//					BufferedReader bufferedReader;
-//					if (osName.startsWith("linux")) {
-//						bufferedReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-//					} else {
-//						bufferedReader = new BufferedReader(new InputStreamReader(stream, "GBK"));
-//					}
-//					String line = null;
-//					while ((line = bufferedReader.readLine()) != null) {
-//						if (line.contains("doing:")) {
-//							String sciName = line.substring(line.indexOf("doing:"), line.length());
-//							doingSci.add(sciName);
-//						}
-//					}
-//					stream.close();
-//					bufferedReader.close();
-//				}
-//				if (doingSci.size() > 0) {
-//					for (int j = doingSci.size() - 1; j > doingSci.size() - 1 - mergeCount; j--) {
-//						result.add(doingSci.get(j));
-//					}
-//				}
-//			}
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		}
-//		return result;
-//	}
 
 	public void dispose() {
 		try {
-			if (threadList.size() == 1) {
-				threadList.get(0).process.destroy();
-			} else {
-				for (int i = threadList.size() - 1; i >= 0; i--) {
-					threadList.get(i).process.destroy();
-					TimeUnit.SECONDS.sleep(2);
-				}
-			}
-			threadList.clear();
-//			protectThread.exit = false;
-			ProcessManager.this.finalize();
+			removeProcesses();
+			processManager.finalize();
 		} catch (Throwable throwable) {
 			throwable.printStackTrace();
 		}
+	}
+
+	private void removeProcesses() throws InterruptedException {
+		if (threadList.size() == 1) {
+			threadList.get(0).process.destroy();
+		} else {
+			for (int i = threadList.size() - 1; i >= 0; i--) {
+				threadList.get(i).process.destroy();
+			}
+		}
+		TimeUnit.SECONDS.sleep(2);
+		threadList.clear();
 	}
 
 //	class ProtectThread extends Thread {

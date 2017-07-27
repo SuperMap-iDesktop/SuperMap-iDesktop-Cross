@@ -6,7 +6,7 @@ import com.supermap.data.EncodeType;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IImportSettingResultset;
-import com.supermap.desktop.UserDefineType.ImportSettingGPX;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.dataconversion.DataConversionProperties;

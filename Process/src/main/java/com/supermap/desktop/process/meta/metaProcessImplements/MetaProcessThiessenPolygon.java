@@ -6,6 +6,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
@@ -20,8 +21,8 @@ import com.supermap.desktop.utilities.DatasetUtilities;
  * Created by Chen on 2017/7/3 0003.
  */
 public class MetaProcessThiessenPolygon extends MetaProcess {
-    private static final String INPUT_DATA = "input_data";
-    private static final String OUTPUT_DATA = "output_data";
+    private static final String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+    private static final String OUTPUT_DATA = "ThiessenPolygonResult";
 
     private ParameterDatasourceConstrained sourceDatasource;
     private ParameterSingleDataset sourceDataset;
@@ -58,6 +59,7 @@ public class MetaProcessThiessenPolygon extends MetaProcess {
         EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
         equalDatasourceConstraint.constrained(sourceDatasource,ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
         equalDatasourceConstraint.constrained(sourceDataset,ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+        DatasourceConstraint.getInstance().constrained(resultDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
     }
 
     private void initParametersState() {

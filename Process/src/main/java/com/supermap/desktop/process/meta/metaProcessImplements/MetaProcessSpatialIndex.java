@@ -24,8 +24,8 @@ import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
  * @author XiaJT
  */
 public class MetaProcessSpatialIndex extends MetaProcess {
-	private final static String INPUT_DATA = "InputData";
-	private final static String OUTPUT_DATA = "output";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	private final static String OUTPUT_DATA = "SpatialIndexResult";
 	private ParameterDatasourceConstrained datasource;
 	private ParameterSingleDataset dataset;
 	private ParameterComboBox parameterComboBox;

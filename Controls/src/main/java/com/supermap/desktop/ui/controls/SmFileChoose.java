@@ -523,7 +523,7 @@ public class SmFileChoose extends JFileChooser {
 	/**
 	 * 获得设置的默认路径
 	 */
-	public String getModuleLastPath(){
+	public String getModuleLastPath() {
 		return moduleLastPath;
 	}
 }

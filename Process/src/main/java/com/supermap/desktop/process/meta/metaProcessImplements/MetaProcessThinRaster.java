@@ -25,8 +25,8 @@ import java.beans.PropertyChangeListener;
  * Created by lixiaoyao on 2017/7/11.
  */
 public class MetaProcessThinRaster extends MetaProcess{
-	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");;
-	private final static String OUTPUT_DATA = "ExtractResult";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	private final static String OUTPUT_DATA = "ThinRasterResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;

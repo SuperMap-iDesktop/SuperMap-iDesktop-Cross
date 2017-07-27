@@ -38,8 +38,8 @@ import java.beans.PropertyChangeListener;
  * @author XiaJT
  */
 public class MetaProcessProjection extends MetaProcess {
-	private final static String INPUT_DATA = "InputData";
-	private final static String OUTPUT_DATA = "output";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	private final static String OUTPUT_DATA = "ProjectionResult";
 
 	private PrjCoordSys prjCoordSys;
 	private ParameterDatasourceConstrained parameterDatasource;

@@ -1,7 +1,7 @@
 package com.supermap.desktop.localUtilities;
 
 import com.supermap.data.conversion.FileType;
-import com.supermap.desktop.UserDefineType.UserDefineFileType;
+import com.supermap.desktop.implement.UserDefineType.UserDefineFileType;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.FileTypeLocale;
 

@@ -17,6 +17,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.*;
 
+import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -59,10 +60,10 @@ public class MetaProcessDEMBuild extends MetaProcess{
     private ParameterSingleDataset eraseDataset;
     //endregion
 
-    private static final String INPUT_DATA = "SourceData";
-    private static final String LAKE_DATA = "LakeData";
-    private static final String CLIP_DATA = "ClipData";
-    private static final String ERASE_DATA = "EraseData";
+    private static final String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+    private static final String LAKE_DATA = CommonProperties.getString("String_GroupBox_LakeData");
+    private static final String CLIP_DATA = ProcessProperties.getString("String_GroupBox_ClipData");
+    private static final String ERASE_DATA = ProcessProperties.getString("String_GroupBox_EraseData");
     private static final String OUTPUT_DATA = "DEMBuildResult";
 
     /*重采样距离需要源数据集为线类型且插值方法为TIN，因此设置两个开关*/
@@ -314,12 +315,17 @@ public class MetaProcessDEMBuild extends MetaProcess{
             } else {
                 src = (DatasetVector) sourceDataset.getSelectedItem();
             }
-            if (src.getType() == DatasetType.POINT) {
-                terrainBuilderParameter.setPointDatasets(new DatasetVector[]{src});
-                terrainBuilderParameter.setPointAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
-            } else if (src.getType() == DatasetType.LINE) {
-                terrainBuilderParameter.setLineDatasets(new DatasetVector[]{src});
-                terrainBuilderParameter.setLineAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
+            if (comboBoxSourceField.getSelectedItem().toString() != "") {
+                if (src.getType() == DatasetType.POINT) {
+                    terrainBuilderParameter.setPointDatasets(new DatasetVector[]{src});
+                    terrainBuilderParameter.setPointAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
+                } else if (src.getType() == DatasetType.LINE) {
+                    terrainBuilderParameter.setLineDatasets(new DatasetVector[]{src});
+                    terrainBuilderParameter.setLineAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
+                }
+            } else {
+                Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_NullHeightValue_Error"));
+                return false;
             }
 
             DatasetVector srcLake=null;
@@ -377,7 +383,7 @@ public class MetaProcessDEMBuild extends MetaProcess{
 
             fireRunning(new RunningEvent(this, 100, "finished"));
         } catch (Exception e) {
-            Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+            Application.getActiveApplication().getOutput().output(e);
         } finally{
             TerrainBuilder.removeSteppedListener(steppedListener);
         }
