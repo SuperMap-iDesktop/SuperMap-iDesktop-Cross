@@ -11,6 +11,7 @@ public class MetaKeys {
 	public static final String SET_PROJECTION = "SetProjection";
 	public static final String EXPORTGRID = "ExportGrid";
 	public static final String EXPORTVECTOR = "ExportVector";
+	public static final String FIELD_INDEX="FieldIndex";
 
 	public static final String GRIDREGION_AGGREGATION = "GridRegionAggregation";
 	public static final String POLYGON_AGGREGATION = "PolygonAggregation";
