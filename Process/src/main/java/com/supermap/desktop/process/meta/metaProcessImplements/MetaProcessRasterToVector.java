@@ -27,7 +27,7 @@ import java.beans.PropertyChangeListener;
  */
 public class MetaProcessRasterToVector extends MetaProcess {
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
-	private final static String OUTPUT_DATA = "RasterToVectorResult";
+	private final static String OUTPUT_DATA = "ExtractResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
@@ -108,13 +108,17 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		imageDatasetSetting.addParameters(comboBoxBackColor, textFieldColorTolerance);
 
 		this.parameters.setParameters(sourceData, vertorizeLineSetting, gridDatasetSetting, imageDatasetSetting, resultData);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.IMAGE, sourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.VECTOR, resultData);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.ALL_RASTER, sourceData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.SIMPLE_VECTOR, resultData);
 	}
 
 	private void initParametersState() {
-		Dataset datasetGrid = DatasetUtilities.getDefaultDataset(DatasetType.IMAGE,DatasetType.GRID);
+		Dataset datasetGrid=null;
+		if (parameters.getInputs().getData(INPUT_DATA).getValue()!=null){
+			datasetGrid=(Dataset) parameters.getInputs().getData(INPUT_DATA).getValue();
+		}else {
+			datasetGrid = DatasetUtilities.getDefaultDataset(DatasetType.IMAGE, DatasetType.GRID);
+		}
 		if (datasetGrid != null) {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
@@ -157,7 +161,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		textFieldGridValueTolerance.setSelectedItem("0");
 		textFieldGridValueTolerance.setMinValue(0);
 		textFieldGridValueTolerance.setIsIncludeMin(true);
-		gridDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetGrid);
+		//gridDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetGrid);
 		comboBoxBackColor.setSelectedItem(Color.WHITE);
 		comboBoxBackColor.setRequisite(true);
 

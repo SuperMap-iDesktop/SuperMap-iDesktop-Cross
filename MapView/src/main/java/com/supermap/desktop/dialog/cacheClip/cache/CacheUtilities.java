@@ -125,7 +125,7 @@ public class CacheUtilities {
 //		return pidNameSet;
 //	}
 
-	public static boolean volatileDatasource() {
+	public static boolean voladateDatasource() {
 		boolean result = true;
 		if (null != Application.getActiveApplication().getWorkspace().getDatasources()) {
 			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();

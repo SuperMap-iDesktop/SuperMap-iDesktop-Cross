@@ -14,6 +14,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.ArrayUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -24,6 +25,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * @author XiaJT
@@ -111,6 +113,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 		String describe = parameterFieldComboBox.getDescribe();
 		if (describe != null) {
 			label.setText(describe);
+			label.setText(getDescribe());
 		}
 		DatasetVector dataset = parameterFieldComboBox.getDataset();
 		resetComboBoxItems(dataset);
@@ -148,7 +151,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 					}
 				}
 			}
-			comboBox.setSelectedIndex(-1);
+			comboBox.setSelectedItem(null);
 			if (comboBox.getItemCount() > 0) {
 				// 先询问参数是否满意当前选项
 				// Ask if the parameters are satisfied with the current option
@@ -190,9 +193,9 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 							break;
 						}
 					}
-					if (comboBox.getSelectedIndex() == -1) {
+					/*if (comboBox.getSelectedIndex() == -1) {
 						parameterFieldComboBox.setSelectedItem("");
-					}
+					}*/
 				}
 			} else {
 				parameterFieldComboBox.setSelectedItem(null);
@@ -207,4 +210,16 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
     protected void descriptionVisibleChanged(boolean newValue) {
         label.setVisible(newValue);
     }
+
+	/**
+	 * @return
+	 */
+	private String getDescribe() {
+		String describe = parameterFieldComboBox.getDescribe();
+		if (parameterFieldComboBox.isRequisite()) {
+			return MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);
+		} else {
+			return describe;
+		}
+	}
 }

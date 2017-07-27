@@ -24,7 +24,7 @@ public class CtrlActionWorkSpaceMultiProcessClipNew extends CtrlAction {
 		if (!CacheUtilities.dynamicEffectClosed(map)) {
 			return;
 		}
-		if (CacheUtilities.volatileDatasource()) {
+		if (CacheUtilities.voladateDatasource()) {
 			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheNew"));
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 			Map newMap = new Map(Application.getActiveApplication().getWorkspace());

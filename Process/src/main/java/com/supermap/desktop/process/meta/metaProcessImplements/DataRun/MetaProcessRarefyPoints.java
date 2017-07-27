@@ -31,7 +31,7 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 
 	private ParameterSaveDataset saveDataset;
 	private ParameterNumber parameterNumberRadius;
-	private ParameterLabel parameterLabelRadiusUnit;
+	//private ParameterLabel parameterLabelRadiusUnit;
 
 	private static final int radiusNoneEarth = 100;
 	private static final double radiusDegree = 0.0001 * 100;
@@ -48,7 +48,7 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 		this.dataset = new ParameterSingleDataset(DatasetType.POINT);
 		this.saveDataset = new ParameterSaveDataset();
 		this.parameterNumberRadius = new ParameterNumber(CommonProperties.getString("String_RarefyPointsRadius"));
-		this.parameterLabelRadiusUnit = new ParameterLabel();
+		//this.parameterLabelRadiusUnit = new ParameterLabel();
 
 		this.parameterNumberRadius.setRequisite(true);
 		ParameterCombine sourceData = new ParameterCombine();
@@ -58,11 +58,11 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 		targetData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		targetData.addParameters(saveDataset);
 
-		ParameterCombine parameterCombineParent = new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterNumberRadius, parameterLabelRadiusUnit);
-		parameterCombineParent.setWeightIndex(0);
+//		ParameterCombine parameterCombineParent = new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterNumberRadius, parameterLabelRadiusUnit);
+//		parameterCombineParent.setWeightIndex(0);
 		ParameterCombine paramSet = new ParameterCombine();
 		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
-		paramSet.addParameters(parameterCombineParent);
+		paramSet.addParameters(parameterNumberRadius);
 
 		this.parameters.setParameters(sourceData, paramSet, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, sourceData);
@@ -84,8 +84,9 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 			this.dataset.setSelectedItem(defaultDataset);
 			this.saveDataset.setResultDatasource(defaultDataset.getDatasource());
 			this.saveDataset.setSelectedItem(defaultDataset.getDatasource().getDatasets().getAvailableDatasetName("result_RarefyPoints"));
-			this.parameterLabelRadiusUnit.setDescribe(defaultDataset.getPrjCoordSys().getCoordUnit().toString());
-			this.parameterLabelRadiusUnit.setSelectedItem(defaultDataset.getPrjCoordSys().getCoordUnit().toString());
+			//this.parameterLabelRadiusUnit.setDescribe(defaultDataset.getPrjCoordSys().getCoordUnit().toString());
+			//this.parameterLabelRadiusUnit.setSelectedItem(defaultDataset.getPrjCoordSys().getCoordUnit().toString());
+			this.parameterNumberRadius.setUnit(defaultDataset.getPrjCoordSys().getCoordUnit().toString());
 			updateTextRadius(defaultDataset.getPrjCoordSys());
 		}
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
@@ -100,7 +101,7 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (dataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
-					parameterLabelRadiusUnit.setSelectedItem(((Dataset) evt.getNewValue()).getPrjCoordSys().getCoordUnit().toString());
+					parameterNumberRadius.setUnit(((Dataset) evt.getNewValue()).getPrjCoordSys().getCoordUnit().toString());
 					updateTextRadius(((Dataset) evt.getNewValue()).getPrjCoordSys());
 				}
 			}

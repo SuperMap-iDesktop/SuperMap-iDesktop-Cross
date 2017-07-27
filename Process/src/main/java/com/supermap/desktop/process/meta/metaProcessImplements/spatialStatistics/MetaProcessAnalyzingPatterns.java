@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics;
 
+import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
@@ -11,7 +12,6 @@ import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
@@ -20,7 +20,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 public abstract class MetaProcessAnalyzingPatterns extends MetaProcess {
 	private static final String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
 	protected ParameterDatasource datasource = new ParameterDatasource();
-	protected ParameterSingleDataset dataset = new ParameterSingleDataset(DatasetTypeUtilities.getDatasetTypeVector());
+	protected ParameterSingleDataset dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 	protected ParameterPatternsParameter parameterPatternsParameter = new ParameterPatternsParameter(getKey());
 
 

@@ -4,6 +4,8 @@ import com.supermap.data.*;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
+import com.supermap.desktop.implement.UserDefineType.UserDefineImportResult;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.IParameterCreator;
 import com.supermap.desktop.process.dataconversion.ImportParameterCreator;
@@ -18,6 +20,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.FileUtilities;
@@ -25,6 +28,9 @@ import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -286,35 +292,106 @@ public class MetaProcessImport extends MetaProcess {
 
 	private boolean doImport() {
 		boolean isSuccessful = false;
-		DataImport dataImport = ImportSettingSetter.setParameter(importSetting, sourceImportParameters, resultImportParameters, paramParameters);
-		try {
+		long startTime = System.currentTimeMillis();
+		long endTime;
+		long time;
+		if (importSetting instanceof ImportSettingGPX) {
 			fireRunning(new RunningEvent(this, 0, "start"));
-			dataImport.addImportSteppedListener(this.importStepListener);
-			ImportResult result = dataImport.run();
-			ImportSetting[] succeedSettings = result.getSucceedSettings();
-			if (succeedSettings.length > 0) {
-				final Datasource datasource = succeedSettings[0].getTargetDatasource();
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						if (null != datasource) {
-							UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
-						}
-					}
-				});
-				Dataset dataset = datasource.getDatasets().get(succeedSettings[0].getTargetDatasetName());
-				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
-				isSuccessful = dataset != null;
-				fireRunning(new RunningEvent(this, 100, "finished"));
+			importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem().toString());
+			final Datasource datasource = (Datasource) ((ParameterDatasource) resultImportParameters.get(0).parameter).getSelectedItem();
+			importSetting.setTargetDatasource(datasource);
+			importSetting.setTargetDatasetName(((ParameterTextField) resultImportParameters.get(1).parameter).getSelectedItem().toString());
+			((ImportSettingGPX) importSetting).addImportSteppedListener(this.importStepListener);
+			UserDefineImportResult result = ((ImportSettingGPX) importSetting).run();
+			if (null != result) {
+				updateDatasource(result.getSuccess());
+				endTime = System.currentTimeMillis(); // 获取结束时间
+				time = endTime - startTime;
+				printMessage(result, time);
 			} else {
 				fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
 			}
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-		} finally {
-			dataImport.removeImportSteppedListener(this.importStepListener);
+			((ImportSettingGPX) importSetting).removeImportSteppedListener(this.importStepListener);
+		} else {
+			DataImport dataImport = ImportSettingSetter.setParameter(importSetting, sourceImportParameters, resultImportParameters, paramParameters);
+			try {
+				fireRunning(new RunningEvent(this, 0, "start"));
+				dataImport.addImportSteppedListener(this.importStepListener);
+				ImportResult result = dataImport.run();
+				ImportSetting[] succeedSettings = result.getSucceedSettings();
+				if (succeedSettings.length > 0) {
+					isSuccessful = updateDatasource(succeedSettings[0]);
+					endTime = System.currentTimeMillis(); // 获取结束时间
+					time = endTime - startTime;
+					printMessage(result, time);
+				} else {
+					fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
+				}
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
+			} finally {
+				dataImport.removeImportSteppedListener(this.importStepListener);
+			}
 		}
 		return isSuccessful;
+	}
+
+	private void printMessage(ImportResult result, long time) {
+		ImportSetting[] successImportSettings = result.getSucceedSettings();
+		ImportSetting[] failImportSettings = result.getFailedSettings();
+		String successImportInfo = ProcessProperties.getString("String_FormImport_OutPutInfoOne");
+		String failImportInfo = ProcessProperties.getString("String_FormImport_OutPutInfoTwo");
+		if (null != successImportSettings && 0 < successImportSettings.length) {
+			String[] names = result.getSucceedDatasetNames(successImportSettings[0]);
+			// 创建空间索引，字段索引
+			ImportSetting sucessSetting = successImportSettings[0];
+			if (null != names && names.length > 0) {
+				for (int j = 0; j < names.length; j++) {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(successImportInfo, sucessSetting.getSourceFilePath(), "->", names[j], sucessSetting
+							.getTargetDatasource().getAlias(), String.valueOf((time / names.length) / 1000.0)));
+				}
+			}
+		} else if (null != failImportSettings && 0 < failImportSettings.length) {
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(failImportInfo, failImportSettings[0].getSourceFilePath(), "->", ""));
+		}
+	}
+
+	private void printMessage(UserDefineImportResult result, long time) {
+		if (null != result.getSuccess()) {
+			String successImportInfo = ProcessProperties.getString("String_FormImport_OutPutInfoOne");
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(successImportInfo, result.getSuccess().getSourceFilePath(), "->", result.getSuccess().getTargetDatasetName(), result.getSuccess()
+					.getTargetDatasource().getAlias(), String.valueOf(time / 1000.0)));
+		}
+	}
+
+	private boolean updateDatasource(ImportSetting succeedSetting) {
+		boolean result = false;
+		final Datasource datasource = succeedSetting.getTargetDatasource();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (null != datasource) {
+					UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+				}
+			}
+		});
+		if (importSetting instanceof ImportSettingWOR) {
+			// 刷新地图节点
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
+					DefaultTreeModel treeModel = (DefaultTreeModel) workspaceTree.getModel();
+					MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
+					UICommonToolkit.getWorkspaceManager().getWorkspaceTree().refreshNode((DefaultMutableTreeNode) treeNode.getChildAt(1));
+				}
+			});
+		}
+		Dataset dataset = datasource.getDatasets().get(succeedSetting.getTargetDatasetName());
+		this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
+		result = dataset != null;
+		fireRunning(new RunningEvent(this, 100, "finished"));
+		return result;
 	}
 
 	@Override

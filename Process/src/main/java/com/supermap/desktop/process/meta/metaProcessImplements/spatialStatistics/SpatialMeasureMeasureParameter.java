@@ -67,9 +67,6 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 	}
 
 	private void initLayout() {
-		if (metaKeys.equals(MetaKeys.CENTRAL_ELEMENT)) {
-			this.addParameters(parameterDistanceMethodComboBox);
-		}
 		if (metaKeys.equals(MetaKeys.DIRECTIONAL)) {
 			this.addParameters(parameterEllipseSizeComboBox);
 		}
@@ -80,6 +77,7 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		this.addParameters(parameterWeightFieldComboBox);
 		if (metaKeys.equals(MetaKeys.CENTRAL_ELEMENT)) {
 			this.addParameters(parameterSelfWeightFieldComboBox);
+			this.addParameters(parameterDistanceMethodComboBox);
 		}
 		if (metaKeys.equals(MetaKeys.LINEAR_DIRECTIONAL_MEAN)) {
 			this.addParameters(parameterIgnoreDirectionCheckBox);
@@ -105,9 +103,9 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 	}
 
 	private void datasetChanged() {
-		parameterGroupFieldComboBox.setDataset(currentDataset);
-		parameterSelfWeightFieldComboBox.setDataset(currentDataset);
-		parameterWeightFieldComboBox.setDataset(currentDataset);
+		parameterGroupFieldComboBox.setFieldName(currentDataset);
+		parameterSelfWeightFieldComboBox.setFieldName(currentDataset);
+		parameterWeightFieldComboBox.setFieldName(currentDataset);
 		parameterStatisticsTypesUserDefine.setDataset(currentDataset);
 		parameterStatisticsTypesUserDefine.setEnabled(currentDataset != null);
 	}

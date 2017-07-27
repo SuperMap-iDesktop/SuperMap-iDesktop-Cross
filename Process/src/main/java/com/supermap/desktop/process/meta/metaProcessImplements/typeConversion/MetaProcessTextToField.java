@@ -43,7 +43,7 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 
 		parameterFieldComboBox = new ParameterFieldComboBox(ProcessProperties.getString("String_ComboBox_PendingTextField"));
 		parameterFieldComboBox.setFieldType(new FieldType[]{FieldType.TEXT, FieldType.WTEXT});
-		parameterFieldComboBox.setDataset((DatasetVector) dataset.getSelectedItem());
+		parameterFieldComboBox.setFieldName((DatasetVector) dataset.getSelectedItem());
 		parameterFieldComboBox.setShowNullValue(false);
 		parameterFieldComboBox.setRequisite(true);
 
