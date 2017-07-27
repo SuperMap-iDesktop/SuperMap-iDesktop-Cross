@@ -89,6 +89,7 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		parameterTextFieldIncrementalDistance.setMinValue(0);
 		parameterTextFieldIncrementalNumber.setSelectedItem("10");
 		parameterTextFieldIncrementalNumber.setMinValue(2);
+		parameterTextFieldIncrementalNumber.setMaxBit(0);
 		parameterTextFieldIncrementalNumber.setMaxValue(30);
 	}
 
@@ -172,7 +173,7 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 			}
 			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			AnalyzingPatterns.removeSteppedListener(steppedListener);
 		}
