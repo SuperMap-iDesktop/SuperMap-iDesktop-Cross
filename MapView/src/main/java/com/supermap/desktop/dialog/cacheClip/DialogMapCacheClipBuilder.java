@@ -415,7 +415,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				}
 				if (result) {
 					String[] params = {sciPath, CacheUtilities.replacePath(cachePath, CacheTask), tasksSize, canudb};
-					boolean buildTaskResult = TaskBuilder.main(params);
+					boolean buildTaskResult = TaskBuilder.buildSci(params);
 					if (!buildTaskResult) {
 						this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 						return;

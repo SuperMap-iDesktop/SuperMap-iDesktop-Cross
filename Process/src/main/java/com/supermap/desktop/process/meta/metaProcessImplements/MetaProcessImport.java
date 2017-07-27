@@ -20,6 +20,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.FileUtilities;
@@ -27,6 +28,9 @@ import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -371,6 +375,18 @@ public class MetaProcessImport extends MetaProcess {
 				}
 			}
 		});
+		if (importSetting instanceof ImportSettingWOR) {
+			// 刷新地图节点
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
+					DefaultTreeModel treeModel = (DefaultTreeModel) workspaceTree.getModel();
+					MutableTreeNode treeNode = (MutableTreeNode) treeModel.getRoot();
+					UICommonToolkit.getWorkspaceManager().getWorkspaceTree().refreshNode((DefaultMutableTreeNode) treeNode.getChildAt(1));
+				}
+			});
+		}
 		Dataset dataset = datasource.getDatasets().get(succeedSetting.getTargetDatasetName());
 		this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
 		result = dataset != null;
