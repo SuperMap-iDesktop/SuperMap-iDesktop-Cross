@@ -91,9 +91,11 @@ public class FileType {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "BIL", "bil"), "b"));
 				} else if ("GBDEM".equalsIgnoreCase(importType) || "GRD_DEM".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "DEM", "dem"), "dem"));
-				} else if("LIDAR".equalsIgnoreCase(importType)){
+				} else if ("LIDAR".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "LIDAR", "txt"), "txt"));
-				} else{
+				} else if ("GPS".equalsIgnoreCase(importType)) {
+					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, importType.toLowerCase()), "gpx"));
+				}else{
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, importType.toLowerCase()), importType.toLowerCase()));
 				}
 				SmFileChoose.addNewNode(fileFilter, CommonProperties.getString("String_DefaultFilePath"),
@@ -113,58 +115,4 @@ public class FileType {
 		return fileChoose;
 	}
 
-	/**
-	 * 创建导入的文件选择器
-	 *
-	 * @return
-	 */
-	public static SmFileChoose createImportFileChooser() {
-		if (!SmFileChoose.isModuleExist("MetaProcessImport")) {
-			if (SystemPropertyUtilities.isWindows()) {
-				String fileFilters = SmFileChoose.bulidFileFilters(
-						SmFileChoose.createFileFilter(descriptionNew[0], extensionsNew),
-						SmFileChoose.createFileFilter(descriptionNew[1], "dxf", "dwg"),
-						SmFileChoose.createFileFilter(descriptionNew[2], "shp", "grd", "txt", "e00", "dem", "dbf"),
-						SmFileChoose.createFileFilter(descriptionNew[3], "tab", "mif", "wor"),
-						SmFileChoose.createFileFilter(descriptionNew[4], "wat", "wan", "wal", "wap"),
-						SmFileChoose.createFileFilter(descriptionNew[5], "csv", "dbf"),
-						SmFileChoose.createFileFilter(descriptionNew[6], "sit", "img", "tif", "tiff", "bmp", "png", "gif", "jpg", "jpeg", "jp2", "jpk", "sid", "ecw"),
-						SmFileChoose.createFileFilter(descriptionNew[7], "osgb", "3ds", "dxf", "x", "fbx"),
-						SmFileChoose.createFileFilter(descriptionNew[8], "kml", "kmz"),
-						SmFileChoose.createFileFilter(descriptionNew[9], "dem", "bil", "raw", "bsq", "bip", "b"),
-						SmFileChoose.createFileFilter(descriptionNew[10], "txt"),
-						SmFileChoose.createFileFilter(descriptionNew[11], "dgn", "vct")
-				);
-				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-						ProcessProperties.getString("String_FileType"), "MetaProcessImport", "OpenOne");
-			} else {
-				String fileFilters = SmFileChoose.bulidFileFilters(
-						SmFileChoose.createFileFilter(descriptionNewForLinux[0], extensionsNewForLinux),
-						SmFileChoose.createFileFilter(descriptionNewForLinux[1], "shp", "grd", "txt", "e00", "dem", "dbf"),
-						SmFileChoose.createFileFilter(descriptionNewForLinux[2], "tab", "mif", "wor"),
-						SmFileChoose.createFileFilter(descriptionNewForLinux[3], "csv"),
-						SmFileChoose.createFileFilter(descriptionNewForLinux[4], "sit", "img", "tif", "tiff", "bmp", "png", "gif", "jpg", "jpeg", "jp2", "jpk", "sid", "ecw"),
-						SmFileChoose.createFileFilter(descriptionNewForLinux[5], "3ds"),
-						SmFileChoose.createFileFilter(descriptionNewForLinux[6], "kml", "kmz"),
-						SmFileChoose.createFileFilter(descriptionNewForLinux[7], "dem", "bil", "raw", "bsq", "bip"),
-						SmFileChoose.createFileFilter(descriptionNewForLinux[8], "vct")
-				);
-				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-						ProcessProperties.getString("String_FileType"), "MetaProcessImport", "OpenOne");
-			}
-
-		}
-		SmFileChoose fileChoose = new SmFileChoose("MetaProcessImport");
-
-		if (LastFileFilter != null) {
-			// 设置过滤器为当前选中
-			for (int i = 0; i < fileChoose.getChoosableFileFilters().length; i++) {
-				FileFilter tempFileFilter = fileChoose.getChoosableFileFilters()[i];
-				if (tempFileFilter.getDescription().equals(LastFileFilter)) {
-					fileChoose.setFileFilter(tempFileFilter);
-				}
-			}
-		}
-		return fileChoose;
-	}
 }

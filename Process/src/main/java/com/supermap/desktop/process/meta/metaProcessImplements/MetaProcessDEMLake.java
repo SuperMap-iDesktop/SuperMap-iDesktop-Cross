@@ -37,8 +37,6 @@ public class MetaProcessDEMLake extends MetaProcess {
     private ParameterFieldComboBox heightFieldComboBox;
     private ParameterNumber heightValue;
 
-
-
     public MetaProcessDEMLake() {
         initParameters();
         initParameterConstraint();
@@ -74,16 +72,15 @@ public class MetaProcessDEMLake extends MetaProcess {
         lakeDatasource.setDescribe(CommonProperties.getString("String_LakeDatasource"));
         lakeDataset=new ParameterSingleDataset(DatasetType.REGION);
         lakeDataset.setDescribe(CommonProperties.getString("String_LakeDataset"));
+        FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
+        heightFieldComboBox = new ParameterFieldComboBox(ProcessProperties.getString("String_Label_HeightField"));
+        heightFieldComboBox.setFieldType(fieldType);
         Dataset datasetRegion = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
         if (datasetRegion != null) {
             lakeDatasource.setSelectedItem(datasetRegion.getDatasource());
             lakeDataset.setSelectedItem(datasetRegion);
+            heightFieldComboBox.setFieldName((DatasetVector) datasetRegion);
         }
-
-        FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
-        heightFieldComboBox = new ParameterFieldComboBox(ProcessProperties.getString("String_Label_HeightField"));
-        heightFieldComboBox.setFieldType(fieldType);
-        heightFieldComboBox.setDataset((DatasetVector) lakeDataset.getSelectedItem());
 
         heightValue = new ParameterNumber(ProcessProperties.getString("String_BuildLake_Elevation"));
         heightValue.setSelectedItem(-9999);

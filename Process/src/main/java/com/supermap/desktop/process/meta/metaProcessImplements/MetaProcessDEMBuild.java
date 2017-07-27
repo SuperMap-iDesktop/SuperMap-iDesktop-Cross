@@ -153,6 +153,7 @@ public class MetaProcessDEMBuild extends MetaProcess{
         if (datasetVector != null) {
             sourceDatasources.setSelectedItem(datasetVector.getDatasource());
             sourceDataset.setSelectedItem(datasetVector);
+            comboBoxSourceField.setFieldName((DatasetVector)datasetVector);
         }
         comboBoxSourceField.setFieldType(fieldType);
 
@@ -207,6 +208,7 @@ public class MetaProcessDEMBuild extends MetaProcess{
         if (datasetVector != null) {
             lakeDatasource.setSelectedItem(datasetVector.getDatasource());
             lakeDataset.setDatasource(datasetVector.getDatasource());
+            comboBoxLakeField.setFieldName((DatasetVector) datasetVector);
         }
         comboBoxLakeField.setFieldType(fieldType);
 
@@ -315,17 +317,12 @@ public class MetaProcessDEMBuild extends MetaProcess{
             } else {
                 src = (DatasetVector) sourceDataset.getSelectedItem();
             }
-            if (comboBoxSourceField.getSelectedItem().toString() != "") {
-                if (src.getType() == DatasetType.POINT) {
-                    terrainBuilderParameter.setPointDatasets(new DatasetVector[]{src});
-                    terrainBuilderParameter.setPointAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
-                } else if (src.getType() == DatasetType.LINE) {
-                    terrainBuilderParameter.setLineDatasets(new DatasetVector[]{src});
-                    terrainBuilderParameter.setLineAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
-                }
-            } else {
-                Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_NullHeightValue_Error"));
-                return false;
+            if (src.getType() == DatasetType.POINT) {
+                terrainBuilderParameter.setPointDatasets(new DatasetVector[]{src});
+                terrainBuilderParameter.setPointAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
+            } else if (src.getType() == DatasetType.LINE) {
+                terrainBuilderParameter.setLineDatasets(new DatasetVector[]{src});
+                terrainBuilderParameter.setLineAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
             }
 
             DatasetVector srcLake=null;

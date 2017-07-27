@@ -151,7 +151,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 					}
 				}
 			}
-			comboBox.setSelectedIndex(-1);
+			comboBox.setSelectedItem(null);
 			if (comboBox.getItemCount() > 0) {
 				// 先询问参数是否满意当前选项
 				// Ask if the parameters are satisfied with the current option
@@ -193,9 +193,9 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 							break;
 						}
 					}
-					if (comboBox.getSelectedIndex() == -1) {
+					/*if (comboBox.getSelectedIndex() == -1) {
 						parameterFieldComboBox.setSelectedItem("");
-					}
+					}*/
 				}
 			} else {
 				parameterFieldComboBox.setSelectedItem(null);

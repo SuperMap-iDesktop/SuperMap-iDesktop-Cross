@@ -25,12 +25,8 @@ import java.util.Map;
  * 字段转文本数据
  */
 public class MetaProcessFieldToText extends MetaProcessTypeConversion {
-    private static final String INPUT_DATA = "InputData";
     private static final String OUTPUT_DATA = "FieldToTextResult";
 
-    private ParameterDatasourceConstrained inputDatasource;
-    private ParameterSingleDataset inputDataset;
-    private ParameterSaveDataset outputData;
     private ParameterFieldComboBox fieldComboBox;
 
     public MetaProcessFieldToText() {
@@ -48,6 +44,7 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
         if (dataset != null) {
             inputDatasource.setSelectedItem(dataset.getDatasource());
             inputDataset.setSelectedItem(dataset);
+            fieldComboBox.setFieldName((DatasetVector) dataset);
         }
         outputData.setSelectedItem("result_fieldToText");
 

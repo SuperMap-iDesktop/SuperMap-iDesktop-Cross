@@ -165,7 +165,7 @@ public class StatisticsFieldPanel extends JPanel {
 					boolean fieldInfoAddOnce = false;
 					ArrayList<StatisticsType> supportedStatisticsType = getSupportedStatisticsType(fieldInfo.getType());
 					for (StatisticsType statisticsType : supportedStatisticsType) {
-						StatisticsFieldInfo statisticsFieldInfo = new StatisticsFieldInfo(fieldInfo.getCaption(), fieldInfo.getType(), statisticsType);
+						StatisticsFieldInfo statisticsFieldInfo = new StatisticsFieldInfo(fieldInfo.getName(), fieldInfo.getType(), statisticsType);
 						this.statisticsFieldInfoAll.add(statisticsFieldInfo);//添加所有合理的字段、统计组合
 						if (!fieldInfoAddOnce) {
 							this.statisticsFieldInfoIncluded.add(statisticsFieldInfo);//默认初始化表格只显示每个字段一次
@@ -518,6 +518,8 @@ public class StatisticsFieldPanel extends JPanel {
 			buttonSelectInvert = new SmButton();
 			buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 			buttonSelectInvert.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
+			buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
+			buttonSelectInvert.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
 			buttonOK.setText(CommonProperties.getString(CommonProperties.OK));
 			buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 			scrollPane = new JScrollPane();
