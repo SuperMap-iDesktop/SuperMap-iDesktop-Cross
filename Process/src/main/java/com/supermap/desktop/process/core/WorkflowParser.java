@@ -271,6 +271,8 @@ public class WorkflowParser {
 			result = new MetaProcessRegionToLine();
 		} else if (MetaKeys.CONVERSION_TABULAR_TO_POINT.equals(key)) {
 			result = new MetaProcessTabularToPoint();
+		} else if (MetaKeys.CONVERSION_TABULARPOINT_TO_REGION.equals(key)) {
+			result = new MetaProcessTabularPointToRegion();
 		} else if (MetaKeys.CONVERSION_CAD_TO_SIMPLE.equals(key)) {
 			result = new MetaProcessCADToSimple();
 		} else if (MetaKeys.CONVERSION_SIMPLE_TO_CAD.equals(key)) {

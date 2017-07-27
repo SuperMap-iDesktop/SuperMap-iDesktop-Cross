@@ -173,8 +173,9 @@
                 <process name="属性数据与空间数据互转">
                     <process key="Conversion_FieldToText" name="字段->文本数据"/>
                     <process key="Conversion_TextToField" name="文本数据->字段"/>
-                    <process key="Conversion_TextToPoint" name="文本数据->点数据"/>
+                    <process key="  Conversion_TextToPoint" name="文本数据->点数据"/>
                     <process key="Conversion_TabularToPoint" name="属性->点数据"/>
+                    <process key="Conversion_TabularPointToRegion" name="点属性->面属性"/>
                 </process>
                 <process name="CAD数据、复合数据与简单数据互转">
                     <process key="Conversion_CADToSimple" name="CAD->简单数据"/>
