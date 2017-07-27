@@ -2,56 +2,52 @@ package com.supermap.desktop.process.meta.metaProcessImplements.typeConversion;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.geometry.Abstract.IGeometry;
-import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
-import com.supermap.desktop.process.meta.MetaProcess;
+import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.RecordsetUtilities;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * 当只有源数据及结果数据，且输入输出数据集类型都只有一种时，可用此模板
- * by Chens
+ * Created By Chens on 2017/7/24 0024
  */
-public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversion{
-    protected static String OUTPUT_DATA = "OutputData";
+public class MetaProcessPointToLine extends MetaProcessTypeConversion {
+    private static final String OUTPUT_DATA = "PointToLineResult";
 
-    private DatasetType inputType;
-    private DatasetType outputType;
+    private ParameterDatasourceConstrained inputDatasource;
+    private ParameterSingleDataset inputDataset;
+    private ParameterSaveDataset outputData;
+    private ParameterFieldComboBox comboBoxConnect;
 
-    public MetaProcessPointLineRegion(DatasetType inputType, DatasetType outputType) {
-        this.inputType = inputType;
-        this.outputType = outputType;
-
-        initHook();
+    public MetaProcessPointToLine() {
         initParameters();
         initParameterConstraint();
     }
 
-    protected abstract void initHook();
-
-    protected abstract String getOutputName();
-
     private void initParameters() {
         inputDatasource = new ParameterDatasourceConstrained();
-        inputDataset = new ParameterSingleDataset(inputType);
+        inputDataset = new ParameterSingleDataset(DatasetType.POINT);
         outputData = new ParameterSaveDataset();
-        outputData.setSelectedItem(getOutputName());
+        comboBoxConnect = new ParameterFieldComboBox(ProcessProperties.getString("String_ConnectionField"));
 
-        Dataset dataset = DatasetUtilities.getDefaultDataset(inputType);
+        Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT);
         if (dataset != null) {
             inputDatasource.setSelectedItem(dataset.getDatasource());
             inputDataset.setSelectedItem(dataset);
+            comboBoxConnect.setDataset((DatasetVector) dataset);
         }
+        FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
+        comboBoxConnect.setFieldType(fieldType);
+        outputData.setSelectedItem("result_PointToLine");
 
         ParameterCombine inputCombine = new ParameterCombine();
         inputCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
@@ -59,16 +55,23 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
         ParameterCombine outputCombine = new ParameterCombine();
         outputCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
         outputCombine.addParameters(outputData);
+        ParameterCombine settingCombine = new ParameterCombine();
+        settingCombine.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
+        settingCombine.addParameters(comboBoxConnect);
 
-        parameters.setParameters(inputCombine, outputCombine);
-        parameters.addInputParameters(INPUT_DATA, datasetTypeToTypes(inputType),inputCombine);
-        parameters.addOutputParameters(OUTPUT_DATA, datasetTypeToTypes(outputType),outputCombine);
+        parameters.setParameters(inputCombine,settingCombine,outputCombine);
+        parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT,inputCombine);
+        parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE,outputCombine);
     }
 
     private void initParameterConstraint() {
         EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
         equalDatasourceConstraint.constrained(inputDatasource,ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
         equalDatasourceConstraint.constrained(inputDataset,ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+
+        EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
+        equalDatasetConstraint.constrained(inputDataset,ParameterSingleDataset.DATASET_FIELD_NAME);
+        equalDatasetConstraint.constrained(comboBoxConnect,ParameterFieldComboBox.DATASET_FIELD_NAME);
     }
 
     @Override
@@ -77,9 +80,20 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
     }
 
     @Override
+    public String getKey() {
+        return MetaKeys.CONVERSION_POINT_TO_LINE;
+    }
+
+    @Override
+    public String getTitle() {
+        return ProcessProperties.getString("String_Title_PointToLine");
+    }
+
+    @Override
     public boolean execute() {
         boolean isSuccessful = false;
         Recordset recordsetResult = null;
+
         try {
             fireRunning(new RunningEvent(this,0,"start"));
 
@@ -89,12 +103,10 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
             } else {
                 src = (DatasetVector) inputDataset.getSelectedDataset();
             }
-
             DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
             datasetVectorInfo.setName(outputData.getResultDatasource().getDatasets().getAvailableDatasetName(outputData.getDatasetName()));
-            datasetVectorInfo.setType(outputType);
+            datasetVectorInfo.setType(DatasetType.LINE);
             DatasetVector resultDataset = outputData.getResultDatasource().getDatasets().create(datasetVectorInfo);
-
             resultDataset.setPrjCoordSys(src.getPrjCoordSys());
             for (int i = 0; i < src.getFieldInfos().getCount(); i++) {
                 FieldInfo fieldInfo = src.getFieldInfos().get(i);
@@ -102,35 +114,63 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
                     resultDataset.getFieldInfos().add(fieldInfo);
                 }
             }
-
             recordsetResult = resultDataset.getRecordset(false, CursorType.DYNAMIC);
             recordsetResult.addSteppedListener(steppedListener);
-
             recordsetResult.getBatch().setMaxRecordCount(2000);
             recordsetResult.getBatch().begin();
 
+            String fieldName = comboBoxConnect.getFieldName();
+
             Recordset recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
+            ArrayList<Point2Ds> point2DsArrayList = new ArrayList<>();
+            ArrayList<Object> fieldValues = new ArrayList<>();
+            ArrayList<Map<String, Object>> valueList = new ArrayList<>();
             while (!recordsetInput.isEOF()) {
-                IGeometry geometry = null;
+                GeoPoint geoPoint = null;
                 try {
-                    geometry = DGeometryFactory.create(recordsetInput.getGeometry());
+                    geoPoint = (GeoPoint) recordsetInput.getGeometry();
                     Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-                    isSuccessful = convert(recordsetResult, geometry, value);
+                    Object currentFieldValue = recordsetInput.getFieldValue(fieldName);
+                    if (point2DsArrayList.size() > 0) {
+                        for (int i = 0; i < fieldValues.size(); i++) {
+                            if (currentFieldValue==(fieldValues.get(i))) {
+                                point2DsArrayList.get(i).add(new Point2D(geoPoint.getX(), geoPoint.getY()));
+                            } else {
+                                fieldValues.add(currentFieldValue);
+                                valueList.add(value);
+                                Point2Ds point2Ds = new Point2Ds();
+                                point2Ds.add(new Point2D(geoPoint.getX(), geoPoint.getY()));
+                                point2DsArrayList.add(point2Ds);
+                            }
+                        }
+                    } else {
+                        fieldValues.add(currentFieldValue);
+                        valueList.add(value);
+                        Point2Ds point2Ds = new Point2Ds();
+                        point2Ds.add(new Point2D(geoPoint.getX(), geoPoint.getY()));
+                        point2DsArrayList.add(point2Ds);
+                    }
                 }finally {
-                    if (geometry != null) {
-                        geometry.dispose();
+                    if (geoPoint != null) {
+                        geoPoint.dispose();
                     }
                 }
                 recordsetInput.moveNext();
             }
+            for (int i = 0; i < point2DsArrayList.size(); i++) {
+                GeoLine geoLine = new GeoLine(point2DsArrayList.get(i));
+                recordsetResult.addNew(geoLine, valueList.get(i));
+                geoLine.dispose();
+            }
             recordsetResult.getBatch().update();
             recordsetInput.close();
             recordsetInput.dispose();
+            isSuccessful = resultDataset != null;
             this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
             fireRunning(new RunningEvent(this,100,"finish"));
         } catch (Exception e) {
             Application.getActiveApplication().getOutput().output(e);
-        }finally {
+        } finally {
             if (recordsetResult != null) {
                 recordsetResult.removeSteppedListener(steppedListener);
                 recordsetResult.close();
@@ -140,6 +180,4 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 
         return isSuccessful;
     }
-
-    protected abstract boolean convert(Recordset recordset, IGeometry geometry, Map<String, Object> value);
 }

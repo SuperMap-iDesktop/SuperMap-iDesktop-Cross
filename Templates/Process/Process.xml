@@ -143,7 +143,7 @@
                 <process name="聚类分布">//ClusteringDistributions
                     <process key="ClusterOutlierAnalyst" name="聚类和异常值分析"/>
                     <process key="HotSpotAnalyst" name="热点分析"/>
-                    <process key="OptimizedHotSpotAnalyst" name="优化的热点分析"/>
+                    <!-- <process key="OptimizedHotSpotAnalyst" name="优化的热点分析"/>-->
                 </process>
                 <process name="空间关系建模">//SpatialRelModeling
                     <process key="GeographicWeightedRegression" name="地理加权回归分析"/>
@@ -166,6 +166,7 @@
             <process key="Buffer" name="缓冲区分析"/>
             <process name="类型转换">
                 <process name="点、线、面类型互转">
+                    <process key="Conversion_PointToLine" name="点数据->线数据"/>
                     <process key="Conversion_LineToPoint" name="线数据->点数据"/>
                     <process key="Conversion_LineToRegion" name="线数据->面数据"/>
                     <process key="Conversion_RegionToPoint" name="面数据->点数据"/>
@@ -180,6 +181,15 @@
                 <process name="CAD数据、复合数据与简单数据互转">
                     <process key="Conversion_CADToSimple" name="CAD->简单数据"/>
                     <process key="Conversion_SimpleToCAD" name="简单数据->CAD"/>
+                    <process key="Conversion_EPSToSimple" name="EPS数据->简单数据"/>
+                </process>
+                <process name="二维数据与三维数据互转">
+                    <process key="Conversion_Point2DTo3D" name="二维点->三维点"/>
+                    <process key="Conversion_Line2DTo3D" name="二维线->三维线"/>
+                    <process key="Conversion_Region2DTo3D" name="二维面->三维面"/>
+                    <process key="Conversion_Point3DTo2D" name="三维点->二维点"/>
+                    <process key="Conversion_Line3DTo2D" name="三维线->二维线"/>
+                    <process key="Conversion_Region3DTo2D" name="三维面->二维面"/>
                 </process>
 
             </process>

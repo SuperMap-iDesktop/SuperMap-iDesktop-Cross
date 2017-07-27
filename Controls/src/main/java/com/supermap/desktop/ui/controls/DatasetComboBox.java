@@ -121,7 +121,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
      * @param dataset
      */
     public void setSelectedDataset(Dataset dataset) {
-        int selectIndex = -1;
+        int selectIndex = 0;
         if (dataset != null) {
             for (int i = 0; i < getItemCount(); i++) {
                 Dataset ComboBoxDataset = getItemAt(i);
