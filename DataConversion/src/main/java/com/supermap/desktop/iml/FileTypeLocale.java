@@ -117,6 +117,6 @@ public class FileTypeLocale {
     public static final String FBX_STRING = ".fbx";
     public static final String PRJ_STRING = ".prj";
     public static final String XML_STRING = ".xml";
-    public static final String GEOJSON_STRING=".json";
+    public static final String GEOJSON_STRING=".geojson";
     public static final String GPX_STRING=".gpx";
 }

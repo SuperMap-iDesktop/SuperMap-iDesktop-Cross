@@ -22,7 +22,7 @@ public class CtrlActionMultiProcessClipExecute extends CtrlAction {
 	@Override
 	protected void run() {
 		Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
-		if (CacheUtilities.volatileDatasource()) {
+		if (CacheUtilities.voladateDatasource()) {
 			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheExecute"));
 			String[] params = {"Multi", "null", map.getName(), "null"};
 			CacheUtilities.startProcess(params, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
