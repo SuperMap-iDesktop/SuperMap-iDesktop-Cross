@@ -193,9 +193,9 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 							break;
 						}
 					}
-					/*if (comboBox.getSelectedIndex() == -1) {
-						parameterFieldComboBox.setSelectedItem("");
-					}*/
+					if (fieldName.equals("")) {
+						comboBox.setSelectedItem(((FieldInfo)comboBox.getItemAt(0)).getCaption());
+					}
 				}
 			} else {
 				parameterFieldComboBox.setSelectedItem(null);

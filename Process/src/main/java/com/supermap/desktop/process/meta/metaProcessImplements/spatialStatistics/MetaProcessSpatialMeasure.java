@@ -106,7 +106,7 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 			isSuccessful = doWork(datasetVector);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+			Application.getActiveApplication().getOutput().output(e);
 		}
 		return isSuccessful;
 	}

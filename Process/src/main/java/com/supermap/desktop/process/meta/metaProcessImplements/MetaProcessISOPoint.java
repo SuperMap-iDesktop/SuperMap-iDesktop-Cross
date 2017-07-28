@@ -317,7 +317,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 				src = (DatasetVector) sourceDataset.getSelectedItem();
 			}
 			DatasetVector result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, fields.getFieldName(),
-					src.getDatasource(),targetDataset.getDatasetName(),Double.valueOf(resolution.getSelectedItem().toString()), null);
+					targetDataset.getResultDatasource(),targetDataset.getDatasetName(),Double.valueOf(resolution.getSelectedItem().toString()), null);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = (result != null);
 			fireRunning(new RunningEvent(MetaProcessISOPoint.this, 100, "finished"));
