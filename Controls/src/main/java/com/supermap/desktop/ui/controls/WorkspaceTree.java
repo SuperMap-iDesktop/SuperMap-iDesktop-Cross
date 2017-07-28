@@ -889,13 +889,14 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		}
 		addScene();
 
-		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
-		TreeNodeData WorkFlowNode = new TreeNodeData(workFlows, NodeDataType.WORK_FLOWS);
-		treeNodeWorkFlow = new DefaultMutableTreeNode(WorkFlowNode);
-		if (isWorkFlowNodeVisible) {
-			treeNodeWorkspace.add(treeNodeWorkFlow);
-		}
-		addWorkFlow();
+		// 添加工作流节点
+//		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
+//		TreeNodeData WorkFlowNode = new TreeNodeData(workFlows, NodeDataType.WORK_FLOWS);
+//		treeNodeWorkFlow = new DefaultMutableTreeNode(WorkFlowNode);
+//		if (isWorkFlowNodeVisible) {
+//			treeNodeWorkspace.add(treeNodeWorkFlow);
+//		}
+//		addWorkFlow();
 
 		// 添加资源库节点
 		TreeNodeData resourcesNodeData = new TreeNodeData(resources, NodeDataType.RESOURCES);
