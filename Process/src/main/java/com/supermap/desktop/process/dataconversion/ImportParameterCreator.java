@@ -220,9 +220,9 @@ public class ImportParameterCreator implements IParameterCreator {
 		if (importSetting instanceof ImportSettingSIT) {
 			ReflectInfo password = new ReflectInfo();
 			password.methodName = "setPassword";
-			ParameterTextField parameterTextField = new ParameterTextField(CoreProperties.getString("String_FormLogin_Password"));
-			parameterTextField.setSelectedItem(((ImportSettingSIT) importSetting).getPassword());
-			password.parameter = parameterTextField;
+			ParameterPassword parameterPassword = new ParameterPassword(CoreProperties.getString("String_FormLogin_Password"));
+			parameterPassword.setSelectedItem(((ImportSettingSIT) importSetting).getPassword());
+			password.parameter = parameterPassword;
 			result.add(password);
 			parameterCombineParamSet = new ParameterCombine();
 			parameterCombineParamSet.setDescribe(ProcessProperties.getString("String_ParamSet"));

@@ -65,6 +65,7 @@ public class CacheUtilities {
 		}
 		return enable;
 	}
+
 	/**
 	 * get selected workspcace map
 	 *
@@ -196,12 +197,12 @@ public class CacheUtilities {
 			}
 			arguments.add(javaexeHome);
 			arguments.add("-cp");
-			String projectPath = replacePath(System.getProperty("user.dir"));
+//			String projectPath = replacePath(System.getProperty("user.dir"));
 			String jarPath = "";
 			if (isWindows()) {
-				jarPath = ".;" + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\require_bundles\\Core.jar;" + projectPath + "\\bundles\\require_bundles\\Controls.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
+				jarPath = ".;" + ".\\bin\\com.supermap.data.jar;" + ".\\bin\\com.supermap.mapping.jar;" + ".\\bin\\com.supermap.tilestorage.jar;" + ".\\bin\\com.supermap.data.processing.jar;" + ".\\bundles\\require_bundles\\Core.jar;" + ".\\bundles\\require_bundles\\Controls.jar;" + ".\\bundles\\idesktop_bundles\\MapView.jar";
 			} else {
-				jarPath = projectPath + "/bin/com.supermap.data.jar:" + projectPath + "/bin/com.supermap.mapping.jar:" + projectPath + "/bin/com.supermap.tilestorage.jar:" + projectPath + "/bin/com.supermap.data.processing.jar:" + projectPath + "/bundles/require_bundles/Core.jar:" + projectPath + "/bundles/require_bundles/Controls.jar:" + projectPath + "/bundles/idesktop_bundles/MapView.jar: ";
+				jarPath = "./bin/com.supermap.data.jar:" + "./bin/com.supermap.mapping.jar:" + "./bin/com.supermap.tilestorage.jar:" + "./bin/com.supermap.data.processing.jar:" + "./bundles/require_bundles/Core.jar:" + "./bundles/require_bundles/Controls.jar:" + "./bundles/idesktop_bundles/MapView.jar: ";
 			}
 //		String jarPath = ".;" + projectPath + "\\bundles\\require_bundles\\Core.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
 			arguments.add(jarPath);
