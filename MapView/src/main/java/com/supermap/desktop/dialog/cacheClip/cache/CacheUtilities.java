@@ -15,6 +15,7 @@ import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.*;
 
 import javax.swing.*;
@@ -189,11 +190,16 @@ public class CacheUtilities {
 	public static void startProcess(String[] params, String className, String cacheType) {
 		try {
 			ArrayList<String> arguments = new ArrayList<>();
-			String javaexeHome = null;
-			if (isWindows()) {
-				javaexeHome = CacheUtilities.replacePath(System.getProperty("java.home"), "bin") + File.separator + "java.exe";
-			} else {
-				javaexeHome = CacheUtilities.replacePath(System.getProperty("java.home"), "bin") + File.separator + "java";
+			String javaexeHome = System.getProperty("java.home");
+			if (StringUtilities.isNullOrEmpty(javaexeHome)) {
+				javaexeHome = "." + File.separator + "jre" + File.separator + "bin";
+				javaexeHome = isWindows() ? javaexeHome + File.separator + "java.exe" : javaexeHome + File.separator + "java";
+			} else if (!javaexeHome.endsWith("bin")) {
+				if (isWindows()) {
+					javaexeHome = CacheUtilities.replacePath(javaexeHome, "bin") + File.separator + "java.exe";
+				} else {
+					javaexeHome = CacheUtilities.replacePath(javaexeHome, "bin") + File.separator + "java";
+				}
 			}
 			arguments.add(javaexeHome);
 			arguments.add("-cp");

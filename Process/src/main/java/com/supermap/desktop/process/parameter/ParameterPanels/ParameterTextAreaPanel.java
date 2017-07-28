@@ -21,88 +21,89 @@ import java.beans.PropertyChangeListener;
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.TEXT_AREA)
 public class ParameterTextAreaPanel extends SwingPanel implements IParameterPanel {
-    private ParameterTextArea parameterTextArea;
-    private JLabel label;
-    private JTextArea textArea;
-    private JScrollPane scrollPane;
-    private boolean selectingItem;
+	private ParameterTextArea parameterTextArea;
+	private JLabel label;
+	private JTextArea textArea;
+	private JScrollPane scrollPane;
+	private boolean selectingItem;
 
 	public ParameterTextAreaPanel(IParameter parameterTextArea) {
 		super(parameterTextArea);
 		this.parameterTextArea = (ParameterTextArea) parameterTextArea;
 		initComponents();
-        initLayout();
-        initListener();
-    }
+		initLayout();
+		initListener();
+	}
 
-    private void initListener() {
-        this.textArea.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                changeItem();
-            }
+	private void initListener() {
+		this.textArea.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				changeItem();
+			}
 
-            private void changeItem() {
-                if (!selectingItem && !StringUtilities.isNullOrEmptyString(textArea.getText())){
-                    selectingItem = true;
-                    parameterTextArea.setSelectedItem(textArea.getText());
-                    selectingItem = false;
-                }
-            }
+			private void changeItem() {
+				if (!selectingItem && !StringUtilities.isNullOrEmptyString(textArea.getText())) {
+					selectingItem = true;
+					parameterTextArea.setSelectedItem(textArea.getText());
+					selectingItem = false;
+				}
+			}
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                changeItem();
-            }
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				changeItem();
+			}
 
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                changeItem();
-            }
-        });
-        this.parameterTextArea.addPropertyListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (!selectingItem){
-                    selectingItem = true;
-                    textArea.setText((String) evt.getNewValue());
-                    selectingItem = false;
-                }
-            }
-        });
-    }
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				changeItem();
+			}
+		});
+		this.parameterTextArea.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (!selectingItem) {
+					selectingItem = true;
+					textArea.setText((String) evt.getNewValue());
+					selectingItem = false;
+				}
+			}
+		});
+	}
 
-    private void initLayout() {
-        label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
-	    panel.setLayout(new GridBagLayout());
-	    if (StringUtilities.isNullOrEmpty(label.getText())){
-		    panel.add(scrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 0, 0).setIpad(0, 55));
-	    }else {
-		    panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST));
-		    panel.add(scrollPane, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 0, 0).setIpad(0, 30));
-	    }
-	    this.scrollPane.setViewportView(textArea);
-    }
+	private void initLayout() {
+		label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
+		panel.setLayout(new GridBagLayout());
+		if (StringUtilities.isNullOrEmpty(label.getText())) {
+			panel.add(scrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 0, 0).setIpad(0, 55));
+		} else {
+			panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST));
+			panel.add(scrollPane, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 0, 0).setIpad(0, 30));
+		}
+		scrollPane.setPreferredSize(new Dimension(200, 100));
+		this.scrollPane.setViewportView(textArea);
+	}
 
-    private void initComponents() {
-        this.scrollPane = new JScrollPane();
-        this.label = new JLabel();
-	    if (!StringUtilities.isNullOrEmpty(parameterTextArea.getDescribe()))
-		    this.label.setText(parameterTextArea.getDescribe());
-		    this.label.setToolTipText(parameterTextArea.getDescribe());
-	    this.textArea = new JTextArea();
-	    if (!parameterTextArea.isEnabled()) {
-	    	this.textArea.setEnabled(parameterTextArea.isEnabled());
-	    }
-	    if (!StringUtilities.isNullOrEmpty((String) parameterTextArea.getSelectedItem())) {
-		    this.textArea.setText((String) parameterTextArea.getSelectedItem());
-        }
-        if (parameterTextArea.isLineWrap()){
-	    	this.textArea.setLineWrap(parameterTextArea.isLineWrap());
-        }
-        if (parameterTextArea.isWrapStyleWord()){
-        	this.textArea.setWrapStyleWord(parameterTextArea.isWrapStyleWord());
-        }
-    }
+	private void initComponents() {
+		this.scrollPane = new JScrollPane();
+		this.label = new JLabel();
+		if (!StringUtilities.isNullOrEmpty(parameterTextArea.getDescribe()))
+			this.label.setText(parameterTextArea.getDescribe());
+		this.label.setToolTipText(parameterTextArea.getDescribe());
+		this.textArea = new JTextArea();
+		if (!parameterTextArea.isEnabled()) {
+			this.textArea.setEnabled(parameterTextArea.isEnabled());
+		}
+		if (!StringUtilities.isNullOrEmpty((String) parameterTextArea.getSelectedItem())) {
+			this.textArea.setText((String) parameterTextArea.getSelectedItem());
+		}
+		if (parameterTextArea.isLineWrap()) {
+			this.textArea.setLineWrap(parameterTextArea.isLineWrap());
+		}
+		if (parameterTextArea.isWrapStyleWord()) {
+			this.textArea.setWrapStyleWord(parameterTextArea.isWrapStyleWord());
+		}
+	}
 
 }

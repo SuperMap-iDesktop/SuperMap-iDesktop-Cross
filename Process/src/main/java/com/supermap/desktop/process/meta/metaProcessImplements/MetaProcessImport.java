@@ -7,10 +7,7 @@ import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.implement.UserDefineType.UserDefineImportResult;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.dataconversion.IParameterCreator;
-import com.supermap.desktop.process.dataconversion.ImportParameterCreator;
-import com.supermap.desktop.process.dataconversion.ImportSettingSetter;
-import com.supermap.desktop.process.dataconversion.ReflectInfo;
+import com.supermap.desktop.process.dataconversion.*;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
@@ -311,10 +308,12 @@ public class MetaProcessImport extends MetaProcess {
 				printMessage(result, time);
 			} else {
 				fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
 			}
 			((ImportSettingGPX) importSetting).removeImportSteppedListener(this.importStepListener);
 		} else {
-			DataImport dataImport = ImportSettingSetter.setParameter(importSetting, sourceImportParameters, resultImportParameters, paramParameters);
+			ImportSetting newImportSetting = new ImportSettingCreator().create(importType);
+			DataImport dataImport = ImportSettingSetter.setParameter(newImportSetting, sourceImportParameters, resultImportParameters, paramParameters);
 			try {
 				fireRunning(new RunningEvent(this, 0, "start"));
 				dataImport.addImportSteppedListener(this.importStepListener);
@@ -328,6 +327,7 @@ public class MetaProcessImport extends MetaProcess {
 					printMessage(result, time);
 				} else {
 					fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
+					Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
 				}
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);

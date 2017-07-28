@@ -87,8 +87,8 @@ public class FileType {
 			if (!SmFileChoose.isModuleExist(importModule)) {
 				if ("MapGIS".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("String_filetype_mapgis"), "wat", "wan", "wal", "wap"));
-				} else if ("BIL".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "BIL", "bil"), "b"));
+				} else if ("B".equalsIgnoreCase(importType)) {
+					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), "BIL", "b","bil"), "b","bil"));
 				} else if ("GBDEM".equalsIgnoreCase(importType) || "GRD_DEM".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "DEM", "dem"), "dem"));
 				} else if ("LIDAR".equalsIgnoreCase(importType)) {
