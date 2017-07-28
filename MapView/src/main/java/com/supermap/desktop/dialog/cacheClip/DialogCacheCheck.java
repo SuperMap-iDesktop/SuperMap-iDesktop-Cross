@@ -230,6 +230,8 @@ public class DialogCacheCheck extends JFrame {
 		try {
 			String processCount = textFieldProcessCount.getText();
 			String taskPath = getTaskPath("build");
+			//先移动cheching下的sci
+			CacheUtilities.renameDoingFile(getTaskPath("checking"), taskPath);
 			if (validateValue(taskPath, processCount)) {
 				String saveErrorData = checkBoxSaveErrorData.isSelected() ? "true" : "false";
 				String geoJsonFile = fileChooseCheckBounds.getPath();
@@ -257,7 +259,6 @@ public class DialogCacheCheck extends JFrame {
 					anchorTop = writer.getIndexBounds().getTop();
 					tileSize = writer.getTileSize().value();
 				}
-				CacheUtilities.renameDoingFile(getTaskPath("checking"), taskPath);
 //				CheckCache.main(params);
 				CheckCache checkCache = new CheckCache();
 				checkCache.startProcess(Integer.valueOf(processCount), params);

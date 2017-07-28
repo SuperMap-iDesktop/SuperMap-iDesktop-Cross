@@ -103,20 +103,24 @@ public class ImportSettingSetter {
 				int otherInfoSize = otherInfo.size();
 				for (int i = 0; i < otherInfoSize; i++) {
 					if (otherInfo.get(i).parameter instanceof ISelectionParameter) {
+						String methodName = otherInfo.get(i).methodName;
 						if (otherInfo.get(i).parameter instanceof ParameterCheckBox) {
-							Method method = importSettingClass.getMethod(otherInfo.get(i).methodName, boolean.class);
+							Method method = importSettingClass.getMethod(methodName, boolean.class);
 							//合并图层参数设置问题
-							boolean value = otherInfo.get(i).methodName.equals("setImportingByLayer")
+							boolean value = methodName.equals("setImportingByLayer")
 									? ("false".equals(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) ? true : false)
 									: ("true".equals(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) ? true : false);
 							method.invoke(importSetting, value);
 						} else if (null != ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) {
 							Method method = null;
-							if ("setCurveSegment".equals(otherInfo.get(i).methodName)) {
-								method = importSettingClass.getMethod(otherInfo.get(i).methodName, int.class);
+							if ("setCurveSegment".equals(methodName)) {
+								method = importSettingClass.getMethod(methodName, int.class);
 								method.invoke(importSetting, Integer.valueOf(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem().toString()));
+							} else if ("setPassword".equals(methodName)) {
+								method = importSettingClass.getMethod(methodName, String.class);
+								method.invoke(importSetting, ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem().toString());
 							} else {
-								method = importSettingClass.getMethod(otherInfo.get(i).methodName, ((ParameterDataNode) ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()).getData().getClass());
+								method = importSettingClass.getMethod(methodName, ((ParameterDataNode) ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()).getData().getClass());
 								method.invoke(importSetting, ((ParameterDataNode) ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()).getData());
 							}
 

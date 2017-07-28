@@ -400,6 +400,8 @@ public class DialogCacheBuilder extends JFrame {
 			String processCount = textFieldProcessCount.getText();
 			boolean isAppending = this.cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip;
 			params = new String[]{taskPath, workspacePath, mapName, cachePath, processCount, String.valueOf(isAppending)};
+			//先移动doing下的sci
+			CacheUtilities.renameDoingFile(getTaskPath("doing"), taskPath);
 			if (!validateValue(taskPath, workspacePath, mapName, processCount)) {
 				buttonCreate.setEnabled(true);
 			} else {
@@ -483,7 +485,6 @@ public class DialogCacheBuilder extends JFrame {
 		} else {
 			new SmOptionPane().showErrorDialog("No sci file");
 		}
-		CacheUtilities.renameDoingFile(getTaskPath("doing"), taskPath);
 		buildCache = new BuildCache();
 		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
 //		BuildCache.main(params);
