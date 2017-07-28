@@ -1,5 +1,7 @@
 package com.supermap.desktop.process.parameter.interfaces.datas.types;
 
+import java.awt.image.Raster;
+
 /**
  * Created by highsad on 2017/4/13.
  */
@@ -41,6 +43,8 @@ public final class DatasetTypes extends Type {
 			LINE.getValue() | REGION.getValue());
 	public final static DatasetTypes VECTOR = new DatasetTypes("vector",
 			TABULAR.getValue() | SIMPLE_VECTOR.getValue() | TEXT.getValue() | CAD.getValue());
+
+	public final static  DatasetTypes ALL_RASTER=new DatasetTypes("AllRaster",IMAGE.getValue() | GRID.getValue());
 
 	public final static DatasetTypes DATASET = new DatasetTypes("dataset", VECTOR.getValue() | GRID.getValue() | IMAGE.getValue());
 

@@ -79,33 +79,25 @@ public class MetaProcessDEMBuild extends MetaProcess{
 
     private void initParameters() {
         sourceDatasources = new ParameterDatasourceConstrained();
-        sourceDatasources.setDescribe(CommonProperties.getString("String_SourceDatasource"));
         sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE);
-        sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
         ParameterCombine sourceData = new ParameterCombine();
         sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
         sourceData.addParameters(sourceDatasources, sourceDataset);
 
         lakeDatasource = new ParameterDatasourceConstrained();
-        lakeDatasource.setDescribe(CommonProperties.getString("String_LakeDatasource"));
         lakeDataset = new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
-        lakeDataset.setDescribe(CommonProperties.getString("String_LakeDataset"));
         ParameterCombine lakeData = new ParameterCombine();
         lakeData.setDescribe(CommonProperties.getString("String_GroupBox_LakeData"));
         lakeData.addParameters(lakeDatasource, lakeDataset);
 
         clipDatasource = new ParameterDatasourceConstrained();
-        clipDatasource.setDescribe(ProcessProperties.getString("String_Label_ClipDatasource"));
         clipDataset=new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
-        clipDataset.setDescribe(ProcessProperties.getString("String_Label_ClipDataset"));
         ParameterCombine clipData = new ParameterCombine();
         clipData.setDescribe(ProcessProperties.getString("String_GroupBox_ClipData"));
         clipData.addParameters(clipDatasource, clipDataset);
 
         eraseDatasource = new ParameterDatasourceConstrained();
-        eraseDatasource.setDescribe(ProcessProperties.getString("String_Label_EraseDatasource"));
         eraseDataset=new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
-        eraseDataset.setDescribe(ProcessProperties.getString("String_Label_EraseDataset"));
         ParameterCombine eraseData = new ParameterCombine();
         eraseData.setDescribe(ProcessProperties.getString("String_GroupBox_EraseData"));
         eraseData.addParameters(eraseDatasource, eraseDataset);
@@ -119,7 +111,7 @@ public class MetaProcessDEMBuild extends MetaProcess{
         checkBox = new ParameterCheckBox(ProcessProperties.getString("String_ProcessFlatArea"));
         ParameterCombine baseSetting = new ParameterCombine();
         baseSetting.setDescribe(ProcessProperties.getString("String_GroupBox_ParameterSetting_Base"));
-        baseSetting.addParameters(comboBoxSourceField, comboBoxInterpolateType, comboBoxTerrainStatisticType, textNumResampleTolerance, textNumZFactor, checkBox, comboBoxLakeField);
+        baseSetting.addParameters(comboBoxSourceField, comboBoxLakeField, comboBoxInterpolateType, comboBoxTerrainStatisticType, textNumResampleTolerance, textNumZFactor, checkBox);
 
         comboBoxEncodeType = new ParameterComboBox().setDescribe(ProcessProperties.getString("label_encodingType"));
         comboBoxPixelFormat = new ParameterComboBox().setDescribe(CommonProperties.getString("String_PixelType"));
@@ -153,6 +145,7 @@ public class MetaProcessDEMBuild extends MetaProcess{
         if (datasetVector != null) {
             sourceDatasources.setSelectedItem(datasetVector.getDatasource());
             sourceDataset.setSelectedItem(datasetVector);
+            comboBoxSourceField.setFieldName((DatasetVector)datasetVector);
         }
         comboBoxSourceField.setFieldType(fieldType);
 
@@ -203,19 +196,17 @@ public class MetaProcessDEMBuild extends MetaProcess{
         textFieldRowCount.setSelectedItem("0");
         textFieldColumnCount.setSelectedItem("0");
         textFieldSizeOf.setSelectedItem("0");
+        comboBoxLakeField.setFieldType(fieldType);
 
         if (datasetVector != null) {
             lakeDatasource.setSelectedItem(datasetVector.getDatasource());
             lakeDataset.setDatasource(datasetVector.getDatasource());
-        }
-        comboBoxLakeField.setFieldType(fieldType);
-
-        if (datasetVector != null) {
+            comboBoxLakeField.setShowNullValue(true);
+            comboBoxLakeField.setDataset((DatasetVector) DatasetUtilities.getDefaultDataset(DatasetType.REGION));
+            lakeDataset.setSelectedItem(null);
+            resetPixel((DatasetVector) datasetVector);
             clipDatasource.setSelectedItem(datasetVector.getDatasource());
             clipDataset.setDatasource(datasetVector.getDatasource());
-        }
-
-        if (datasetVector != null) {
             eraseDatasource.setSelectedItem(datasetVector.getDatasource());
             eraseDataset.setDatasource(datasetVector.getDatasource());
         }
@@ -254,38 +245,10 @@ public class MetaProcessDEMBuild extends MetaProcess{
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
-                    Rectangle2D bounds = ((DatasetVector) evt.getNewValue()).getBounds();
-                    double cellSize = Math.sqrt(Math.pow(bounds.getHeight(), 2) + Math.pow(bounds.getWidth(), 2)) / 500;
-                    textFieldCellSize.setSelectedItem(cellSize);
-                    textFieldRowCount.setSelectedItem((int) (bounds.getHeight() / cellSize));
-                    textFieldColumnCount.setSelectedItem((int) (bounds.getWidth() / cellSize));
+                    resetPixel((DatasetVector) evt.getNewValue());
                 }
 
-                int pixelFormatByte = 0;
-                if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT1) {
-                    pixelFormatByte = 1;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT4) {
-                    pixelFormatByte = 4;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT8 || comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT8) {
-                    pixelFormatByte = 8;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT16 || comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT16) {
-                    pixelFormatByte = 16;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT32 || comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT32) {
-                    pixelFormatByte = 32;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT64) {
-                    pixelFormatByte = 64;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.SINGLE) {
-                    pixelFormatByte = 32;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.DOUBLE) {
-                    pixelFormatByte = 64;
-                }
-                int row = Integer.valueOf(textFieldRowCount.getSelectedItem().toString());
-                int column = Integer.valueOf(textFieldColumnCount.getSelectedItem().toString());
-                double sizeOf = (row * column * pixelFormatByte) / (8 * 1024 * 1024) + 0.000005;
-                sizeOf = Math.round(sizeOf * 100000)/100000;
-                textFieldSizeOf.setSelectedItem(sizeOf);
-
-                isDatasetLine = ((DatasetVector)evt.getNewValue()).getType() == DatasetType.LINE;
+                isDatasetLine = evt.getNewValue()==null||(((DatasetVector)evt.getNewValue()).getType() == DatasetType.LINE);
                 textNumResampleTolerance.setEnabled(isDatasetLine&&isInterpolateTypeTIN);
             }
         });
@@ -315,17 +278,12 @@ public class MetaProcessDEMBuild extends MetaProcess{
             } else {
                 src = (DatasetVector) sourceDataset.getSelectedItem();
             }
-            if (comboBoxSourceField.getSelectedItem().toString() != "") {
-                if (src.getType() == DatasetType.POINT) {
-                    terrainBuilderParameter.setPointDatasets(new DatasetVector[]{src});
-                    terrainBuilderParameter.setPointAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
-                } else if (src.getType() == DatasetType.LINE) {
-                    terrainBuilderParameter.setLineDatasets(new DatasetVector[]{src});
-                    terrainBuilderParameter.setLineAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
-                }
-            } else {
-                Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_NullHeightValue_Error"));
-                return false;
+            if (src.getType() == DatasetType.POINT) {
+                terrainBuilderParameter.setPointDatasets(new DatasetVector[]{src});
+                terrainBuilderParameter.setPointAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
+            } else if (src.getType() == DatasetType.LINE) {
+                terrainBuilderParameter.setLineDatasets(new DatasetVector[]{src});
+                terrainBuilderParameter.setLineAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
             }
 
             DatasetVector srcLake=null;
@@ -404,5 +362,41 @@ public class MetaProcessDEMBuild extends MetaProcess{
     @Override
     public String getTitle() {
         return ProcessProperties.getString("String_DEMBuild");
+    }
+
+    /**
+     * 刷新分辨率、行数、列数的值
+     */
+    private void resetPixel(DatasetVector datasetVector) {
+
+        Rectangle2D bounds = datasetVector.getBounds();
+        double cellSize = Math.sqrt(Math.pow(bounds.getHeight(), 2) + Math.pow(bounds.getWidth(), 2)) / 500;
+        textFieldCellSize.setSelectedItem(cellSize);
+        textFieldRowCount.setSelectedItem((int) (bounds.getHeight() / cellSize));
+        textFieldColumnCount.setSelectedItem((int) (bounds.getWidth() / cellSize));
+
+        int pixelFormatByte = 0;
+        if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT1) {
+            pixelFormatByte = 1;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT4) {
+            pixelFormatByte = 4;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT8 || comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT8) {
+            pixelFormatByte = 8;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT16 || comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT16) {
+            pixelFormatByte = 16;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT32 || comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT32) {
+            pixelFormatByte = 32;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT64) {
+            pixelFormatByte = 64;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.SINGLE) {
+            pixelFormatByte = 32;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.DOUBLE) {
+            pixelFormatByte = 64;
+        }
+        int row = Integer.valueOf(textFieldRowCount.getSelectedItem().toString());
+        int column = Integer.valueOf(textFieldColumnCount.getSelectedItem().toString());
+        double sizeOf = (row * column * pixelFormatByte) / (8 * 1024 * 1024) + 0.000005;
+        sizeOf = Math.round(sizeOf * 100000)/100000;
+        textFieldSizeOf.setSelectedItem(sizeOf);
     }
 }

@@ -2,10 +2,12 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
+import com.supermap.desktop.utilities.ArrayUtilities;
 
 import java.beans.PropertyChangeEvent;
 
@@ -114,4 +116,21 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 		this.isEditable = isEditable;
 	}
 
+	public void setFieldName(String fieldName) {
+		this.fieldName = fieldName;
+	}
+
+	public void setFieldName(DatasetVector dataset) {
+		setDataset(dataset);
+		FieldInfos fieldInfos = dataset.getFieldInfos();
+		if (!isShowNullValue) {
+			for (int i = 0; i < fieldInfos.getCount(); i++) {
+				FieldInfo fieldInfo = fieldInfos.get(i);
+				if (!fieldInfo.isSystemField()&& (fieldTypes==null||ArrayUtilities.isArrayContains(fieldTypes, fieldInfo.getType()))) {
+					this.fieldName = fieldInfo.getCaption();
+					break;
+				}
+			}
+		}
+	}
 }

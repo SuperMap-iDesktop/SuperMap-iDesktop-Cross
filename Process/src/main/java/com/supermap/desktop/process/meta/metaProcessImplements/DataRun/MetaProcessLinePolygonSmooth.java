@@ -19,7 +19,8 @@ import com.supermap.desktop.utilities.DatasetUtilities;
  * 线面光滑
  */
 public class MetaProcessLinePolygonSmooth extends MetaProcess {
-	private final static String INPUT_SOURCE_DATASET = "SourceDataset";
+	private final static String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
+	private final static String OUTPUT_DATA = "LinePolygonSmoothResult";
 
 	private ParameterDatasourceConstrained datasource;
 	private ParameterSingleDataset dataset;
@@ -52,6 +53,7 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 
 		parameters.setParameters(parameterCombineSourceData, parameterCombineParameter);
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
 
 	}
 
@@ -74,8 +76,8 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
+		DatasetVector datasetVector = null;
 		try {
-			DatasetVector datasetVector = null;
 			if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
 					&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
 				datasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
@@ -87,11 +89,11 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 
 			datasetVector.addSteppedListener(this.steppedListener);
 			isSuccessful = datasetVector.smooth(smoothness, true);
-			datasetVector.removeSteppedListener(this.steppedListener);
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(datasetVector);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-
+			datasetVector.removeSteppedListener(this.steppedListener);
 		}
 		return isSuccessful;
 	}

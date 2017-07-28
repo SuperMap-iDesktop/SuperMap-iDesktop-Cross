@@ -183,8 +183,8 @@ public class MetaProcessBuffer extends MetaProcess {
 		if (datasetVector != null) {
 			datasource.setSelectedItem(datasetVector.getDatasource());
 			dataset.setSelectedItem(datasetVector);
-			comboBoxFieldLeft.setDataset((DatasetVector) datasetVector);
-			comboBoxFieldRight.setDataset((DatasetVector) datasetVector);
+			comboBoxFieldLeft.setFieldName((DatasetVector) datasetVector);
+			comboBoxFieldRight.setFieldName((DatasetVector) datasetVector);
 			checkBoxBufferType.setEnabled(dataset.getSelectedDataset().getType().equals(DatasetType.LINE));
 			setComponentEnable();
 		}

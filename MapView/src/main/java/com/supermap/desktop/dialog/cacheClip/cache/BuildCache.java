@@ -3,6 +3,7 @@ package com.supermap.desktop.dialog.cacheClip.cache;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.data.processing.StorageType;
 import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.mapping.Map;
 
@@ -110,8 +111,9 @@ public class BuildCache {
 						}
 						//加锁前先创建MapCacheBuilder(builder.fromConfigFile()需要用到sci文件)
 						MapCacheBuilder builder = new MapCacheBuilder();
-						builder.setMap(map);
 						builder.fromConfigFile(sciName);
+						builder.setMap(map);
+						builder.setMultiProcessing(builder.getStorageType() == StorageType.MongoDB);
 						builder.setOutputFolder(new File(cachePath).getParent());
 						builder.setCacheName(builder.getCacheName());
 						builder.resumable(false);

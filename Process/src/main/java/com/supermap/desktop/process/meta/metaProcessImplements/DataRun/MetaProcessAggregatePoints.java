@@ -104,7 +104,7 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 			sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
 			dataset.setSelectedItem(defaultDataset);
 			saveDataset.setResultDatasource(defaultDataset.getDatasource());
-			saveDataset.setSelectedItem(OUTPUT_DATA);
+			saveDataset.setSelectedItem("result_aggregatePoints");
 		}
 
 		parameterNumberDistance.setSelectedItem(1000);
@@ -121,7 +121,6 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 		DatasourceConstraint.getInstance().constrained(saveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
-
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
@@ -136,15 +135,15 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 			} else {
 				src = (DatasetVector) this.dataset.getSelectedItem();
 			}
-
 			Generalization.addSteppedListener(steppedListener);
-			boolean result=Generalization.aggregatePoints(src,Double.valueOf(parameterNumberDistance.getSelectedItem().toString()),
+			Generalization.aggregatePoints(src,Double.valueOf(parameterNumberDistance.getSelectedItem().toString()),
 					(Unit) parameterComboBoxUnit.getSelectedData(),
 					Integer.valueOf(parameterNumberMinPilePointCount.getSelectedItem().toString()),
 					saveDataset.getResultDatasource(), datasetName,null);
 			Dataset dataset= saveDataset.getResultDatasource().getDatasets().get(datasetName);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
 			isSuccessful = dataset!=null;
+
 			fireRunning(new RunningEvent(MetaProcessAggregatePoints.this, 100, "finished"));
 			
 		} catch (Exception e) {
@@ -154,7 +153,6 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 		}
 		return isSuccessful;
 	}
-
 
 	@Override
 	public IParameters getParameters() {
@@ -170,6 +168,4 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 	public String getTitle() {
 		return ProcessProperties.getString("String_AggregatePoints");
 	}
-
-
 }

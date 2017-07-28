@@ -55,7 +55,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	public static final int ResumeProcessClip = 4;
 	private boolean firstStepEnabled = true;
 	private boolean nextStepEnabled = true;
-	private String tasksSize = "5";
+	private String tasksSize = "1";
 	private String canudb = "1";
 	private MapCacheBuilder mapCacheBuilder;
 	public FirstStepPane firstStepPane;
@@ -233,12 +233,14 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				cacheFile.mkdir();
 				taskFile.mkdir();
 			}
-			File propertyFile = new File(CacheUtilities.replacePath(cacheRoot, "Cache.property"));
-			propertyFile.createNewFile();
-			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(propertyFile), "UTF-8");
-			writer.write("CacheName=" + cacheName);
-			writer.flush();
-			writer.close();
+			if (cmdType == MultiProcessClip) {
+				File propertyFile = new File(CacheUtilities.replacePath(cacheRoot, "Cache.property"));
+				propertyFile.createNewFile();
+				OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(propertyFile), "UTF-8");
+				writer.write("CacheName=" + cacheName);
+				writer.flush();
+				writer.close();
+			}
 		} catch (IOException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
@@ -415,7 +417,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				}
 				if (result) {
 					String[] params = {sciPath, CacheUtilities.replacePath(cachePath, CacheTask), tasksSize, canudb};
-					boolean buildTaskResult = TaskBuilder.main(params);
+					boolean buildTaskResult = TaskBuilder.buildSci(params);
 					if (!buildTaskResult) {
 						this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 						return;

@@ -420,7 +420,6 @@ public class NextStepPane extends JPanel implements IState {
 			this.labelPixel.setEnabled(false);
 			this.comboBoxPixel.setEnabled(false);
 		} else {
-			this.panelIndexRange.setComponentsEnabled(true);
 			this.labelImageType.setEnabled(true);
 			this.comboBoxImageType.setEnabled(true);
 			this.labelPixel.setEnabled(true);

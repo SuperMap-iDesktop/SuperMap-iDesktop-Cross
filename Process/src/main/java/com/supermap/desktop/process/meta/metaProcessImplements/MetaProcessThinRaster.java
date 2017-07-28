@@ -73,10 +73,10 @@ public class MetaProcessThinRaster extends MetaProcess{
 
 
 		this.parameters.setParameters(sourceData, parameterSetting, resultData);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.IMAGE, sourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.IMAGE, resultData);
+//		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.ALL_RASTER, sourceData);
+//		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.ALL_RASTER, resultData);
 	}
 
 	private void initParameterConstraint() {

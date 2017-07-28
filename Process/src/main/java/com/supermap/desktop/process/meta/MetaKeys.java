@@ -11,6 +11,7 @@ public class MetaKeys {
 	public static final String SET_PROJECTION = "SetProjection";
 	public static final String EXPORTGRID = "ExportGrid";
 	public static final String EXPORTVECTOR = "ExportVector";
+	public static final String FIELD_INDEX="FieldIndex";
 
 	public static final String GRIDREGION_AGGREGATION = "GridRegionAggregation";
 	public static final String POLYGON_AGGREGATION = "PolygonAggregation";
@@ -96,6 +97,12 @@ public class MetaKeys {
 	public static final String CONVERSION_TEXT_TO_POINT = "Conversion_TextToPoint";
 	public static final String CONVERSION_TABULAR_TO_POINT = "Conversion_TabularToPoint";
 	public static final String CONVERSION_TABULARPOINT_TO_REGION = "Conversion_TabularPointToRegion";
+	public static final String CONVERSION_POINT3D_TO_2D = "Conversion_Point3DTo2D";
+	public static final String CONVERSION_LINE3D_TO_2D = "Conversion_Line3DTo2D";
+	public static final String CONVERSION_REGION3D_TO_2D = "Conversion_Region3DTo2D";
+	public static final String CONVERSION_POINT2D_TO_3D = "Conversion_Point2DTo3D";
+	public static final String CONVERSION_LINE2D_TO_3D = "Conversion_Line2DTo3D";
+	public static final String CONVERSION_REGION2D_TO_3D = "Conversion_Region2DTo3D";
 
 	// 大数据
 	public static final String HEAT_MAP = "HeatMap";

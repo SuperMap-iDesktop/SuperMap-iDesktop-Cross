@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
+import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.MetaProcessImportFactory;
@@ -257,10 +258,14 @@ public class WorkflowParser {
 			result = new MetaProcessAggregatePoints();
 		} else if (MetaKeys.RAREFY_POINTS.equals(key)) {
 			result = new MetaProcessRarefyPoints();
-		} else if (MetaKeys.VECTOR_RESAMPLE.equals(key)) {
+		} else if (MetaKeys.FIELD_INDEX.equals(key)) {
+			result = new MetaProcessFieldIndex();
+		}else if (MetaKeys.VECTOR_RESAMPLE.equals(key)) {
 			result = new MetaProcessVectorResample();
 		} else if (MetaKeys.LINE_POLYGON_SMOOTH.equals(key)) {
 			result = new MetaProcessLinePolygonSmooth();
+		} else if (MetaKeys.CONVERSION_POINT_TO_LINE.equals(key)) {
+			result = new MetaProcessPointToLine();
 		} else if (MetaKeys.CONVERSION_LINE_TO_POINT.equals(key)) {
 			result = new MetaProcessLineToPoint();
 		} else if (MetaKeys.CONVERSION_REGION_TO_POINT.equals(key)) {
@@ -271,6 +276,8 @@ public class WorkflowParser {
 			result = new MetaProcessRegionToLine();
 		} else if (MetaKeys.CONVERSION_TABULAR_TO_POINT.equals(key)) {
 			result = new MetaProcessTabularToPoint();
+		} else if (MetaKeys.CONVERSION_TABULARPOINT_TO_REGION.equals(key)) {
+			result = new MetaProcessTabularPointToRegion();
 		} else if (MetaKeys.CONVERSION_CAD_TO_SIMPLE.equals(key)) {
 			result = new MetaProcessCADToSimple();
 		} else if (MetaKeys.CONVERSION_SIMPLE_TO_CAD.equals(key)) {
@@ -281,6 +288,20 @@ public class WorkflowParser {
 			result = new MetaProcessTextToField();
 		} else if (MetaKeys.CONVERSION_TEXT_TO_POINT.equals(key)) {
 			result = new MetaProcessTextToPoint();
+		} else if (MetaKeys.CONVERSION_EPS_TO_SIMPLE.equals(key)) {
+			result = new MetaProcessEPSToSimple();
+		} else if (MetaKeys.CONVERSION_POINT3D_TO_2D.equals(key)) {
+			result = new MetaProcessPoint3DTo2D();
+		} else if (MetaKeys.CONVERSION_LINE3D_TO_2D.equals(key)) {
+			result = new MetaProcessLine3DTo2D();
+		} else if (MetaKeys.CONVERSION_REGION3D_TO_2D.equals(key)) {
+			result = new MetaProcessRegion3DTo2D();
+		} else if (MetaKeys.CONVERSION_POINT2D_TO_3D.equals(key)) {
+			result = new MetaProcess2DTo3D(DatasetType.POINT);
+		} else if (MetaKeys.CONVERSION_LINE2D_TO_3D.equals(key)) {
+			result = new MetaProcess2DTo3D(DatasetType.LINE);
+		} else if (MetaKeys.CONVERSION_REGION2D_TO_3D.equals(key)) {
+			result = new MetaProcess2DTo3D(DatasetType.REGION);
 		} else if (MetaKeys.EDGE_MATCH.equals(key)) {
 			result = new MetaProcessEdgeMatch();
 		} else if (MetaKeys.PICKUP_BORDER.equals(key)) {

@@ -97,6 +97,7 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 			parameterSingleDatasetBounding.setSelectedItem(defaultDatasetVector);
 			parameterSingleDatasetAggregating.setSelectedItem(defaultDatasetVector);
 			parameterFieldComboBox.setDataset(defaultDatasetVector);
+			parameterFieldComboBox.setFieldName(defaultDatasetVector);
 		}
 	}
 

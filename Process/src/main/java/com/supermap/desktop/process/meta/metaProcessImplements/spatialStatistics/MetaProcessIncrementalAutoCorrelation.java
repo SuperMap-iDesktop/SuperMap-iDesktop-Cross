@@ -4,6 +4,7 @@ import com.supermap.analyst.spatialstatistics.AnalyzingPatterns;
 import com.supermap.analyst.spatialstatistics.DistanceMethod;
 import com.supermap.analyst.spatialstatistics.IncrementalParameter;
 import com.supermap.analyst.spatialstatistics.IncrementalResult;
+import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -18,7 +19,6 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
 import java.text.DecimalFormat;
@@ -31,7 +31,7 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 	// TODO: 2017/4/27
 	private final static String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
 	private ParameterDatasourceConstrained datasource = new ParameterDatasourceConstrained();
-	private ParameterSingleDataset dataset = new ParameterSingleDataset(DatasetTypeUtilities.getDatasetTypeVector());
+	private ParameterSingleDataset dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 	private ParameterFieldComboBox parameterFieldComboBox = new ParameterFieldComboBox();
 	private ParameterCheckBox parameterCheckBox = new ParameterCheckBox();
 	private ParameterNumber parameterTextFieldBeginDistance = new ParameterNumber();
@@ -81,6 +81,7 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 			datasource.setSelectedItem(defaultDatasetVector.getDatasource());
 			dataset.setSelectedItem(defaultDatasetVector);
 			parameterFieldComboBox.setDataset(defaultDatasetVector);
+			parameterFieldComboBox.setFieldName(defaultDatasetVector);
 		}
 		parameterTextFieldBeginDistance.setSelectedItem("0.0");
 		parameterTextFieldBeginDistance.setMinValue(0);
@@ -88,6 +89,7 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		parameterTextFieldIncrementalDistance.setMinValue(0);
 		parameterTextFieldIncrementalNumber.setSelectedItem("10");
 		parameterTextFieldIncrementalNumber.setMinValue(2);
+		parameterTextFieldIncrementalNumber.setMaxBit(0);
 		parameterTextFieldIncrementalNumber.setMaxValue(30);
 	}
 
@@ -171,7 +173,7 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 			}
 			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			AnalyzingPatterns.removeSteppedListener(steppedListener);
 		}
