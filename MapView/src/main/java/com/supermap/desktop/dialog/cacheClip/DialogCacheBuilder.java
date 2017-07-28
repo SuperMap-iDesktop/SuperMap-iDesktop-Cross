@@ -379,7 +379,7 @@ public class DialogCacheBuilder extends JFrame {
 				doingFile = new File(getTaskPath("doing"));
 			}
 		}
-		return null != doingFile && hasSciFiles(doingFile);
+		return null != doingFile && CacheUtilities.hasSciFiles(doingFile);
 	}
 
 	private void removeEvents() {
@@ -414,16 +414,16 @@ public class DialogCacheBuilder extends JFrame {
 
 	public String getCacheSci() {
 		String result = null;
-		if (null!=CacheUtilities.getCachePath(fileChooserCachePath.getPath())){
-		File cachePath = new File(CacheUtilities.getCachePath(fileChooserCachePath.getPath()));
-		File[] scis = cachePath.listFiles();
-		if (null != scis) {
-			for (int i = 0; i < scis.length; i++) {
-				if (scis[i].getName().endsWith(".sci")) {
-					result = scis[i].getAbsolutePath();
+		if (null != CacheUtilities.getCachePath(fileChooserCachePath.getPath())) {
+			File cachePath = new File(CacheUtilities.getCachePath(fileChooserCachePath.getPath()));
+			File[] scis = cachePath.listFiles();
+			if (null != scis) {
+				for (int i = 0; i < scis.length; i++) {
+					if (scis[i].getName().endsWith(".sci")) {
+						result = scis[i].getAbsolutePath();
+					}
 				}
 			}
-		}
 		}
 		return result;
 	}
@@ -548,8 +548,8 @@ public class DialogCacheBuilder extends JFrame {
 			}
 		}
 		File failedDirectory = new File(getTaskPath("failed"));
-		if (!taskDirectory.exists() || !hasSciFiles(taskDirectory)) {
-			if (failedDirectory.exists() && hasSciFiles(failedDirectory)) {
+		if (!taskDirectory.exists() || !CacheUtilities.hasSciFiles(taskDirectory)) {
+			if (failedDirectory.exists() && CacheUtilities.hasSciFiles(failedDirectory)) {
 				if (new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
 					File[] failedSci = failedDirectory.listFiles();
 					for (int i = 0; i < failedSci.length; i++) {
@@ -558,8 +558,7 @@ public class DialogCacheBuilder extends JFrame {
 				} else {
 					return false;
 				}
-			} else if ((!taskDirectory.exists() || !hasSciFiles(taskDirectory))
-					&& (!failedDirectory.exists() && !hasSciFiles(failedDirectory))) {
+			} else if (!failedDirectory.exists() || !CacheUtilities.hasSciFiles(failedDirectory)) {
 				new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_TaskNotExist"));
 				return false;
 			}
@@ -567,12 +566,6 @@ public class DialogCacheBuilder extends JFrame {
 		return result;
 	}
 
-	private boolean hasSciFiles(File sciDirectory) {
-		if (null == sciDirectory.list(getFilter())) {
-			return false;
-		}
-		return sciDirectory.list(getFilter()).length > 0 ? true : false;
-	}
 
 	//Update single scale info process
 	private void updateProcesses(final String parentPath, final String cachePath, final int totalSciLength) {

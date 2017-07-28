@@ -233,12 +233,14 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				cacheFile.mkdir();
 				taskFile.mkdir();
 			}
-			File propertyFile = new File(CacheUtilities.replacePath(cacheRoot, "Cache.property"));
-			propertyFile.createNewFile();
-			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(propertyFile), "UTF-8");
-			writer.write("CacheName=" + cacheName);
-			writer.flush();
-			writer.close();
+			if (cmdType == MultiProcessClip) {
+				File propertyFile = new File(CacheUtilities.replacePath(cacheRoot, "Cache.property"));
+				propertyFile.createNewFile();
+				OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(propertyFile), "UTF-8");
+				writer.write("CacheName=" + cacheName);
+				writer.flush();
+				writer.close();
+			}
 		} catch (IOException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}

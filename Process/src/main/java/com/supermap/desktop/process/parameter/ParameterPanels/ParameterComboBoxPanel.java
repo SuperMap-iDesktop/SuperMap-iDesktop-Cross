@@ -53,7 +53,7 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 		label.setToolTipText(this.parameterComboBox.getDescribe());
 		label.setVisible(parameterComboBox.isDescriptionVisible());
 		comboBox.setRenderer(new ParameterComboBoxCellRender(this.parameterComboBox.getIConGetter()));
-
+		//comboBox.setEditable(this.parameterComboBox.isEditable());
 		initLayout();
 	}
 

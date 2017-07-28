@@ -6,6 +6,7 @@ import com.supermap.data.Point3D;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
@@ -115,8 +116,8 @@ public class ImportSettingSetter {
 								method = importSettingClass.getMethod(otherInfo.get(i).methodName, int.class);
 								method.invoke(importSetting, Integer.valueOf(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem().toString()));
 							} else {
-								method = importSettingClass.getMethod(otherInfo.get(i).methodName, ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem().getClass());
-								method.invoke(importSetting, ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem());
+								method = importSettingClass.getMethod(otherInfo.get(i).methodName, ((ParameterDataNode) ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()).getData().getClass());
+								method.invoke(importSetting, ((ParameterDataNode) ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()).getData());
 							}
 
 						}

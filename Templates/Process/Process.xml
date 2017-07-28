@@ -33,14 +33,11 @@
                     <process key="ImportSIT" name=".SIT"/>
                     <process key="ImportIMG" name=".IMG"/>
                     <process key="ImportTIF" name=".TIF"/>
-                    <process key="ImportTIFF" name=".TIFF"/>
                     <process key="ImportBMP" name=".BMP"/>
                     <process key="ImportPNG" name=".PNG"/>
                     <process key="ImportGIF" name=".GIF"/>
                     <process key="ImportJPG" name=".JPG"/>
-                    <process key="ImportJPEG" name=".JPEG"/>
                     <process key="ImportJP2" name=".JP2"/>
-                    <process key="ImportJPK" name=".JPK"/>
                     <process key="ImportSID" name=".SID"/>
                     <process key="ImportECW" name=".ECW"/>
                 </process>

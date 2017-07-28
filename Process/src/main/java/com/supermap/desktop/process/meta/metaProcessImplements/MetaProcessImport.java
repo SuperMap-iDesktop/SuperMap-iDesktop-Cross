@@ -304,6 +304,7 @@ public class MetaProcessImport extends MetaProcess {
 			((ImportSettingGPX) importSetting).addImportSteppedListener(this.importStepListener);
 			UserDefineImportResult result = ((ImportSettingGPX) importSetting).run();
 			if (null != result) {
+				isSuccessful = true;
 				updateDatasource(result.getSuccess());
 				endTime = System.currentTimeMillis(); // 获取结束时间
 				time = endTime - startTime;
@@ -320,7 +321,8 @@ public class MetaProcessImport extends MetaProcess {
 				ImportResult result = dataImport.run();
 				ImportSetting[] succeedSettings = result.getSucceedSettings();
 				if (succeedSettings.length > 0) {
-					isSuccessful = updateDatasource(succeedSettings[0]);
+					isSuccessful = true;
+					updateDatasource(succeedSettings[0]);
 					endTime = System.currentTimeMillis(); // 获取结束时间
 					time = endTime - startTime;
 					printMessage(result, time);
@@ -364,8 +366,7 @@ public class MetaProcessImport extends MetaProcess {
 		}
 	}
 
-	private boolean updateDatasource(ImportSetting succeedSetting) {
-		boolean result = false;
+	private void updateDatasource(ImportSetting succeedSetting) {
 		final Datasource datasource = succeedSetting.getTargetDatasource();
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -389,9 +390,7 @@ public class MetaProcessImport extends MetaProcess {
 		}
 		Dataset dataset = datasource.getDatasets().get(succeedSetting.getTargetDatasetName());
 		this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
-		result = dataset != null;
 		fireRunning(new RunningEvent(this, 100, "finished"));
-		return result;
 	}
 
 	@Override
