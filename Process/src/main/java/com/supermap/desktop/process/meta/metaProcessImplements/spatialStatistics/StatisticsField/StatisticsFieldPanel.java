@@ -377,8 +377,9 @@ public class StatisticsFieldPanel extends JPanel {
 		buttonAddNew.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				tableModel.addRow(new StatisticsFieldInfo("NewField", FieldType.TEXT, StatisticsType.FIRST));
+				tableModel.addRow(new StatisticsFieldInfo(dataset.getAvailableFieldName("NewField"), FieldType.TEXT, StatisticsType.FIRST));
 				// 当手动添加了新条目，才设置最后一行可编辑-yuanR 2017.7.12
+				// todo 修改整个table可修改
 				tableModel.setColumnFieldTypeEditable(true);
 			}
 		});
@@ -532,7 +533,7 @@ public class StatisticsFieldPanel extends JPanel {
 			ArrayList<StatisticsFieldInfo> shownInfos = ((StatisticsFieldTableModel) StatisticsFieldPanel.this.table.getModel()).getStatisticsFieldInfos();
 			ArrayList<StatisticsFieldInfo> unShownInfos = subtract(statisticsFieldInfoAll, shownInfos);
 			this.tableModel = new StatisticsFieldTableModel(unShownInfos);
-			this.tableModel.setColumnStatisticsTypeEditable(false);
+			this.tableModel.setColumnStatisticsTypeEditable(true);
 			this.scrollPane.setViewportView(table);
 			this.table.setModel(this.tableModel);
 
