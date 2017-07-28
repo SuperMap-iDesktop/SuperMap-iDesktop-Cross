@@ -79,33 +79,25 @@ public class MetaProcessDEMBuild extends MetaProcess{
 
     private void initParameters() {
         sourceDatasources = new ParameterDatasourceConstrained();
-        sourceDatasources.setDescribe(CommonProperties.getString("String_SourceDatasource"));
         sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE);
-        sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
         ParameterCombine sourceData = new ParameterCombine();
         sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
         sourceData.addParameters(sourceDatasources, sourceDataset);
 
         lakeDatasource = new ParameterDatasourceConstrained();
-        lakeDatasource.setDescribe(CommonProperties.getString("String_LakeDatasource"));
         lakeDataset = new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
-        lakeDataset.setDescribe(CommonProperties.getString("String_LakeDataset"));
         ParameterCombine lakeData = new ParameterCombine();
         lakeData.setDescribe(CommonProperties.getString("String_GroupBox_LakeData"));
         lakeData.addParameters(lakeDatasource, lakeDataset);
 
         clipDatasource = new ParameterDatasourceConstrained();
-        clipDatasource.setDescribe(ProcessProperties.getString("String_Label_ClipDatasource"));
         clipDataset=new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
-        clipDataset.setDescribe(ProcessProperties.getString("String_Label_ClipDataset"));
         ParameterCombine clipData = new ParameterCombine();
         clipData.setDescribe(ProcessProperties.getString("String_GroupBox_ClipData"));
         clipData.addParameters(clipDatasource, clipDataset);
 
         eraseDatasource = new ParameterDatasourceConstrained();
-        eraseDatasource.setDescribe(ProcessProperties.getString("String_Label_EraseDatasource"));
         eraseDataset=new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
-        eraseDataset.setDescribe(ProcessProperties.getString("String_Label_EraseDataset"));
         ParameterCombine eraseData = new ParameterCombine();
         eraseData.setDescribe(ProcessProperties.getString("String_GroupBox_EraseData"));
         eraseData.addParameters(eraseDatasource, eraseDataset);
@@ -208,6 +200,7 @@ public class MetaProcessDEMBuild extends MetaProcess{
         if (datasetVector != null) {
             lakeDatasource.setSelectedItem(datasetVector.getDatasource());
             lakeDataset.setDatasource(datasetVector.getDatasource());
+            comboBoxLakeField.setShowNullValue(true);
             comboBoxLakeField.setFieldName((DatasetVector) datasetVector);
         }
         comboBoxLakeField.setFieldType(fieldType);

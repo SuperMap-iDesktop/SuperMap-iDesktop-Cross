@@ -24,8 +24,8 @@ import java.util.ArrayList;
  * 点属性->面属性
  * 待优化内容：追加点属性到面属性之前需要手动创建追加字段，其创建的字段类型都为文本，之后修改为创建的字段类型和点数据字段类型相同。
  */
-public class MetaProcessTabularPointToRegion extends MetaProcess {
-	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+public class MetaProcessTabularPointToRegion extends MetaProcessTypeConversion {
+	private static final String OUTPUT_DATA = "TabularPointToRegionResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
@@ -50,12 +50,13 @@ public class MetaProcessTabularPointToRegion extends MetaProcess {
 		parameterCombineSourceData.addParameters(sourceDatasource, sourceDataset);
 		parameterCombineSourceData.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
 
-		ParameterCombine parameterCombineTargeData = new ParameterCombine();
-		parameterCombineTargeData.addParameters(targetDatasource, targetDataset);
-		parameterCombineTargeData.setDescribe(ControlsProperties.getString("String_GroupBox_TargetDataset"));
+		ParameterCombine parameterCombineTargetData = new ParameterCombine();
+		parameterCombineTargetData.addParameters(targetDatasource, targetDataset);
+		parameterCombineTargetData.setDescribe(ControlsProperties.getString("String_GroupBox_TargetDataset"));
 
-		parameters.setParameters(parameterCombineSourceData, parameterCombineTargeData);
+		parameters.setParameters(parameterCombineSourceData, parameterCombineTargetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, parameterCombineSourceData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.REGION, parameterCombineTargetData);
 	}
 
 	private void initParameterConstraint() {
@@ -175,8 +176,8 @@ public class MetaProcessTabularPointToRegion extends MetaProcess {
 			sourceRecordset = sourceDataset.getRecordset(false, CursorType.DYNAMIC);
 			sourceRecordset.addSteppedListener(steppedListener);
 			isSuccessful = targetDataset.updateFields(sourceRecordset, SpatialRelationType.WITHIN, newName, newName, AttributeStatisticsType.VALUE, true, stasticInfo, true);
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(targetDataset);
 			fireRunning(new RunningEvent(MetaProcessTabularPointToRegion.this, 100, "finished"));
-
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

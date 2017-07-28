@@ -57,9 +57,7 @@ public class MetaProcessComputeDistance extends MetaProcess {
 
     private void initParameters() {
         sourceDatasource = new ParameterDatasourceConstrained();
-        sourceDatasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
         sourceDataset = new ParameterSingleDataset(DatasetType.POINT);
-        sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
         ParameterCombine sourceData = new ParameterCombine();
         sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
         sourceData.addParameters(sourceDatasource, sourceDataset);
@@ -245,6 +243,7 @@ public class MetaProcessComputeDistance extends MetaProcess {
             } else {
                 isSuccessful = ProximityAnalyst.computeRangeDistance(recordsetSource, recordsetReference, min, max, resultDataset.getResultDatasource(), datasetName);
             }
+            this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
             recordsetSource.dispose();
             recordsetReference.dispose();
 

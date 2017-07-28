@@ -21,14 +21,12 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 public class MetaProcessTextToField extends MetaProcessTypeConversion {
 
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
-	private final static String OUTPUT_DATA = "result_TextToField";
+	private final static String OUTPUT_DATA = "TextToFieldResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset dataset;
 
 	private ParameterFieldComboBox parameterFieldComboBox;
-
-//	private ParameterSaveDataset saveDataset;
 
 	public MetaProcessTextToField() {
 		initParameters();
@@ -43,11 +41,9 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 
 		parameterFieldComboBox = new ParameterFieldComboBox(ProcessProperties.getString("String_ComboBox_PendingTextField"));
 		parameterFieldComboBox.setFieldType(new FieldType[]{FieldType.TEXT, FieldType.WTEXT});
-		parameterFieldComboBox.setFieldName((DatasetVector) dataset.getSelectedItem());
+
 		parameterFieldComboBox.setShowNullValue(false);
 		parameterFieldComboBox.setRequisite(true);
-
-//		this.saveDataset = new ParameterSaveDataset();
 
 		// 源数据
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
@@ -59,14 +55,10 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 		parameterCombineSet.addParameters(parameterFieldComboBox);
 		parameterCombineSet.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
 
-//		// 结果数据
-//		ParameterCombine parameterCombineResultData = new ParameterCombine();
-//		parameterCombineResultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-//		parameterCombineResultData.addParameters(saveDataset);
 
 		parameters.setParameters(parameterCombineSourceData, parameterCombineSet);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.TEXT, parameterCombineSourceData);
-//		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.TEXT, parameterCombineResultData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.TEXT, parameterCombineSourceData);
 	}
 
 	private void initParameterConstraint() {
@@ -87,6 +79,7 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 		if (defaultDataset != null) {
 			sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
 			dataset.setSelectedItem(defaultDataset);
+			parameterFieldComboBox.setFieldName((DatasetVector) defaultDataset);
 		}
 	}
 
@@ -136,8 +129,8 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 				recordsetInput.moveNext();
 			}
 			recordsetInput.getBatch().update();
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
 			fireRunning(new RunningEvent(MetaProcessTextToField.this, 100, "finished"));
-
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
