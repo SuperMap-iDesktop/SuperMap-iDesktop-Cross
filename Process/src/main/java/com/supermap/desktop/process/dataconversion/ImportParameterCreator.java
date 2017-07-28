@@ -254,7 +254,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			result.add(setWorldFilePath);
 			parameterCombineParamSet = new ParameterCombine();
 			parameterCombineParamSet.setDescribe(ProcessProperties.getString("String_ParamSet"));
-			parameterCombineParamSet.addParameters(new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(importBandMode.parameter, pyramidBuiltInfo.parameter), setWorldFilePath.parameter);
+			parameterCombineParamSet.addParameters(importBandMode.parameter, setWorldFilePath.parameter, pyramidBuiltInfo.parameter);
 			return result;
 		}
 		if (importSetting instanceof ImportSettingIMG) {

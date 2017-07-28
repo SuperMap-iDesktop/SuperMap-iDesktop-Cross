@@ -116,8 +116,8 @@ public class ImportSettingSetter {
 								method = importSettingClass.getMethod(otherInfo.get(i).methodName, int.class);
 								method.invoke(importSetting, Integer.valueOf(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem().toString()));
 							} else {
-								method = importSettingClass.getMethod(otherInfo.get(i).methodName, ((ParameterDataNode)((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()).getData().getClass());
-								method.invoke(importSetting, ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem());
+								method = importSettingClass.getMethod(otherInfo.get(i).methodName, ((ParameterDataNode) ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()).getData().getClass());
+								method.invoke(importSetting, ((ParameterDataNode) ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()).getData());
 							}
 
 						}

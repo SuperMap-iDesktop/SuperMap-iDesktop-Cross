@@ -209,11 +209,10 @@ public class DialogCacheCheck extends JFrame {
 				} else {
 					return false;
 				}
-			} else if ((!buildFile.exists() || !CacheUtilities.hasSciFiles(buildFile))
-					&& (!failedDirectory.exists() && !CacheUtilities.hasSciFiles(failedDirectory))) {
+			} else if (!failedDirectory.exists() || !CacheUtilities.hasSciFiles(failedDirectory)) {
 				//build下，failed下都没有则提示没有sci
 				new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_TaskNotExist"));
-				return false;
+				result = false;
 			}
 		}
 

@@ -414,16 +414,16 @@ public class DialogCacheBuilder extends JFrame {
 
 	public String getCacheSci() {
 		String result = null;
-		if (null!=CacheUtilities.getCachePath(fileChooserCachePath.getPath())){
-		File cachePath = new File(CacheUtilities.getCachePath(fileChooserCachePath.getPath()));
-		File[] scis = cachePath.listFiles();
-		if (null != scis) {
-			for (int i = 0; i < scis.length; i++) {
-				if (scis[i].getName().endsWith(".sci")) {
-					result = scis[i].getAbsolutePath();
+		if (null != CacheUtilities.getCachePath(fileChooserCachePath.getPath())) {
+			File cachePath = new File(CacheUtilities.getCachePath(fileChooserCachePath.getPath()));
+			File[] scis = cachePath.listFiles();
+			if (null != scis) {
+				for (int i = 0; i < scis.length; i++) {
+					if (scis[i].getName().endsWith(".sci")) {
+						result = scis[i].getAbsolutePath();
+					}
 				}
 			}
-		}
 		}
 		return result;
 	}
@@ -558,8 +558,7 @@ public class DialogCacheBuilder extends JFrame {
 				} else {
 					return false;
 				}
-			} else if ((!taskDirectory.exists() || !CacheUtilities.hasSciFiles(taskDirectory))
-					&& (!failedDirectory.exists() && !CacheUtilities.hasSciFiles(failedDirectory))) {
+			} else if (!failedDirectory.exists() || !CacheUtilities.hasSciFiles(failedDirectory)) {
 				new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_TaskNotExist"));
 				return false;
 			}
