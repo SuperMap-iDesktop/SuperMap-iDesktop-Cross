@@ -55,13 +55,13 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 		if (dataset != null) {
 			inputDatasource.setSelectedItem(dataset.getDatasource());
 			inputDataset.setSelectedItem(dataset);
-		}
-		if (dataset.getType().equals(DatasetType.POINTEPS)) {
-			outputData.setSelectedItem("result_pointEPSToSimple");
-		} else if (dataset.getType().equals(DatasetType.LINEEPS)) {
-			outputData.setSelectedItem("result_lineEPSToSimple");
-		} else if (dataset.getType().equals(DatasetType.REGIONEPS)) {
-			outputData.setSelectedItem("result_regionEPSToSimple");
+			if (dataset.getType().equals(DatasetType.POINTEPS)) {
+				outputData.setSelectedItem("result_pointEPSToSimple");
+			} else if (dataset.getType().equals(DatasetType.LINEEPS)) {
+				outputData.setSelectedItem("result_lineEPSToSimple");
+			} else if (dataset.getType().equals(DatasetType.REGIONEPS)) {
+				outputData.setSelectedItem("result_regionEPSToSimple");
+			}
 		}
 	}
 
