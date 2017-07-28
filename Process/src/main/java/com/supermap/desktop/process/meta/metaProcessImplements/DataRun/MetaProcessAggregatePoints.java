@@ -136,20 +136,11 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 			} else {
 				src = (DatasetVector) this.dataset.getSelectedItem();
 			}
-			String resultType=src.getAvailableFieldName("ResultType");
-			FieldInfo fieldInfo = new FieldInfo();
-			fieldInfo.setName(resultType);
-			fieldInfo.setCaption(resultType);
-			fieldInfo.setDefaultValue("0");
-			fieldInfo.setType(FieldType.INT32);
-			fieldInfo.setRequired(true);
-			src.getFieldInfos().add(fieldInfo);
-			fieldInfo.dispose();
 			Generalization.addSteppedListener(steppedListener);
 			boolean result=Generalization.aggregatePoints(src,Double.valueOf(parameterNumberDistance.getSelectedItem().toString()),
 					(Unit) parameterComboBoxUnit.getSelectedData(),
 					Integer.valueOf(parameterNumberMinPilePointCount.getSelectedItem().toString()),
-					saveDataset.getResultDatasource(), datasetName,resultType);
+					saveDataset.getResultDatasource(), datasetName,null);
 			Dataset dataset= saveDataset.getResultDatasource().getDatasets().get(datasetName);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
 			isSuccessful = dataset!=null;
