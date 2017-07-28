@@ -22,8 +22,8 @@ import java.beans.PropertyChangeListener;
  * 矢量重采样
  */
 public class MetaProcessVectorResample extends MetaProcess {
-	private final static String INPUT_SOURCE_DATASET = "SourceDataset";
-//	private final static String OUTPUT_DATASET = "VectorResampleResult";
+	private final static String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
+	private final static String OUTPUT_DATA = "VectorResampleResult";
 
 	private ParameterDatasourceConstrained datasource;
 	private ParameterSingleDataset dataset;
@@ -40,8 +40,6 @@ public class MetaProcessVectorResample extends MetaProcess {
 	private ParameterNumber parameterVertexTolerance;
 	// 字符：度
 	private ParameterLabel label;
-
-//	private ParameterSaveDataset parameterSaveDataset;
 
 
 	public MetaProcessVectorResample() {
@@ -75,26 +73,6 @@ public class MetaProcessVectorResample extends MetaProcess {
 		parameterVertexTolerance.setMaxBit(17);
 		parameterVertexTolerance.setMinValue(0);
 
-//		parameterResampleTolerance.addItem(new ParameterDataNode("1", "0.7036"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("2", "0.3518"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("3", "0.1759"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("4", "0.088"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("5", "0.044"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("6", "0.022"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("7", "0.011"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("8", "0.0055"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("9", "0.0028"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("10", "0.0014"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("11", "0.0007"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("12", "0.0004"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("13", "0.0002"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("14", "0.0001"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("15", "0.00005"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("16", "0.000025"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("17", "0.000013"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("18", "0.000065"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("19", "0.000033"));
-//		parameterResampleTolerance.addItem(new ParameterDataNode("20", "0.000017"));
 		parameterResampleType.setRequisite(true);
 		parameterResampleTolerance.setRequisite(true);
 
@@ -103,20 +81,13 @@ public class MetaProcessVectorResample extends MetaProcess {
 		parameterCombineParameter.addParameters(parameterResampleType, parameterResampleTolerance, parameterisSaveSmallGeometry,
 				parameterisTopologyPreprocess, parameterVertexTolerance);
 
-		// 结果数据
-//		parameterSaveDataset = new ParameterSaveDataset();
-//		ParameterCombine parameterCombineResult = new ParameterCombine();
-//		parameterCombineResult.addParameters(parameterSaveDataset);
-//		parameterCombineResult.setDescribe(CommonProperties.getString("String_ResultSet"));
-
 		parameters.setParameters(
 				parameterCombineSourceData,
 				parameterCombineParameter
-//				parameterCombineResult
 		);
 
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
-//		this.parameters.addOutputParameters(OUTPUT_DATASET, DatasetTypes.SIMPLE_VECTOR, parameterCombineResult);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
 	}
 
 	private void initComponentState() {
@@ -195,8 +166,8 @@ public class MetaProcessVectorResample extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
+		DatasetVector datasetVector = null;
 		try {
-			DatasetVector datasetVector = null;
 			if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
 					&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
 				datasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
@@ -220,11 +191,11 @@ public class MetaProcessVectorResample extends MetaProcess {
 
 			datasetVector.addSteppedListener(this.steppedListener);
 			isSuccessful = datasetVector.resample(resampleInformation, true, isSaveSmallGeometry);
-			datasetVector.removeSteppedListener(this.steppedListener);
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(datasetVector);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-
+			datasetVector.removeSteppedListener(this.steppedListener);
 		}
 		return isSuccessful;
 	}

@@ -104,7 +104,7 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 			sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
 			dataset.setSelectedItem(defaultDataset);
 			saveDataset.setResultDatasource(defaultDataset.getDatasource());
-			saveDataset.setSelectedItem(OUTPUT_DATA);
+			saveDataset.setSelectedItem("result_aggregatePoints");
 		}
 
 		parameterNumberDistance.setSelectedItem(1000);
@@ -120,7 +120,6 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 
 		DatasourceConstraint.getInstance().constrained(saveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
-
 
 	@Override
 	public boolean execute() {
@@ -146,7 +145,7 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 			src.getFieldInfos().add(fieldInfo);
 			fieldInfo.dispose();
 			Generalization.addSteppedListener(steppedListener);
-			boolean result=Generalization.aggregatePoints(src,Double.valueOf(parameterNumberDistance.getSelectedItem().toString()),
+			Generalization.aggregatePoints(src,Double.valueOf(parameterNumberDistance.getSelectedItem().toString()),
 					(Unit) parameterComboBoxUnit.getSelectedData(),
 					Integer.valueOf(parameterNumberMinPilePointCount.getSelectedItem().toString()),
 					saveDataset.getResultDatasource(), datasetName,resultType);
@@ -164,7 +163,6 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 		return isSuccessful;
 	}
 
-
 	@Override
 	public IParameters getParameters() {
 		return parameters;
@@ -179,6 +177,4 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 	public String getTitle() {
 		return ProcessProperties.getString("String_AggregatePoints");
 	}
-
-
 }
