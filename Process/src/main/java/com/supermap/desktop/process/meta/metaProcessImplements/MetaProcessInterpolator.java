@@ -246,14 +246,6 @@ public class MetaProcessInterpolator extends MetaProcess {
 			parameterDatasource.setSelectedItem(datasetVector.getDatasource());
 			parameterDataset.setSelectedItem(datasetVector);
 			parameterInterpolatorFields.setFieldName((DatasetVector) datasetVector);
-			/*FieldInfos fieldInfos = ((DatasetVector) datasetVector).getFieldInfos();
-			for (int i = 0; i < fieldInfos.getCount(); i++) {
-				if (!fieldInfos.get(i).isSystemField()) {
-					parameterInterpolatorFields.setSelectedItem(fieldInfos.get(i).getCaption());
-					break;
-				}
-			}*/
-			//ParameterFieldComboBox会在绘制界面时重构，这里设置的选项会被清除。如果用户不选，最后执行参数为空，因此在这里不赋予字段复选框初始默认值
 
             FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
             parameterInterpolatorFields.setFieldType(fieldType);

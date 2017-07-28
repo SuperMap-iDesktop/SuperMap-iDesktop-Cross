@@ -111,7 +111,7 @@ public class MetaProcessDEMBuild extends MetaProcess{
         checkBox = new ParameterCheckBox(ProcessProperties.getString("String_ProcessFlatArea"));
         ParameterCombine baseSetting = new ParameterCombine();
         baseSetting.setDescribe(ProcessProperties.getString("String_GroupBox_ParameterSetting_Base"));
-        baseSetting.addParameters(comboBoxSourceField, comboBoxInterpolateType, comboBoxTerrainStatisticType, textNumResampleTolerance, textNumZFactor, checkBox, comboBoxLakeField);
+        baseSetting.addParameters(comboBoxSourceField, comboBoxLakeField, comboBoxInterpolateType, comboBoxTerrainStatisticType, textNumResampleTolerance, textNumZFactor, checkBox);
 
         comboBoxEncodeType = new ParameterComboBox().setDescribe(ProcessProperties.getString("label_encodingType"));
         comboBoxPixelFormat = new ParameterComboBox().setDescribe(CommonProperties.getString("String_PixelType"));
@@ -196,21 +196,17 @@ public class MetaProcessDEMBuild extends MetaProcess{
         textFieldRowCount.setSelectedItem("0");
         textFieldColumnCount.setSelectedItem("0");
         textFieldSizeOf.setSelectedItem("0");
+        comboBoxLakeField.setFieldType(fieldType);
 
         if (datasetVector != null) {
             lakeDatasource.setSelectedItem(datasetVector.getDatasource());
             lakeDataset.setDatasource(datasetVector.getDatasource());
             comboBoxLakeField.setShowNullValue(true);
-            comboBoxLakeField.setFieldName((DatasetVector) datasetVector);
-        }
-        comboBoxLakeField.setFieldType(fieldType);
-
-        if (datasetVector != null) {
+            comboBoxLakeField.setDataset((DatasetVector) DatasetUtilities.getDefaultDataset(DatasetType.REGION));
+            lakeDataset.setSelectedItem(null);
+            resetPixel((DatasetVector) datasetVector);
             clipDatasource.setSelectedItem(datasetVector.getDatasource());
             clipDataset.setDatasource(datasetVector.getDatasource());
-        }
-
-        if (datasetVector != null) {
             eraseDatasource.setSelectedItem(datasetVector.getDatasource());
             eraseDataset.setDatasource(datasetVector.getDatasource());
         }
@@ -249,38 +245,10 @@ public class MetaProcessDEMBuild extends MetaProcess{
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
-                    Rectangle2D bounds = ((DatasetVector) evt.getNewValue()).getBounds();
-                    double cellSize = Math.sqrt(Math.pow(bounds.getHeight(), 2) + Math.pow(bounds.getWidth(), 2)) / 500;
-                    textFieldCellSize.setSelectedItem(cellSize);
-                    textFieldRowCount.setSelectedItem((int) (bounds.getHeight() / cellSize));
-                    textFieldColumnCount.setSelectedItem((int) (bounds.getWidth() / cellSize));
+                    resetPixel((DatasetVector) evt.getNewValue());
                 }
 
-                int pixelFormatByte = 0;
-                if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT1) {
-                    pixelFormatByte = 1;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT4) {
-                    pixelFormatByte = 4;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT8 || comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT8) {
-                    pixelFormatByte = 8;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT16 || comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT16) {
-                    pixelFormatByte = 16;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT32 || comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT32) {
-                    pixelFormatByte = 32;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT64) {
-                    pixelFormatByte = 64;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.SINGLE) {
-                    pixelFormatByte = 32;
-                } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.DOUBLE) {
-                    pixelFormatByte = 64;
-                }
-                int row = Integer.valueOf(textFieldRowCount.getSelectedItem().toString());
-                int column = Integer.valueOf(textFieldColumnCount.getSelectedItem().toString());
-                double sizeOf = (row * column * pixelFormatByte) / (8 * 1024 * 1024) + 0.000005;
-                sizeOf = Math.round(sizeOf * 100000)/100000;
-                textFieldSizeOf.setSelectedItem(sizeOf);
-
-                isDatasetLine = ((DatasetVector)evt.getNewValue()).getType() == DatasetType.LINE;
+                isDatasetLine = evt.getNewValue()==null||(((DatasetVector)evt.getNewValue()).getType() == DatasetType.LINE);
                 textNumResampleTolerance.setEnabled(isDatasetLine&&isInterpolateTypeTIN);
             }
         });
@@ -291,6 +259,18 @@ public class MetaProcessDEMBuild extends MetaProcess{
                 textNumResampleTolerance.setEnabled(isDatasetLine && isInterpolateTypeTIN);
                 eraseDatasource.setEnabled(isInterpolateTypeTIN);
                 eraseDataset.setEnabled(isInterpolateTypeTIN);
+            }
+        });
+        textFieldCellSize.addPropertyListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (sourceDataset.getSelectedItem() != null) {
+                    DatasetVector datasetVector = (DatasetVector) sourceDataset.getSelectedItem();
+                    Rectangle2D bounds = datasetVector.getBounds();
+                    double cellSize = Double.valueOf(textFieldCellSize.getSelectedItem().toString());
+                    textFieldRowCount.setSelectedItem((int) (bounds.getHeight() / cellSize));
+                    textFieldColumnCount.setSelectedItem((int) (bounds.getWidth() / cellSize));
+                }
             }
         });
     }
@@ -394,5 +374,41 @@ public class MetaProcessDEMBuild extends MetaProcess{
     @Override
     public String getTitle() {
         return ProcessProperties.getString("String_DEMBuild");
+    }
+
+    /**
+     * 刷新分辨率、行数、列数的值
+     */
+    private void resetPixel(DatasetVector datasetVector) {
+
+        Rectangle2D bounds = datasetVector.getBounds();
+        double cellSize = Math.sqrt(Math.pow(bounds.getHeight(), 2) + Math.pow(bounds.getWidth(), 2)) / 500;
+        textFieldCellSize.setSelectedItem(cellSize);
+        textFieldRowCount.setSelectedItem((int) (bounds.getHeight() / cellSize));
+        textFieldColumnCount.setSelectedItem((int) (bounds.getWidth() / cellSize));
+
+        int pixelFormatByte = 0;
+        if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT1) {
+            pixelFormatByte = 1;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT4) {
+            pixelFormatByte = 4;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT8 || comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT8) {
+            pixelFormatByte = 8;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT16 || comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT16) {
+            pixelFormatByte = 16;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.UBIT32 || comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT32) {
+            pixelFormatByte = 32;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.BIT64) {
+            pixelFormatByte = 64;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.SINGLE) {
+            pixelFormatByte = 32;
+        } else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.DOUBLE) {
+            pixelFormatByte = 64;
+        }
+        int row = Integer.valueOf(textFieldRowCount.getSelectedItem().toString());
+        int column = Integer.valueOf(textFieldColumnCount.getSelectedItem().toString());
+        double sizeOf = (row * column * pixelFormatByte) / (8 * 1024 * 1024) + 0.000005;
+        sizeOf = Math.round(sizeOf * 100000)/100000;
+        textFieldSizeOf.setSelectedItem(sizeOf);
     }
 }
