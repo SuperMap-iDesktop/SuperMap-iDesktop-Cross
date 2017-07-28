@@ -204,10 +204,8 @@ public class DialogCacheCheck extends JFrame {
 					for (int i = 0; i < failedSci.length; i++) {
 						failedSci[i].renameTo(new File(taskFile, failedSci[i].getName()));
 					}
-
-					File cacheFile = new File(fileChooseCachePath.getPath());
-					String[] tempParams = {"Multi", "null", cacheFile.getName(), fileChooseCachePath.getPath()};
-					CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
+					buildCache();
+					killProcess();
 				} else {
 					return false;
 				}
@@ -220,6 +218,12 @@ public class DialogCacheCheck extends JFrame {
 		}
 
 		return result;
+	}
+
+	private void buildCache() {
+		File cacheFile = new File(fileChooseCachePath.getPath());
+		String[] tempParams = {"Multi", "null", cacheFile.getName(), fileChooseCachePath.getPath()};
+		CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 	}
 
 
@@ -309,9 +313,7 @@ public class DialogCacheCheck extends JFrame {
 									failedSci[i].renameTo(new File(taskFile, failedSci[i].getName()));
 								}
 								//有错误则重新切图
-								File cacheFile = new File(fileChooseCachePath.getPath());
-								String[] tempParams = {"Multi", "null", cacheFile.getName(), fileChooseCachePath.getPath()};
-								CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
+								buildCache();
 								return;
 							}
 						} else {
