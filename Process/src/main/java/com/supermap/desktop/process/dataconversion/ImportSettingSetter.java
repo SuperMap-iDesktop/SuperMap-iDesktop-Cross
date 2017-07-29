@@ -19,9 +19,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasetType;
 import com.supermap.desktop.process.parameter.implement.ParameterEnum;
 import com.supermap.desktop.process.parameter.implement.ParameterFile;
-import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
-import com.supermap.desktop.utilities.StringUtilities;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -94,18 +92,12 @@ public class ImportSettingSetter {
 					Method method = importSettingClass.getMethod(resultInfo.get(i).methodName, ((ParameterEnum) resultInfo.get(i).parameter).getSelectedData().getClass());
 					invokeMethod(method, importSetting, ((ParameterEnum) resultInfo.get(i).parameter).getSelectedData());
 				} else if (resultInfo.get(i).parameter instanceof ISelectionParameter) {
-					Object selectedItem = ((ISelectionParameter) resultInfo.get(i).parameter).getSelectedItem();
 					if (resultInfo.get(i).parameter instanceof ParameterCheckBox) {
 						Method method = importSettingClass.getMethod(resultInfo.get(i).methodName, boolean.class);
-						invokeMethod(method, importSetting, "true".equals(selectedItem) ? true : false);
-					} else if (null != selectedItem) {
-						if ("setImportingAs3D".equals(resultInfo.get(i).methodName)) {
-							Method method = importSettingClass.getMethod(resultInfo.get(i).methodName, boolean.class);
-							invokeMethod(method, importSetting, ((ParameterDataNode) selectedItem).getData());
-						} else {
-							Method method = importSettingClass.getMethod(resultInfo.get(i).methodName, selectedItem.getClass());
-							invokeMethod(method, importSetting, selectedItem);
-						}
+						invokeMethod(method, importSetting, "true".equals(((ISelectionParameter) resultInfo.get(i).parameter).getSelectedItem()) ? true : false);
+					} else if (null != ((ISelectionParameter) resultInfo.get(i).parameter).getSelectedItem()) {
+						Method method = importSettingClass.getMethod(resultInfo.get(i).methodName, ((ISelectionParameter) resultInfo.get(i).parameter).getSelectedItem().getClass());
+						invokeMethod(method, importSetting, ((ISelectionParameter) resultInfo.get(i).parameter).getSelectedItem());
 					}
 				}
 			}
@@ -121,36 +113,26 @@ public class ImportSettingSetter {
 			} else if (null != otherInfo) {
 				int otherInfoSize = otherInfo.size();
 				for (int i = 0; i < otherInfoSize; i++) {
-					IParameter parameter = otherInfo.get(i).parameter;
-					if (parameter instanceof ISelectionParameter) {
+					if (otherInfo.get(i).parameter instanceof ISelectionParameter) {
 						String methodName = otherInfo.get(i).methodName;
-						Object selectedItem = ((ISelectionParameter) parameter).getSelectedItem();
-
-						if (parameter instanceof ParameterCheckBox) {
+						if (otherInfo.get(i).parameter instanceof ParameterCheckBox) {
 							Method method = importSettingClass.getMethod(methodName, boolean.class);
-							boolean booleanValue = Boolean.valueOf(String.valueOf(selectedItem));
 							//合并图层参数设置问题
-							if (!methodName.equals("setImportingByLayer") && !methodName.equals("setUnvisibleObjectIgnored") && !methodName.equals("setFirstRowIsField")) {
-								booleanValue = !booleanValue;
-							}
-
-							method.invoke(importSetting, booleanValue);
-						} else if (null != selectedItem) {
-							Method method;
-							if (StringUtilities.isNullOrEmpty(selectedItem.toString())) {
-								break;
-							}
-							if (selectedItem instanceof String) {
-								if (StringUtilities.isInteger(selectedItem.toString()) && !"setPassword".endsWith(methodName)) {
-									method = importSettingClass.getMethod(methodName, int.class);
-									method.invoke(importSetting, Integer.valueOf(selectedItem.toString()));
-								} else {
-									method = importSettingClass.getMethod(methodName, String.class);
-									method.invoke(importSetting, selectedItem.toString());
-								}
+							boolean value = methodName.equals("setImportingByLayer")
+									? ("false".equals(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) ? true : false)
+									: ("true".equals(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) ? true : false);
+							method.invoke(importSetting, value);
+						} else if (null != ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) {
+							Method method = null;
+							if ("setCurveSegment".equals(methodName)) {
+								method = importSettingClass.getMethod(methodName, int.class);
+								method.invoke(importSetting, Integer.valueOf(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem().toString()));
+							} else if ("setPassword".equals(methodName)) {
+								method = importSettingClass.getMethod(methodName, String.class);
+								method.invoke(importSetting, ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem().toString());
 							} else {
-								method = importSettingClass.getMethod(methodName, ((ParameterDataNode) selectedItem).getData().getClass());
-								method.invoke(importSetting, ((ParameterDataNode) selectedItem).getData());
+								method = importSettingClass.getMethod(methodName, ((ParameterDataNode) ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()).getData().getClass());
+								method.invoke(importSetting, ((ParameterDataNode) ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()).getData());
 							}
 
 						}
