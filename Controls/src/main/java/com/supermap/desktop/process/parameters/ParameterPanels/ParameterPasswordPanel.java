@@ -3,11 +3,11 @@ package com.supermap.desktop.process.parameters.ParameterPanels;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.ParameterUpdateValueEvent;
 import com.supermap.desktop.process.parameter.events.UpdateValueListener;
-import com.supermap.desktop.process.parameter.implement.ParameterPassword;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
+import com.supermap.desktop.process.parameter.ipls.ParameterPassword;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 

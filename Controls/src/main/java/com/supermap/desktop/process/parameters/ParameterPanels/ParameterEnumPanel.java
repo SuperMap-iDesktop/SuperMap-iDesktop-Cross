@@ -2,10 +2,10 @@ package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterComboBoxCellRender;
-import com.supermap.desktop.process.parameter.implement.ParameterEnum;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
+import com.supermap.desktop.process.parameter.ipls.ParameterEnum;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;

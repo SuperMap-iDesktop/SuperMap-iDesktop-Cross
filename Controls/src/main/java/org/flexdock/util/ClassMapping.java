@@ -51,7 +51,7 @@ import java.util.WeakHashMap;
  * Polymorphic identity within the class association uses <i>strict</i>
  * subclasses. This means that the {@code Handler1.class} mapping for
  * {@code Foo}, {@code Bar}, and all non-specific subclasses will hold true.
- * However, if {@code Foo} happens to implement the interface {@code Qwerty},
+ * However, if {@code Foo} happens to ipls the interface {@code Qwerty},
  * the class mapping relationship will not hold true for all implementations of
  * {@code Qwerty}. Only subclasses of {@code Foo}.
  *

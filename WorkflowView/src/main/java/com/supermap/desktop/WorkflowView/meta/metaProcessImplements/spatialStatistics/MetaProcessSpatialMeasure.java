@@ -3,16 +3,16 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStat
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
-import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
-import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
-import com.supermap.desktop.process.parameters.implement.ParameterCombine;
-import com.supermap.desktop.process.parameters.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameters.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameters.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 

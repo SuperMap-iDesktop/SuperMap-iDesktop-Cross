@@ -1,15 +1,15 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
+import com.supermap.desktop.lbs.WebHDFS;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
+import com.supermap.desktop.process.parameter.ipls.ParameterHDFSPath;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.lbs.WebHDFS;
 import com.supermap.desktop.ui.lbs.ui.JDialogHDFSFiles;
 import com.supermap.desktop.utilities.StringUtilities;
 

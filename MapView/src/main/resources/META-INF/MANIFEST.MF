@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1500952840451
+Bnd-LastModified: 1501294827260
 Build-Jdk: 1.7.0_80
 Built-By: highsad
 Bundle-Activator: com.supermap.desktop.mapview.MapViewActivator

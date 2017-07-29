@@ -5,22 +5,16 @@ import com.supermap.analyst.spatialstatistics.DistanceMethod;
 import com.supermap.analyst.spatialstatistics.PatternsParameter;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldType;
-import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
-import com.supermap.desktop.process.parameters.implement.ParameterCheckBox;
-import com.supermap.desktop.process.parameters.implement.ParameterCombine;
-import com.supermap.desktop.process.parameters.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameters.implement.ParameterFieldComboBox;
-import com.supermap.desktop.process.parameters.implement.ParameterFile;
-import com.supermap.desktop.process.parameters.implement.ParameterNumber;
-import com.supermap.desktop.process.parameters.implement.ParameterSwitch;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 
 import java.beans.PropertyChangeEvent;
@@ -106,8 +100,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
 					ProcessProperties.getString("String_SWMFile"), moduleName, "OpenOne");
 		}
-		SmFileChoose fileChoose = new SmFileChoose(moduleName);
-		parameterFile.setFileChoose(fileChoose);
+		parameterFile.setModuleName(moduleName);
 		parameterTextFieldKNeighbors.setDescribe(ProcessProperties.getString("String_KNeighbors"));
 		parameterSelfWeightFieldComboBox.setDescribe(ProcessProperties.getString("String_SelfWeightField"));
 

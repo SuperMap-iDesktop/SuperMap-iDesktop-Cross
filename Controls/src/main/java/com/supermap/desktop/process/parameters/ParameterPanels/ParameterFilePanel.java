@@ -1,10 +1,10 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.implement.ParameterFile;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
+import com.supermap.desktop.process.parameter.ipls.ParameterFile;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.FileChooserPathChangedListener;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;

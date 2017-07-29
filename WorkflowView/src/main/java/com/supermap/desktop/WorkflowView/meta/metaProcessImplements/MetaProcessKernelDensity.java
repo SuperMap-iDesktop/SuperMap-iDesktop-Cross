@@ -1,20 +1,23 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.events.RunningEvent;
-import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameters.implement.*;
-import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
-import com.supermap.desktop.process.util.TaskUtil;
 import com.supermap.desktop.lbs.Interface.IServerService;
 import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.lbs.params.JobResultResponse;
+import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.messageBus.NewMessageBus;
+import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
+import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
+import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.utilities.CursorUtilities;
+
+import java.util.concurrent.CancellationException;
 
 
 /**
@@ -103,32 +106,61 @@ public class MetaProcessKernelDensity extends MetaProcess {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
 			//核密度分析功能实现
-			CommonSettingCombine filePath = new CommonSettingCombine("filePath",parameterHDFSPath.getSelectedItem().toString());
-			CommonSettingCombine xIndex = new CommonSettingCombine("xIndex",parameterTextFieldXIndex.getSelectedItem().toString());
-			CommonSettingCombine yIndex = new CommonSettingCombine("yIndex",parameterTextFieldYIndex.getSelectedItem().toString());
-			CommonSettingCombine separator = new CommonSettingCombine("separator",parameterTextFieldSeparator.getSelectedItem().toString());
+			CommonSettingCombine filePath = new CommonSettingCombine("filePath", parameterHDFSPath.getSelectedItem().toString());
+			CommonSettingCombine xIndex = new CommonSettingCombine("xIndex", parameterTextFieldXIndex.getSelectedItem().toString());
+			CommonSettingCombine yIndex = new CommonSettingCombine("yIndex", parameterTextFieldYIndex.getSelectedItem().toString());
+			CommonSettingCombine separator = new CommonSettingCombine("separator", parameterTextFieldSeparator.getSelectedItem().toString());
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
-			input.add(filePath,xIndex,yIndex,separator);
+			input.add(filePath, xIndex, yIndex, separator);
 
 
-			CommonSettingCombine method = new CommonSettingCombine("method",(String) parameterComboBoxAnalyseType.getSelectedData());
-			CommonSettingCombine meshType = new CommonSettingCombine("meshType",(String) parameterComboBoxMeshType.getSelectedData());
-			CommonSettingCombine fields = new CommonSettingCombine("fields",(String) parameterIndex.getSelectedItem());
-			CommonSettingCombine query = new CommonSettingCombine("query",parameterBounds.getSelectedItem().toString());
-			CommonSettingCombine resolution = new CommonSettingCombine("resolution",parameterResolution.getSelectedItem().toString());
-			CommonSettingCombine radius = new CommonSettingCombine("radius",parameterRadius.getSelectedItem().toString());
+			CommonSettingCombine method = new CommonSettingCombine("method", (String) parameterComboBoxAnalyseType.getSelectedData());
+			CommonSettingCombine meshType = new CommonSettingCombine("meshType", (String) parameterComboBoxMeshType.getSelectedData());
+			CommonSettingCombine fields = new CommonSettingCombine("fields", (String) parameterIndex.getSelectedItem());
+			CommonSettingCombine query = new CommonSettingCombine("query", parameterBounds.getSelectedItem().toString());
+			CommonSettingCombine resolution = new CommonSettingCombine("resolution", parameterResolution.getSelectedItem().toString());
+			CommonSettingCombine radius = new CommonSettingCombine("radius", parameterRadius.getSelectedItem().toString());
 
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
-			analyst.add(query,resolution,radius,method,meshType,fields);
+			analyst.add(query, resolution, radius, method, meshType, fields);
 
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
-			commonSettingCombine.add(input,analyst);
-			JobResultResponse response = service.queryResult(MetaKeys.KERNEL_DENSITY,commonSettingCombine.getFinalJSon());
+			commonSettingCombine.add(input, analyst);
+			JobResultResponse response = service.queryResult(MetaKeys.KERNEL_DENSITY, commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				CursorUtilities.setDefaultCursor();
-				ProcessTask task = TaskUtil.getTask(this);
-				NewMessageBus messageBus = new NewMessageBus(response, task);
+				NewMessageBus messageBus = new NewMessageBus(response, new IUpdateProgress() {
+					@Override
+					public boolean isCancel() {
+						return false;
+					}
+
+					@Override
+					public void setCancel(boolean isCancel) {
+
+					}
+
+					@Override
+					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
+						fireRunning(new RunningEvent(MetaProcessKernelDensity.this, percent, message, -1));
+					}
+
+					@Override
+					public void updateProgress(String message, int percent, String currentMessage) throws CancellationException {
+
+					}
+
+					@Override
+					public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
+
+					}
+
+					@Override
+					public void updateProgress(int percent, String recentTask, int totalPercent, String message) throws CancellationException {
+
+					}
+				}, DefaultOpenServerMap.INSTANCE);
 				messageBus.run();
 			}
 			fireRunning(new RunningEvent(this, 100, "finished"));

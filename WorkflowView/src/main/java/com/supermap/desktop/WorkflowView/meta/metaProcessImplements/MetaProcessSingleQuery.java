@@ -2,30 +2,28 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.Dataset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
-import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameters.implement.ParameterBigDatasourceDatasource;
-import com.supermap.desktop.process.parameters.implement.ParameterCombine;
-import com.supermap.desktop.process.parameters.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameters.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameters.implement.ParameterIServerLogin;
-import com.supermap.desktop.process.parameters.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
-import com.supermap.desktop.process.util.TaskUtil;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.lbs.Interface.IServerService;
 import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.lbs.params.JobResultResponse;
+import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
+import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.messageBus.NewMessageBus;
+import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
+import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
+import com.supermap.desktop.progress.Interface.IUpdateProgress;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
+
+import java.util.concurrent.CancellationException;
 
 /**
  * @author XiaJT
@@ -123,10 +121,10 @@ public class MetaProcessSingleQuery extends MetaProcess {
 	@Override
 	public boolean execute() {
 		try {
-		IServerService service = parameterIServerLogin.login();
-		Dataset sourceDataset = parameterSourceDataset.getSelectedDataset();
-		Dataset queryDataset = parameterQueryDataset.getSelectedDataset();
-		String queryType = (String) parameterQueryTypeComboBox.getSelectedData();
+			IServerService service = parameterIServerLogin.login();
+			Dataset sourceDataset = parameterSourceDataset.getSelectedDataset();
+			Dataset queryDataset = parameterQueryDataset.getSelectedDataset();
+			String queryType = (String) parameterQueryTypeComboBox.getSelectedData();
 
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			input.add(new CommonSettingCombine("datasetSource", sourceDataset.getName()));
@@ -138,10 +136,39 @@ public class MetaProcessSingleQuery extends MetaProcess {
 			CommonSettingCombine query = new CommonSettingCombine("query", "");
 			query.add(input, analyst);
 			CursorUtilities.setWaitCursor();
-			JobResultResponse response = service.queryResult(MetaKeys.SINGLE_QUERY,query.getFinalJSon());
+			JobResultResponse response = service.queryResult(MetaKeys.SINGLE_QUERY, query.getFinalJSon());
 			if (null != response) {
-				ProcessTask task = TaskUtil.getTask(this);
-				NewMessageBus messageBus = new NewMessageBus(response, task);
+				NewMessageBus messageBus = new NewMessageBus(response, new IUpdateProgress() {
+					@Override
+					public boolean isCancel() {
+						return false;
+					}
+
+					@Override
+					public void setCancel(boolean isCancel) {
+
+					}
+
+					@Override
+					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
+						fireRunning(new RunningEvent(MetaProcessSingleQuery.this, percent, message, -1));
+					}
+
+					@Override
+					public void updateProgress(String message, int percent, String currentMessage) throws CancellationException {
+
+					}
+
+					@Override
+					public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
+
+					}
+
+					@Override
+					public void updateProgress(int percent, String recentTask, int totalPercent, String message) throws CancellationException {
+
+					}
+				}, DefaultOpenServerMap.INSTANCE);
 				messageBus.run();
 			}
 			fireRunning(new RunningEvent(this, 100, "finished"));

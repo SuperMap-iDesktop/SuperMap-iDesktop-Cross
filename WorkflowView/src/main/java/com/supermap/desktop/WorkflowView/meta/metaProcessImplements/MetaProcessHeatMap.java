@@ -1,19 +1,23 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.meta.MetaKeys;
+import com.supermap.desktop.WorkflowView.meta.MetaProcess;
+import com.supermap.desktop.lbs.Interface.IServerService;
+import com.supermap.desktop.lbs.params.CommonSettingCombine;
+import com.supermap.desktop.lbs.params.JobResultResponse;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
-import com.supermap.desktop.WorkflowView.meta.MetaKeys;
-import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameters.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
-import com.supermap.desktop.process.util.TaskUtil;
-import com.supermap.desktop.lbs.Interface.IServerService;
-import com.supermap.desktop.lbs.params.*;
+import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
+import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.utilities.CursorUtilities;
+
+import java.util.concurrent.CancellationException;
 
 /**
  * Created by xie on 2017/2/10.
@@ -110,36 +114,65 @@ public class MetaProcessHeatMap extends MetaProcess {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
 			//热度图分析功能
-			CommonSettingCombine filePath = new CommonSettingCombine("filePath",parameterHDFSPath.getSelectedItem().toString());
-			CommonSettingCombine xIndex = new CommonSettingCombine("xIndex",parameterTextFieldXIndex.getSelectedItem().toString());
-			CommonSettingCombine yIndex = new CommonSettingCombine("yIndex",parameterTextFieldYIndex.getSelectedItem().toString());
-			CommonSettingCombine separator = new CommonSettingCombine("separator",parameterTextFieldSeparator.getSelectedItem().toString());
+			CommonSettingCombine filePath = new CommonSettingCombine("filePath", parameterHDFSPath.getSelectedItem().toString());
+			CommonSettingCombine xIndex = new CommonSettingCombine("xIndex", parameterTextFieldXIndex.getSelectedItem().toString());
+			CommonSettingCombine yIndex = new CommonSettingCombine("yIndex", parameterTextFieldYIndex.getSelectedItem().toString());
+			CommonSettingCombine separator = new CommonSettingCombine("separator", parameterTextFieldSeparator.getSelectedItem().toString());
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
-			input.add(filePath,xIndex,yIndex,separator);
+			input.add(filePath, xIndex, yIndex, separator);
 
-			CommonSettingCombine cacheName = new CommonSettingCombine("cacheName",parameterCacheName.getSelectedItem().toString());
-			CommonSettingCombine cacheType = new CommonSettingCombine("cacheType",(String) parameterDatabaseType.getSelectedData());
-			CommonSettingCombine serverAdresses = new CommonSettingCombine("serverAdresses",parameterServiceAddress.getSelectedItem().toString());
-			CommonSettingCombine database = new CommonSettingCombine("database",parameterDatabase.getSelectedItem().toString());
-			CommonSettingCombine version = new CommonSettingCombine("version",parameterVersion.getSelectedItem().toString());
+			CommonSettingCombine cacheName = new CommonSettingCombine("cacheName", parameterCacheName.getSelectedItem().toString());
+			CommonSettingCombine cacheType = new CommonSettingCombine("cacheType", (String) parameterDatabaseType.getSelectedData());
+			CommonSettingCombine serverAdresses = new CommonSettingCombine("serverAdresses", parameterServiceAddress.getSelectedItem().toString());
+			CommonSettingCombine database = new CommonSettingCombine("database", parameterDatabase.getSelectedItem().toString());
+			CommonSettingCombine version = new CommonSettingCombine("version", parameterVersion.getSelectedItem().toString());
 			CommonSettingCombine output = new CommonSettingCombine("output", "");
-			output.add(cacheName,cacheType,serverAdresses,database,version);
+			output.add(cacheName, cacheType, serverAdresses, database, version);
 
-			CommonSettingCombine imageType = new CommonSettingCombine("imageType",(String) parameterCacheType.getSelectedData());
-			CommonSettingCombine bounds = new CommonSettingCombine("bounds",parameterBounds.getSelectedItem().toString());
-			CommonSettingCombine level = new CommonSettingCombine("level",parameterCacheLevel.getSelectedItem().toString());
+			CommonSettingCombine imageType = new CommonSettingCombine("imageType", (String) parameterCacheType.getSelectedData());
+			CommonSettingCombine bounds = new CommonSettingCombine("bounds", parameterBounds.getSelectedItem().toString());
+			CommonSettingCombine level = new CommonSettingCombine("level", parameterCacheLevel.getSelectedItem().toString());
 			CommonSettingCombine drawing = new CommonSettingCombine("drawing", "");
-			drawing.add(imageType,bounds,level);
+			drawing.add(imageType, bounds, level);
 
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
-			commonSettingCombine.add(input,output,drawing);
+			commonSettingCombine.add(input, output, drawing);
 			String finalJSon = commonSettingCombine.getFinalJSon();
 			finalJSon = finalJSon.replaceAll("\"" + parameterServiceAddress.getSelectedItem().toString() + "\"", "[\"" + parameterServiceAddress.getSelectedItem().toString() + "\"]");
 			JobResultResponse response = service.queryResult(MetaKeys.HEAT_MAP, finalJSon);
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
-				ProcessTask task = TaskUtil.getTask(this);
-				NewMessageBus messageBus = new NewMessageBus(response, task);
+				NewMessageBus messageBus = new NewMessageBus(response, new IUpdateProgress() {
+					@Override
+					public boolean isCancel() {
+						return false;
+					}
+
+					@Override
+					public void setCancel(boolean isCancel) {
+
+					}
+
+					@Override
+					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
+						fireRunning(new RunningEvent(MetaProcessHeatMap.this, percent, message, -1));
+					}
+
+					@Override
+					public void updateProgress(String message, int percent, String currentMessage) throws CancellationException {
+
+					}
+
+					@Override
+					public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
+
+					}
+
+					@Override
+					public void updateProgress(int percent, String recentTask, int totalPercent, String message) throws CancellationException {
+
+					}
+				}, DefaultOpenServerMap.INSTANCE);
 				messageBus.run();
 			}
 			fireRunning(new RunningEvent(this, 100, "finished"));

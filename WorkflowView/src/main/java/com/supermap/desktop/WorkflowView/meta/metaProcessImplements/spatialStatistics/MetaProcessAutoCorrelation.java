@@ -3,14 +3,14 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStat
 import com.supermap.analyst.spatialstatistics.AnalyzingPatterns;
 import com.supermap.analyst.spatialstatistics.AnalyzingPatternsResult;
 import com.supermap.data.DatasetVector;
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
-import com.supermap.desktop.process.parameters.implement.ParameterCombine;
-import com.supermap.desktop.process.parameters.implement.ParameterTextArea;
+import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextArea;
 
 /**
  * @author XiaJT
- * 空间自相关分析
+ *         空间自相关分析
  */
 public class MetaProcessAutoCorrelation extends MetaProcessAnalyzingPatterns {
 

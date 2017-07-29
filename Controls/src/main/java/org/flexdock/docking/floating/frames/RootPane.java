@@ -19,19 +19,11 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 package org.flexdock.docking.floating.frames;
 
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.LayoutManager;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-
-import javax.swing.JRootPane;
-import javax.swing.SwingUtilities;
 
 /**
  * @author Andreas Ernst
@@ -210,7 +202,7 @@ public class RootPane extends JRootPane implements MouseListener, MouseMotionLis
 
 
 
-    // implement MouseListener, MouseMotionListener
+    // ipls MouseListener, MouseMotionListener
 
     public void mousePressed(MouseEvent e) {
         currentResizeRegion = getCursor(e.getPoint());

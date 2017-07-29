@@ -1,12 +1,13 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.implement.ParameterLabel;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
+import com.supermap.desktop.process.parameter.ipls.ParameterLabel;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;

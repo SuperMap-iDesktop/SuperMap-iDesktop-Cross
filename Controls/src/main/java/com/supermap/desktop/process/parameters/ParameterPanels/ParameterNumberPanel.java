@@ -1,9 +1,9 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.implement.ParameterNumber;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
 import com.supermap.desktop.properties.CommonProperties;
 
 import java.text.MessageFormat;

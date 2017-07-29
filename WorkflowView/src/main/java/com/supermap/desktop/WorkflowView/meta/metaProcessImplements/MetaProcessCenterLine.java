@@ -4,14 +4,14 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.Generalization;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
-import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
-import com.supermap.desktop.process.parameters.implement.*;
+import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -23,7 +23,7 @@ public abstract class MetaProcessCenterLine extends MetaProcess {
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String OUTPUT_DATA = "CenterLineResult";
 
-	public abstract DatasetType getSonDatasetType() ;
+	public abstract DatasetType getSonDatasetType();
 
 	public abstract String getResultDatasetName();
 
@@ -65,10 +65,10 @@ public abstract class MetaProcessCenterLine extends MetaProcess {
 		paramSet.addParameters(parameterNumberMinWidth);
 
 		this.parameters.setParameters(sourceData, paramSet, targetData);
-		if (getSonDatasetType()==DatasetType.LINE) {
-			this.parameters.addInputParameters(INPUT_DATA,DatasetTypes.LINE, sourceData);
-		}else if (getSonDatasetType()==DatasetType.REGION){
-			this.parameters.addInputParameters(INPUT_DATA,DatasetTypes.REGION, sourceData);
+		if (getSonDatasetType() == DatasetType.LINE) {
+			this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.LINE, sourceData);
+		} else if (getSonDatasetType() == DatasetType.REGION) {
+			this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.REGION, sourceData);
 		}
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, targetData);
 	}
@@ -108,11 +108,11 @@ public abstract class MetaProcessCenterLine extends MetaProcess {
 		try {
 			fireRunning(new RunningEvent(MetaProcessCenterLine.this, 0, "start"));
 
-			Double maxWidth= Double.valueOf(parameterNumberMaxWidth.getSelectedItem().toString());
-			Double minWidth= Double.valueOf(parameterNumberMinWidth.getSelectedItem().toString());
-			if (Double.compare(maxWidth,minWidth)==-1 || Double.compare(maxWidth,minWidth)==0 ||Double.compare(maxWidth,0)!=1 ||Double.compare(minWidth,0)==-1){
+			Double maxWidth = Double.valueOf(parameterNumberMaxWidth.getSelectedItem().toString());
+			Double minWidth = Double.valueOf(parameterNumberMinWidth.getSelectedItem().toString());
+			if (Double.compare(maxWidth, minWidth) == -1 || Double.compare(maxWidth, minWidth) == 0 || Double.compare(maxWidth, 0) != 1 || Double.compare(minWidth, 0) == -1) {
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
-			}else {
+			} else {
 				String datasetName = saveDataset.getDatasetName();
 				datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 				DatasetVector src = null;
@@ -132,7 +132,7 @@ public abstract class MetaProcessCenterLine extends MetaProcess {
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
-		}finally {
+		} finally {
 			Generalization.removeSteppedListener(steppedListener);
 		}
 		return isSuccessful;

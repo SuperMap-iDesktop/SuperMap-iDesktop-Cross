@@ -3,14 +3,14 @@
  */
 package org.flexdock.docking.floating.policy;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
-
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.drag.DragManager;
 import org.flexdock.docking.event.DockingEvent;
 import org.flexdock.docking.event.DockingListener;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * This class provides centralized control over the framework's floating
@@ -32,7 +32,7 @@ import org.flexdock.docking.event.DockingListener;
  * {@code setGlobalFloatingEnabled(boolean globalFloatingEnabled)}.
  * <p>
  * This class provides methods {@code addPolicy(FloatPolicy policy)} and
- * {@code removePolicy(FloatPolicy policy)}, allowing the user to implement
+ * {@code removePolicy(FloatPolicy policy)}, allowing the user to ipls
  * custom behavior to control floating support for individual docking operations
  * on an event-by-event basis. By default, the {@code FloatPolicyManager} has a
  * single {@code FloatPolicy} installed of type {@code DefaultFloatPolicy}.

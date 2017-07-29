@@ -6,15 +6,15 @@ import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetImage;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
-import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
-import com.supermap.desktop.process.parameters.implement.*;
+import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -24,8 +24,9 @@ import java.beans.PropertyChangeListener;
 /**
  * Created by lixiaoyao on 2017/7/11.
  */
-public class MetaProcessThinRaster extends MetaProcess{
-	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");;
+public class MetaProcessThinRaster extends MetaProcess {
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	;
 	private final static String OUTPUT_DATA = "ExtractResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
@@ -65,7 +66,7 @@ public class MetaProcessThinRaster extends MetaProcess{
 
 		parameterSetting = new ParameterCombine();
 		parameterSetting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		parameterSetting.addParameters(textFieldNoValue,textFieldNoValueTolerance);
+		parameterSetting.addParameters(textFieldNoValue, textFieldNoValueTolerance);
 
 		resultData = new ParameterCombine();
 		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
@@ -88,13 +89,13 @@ public class MetaProcessThinRaster extends MetaProcess{
 	}
 
 	private void initParametersState() {
-		Dataset datasetGrid = DatasetUtilities.getDefaultDataset(DatasetType.GRID,DatasetType.IMAGE);
+		Dataset datasetGrid = DatasetUtilities.getDefaultDataset(DatasetType.GRID, DatasetType.IMAGE);
 		if (datasetGrid != null) {
 			this.sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			this.sourceDataset.setSelectedItem(datasetGrid);
-			if (datasetGrid instanceof DatasetGrid){
-				textFieldNoValue.setSelectedItem(((DatasetGrid)datasetGrid).getNoValue());
-			}else {
+			if (datasetGrid instanceof DatasetGrid) {
+				textFieldNoValue.setSelectedItem(((DatasetGrid) datasetGrid).getNoValue());
+			} else {
 				textFieldNoValue.setSelectedItem("16777215");
 			}
 		}
@@ -112,9 +113,9 @@ public class MetaProcessThinRaster extends MetaProcess{
 		sourceDataset.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (sourceDataset.getSelectedItem() instanceof DatasetGrid){
+				if (sourceDataset.getSelectedItem() instanceof DatasetGrid) {
 					textFieldNoValue.setSelectedItem(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue());
-				}else if (sourceDataset.getSelectedItem() instanceof DatasetImage){
+				} else if (sourceDataset.getSelectedItem() instanceof DatasetImage) {
 					textFieldNoValue.setSelectedItem("16777215");
 				}
 			}
@@ -130,23 +131,23 @@ public class MetaProcessThinRaster extends MetaProcess{
 			String datasetName = resultDataset.getDatasetName();
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 
-			Dataset src=null;
+			Dataset src = null;
 			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
-				src = (Dataset)this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+				src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 			} else {
 				src = sourceDataset.getSelectedDataset();
 			}
 			ConversionAnalyst.addSteppedListener(steppedListener);
 
-			Dataset result = ConversionAnalyst.thinRaster(src, Math.round( Double.valueOf(this.textFieldNoValue.getSelectedItem().toString())), Double.valueOf(this.textFieldNoValueTolerance.getSelectedItem().toString()), this.resultDataset.getResultDatasource(), datasetName);
+			Dataset result = ConversionAnalyst.thinRaster(src, Math.round(Double.valueOf(this.textFieldNoValue.getSelectedItem().toString())), Double.valueOf(this.textFieldNoValueTolerance.getSelectedItem().toString()), this.resultDataset.getResultDatasource(), datasetName);
 
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
 
 			fireRunning(new RunningEvent(MetaProcessThinRaster.this, 100, "finished"));
-		}catch (Exception e){
+		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+		} finally {
 			ConversionAnalyst.removeSteppedListener(steppedListener);
 		}
 		return isSuccessful;

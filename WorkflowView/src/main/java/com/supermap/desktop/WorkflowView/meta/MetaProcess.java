@@ -7,9 +7,9 @@ import com.supermap.desktop.process.core.AbstractProcess;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
-import com.supermap.desktop.process.parameters.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.ipls.DefaultParameters;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;

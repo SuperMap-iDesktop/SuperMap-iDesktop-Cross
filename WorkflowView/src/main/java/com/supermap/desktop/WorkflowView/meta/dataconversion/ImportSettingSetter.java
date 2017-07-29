@@ -6,8 +6,8 @@ import com.supermap.data.Point3D;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
+import com.supermap.desktop.process.parameter.ipls.*;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.CopyOnWriteArrayList;

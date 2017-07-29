@@ -26,7 +26,7 @@ public class WorkflowViewActivator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.process", bundleContext.getBundle());
+		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.WorkflowView", bundleContext.getBundle());
 		System.out.println("Hello SuperMap === WorkflowView!!");
 
 		Application.getActiveApplication().setWorkflowInitListener(new WorkflowInitListener() {

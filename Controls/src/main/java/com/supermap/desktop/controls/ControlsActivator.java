@@ -3,6 +3,7 @@ package com.supermap.desktop.controls;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.CoreServiceTracker;
 import com.supermap.desktop.dialog.OptionPaneImpl;
+import com.supermap.desktop.process.ProcessEnv;
 import com.supermap.desktop.utilities.JOptionPaneUtilities;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -27,6 +28,7 @@ public class ControlsActivator implements BundleActivator {
 //			this.registration = context.registerService(Application.class.getName(), new Application(), null);
 
 			Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Controls", context.getBundle());
+			ProcessEnv.INSTANCE.addParametersUIPackage("com.supermap.desktop.process.parameters.ParameterPanels", "SuperMap.Desktop.Controls");
 		}
 	}
 

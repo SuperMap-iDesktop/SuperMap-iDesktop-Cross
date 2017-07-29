@@ -1,9 +1,9 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.implement.ParameterFieldSetDialog;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
+import com.supermap.desktop.process.parameter.ipls.ParameterFieldSetDialog;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FieldsSetDialog;
 import com.supermap.desktop.ui.controls.DialogResult;

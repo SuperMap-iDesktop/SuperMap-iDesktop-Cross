@@ -1,7 +1,7 @@
 package com.supermap.desktop.WorkflowView.meta.dataconversion;
 
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.parameter.implement.ParameterFile;
+import com.supermap.desktop.process.parameter.ipls.ParameterFile;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;

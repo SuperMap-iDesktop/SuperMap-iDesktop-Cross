@@ -5,16 +5,16 @@ import com.supermap.analyst.spatialanalyst.ConversionAnalystParameter;
 import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
-import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
+import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameters.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -26,7 +26,8 @@ import java.beans.PropertyChangeListener;
  * Created by Chen on 2017/6/30 0030.
  */
 public class MetaProcessRasterToVector extends MetaProcess {
-	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");;
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	;
 	private final static String OUTPUT_DATA = "ExtractResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
@@ -114,7 +115,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 	}
 
 	private void initParametersState() {
-		Dataset datasetGrid = DatasetUtilities.getDefaultDataset(DatasetType.IMAGE,DatasetType.GRID);
+		Dataset datasetGrid = DatasetUtilities.getDefaultDataset(DatasetType.IMAGE, DatasetType.GRID);
 		if (datasetGrid != null) {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
@@ -177,9 +178,9 @@ public class MetaProcessRasterToVector extends MetaProcess {
 				imageDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetImage);
 				textFieldGridValue.setEnabled(false);
 				textFieldGridValueTolerance.setEnabled(false);
-				if (sourceDataset.getSelectedItem() instanceof DatasetGrid){
+				if (sourceDataset.getSelectedItem() instanceof DatasetGrid) {
 					textFieldNoValue.setSelectedItem(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue());
-				}else if (sourceDataset.getSelectedItem() instanceof DatasetImage){
+				} else if (sourceDataset.getSelectedItem() instanceof DatasetImage) {
 					textFieldNoValue.setSelectedItem("16777215");
 				}
 			}
@@ -188,7 +189,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				vertorizeLineSetting.setEnabled(comboBoxType.getSelectedData() == DatasetType.LINE);
-				if(vertorizeLineSetting.isEnabled()){
+				if (vertorizeLineSetting.isEnabled()) {
 					textFieldSmoothDegree.setEnabled(false);
 				}
 			}
@@ -224,22 +225,22 @@ public class MetaProcessRasterToVector extends MetaProcess {
 
 			String datasetName = resultDataset.getDatasetName();
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
-			if (parameters.getInputs().getData(INPUT_DATA).getValue()!=null){
+			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				analystParameter.setSourceDataset((Dataset) parameters.getInputs().getData(INPUT_DATA).getValue());
-			}else {
+			} else {
 				analystParameter.setSourceDataset(sourceDataset.getSelectedDataset());
 			}
 			analystParameter.setTargetDatasource(resultDataset.getResultDatasource());
 			analystParameter.setTargetDatasetName(datasetName);
 			analystParameter.setTargetDatasetType((DatasetType) comboBoxType.getSelectedData());
 			analystParameter.setValueFieldName("GridValue");      // 栅格转为矢量字段名是必须设置的，但是.NET那边只针对GRID数据设置
-			                                                      //  没有针对影像数据设置
+			//  没有针对影像数据设置
 
 			if (vertorizeLineSetting.isEnabled) {
 				analystParameter.setSmoothMethod((SmoothMethod) comboBoxSmoothMethod.getSelectedData());
-				if (checkBoxThinRaster.getSelectedItem().equals("false")){
+				if (checkBoxThinRaster.getSelectedItem().equals("false")) {
 					analystParameter.setThinRaster(false);
-				}else if (checkBoxThinRaster.getSelectedItem().equals("true")){
+				} else if (checkBoxThinRaster.getSelectedItem().equals("true")) {
 					analystParameter.setThinRaster(true);
 				}
 				if (textFieldSmoothDegree.isEnabled() && Integer.valueOf((String) textFieldSmoothDegree.getSelectedItem()) >= 2 && Integer.valueOf((String) textFieldSmoothDegree.getSelectedItem()) <= 10) {
@@ -247,7 +248,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 				}
 			}
 			if (gridDatasetSetting.isEnabled()) {
-				analystParameter.setBackOrNoValue(Math.round( Double.valueOf(textFieldNoValue.getSelectedItem().toString())));
+				analystParameter.setBackOrNoValue(Math.round(Double.valueOf(textFieldNoValue.getSelectedItem().toString())));
 				analystParameter.setBackOrNoValueTolerance(Double.valueOf(textFieldNoValueTolerance.getSelectedItem().toString()));
 				analystParameter.setValueFieldName(textFieldGridField.getSelectedItem().toString());
 				if (textFieldGridValue.isEnabled()) {
@@ -256,9 +257,9 @@ public class MetaProcessRasterToVector extends MetaProcess {
 				}
 			}
 			if (imageDatasetSetting.isEnabled()) {
-				if (comboBoxBackColor.getSelectedItem()==null){
+				if (comboBoxBackColor.getSelectedItem() == null) {
 					Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_GridToVector_NotSetColor"));
-				}else {
+				} else {
 					//System.out.println((long) ((Color) comboBoxBackColor.getSelectedItem()).getRGB());
 					analystParameter.setBackOrNoValue((long) ((Color) comboBoxBackColor.getSelectedItem()).getRGB());
 				}

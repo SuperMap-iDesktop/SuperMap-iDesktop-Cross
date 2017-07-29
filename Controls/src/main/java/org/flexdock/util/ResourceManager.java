@@ -18,27 +18,17 @@
  OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 package org.flexdock.util;
 
-import java.awt.Cursor;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.w3c.dom.Document;
+
+import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.awt.*;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.Properties;
-
-import javax.swing.ImageIcon;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-
-
-import org.w3c.dom.Document;
 
 /**
  * This class provides {@code static} convenience methods for resource
@@ -235,7 +225,7 @@ public class ResourceManager {
 
     /**
      * Attempts to load the specified native {@code library}, using
-     * {@code classpathResource} and the filesystem to implement several
+     * {@code classpathResource} and the filesystem to ipls several
      * fallback mechanisms in the event the library cannot be loaded. This
      * method should provide seamless installation and loading of native
      * libraries from within the classpath so that native libraries may be

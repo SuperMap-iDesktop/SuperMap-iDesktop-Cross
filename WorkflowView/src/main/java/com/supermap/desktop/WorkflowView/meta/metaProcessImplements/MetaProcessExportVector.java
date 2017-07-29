@@ -3,13 +3,13 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.data.Charset;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessAbstractExport;
+import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameters.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 
@@ -66,8 +66,7 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 			SmFileChoose.addNewNode("", System.getProperty("user.dir"), ProcessProperties.getString("String_Export"),
 					module, "GetDirectories");
 		}
-		SmFileChoose tempfileChooser = new SmFileChoose(module);
-		exportPath.setFileChoose(tempfileChooser);
+		exportPath.setModuleName(module);
 		this.vectorCombine = new ParameterCombine();
 		this.vectorCombine.setDescribe(ProcessProperties.getString("String_ParamSet"));
 		this.externalData = new ParameterCheckBox(ProcessProperties.getString("String_ExportExternalData"));

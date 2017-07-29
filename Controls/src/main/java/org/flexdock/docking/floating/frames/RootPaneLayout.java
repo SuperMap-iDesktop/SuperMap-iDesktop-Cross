@@ -19,15 +19,9 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 package org.flexdock.docking.floating.frames;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.LayoutManager2;
-import java.awt.Rectangle;
+import javax.swing.*;
+import java.awt.*;
 import java.io.Serializable;
-
-import javax.swing.JLayeredPane;
 
 /**
  * @author Andreas Ernst
@@ -36,7 +30,7 @@ import javax.swing.JLayeredPane;
 @SuppressWarnings(value = { "serial" })
 public class RootPaneLayout implements LayoutManager2, Serializable {
     private RootPane pane;
-    // implement
+    // ipls
 
     RootPaneLayout(RootPane pane) {
         this.pane = pane;

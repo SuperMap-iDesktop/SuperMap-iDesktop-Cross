@@ -2,12 +2,12 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessAbstractExport;
-import com.supermap.desktop.process.parameters.implement.*;
+import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 
@@ -51,8 +51,7 @@ public class MetaProcessExportGrid extends MetaProcessAbstractExport {
 			SmFileChoose.addNewNode("", System.getProperty("user.dir"), ProcessProperties.getString("String_Export"),
 					module, "GetDirectories");
 		}
-		SmFileChoose tempfileChooser = new SmFileChoose(module);
-		exportPath.setFileChoose(tempfileChooser);
+		exportPath.setModuleName(module);
 
 		this.gridCombine = new ParameterCombine();
 		this.gridCombine.setDescribe(ProcessProperties.getString("String_ParamSet"));
@@ -65,8 +64,7 @@ public class MetaProcessExportGrid extends MetaProcessAbstractExport {
 			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
 					ProcessProperties.getString("String_Export"), moduleForTFW, "SaveOne");
 		}
-		SmFileChoose fileChooserc = new SmFileChoose(moduleForTFW);
-		prjFile.setFileChoose(fileChooserc);
+		prjFile.setModuleName(moduleForTFW);
 
 		this.prjFile.setEnabled(false);
 		this.checkBoxTFW = new ParameterCheckBox(ProcessProperties.getString("String_TFW"));

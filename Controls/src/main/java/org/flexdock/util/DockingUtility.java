@@ -3,16 +3,6 @@
  */
 package org.flexdock.util;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Point;
-
-import javax.swing.JComponent;
-import javax.swing.JRootPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
@@ -21,6 +11,9 @@ import org.flexdock.docking.defaults.DefaultRegionChecker;
 import org.flexdock.docking.props.DockablePropertySet;
 import org.flexdock.docking.state.DockingState;
 import org.flexdock.docking.state.MinimizationManager;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author Christopher Butler
@@ -697,7 +690,7 @@ public class DockingUtility implements DockingConstants {
      * Registered {@code Dockable} components, if they are {@code JComponents},
      * will also have a {@code Boolean} client property present with the key
      * {@code Dockable.DOCKABLE_INDICATOR}, used by dockable
-     * {@code JComponents} that don't implement the {@code Dockable} interface
+     * {@code JComponents} that don't ipls the {@code Dockable} interface
      * directly, but acquire docking capabilities through a separate wrapper
      * {@code Dockable} implementation. For these components, the
      * {@code instanceof} check is insufficient since the valid {@code Dockable}
@@ -735,7 +728,7 @@ public class DockingUtility implements DockingConstants {
         }
 
         // they may have a heavyweight Component that does not directly
-        // implement Dockable.
+        // ipls Dockable.
         // in this case, Component does not have client properties we can check.
         // we'll have to
         // check directly with the DockingManager.
