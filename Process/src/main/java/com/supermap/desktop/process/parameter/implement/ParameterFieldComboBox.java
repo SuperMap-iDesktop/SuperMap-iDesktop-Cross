@@ -124,13 +124,15 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 	public void setFieldName(DatasetVector dataset) {
 		// FIXME: @chenS 这样写会导致必须先设置 fieldTypes,然后再设置dataset才会有正确结果
 		setDataset(dataset);
-		FieldInfos fieldInfos = dataset.getFieldInfos();
-		if (!isShowNullValue) {
-			for (int i = 0; i < fieldInfos.getCount(); i++) {
-				FieldInfo fieldInfo = fieldInfos.get(i);
-				if (!fieldInfo.isSystemField() && (fieldTypes == null || ArrayUtilities.isArrayContains(fieldTypes, fieldInfo.getType()))) {
-					this.fieldName = fieldInfo.getCaption();
-					break;
+		if (dataset != null) {
+			FieldInfos fieldInfos = dataset.getFieldInfos();
+			if (!isShowNullValue) {
+				for (int i = 0; i < fieldInfos.getCount(); i++) {
+					FieldInfo fieldInfo = fieldInfos.get(i);
+					if (!fieldInfo.isSystemField() && (fieldTypes == null || ArrayUtilities.isArrayContains(fieldTypes, fieldInfo.getType()))) {
+						this.fieldName = fieldInfo.getCaption();
+						break;
+					}
 				}
 			}
 		}

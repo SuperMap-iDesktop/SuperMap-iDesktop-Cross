@@ -11,7 +11,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -105,7 +110,12 @@ public class JFileChooserControl extends JComponent {
 	}
 
 	public String getPath() {
-		return this.textEditor.getText();
+		String text = this.textEditor.getText();
+		if (!StringUtilities.isNullOrEmpty(text)) {
+			File file = new File(text);
+			file.mkdirs();
+		}
+		return text;
 	}
 
 	public void setFileChooser(JFileChooser chooser) {

@@ -64,7 +64,7 @@ public class PanelTransformForMicrosoft extends PanelTransform {
                     ((PanelTransformForMicrosoft) tempPanelImport.getTransform()).getCheckBoxFirstRowAsField().setSelected(checkBoxFirstRowAsField.isSelected());
                 }
             } else {
-                ((ImportSettingCSV) importSetting).setFirstRowIsField(checkBoxFirstRowAsField.isSelected());
+	            ((ImportSettingCSV) importSetting).setFirstRowIsField(!checkBoxFirstRowAsField.isSelected());
             }
         }
     };

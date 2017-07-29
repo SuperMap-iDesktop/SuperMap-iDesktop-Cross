@@ -1,15 +1,25 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.data.Charset;
-import com.supermap.data.conversion.*;
+import com.supermap.data.conversion.CADVersion;
+import com.supermap.data.conversion.ExportSetting;
+import com.supermap.data.conversion.ExportSettingDWG;
+import com.supermap.data.conversion.ExportSettingDXF;
+import com.supermap.data.conversion.ExportSteppedEvent;
+import com.supermap.data.conversion.ExportSteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessAbstractExport;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.implement.ParameterCharset;
+import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.implement.ParameterCombine;
+import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterLabel;
+import com.supermap.desktop.process.parameter.implement.ParameterSQLExpression;
+import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
@@ -150,6 +160,10 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 		boolean isSuccessful = false;
 		boolean isOverwrite = Boolean.valueOf(cover.getSelectedItem().toString());
 		String targetPath = getFilePath();
+		if (StringUtilities.isNullOrEmpty(targetPath)) {
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ExportPathIsNull"));
+			return false;
+		}
 		if (new File(targetPath).exists() && !isOverwrite) {
 			Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_DuplicateFileError"), targetPath));
 		} else if (!StringUtilities.isNullOrEmpty(targetPath)) {
