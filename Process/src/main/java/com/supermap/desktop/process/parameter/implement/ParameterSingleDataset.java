@@ -76,8 +76,10 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 	}
 
 	public void setDatasource(Datasource datasource) {
-		firePropertyChangeListener(new PropertyChangeEvent(this, DATASOURCE_FIELD_NAME, this.datasource, datasource));
-		this.datasource = datasource;
+		if (this.datasource != datasource) {
+			firePropertyChangeListener(new PropertyChangeEvent(this, DATASOURCE_FIELD_NAME, this.datasource, datasource));
+			this.datasource = datasource;
+		}
 	}
 
 	public Datasource getDatasource() {
