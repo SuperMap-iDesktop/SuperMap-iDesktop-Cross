@@ -31,6 +31,9 @@ public class ParameterNumber extends ParameterTextField {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
 				try {
+					if (StringUtilities.isNullOrEmpty(textFieldValue)) {
+						return false;
+					}
 					if (textFieldValue.endsWith(".")) {
 						return false;
 					}

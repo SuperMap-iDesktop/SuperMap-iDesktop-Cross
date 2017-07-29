@@ -55,7 +55,7 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 
 			@Override
 			public String getLegitValue(String currentValue, String backUpValue) {
-				return currentValue;
+				return smTextFieldLegit == null ? currentValue : smTextFieldLegit.getLegitValue(currentValue, backUpValue);
 			}
 		});
 		initLayout();
