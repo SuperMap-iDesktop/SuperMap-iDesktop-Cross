@@ -15,6 +15,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilities.GeometryTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import org.apache.http.Header;

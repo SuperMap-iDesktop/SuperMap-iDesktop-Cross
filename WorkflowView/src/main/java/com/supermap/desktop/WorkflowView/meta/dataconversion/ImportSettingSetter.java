@@ -3,17 +3,11 @@ package com.supermap.desktop.WorkflowView.meta.dataconversion;
 import com.supermap.data.Charset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Point3D;
-import com.supermap.data.conversion.DataImport;
-import com.supermap.data.conversion.ImportSetting;
-import com.supermap.data.conversion.ImportSettingModel3DS;
-import com.supermap.data.conversion.ImportSettingModelDXF;
-import com.supermap.data.conversion.ImportSettingModelFBX;
-import com.supermap.data.conversion.ImportSettingModelFLT;
-import com.supermap.data.conversion.ImportSettingModelOSG;
-import com.supermap.data.conversion.ImportSettingModelX;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -125,7 +119,7 @@ public class ImportSettingSetter {
 							Method method = importSettingClass.getMethod(methodName, boolean.class);
 							boolean booleanValue = Boolean.valueOf(String.valueOf(selectedItem));
 							//合并图层参数设置问题
-							if (methodName.equals("setImportingByLayer")|| methodName.equals("setUnvisibleObjectIgnored")) {
+							if (methodName.equals("setImportingByLayer") || methodName.equals("setUnvisibleObjectIgnored")) {
 								booleanValue = !booleanValue;
 							}
 

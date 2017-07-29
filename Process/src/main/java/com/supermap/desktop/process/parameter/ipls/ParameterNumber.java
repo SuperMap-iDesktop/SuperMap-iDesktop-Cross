@@ -2,6 +2,7 @@ package com.supermap.desktop.process.parameter.ipls;
 
 import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 /**

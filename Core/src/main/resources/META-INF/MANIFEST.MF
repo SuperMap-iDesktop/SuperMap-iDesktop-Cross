@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1501323258819
+Bnd-LastModified: 1501323900707
 Build-Jdk: 1.7.0_80
 Built-By: highsad
 Bundle-Activator: com.supermap.desktop.core.CoreActivator
@@ -161,8 +161,8 @@ Export-Package: com.supermap.desktop;version="1.0.0";uses:="com.supermap
  map.desktop.icloud.online,org.apache.http.impl.client",com.supermap.des
  ktop.implement;version="1.0.0";uses:="com.supermap.desktop.Interface,co
  m.supermap.desktop.enums,com.supermap.desktop.ui",com.supermap.desktop.
- implement.UserDefineType;uses:="com.supermap.data,com.supermap.data.con
- version";version="1.0.0",com.supermap.layout;version="1.0.0";uses:="com
+ implement.UserDefineType;version="1.0.0";uses:="com.supermap.data,com.s
+ upermap.data.conversion",com.supermap.layout;version="1.0.0";uses:="com
  .supermap.data,com.supermap.mapping,com.supermap.ui",com.supermap.mappi
  ng;version="1.0.0";uses:="com.supermap.data,com.supermap.ui",com.superm
  ap.realspace;version="1.0.0";uses:="com.supermap.data,com.supermap.mapp
