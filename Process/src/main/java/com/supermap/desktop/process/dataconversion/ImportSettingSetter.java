@@ -130,8 +130,11 @@ public class ImportSettingSetter {
 							Method method = importSettingClass.getMethod(methodName, boolean.class);
 							boolean booleanValue = Boolean.valueOf(String.valueOf(selectedItem));
 							//合并图层参数设置问题
-							boolean value = (methodName.equals("setImportingByLayer") || methodName.equals("setUnvisibleObjectIgnored")) != booleanValue;
-							method.invoke(importSetting, value);
+							if (!methodName.equals("setImportingByLayer") && !methodName.equals("setUnvisibleObjectIgnored") && !methodName.equals("setFirstRowIsField")) {
+								booleanValue = !booleanValue;
+							}
+
+							method.invoke(importSetting, booleanValue);
 						} else if (null != selectedItem) {
 							Method method;
 							if (StringUtilities.isNullOrEmpty(selectedItem.toString())) {
