@@ -3,11 +3,23 @@ package com.supermap.desktop.process.dataconversion;
 import com.supermap.data.Charset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Point3D;
-import com.supermap.data.conversion.*;
+import com.supermap.data.conversion.DataImport;
+import com.supermap.data.conversion.ImportSetting;
+import com.supermap.data.conversion.ImportSettingModel3DS;
+import com.supermap.data.conversion.ImportSettingModelDXF;
+import com.supermap.data.conversion.ImportSettingModelFBX;
+import com.supermap.data.conversion.ImportSettingModelFLT;
+import com.supermap.data.conversion.ImportSettingModelOSG;
+import com.supermap.data.conversion.ImportSettingModelX;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.implement.ParameterCharset;
+import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasetType;
+import com.supermap.desktop.process.parameter.implement.ParameterEnum;
+import com.supermap.desktop.process.parameter.implement.ParameterFile;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -109,18 +121,19 @@ public class ImportSettingSetter {
 			} else if (null != otherInfo) {
 				int otherInfoSize = otherInfo.size();
 				for (int i = 0; i < otherInfoSize; i++) {
-					if (otherInfo.get(i).parameter instanceof ISelectionParameter) {
+					IParameter parameter = otherInfo.get(i).parameter;
+					if (parameter instanceof ISelectionParameter) {
 						String methodName = otherInfo.get(i).methodName;
-						if (otherInfo.get(i).parameter instanceof ParameterCheckBox) {
+						Object selectedItem = ((ISelectionParameter) parameter).getSelectedItem();
+
+						if (parameter instanceof ParameterCheckBox) {
 							Method method = importSettingClass.getMethod(methodName, boolean.class);
+							boolean booleanValue = Boolean.valueOf(String.valueOf(selectedItem));
 							//合并图层参数设置问题
-							boolean value = methodName.equals("setImportingByLayer") || method.equals("setUnvisibleObjectIgnored")
-									? ("false".equals(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) ? true : false)
-									: ("true".equals(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) ? false : true);
+							boolean value = (methodName.equals("setImportingByLayer") || methodName.equals("setUnvisibleObjectIgnored")) != booleanValue;
 							method.invoke(importSetting, value);
-						} else if (null != ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) {
+						} else if (null != selectedItem) {
 							Method method;
-							Object selectedItem = ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem();
 							if (StringUtilities.isNullOrEmpty(selectedItem.toString())) {
 								break;
 							}
