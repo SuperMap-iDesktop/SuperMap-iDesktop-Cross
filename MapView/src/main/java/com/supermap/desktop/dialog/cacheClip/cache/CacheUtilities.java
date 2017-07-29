@@ -12,15 +12,16 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -125,7 +126,7 @@ public class CacheUtilities {
 //		return pidNameSet;
 //	}
 
-	public static boolean volatileDatasource() {
+	public static boolean voladateDatasource() {
 		boolean result = true;
 		if (null != Application.getActiveApplication().getWorkspace().getDatasources()) {
 			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
@@ -189,20 +190,25 @@ public class CacheUtilities {
 	public static void startProcess(String[] params, String className, String cacheType) {
 		try {
 			ArrayList<String> arguments = new ArrayList<>();
-			String javaexeHome = null;
-			if (isWindows()) {
-				javaexeHome = CacheUtilities.replacePath(System.getProperty("java.home"), "bin") + File.separator + "java.exe";
-			} else {
-				javaexeHome = CacheUtilities.replacePath(System.getProperty("java.home"), "bin") + File.separator + "java";
+			String javaexeHome = System.getProperty("java.home");
+			if (StringUtilities.isNullOrEmpty(javaexeHome)) {
+				javaexeHome = "." + File.separator + "jre" + File.separator + "bin";
+				javaexeHome = isWindows() ? javaexeHome + File.separator + "java.exe" : javaexeHome + File.separator + "java";
+			} else if (!javaexeHome.endsWith("bin")) {
+				if (isWindows()) {
+					javaexeHome = CacheUtilities.replacePath(javaexeHome, "bin") + File.separator + "java.exe";
+				} else {
+					javaexeHome = CacheUtilities.replacePath(javaexeHome, "bin") + File.separator + "java";
+				}
 			}
 			arguments.add(javaexeHome);
 			arguments.add("-cp");
-			String projectPath = replacePath(System.getProperty("user.dir"));
+//			String projectPath = replacePath(System.getProperty("user.dir"));
 			String jarPath = "";
 			if (isWindows()) {
-				jarPath = ".;" + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\require_bundles\\Core.jar;" + projectPath + "\\bundles\\require_bundles\\Controls.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
+				jarPath = ".;" + ".\\bin\\com.supermap.data.jar;" + ".\\bin\\com.supermap.mapping.jar;" + ".\\bin\\com.supermap.tilestorage.jar;" + ".\\bin\\com.supermap.data.processing.jar;" + ".\\bundles\\require_bundles\\Core.jar;" + ".\\bundles\\require_bundles\\Controls.jar;" + ".\\bundles\\idesktop_bundles\\MapView.jar";
 			} else {
-				jarPath = projectPath + "/bin/com.supermap.data.jar:" + projectPath + "/bin/com.supermap.mapping.jar:" + projectPath + "/bin/com.supermap.tilestorage.jar:" + projectPath + "/bin/com.supermap.data.processing.jar:" + projectPath + "/bundles/require_bundles/Core.jar:" + projectPath + "/bundles/require_bundles/Controls.jar:" + projectPath + "/bundles/idesktop_bundles/MapView.jar: ";
+				jarPath = "./bin/com.supermap.data.jar:" + "./bin/com.supermap.mapping.jar:" + "./bin/com.supermap.tilestorage.jar:" + "./bin/com.supermap.data.processing.jar:" + "./bundles/require_bundles/Core.jar:" + "./bundles/require_bundles/Controls.jar:" + "./bundles/idesktop_bundles/MapView.jar: ";
 			}
 //		String jarPath = ".;" + projectPath + "\\bundles\\require_bundles\\Core.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
 			arguments.add(jarPath);
@@ -296,4 +302,55 @@ public class CacheUtilities {
 		};
 	}
 
+	public static String getCachePath(String path) {
+		String result = null;
+		//获取缓存任务根路径
+		File propertyFile = new File(CacheUtilities.replacePath(path, "Cache.property"));
+		try {
+			if (propertyFile.exists()) {
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(propertyFile), "UTF-8"));
+				String line = null;
+				String cacheName = "";
+				while (null != (line = bufferedReader.readLine())) {
+					cacheName += line.replace("CacheName=", "");
+				}
+				result = CacheUtilities.replacePath(path, cacheName);
+				bufferedReader.close();
+			}
+		} catch (Exception e) {
+			if (null != e.getMessage()) {
+				new SmOptionPane().showConfirmDialog(e.getMessage());
+			}
+		}
+		return result;
+	}
+
+	public static void renameDoingFile(String doingPath, String taskPath) {
+		//实时检查doing目录下的文件是否加锁,如果文件已经加锁则表示有进程正在使用,否则表示为以前进程挂了没有处理的
+		File doingDirectory = new File(doingPath);
+		if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
+			renameFiles(taskPath, doingDirectory);
+		}
+	}
+
+	public static void renameFiles(String taskPath, File doingDirectory) {
+		File[] doingFailedSci = doingDirectory.listFiles();
+		for (File doingSci : doingFailedSci) {
+			//文件加了锁说明文件正在被用于切图任务
+			FileLocker locker = new FileLocker(doingSci);
+			if (locker.tryLock()) {
+				//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将该任务移到task目录下,重新切图
+				locker.release();
+				doingSci.renameTo(new File(new File(taskPath), doingSci.getName()));
+			}
+		}
+	}
+
+	public static boolean hasSciFiles(File sciDirectory) {
+		int size = 0;
+		if (null != sciDirectory.list(CacheUtilities.getFilter())) {
+			size = sciDirectory.list(CacheUtilities.getFilter()).length;
+		}
+		return size > 0 ? true : false;
+	}
 }

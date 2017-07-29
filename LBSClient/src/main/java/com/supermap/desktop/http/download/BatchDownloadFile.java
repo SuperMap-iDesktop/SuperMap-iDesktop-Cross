@@ -5,7 +5,12 @@ import com.supermap.desktop.http.LogUtils;
 import com.supermap.desktop.lbs.FileInfo;
 import com.supermap.desktop.utilities.ManagerXMLParser;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -252,8 +257,8 @@ public class BatchDownloadFile extends Thread {
 		} else if (size >= kb) {
 			float f = (float) size / kb;
 			return String.format(f > 100 ? "%.0f KB" : "%.1f KB", f);
-		} else
-			return String.format("%d B", size);
+		}
+		return String.format("%d B", size);
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.DataRun;
 
+import com.supermap.analyst.spatialanalyst.Generalization;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -101,7 +102,7 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 			sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
 			dataset.setSelectedItem(defaultDataset);
 			saveDataset.setResultDatasource(defaultDataset.getDatasource());
-			saveDataset.setSelectedItem(OUTPUT_DATA);
+			saveDataset.setSelectedItem("result_aggregatePoints");
 		}
 
 		parameterNumberDistance.setSelectedItem(1000);
@@ -118,63 +119,38 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 		DatasourceConstraint.getInstance().constrained(saveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
-
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
-			DatasetVector sourceDataset = null;
+			fireRunning(new RunningEvent(MetaProcessAggregatePoints.this, 0, "start"));
+			String datasetName = saveDataset.getDatasetName();
+			datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
+			DatasetVector src = null;
 			if (this.getParameters().getInputs().getData(INPUT_DATA) != null
 					&& this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof DatasetVector) {
-				sourceDataset = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+				src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 			} else {
-				sourceDataset = (DatasetVector) this.dataset.getSelectedItem();
+				src = (DatasetVector) this.dataset.getSelectedItem();
 			}
+			Generalization.addSteppedListener(steppedListener);
+			Generalization.aggregatePoints(src,Double.valueOf(parameterNumberDistance.getSelectedItem().toString()),
+					(Unit) parameterComboBoxUnit.getSelectedData(),
+					Integer.valueOf(parameterNumberMinPilePointCount.getSelectedItem().toString()),
+					saveDataset.getResultDatasource(), datasetName,null);
+			Dataset dataset= saveDataset.getResultDatasource().getDatasets().get(datasetName);
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
+			isSuccessful = dataset!=null;
 
-			Recordset recordset = sourceDataset.getRecordset(false, CursorType.STATIC);
-
-			Point2Ds point2Ds = new Point2Ds();
-			while (!recordset.isEOF()) {
-				GeoPoint geoPoint = (GeoPoint) recordset.getGeometry();
-				Point2D point2D = new Point2D(geoPoint.getX(), geoPoint.getY());
-				point2Ds.add(point2D);
-				recordset.moveNext();
-			}
-
-			PrjCoordSys prjCoordSys = sourceDataset.getPrjCoordSys();
-			Double distance = Double.valueOf(parameterNumberDistance.getSelectedItem().toString());
-			Unit unit = (Unit) parameterComboBoxUnit.getSelectedData();
-			int minPilePointCount = Integer.valueOf(parameterNumberMinPilePointCount.getSelectedItem().toString());
-
-			// 组件给的接口貌似有问题-yuanR
-			int[] ints = Geometrist.aggregatePoints(point2Ds, prjCoordSys, distance, unit, minPilePointCount);
-			GeoRegion[] geoRegions = Geometrist.aggregatePointsToRegions(point2Ds, prjCoordSys, distance, unit, minPilePointCount);
-
-
-			// 新建数据集
-			if (geoRegions.length > 0) {
-				DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo(saveDataset.getDatasetName(), DatasetType.REGION);
-				datasetVectorInfo.setEncodeType(sourceDataset.getEncodeType());
-				DatasetVector newDataset = saveDataset.getResultDatasource().getDatasets().create(datasetVectorInfo);
-
-				Recordset recordsetResult = newDataset.getRecordset(false, CursorType.DYNAMIC);
-
-				for (int i = 0; i < geoRegions.length; i++) {
-					recordsetResult.addNew((Geometry) geoRegions[i]);
-					recordsetResult.refresh();
-				}
-			} else {
-				isSuccessful = false;
-			}
+			fireRunning(new RunningEvent(MetaProcessAggregatePoints.this, 100, "finished"));
 
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-
+			Generalization.removeSteppedListener(steppedListener);
 		}
 		return isSuccessful;
 	}
-
 
 	@Override
 	public IParameters getParameters() {
@@ -183,13 +159,11 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.AggregatePoints;
+		return MetaKeys.AGGREGATE_POINTS;
 	}
 
 	@Override
 	public String getTitle() {
 		return ProcessProperties.getString("String_AggregatePoints");
 	}
-
-
 }

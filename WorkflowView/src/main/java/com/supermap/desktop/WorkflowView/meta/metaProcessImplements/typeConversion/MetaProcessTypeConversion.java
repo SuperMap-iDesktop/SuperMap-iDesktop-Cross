@@ -3,6 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConvers
 import com.supermap.data.*;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
+import com.supermap.desktop.properties.CommonProperties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +12,11 @@ import java.util.Map;
  * Created By Chens on 2017/7/21 0021
  */
 public abstract class MetaProcessTypeConversion extends MetaProcess {
+    protected static final String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+    protected String OUTPUT_DATA;
+    protected ParameterDatasourceConstrained inputDatasource;
+    protected ParameterSingleDataset inputDataset;
+    protected ParameterSaveDataset outputData;
 
     protected HashMap<String, Object> mergePropertyData(DatasetVector des, FieldInfos srcFieldInfos, Map<String, Object> properties) {
         HashMap<String, Object> results = new HashMap<>();

@@ -33,14 +33,11 @@
                     <process key="ImportSIT" name=".SIT"/>
                     <process key="ImportIMG" name=".IMG"/>
                     <process key="ImportTIF" name=".TIF"/>
-                    <process key="ImportTIFF" name=".TIFF"/>
                     <process key="ImportBMP" name=".BMP"/>
                     <process key="ImportPNG" name=".PNG"/>
                     <process key="ImportGIF" name=".GIF"/>
                     <process key="ImportJPG" name=".JPG"/>
-                    <process key="ImportJPEG" name=".JPEG"/>
                     <process key="ImportJP2" name=".JP2"/>
-                    <process key="ImportJPK" name=".JPK"/>
                     <process key="ImportSID" name=".SID"/>
                     <process key="ImportECW" name=".ECW"/>
                 </process>
@@ -64,6 +61,12 @@
                 </process>
                 <process name="LIDAR文件">
                     <process key="ImportLIDAR" name=".TXT"/>
+                </process>
+                <process name="GEOJSON文件">
+                    <process key="ImportGEOJSON" name=".GEOJSON"/>
+                </process>
+                <process name="GPS文件">
+                    <process key="ImportGPS" name=".GPS"/>
                 </process>
                 <process name="中国标准矢量格式">
                     <process key="ImportDGN" name=".DGN"/>
@@ -129,22 +132,23 @@
                     <process key="StandardDistance" name="标准距离"/>
                 </process>
                 <process name="分析模式">//AnalyzingPatterns
-                    <process key="autoCorrelation" name="空间自相关"/>
-                    <process key="highOrLowClustering" name="高低值聚类"/>
-                    <process key="incrementalAutoCorrelation" name="增量空间自相关"/>
-                    <process key="averageNearestNeighbor" name="平均最近邻"/>
+                    <process key="AutoCorrelation" name="空间自相关"/>
+                    <process key="HighOrLowClustering" name="高低值聚类"/>
+                    <process key="IncrementalAutoCorrelation" name="增量空间自相关"/>
+                    <process key="AverageNearestNeighbor" name="平均最近邻"/>
                 </process>
                 <process name="聚类分布">//ClusteringDistributions
-                    <process key="clusterOutlierAnalyst" name="聚类和异常值分析"/>
-                    <process key="hotSpotAnalyst" name="热点分析"/>
-                    <process key="optimizedHotSpotAnalyst" name="优化的热点分析"/>
+                    <process key="ClusterOutlierAnalyst" name="聚类和异常值分析"/>
+                    <process key="HotSpotAnalyst" name="热点分析"/>
+                    <!-- <process key="OptimizedHotSpotAnalyst" name="优化的热点分析"/>-->
                 </process>
                 <process name="空间关系建模">//SpatialRelModeling
-                    <process key="geographicWeightedRegression" name="地理加权回归分析"/>
+                    <process key="GeographicWeightedRegression" name="地理加权回归分析"/>
                 </process>
             </process>
             <process name="数据处理">
                 <process key="AggregatePoints" name="点密度聚合"/>
+                <process key="RarefyPoints" name="点抽稀"/>
                 <process key="VectorResample" name="矢量重采样"/>
                 <process key="LinePolygonSmooth" name="线面光滑"/>
                 <process key="EdgeMatch" name="图幅接边"/>
@@ -154,10 +158,12 @@
                 <process key="RegionTrunkToCenterLine" name="面主干中心线"/>
             </process>
             <process key="SpatialIndex" name="重构空间索引"/>
+            <process key="FieldIndex" name="字段索引"/>
             <process key="SqlQuery" name="Sql查询"/>
             <process key="Buffer" name="缓冲区分析"/>
             <process name="类型转换">
                 <process name="点、线、面类型互转">
+                    <process key="Conversion_PointToLine" name="点数据->线数据"/>
                     <process key="Conversion_LineToPoint" name="线数据->点数据"/>
                     <process key="Conversion_LineToRegion" name="线数据->面数据"/>
                     <process key="Conversion_RegionToPoint" name="面数据->点数据"/>
@@ -165,12 +171,23 @@
                 </process>
                 <process name="属性数据与空间数据互转">
                     <process key="Conversion_FieldToText" name="字段->文本数据"/>
+                    <process key="Conversion_TextToField" name="文本数据->字段"/>
                     <process key="Conversion_TextToPoint" name="文本数据->点数据"/>
                     <process key="Conversion_TabularToPoint" name="属性->点数据"/>
+                    <process key="Conversion_TabularPointToRegion" name="点属性->面属性"/>
                 </process>
                 <process name="CAD数据、复合数据与简单数据互转">
                     <process key="Conversion_CADToSimple" name="CAD->简单数据"/>
                     <process key="Conversion_SimpleToCAD" name="简单数据->CAD"/>
+                    <process key="Conversion_EPSToSimple" name="EPS数据->简单数据"/>
+                </process>
+                <process name="二维数据与三维数据互转">
+                    <process key="Conversion_Point2DTo3D" name="二维点->三维点"/>
+                    <process key="Conversion_Line2DTo3D" name="二维线->三维线"/>
+                    <process key="Conversion_Region2DTo3D" name="二维面->三维面"/>
+                    <process key="Conversion_Point3DTo2D" name="三维点->二维点"/>
+                    <process key="Conversion_Line3DTo2D" name="三维线->二维线"/>
+                    <process key="Conversion_Region3DTo2D" name="三维面->二维面"/>
                 </process>
 
             </process>
@@ -225,8 +242,8 @@
             <process key="HeatMap" name="计算热度图"/>
             <process key="SimpleDensity" name="简单点密度分析"/>
             <process key="KernelDensity" name="核密度分析"/>
-            <process key="overlayanalystgeo" name="单对象叠加分析"/>
-            <process key="singleQuery" name="单对象查询"/>
+            <!--<process key="overlayanalystgeo" name="单对象叠加分析"/>-->
+            <process key="SingleQuery" name="单对象查询"/>
             <process key="GridRegionAggregation" name="网格面聚合分析"/>
             <process key="PolygonAggregation" name="多边形聚合分析"/>
 

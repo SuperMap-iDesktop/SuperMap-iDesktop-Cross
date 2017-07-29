@@ -118,7 +118,7 @@ public class MetaProcessPickupBorder extends MetaProcess {
 
 
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			TopologyProcessing.removeSteppedListener(steppedListener);
 		}
@@ -132,7 +132,7 @@ public class MetaProcessPickupBorder extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.PickupBorder;
+		return MetaKeys.PICKUP_BORDER;
 	}
 
 	@Override

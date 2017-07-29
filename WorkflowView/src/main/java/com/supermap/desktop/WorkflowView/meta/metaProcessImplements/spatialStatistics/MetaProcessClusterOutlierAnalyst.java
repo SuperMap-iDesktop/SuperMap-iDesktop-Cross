@@ -39,7 +39,7 @@ public class MetaProcessClusterOutlierAnalyst extends MetaProcessAnalyzingPatter
 
 	@Override
 	public String getKey() {
-		return MetaKeys.clusterOutlierAnalyst;
+		return MetaKeys.CLUSTER_OUTLIER_ANALYST;
 	}
 
 	@Override

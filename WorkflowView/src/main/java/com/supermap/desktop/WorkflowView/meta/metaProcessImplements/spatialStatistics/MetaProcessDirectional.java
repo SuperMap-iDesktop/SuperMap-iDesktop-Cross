@@ -17,6 +17,7 @@ public class MetaProcessDirectional extends MetaProcessSpatialMeasure {
 
 	protected void initHook() {
 		OUTPUT_DATASET = "DirectionalResult";
+		resultName = "result_directional";
 	}
 
 	@Override
@@ -48,6 +49,6 @@ public class MetaProcessDirectional extends MetaProcessSpatialMeasure {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.Directional;
+		return MetaKeys.DIRECTIONAL;
 	}
 }

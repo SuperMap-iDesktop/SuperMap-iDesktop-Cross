@@ -2,6 +2,8 @@ package com.supermap.desktop.WorkflowView.meta.dataconversion;
 
 import com.supermap.data.conversion.*;
 import com.supermap.data.conversion.FileType;
+import com.supermap.desktop.implement.UserDefineType.ExportSettingGPX;
+import com.supermap.desktop.implement.UserDefineType.UserDefineFileType;
 import com.supermap.desktop.process.ProcessProperties;
 
 /**
@@ -44,10 +46,9 @@ public class ExportSettingUtilities {
 			result = new ExportSettingCSV();
 		} else if (fileType.equals(FileType.GEOJSON)) {
 			result = new ExportSettingGeoJson();
+		} else if (fileType.equals(UserDefineFileType.GPX)) {
+			result = new ExportSettingGPX();
 		}
-//		else if (fileType.equals(UserDefineFileType.GPX)) {
-//			result = new ExportSettingGPX();
-//		}
 		// 复制目标文件路径到新的exportsetting中
 		return result;
 	}

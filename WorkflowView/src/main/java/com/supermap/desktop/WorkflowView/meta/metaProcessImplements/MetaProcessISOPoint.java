@@ -28,7 +28,7 @@ import java.beans.PropertyChangeListener;
  * Created by xie on 2017/3/10.
  */
 public class MetaProcessISOPoint extends MetaProcess {
-	private final static String INPUT_DATA = "InputData";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String OUTPUT_DATA = "ExtractResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
@@ -72,6 +72,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
 		equalDatasetConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
 		equalDatasetConstraint.constrained(fields, ParameterFieldComboBox.DATASET_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(targetDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void initParametersState() {
@@ -84,7 +85,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 			sourceDataset.setSelectedItem(datasetVector);
 			targetDataset.setResultDatasource(datasetVector.getDatasource());
 			targetDataset.setSelectedItem(datasetVector.getDatasource().getDatasets().getAvailableDatasetName("result_ISOPoint"));
-			this.fields.setSelectedItem("SmUserID");
+			fields.setFieldName((DatasetVector) datasetVector);
 			reloadValue();
 		}
 		ParameterDataNode selectedInterpolateType = new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_IDW"), TerrainInterpolateType.IDW);
@@ -315,11 +316,13 @@ public class MetaProcessISOPoint extends MetaProcess {
 			} else {
 				src = (DatasetVector) sourceDataset.getSelectedItem();
 			}
-			GeoLine[] lines = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, fields.getFieldName(), ((TerrainInterpolateType) ((ParameterDataNode) terrainInterpolateType.getSelectedItem()).getData()), (Double) resolution.getSelectedItem(), null);
-			isSuccessful = (lines != null && lines.length > 0);
+			DatasetVector result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, fields.getFieldName(),
+					targetDataset.getResultDatasource(),targetDataset.getDatasetName(),Double.valueOf(resolution.getSelectedItem().toString()), null);
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
+			isSuccessful = (result != null);
 			fireRunning(new RunningEvent(MetaProcessISOPoint.this, 100, "finished"));
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			SurfaceAnalyst.removeSteppedListener(this.stepListener);
 		}

@@ -266,7 +266,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 			fireRunning(new RunningEvent(this, 100, "finished"));
 			this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(targetDataset);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SameDataSet_error"));
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			OverlayAnalyst.removeSteppedListener(this.steppedListener);
 		}

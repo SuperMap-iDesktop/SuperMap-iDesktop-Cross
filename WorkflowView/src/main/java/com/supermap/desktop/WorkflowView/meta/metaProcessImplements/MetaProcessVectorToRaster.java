@@ -18,6 +18,7 @@ import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.PixelFormatUtilities;
+import sun.font.TrueTypeFont;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -28,9 +29,8 @@ import java.beans.PropertyChangeListener;
 public class MetaProcessVectorToRaster extends MetaProcess {
 
 	private final static String SOURCE_DATA = CommonProperties.getString("String_GroupBox_SourceData");
-	;
-	private final static String BOUNDARY_DATA = CommonProperties.getString("String_GroupBox_BoundaryData");
-	private final static String OUTPUT_DATA = "ExtractResult";
+	private final static String BOUNDARY_DATA = CommonProperties.getString("String_BoundaryData");
+	private final static String OUTPUT_DATA = "VectorToRasterResult";
 
 	//  输入数据
 	private ParameterDatasourceConstrained sourceDatasource;
@@ -62,9 +62,8 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 
 	public MetaProcessVectorToRaster() {
 		initParameters();
-		initParameterConstrint();
 		initParametersState();
-
+		initParameterConstrint();
 		registerListener();
 	}
 
@@ -106,9 +105,9 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		this.resultData.addParameters(this.resultDataset);
 
 		this.parameters.setParameters(this.sourceData, this.boundaryData, this.parameterSetting, this.resultData);
-		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.POINT, sourceData);
-		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.LINE, sourceData);
-		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.REGION, sourceData);
+//		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.POINT, sourceData);
+//		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.LINE, sourceData);
+		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.SIMPLE_VECTOR, sourceData);
 		this.parameters.addInputParameters(BOUNDARY_DATA, DatasetTypes.REGION, boundaryData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultData);
 
@@ -130,7 +129,7 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 			}
 			double cellSize = maxEdge / 500;
 			this.textCellSize.setSelectedItem(cellSize);
-			this.comboBoxValueField.setDataset(datasetVector);
+			this.comboBoxValueField.setFieldName(datasetVector);
 			this.comboBoxValueField.setSelectedItem("SmUserID");
 		}
 
@@ -142,6 +141,9 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		this.textCellSize.setIsIncludeMin(false);
 		this.comboBoxPixelFormat.setSelectedItem(parameterDataNodeBit32);
 		this.resultDataset.setSelectedItem("result_vectorToGrid");
+		this.comboBoxValueField.setRequisite(true);
+		this.textCellSize.setRequisite(true);
+		this.comboBoxPixelFormat.setRequisite(true);
 	}
 
 	private void initParameterConstrint() {
@@ -172,6 +174,7 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 					}
 					double cellSize = maxEdge / 500;
 					textCellSize.setSelectedItem(cellSize);
+					comboBoxValueField.setSelectedItem("SmUserID");
 				}
 			}
 		});

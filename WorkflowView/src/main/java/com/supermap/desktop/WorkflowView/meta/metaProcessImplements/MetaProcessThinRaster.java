@@ -24,10 +24,9 @@ import java.beans.PropertyChangeListener;
 /**
  * Created by lixiaoyao on 2017/7/11.
  */
-public class MetaProcessThinRaster extends MetaProcess {
+public class MetaProcessThinRaster extends MetaProcess{
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
-	;
-	private final static String OUTPUT_DATA = "ExtractResult";
+	private final static String OUTPUT_DATA = "ThinRasterResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
@@ -74,10 +73,10 @@ public class MetaProcessThinRaster extends MetaProcess {
 
 
 		this.parameters.setParameters(sourceData, parameterSetting, resultData);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.IMAGE, sourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.IMAGE, resultData);
+//		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.ALL_RASTER, sourceData);
+//		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.ALL_RASTER, resultData);
 	}
 
 	private void initParameterConstraint() {

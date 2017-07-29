@@ -51,7 +51,7 @@ public class MetaProcessRegionToLine extends MetaProcessPointLineRegion {
 
     @Override
     public String getKey() {
-        return MetaKeys.Conversion_RegionToLine;
+        return MetaKeys.CONVERSION_REGION_TO_LINE;
     }
 
     @Override

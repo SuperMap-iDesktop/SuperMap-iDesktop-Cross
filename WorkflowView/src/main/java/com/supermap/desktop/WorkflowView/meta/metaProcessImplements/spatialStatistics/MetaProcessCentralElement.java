@@ -17,6 +17,7 @@ public class MetaProcessCentralElement extends MetaProcessSpatialMeasure {
 
 	protected void initHook() {
 		OUTPUT_DATASET = "CentralElementResult";
+		resultName = "result_centralElement";
 	}
 
 	@Override
@@ -48,6 +49,6 @@ public class MetaProcessCentralElement extends MetaProcessSpatialMeasure {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.CentralElement;
+		return MetaKeys.CENTRAL_ELEMENT;
 	}
 }

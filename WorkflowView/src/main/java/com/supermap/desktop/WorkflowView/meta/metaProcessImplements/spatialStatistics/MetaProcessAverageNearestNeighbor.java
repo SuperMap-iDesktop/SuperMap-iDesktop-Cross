@@ -26,7 +26,7 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 	private ParameterDatasourceConstrained parameterDatasourceConstrained = new ParameterDatasourceConstrained();
 	private ParameterSingleDataset parameterSingleDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 
-	private ParameterTextField parameterTextFieldArea = new ParameterTextField();
+	private ParameterNumber parameterTextFieldArea = new ParameterNumber();
 	private ParameterComboBox parameterComboBox = new ParameterComboBox();
 	// 添加展示结果的textArea--yuanR
 	private ParameterTextArea parameterResult = new ParameterTextArea();
@@ -40,7 +40,8 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 	private void initParameters() {
 		parameterTextFieldArea.setDescribe(ProcessProperties.getString("String_SearchArea"));
 		parameterComboBox.setDescribe(ProcessProperties.getString("String_DistanceMethod"));
-		parameterComboBox.addItem(new ParameterDataNode(ProcessProperties.getString("String_EUCLIDEAN"), DistanceMethod.EUCLIDEAN));
+		parameterComboBox.setItems(new ParameterDataNode(ProcessProperties.getString("String_EUCLIDEAN"), DistanceMethod.EUCLIDEAN),
+				new ParameterDataNode(ProcessProperties.getString("String_MANHATTAN"), DistanceMethod.MANHATTAN));
 		// 源数据
 		ParameterCombine parameterCombine = new ParameterCombine();
 		parameterCombine.addParameters(parameterDatasourceConstrained, parameterSingleDataset);
@@ -67,6 +68,7 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 			parameterSingleDataset.setSelectedItem(defaultDatasetVector);
 		}
 		parameterTextFieldArea.setSelectedItem("0.0");
+		parameterTextFieldArea.setMinValue(0);
 	}
 
 	private void initParameterConstraint() {
@@ -116,6 +118,6 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.AverageNearestNeighbor;
+		return MetaKeys.AVERAGE_NEAREST_NEIGHBOR;
 	}
 }

@@ -98,7 +98,7 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 			isSuccessful = result != null;
 			fireRunning(new RunningEvent(MetaProcessRegionTrunkToCenterLine.this, 100, "finished"));
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			Generalization.removeSteppedListener(steppedListener);
 		}
@@ -112,7 +112,7 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.RegionTrunkToCenterLine;
+		return MetaKeys.REGION_TRUNK_TO_CENTERLINE;
 	}
 
 	@Override

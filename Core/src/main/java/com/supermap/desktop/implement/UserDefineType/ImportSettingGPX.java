@@ -1,6 +1,7 @@
-package com.supermap.desktop.UserDefineType;
+package com.supermap.desktop.implement.UserDefineType;
 
 import com.supermap.data.*;
+import com.supermap.data.conversion.ImportSettingGeoJson;
 import com.supermap.data.conversion.ImportSettingSCV;
 import com.supermap.data.conversion.ImportSteppedEvent;
 import com.supermap.data.conversion.ImportSteppedListener;
@@ -13,7 +14,7 @@ import java.util.Vector;
 /**
  * Created by xie on 2017/3/28.
  */
-public class ImportSettingGPX extends ImportSettingSCV {
+public class ImportSettingGPX extends ImportSettingGeoJson {
     private Vector steppedListeners;
 
     public ImportSettingGPX() {

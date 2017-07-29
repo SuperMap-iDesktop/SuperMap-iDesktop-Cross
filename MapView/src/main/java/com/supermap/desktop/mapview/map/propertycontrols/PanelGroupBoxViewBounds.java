@@ -701,8 +701,8 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		this.textFieldCurrentViewRight.setEnable(enabled);
 		this.textFieldCurrentViewTop.setEnable(enabled);
 		this.copyButton.setEnabled(enabled);
-		this.currentViewBoundsButton.setEnabled(enabled);
-		this.customBoundsButton.setEnabled(enabled);
+		this.currentViewBoundsButton.setEnabled(enabled && map != null);
+		this.customBoundsButton.setEnabled(enabled && map != null);
 		this.mapViewBoundsButton.setEnabled(enabled);
 		this.pasteButton.setEnabled(enabled);
 	}

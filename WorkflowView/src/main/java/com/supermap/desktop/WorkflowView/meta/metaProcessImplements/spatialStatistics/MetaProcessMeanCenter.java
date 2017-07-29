@@ -17,6 +17,7 @@ public class MetaProcessMeanCenter extends MetaProcessSpatialMeasure {
 
 	protected void initHook() {
 		OUTPUT_DATASET = "MeanCenterResult";
+		resultName = "result_meanCenter";
 	}
 
 	@Override
@@ -48,6 +49,6 @@ public class MetaProcessMeanCenter extends MetaProcessSpatialMeasure {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.MeanCenter;
+		return MetaKeys.MEAN_CENTER;
 	}
 }

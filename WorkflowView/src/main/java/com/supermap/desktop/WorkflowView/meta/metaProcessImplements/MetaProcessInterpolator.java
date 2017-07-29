@@ -219,15 +219,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 		if (datasetVector != null) {
 			parameterDatasource.setSelectedItem(datasetVector.getDatasource());
 			parameterDataset.setSelectedItem(datasetVector);
-			parameterInterpolatorFields.setDataset(((DatasetVector) datasetVector));
-			/*FieldInfos fieldInfos = ((DatasetVector) datasetVector).getFieldInfos();
-			for (int i = 0; i < fieldInfos.getCount(); i++) {
-				if (!fieldInfos.get(i).isSystemField()) {
-					parameterInterpolatorFields.setSelectedItem(fieldInfos.get(i).getCaption());
-					break;
-				}
-			}*/
-			//ParameterFieldComboBox会在绘制界面时重构，这里设置的选项会被清除。如果用户不选，最后执行参数为空，因此在这里不赋予字段复选框初始默认值
+			parameterInterpolatorFields.setFieldName((DatasetVector) datasetVector);
 
             FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
             parameterInterpolatorFields.setFieldType(fieldType);
@@ -254,7 +246,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(parameterDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(parameterDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-		//DatasourceConstraint.getInstance().constrained(parameterResultDatasetName, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(parameterResultDatasetName, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
 		equalDatasetConstraint.constrained(parameterDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
 		equalDatasetConstraint.constrained(parameterInterpolatorFields, ParameterFieldComboBox.DATASET_FIELD_NAME);
@@ -342,7 +334,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 			isSuccessful = dataset != null;
 			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			Interpolator.removeSteppedListener(this.stepLitener);
 		}

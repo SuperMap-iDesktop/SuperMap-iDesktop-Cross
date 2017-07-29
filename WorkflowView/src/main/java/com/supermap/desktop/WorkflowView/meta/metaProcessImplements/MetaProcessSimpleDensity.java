@@ -166,7 +166,7 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 			parameters.getOutputs().getData("SimpleDensityResult").setValue("");// // TODO: 2017/5/26
 			CursorUtilities.setDefaultCursor();
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+			Application.getActiveApplication().getOutput().output(e);
 			return false;
 		}
 		return true;

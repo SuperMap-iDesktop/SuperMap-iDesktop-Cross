@@ -77,7 +77,10 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 
 			@Override
 			public String getLegitValue(String currentValue, String backUpValue) {
-				return ((Datasource) datasourceComboBox.getSelectedItem()).getDatasets().getAvailableDatasetName(currentValue);
+				if (datasourceComboBox.getSelectedItem() != null) {
+					((Datasource) datasourceComboBox.getSelectedItem()).getDatasets().getAvailableDatasetName(currentValue);
+				}
+				return currentValue;
 			}
 		});
 		initLayout();

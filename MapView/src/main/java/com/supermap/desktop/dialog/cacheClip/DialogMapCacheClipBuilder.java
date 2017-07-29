@@ -34,8 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.*;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,7 +55,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	public static final int ResumeProcessClip = 4;
 	private boolean firstStepEnabled = true;
 	private boolean nextStepEnabled = true;
-	private String tasksSize = "5";
+	private String tasksSize = "1";
 	private String canudb = "1";
 	private MapCacheBuilder mapCacheBuilder;
 	public FirstStepPane firstStepPane;
@@ -213,24 +212,37 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 	private boolean validateCacheFolderSave() {
 		boolean result = true;
-		if (cmdType == MultiUpdateProcessClip || cmdType == SingleUpdateProcessClip
-				|| cmdType == ResumeProcessClip) {
-			return result;
-		}
-		String cacheRoot = firstStepPane.fileChooserControlFileCache.getPath();
-		String cachePath = CacheUtilities.replacePath(cacheRoot, firstStepPane.textFieldCacheName.getText());
-		String taskPath = CacheUtilities.replacePath(cacheRoot, CacheTask);
-		File cacheFile = new File(cachePath);
-		File taskFile = new File(taskPath);
-		if (cacheFile.exists()) {
-			new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_CachePathExistError"), cachePath));
-			changePanel(buttonStep.getText().equals(ControlsProperties.getString("String_NextWay")));
-			firstStepPane.textFieldCacheName.requestFocus();
-			getContentPane().repaint();
-			result = false;
-		} else {
-			cacheFile.mkdir();
-			taskFile.mkdir();
+		try {
+			if (cmdType == MultiUpdateProcessClip || cmdType == SingleUpdateProcessClip
+					|| cmdType == ResumeProcessClip) {
+				return result;
+			}
+			String cacheRoot = firstStepPane.fileChooserControlFileCache.getPath();
+			String cacheName = firstStepPane.textFieldCacheName.getText();
+			String cachePath = CacheUtilities.replacePath(cacheRoot, cacheName);
+			String taskPath = CacheUtilities.replacePath(cacheRoot, CacheTask);
+			File cacheFile = new File(cachePath);
+			File taskFile = new File(taskPath);
+			if (cacheFile.exists()) {
+				new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_CachePathExistError"), cachePath));
+				changePanel(buttonStep.getText().equals(ControlsProperties.getString("String_NextWay")));
+				firstStepPane.textFieldCacheName.requestFocus();
+				getContentPane().repaint();
+				result = false;
+			} else {
+				cacheFile.mkdir();
+				taskFile.mkdir();
+			}
+			if (cmdType == MultiProcessClip) {
+				File propertyFile = new File(CacheUtilities.replacePath(cacheRoot, "Cache.property"));
+				propertyFile.createNewFile();
+				OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(propertyFile), "UTF-8");
+				writer.write("CacheName=" + cacheName);
+				writer.flush();
+				writer.close();
+			}
+		} catch (IOException e) {
+			Application.getActiveApplication().getOutput().output(e);
 		}
 		return result;
 	}
@@ -348,7 +360,6 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
 				}
 				String cachePath = firstStepPane.fileChooserControlFileCache.getPath();
-
 				String sciPath = "";
 				if (cmdType == MultiUpdateProcessClip) {
 					//todo 多进程更新功能后续处理
@@ -406,7 +417,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				}
 				if (result) {
 					String[] params = {sciPath, CacheUtilities.replacePath(cachePath, CacheTask), tasksSize, canudb};
-					boolean buildTaskResult = TaskBuilder.main(params);
+					boolean buildTaskResult = TaskBuilder.buildSci(params);
 					if (!buildTaskResult) {
 						this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 						return;
@@ -421,8 +432,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 							mapName = this.mapCacheBuilder.getMap().getName();
 						}
 						String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi",
-								Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), mapName,
-								CacheUtilities.replacePath(cachePath, firstStepPane.textFieldCacheName.getText())};
+								Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), mapName, cachePath};
 						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 					}
 				}

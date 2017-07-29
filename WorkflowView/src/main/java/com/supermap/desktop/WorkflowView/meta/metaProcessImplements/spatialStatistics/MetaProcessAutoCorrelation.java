@@ -50,6 +50,6 @@ public class MetaProcessAutoCorrelation extends MetaProcessAnalyzingPatterns {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.autoCorrelation;
+		return MetaKeys.AUTO_CORRELATION;
 	}
 }

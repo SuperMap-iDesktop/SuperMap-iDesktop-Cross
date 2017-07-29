@@ -27,7 +27,7 @@ public class MetaProcessTextToPoint extends MetaProcessPointLineRegion {
 
     @Override
     public String getKey() {
-        return MetaKeys.Conversion_TextToPoint;
+        return MetaKeys.CONVERSION_TEXT_TO_POINT;
     }
 
     @Override

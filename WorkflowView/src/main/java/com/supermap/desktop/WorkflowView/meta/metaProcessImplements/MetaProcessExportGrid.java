@@ -10,6 +10,8 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -44,8 +46,8 @@ public class MetaProcessExportGrid extends MetaProcessAbstractExport {
 
 	protected void initParameters() {
 		super.initParameters();
-
-		this.chooseDataset.setSupportTypes(DatasetTypeUtilities.getDatasetTypeGrid());
+		this.dataset.setDatasetTypes(DatasetTypeUtilities.getDatasetTypeGrid());
+		this.dataset.setSelectedItem(DatasetUtilities.getDefaultDatasetGrid());
 		String module = "ExportGrid_OutPutDirectories";
 		if (!SmFileChoose.isModuleExist(module)) {
 			SmFileChoose.addNewNode("", System.getProperty("user.dir"), ProcessProperties.getString("String_Export"),
@@ -69,20 +71,22 @@ public class MetaProcessExportGrid extends MetaProcessAbstractExport {
 		this.prjFile.setEnabled(false);
 		this.checkBoxTFW = new ParameterCheckBox(ProcessProperties.getString("String_TFW"));
 		this.checkBoxTFW.setEnabled(false);
+		this.checkBoxTFW.setSelectedItem(true);
 		this.password = new ParameterPassword(ProcessProperties.getString("String_Password"));
 		this.password.setEnabled(false);
 		this.confirmPassword = new ParameterPassword(ProcessProperties.getString("String_ConfirmPassword"));
 		this.confirmPassword.setEnabled(false);
-		this.basicCombine.addParameters(this.chooseDataset, this.supportType, this.targetName
+		this.basicCombine.addParameters(this.supportType, this.targetName
 				, this.exportPath, this.cover);
 		this.gridCombine.addParameters(this.compressionRatio, this.prjFile, this.checkBoxTFW,
 				this.password, this.confirmPassword);
-		this.parameters.setParameters(this.basicCombine, this.gridCombine);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, chooseDataset);
+		this.parameters.setParameters(this.sourceInfo, this.basicCombine, this.gridCombine);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, this.sourceInfo);
+		resetDataset();
 	}
 
-	protected void addDataset() {
-		super.addDataset();
+	protected void resetDataset() {
+		super.resetDataset();
 		initComponentsState(exportSetting);
 	}
 
@@ -130,7 +134,7 @@ public class MetaProcessExportGrid extends MetaProcessAbstractExport {
 		String targetPath = getFilePath();
 		if (new File(targetPath).exists() && !isOverwrite) {
 			Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_DuplicateFileError"), targetPath));
-		} else {
+		} else if (!StringUtilities.isNullOrEmpty(targetPath)) {
 			setExportSettingInfo(isOverwrite);
 			isSuccessful = printResultInfo(isSuccessful, targetPath, this.exportListener);
 			removeEvents();

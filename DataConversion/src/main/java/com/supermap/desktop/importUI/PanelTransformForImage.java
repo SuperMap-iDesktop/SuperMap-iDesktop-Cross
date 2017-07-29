@@ -183,6 +183,8 @@ public class PanelTransformForImage extends PanelTransform {
                     ((ImportSettingPNG) importSetting).setWorldFilePath(worldFile);
                 } else if (importSetting instanceof ImportSettingGIF) {
                     ((ImportSettingGIF) importSetting).setWorldFilePath(worldFile);
+                }else if(importSetting instanceof ImportSettingTIF){
+                    ((ImportSettingTIF) importSetting).setWorldFilePath(worldFile);
                 }
             }
         }

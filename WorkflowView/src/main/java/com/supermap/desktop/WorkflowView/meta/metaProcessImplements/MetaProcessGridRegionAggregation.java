@@ -156,7 +156,7 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 			parameters.getOutputs().getData("GridRegionAggregationResult").setValue("");
 			CursorUtilities.setDefaultCursor();
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+			Application.getActiveApplication().getOutput().output(e);
 			return false;
 		}
 		return true;

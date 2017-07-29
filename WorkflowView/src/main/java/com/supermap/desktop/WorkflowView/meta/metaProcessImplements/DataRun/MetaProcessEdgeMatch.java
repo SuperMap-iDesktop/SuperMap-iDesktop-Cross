@@ -29,7 +29,8 @@ import java.beans.PropertyChangeListener;
  */
 public class MetaProcessEdgeMatch extends MetaProcess {
 
-	private final static String INPUT_SOURCE_DATASET = "SourceDataset";
+	private final static String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
+	private final static String OUTPUT_DATA = "EdgeMatchResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
@@ -104,6 +105,7 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 
 		parameters.setParameters(parameterCombineSourceData, parameterCombineTargetData, parameterCombineParameter, parameterCombineLinkData);
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.LINE, parameterCombineSourceData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, parameterCombineSourceData);
 	}
 
 	private void initComponentState() {
@@ -172,12 +174,11 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 
 			Generalization.addSteppedListener(this.steppedListener);
 			isSuccessful = Generalization.edgeMatch(sourceDataset, targetDataset, edgeMatchParameter);
-			Generalization.removeSteppedListener(this.steppedListener);
-
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(targetDataset);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-
+			Generalization.removeSteppedListener(this.steppedListener);
 		}
 		return isSuccessful;
 	}
@@ -194,6 +195,6 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.EdgeMatch;
+		return MetaKeys.EDGE_MATCH;
 	}
 }

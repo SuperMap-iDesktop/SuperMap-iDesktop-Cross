@@ -21,10 +21,11 @@ import com.supermap.desktop.utilities.DatasetUtilities;
  * 度量地理分布 父类
  */
 public abstract class MetaProcessSpatialMeasure extends MetaProcess {
-	private static final String INPUT_SOURCE_DATASET = "SourceDataset";
+	private static final String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
 	protected ParameterDatasource datasource = new ParameterDatasource();
 	protected ParameterSaveDataset parameterSaveDataset;
 	protected String OUTPUT_DATASET = "SpatialMeasureResult";
+	protected String resultName;
 	protected ParameterSingleDataset dataset;
 	protected SpatialMeasureMeasureParameter measureParameter = new SpatialMeasureMeasureParameter(getKey());
 
@@ -36,16 +37,14 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 		initParameterConstraint();
 	}
 
-	protected void initHook() {
-
-	}
+	protected abstract void initHook();
 
 	/**
 	 * 根据不同的功能给予相应的DatasetComboBox
 	 * 例如：线性方向平均值只能处理线类型数据集-yuanR
 	 */
 	private void initDatasetComboBox() {
-		if (getKey().equals(MetaKeys.LinearDirectionalMean)) {
+		if (getKey().equals(MetaKeys.LINEAR_DIRECTIONAL_MEAN)) {
 			dataset = new ParameterSingleDataset(DatasetType.LINE);
 		} else {
 			dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
@@ -58,13 +57,13 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 		parameterCombineSource.setDescribe(CommonProperties.getString("String_ColumnHeader_SourceData"));
 
 		parameterSaveDataset = new ParameterSaveDataset();
-		parameterSaveDataset.setDatasetName("result_spatialMeasure");
+		parameterSaveDataset.setDatasetName(resultName);
 		ParameterCombine parameterCombineResult = new ParameterCombine();
 		parameterCombineResult.addParameters(parameterSaveDataset);
 		parameterCombineResult.setDescribe(CommonProperties.getString("String_ResultSet"));
 
 		parameters.setParameters(parameterCombineSource, measureParameter, parameterCombineResult);
-		parameters.addInputParameters(INPUT_SOURCE_DATASET,getKey().equals(MetaKeys.LinearDirectionalMean)? DatasetTypes.LINE:DatasetTypes.SIMPLE_VECTOR, parameterCombineSource);
+		parameters.addInputParameters(INPUT_SOURCE_DATASET,getKey().equals(MetaKeys.LINEAR_DIRECTIONAL_MEAN)? DatasetTypes.LINE:DatasetTypes.SIMPLE_VECTOR, parameterCombineSource);
 		parameters.addOutputParameters(OUTPUT_DATASET, DatasetTypes.VECTOR, parameterCombineResult);
 	}
 
@@ -107,7 +106,7 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 			isSuccessful = doWork(datasetVector);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+			Application.getActiveApplication().getOutput().output(e);
 		}
 		return isSuccessful;
 	}

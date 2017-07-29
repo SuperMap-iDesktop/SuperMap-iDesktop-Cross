@@ -43,6 +43,6 @@ public class MetaProcessHighOrLowClustering extends MetaProcessAnalyzingPatterns
 
 	@Override
 	public String getKey() {
-		return MetaKeys.highOrLowClustering;
+		return MetaKeys.HIGH_OR_LOW_CLUSTERING;
 	}
 }

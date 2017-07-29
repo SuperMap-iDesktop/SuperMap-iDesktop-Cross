@@ -1,10 +1,6 @@
 package com.supermap.desktop.iml;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasources;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.SpatialIndexType;
+import com.supermap.data.*;
 import com.supermap.data.conversion.DataImport;
 import com.supermap.data.conversion.FileType;
 import com.supermap.data.conversion.ImportMode;
@@ -14,8 +10,8 @@ import com.supermap.data.conversion.ImportSettingWOR;
 import com.supermap.data.conversion.ImportSteppedEvent;
 import com.supermap.data.conversion.ImportSteppedListener;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.UserDefineType.ImportSettingGPX;
-import com.supermap.desktop.UserDefineType.UserDefineImportResult;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
+import com.supermap.desktop.implement.UserDefineType.UserDefineImportResult;
 import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.importUI.DataImportDialog;
@@ -124,7 +120,7 @@ public class ImportCallable extends UpdateProgressCallable {
             }
             endTime = System.currentTimeMillis(); // 获取结束时间
             time = endTime - startTime;
-            printMessage(result, i, time);
+            printMessage(result,time);
             ((ImportSettingGPX) importSetting).removeImportSteppedListener(percentProgress);
         } else {
             dataImport.getImportSettings().add(importSetting);
@@ -183,7 +179,7 @@ public class ImportCallable extends UpdateProgressCallable {
         }
     }
 
-    private void printMessage(UserDefineImportResult result, int i, long time) {
+    private void printMessage(UserDefineImportResult result,long time) {
         if (null != result.getSuccess()) {
             String successImportInfo = DataConversionProperties.getString("String_FormImport_OutPutInfoOne");
             Application.getActiveApplication().getOutput().output(MessageFormat.format(successImportInfo, result.getSuccess().getSourceFilePath(), "->", result.getSuccess().getTargetDatasetName(), result.getSuccess()

@@ -1,6 +1,7 @@
 package com.supermap.desktop.WorkflowView.meta;
 
 import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
+import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.DataRun.MetaProcessAggregatePoints;
@@ -202,33 +203,33 @@ public class WorkflowParser {
 			result = new MetaProcessOverlayAnalyst(OverlayAnalystType.XOR);
 		} else if (MetaKeys.SQL_QUERY.equals(key)) {
 			result = new MetaProcessSqlQuery();
-		} else if (MetaKeys.CentralElement.equals(key)) {
+		} else if (MetaKeys.CENTRAL_ELEMENT.equals(key)) {
 			result = new MetaProcessCentralElement();
-		} else if (MetaKeys.MeanCenter.equals(key)) {
+		} else if (MetaKeys.MEAN_CENTER.equals(key)) {
 			result = new MetaProcessMeanCenter();
-		} else if (MetaKeys.MedianCenter.equals(key)) {
+		} else if (MetaKeys.MEDIAN_CENTER.equals(key)) {
 			result = new MetaProcessMedianCenter();
-		} else if (MetaKeys.Directional.equals(key)) {
+		} else if (MetaKeys.DIRECTIONAL.equals(key)) {
 			result = new MetaProcessDirectional();
-		} else if (MetaKeys.LinearDirectionalMean.equals(key)) {
+		} else if (MetaKeys.LINEAR_DIRECTIONAL_MEAN.equals(key)) {
 			result = new MetaProcessLinearDirectionalMean();
-		} else if (MetaKeys.StandardDistance.equals(key)) {
+		} else if (MetaKeys.STANDARD_DISTANCE.equals(key)) {
 			result = new MetaProcessStandardDistance();
-		} else if (MetaKeys.autoCorrelation.equals(key)) {
+		} else if (MetaKeys.AUTO_CORRELATION.equals(key)) {
 			return new MetaProcessAutoCorrelation();
-		} else if (MetaKeys.highOrLowClustering.equals(key)) {
+		} else if (MetaKeys.HIGH_OR_LOW_CLUSTERING.equals(key)) {
 			result = new MetaProcessHighOrLowClustering();
-		} else if (MetaKeys.clusterOutlierAnalyst.equals(key)) {
+		} else if (MetaKeys.CLUSTER_OUTLIER_ANALYST.equals(key)) {
 			result = new MetaProcessClusterOutlierAnalyst();
-		} else if (MetaKeys.hotSpotAnalyst.equals(key)) {
+		} else if (MetaKeys.HOT_SPOT_ANALYST.equals(key)) {
 			result = new MetaProcessHotSpotAnalyst();
-		} else if (MetaKeys.geographicWeightedRegression.equals(key)) {
+		} else if (MetaKeys.GEOGRAPHIC_WEIGHTED_REGRESSION.equals(key)) {
 			result = new MetaProcessGeographicWeightedRegression();
-		} else if (MetaKeys.optimizedHotSpotAnalyst.equals(key)) {
+		} else if (MetaKeys.OPTIMIZED_HOT_SPOT_ANALYST.equals(key)) {
 			result = new MetaProcessOptimizedHotSpotAnalyst();
-		} else if (MetaKeys.incrementalAutoCorrelation.equals(key)) {
+		} else if (MetaKeys.INCREMENTAL_AUTO_CORRELATION.equals(key)) {
 			result = new MetaProcessIncrementalAutoCorrelation();
-		} else if (MetaKeys.AverageNearestNeighbor.equals(key)) {
+		} else if (MetaKeys.AVERAGE_NEAREST_NEIGHBOR.equals(key)) {
 			result = new MetaProcessAverageNearestNeighbor();
 		} else if (MetaKeys.OVERLAYANALYSTGEO.equals(key)) {
 			result = new MetaProcessOverlayanalystgeo();
@@ -255,39 +256,63 @@ public class WorkflowParser {
 			result = new MetaProcessExportGrid();
 		} else if (MetaKeys.EXPORTVECTOR.equals(key)) {
 			result = new MetaProcessExportVector();
-		} else if (MetaKeys.AggregatePoints.equals(key)) {
+		} else if (MetaKeys.AGGREGATE_POINTS.equals(key)) {
 			result = new MetaProcessAggregatePoints();
-		} else if (MetaKeys.VectorResample.equals(key)) {
+		} else if (MetaKeys.RAREFY_POINTS.equals(key)) {
+			result = new MetaProcessRarefyPoints();
+		} else if (MetaKeys.FIELD_INDEX.equals(key)) {
+			result = new MetaProcessFieldIndex();
+		}else if (MetaKeys.VECTOR_RESAMPLE.equals(key)) {
 			result = new MetaProcessVectorResample();
-		} else if (MetaKeys.LinePolygonSmooth.equals(key)) {
+		} else if (MetaKeys.LINE_POLYGON_SMOOTH.equals(key)) {
 			result = new MetaProcessLinePolygonSmooth();
-		} else if (MetaKeys.Conversion_LineToPoint.equals(key)) {
+		} else if (MetaKeys.CONVERSION_POINT_TO_LINE.equals(key)) {
+			result = new MetaProcessPointToLine();
+		} else if (MetaKeys.CONVERSION_LINE_TO_POINT.equals(key)) {
 			result = new MetaProcessLineToPoint();
-		} else if (MetaKeys.Conversion_RegionToPoint.equals(key)) {
+		} else if (MetaKeys.CONVERSION_REGION_TO_POINT.equals(key)) {
 			result = new MetaProcessRegionToPoint();
-		} else if (MetaKeys.Conversion_LineToRegion.equals(key)) {
+		} else if (MetaKeys.CONVERSION_LINE_TO_REGION.equals(key)) {
 			result = new MetaProcessLineToRegion();
-		} else if (MetaKeys.Conversion_RegionToLine.equals(key)) {
+		} else if (MetaKeys.CONVERSION_REGION_TO_LINE.equals(key)) {
 			result = new MetaProcessRegionToLine();
-		} else if (MetaKeys.Conversion_TabularToPoint.equals(key)) {
+		} else if (MetaKeys.CONVERSION_TABULAR_TO_POINT.equals(key)) {
 			result = new MetaProcessTabularToPoint();
-		} else if (MetaKeys.Conversion_CADToSimple.equals(key)) {
+		} else if (MetaKeys.CONVERSION_TABULARPOINT_TO_REGION.equals(key)) {
+			result = new MetaProcessTabularPointToRegion();
+		} else if (MetaKeys.CONVERSION_CAD_TO_SIMPLE.equals(key)) {
 			result = new MetaProcessCADToSimple();
-		} else if (MetaKeys.Conversion_SimpleToCAD.equals(key)) {
+		} else if (MetaKeys.CONVERSION_SIMPLE_TO_CAD.equals(key)) {
 			result = new MetaProcessSimpleToCAD();
-		} else if (MetaKeys.Conversion_FieldToText.equals(key)) {
+		} else if (MetaKeys.CONVERSION_FIELD_TO_TEXT.equals(key)) {
 			result = new MetaProcessFieldToText();
-		} else if (MetaKeys.Conversion_TextToPoint.equals(key)) {
+		} else if (MetaKeys.CONVERSION_TEXT_TO_FILED.equals(key)) {
+			result = new MetaProcessTextToField();
+		} else if (MetaKeys.CONVERSION_TEXT_TO_POINT.equals(key)) {
 			result = new MetaProcessTextToPoint();
-		} else if (MetaKeys.EdgeMatch.equals(key)) {
+		} else if (MetaKeys.CONVERSION_EPS_TO_SIMPLE.equals(key)) {
+			result = new MetaProcessEPSToSimple();
+		} else if (MetaKeys.CONVERSION_POINT3D_TO_2D.equals(key)) {
+			result = new MetaProcessPoint3DTo2D();
+		} else if (MetaKeys.CONVERSION_LINE3D_TO_2D.equals(key)) {
+			result = new MetaProcessLine3DTo2D();
+		} else if (MetaKeys.CONVERSION_REGION3D_TO_2D.equals(key)) {
+			result = new MetaProcessRegion3DTo2D();
+		} else if (MetaKeys.CONVERSION_POINT2D_TO_3D.equals(key)) {
+			result = new MetaProcess2DTo3D(DatasetType.POINT);
+		} else if (MetaKeys.CONVERSION_LINE2D_TO_3D.equals(key)) {
+			result = new MetaProcess2DTo3D(DatasetType.LINE);
+		} else if (MetaKeys.CONVERSION_REGION2D_TO_3D.equals(key)) {
+			result = new MetaProcess2DTo3D(DatasetType.REGION);
+		} else if (MetaKeys.EDGE_MATCH.equals(key)) {
 			result = new MetaProcessEdgeMatch();
-		} else if (MetaKeys.PickupBorder.equals(key)) {
+		} else if (MetaKeys.PICKUP_BORDER.equals(key)) {
 			result = new MetaProcessPickupBorder();
-		} else if (MetaKeys.DualLineToCenterLine.equals(key)) {
+		} else if (MetaKeys.DUALLINE_TO_CENTERLINE.equals(key)) {
 			result = new MetaProcessDualLineToCenterLine();
-		} else if (MetaKeys.RegionToCenterLine.equals(key)) {
+		} else if (MetaKeys.REGION_TO_CENTERLINE.equals(key)) {
 			result = new MetaProcessRegionToCenterLine();
-		} else if (MetaKeys.RegionTrunkToCenterLine.equals(key)) {
+		} else if (MetaKeys.REGION_TRUNK_TO_CENTERLINE.equals(key)) {
 			result = new MetaProcessRegionTrunkToCenterLine();
 		} else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));

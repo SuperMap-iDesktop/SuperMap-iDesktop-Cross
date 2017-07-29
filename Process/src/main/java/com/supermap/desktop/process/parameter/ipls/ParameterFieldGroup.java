@@ -22,6 +22,8 @@ public class ParameterFieldGroup extends AbstractParameter implements IMultiSele
 	private FieldType[] fieldType;
 	private FieldInfo[] selectedFields;
 
+	private boolean isShowSystemField = false;
+
 	public ParameterFieldGroup() {
 
 	}
@@ -74,5 +76,13 @@ public class ParameterFieldGroup extends AbstractParameter implements IMultiSele
 
 	public FieldInfo[] getSelectedFields() {
 		return selectedFields;
+	}
+
+	public boolean isShowSystemField() {
+		return isShowSystemField;
+	}
+
+	public void setShowSystemField(boolean showSystemField) {
+		isShowSystemField = showSystemField;
 	}
 }

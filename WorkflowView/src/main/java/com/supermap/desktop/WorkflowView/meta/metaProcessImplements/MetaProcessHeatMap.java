@@ -179,7 +179,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 			parameters.getOutputs().getData("HeatMapResult").setValue("");
 			CursorUtilities.setDefaultCursor();
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+			Application.getActiveApplication().getOutput().output(e);
 			return false;
 		}
 		return true;

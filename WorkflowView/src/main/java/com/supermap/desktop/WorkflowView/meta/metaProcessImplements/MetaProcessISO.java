@@ -25,8 +25,8 @@ import java.beans.PropertyChangeListener;
  */
 public abstract class MetaProcessISO extends MetaProcess {
 
-	private final static String INPUT_DATA = "InputData";
-	private final static String OUTPUT_DATA = "ExtractResult";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	protected static String OUTPUT_DATA = "ExtractResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset dataset;
@@ -225,7 +225,7 @@ public abstract class MetaProcessISO extends MetaProcess {
 			isSuccessful = result != null;
 			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			SurfaceAnalyst.removeSteppedListener(this.steppedListener);
 		}
@@ -240,5 +240,5 @@ public abstract class MetaProcessISO extends MetaProcess {
 		return parameters.getPanel();
 	}
 
-
+	protected abstract void initHook();
 }

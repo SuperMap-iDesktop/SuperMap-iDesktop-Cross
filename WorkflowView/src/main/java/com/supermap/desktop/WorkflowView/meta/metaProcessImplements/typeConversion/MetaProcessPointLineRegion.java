@@ -17,16 +17,15 @@ import com.supermap.desktop.utilities.RecordsetUtilities;
 
 import java.util.Map;
 
+/**
+ * 当只有源数据及结果数据，且输入输出数据集类型都只有一种时，可用此模板
+ * by Chens
+ */
 public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversion{
-    private static final String INPUT_DATA = "InputData";
     protected static String OUTPUT_DATA = "OutputData";
 
     private DatasetType inputType;
     private DatasetType outputType;
-
-    private ParameterDatasourceConstrained inputDatasource;
-    private ParameterSingleDataset inputDataset;
-    private ParameterSaveDataset outputData;
 
     public MetaProcessPointLineRegion(DatasetType inputType, DatasetType outputType) {
         this.inputType = inputType;

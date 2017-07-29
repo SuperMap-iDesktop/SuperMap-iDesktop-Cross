@@ -19,6 +19,7 @@ public class MetaProcessLinearDirectionalMean extends MetaProcessSpatialMeasure 
 
 	protected void initHook() {
 		OUTPUT_DATASET = "LinearDirectionalMeanResult";
+		resultName = "result_linearDirectionalMean";
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class MetaProcessLinearDirectionalMean extends MetaProcessSpatialMeasure 
 
 	@Override
 	public String getKey() {
-		return MetaKeys.LinearDirectionalMean;
+		return MetaKeys.LINEAR_DIRECTIONAL_MEAN;
 	}
 }
 

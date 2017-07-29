@@ -17,7 +17,7 @@ public class MetaProcessRegionToCenterLine extends MetaProcessCenterLine{
 	}
 
 	public String getSonKey(){
-		return MetaKeys.RegionToCenterLine;
+		return MetaKeys.REGION_TO_CENTERLINE;
 	}
 
 	public String getSonTitle(){

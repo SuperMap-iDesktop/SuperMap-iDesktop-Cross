@@ -5,7 +5,7 @@ import com.supermap.data.conversion.CADVersion;
 import com.supermap.data.conversion.ExportSetting;
 import com.supermap.data.conversion.ExportSettingDWG;
 import com.supermap.data.conversion.ExportSettingDXF;
-import com.supermap.desktop.UserDefineType.ExportSettingGPX;
+import com.supermap.desktop.implement.UserDefineType.ExportSettingGPX;
 import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
