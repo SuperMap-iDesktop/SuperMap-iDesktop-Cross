@@ -790,7 +790,8 @@ public class CheckCache {
 			}
 			file.delete();
 		}
-		Application.getActiveApplication().getWorkspace().getDatasources().open(info);
+		//// FIXME: 2017/7/29 by hanyzh 缓存检查不是独立进程吗？可以直接在桌面打开吗？上面打开ds之后还没有关闭，这里无法独占打开吧
+//		Application.getActiveApplication().getWorkspace().getDatasources().open(info);
 		ds.close();
 		workspace.close();
 		workspace.dispose();
