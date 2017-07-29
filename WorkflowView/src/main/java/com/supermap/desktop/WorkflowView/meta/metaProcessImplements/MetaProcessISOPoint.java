@@ -4,7 +4,17 @@ import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
 import com.supermap.analyst.spatialanalyst.TerrainInterpolateType;
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.FieldType;
+import com.supermap.data.Recordset;
+import com.supermap.data.Rectangle2D;
+import com.supermap.data.StatisticMode;
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -21,6 +31,7 @@ import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -134,13 +145,14 @@ public class MetaProcessISOPoint extends MetaProcess {
 
 	private void reload() {
 		Dataset dataset = sourceDataset.getSelectedDataset();
-		if (dataset != null) {
+		String fieldName = fields.getFieldName();
+		if (dataset != null && !StringUtilities.isNullOrEmpty(fieldName)) {
 			double maxValue = 0;
 			double minValue = 0;
 			Recordset recordset = ((DatasetVector) dataset).getRecordset(false, CursorType.STATIC);
 			if (recordset != null && recordset.getFieldCount() > 0) {
-				maxValue = recordset.statistic(fields.getFieldName(), StatisticMode.MAX);
-				minValue = recordset.statistic(fields.getFieldName(), StatisticMode.MIN);
+				maxValue = recordset.statistic(fieldName, StatisticMode.MAX);
+				minValue = recordset.statistic(fieldName, StatisticMode.MIN);
 			}
 			double baseValue = Double.valueOf((String) datumValue.getSelectedItem());
 			double lineDistance = Double.valueOf((String) interval.getSelectedItem());

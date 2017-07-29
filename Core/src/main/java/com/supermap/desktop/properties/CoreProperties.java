@@ -37,6 +37,7 @@ public class CoreProperties extends Properties {
 	public static final String Text = "String_Text";
 	public static final String WText = "String_WText";
 	public static final String DateTime = "String_DateTime";
+	public static final String JSONB = "String_JSONB";
 	public static final String Left = "String_Left";
 	public static final String Right = "String_Right";
 	public static final String Top = "String_Top";

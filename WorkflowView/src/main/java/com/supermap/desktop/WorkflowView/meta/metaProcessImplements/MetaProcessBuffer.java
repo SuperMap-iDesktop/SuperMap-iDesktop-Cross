@@ -3,7 +3,12 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.BufferAnalyst;
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
 import com.supermap.analyst.spatialanalyst.BufferRadiusUnit;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVectorInfo;
+import com.supermap.data.Datasource;
+import com.supermap.data.FieldType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -103,24 +108,27 @@ public class MetaProcessBuffer extends MetaProcess {
 		parameterTextFieldSemicircleLineSegment.setMinValue(4);
 		parameterTextFieldSemicircleLineSegment.setMaxValue(200);
 		// 设置是否为必要参数-yuanR
-		ParameterLabel labelSplit = new ParameterLabel();
-		labelSplit.setDescribe("-----------------------------------------------------");
+		//ParameterLabel labelSplit = new ParameterLabel();
+		//labelSplit.setDescribe("-----------------------------------------------------");
 
 		parameterSaveDataset = new ParameterSaveDataset();
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
 		parameterCombineSourceData.addParameters(datasource, dataset);
 		parameterCombineSourceData.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
 
-		ParameterCombine parameterCombineParameter = new ParameterCombine();
-		parameterCombineParameter.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		parameterCombineParameter.addParameters(parameterBufferRange,
+		ParameterCombine parameterCombineBufferRadio = new ParameterCombine();
+		parameterCombineBufferRadio.addParameters(parameterBufferRange,
 				checkBoxBufferType,
 				new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(checkBoxBufferLeft, checkBoxBufferRight),
 				radioButtonNumOrField,
 				parameterTextFieldLeftRadius, parameterTextFieldRightRadius,
-				labelSplit,
-				comboBoxFieldLeft, comboBoxFieldRight,
-				new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterUnionBuffer, parameterRetainAttribute), parameterTextFieldSemicircleLineSegment);
+				comboBoxFieldLeft, comboBoxFieldRight);
+		parameterCombineBufferRadio.setDescribe(ControlsProperties.getString("String_BufferRadius"));
+
+		ParameterCombine parameterCombineParameter = new ParameterCombine();
+		parameterCombineParameter.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
+		parameterCombineParameter.addParameters(
+				parameterUnionBuffer, parameterRetainAttribute, parameterTextFieldSemicircleLineSegment);
 
 		ParameterCombine parameterCombineResult = new ParameterCombine();
 		parameterCombineResult.addParameters(parameterSaveDataset);
@@ -128,6 +136,7 @@ public class MetaProcessBuffer extends MetaProcess {
 
 		parameters.setParameters(
 				parameterCombineSourceData,
+				parameterCombineBufferRadio,
 				parameterCombineParameter,
 				parameterCombineResult
 		);
@@ -199,8 +208,10 @@ public class MetaProcessBuffer extends MetaProcess {
 		dataset.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				checkBoxBufferType.setEnabled(dataset.getSelectedDataset().getType().equals(DatasetType.LINE));
-				setComponentEnable();
+				if (dataset.getSelectedDataset() != null) {
+					checkBoxBufferType.setEnabled(dataset.getSelectedDataset().getType().equals(DatasetType.LINE));
+					setComponentEnable();
+				}
 			}
 		});
 		checkBoxBufferType.addPropertyListener(new PropertyChangeListener() {

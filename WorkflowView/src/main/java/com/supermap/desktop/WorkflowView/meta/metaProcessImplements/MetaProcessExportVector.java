@@ -1,7 +1,12 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.Charset;
-import com.supermap.data.conversion.*;
+import com.supermap.data.conversion.CADVersion;
+import com.supermap.data.conversion.ExportSetting;
+import com.supermap.data.conversion.ExportSettingDWG;
+import com.supermap.data.conversion.ExportSettingDXF;
+import com.supermap.data.conversion.ExportSteppedEvent;
+import com.supermap.data.conversion.ExportSteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessAbstractExport;
@@ -148,6 +153,10 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 		boolean isSuccessful = false;
 		boolean isOverwrite = Boolean.valueOf(cover.getSelectedItem().toString());
 		String targetPath = getFilePath();
+		if (StringUtilities.isNullOrEmpty(targetPath)) {
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ExportPathIsNull"));
+			return false;
+		}
 		if (new File(targetPath).exists() && !isOverwrite) {
 			Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_DuplicateFileError"), targetPath));
 		} else if (!StringUtilities.isNullOrEmpty(targetPath)) {

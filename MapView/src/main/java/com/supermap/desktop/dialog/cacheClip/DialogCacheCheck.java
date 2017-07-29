@@ -293,7 +293,12 @@ public class DialogCacheCheck extends JFrame {
 						Thread.sleep(2000);
 					}
 					if (null != parentPath && checkBoxSaveErrorData.isSelected()) {
-						CheckCache.error2Udb(anchorLeft, anchorTop, tileSize, parentPath, datasourcePath);
+						try {
+							CheckCache.error2Udb(anchorLeft, anchorTop, tileSize, parentPath, datasourcePath);
+						} catch (Exception e) {
+							//hanyzh:写入UDB有可能抛异常，不要影响后面的执行--error2Udb试图两次打开UDB异常
+//							new SmOptionPane().showConfirmDialog(e.getMessage()+"**");
+						}
 					}
 //					DatasourceConnectionInfo info = new DatasourceConnectionInfo();
 //					info.setServer(datasourcePath);

@@ -3,7 +3,14 @@ package com.supermap.desktop.WorkflowView.meta.dataconversion;
 import com.supermap.data.Charset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Point3D;
-import com.supermap.data.conversion.*;
+import com.supermap.data.conversion.DataImport;
+import com.supermap.data.conversion.ImportSetting;
+import com.supermap.data.conversion.ImportSettingModel3DS;
+import com.supermap.data.conversion.ImportSettingModelDXF;
+import com.supermap.data.conversion.ImportSettingModelFBX;
+import com.supermap.data.conversion.ImportSettingModelFLT;
+import com.supermap.data.conversion.ImportSettingModelOSG;
+import com.supermap.data.conversion.ImportSettingModelX;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -109,18 +116,22 @@ public class ImportSettingSetter {
 			} else if (null != otherInfo) {
 				int otherInfoSize = otherInfo.size();
 				for (int i = 0; i < otherInfoSize; i++) {
-					if (otherInfo.get(i).parameter instanceof ISelectionParameter) {
+					IParameter parameter = otherInfo.get(i).parameter;
+					if (parameter instanceof ISelectionParameter) {
 						String methodName = otherInfo.get(i).methodName;
-						if (otherInfo.get(i).parameter instanceof ParameterCheckBox) {
+						Object selectedItem = ((ISelectionParameter) parameter).getSelectedItem();
+
+						if (parameter instanceof ParameterCheckBox) {
 							Method method = importSettingClass.getMethod(methodName, boolean.class);
+							boolean booleanValue = Boolean.valueOf(String.valueOf(selectedItem));
 							//合并图层参数设置问题
-							boolean value = methodName.equals("setImportingByLayer") || method.equals("setUnvisibleObjectIgnored")
-									? ("false".equals(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) ? true : false)
-									: ("true".equals(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) ? false : true);
-							method.invoke(importSetting, value);
-						} else if (null != ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) {
+							if (methodName.equals("setImportingByLayer")|| methodName.equals("setUnvisibleObjectIgnored")) {
+								booleanValue = !booleanValue;
+							}
+
+							method.invoke(importSetting, booleanValue);
+						} else if (null != selectedItem) {
 							Method method;
-							Object selectedItem = ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem();
 							if (StringUtilities.isNullOrEmpty(selectedItem.toString())) {
 								break;
 							}

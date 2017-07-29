@@ -1,8 +1,6 @@
 package com.supermap.desktop.process.parameter.ipls;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
+import com.supermap.data.*;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
@@ -27,6 +25,14 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 	@ParameterField(name = DATASOURCE_FIELD_NAME)
 	private Datasource datasource;
 	private String describe = CommonProperties.getString(CommonProperties.Label_Dataset);
+	private DatasourceClosingListener datasourceClosingListener = new DatasourceClosingListener() {
+		@Override
+		public void datasourceClosing(DatasourceClosingEvent datasourceClosingEvent) {
+			if (datasourceClosingEvent.getDatasource() == ParameterSingleDataset.this.datasource) {
+				setDatasource(null);
+			}
+		}
+	};
 
 	public ParameterSingleDataset(DatasetType... datasetTypes) {
 		this.datasetTypes = datasetTypes;
@@ -39,10 +45,11 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 		if (item == null) {
 			oldValue = this.selectedItem;
 			this.selectedItem = null;
+			setDatasource(null);
 		} else if (item instanceof Dataset) {
 			oldValue = this.selectedItem;
 			this.selectedItem = (Dataset) item;
-			datasource = selectedItem.getDatasource();
+			setDatasource(selectedItem.getDatasource());
 		}
 		firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELD_NAME, oldValue, selectedItem));
 	}
@@ -77,8 +84,18 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 	}
 
 	public void setDatasource(Datasource datasource) {
-		firePropertyChangeListener(new PropertyChangeEvent(this, DATASOURCE_FIELD_NAME, this.datasource, datasource));
-		this.datasource = datasource;
+		if (this.datasource != datasource) {
+			if (this.datasource != null) {
+				this.datasource.getWorkspace().getDatasources().removeClosingListener(this.datasourceClosingListener);
+			}
+
+			firePropertyChangeListener(new PropertyChangeEvent(this, DATASOURCE_FIELD_NAME, this.datasource, datasource));
+			this.datasource = datasource;
+
+			if (this.datasource != null) {
+				this.datasource.getWorkspace().getDatasources().addClosingListener(this.datasourceClosingListener);
+			}
+		}
 	}
 
 	public Datasource getDatasource() {

@@ -43,6 +43,8 @@ public class FieldTypeUtilities {
 				type = CoreProperties.getString(CoreProperties.Text);
 			} else if (fieldType == FieldType.WTEXT) {
 				type = CoreProperties.getString(CoreProperties.WText);
+			} else if (fieldType == FieldType.JSONB) {
+				type = CoreProperties.getString(CoreProperties.JSONB);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -83,6 +85,8 @@ public class FieldTypeUtilities {
 				type = FieldType.TEXT;
 			} else if (strFieldType.equalsIgnoreCase(CoreProperties.getString(CoreProperties.WText))) {
 				type = FieldType.WTEXT;
+			} else if (strFieldType.equalsIgnoreCase(CoreProperties.getString(CoreProperties.JSONB))) {
+				type = FieldType.JSONB;
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

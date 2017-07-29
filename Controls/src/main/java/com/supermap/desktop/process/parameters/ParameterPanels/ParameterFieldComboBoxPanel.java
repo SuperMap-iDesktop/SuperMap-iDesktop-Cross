@@ -78,7 +78,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 				if (!isSelectingItem && (e.getStateChange() == ItemEvent.SELECTED || comboBox.getSelectedItem() == null)) {
 					isSelectingItem = true;
 					if (comboBox.getSelectedItem() instanceof FieldInfo) {
-						comboBox.setSelectedItem(((FieldInfo) comboBox.getSelectedItem()).getCaption());
+						comboBox.setSelectedItem(((FieldInfo) comboBox.getSelectedItem()).getName());
 					}
 					parameterFieldComboBox.setSelectedItem(comboBox.getSelectedItem());
 					isSelectingItem = false;
@@ -95,7 +95,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 			public Component getListCellRendererComponent(JList<? extends FieldInfo> list, FieldInfo value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
 				if (value != null) {
-					jLabel.setText(value.getCaption());
+					jLabel.setText(value.getName());// 缺陷太多，先改回name
 				} else {
 					jLabel.setText(" ");
 				}
@@ -192,9 +192,6 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 							comboBox.setSelectedItem(fieldName);
 							break;
 						}
-					}
-					if (fieldName.equals("")) {
-						comboBox.setSelectedItem(((FieldInfo)comboBox.getItemAt(0)).getCaption());
 					}
 				}
 			} else {

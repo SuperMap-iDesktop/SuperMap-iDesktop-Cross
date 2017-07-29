@@ -30,10 +30,13 @@ public class ParameterNumber extends ParameterTextField {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
 				try {
+					if (StringUtilities.isNullOrEmpty(textFieldValue)) {
+						return false;
+					}
 					if (textFieldValue.endsWith(".")) {
 						return false;
 					}
-					Double aDouble = Double.valueOf(textFieldValue);
+					Double aDouble = DoubleUtilities.stringToValue(textFieldValue);
 					if (isMinValueEnable && (aDouble < minValue || (!isIncludeMin && aDouble == minValue))) {
 						return false;
 					}
@@ -41,7 +44,9 @@ public class ParameterNumber extends ParameterTextField {
 						return false;
 					}
 					if (bit == 0) {
-						Integer integer = Integer.valueOf(textFieldValue);
+						if (textFieldValue.contains(".")) {
+							return false;
+						}
 					} else if (bit > 0) {
 						int bitCount = 0;
 						String[] split = textFieldValue.split("\\.");

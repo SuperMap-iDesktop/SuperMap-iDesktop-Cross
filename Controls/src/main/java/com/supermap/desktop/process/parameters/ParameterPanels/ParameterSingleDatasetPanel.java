@@ -108,7 +108,7 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 
 		this.datasetComboBox.setShowNullValue(parameterSingleDataset.isShowNullValue());
 		this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
-		if (this.datasource != null){
+		if (this.datasource != null) {
 			Object selectedItem = parameterSingleDataset.getSelectedItem();
 			if (selectedItem != null && selectedItem instanceof Dataset) {
 				this.datasetComboBox.setSelectedDataset((Dataset) selectedItem);
@@ -128,6 +128,7 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 		} else {
 			datasetComboBox.setDatasets(datasource.getDatasets());
 		}
+		this.parameterSingleDataset.setDatasource(datasource);
 	}
 
 	private void removeDatasourceListener(Datasource datasource) {
