@@ -1,9 +1,12 @@
-package com.supermap.desktop.process.meta.metaProcessImplements.typeConversion;
+package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion;
 
-import com.supermap.data.*;
+import com.supermap.data.DatasetType;
+import com.supermap.data.GeoPoint;
+import com.supermap.data.GeoPoint3D;
+import com.supermap.data.Recordset;
+import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.meta.MetaKeys;
 
 import java.util.Map;
 
@@ -17,7 +20,7 @@ public class MetaProcessPoint3DTo2D extends MetaProcessPointLineRegion {
 
 	@Override
 	protected void initHook() {
-		OUTPUT_DATA="Point3DTo2DResult";
+		OUTPUT_DATA = "Point3DTo2DResult";
 	}
 
 	@Override

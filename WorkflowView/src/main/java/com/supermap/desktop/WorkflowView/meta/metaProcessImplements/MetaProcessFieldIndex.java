@@ -1,20 +1,20 @@
-package com.supermap.desktop.process.meta.metaProcessImplements;
+package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfos;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.meta.MetaKeys;
+import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
-import com.supermap.desktop.process.meta.MetaKeys;
-import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -32,14 +32,14 @@ public class MetaProcessFieldIndex extends MetaProcess {
 	private ParameterSingleDataset sourceDataset;
 	private ParameterCombine sourceData;
 
-//	private ParameterComboBox parameterComboBox;
+	//	private ParameterComboBox parameterComboBox;
 	//private ParameterRadioButton parameterRadioButton;
 	//private ParameterFieldSetDialog parameterFieldSetDialog;
 	private ParameterTextField parameterTextField;
 	private ParameterTextArea parameterTextAreaField;
 
-	private Map<String,String> fieldIndexes=new HashMap<>();
-	private ArrayList<String> indexs=new ArrayList<>();
+	private Map<String, String> fieldIndexes = new HashMap<>();
+	private ArrayList<String> indexs = new ArrayList<>();
 
 	public MetaProcessFieldIndex() {
 		initParameters();
@@ -58,7 +58,7 @@ public class MetaProcessFieldIndex extends MetaProcess {
 		sourceData.addParameters(sourceDatasource, sourceDataset);
 
 		//parameterComboBox = new ParameterComboBox(ProcessProperties.getString("String_FieldIndex_Form"));
-		parameterTextField=new ParameterTextField(ProcessProperties.getString("String_FieldIndex_Form"));
+		parameterTextField = new ParameterTextField(ProcessProperties.getString("String_FieldIndex_Form"));
 
 
 //		parameterRadioButton = new ParameterRadioButton();
@@ -69,13 +69,13 @@ public class MetaProcessFieldIndex extends MetaProcess {
 //		parameterRadioButton.setSelectedItem(parameterDataNodeCreate);
 //		parameterFieldSetDialog = new ParameterFieldSetDialog();
 //		parameterFieldSetDialog.setDescribe(CommonProperties.getString("String_FieldsSetting"));
-		parameterTextAreaField =new ParameterTextArea(ProcessProperties.getString("String_FieldIndex_FieldForIndex"));
+		parameterTextAreaField = new ParameterTextArea(ProcessProperties.getString("String_FieldIndex_FieldForIndex"));
 //		ParameterCombine parameterCombineParent = new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterComboBox,parameterFieldSetDialog);
 //		parameterCombineParent.setWeightIndex(0);
 
 		ParameterCombine paramSet = new ParameterCombine();
 		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
-		paramSet.addParameters(parameterTextField,parameterTextAreaField);
+		paramSet.addParameters(parameterTextField, parameterTextAreaField);
 
 		this.parameters.setParameters(sourceData, paramSet);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceData);
@@ -104,8 +104,8 @@ public class MetaProcessFieldIndex extends MetaProcess {
 		sourceDataset.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (sourceDataset.getSelectedItem() !=null) {
-					reloadIndexField((Dataset)sourceDataset.getSelectedItem());
+				if (sourceDataset.getSelectedItem() != null) {
+					reloadIndexField((Dataset) sourceDataset.getSelectedItem());
 				}
 			}
 		});
@@ -118,18 +118,18 @@ public class MetaProcessFieldIndex extends MetaProcess {
 //		});
 	}
 
-	private void reloadIndexField(Dataset dataset){
+	private void reloadIndexField(Dataset dataset) {
 
-		this.parameterTextField.setSelectedItem(dataset.getName()+"_FieldIndex");
-		FieldInfos fieldInfos= ((DatasetVector)dataset).getFieldInfos();
-		String fields="";
-		for (int i=0;i<fieldInfos.getCount();i++){
+		this.parameterTextField.setSelectedItem(dataset.getName() + "_FieldIndex");
+		FieldInfos fieldInfos = ((DatasetVector) dataset).getFieldInfos();
+		String fields = "";
+		for (int i = 0; i < fieldInfos.getCount(); i++) {
 			if (!fieldInfos.get(i).isSystemField()) {
-				fields = fields + fieldInfos.get(i).getName()+",";
+				fields = fields + fieldInfos.get(i).getName() + ",";
 			}
 		}
-		if (fields.substring(fields.length()-1,fields.length()).equals(",")){
-			fields=fields.substring(0,fields.length()-1);
+		if (fields.substring(fields.length() - 1, fields.length()).equals(",")) {
+			fields = fields.substring(0, fields.length() - 1);
 		}
 		this.parameterTextAreaField.setSelectedItem(fields);
 //		if (this.sourceDataset.getSelectedDataset()!=null){
@@ -162,16 +162,16 @@ public class MetaProcessFieldIndex extends MetaProcess {
 		boolean isSuccessful = false;
 		try {
 			fireRunning(new RunningEvent(MetaProcessFieldIndex.this, 0, "start"));
-			String fields=this.parameterTextAreaField.getSelectedItem().toString();
+			String fields = this.parameterTextAreaField.getSelectedItem().toString();
 			String[] fieldIndex;
 			if (fields.contains(",")) {
 				fieldIndex = fields.split(",");
-			}else{
-				fieldIndex=new String[]{fields};
+			} else {
+				fieldIndex = new String[]{fields};
 			}
-			isSuccessful=((DatasetVector)sourceDataset.getSelectedDataset()).buildFieldIndex(fieldIndex,this.parameterTextField.getSelectedItem().toString());
+			isSuccessful = ((DatasetVector) sourceDataset.getSelectedDataset()).buildFieldIndex(fieldIndex, this.parameterTextField.getSelectedItem().toString());
 			fireRunning(new RunningEvent(MetaProcessFieldIndex.this, 100, "finished"));
-		}catch (Exception e){
+		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		return isSuccessful;

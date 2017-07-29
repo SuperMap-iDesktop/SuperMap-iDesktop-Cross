@@ -2,12 +2,17 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStat
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.ExportSettingUtilities;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.implement.UserDefineType.ExportSettingGPX;
+import com.supermap.desktop.implement.UserDefineType.GPXAnalytic;
+import com.supermap.desktop.implement.UserDefineType.UserDefineExportResult;
+import com.supermap.desktop.implement.UserDefineType.UserDefineFileType;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
@@ -81,7 +86,7 @@ public class MetaProcessAbstractExport extends MetaProcess {
 		this.sourceInfo = new ParameterCombine();
 		this.sourceInfo.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
 		this.dataset = new ParameterSingleDataset();
-		if (Application.getActiveApplication().getWorkspace().getDatasources()!=null&&Application.getActiveApplication().getWorkspace().getDatasources().getCount()>0) {
+		if (Application.getActiveApplication().getWorkspace().getDatasources() != null && Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
 			this.dataset.setDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
 		}
 		this.sourceInfo.addParameters(datasource, dataset);
@@ -106,7 +111,7 @@ public class MetaProcessAbstractExport extends MetaProcess {
 
 	protected void resetDataset() {
 		selectDataset = (Dataset) dataset.getSelectedItem();
-		if (null==selectDataset){
+		if (null == selectDataset) {
 			return;
 		}
 		ExportSetting tempExportSetting = new ExportSetting();

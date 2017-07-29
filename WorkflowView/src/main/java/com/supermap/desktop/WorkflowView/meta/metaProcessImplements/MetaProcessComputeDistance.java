@@ -7,6 +7,7 @@ import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -25,9 +26,9 @@ import java.beans.PropertyChangeListener;
  * Created by Chen on 2017/7/3 0003.
  */
 public class MetaProcessComputeDistance extends MetaProcess {
-	private final static String INPUT_DATA = "SourceData";
-	private final static String PROXIMITY_DATA = "ProximityData";
-	private final static String OUTPUT_DATA = "computeDistanceResult";
+	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	private final static String PROXIMITY_DATA = CommonProperties.getString("String_GroupBox_ProximityData");
+	private final static String OUTPUT_DATA = "ComputeDistanceResult";
 
 	private final static String MIN_DISTANCE = "MinDistance";
 	private final static String RANGE_DISTANCE = "RangeDistance";
@@ -56,9 +57,7 @@ public class MetaProcessComputeDistance extends MetaProcess {
 
 	private void initParameters() {
 		sourceDatasource = new ParameterDatasourceConstrained();
-		sourceDatasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
 		sourceDataset = new ParameterSingleDataset(DatasetType.POINT);
-		sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
 		sourceData.addParameters(sourceDatasource, sourceDataset);
@@ -94,7 +93,7 @@ public class MetaProcessComputeDistance extends MetaProcess {
 		textNumMin = new ParameterNumber(ProcessProperties.getString("String_Label_MinDistance"));
 		ParameterCombine setting = new ParameterCombine();
 		setting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		setting.addParameters(comboBoxComputeMethod, new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(checkBoxMax, checkBoxMin), textNumMax, textNumMin);
+		setting.addParameters(comboBoxComputeMethod, new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(checkBoxMin, checkBoxMax), textNumMax, textNumMin);
 
 		resultDataset = new ParameterSaveDataset();
 		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
@@ -125,6 +124,8 @@ public class MetaProcessComputeDistance extends MetaProcess {
 		EqualDatasetConstraint datasetConstraintProximity = new EqualDatasetConstraint();
 		datasetConstraintProximity.constrained(proximityDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
 		datasetConstraintProximity.constrained(expressionProximity, ParameterSQLExpression.DATASET_FIELD_NAME);
+
+		DatasourceConstraint.getInstance().constrained(resultDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void initParametersState() {
@@ -145,7 +146,7 @@ public class MetaProcessComputeDistance extends MetaProcess {
 				new ParameterDataNode(ProcessProperties.getString("String_Item_DistanceInRange"), RANGE_DISTANCE));
 		textNumMax.setEnabled(false);
 		textNumMin.setEnabled(false);
-		textNumMax.setSelectedItem(-1);
+		textNumMax.setSelectedItem(0);
 		textNumMax.setMinValue(0);
 		textNumMax.setIsIncludeMin(false);
 		textNumMin.setSelectedItem(0);
@@ -182,6 +183,19 @@ public class MetaProcessComputeDistance extends MetaProcess {
 				if (null != evt.getNewValue()) {
 					textAreaProximitySQL.setSelectedItem(expressionProximity.getSelectedItem());
 				}
+			}
+		});
+		comboBoxComputeMethod.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				checkBoxMax.setSelectedItem(true);
+				checkBoxMin.setSelectedItem(true);
+			}
+		});
+		textNumMin.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				textNumMax.setMinValue(Double.valueOf(textNumMin.getSelectedItem().toString()));
 			}
 		});
 	}
@@ -222,13 +236,14 @@ public class MetaProcessComputeDistance extends MetaProcess {
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 
 			double min = textNumMin.isEnabled() ? (double) textNumMin.getSelectedItem() : 0;
-			double max = textNumMax.isEnabled() ? (double) textNumMax.getSelectedItem() : -1;
+			double max = textNumMax.isEnabled() && (double) textNumMax.getSelectedItem() > (double) textNumMin.getSelectedItem() ? (double) textNumMax.getSelectedItem() : -1;
 
 			if (comboBoxComputeMethod.getSelectedData() == MIN_DISTANCE) {
 				isSuccessful = ProximityAnalyst.computeMinDistance(recordsetSource, recordsetReference, min, max, resultDataset.getResultDatasource(), datasetName);
 			} else {
 				isSuccessful = ProximityAnalyst.computeRangeDistance(recordsetSource, recordsetReference, min, max, resultDataset.getResultDatasource(), datasetName);
 			}
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
 			recordsetSource.dispose();
 			recordsetReference.dispose();
 

@@ -1,19 +1,17 @@
-package com.supermap.desktop.process.meta.metaProcessImplements.typeConversion;
+package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.geometry.Abstract.IGeometry;
-import com.supermap.desktop.geometry.Implements.DGeometryFactory;
+import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
-import com.supermap.desktop.process.meta.MetaKeys;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.RecordsetUtilities;
@@ -44,10 +42,10 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 		outputCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		outputCombine.addParameters(outputData);
 
-		parameters.setParameters(inputCombine,outputCombine);
+		parameters.setParameters(inputCombine, outputCombine);
 		parameters.addInputParameters(INPUT_DATA, new DatasetTypes("",
-				DatasetTypes.POINTEPS.getValue() | DatasetTypes.LINEEPS.getValue() | DatasetTypes.REGIONEPS.getValue()),inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.SIMPLE_VECTOR,outputCombine);
+				DatasetTypes.POINTEPS.getValue() | DatasetTypes.LINEEPS.getValue() | DatasetTypes.REGIONEPS.getValue()), inputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.SIMPLE_VECTOR, outputCombine);
 	}
 
 	private void initParameterState() {
@@ -67,8 +65,8 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 
 	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-		equalDatasourceConstraint.constrained(inputDatasource,ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(inputDataset,ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(inputDatasource, ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(inputDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	@Override
@@ -91,7 +89,7 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 		boolean isSuccessful = false;
 		Recordset recordsetResult = null;
 		try {
-			fireRunning(new RunningEvent(this,0,"start"));
+			fireRunning(new RunningEvent(this, 0, "start"));
 
 			DatasetVector src = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
@@ -132,7 +130,7 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 					geometry = recordsetInput.getGeometry();
 					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
 					isSuccessful = convert(recordsetResult, geometry, value);
-				}finally {
+				} finally {
 					if (geometry != null) {
 						geometry.dispose();
 					}
@@ -143,10 +141,10 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 			recordsetInput.close();
 			recordsetInput.dispose();
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
-			fireRunning(new RunningEvent(this,100,"finish"));
+			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+		} finally {
 			if (recordsetResult != null) {
 				recordsetResult.removeSteppedListener(steppedListener);
 				recordsetResult.close();

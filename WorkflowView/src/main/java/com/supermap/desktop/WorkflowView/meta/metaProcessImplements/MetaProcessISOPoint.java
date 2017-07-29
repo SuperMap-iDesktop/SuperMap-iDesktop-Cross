@@ -9,6 +9,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -317,7 +318,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 				src = (DatasetVector) sourceDataset.getSelectedItem();
 			}
 			DatasetVector result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, fields.getFieldName(),
-					targetDataset.getResultDatasource(),targetDataset.getDatasetName(),Double.valueOf(resolution.getSelectedItem().toString()), null);
+					targetDataset.getResultDatasource(), targetDataset.getDatasetName(), Double.valueOf(resolution.getSelectedItem().toString()), null);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = (result != null);
 			fireRunning(new RunningEvent(MetaProcessISOPoint.this, 100, "finished"));

@@ -22,12 +22,7 @@ import java.util.Map;
  * Created By Chens on 2017/7/22 0022
  */
 public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
-	private static final String INPUT_DATA = "InputData";
 	private static final String OUTPUT_DATA = "SimpleToCADResult";
-
-	private ParameterDatasourceConstrained inputDatasource;
-	private ParameterSingleDataset inputDataset;
-	private ParameterSaveDataset outputData;
 
 	public MetaProcessSimpleToCAD() {
 		initParameters();
@@ -133,7 +128,7 @@ public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.Conversion_SimpleToCAD;
+		return MetaKeys.CONVERSION_SIMPLE_TO_CAD;
 	}
 
 	@Override

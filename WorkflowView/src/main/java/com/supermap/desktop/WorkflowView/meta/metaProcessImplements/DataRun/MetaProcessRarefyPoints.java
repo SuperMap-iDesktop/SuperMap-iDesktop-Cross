@@ -1,17 +1,17 @@
-package com.supermap.desktop.process.meta.metaProcessImplements.DataRun;
+package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.DataRun;
 
 import com.supermap.analyst.spatialanalyst.ProximityAnalyst;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.meta.MetaKeys;
+import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
-import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
+import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
-import com.supermap.desktop.process.meta.MetaKeys;
-import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -101,10 +101,10 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 		});
 	}
 
-	private void updateTextRadius(PrjCoordSys prjCoordSys){
-		if (prjCoordSys.getType()== PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE){
+	private void updateTextRadius(PrjCoordSys prjCoordSys) {
+		if (prjCoordSys.getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE) {
 			this.parameterNumberRadius.setSelectedItem(radiusDegree);
-		}else{
+		} else {
 			this.parameterNumberRadius.setSelectedItem(radiusNoneEarth);
 		}
 	}

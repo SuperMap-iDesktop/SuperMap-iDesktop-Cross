@@ -14,58 +14,52 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.RecordsetUtilities;
 
+import java.util.ArrayList;
 import java.util.Map;
 
-public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
-	private static final String OUTPUT_DATA = "TabularToPointResult";
+/**
+ * Created By Chens on 2017/7/24 0024
+ */
+public class MetaProcessPointToLine extends MetaProcessTypeConversion {
+	private static final String OUTPUT_DATA = "PointToLineResult";
 
-	private ParameterFieldComboBox comboBoxX;
-	private ParameterFieldComboBox comboBoxY;
+	private ParameterDatasourceConstrained inputDatasource;
+	private ParameterSingleDataset inputDataset;
+	private ParameterSaveDataset outputData;
+	private ParameterFieldComboBox comboBoxConnect;
 
-	public MetaProcessTabularToPoint() {
+	public MetaProcessPointToLine() {
 		initParameters();
 		initParameterConstraint();
 	}
 
 	private void initParameters() {
 		inputDatasource = new ParameterDatasourceConstrained();
-		inputDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION,
-				DatasetType.TEXT, DatasetType.TABULAR, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.CAD);
+		inputDataset = new ParameterSingleDataset(DatasetType.POINT);
 		outputData = new ParameterSaveDataset();
-		comboBoxX = new ParameterFieldComboBox(ProcessProperties.getString("String_Xcoordinate"));
-		comboBoxY = new ParameterFieldComboBox(ProcessProperties.getString("String_Ycoordinate"));
+		comboBoxConnect = new ParameterFieldComboBox(ProcessProperties.getString("String_ConnectionField"));
 
-		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
-		if (datasetVector != null) {
-			inputDatasource.setSelectedItem(datasetVector.getDatasource());
-			inputDataset.setSelectedItem(datasetVector);
-			comboBoxY.setFieldName(datasetVector);
-			comboBoxX.setFieldName(datasetVector);
+		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT);
+		if (dataset != null) {
+			inputDatasource.setSelectedItem(dataset.getDatasource());
+			inputDataset.setSelectedItem(dataset);
+			comboBoxConnect.setFieldName((DatasetVector) dataset);
 		}
-		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
-		comboBoxX.setFieldType(fieldType);
-		comboBoxY.setFieldType(fieldType);
-		outputData.setSelectedItem("result_tabularToPoint");
+		outputData.setSelectedItem("result_PointToLine");
 
 		ParameterCombine inputCombine = new ParameterCombine();
 		inputCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
 		inputCombine.addParameters(inputDatasource, inputDataset);
-		ParameterCombine settingCombine = new ParameterCombine();
-		settingCombine.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		settingCombine.addParameters(comboBoxX, comboBoxY);
 		ParameterCombine outputCombine = new ParameterCombine();
 		outputCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		outputCombine.addParameters(outputData);
-
-		DatasetTypes datasetTypes = new DatasetTypes("", DatasetTypes.POINT.getValue() |
-				DatasetTypes.LINE.getValue() | DatasetTypes.REGION.getValue() |
-				DatasetTypes.TEXT.getValue() | DatasetTypes.TABULAR.getValue() |
-				DatasetTypes.POINT3D.getValue() | DatasetTypes.LINE3D.getValue() |
-				DatasetTypes.REGION3D.getValue() | DatasetTypes.CAD.getValue());
+		ParameterCombine settingCombine = new ParameterCombine();
+		settingCombine.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
+		settingCombine.addParameters(comboBoxConnect);
 
 		parameters.setParameters(inputCombine, settingCombine, outputCombine);
-		parameters.addInputParameters(INPUT_DATA, datasetTypes, inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.POINT, outputCombine);
+		parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, inputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, outputCombine);
 	}
 
 	private void initParameterConstraint() {
@@ -75,8 +69,7 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
 
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
 		equalDatasetConstraint.constrained(inputDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
-		equalDatasetConstraint.constrained(comboBoxX, ParameterFieldComboBox.DATASET_FIELD_NAME);
-		equalDatasetConstraint.constrained(comboBoxY, ParameterFieldComboBox.DATASET_FIELD_NAME);
+		equalDatasetConstraint.constrained(comboBoxConnect, ParameterFieldComboBox.DATASET_FIELD_NAME);
 	}
 
 	@Override
@@ -85,21 +78,23 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
 	}
 
 	@Override
+	public String getKey() {
+		return MetaKeys.CONVERSION_POINT_TO_LINE;
+	}
+
+	@Override
+	public String getTitle() {
+		return ProcessProperties.getString("String_Title_PointToLine");
+	}
+
+	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
 		Recordset recordsetResult = null;
+
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 
-			String filedX = null;
-			String filedY = null;
-			if (comboBoxX.getSelectedItem() != null && comboBoxY.getSelectedItem() != null) {
-				filedX = comboBoxX.getFieldName();
-				filedY = comboBoxY.getFieldName();
-			} else {
-				Application.getActiveApplication().getOutput().output("Coordinate is null");
-				return false;
-			}
 			DatasetVector src = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -108,9 +103,8 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
 			}
 			DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
 			datasetVectorInfo.setName(outputData.getResultDatasource().getDatasets().getAvailableDatasetName(outputData.getDatasetName()));
-			datasetVectorInfo.setType(DatasetType.POINT);
+			datasetVectorInfo.setType(DatasetType.LINE);
 			DatasetVector resultDataset = outputData.getResultDatasource().getDatasets().create(datasetVectorInfo);
-
 			resultDataset.setPrjCoordSys(src.getPrjCoordSys());
 			for (int i = 0; i < src.getFieldInfos().getCount(); i++) {
 				FieldInfo fieldInfo = src.getFieldInfos().get(i);
@@ -123,14 +117,55 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
 			recordsetResult.getBatch().setMaxRecordCount(2000);
 			recordsetResult.getBatch().begin();
 
+			String fieldName = comboBoxConnect.getFieldName();
+
 			Recordset recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
+
+			ArrayList<Point2Ds> point2DsArrayList = new ArrayList<>();
+			ArrayList<Object> fieldValues = new ArrayList<>();
+			ArrayList<Map<String, Object>> valueList = new ArrayList<>();
 			while (!recordsetInput.isEOF()) {
-				Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-				Point2D point2D = new Point2D(Double.valueOf(recordsetInput.getFieldValue(filedX).toString()), Double.valueOf(recordsetInput.getFieldValue(filedY).toString()));
-				GeoPoint geoPoint = new GeoPoint(point2D);
-				recordsetResult.addNew(geoPoint, value);
-				geoPoint.dispose();
+				GeoPoint geoPoint = null;
+				try {
+					geoPoint = (GeoPoint) recordsetInput.getGeometry();
+					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
+					Object currentFieldValue = recordsetInput.getFieldValue(fieldName);
+					if (fieldValues.size() > 0) {
+						for (int i = 0; i < fieldValues.size(); i++) {
+							if (currentFieldValue == (fieldValues.get(i)) || currentFieldValue.equals(fieldValues.get(i))) {
+								point2DsArrayList.get(i).add(new Point2D(geoPoint.getX(), geoPoint.getY()));
+								break;
+							} else {
+								fieldValues.add(currentFieldValue);
+								valueList.add(value);
+								Point2Ds point2Ds = new Point2Ds();
+								point2Ds.add(new Point2D(geoPoint.getX(), geoPoint.getY()));
+								point2DsArrayList.add(point2Ds);
+								break;
+							}
+						}
+					} else {
+						fieldValues.add(currentFieldValue);
+						valueList.add(value);
+						Point2Ds point2Ds = new Point2Ds();
+						point2Ds.add(new Point2D(geoPoint.getX(), geoPoint.getY()));
+						point2DsArrayList.add(point2Ds);
+					}
+
+
+				} finally {
+					if (geoPoint != null) {
+						geoPoint.dispose();
+					}
+				}
 				recordsetInput.moveNext();
+			}
+			for (int i = 0; i < point2DsArrayList.size(); i++) {
+				if (point2DsArrayList.get(i).getCount() > 1) {
+					GeoLine geoLine = new GeoLine(point2DsArrayList.get(i));
+					recordsetResult.addNew(geoLine, valueList.get(i));
+					geoLine.dispose();
+				}
 			}
 			recordsetResult.getBatch().update();
 			recordsetInput.close();
@@ -149,15 +184,5 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
 		}
 
 		return isSuccessful;
-	}
-
-	@Override
-	public String getKey() {
-		return MetaKeys.CONVERSION_TABULAR_TO_POINT;
-	}
-
-	@Override
-	public String getTitle() {
-		return ProcessProperties.getString("String_Title_TabularToPoint");
 	}
 }

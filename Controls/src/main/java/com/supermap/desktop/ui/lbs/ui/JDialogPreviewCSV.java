@@ -6,12 +6,12 @@ import com.supermap.data.Enum;
 import com.supermap.data.GeometryType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.lbs.HDFSDefine;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.ui.lbs.HDFSDefine;
 import com.supermap.desktop.utilities.GeometryTypeUtilities;
 
 import javax.swing.*;

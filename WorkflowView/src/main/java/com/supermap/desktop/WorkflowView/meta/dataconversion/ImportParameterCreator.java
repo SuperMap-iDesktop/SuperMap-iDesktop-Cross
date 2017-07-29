@@ -333,8 +333,10 @@ public class ImportParameterCreator implements IParameterCreator {
 		if (importSetting instanceof ImportSettingMAPGIS) {
 			ReflectInfo setColorIndexFilePath = new ReflectInfo();
 			setColorIndexFilePath.methodName = "setColorIndexFilePath";
+
 			ParameterFile colorIndex = new ParameterFile(CommonProperties.getString("String_ColorIndexFile"));
-			colorIndex.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_color"), "wat")), "ColorIndexFile"));
+			colorIndex.setModuleName("ColorIndexFile");
+			colorIndex.addExtension(ProcessProperties.getString("string_filetype_color"), "wat");
 			String filePath = ((ImportSettingMAPGIS) importSetting).getColorIndexFilePath();
 			if (!StringUtilities.isNullOrEmpty(filePath)) {
 				colorIndex.setSelectedItem(new File(filePath).getAbsolutePath());
