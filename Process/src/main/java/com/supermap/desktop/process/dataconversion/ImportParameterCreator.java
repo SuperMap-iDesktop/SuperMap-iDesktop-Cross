@@ -729,12 +729,13 @@ public class ImportParameterCreator implements IParameterCreator {
 			if (importSetting instanceof ImportSettingGJB || importSetting instanceof ImportSettingTEMSVector
 					|| importSetting instanceof ImportSettingTEMSBuildingVector || importSetting instanceof ImportSettingFileGDBVector) {
 				this.parameterDataset.setEnabled(false);
+				this.parameterDataset.setSelectedItem("");
 			}
 
 		} else if (importSetting instanceof ImportSettingLIDAR) {
 			ParameterComboBox parameterDatasetType = new ParameterComboBox();
-			parameterDatasetType.addItem(new ParameterDataNode(ProcessProperties.getString("String_datasetType2D"), Boolean.FALSE));
-			parameterDatasetType.addItem(new ParameterDataNode(ProcessProperties.getString("String_datasetType3D"), Boolean.TRUE));
+			parameterDatasetType.addItem(new ParameterDataNode(ProcessProperties.getString("String_datasetType2D"), false));
+			parameterDatasetType.addItem(new ParameterDataNode(ProcessProperties.getString("String_datasetType3D"), true));
 			parameterDatasetType.setDescribe(ProcessProperties.getString("string_label_lblDatasetType"));
 			if (null != parameterDatasetType) {
 				reflectInfoDatasetType = new ReflectInfo();

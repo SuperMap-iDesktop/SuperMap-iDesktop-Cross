@@ -261,6 +261,18 @@ public class MetaProcessDEMBuild extends MetaProcess{
                 eraseDataset.setEnabled(isInterpolateTypeTIN);
             }
         });
+        textFieldCellSize.addPropertyListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (sourceDataset.getSelectedItem() != null) {
+                    DatasetVector datasetVector = (DatasetVector) sourceDataset.getSelectedItem();
+                    Rectangle2D bounds = datasetVector.getBounds();
+                    double cellSize = Double.valueOf(textFieldCellSize.getSelectedItem().toString());
+                    textFieldRowCount.setSelectedItem((int) (bounds.getHeight() / cellSize));
+                    textFieldColumnCount.setSelectedItem((int) (bounds.getWidth() / cellSize));
+                }
+            }
+        });
     }
 
     @Override

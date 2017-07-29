@@ -316,8 +316,10 @@ public class MetaProcessISOPoint extends MetaProcess {
 			} else {
 				src = (DatasetVector) sourceDataset.getSelectedItem();
 			}
-			GeoLine[] lines = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, fields.getFieldName(), ((TerrainInterpolateType) ((ParameterDataNode) terrainInterpolateType.getSelectedItem()).getData()), (Double) resolution.getSelectedItem(), null);
-			isSuccessful = (lines != null && lines.length > 0);
+			DatasetVector result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, fields.getFieldName(),
+					targetDataset.getResultDatasource(),targetDataset.getDatasetName(),Double.valueOf(resolution.getSelectedItem().toString()), null);
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
+			isSuccessful = (result != null);
 			fireRunning(new RunningEvent(MetaProcessISOPoint.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

@@ -4,6 +4,7 @@ import com.supermap.data.Charset;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessAbstractExport;
@@ -12,6 +13,8 @@ import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -60,7 +63,8 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 
 	protected void initParameters() {
 		super.initParameters();
-		this.chooseDataset.setSupportTypes(DatasetTypeUtilities.getDatasetTypeVector());
+		this.dataset.setDatasetTypes(DatasetTypeUtilities.getDatasetTypeVector());
+		this.dataset.setSelectedItem(DatasetUtilities.getDefaultDatasetVector());
 		String module = "ExportVector_OutPutDirectories";
 		if (!SmFileChoose.isModuleExist(module)) {
 			SmFileChoose.addNewNode("", System.getProperty("user.dir"), ProcessProperties.getString("String_Export"),
@@ -93,12 +97,13 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 
 		this.vectorCombine.addParameters(this.externalData, this.externalRecord, this.charset
 				, this.cadVersion, this.expression, emptyCombine);
-		this.parameters.setParameters(this.basicCombine, this.vectorCombine);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, chooseDataset);
+		this.parameters.setParameters(this.sourceInfo, this.basicCombine, this.vectorCombine);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, this.sourceInfo);
+		resetDataset();
 	}
 
-	protected void addDataset() {
-		super.addDataset();
+	protected void resetDataset() {
+		super.resetDataset();
 		if (null != this.selectDataset) {
 			this.sqlExpression.setSelectDataset(this.selectDataset);
 		}
@@ -147,7 +152,7 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 		String targetPath = getFilePath();
 		if (new File(targetPath).exists() && !isOverwrite) {
 			Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_DuplicateFileError"), targetPath));
-		} else {
+		} else if (!StringUtilities.isNullOrEmpty(targetPath)) {
 			setExportSettingInfo(isOverwrite);
 			isSuccessful = printResultInfo(isSuccessful, targetPath, this.exportListener);
 			removeEvents();
