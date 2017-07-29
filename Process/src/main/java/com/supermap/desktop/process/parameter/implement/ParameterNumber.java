@@ -2,6 +2,7 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 /**
@@ -33,7 +34,7 @@ public class ParameterNumber extends ParameterTextField {
 					if (textFieldValue.endsWith(".")) {
 						return false;
 					}
-					Double aDouble = Double.valueOf(textFieldValue);
+					Double aDouble = DoubleUtilities.stringToValue(textFieldValue);
 					if (isMinValueEnable && (aDouble < minValue || (!isIncludeMin && aDouble == minValue))) {
 						return false;
 					}
@@ -41,7 +42,9 @@ public class ParameterNumber extends ParameterTextField {
 						return false;
 					}
 					if (bit == 0) {
-						Integer integer = Integer.valueOf(textFieldValue);
+						if (textFieldValue.contains(".")) {
+							return false;
+						}
 					} else if (bit > 0) {
 						int bitCount = 0;
 						String[] split = textFieldValue.split("\\.");
