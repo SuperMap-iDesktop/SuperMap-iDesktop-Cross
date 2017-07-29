@@ -1,5 +1,6 @@
 package com.supermap.desktop.implement;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.DesktopRuntimeManager;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.ICtrlAction;
@@ -51,6 +52,7 @@ public abstract class CtrlAction implements ICtrlAction {
 		} catch (Exception e) {
 			DesktopRuntimeManager.getInstance().fireDesktopRuntimeStateListener(
 					new DesktopRuntimeEvent<>(this, Thread.currentThread().getStackTrace(), DesktopRuntimeEvent.CANCLE));
+			Application.getActiveApplication().getOutput().output(e);
 			return;
 		}
 		DesktopRuntimeManager.getInstance().fireDesktopRuntimeStateListener(

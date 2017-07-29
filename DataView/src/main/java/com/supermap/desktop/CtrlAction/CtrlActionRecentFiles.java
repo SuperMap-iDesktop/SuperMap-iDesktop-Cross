@@ -62,7 +62,7 @@ public class CtrlActionRecentFiles extends CtrlAction {
 						}
 
 						if (result != OpenWorkspaceResult.SUCCESSED) {
-							String stMsg = String.format(CoreProperties.getString("String_OpenWorkspaceFailed"), filePath);
+							String stMsg = MessageFormat.format(CoreProperties.getString("String_OpenWorkspaceFailed"), filePath);
 							if (result != OpenWorkspaceResult.FAILED_CANCEL) {
 								Application.getActiveApplication().getWorkspace().close();
 							}
