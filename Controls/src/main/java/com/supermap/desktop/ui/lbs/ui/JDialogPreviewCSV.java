@@ -17,10 +17,15 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.lbs.HDFSDefine;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilities.GeometryTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 import javax.swing.*;
@@ -30,8 +35,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 /**
@@ -155,8 +162,10 @@ public class JDialogPreviewCSV extends SmDialog {
 		buttonOk.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dialogResult = DialogResult.OK;
-				updateMetaFile();
+				if (updateMetaFile()) {
+					dialogResult = DialogResult.OK;
+					dispose();
+				}
 			}
 		});
 
@@ -172,8 +181,8 @@ public class JDialogPreviewCSV extends SmDialog {
 	private boolean updateMetaFile() {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("GeometryType", ((GeometryType) comboBoxGeometryType.getSelectedItem()).name());
-		jsonObject.put("StorageType", comboBoxGeometryType.getSelectedItem());
-		jsonObject.put("HasHeader", checkBoxHasHeader.isSelected());
+		jsonObject.put("StorageType", comboBoxStorageType.getSelectedItem());
+		jsonObject.put("HasHeader", String.valueOf(checkBoxHasHeader.isSelected()));
 		JSONArray array = new JSONArray();
 		for (int i = 0; i < tableModelField.getRowCount(); i++) {
 			JSONObject jsonObjectField = new JSONObject();
@@ -182,29 +191,137 @@ public class JDialogPreviewCSV extends SmDialog {
 			array.add(jsonObjectField);
 		}
 		jsonObject.put("FieldInfos", array);
-		String metaFile = jsonObject.toJSONString();
-		if (isMetaExists) {
-			String url = getMetaFilePath() + "?user.name=root&op=DELETE";
-			HttpDelete requestPut = new HttpDelete(url);
-			requestPut.setHeader("Accept-Encoding", "utf-8");
-			CloseableHttpClient httpClient = HttpClients.createDefault();
-			try {
-				HttpResponse response = httpClient.execute(requestPut);
-				if (response == null || response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-					return false;
-				}
-			} catch (Exception e) {
+		String metaFile = jsonObject.toJSONString() + "\r\n";
+
+		if (!deleteMetaFile() && isMetaExists) {
+			return false;
+		}
+
+		boolean isCreateSuccess = createMetaFile();
+		if (isCreateSuccess) {
+			if (!postMetaFile(metaFile)) {
 				return false;
-			} finally {
-				try {
-					httpClient.close();
-				} catch (IOException e) {
-					Application.getActiveApplication().getOutput().output(e);
-				}
 			}
 		}
-// TODO: 2017/7/29
 		return true;
+	}
+
+	private boolean deleteMetaFile() {
+		String url = getMetaUrl() + "?user.name=root&op=DELETE";
+		HttpDelete requestPut = new HttpDelete(url);
+		requestPut.setHeader("Accept-Encoding", "utf-8");
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		try {
+			HttpResponse response = new DefaultHttpClient().execute(requestPut);
+			if (response == null || response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				return true;
+			}
+		} catch (Exception e) {
+			return true;
+		} finally {
+			try {
+				httpClient.close();
+			} catch (IOException e) {
+				Application.getActiveApplication().getOutput().output(e);
+			}
+		}
+		return false;
+	}
+
+	private boolean postMetaFile(String metaFile) {
+		String webFile = getMetaUrl() + "?user.name=root&op=APPEND";
+		HttpPost requestPost = new HttpPost(webFile);
+		requestPost.setHeader("Accept-Encoding", "utf-8");
+		String locationURL = "";
+		try {
+			HttpResponse response = new DefaultHttpClient().execute(requestPost);
+			if (response != null) {
+				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
+					Header locationHeader = response.getFirstHeader("Location");
+					if (locationHeader != null) {
+						locationURL = locationHeader.getValue();
+					}
+				}
+			}
+			if (!StringUtilities.isNullOrEmptyString(locationURL)) {
+				// 利用post请求往服务器上上传内容
+				URL nowURL = new URL(locationURL);
+				HttpURLConnection connection = (HttpURLConnection) nowURL.openConnection();
+				connection.setConnectTimeout(10000);
+				// 设置读取数据超时时间为3000ms
+				connection.setReadTimeout(10000);
+				setHeader(connection);
+				connection.setDoOutput(true);
+				connection.setRequestMethod("POST");
+				OutputStream outputStream = connection.getOutputStream();
+				while (outputStream == null) {
+					outputStream = connection.getOutputStream();
+				}
+
+				byte[] bytes = metaFile.getBytes("UTF-8");
+				// 将文件写入字节流中
+				outputStream.write(bytes, 0, bytes.length);
+				outputStream.flush();
+
+				if (null != connection.getInputStream()) {
+					InputStream inputStream = connection.getInputStream();
+					// 写入文件到远程服务器
+					inputStream.read(bytes);
+				}
+
+			}
+		} catch (IOException e) {
+			Application.getActiveApplication().getOutput().output(e);
+			return false;
+		} finally {
+			// FIXME: 2017/7/29 资源释放 先保证可用
+		}
+		return true;
+	}
+
+	private void setHeader(URLConnection conn) {
+		conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+		conn.setRequestProperty("Accept-Language", "en-us,en;q=0.7,zh-cn;q=0.3");
+		conn.setRequestProperty("Accept-Encoding", "utf-8");
+		conn.setRequestProperty("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
+		conn.setRequestProperty("Keep-Alive", "300");
+		conn.setRequestProperty("connnection", "keep-alive");
+		conn.setRequestProperty("If-Modified-Since", "Fri, 22 Jan 2016 12:00:00 GMT");
+		conn.setRequestProperty("If-None-Match", "\"1261d8-4290-df64d224\"");
+		conn.setRequestProperty("Cache-conntrol", "max-age=0");
+		conn.setRequestProperty("Content-type", "application/x-java-serialized-object");
+		conn.setRequestProperty("Referer", "http://www.baidu.com");
+	}
+
+	private boolean createMetaFile() {
+		String metaFilePath = getMetaUrl();
+		String webFile = metaFilePath + "?user.name=root&op=CREATE";
+		HttpPut requestPut = new HttpPut(webFile);
+		String locationURL = "";
+		try {
+			HttpResponse response = new DefaultHttpClient().execute(requestPut);
+			if (response != null) {
+				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
+					Header locationHeader = response.getFirstHeader("Location");
+					if (locationHeader != null) {
+						// 获取登陆成功之后跳转链接
+						locationURL = locationHeader.getValue();
+					}
+				}
+			}
+			if (!StringUtilities.isNullOrEmptyString(locationURL)) {
+				requestPut = new HttpPut(locationURL);
+				response = new DefaultHttpClient().execute(requestPut);
+				if (response != null && response.getStatusLine().getStatusCode() == 201) {
+					return true;
+				}
+			}
+		} catch (IOException e) {
+			Application.getActiveApplication().getOutput().output(e);
+			return false;
+		}
+
+		return false;
 	}
 
 	private void initComponentState() {
@@ -248,9 +365,8 @@ public class JDialogPreviewCSV extends SmDialog {
 		}
 		try {
 			byte[] buff = new byte[BUFF_LENGTH];
-			String metaFileName = getMetaFilePath();
 
-			URL urlMeta = new URL(this.webURL + metaFileName + "?op=open&offset=" + 0 + "&length=" + hdfsDefine.getSize());
+			URL urlMeta = new URL(getMetaUrl() + "?op=open&offset=" + 0 + "&length=" + hdfsDefine.getSize());
 			HttpURLConnection connectionMeta = (HttpURLConnection) urlMeta.openConnection();
 			setConnection(connectionMeta);
 
@@ -304,7 +420,7 @@ public class JDialogPreviewCSV extends SmDialog {
 			if (jsonObject != null) {
 				String geometryType = (String) jsonObject.get("GeometryType");
 				String storageType = (String) jsonObject.get("StorageType");
-				boolean hasHeader = Boolean.valueOf((String) jsonObject.get("HasHeader"));
+				boolean hasHeader = Boolean.valueOf(String.valueOf(jsonObject.get("HasHeader")));
 
 				if (!geometryType.startsWith("GEO")) {
 					geometryType = "GEO" + geometryType;
@@ -360,8 +476,12 @@ public class JDialogPreviewCSV extends SmDialog {
 		tableField.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(comboBox));
 	}
 
-	private String getMetaFilePath() {
+	private String getMetaFileName() {
 		return hdfsDefine.getName().substring(0, hdfsDefine.getName().length() - 4) + ".meta";
+	}
+
+	private String getMetaUrl() {
+		return webURL + getMetaFileName();
 	}
 
 	private void setConnection(HttpURLConnection connection) {
