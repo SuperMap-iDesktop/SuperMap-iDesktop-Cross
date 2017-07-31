@@ -1,6 +1,6 @@
 package com.supermap.desktop.dialog.symbolDialogs.symbolTrees;
 
-import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.utilities.StringUtilities;
 

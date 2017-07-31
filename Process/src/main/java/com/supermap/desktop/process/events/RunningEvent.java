@@ -24,6 +24,10 @@ public class RunningEvent extends EventObject {
 		this(process, progress, message, 0, 0);
 	}
 
+	public RunningEvent(IProcess process, int progress, String message, int remainTime) {
+		this(process, progress, message, remainTime, 0);
+	}
+
 	public RunningEvent(IProcess process, int progress, String message, int remainTime, int totalTime) {
 		super(process);
 		this.progress = progress;

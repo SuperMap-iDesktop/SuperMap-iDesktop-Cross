@@ -87,14 +87,14 @@ public interface DockingPort extends DockingListener, DockingMonitor {
     Component getComponent(String region);
 
     /**
-     * Returns a {@code String} identifier that is unique within a JVM instance,
+     * Returns a {@code String} identifier that is unique within a JVM newProcess,
      * but persistent across JVM instances. This is used for configuration
      * mangement, allowing the JVM to recognize a {@code DockingPort} instance
      * within an application instance, persist the ID, and recall it in later
      * application instances. The ID should be unique within an appliation
      * instance so that there are no collisions with other {@code DockingPort}
      * instances, but it should also be consistent from JVM to JVM so that the
-     * association between a {@code DockingPort} instance and its ID can be
+     * association between a {@code DockingPort} newProcess and its ID can be
      * remembered from session to session.
      */
     String getPersistentId();

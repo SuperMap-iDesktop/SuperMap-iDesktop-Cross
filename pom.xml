@@ -32,6 +32,7 @@
         <module>TabularView</module>
         <module>Process</module>
         <module>UserExperience</module>
+        <module>WorkflowView</module>
     </modules>
 
     <properties>
@@ -115,7 +116,7 @@
                     <configuration>
                         <filesets>
 
-                            <!--核心插件所在路径（Core and Controls and Frame）-->
+                            <!--核心插件所在路径（Core and Controls and Process and Frame）-->
                             <fileset>
                                 <directory>${project.basedir}/../bundles/require_bundles/</directory>
                                 <includes>

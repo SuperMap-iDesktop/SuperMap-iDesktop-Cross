@@ -106,12 +106,12 @@ public interface Dockable extends DockingListener, DockingMonitor {
     Set getFrameDragSources();
 
     /**
-     * Returns a {@code String} identifier that is unique within a JVM instance,
+     * Returns a {@code String} identifier that is unique within a JVM newProcess,
      * but persistent across JVM instances. This is used for configuration
-     * mangement, allowing the JVM to recognize a {@code Dockable} instance
-     * within an application instance, persist the ID, and recall it in later
+     * mangement, allowing the JVM to recognize a {@code Dockable} newProcess
+     * within an application newProcess, persist the ID, and recall it in later
      * application instances. The ID should be unique within an appliation
-     * instance so that there are no collisions with other {@code Dockable}
+     * newProcess so that there are no collisions with other {@code Dockable}
      * instances, but it should also be consistent from JVM to JVM so that the
      * association between a {@code Dockable} instance and its ID can be
      * remembered from session to session.

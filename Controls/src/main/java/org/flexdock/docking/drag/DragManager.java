@@ -3,15 +3,6 @@
  */
 package org.flexdock.docking.drag;
 
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.util.EventListener;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.docking.DockingPort;
@@ -21,6 +12,14 @@ import org.flexdock.docking.event.DockingEvent;
 import org.flexdock.docking.floating.policy.FloatPolicyManager;
 import org.flexdock.event.EventManager;
 import org.flexdock.util.DockingUtility;
+
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.util.EventListener;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Christopher Butler
@@ -148,7 +147,7 @@ public class DragManager extends MouseAdapter implements MouseMotionListener {
     private static void initializeListenerCaching(DragOperation token) {
         // it's easier for us if we remove the MouseMostionListener associated with the dragSource
         // before dragging, so normally we'll try to do that.  However, if developers really want to
-        // keep them in there, then they can implement the Dockable interface for their dragSource and
+        // keep them in there, then they can ipls the Dockable interface for their dragSource and
         // let mouseMotionListenersBlockedWhileDragging() return false
 //		if (!dockableImpl.mouseMotionListenersBlockedWhileDragging())
 //			return;

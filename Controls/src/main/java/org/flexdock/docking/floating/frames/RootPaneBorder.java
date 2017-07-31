@@ -19,12 +19,8 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 package org.flexdock.docking.floating.frames;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Insets;
-
 import javax.swing.border.Border;
+import java.awt.*;
 
 /**
  * @author Andreas Ernst
@@ -37,7 +33,7 @@ public class RootPaneBorder implements Border {
         return new Insets(3, 3, 3, 3);
     }
 
-    // implement Border
+    // ipls Border
 
     public boolean isBorderOpaque() {
         return false;

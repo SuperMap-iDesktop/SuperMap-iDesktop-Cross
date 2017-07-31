@@ -1,9 +1,9 @@
 package com.supermap.desktop.process.util;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.parameter.implement.ParameterClassBundleNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
+import com.supermap.desktop.process.parameter.ipls.ParameterClassBundleNode;
 import org.osgi.framework.Bundle;
 
 import java.awt.*;

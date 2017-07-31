@@ -8,7 +8,7 @@ import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.http.upload.BatchUploadFile;
 import com.supermap.desktop.http.upload.UploadUtils;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
-import com.supermap.desktop.ui.lbs.FileInfo;
+import com.supermap.desktop.lbs.FileInfo;
 import com.supermap.desktop.utilities.CommonUtilities;
 import com.supermap.desktop.utilities.ManagerXMLParser;
 

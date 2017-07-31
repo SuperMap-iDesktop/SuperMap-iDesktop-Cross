@@ -2,23 +2,20 @@
  */
 package org.flexdock.docking.defaults;
 
-import java.awt.Component;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.AbstractAction;
-import javax.swing.JSplitPane;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
-
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.docking.DockingPort;
 import org.flexdock.util.DockingUtility;
 import org.flexdock.util.SwingUtility;
+
+import javax.swing.*;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * @author Christopher Butler
@@ -134,7 +131,7 @@ public class DockingSplitPane extends JSplitPane implements DockingConstants {
                                    + ((int) (extraSpace * getResizeWeight() + .5)));
             }
 
-            // TODO implement shrinking excess space to ensure that one has
+            // TODO ipls shrinking excess space to ensure that one has
             // preferred and nothing more
         } else {
             int w = getWidth() - i.left - i.right - getDividerSize();
@@ -149,7 +146,7 @@ public class DockingSplitPane extends JSplitPane implements DockingConstants {
                                    + ((int) (extraSpace * getResizeWeight() + .5)));
             }
 
-            // TODO implement shrinking excess space to ensure that one has
+            // TODO ipls shrinking excess space to ensure that one has
             // preferred and nothing more
         }
     }

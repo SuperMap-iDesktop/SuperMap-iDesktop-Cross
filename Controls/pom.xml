@@ -26,6 +26,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.supermap.idesktop.cross</groupId>
+            <artifactId>Process</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
@@ -40,7 +46,7 @@
                     <instructions>
                         <Bundle-Activator>com.supermap.desktop.controls.ControlsActivator</Bundle-Activator>
                         <Export-Package>{local-packages}</Export-Package>
-                        <Require-Bundle>${project.groupId}.Core</Require-Bundle>
+                        <Require-Bundle>${project.groupId}.Core,${project.groupId}.Process</Require-Bundle>
                     </instructions>
                 </configuration>
             </plugin>

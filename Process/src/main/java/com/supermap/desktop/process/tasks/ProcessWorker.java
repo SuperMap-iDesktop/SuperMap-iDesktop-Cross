@@ -1,10 +1,10 @@
 package com.supermap.desktop.process.tasks;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
+import com.supermap.desktop.properties.CoreProperties;
 
 import java.text.MessageFormat;
 
@@ -44,7 +44,7 @@ public class ProcessWorker extends Worker<SingleProgress> {
 				if (isCancelled) {
 					e.setCancel(true);
 				} else {
-					update(new SingleProgress(e.getProgress(), e.getMessage(), MessageFormat.format(ControlsProperties.getString("String_RemainTime"), e.getRemainTime())));
+					update(new SingleProgress(e.getProgress(), e.getMessage(), MessageFormat.format(CoreProperties.getString("String_RemainTime"), e.getRemainTime())));
 				}
 			} catch (Exception e1) {
 				e.setCancel(true);

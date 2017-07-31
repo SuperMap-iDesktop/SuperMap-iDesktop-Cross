@@ -3,19 +3,18 @@
  */
 package org.flexdock.docking.adapter;
 
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.Icon;
-
 /**
  * @author Christopher Butler
  */
-//TODO shouldn't this implement Dockable?
+//TODO shouldn't this ipls Dockable?
 public class DockingAdapter {
     private static final Class[] EMPTY_PARAMS = {};
     private static final Object[] EMPTY_ARGS = {};

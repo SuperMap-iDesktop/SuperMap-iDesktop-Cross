@@ -6,7 +6,7 @@ import com.supermap.desktop.Interface.IAfterWork;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.ui.lbs.FileInfo;
+import com.supermap.desktop.lbs.FileInfo;
 import com.supermap.desktop.utilities.CommonUtilities;
 
 import javax.swing.*;

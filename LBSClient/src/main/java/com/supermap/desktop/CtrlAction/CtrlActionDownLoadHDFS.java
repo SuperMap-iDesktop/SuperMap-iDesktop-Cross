@@ -5,8 +5,8 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLBSControl;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.ui.lbs.HDFSDefine;
-import com.supermap.desktop.ui.lbs.HDFSTableModel;
+import com.supermap.desktop.lbs.HDFSDefine;
+import com.supermap.desktop.ui.lbs.ui.HDFSTableModel;
 import com.supermap.desktop.utilities.CursorUtilities;
 
 public class CtrlActionDownLoadHDFS extends CtrlAction {

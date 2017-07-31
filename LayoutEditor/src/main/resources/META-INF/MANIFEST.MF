@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1500963087364
+Bnd-LastModified: 1501323915395
 Build-Jdk: 1.7.0_80
-Built-By: Administrator
+Built-By: highsad
 Bundle-Activator: com.supermap.desktop.layouteditor.LayoutEditorActivato
  r
 Bundle-ManifestVersion: 2

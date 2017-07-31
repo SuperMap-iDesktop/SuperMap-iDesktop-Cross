@@ -39,7 +39,7 @@ public class DragOperation implements DockingConstants {
         if(evt==null)
             throw new NullPointerException("'evt' parameter cannot be null.");
         if(!(evt.getSource() instanceof Component))
-            throw new IllegalArgumentException("'evt.getSource()' must be an instance of java.awt.Component.");
+            throw new IllegalArgumentException("'evt.getSource()' must be an newProcess of java.awt.Component.");
 
         if(dragOrigin==null)
             dragOrigin = evt.getPoint();

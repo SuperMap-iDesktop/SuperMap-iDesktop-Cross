@@ -124,7 +124,7 @@ public class Utilities {
      * Returns an instance of the specified class name. If {@code className} is
      * {@code null}, then this method returns a {@code null} reference.
      * <p>
-     * This method will try two different means of obtaining an instance of
+     * This method will try two different means of obtaining an newProcess of
      * {@code className}. First, it will attempt to resolve the {@code Class}
      * of {@code className} via {@code Class.forName(String className)}. It
      * will then use reflection to search for a method on the class named
@@ -145,7 +145,7 @@ public class Utilities {
      *
      * @param className
      *            the fully qualified name of the desired class.
-     * @return an instance of the specified class
+     * @return an newProcess of the specified class
      * @see #getInstance(String, boolean)
      * @see #createInstance(String, boolean)
      * @see Class#forName(java.lang.String)
@@ -158,7 +158,7 @@ public class Utilities {
     }
 
     /**
-     * Returns an instance of the specified class name. If {@code className} is
+     * Returns an newProcess of the specified class name. If {@code className} is
      * {@code null}, then this method returns a {@code null} reference.
      * <p>
      * This method will try two different means of obtaining an instance of
@@ -252,7 +252,7 @@ public class Utilities {
      * assignability checkes are performed because this method uses a
      * {@code null} {@code superType}.
      * <p>
-     * Once the desired class has been resolved, a new instance of it is created
+     * Once the desired class has been resolved, a new newProcess of it is created
      * and returned by invoking its {@code newInstance()} method. If there are
      * any problems encountered during this process, the value of
      * {@code failSilent} is checked to determine whether the stack stack trace
@@ -275,7 +275,7 @@ public class Utilities {
     }
 
     /**
-     * Creates and returns an instance of the specified class name using
+     * Creates and returns an newProcess of the specified class name using
      * {@code Class.newInstance()}. If {@code className} is {@code null}, then
      * this method returns a {@code null} reference. If {@code superType} is
      * non-{@code null}, then this method will enforce polymorphic identity

@@ -2,6 +2,7 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.process.events.*;
+import com.supermap.desktop.process.util.WorkflowUtil;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
@@ -107,11 +108,11 @@ public class Workflow implements IWorkflow {
 		Vector<IProcess> processes = this.processMatrix.getNodes();
 		for (int i = 0; i < processes.size(); i++) {
 			IProcess process = processes.get(i);
-			Element processNode = doc.createElement("Process");
+			Element processNode = doc.createElement("process");
 			processNode.setAttribute("Key", process.getKey());
 			processNode.setAttribute("ClassName", process.getClass().getName());
 
-			// 一个工作流可能存在多个相同类型的 Process，此时导出就需要有一个标记，用以在导入的时候匹配
+			// 一个工作流可能存在多个相同类型的 process，此时导出就需要有一个标记，用以在导入的时候匹配
 			processNode.setAttribute("SerialID", String.valueOf(process.getSerialID()));
 			processesNode.appendChild(processNode);
 		}
@@ -141,14 +142,14 @@ public class Workflow implements IWorkflow {
 
 	public void serializeFrom(Element workflowNode) {
 
-		// 处理 Process
+		// 处理 process
 		Element processesNode = (Element) XmlUtilities.getChildElementNodeByName(workflowNode, "Processes");
-		Element[] processNodes = XmlUtilities.getChildElementNodesByName(processesNode, "Process");
+		Element[] processNodes = XmlUtilities.getChildElementNodesByName(processesNode, "process");
 		for (int i = 0; i < processNodes.length; i++) {
 			Element processNode = processNodes[i];
 			String processKey = processNode.getAttribute("Key");
 			int serialID = Integer.valueOf(processNode.getAttribute("SerialID"));
-			IProcess process = WorkflowParser.getMetaProcess(processKey);
+			IProcess process = WorkflowUtil.newProcess(processKey);
 			process.setSerialID(serialID);
 			addProcess(process);
 		}

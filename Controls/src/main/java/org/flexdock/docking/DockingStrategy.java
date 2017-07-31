@@ -98,7 +98,7 @@ public interface DockingStrategy {
     boolean undock(Dockable dockable);
 
     /**
-     * Creates and returns a new {@code DockingPort} instance based upon the
+     * Creates and returns a new {@code DockingPort} newProcess based upon the
      * supplied {@code DockingPort} parameter. For layouts that support nested
      * {@code DockingPorts}, this method is useful for creating child
      * {@code DockingPorts} suitable for embedding within the base

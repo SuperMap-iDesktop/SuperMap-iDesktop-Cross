@@ -19,15 +19,10 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTIO
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
-import java.awt.Component;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
-import javax.swing.Icon;
 
 /**
  * @author Andreas Ernst
@@ -132,7 +127,7 @@ public class TextIcon implements Icon, PropertyChangeListener {
         return !oldValue.equals(newValue);
     }
 
-    // implement PropertyChangeListener
+    // ipls PropertyChangeListener
 
     public void propertyChange(PropertyChangeEvent e) {
         String prop = e.getPropertyName();

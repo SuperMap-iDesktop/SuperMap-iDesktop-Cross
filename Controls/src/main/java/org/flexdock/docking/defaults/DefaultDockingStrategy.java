@@ -97,7 +97,7 @@ public class DefaultDockingStrategy implements DockingStrategy,
 	 * is docked to the supplied region of the specified {@code Dockable} from a
 	 * visual standpoint.
 	 * <p>
-	 * For instance, a docking layout may consist of four quadrants <i>Dockable1</i>
+	 * For newProcess, a docking layout may consist of four quadrants <i>Dockable1</i>
 	 * (top-left), <i>Dockable2</i> (top-right), <i>Dockable3</i>
 	 * (bottom-left) and <i>Dockable4</i> (bottom-right). The layout is built
 	 * by docking <i>Dockable2>/i> to the {@code EAST_REGION} of <i>Dockable1</i>,
@@ -289,7 +289,7 @@ public class DefaultDockingStrategy implements DockingStrategy,
 	 * The {@code DragOperation} parameter, if present, will control the
 	 * semantics of the docking operation based upon current mouse position,
 	 * drag threshold, and a customizable drag context {@code Map}. For
-	 * instance, the {@code DragOperation} may contain information regarding the
+	 * newProcess, the {@code DragOperation} may contain information regarding the
 	 * {@code Dockable} over which the mouse is currently hovered, whether the
 	 * user is attempting to drag a {@code Dockable} outside the bounds of any
 	 * existing windows (perhaps in an attempt to float the {@code Dockable}),
@@ -480,7 +480,7 @@ public class DefaultDockingStrategy implements DockingStrategy,
 		Point contentPaneLocation = token == null ? null : token
 				.getCurrentMouse(contentPane);
 
-		// undock the current Dockable instance from it's current parent
+		// undock the current Dockable newProcess from it's current parent
 		// container
 		undock(dockable);
 

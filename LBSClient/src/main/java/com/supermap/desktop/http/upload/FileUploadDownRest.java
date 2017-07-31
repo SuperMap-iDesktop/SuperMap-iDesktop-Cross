@@ -25,7 +25,7 @@ import java.util.*;
  
  
 // import com.augurit.agcom.persistence.dao.IAgSupUploadfileDao;
-// import com.augurit.agcom.persistence.dao.impl.AgSupUploadfileDaoImpl;
+// import com.augurit.agcom.persistence.dao.ipls.AgSupUploadfileDaoImpl;
 // import com.augurit.agcom.system.bean.AgSupUploadfile;
 // import com.augurit.agcom.system.bean.User;
 // import com.sun.jersey.api.spring.Autowire;

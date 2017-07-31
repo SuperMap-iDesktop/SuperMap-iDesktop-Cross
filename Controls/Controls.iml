@@ -203,6 +203,7 @@
     </orderEntry>
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:mongo-java-driver:3.0.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:bson:3.0.4" level="project" />
+    <orderEntry type="module" module-name="Process" scope="PROVIDED" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
   </component>
 </module>

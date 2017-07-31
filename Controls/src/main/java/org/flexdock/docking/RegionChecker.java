@@ -3,9 +3,7 @@
  */
 package org.flexdock.docking;
 
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 
 /**
  * This interface provides an API for determining the desired regional bounds
@@ -17,7 +15,7 @@ import java.awt.Rectangle;
  * another embedded {@code Dockable}, a determination must be made as to where
  * the dragged {@code Dockable} will be docked within the target
  * {@code DockingPort} based upon the current mouse position relative to
- * the embedded {@code Dockable} underneath the mouse. Classes that implement
+ * the embedded {@code Dockable} underneath the mouse. Classes that ipls
  * this interface are responsible for making such determinations.
  *
  * For example, if a {@code Dockable} is dragged over another {@code Dockable}
