@@ -77,6 +77,7 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 	}
 
 	public String getDatasetName() {
+		// parameter简单点，判断数据集存在放在panel里面，以后可以考虑做覆盖操作。
 		return datasetName;
 	}
 

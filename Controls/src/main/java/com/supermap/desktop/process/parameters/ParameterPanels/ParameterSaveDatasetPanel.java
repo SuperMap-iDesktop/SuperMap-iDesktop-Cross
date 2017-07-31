@@ -42,9 +42,24 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 				isSelectingItem = true;
 				parameterSaveDataset.setResultDatasource((Datasource) datasourceComboBox.getSelectedItem());
 				isSelectingItem = false;
+				checkDatasetName();
 			}
 		}
 	};
+
+	private void checkDatasetName() {
+		Datasource selectedDatasource = datasourceComboBox.getSelectedDatasource();
+		if (selectedDatasource != null) {
+			String text = textFieldDataset.getText();
+			String availableDatasetName = selectedDatasource.getDatasets().getAvailableDatasetName(text);
+			if (!availableDatasetName.equals(text)) {
+				isSelectingItem = true;
+				textFieldDataset.setText(availableDatasetName);
+				parameterSaveDataset.setDatasetName(availableDatasetName);
+				isSelectingItem = false;
+			}
+		}
+	}
 
 
 	public ParameterSaveDatasetPanel(IParameter parameterSaveDataset) {
@@ -86,7 +101,12 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 		initLayout();
 		initListener();
 		initComponentState();
-		this.parameterSaveDataset.setResultDatasource((Datasource) datasourceComboBox.getSelectedItem());
+		if (datasourceComboBox.getSelectedItem() != this.parameterSaveDataset.getResultDatasource()) {
+			this.parameterSaveDataset.setResultDatasource((Datasource) datasourceComboBox.getSelectedItem());
+		}
+		if (this.parameterSaveDataset.getDatasetName() != null && !this.parameterSaveDataset.getDatasetName().equals(textFieldDataset.getText())) {
+			this.parameterSaveDataset.setDatasetName(textFieldDataset.getText());
+		}
 	}
 
 	private void initLayout() {
@@ -113,8 +133,13 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 		if (parameterSaveDataset.getResultDatasource() != null) {
 			datasourceComboBox.setSelectedItem(parameterSaveDataset.getResultDatasource());
 		}
-		if (!StringUtilities.isNullOrEmpty(parameterSaveDataset.getDatasetName())) {
-			textFieldDataset.setText(parameterSaveDataset.getDatasetName());
+		String datasetName = parameterSaveDataset.getDatasetName();
+		if (!StringUtilities.isNullOrEmpty(datasetName)) {
+			Datasource datasource = datasourceComboBox.getSelectedDatasource();
+			if (datasource != null) {
+				datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
+			}
+			textFieldDataset.setText(datasetName);
 		}
 		isSelectingItem = false;
 	}
