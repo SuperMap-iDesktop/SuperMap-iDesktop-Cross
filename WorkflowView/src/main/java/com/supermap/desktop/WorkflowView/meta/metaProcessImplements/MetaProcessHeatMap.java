@@ -76,11 +76,11 @@ public class MetaProcessHeatMap extends MetaProcess {
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
 		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_setParameter"));
 		parameterCombineSetting.addParameters(parameterHDFSPath,
-				parameterCacheType,
-				parameterBounds,
 				parameterTextFieldXIndex,
 				parameterTextFieldYIndex,
 				parameterTextFieldSeparator,
+				parameterCacheType,
+				parameterBounds,
 				parameterCacheLevel,
 				parameterCacheName,
 				parameterDatabaseType,
