@@ -31,8 +31,8 @@ public class CtrlActionNewCollectionDataset extends CtrlAction {
 			for (Datasource datasource : datasources) {
 				//暂时只支持postgreSql的引擎类型
 				if (null != datasource && !datasource.isReadOnly()
-						&& datasource.getEngineType().equals(EngineType.POSTGRESQL)
-						) {
+						&& (datasource.getEngineType().equals(EngineType.POSTGRESQL) || datasource.getEngineType().equals(EngineType.UDB) ||
+						datasource.getEngineType().equals(EngineType.ORACLEPLUS))) {
 					enable = true;
 					break;
 				}

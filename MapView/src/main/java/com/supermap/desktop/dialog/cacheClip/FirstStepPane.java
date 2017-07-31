@@ -1135,7 +1135,7 @@ public class FirstStepPane extends JPanel implements IState {
 		if (this.localSplitTable.getRowCount() == 1) {
 			if (this.originMapCacheScale.length > 0) {
 				this.currentMapCacheScale.add(this.originMapCacheScale[0]);
-			} else {
+			} else if (null != Application.getActiveApplication().getActiveForm()) {
 				this.currentMapCacheScale.add(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getScale());
 			}
 		} else {
