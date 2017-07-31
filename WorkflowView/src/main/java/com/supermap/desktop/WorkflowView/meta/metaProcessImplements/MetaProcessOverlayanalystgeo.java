@@ -19,6 +19,7 @@ import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -58,15 +59,15 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 		parameterOverlayDataset = new ParameterSingleDataset();
 		parameterOverlayDataset.setDescribe(ProcessProperties.getString("String_overlayDataset"));
 
-		parameterOverlayTypeComboBox = new ParameterComboBox(ControlsProperties.getString("String_OverlayAnalystType"));
+		parameterOverlayTypeComboBox = new ParameterComboBox(CoreProperties.getString("String_OverlayAnalystType"));
 		parameterOverlayTypeComboBox.setItems(
-				new ParameterDataNode(ControlsProperties.getString("String_OverlayAnalystMethod_Clip"), "clip"),
-				new ParameterDataNode(ControlsProperties.getString("String_OverlayAnalystMethod_Iserver_Intersect"), "interset"),
-				new ParameterDataNode(ControlsProperties.getString("String_OverlayAnalystMethod_Erase"), "erase"),
-				new ParameterDataNode(ControlsProperties.getString("String_OverlayAnalystMethod_Union"), "union"),
-				new ParameterDataNode(ControlsProperties.getString("String_OverlayAnalystMethod_XOR"), "xor"),
-				new ParameterDataNode(ControlsProperties.getString("String_OverlayAnalystMethod_Update"), "update"),
-				new ParameterDataNode(ControlsProperties.getString("String_OverlayAnalystMethod_Identity"), "identity")
+				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_Clip"), "clip"),
+				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_Iserver_Intersect"), "interset"),
+				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_Erase"), "erase"),
+				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_Union"), "union"),
+				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_XOR"), "xor"),
+				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_Update"), "update"),
+				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_Identity"), "identity")
 		);
 
 		ParameterCombine parameterCombineSource = new ParameterCombine();

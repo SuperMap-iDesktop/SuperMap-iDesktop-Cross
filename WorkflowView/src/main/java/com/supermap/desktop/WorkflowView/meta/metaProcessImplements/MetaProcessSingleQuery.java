@@ -57,7 +57,7 @@ public class MetaProcessSingleQuery extends MetaProcess {
 		parameterQueryDataset = new ParameterSingleDataset();
 		parameterQueryDataset.setDescribe(ProcessProperties.getString("String_Label_QueryDataset"));
 
-		parameterQueryTypeComboBox = new ParameterComboBox(ControlsProperties.getString("String_OverlayAnalystType"));
+		parameterQueryTypeComboBox = new ParameterComboBox(CoreProperties.getString("String_OverlayAnalystType"));
 		parameterQueryTypeComboBox.setItems(
 				new ParameterDataNode(CoreProperties.getString("String_SpatialQuery_ContainCHS"), "CONTAIN"),
 				new ParameterDataNode(CoreProperties.getString("String_SpatialQuery_CrossCHS"), "CROSS"),
