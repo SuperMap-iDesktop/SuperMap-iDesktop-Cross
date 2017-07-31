@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class ProcessTreeNodeBean {
 	private String iconPath;
 	private String key;
+	private String className;
 	private String name;
 
 	private static final Icon firstIcon = ProcessResources.getIcon("/processresources/Tree_Node1.png");
@@ -42,6 +43,14 @@ public class ProcessTreeNodeBean {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
 	}
 
 	public int getChildCount() {
