@@ -1,11 +1,13 @@
 package com.supermap.desktop.ui.lbs.ui;
 
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
+import com.supermap.desktop.lbs.HDFSDefine;
+import com.supermap.desktop.lbs.WebHDFS;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.lbs.WebHDFS;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;

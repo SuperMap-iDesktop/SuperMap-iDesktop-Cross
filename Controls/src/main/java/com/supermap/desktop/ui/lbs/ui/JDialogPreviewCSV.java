@@ -73,6 +73,8 @@ public class JDialogPreviewCSV extends SmDialog {
 	private String metaFile = null;
 
 	private boolean isMetaExists = false;
+	private String defaultSeparator = ",";
+	;
 
 	public JDialogPreviewCSV(String webURL, HDFSDefine hdfsDefine) {
 		this.webURL = webURL;
@@ -405,12 +407,27 @@ public class JDialogPreviewCSV extends SmDialog {
 
 		ArrayList<RowData> csvDatas = new ArrayList<>();
 		String[] split = csvFile.split("\n");
+		ArrayList<String> modelColumns = new ArrayList<>();
 		for (int i = 0; i < split.length - 1 && i <= DEFAULT_CSV_LENGTH; i++) {
+			modelColumns.clear();
 			String line = split[i];
 			line = line.split("\r")[0];
-			String[] columns = line.split("\",\"");
-			csvDatas.add(new RowData(columns));
+			String[] columns = line.split(defaultSeparator);
+			String columnTmp = "";
+			for (String column : columns) {
+				if (StringUtilities.isNullOrEmpty(columnTmp)) {
+					columnTmp = column;
+				} else {
+					columnTmp = columnTmp + defaultSeparator + column;
+				}
+				if (StringUtilities.isBracketComplete(columnTmp)) {
+					modelColumns.add(columnTmp);
+					columnTmp = "";
+				}
+			}
+			csvDatas.add(new RowData(modelColumns.toArray(new String[modelColumns.size()])));
 		}
+
 
 		tableModelPreviewCSV = new PreviewCSVTableModel(csvDatas);
 		tablePreviewCSV.setModel(tableModelPreviewCSV);
