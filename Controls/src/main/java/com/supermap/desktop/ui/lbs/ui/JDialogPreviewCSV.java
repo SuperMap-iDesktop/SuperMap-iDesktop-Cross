@@ -80,6 +80,7 @@ public class JDialogPreviewCSV extends SmDialog {
 			this.webURL += "/";
 		}
 		this.hdfsDefine = hdfsDefine;
+		this.setTitle(hdfsDefine.getName() + "");
 		init();
 		this.setSize(800, 600);
 		setLocationRelativeTo(null);
@@ -121,7 +122,7 @@ public class JDialogPreviewCSV extends SmDialog {
 		}
 
 		String[] storageTypes = {
-				"WKT", "XY"
+				"WKT", "XYColumn"
 		};
 		for (String storageType : storageTypes) {
 			comboBoxStorageType.addItem(storageType);
@@ -213,7 +214,7 @@ public class JDialogPreviewCSV extends SmDialog {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		try {
 			HttpResponse response = new DefaultHttpClient().execute(requestPut);
-			if (response == null || response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+			if (response == null || response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -431,20 +432,25 @@ public class JDialogPreviewCSV extends SmDialog {
 				checkBoxHasHeader.setSelected(hasHeader);
 
 				JSONArray fieldInfos = (JSONArray) jsonObject.get("FieldInfos");
-				for (int i = 0; i < fieldInfos.size(); i++) {
-					Object fieldInfo = fieldInfos.get(i);
-					String name = (String) ((JSONObject) fieldInfo).get("name");
-					String type = FieldTypeUtilities.getFieldTypeName((FieldType) Enum.parse(FieldType.class, (String) ((JSONObject) fieldInfo).get("type")));
-					rowDatas.add(new RowData(name, type));
-					tableModelPreviewCSV.setColumnName(i, name);
+				if (fieldInfos != null) {
+					for (int i = 0; i < fieldInfos.size(); i++) {
+						Object fieldInfo = fieldInfos.get(i);
+						String name = (String) ((JSONObject) fieldInfo).get("name");
+						String type = FieldTypeUtilities.getFieldTypeName((FieldType) Enum.parse(FieldType.class, (String) ((JSONObject) fieldInfo).get("type")));
+						rowDatas.add(new RowData(name, type));
+						tableModelPreviewCSV.setColumnName(i, name);
+					}
+					for (int i = fieldInfos.size(); i < tableModelPreviewCSV.getMaxColumnCount(); i++) {
+						rowDatas.add(new RowData(tableModelPreviewCSV.getColumnName(i), FieldTypeUtilities.getFieldTypeName(FieldType.TEXT)));
+					}
 				}
 			}
 			isMetaExists = true;
 		}
 		if (!isMetaExists) {
-			int columnCount = tablePreviewCSV.getColumnCount();
+			int columnCount = tableModelPreviewCSV.getMaxColumnCount();
 			for (int i = 0; i < columnCount; i++) {
-				rowDatas.add(new RowData(tablePreviewCSV.getColumnName(i), FieldTypeUtilities.getFieldTypeName(FieldType.TEXT)));
+				rowDatas.add(new RowData(tableModelPreviewCSV.getColumnName(i), FieldTypeUtilities.getFieldTypeName(FieldType.TEXT)));
 			}
 		}
 		tableModelField = new CSVFiledTableModel(rowDatas);
@@ -510,8 +516,8 @@ public class JDialogPreviewCSV extends SmDialog {
 		PreviewCSVTableModel(ArrayList<RowData> values) {
 			this.values = values;
 			if (values.size() > 0) {
-				RowData rowData = values.get(0);
-				for (int i = 0; i < rowData.getLength(); i++) {
+				int maxColumnCount = getMaxColumnCount();
+				for (int i = 0; i < maxColumnCount; i++) {
 					columnNames.add("column_" + (i + 1));
 				}
 			}
@@ -549,6 +555,17 @@ public class JDialogPreviewCSV extends SmDialog {
 				columnNames.set(columnIndex, columnName);
 			}
 			fireTableStructureChanged();
+		}
+
+
+		public int getMaxColumnCount() {
+			int maxCount = -1;
+			for (RowData value : values) {
+				if (value.getLength() > maxCount) {
+					maxCount = value.getLength();
+				}
+			}
+			return maxCount;
 		}
 	}
 
@@ -607,6 +624,9 @@ public class JDialogPreviewCSV extends SmDialog {
 		}
 
 		public String getValueAt(int index) {
+			if (index >= getLength()) {
+				return "";
+			}
 			String data = datas[index];
 			if (data.startsWith("\"")) {
 				data = data.substring(1);
