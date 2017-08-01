@@ -31,24 +31,24 @@ public class ProcessManager extends JPanel {
 	private Vector<IProcess> processes = new Vector<>();
 	public static final ProcessManager SINGLETON = new ProcessManager();
 
-    public ProcessManager() {
-        initComponents();
-        initLayout();
-        registerProcessLoader(DefaultProcessLoader.SINGLETON);
+	public ProcessManager() {
+		initComponents();
+		initLayout();
+		registerProcessLoader(DefaultProcessLoader.SINGLETON);
 
-    }
+	}
 
-    private void initComponents() {
-	    ProcessTreeNodeBean processGroup = initProcessGroup();
-	    this.processTree = new ProcessTree(new ProcessTreeNode(null, processGroup));
-        this.jScrollPane = new JScrollPane();
-        jScrollPane.setViewportView(processTree);
-    }
+	private void initComponents() {
+		ProcessTreeNodeBean processGroup = initProcessGroup();
+		this.processTree = new ProcessTree(new ProcessTreeNode(null, processGroup));
+		this.jScrollPane = new JScrollPane();
+		jScrollPane.setViewportView(processTree);
+	}
 
-    private void initLayout() {
-        this.setLayout(new GridBagLayout());
-        this.add(jScrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
-    }
+	private void initLayout() {
+		this.setLayout(new GridBagLayout());
+		this.add(jScrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+	}
 
 	private ProcessTreeNodeBean initProcessGroup() {
 		String processXmlPath = PathUtilities.getFullPathName(PROCESS_FILE_PATH, false);
@@ -72,14 +72,14 @@ public class ProcessManager extends JPanel {
 	}
 
 
-    public void registerProcessLoader(IProcessLoader loader) {
-        this.loaders.add(loader);
-        addProcesses(loader.loadProcesses());
-    }
+	public void registerProcessLoader(IProcessLoader loader) {
+		this.loaders.add(loader);
+//        addProcesses(loader.loadProcesses());
+	}
 
-    public void addProcesses(IProcess... processes) {
-        if (processes != null && processes.length > 0) {
-            Collections.addAll(this.processes, processes);
-        }
-    }
+	public void addProcesses(IProcess... processes) {
+		if (processes != null && processes.length > 0) {
+			Collections.addAll(this.processes, processes);
+		}
+	}
 }

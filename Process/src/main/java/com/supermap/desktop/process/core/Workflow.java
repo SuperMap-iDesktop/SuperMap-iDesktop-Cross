@@ -147,9 +147,9 @@ public class Workflow implements IWorkflow {
 		Element[] processNodes = XmlUtilities.getChildElementNodesByName(processesNode, "process");
 		for (int i = 0; i < processNodes.length; i++) {
 			Element processNode = processNodes[i];
-			String processKey = processNode.getAttribute("Key");
+			String className = processNode.getAttribute("className");
 			int serialID = Integer.valueOf(processNode.getAttribute("SerialID"));
-			IProcess process = WorkflowUtil.newProcess(processKey);
+			IProcess process = WorkflowUtil.newProcess(className);
 			process.setSerialID(serialID);
 			addProcess(process);
 		}

@@ -6,6 +6,7 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.events.StatusChangeEvent;
 import com.supermap.desktop.process.events.StatusChangeListener;
+import com.supermap.desktop.process.loader.DefaultProcessLoader;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
@@ -115,6 +116,11 @@ public abstract class AbstractProcess implements IProcess {
 			this.status = RunningStatus.NORMAL;
 			fireStatusChange(new StatusChangeEvent(this, RunningStatus.NORMAL, oldStatus));
 		}
+	}
+
+	@Override
+	public Class<DefaultProcessLoader> getLoader() {
+		return DefaultProcessLoader.class;
 	}
 
 	@Override
