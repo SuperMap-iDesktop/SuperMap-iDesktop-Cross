@@ -406,4 +406,8 @@ public class TabularTableModel extends AbstractTableModel {
 		this.isHiddenSystemField = isHiddenSystemField;
 		fireTableStructureChanged();
 	}
+
+	public int getModelColumn(int columnIndex) {
+		return getFieldIndex(columnIndex);
+	}
 }

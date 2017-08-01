@@ -108,6 +108,10 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 		this.setLayout(layout);
 	}
 
+	public void setTitleVisible(boolean isVisible) {
+		this.labelTitle.setVisible(isVisible);
+	}
+
 	public boolean cancel() {
 		return this.worker.cancel(false);
 	}

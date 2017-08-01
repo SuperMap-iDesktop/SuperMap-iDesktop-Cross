@@ -1,4 +1,4 @@
-package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.StatisticsField;
+package com.supermap.desktop.process.parameters.ParameterPanels.StatisticsField;
 
 import com.supermap.analyst.spatialstatistics.StatisticsType;
 import com.supermap.data.DatasetVector;
