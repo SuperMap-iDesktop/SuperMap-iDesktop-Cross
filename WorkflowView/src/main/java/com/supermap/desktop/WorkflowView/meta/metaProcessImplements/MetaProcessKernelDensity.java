@@ -19,7 +19,6 @@ import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServer
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
-
 import java.util.concurrent.CancellationException;
 
 
@@ -77,8 +76,6 @@ public class MetaProcessKernelDensity extends MetaProcess {
 				new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Yard"), "SquareYard"),
 				new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Mile"), "SquareMile")
 		);
-		ParameterCombine parameterCombineSetting = new ParameterCombine();
-		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_setParameter"));
 		ParameterCombine parameterCombineAlaysis = new ParameterCombine();
 		parameterCombineAlaysis.setDescribe(ProcessProperties.getString("String_AnalystSet"));
 		parameterCombineAlaysis.addParameters(parameterComboBoxAnalyseType,
@@ -91,13 +88,10 @@ public class MetaProcessKernelDensity extends MetaProcess {
 				parameterRadiusUnit,
 				parameterAreaUnit
 		);
-		parameterCombineSetting.addParameters(
-				parameterInputDataType,
-				parameterCombineAlaysis
-		);
 		parameters.setParameters(
 				parameterIServerLogin,
-				parameterCombineSetting
+				parameterInputDataType,
+				parameterCombineAlaysis
 		);
 		parameters.getOutputs().addData("KernelDensityResult", Type.UNKOWN);
 	}
@@ -121,10 +115,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 			CommonSettingCombine datasetInfo = new CommonSettingCombine("datasetInfo", "");
 			if(parameterInputDataType.parameterDataInputWay.getSelectedData().toString().equals("0")){
 				CommonSettingCombine filePath = new CommonSettingCombine("filePath",parameterInputDataType.parameterHDFSPath.getSelectedItem().toString());
-				CommonSettingCombine xIndex = new CommonSettingCombine("xIndex",parameterInputDataType.parameterTextFieldXIndex.getSelectedItem().toString());
-				CommonSettingCombine yIndex = new CommonSettingCombine("yIndex",parameterInputDataType.parameterTextFieldYIndex.getSelectedItem().toString());
-				CommonSettingCombine separator = new CommonSettingCombine("separator",parameterInputDataType.parameterTextFieldSeparator.getSelectedItem().toString());
-				input.add(filePath,xIndex,yIndex,separator);
+				input.add(filePath);
 			}else if(parameterInputDataType.parameterDataInputWay.getSelectedData().toString().equals("1")){
 				CommonSettingCombine type = new CommonSettingCombine("type",parameterInputDataType.parameterDataSouceType.getSelectedItem().toString());
 				CommonSettingCombine url = new CommonSettingCombine("url",parameterInputDataType.parameterDataSoucePath.getSelectedItem().toString());
@@ -151,14 +142,14 @@ public class MetaProcessKernelDensity extends MetaProcess {
 			CommonSettingCombine method = new CommonSettingCombine("method",(String) parameterComboBoxAnalyseType.getSelectedData());
 			CommonSettingCombine meshType = new CommonSettingCombine("meshType",(String) parameterComboBoxMeshType.getSelectedData());
 			CommonSettingCombine fields = new CommonSettingCombine("fields",(String) parameterIndex.getSelectedItem());
-			CommonSettingCombine bounds = new CommonSettingCombine("bounds",parameterBounds.getSelectedItem().toString());
-			CommonSettingCombine meshSize = new CommonSettingCombine("meshSize",parameterMeshSize.getSelectedItem().toString());
+			CommonSettingCombine query = new CommonSettingCombine("query",parameterBounds.getSelectedItem().toString());
+			CommonSettingCombine resolution = new CommonSettingCombine("resolution",parameterMeshSize.getSelectedItem().toString());
 			CommonSettingCombine meshSizeUnit = new CommonSettingCombine("meshSizeUnit",(String)parameterMeshSizeUnit.getSelectedData());
 			CommonSettingCombine radius = new CommonSettingCombine("radius",parameterRadius.getSelectedItem().toString());
 			CommonSettingCombine radiusUnit = new CommonSettingCombine("radiusUnit",(String)parameterRadiusUnit.getSelectedData());
 			CommonSettingCombine areaUnit = new CommonSettingCombine("areaUnit",(String)parameterAreaUnit.getSelectedData());
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
-			analyst.add(method,meshType,fields,bounds,meshSize,meshSizeUnit,radius,radiusUnit,areaUnit);
+			analyst.add(method,meshType,fields,query,resolution,meshSizeUnit,radius,radiusUnit,areaUnit);
 
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input, analyst);

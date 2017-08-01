@@ -31,7 +31,7 @@ import java.text.MessageFormat;
  */
 public class MetaProcessOverlayAnalyst extends MetaProcess {
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
-	private final static String OVERLAY_DATA = CommonProperties.getString("String_label_OverlayDataset");
+	private final static String OVERLAY_DATA = CommonProperties.getString("String_GroupBox_OverlayDataset");
 	private final static String OUTPUT_DATA = "OverlayResult";
 
 	private OverlayAnalystType analystType;
