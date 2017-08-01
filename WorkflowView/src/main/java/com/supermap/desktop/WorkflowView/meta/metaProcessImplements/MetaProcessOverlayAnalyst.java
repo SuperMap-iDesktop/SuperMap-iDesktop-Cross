@@ -2,7 +2,13 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
 import com.supermap.analyst.spatialanalyst.OverlayAnalystParameter;
-import com.supermap.data.*;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVectorInfo;
+import com.supermap.data.Datasource;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -15,9 +21,16 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterFieldSetDialog;
+import com.supermap.desktop.process.parameter.ipls.ParameterLabel;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.OverlayAnalystType;
 
@@ -31,7 +44,7 @@ import java.text.MessageFormat;
  */
 public class MetaProcessOverlayAnalyst extends MetaProcess {
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
-	private final static String OVERLAY_DATA = CommonProperties.getString("String_label_OverlayDataset");
+	private final static String OVERLAY_DATA = CommonProperties.getString("String_GroupBox_OverlayDataset");
 	private final static String OUTPUT_DATA = "OverlayResult";
 
 	private OverlayAnalystType analystType;
@@ -133,8 +146,8 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	}
 
 	private void initParameterStates() {
-		String resultName = this.analystType.defaultResultName();
-		parameterSaveDataset.setSelectedItem(resultName);
+
+
 		if (this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE) {
 			parameterSourceDataset.setDatasetTypes(DatasetType.REGION);
 		} else {
@@ -146,7 +159,18 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 			parameterSourceDataset.setSelectedItem(datasetVector);
 			parameterOverlayDatasource.setSelectedItem(datasetVector.getDatasource());
 			parameterOverlayDataset.setSelectedItem(datasetVector);
-			parameterResultDatasource.setSelectedItem(datasetVector.getDatasource());
+			if (!datasetVector.getDatasource().isReadOnly()) {
+				parameterResultDatasource.setSelectedItem(datasetVector.getDatasource());
+			} else {
+				Datasource defaultResultDatasource = DatasourceUtilities.getDefaultResultDatasource();
+				parameterResultDatasource.setSelectedItem(defaultResultDatasource);
+			}
+			String resultName = this.analystType.defaultResultName();
+			Datasource datasource = parameterResultDatasource.getSelectedItem();
+			if (datasource != null) {
+				resultName = datasource.getDatasets().getAvailableDatasetName(resultName);
+			}
+			parameterSaveDataset.setSelectedItem(resultName);
 			if ((this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE) && datasetVector.getType() == DatasetType.REGION) {
 				parameterTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance(datasetVector).getNodeSnap());
 				parameterUnit.setDescribe(LengthUnit.convertForm(datasetVector.getPrjCoordSys().getCoordUnit()).toString());

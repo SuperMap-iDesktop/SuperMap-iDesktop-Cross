@@ -19,7 +19,6 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
-import net.sf.image4j.codec.bmp.BMPDecoder;
 import net.sf.image4j.codec.ico.ICODecoder;
 
 import javax.imageio.ImageIO;
@@ -449,10 +448,12 @@ public abstract class SymbolDialog extends SmDialog {
 					if (file.getPath().endsWith("ico") || file.getPath().endsWith("ICO")) {
 						ArrayList<BufferedImage> images = (ArrayList<BufferedImage>) ICODecoder.read(file);
 						for (int i = 0; i < images.size(); i++) {
-							importIcon(images.get(i), file, fileName);
+							if (images.get(i).getHeight() == 32) {
+								//只导入一个高为32的图标
+								importIcon(images.get(i), file, fileName);
+								break;
+							}
 						}
-					} else if (file.getPath().endsWith("bmp") || file.getPath().endsWith("BMP")) {
-						importIcon(BMPDecoder.read(file), file, fileName);
 					} else {
 						FileInputStream stream = new FileInputStream(file);
 						importIcon(ImageIO.read(stream), file, fileName);

@@ -78,6 +78,10 @@ public class SmFileChoose extends JFileChooser {
 	 */
 
 	public static Document getDocumentFileChoose() {
+		File parentFile = new File(PathUtilities.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFileParent"), true));
+		if (!parentFile.exists()) {
+			parentFile.mkdir();
+		}
 		File file = new File(PathUtilities.getFullPathName(ControlsProperties.getString("SmFileChooseXMLFilePath"), true));
 		if (!file.exists()) {
 			try {

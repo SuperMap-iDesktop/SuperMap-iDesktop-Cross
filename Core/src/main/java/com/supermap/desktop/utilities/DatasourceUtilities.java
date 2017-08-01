@@ -5,6 +5,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceConnectionInfo;
+import com.supermap.data.Datasources;
 import com.supermap.data.EngineInfo;
 import com.supermap.data.EngineType;
 import com.supermap.data.ErrorInfo;
@@ -523,5 +524,23 @@ public class DatasourceUtilities {
 			}
 		}
 		return result;
+	}
+
+	public static Datasource getDefaultResultDatasource() {
+		Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
+		if (activeDatasources != null) {
+			for (Datasource activeDatasource : activeDatasources) {
+				if (!activeDatasource.isReadOnly()) {
+					return activeDatasource;
+				}
+			}
+		}
+		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+		for (int i = 0; i < datasources.getCount(); i++) {
+			if (!datasources.get(i).isReadOnly()) {
+				return datasources.get(i);
+			}
+		}
+		return null;
 	}
 }

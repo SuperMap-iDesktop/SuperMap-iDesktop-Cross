@@ -5,7 +5,6 @@ import com.supermap.data.StatisticMode;
 import com.supermap.desktop.event.TabularValueChangedListener;
 
 import javax.swing.*;
-import java.util.List;
 
 public interface IFormTabular extends IForm {
 
@@ -137,4 +136,6 @@ public interface IFormTabular extends IForm {
 	boolean getHiddenSystemField();
 
 	void setHiddenSystemField(boolean hiddenSystemField);
+
+	int getModelColumn(int columnIndex);
 }

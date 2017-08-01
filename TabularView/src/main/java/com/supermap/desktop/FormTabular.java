@@ -1041,4 +1041,9 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	public void setHiddenSystemField(boolean hiddenSystemField) {
 		tabularTableModel.setHiddenSystemField(hiddenSystemField);
 	}
+
+	@Override
+	public int getModelColumn(int columnIndex) {
+		return tabularTableModel.getModelColumn(columnIndex);
+	}
 }

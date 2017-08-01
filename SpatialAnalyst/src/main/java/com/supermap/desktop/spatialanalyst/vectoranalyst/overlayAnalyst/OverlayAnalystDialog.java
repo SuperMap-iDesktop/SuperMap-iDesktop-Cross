@@ -11,6 +11,7 @@ import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.FieldsSetDialog;
 import com.supermap.desktop.ui.SMFormattedTextField;
@@ -568,13 +569,13 @@ public class OverlayAnalystDialog extends SmDialog {
 	 */
 	private void addListItem() {
 		DefaultListModel<Object> listModel = new DefaultListModel<Object>();
-		listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Clip") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Clip.png"))));
-		listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Union") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Union.png"))));
-		listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Erase") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Erase.png"))));
-		listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Intersect") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Intersect.png"))));
-		listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Identity") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Identity.png"))));
-		listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_XOR") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_XOR.png"))));
-		listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Update") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Update.png"))));
+		listModel.addElement(new DataCell(CoreProperties.getString("String_OverlayAnalystMethod_Clip") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Clip.png"))));
+		listModel.addElement(new DataCell(CoreProperties.getString("String_OverlayAnalystMethod_Union") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Union.png"))));
+		listModel.addElement(new DataCell(CoreProperties.getString("String_OverlayAnalystMethod_Erase") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Erase.png"))));
+		listModel.addElement(new DataCell(CoreProperties.getString("String_OverlayAnalystMethod_Intersect") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Intersect.png"))));
+		listModel.addElement(new DataCell(CoreProperties.getString("String_OverlayAnalystMethod_Identity") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Identity.png"))));
+		listModel.addElement(new DataCell(CoreProperties.getString("String_OverlayAnalystMethod_XOR") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_XOR.png"))));
+		listModel.addElement(new DataCell(CoreProperties.getString("String_OverlayAnalystMethod_Update") + "  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Update.png"))));
 		this.listOverlayAnalystType.setModel(listModel);
 		this.listOverlayAnalystType.setSelectedIndex(0);
 		this.listOverlayAnalystType.setCellRenderer(new CommonListCellRenderer());
