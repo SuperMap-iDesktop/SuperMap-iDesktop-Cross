@@ -1,6 +1,8 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -26,21 +28,17 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 import java.util.concurrent.CancellationException;
 
 /**
- * 单对象叠加
+ * 矢量裁剪分析
  *
  * @author XiaJT
  */
 public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 	private ParameterIServerLogin parameterIServerLogin = new ParameterIServerLogin();
-	private ParameterBigDatasourceDatasource parameterSourceDatasource;
-	private ParameterSingleDataset parameterSourceDataset;
-
+	ParameterInputDataType parameterInputDataType = new ParameterInputDataType();
 	private ParameterBigDatasourceDatasource parameterOverlayDatasource;
 	private ParameterSingleDataset parameterOverlayDataset;
-
 	private ParameterComboBox parameterOverlayTypeComboBox;
-
 
 	public MetaProcessOverlayanalystgeo() {
 		initComponents();
@@ -50,38 +48,25 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 	}
 
 	private void initComponents() {
-		parameterSourceDatasource = new ParameterBigDatasourceDatasource();
-		parameterSourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		parameterSourceDataset = new ParameterSingleDataset();
-		parameterSourceDataset.setDescribe(CommonProperties.getString("String_Label_SourceDataset"));
 		parameterOverlayDatasource = new ParameterBigDatasourceDatasource();
-		parameterOverlayDatasource.setDescribe(ProcessProperties.getString("String_overlayDatasource"));
-		parameterOverlayDataset = new ParameterSingleDataset();
-		parameterOverlayDataset.setDescribe(ProcessProperties.getString("String_overlayDataset"));
+		parameterOverlayDatasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
+		parameterOverlayDataset = new ParameterSingleDataset(DatasetType.REGION);
+		parameterOverlayDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 
 		parameterOverlayTypeComboBox = new ParameterComboBox(CoreProperties.getString("String_OverlayAnalystType"));
 		parameterOverlayTypeComboBox.setItems(
-				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_Clip"), "clip"),
-				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_Iserver_Intersect"), "interset"),
-				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_Erase"), "erase"),
-				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_Union"), "union"),
-				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_XOR"), "xor"),
-				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_Update"), "update"),
-				new ParameterDataNode(CoreProperties.getString("String_OverlayAnalystMethod_Identity"), "identity")
+				new ParameterDataNode(CoreProperties.getString("String_Clip"), "clip"),
+				new ParameterDataNode(CoreProperties.getString("String_Intersect"), "intersect")
 		);
 
-		ParameterCombine parameterCombineSource = new ParameterCombine();
-		parameterCombineSource.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
-		parameterCombineSource.addParameters(parameterSourceDatasource, parameterSourceDataset);
 		ParameterCombine parameterCombineOverlay = new ParameterCombine();
-		parameterCombineOverlay.setDescribe(CommonProperties.getString("String_GroupBox_OverlayDataset"));
+		parameterCombineOverlay.setDescribe(CommonProperties.getString("String_clipDataset"));
 		parameterCombineOverlay.addParameters(parameterOverlayDatasource, parameterOverlayDataset);
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
-		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_setParameter"));
+		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_AnalystSet"));
 		parameterCombineSetting.addParameters(parameterOverlayTypeComboBox);
 
-		parameters.addParameters(parameterIServerLogin, parameterCombineSource, parameterCombineOverlay, parameterCombineSetting);
-		parameters.addInputParameters("source", Type.UNKOWN, parameterCombineSource);// 缺少对应的类型
+		parameters.addParameters(parameterIServerLogin, parameterInputDataType, parameterCombineOverlay, parameterCombineSetting);
 		parameters.addInputParameters("overlay", Type.UNKOWN, parameterCombineOverlay);// 缺少对应的类型
 		parameters.addOutputParameters("OverlayResult", BasicTypes.STRING, null);
 	}
@@ -89,9 +74,6 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 	private void initComponentState() {
 		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
 		if (defaultBigDataStoreDataset != null) {
-			parameterSourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
-			parameterSourceDataset.setSelectedItem(defaultBigDataStoreDataset);
-
 			parameterOverlayDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterOverlayDataset.setSelectedItem(defaultBigDataStoreDataset);
 
@@ -99,13 +81,9 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 	}
 
 	private void initConstraint() {
-		EqualDatasourceConstraint equalSourceDatasource = new EqualDatasourceConstraint();
-		equalSourceDatasource.constrained(parameterSourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalSourceDatasource.constrained(parameterSourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-
 		EqualDatasourceConstraint equalOverlayDatasource = new EqualDatasourceConstraint();
 		equalOverlayDatasource.constrained(parameterOverlayDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalOverlayDatasource.constrained(parameterSourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalOverlayDatasource.constrained(parameterOverlayDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void initListener() {
@@ -122,15 +100,37 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
-			Dataset sourceDataset = parameterSourceDataset.getSelectedDataset();
-			Dataset overlayDataset = parameterOverlayDataset.getSelectedDataset();
-			String overlayType = (String) parameterOverlayTypeComboBox.getSelectedData();
-			CommonSettingCombine datasetSource = new CommonSettingCombine("datasetSource", sourceDataset.getName());
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
-			input.add(datasetSource);
-
+			CommonSettingCombine datasetInfo = new CommonSettingCombine("datasetInfo", "");
+			if(parameterInputDataType.parameterDataInputWay.getSelectedData().toString().equals("0")){
+				CommonSettingCombine filePath = new CommonSettingCombine("filePath",parameterInputDataType.parameterHDFSPath.getSelectedItem().toString());
+				input.add(filePath);
+			}else if(parameterInputDataType.parameterDataInputWay.getSelectedData().toString().equals("1")){
+				CommonSettingCombine type = new CommonSettingCombine("type",parameterInputDataType.parameterDataSouceType.getSelectedItem().toString());
+				CommonSettingCombine url = new CommonSettingCombine("url",parameterInputDataType.parameterDataSoucePath.getSelectedItem().toString());
+				CommonSettingCombine datasetName = new CommonSettingCombine("datasetName",parameterInputDataType.parameterDatasetName.getSelectedItem().toString());
+				CommonSettingCombine datasetType = new CommonSettingCombine("datasetType",(String) parameterInputDataType.parameterDatasetType.getSelectedData());
+				CommonSettingCombine numSlices = new CommonSettingCombine("numSlices",parameterInputDataType.parameterSpark.getSelectedItem().toString());
+				datasetInfo.add(type,url,datasetName,datasetType);
+				input.add(datasetInfo,numSlices);
+			}else{
+				Dataset sourceDataset = parameterInputDataType.parameterSourceDataset.getSelectedDataset();
+				CommonSettingCombine dataSourceName = new CommonSettingCombine("dataSourceName",((Datasource)parameterInputDataType.parameterSourceDatasource.getSelectedItem()).getAlias());
+				CommonSettingCombine name = new CommonSettingCombine("name",sourceDataset.getName());
+				CommonSettingCombine type = new CommonSettingCombine("type",(String) parameterInputDataType.parameterDatasetType1.getSelectedData());
+				CommonSettingCombine engineType = new CommonSettingCombine("engineType",parameterInputDataType.parameterEngineType.getSelectedItem().toString());
+				CommonSettingCombine server = new CommonSettingCombine("server",parameterInputDataType.parameterTextFieldAddress.getSelectedItem().toString());
+				CommonSettingCombine dataBase = new CommonSettingCombine("dataBase",parameterInputDataType.parameterDataBaseName.getSelectedItem().toString());
+				CommonSettingCombine user = new CommonSettingCombine("user",parameterInputDataType.parameterTextFieldUserName.getSelectedItem().toString());
+				CommonSettingCombine password = new CommonSettingCombine("password",parameterInputDataType.parameterTextFieldPassword.getSelectedItem().toString());
+				CommonSettingCombine datasourceConnectionInfo = new CommonSettingCombine("datasourceConnectionInfo", "");
+				datasourceConnectionInfo.add(engineType,server,dataBase,user,password);
+				datasetInfo.add(type,name,dataSourceName,datasourceConnectionInfo);
+				input.add(datasetInfo);
+			}
+			Dataset overlayDataset = parameterOverlayDataset.getSelectedDataset();
 			CommonSettingCombine datasetOverlay = new CommonSettingCombine("datasetOverlay", overlayDataset.getName());
-			CommonSettingCombine mode = new CommonSettingCombine("mode", overlayType);
+			CommonSettingCombine mode = new CommonSettingCombine("mode", (String)parameterOverlayTypeComboBox.getSelectedData());
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
 			analyst.add(datasetOverlay, mode);
 

@@ -1,5 +1,7 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -25,10 +27,7 @@ import java.util.concurrent.CancellationException;
  */
 public class MetaProcessGridRegionAggregation extends MetaProcess {
 	private ParameterIServerLogin parameterIServerLogin = new ParameterIServerLogin();
-	private ParameterHDFSPath parameterHDFSPath = new ParameterHDFSPath();
-	private ParameterTextField parameterTextFieldXIndex = new ParameterTextField(ProcessProperties.getString("String_XIndex"));
-	private ParameterTextField parameterTextFieldYIndex = new ParameterTextField(ProcessProperties.getString("String_YIndex"));
-	private ParameterTextField parameterTextFieldSeparator = new ParameterTextField(ProcessProperties.getString("String_Separator"));
+	ParameterInputDataType parameterInputDataType = new ParameterInputDataType();
 	private ParameterComboBox parameterAggregationType = new ParameterComboBox().setDescribe(ProcessProperties.getString("String_AggregationType"));
 	private ParameterComboBox parameterMeshType = new ParameterComboBox(ProcessProperties.getString("String_MeshType"));
 	private ParameterTextField parameterBounds = new ParameterTextField().setDescribe(ProcessProperties.getString("String_AnalystBounds"));
@@ -42,12 +41,6 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 	}
 
 	private void initParameters() {
-		parameterHDFSPath.setSelectedItem("hdfs://192.168.20.189:9000/data/newyork_taxi_2013-01_14k.csv");
-		parameterTextFieldXIndex.setSelectedItem("10");
-		parameterTextFieldYIndex.setSelectedItem("11");
-		parameterTextFieldSeparator.setSelectedItem(",");
-		parameterTextFieldSeparator.setEnabled(false);
-
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_GridRegionAggregationType"), "SUMMARYMESH");
 		parameterAggregationType.setItems(parameterDataNode);
 		parameterAggregationType.setSelectedItem(parameterDataNode);
@@ -58,17 +51,13 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 		parameterBounds.setSelectedItem("-74.050,40.650,-73.850,40.850");
 		parameterResolution.setSelectedItem("0.001");
 		parameterStaticModel.setSelectedItem("max");
-		parameterWeightIndex.setSelectedItem("7");
+		parameterWeightIndex.setSelectedItem("col7");
 	}
 
 	private void initComponentLayout() {
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
-		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_setParameter"));
+		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_AnalystSet"));
 		parameterCombineSetting.addParameters(
-				parameterHDFSPath,
-				parameterTextFieldXIndex,
-				parameterTextFieldYIndex,
-				parameterTextFieldSeparator,
 				parameterAggregationType,
 				parameterMeshType,
 				parameterBounds,
@@ -77,6 +66,7 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 				parameterWeightIndex);
 		parameters.setParameters(
 				parameterIServerLogin,
+				parameterInputDataType,
 				parameterCombineSetting
 		);
 		parameters.getOutputs().addData("GridRegionAggregationResult", Type.UNKOWN);
@@ -98,13 +88,34 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
-			CommonSettingCombine filePath = new CommonSettingCombine("filePath", parameterHDFSPath.getSelectedItem().toString());
-			CommonSettingCombine xIndex = new CommonSettingCombine("xIndex", parameterTextFieldXIndex.getSelectedItem().toString());
-			CommonSettingCombine yIndex = new CommonSettingCombine("yIndex", parameterTextFieldYIndex.getSelectedItem().toString());
-			CommonSettingCombine separator = new CommonSettingCombine("separator", parameterTextFieldSeparator.getSelectedItem().toString());
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
-			input.add(filePath, xIndex, yIndex, separator);
-
+			CommonSettingCombine datasetInfo = new CommonSettingCombine("datasetInfo", "");
+			if(parameterInputDataType.parameterDataInputWay.getSelectedData().toString().equals("0")){
+				CommonSettingCombine filePath = new CommonSettingCombine("filePath",parameterInputDataType.parameterHDFSPath.getSelectedItem().toString());
+				input.add(filePath);
+			}else if(parameterInputDataType.parameterDataInputWay.getSelectedData().toString().equals("1")){
+				CommonSettingCombine type = new CommonSettingCombine("type",parameterInputDataType.parameterDataSouceType.getSelectedItem().toString());
+				CommonSettingCombine url = new CommonSettingCombine("url",parameterInputDataType.parameterDataSoucePath.getSelectedItem().toString());
+				CommonSettingCombine datasetName = new CommonSettingCombine("datasetName",parameterInputDataType.parameterDatasetName.getSelectedItem().toString());
+				CommonSettingCombine datasetType = new CommonSettingCombine("datasetType",(String) parameterInputDataType.parameterDatasetType.getSelectedData());
+				CommonSettingCombine numSlices = new CommonSettingCombine("numSlices",parameterInputDataType.parameterSpark.getSelectedItem().toString());
+				datasetInfo.add(type,url,datasetName,datasetType);
+				input.add(datasetInfo,numSlices);
+			}else{
+				Dataset sourceDataset = parameterInputDataType.parameterSourceDataset.getSelectedDataset();
+				CommonSettingCombine dataSourceName = new CommonSettingCombine("dataSourceName",((Datasource)parameterInputDataType.parameterSourceDatasource.getSelectedItem()).getAlias());
+				CommonSettingCombine name = new CommonSettingCombine("name",sourceDataset.getName());
+				CommonSettingCombine type = new CommonSettingCombine("type",(String) parameterInputDataType.parameterDatasetType1.getSelectedData());
+				CommonSettingCombine engineType = new CommonSettingCombine("engineType",parameterInputDataType.parameterEngineType.getSelectedItem().toString());
+				CommonSettingCombine server = new CommonSettingCombine("server",parameterInputDataType.parameterTextFieldAddress.getSelectedItem().toString());
+				CommonSettingCombine dataBase = new CommonSettingCombine("dataBase",parameterInputDataType.parameterDataBaseName.getSelectedItem().toString());
+				CommonSettingCombine user = new CommonSettingCombine("user",parameterInputDataType.parameterTextFieldUserName.getSelectedItem().toString());
+				CommonSettingCombine password = new CommonSettingCombine("password",parameterInputDataType.parameterTextFieldPassword.getSelectedItem().toString());
+				CommonSettingCombine datasourceConnectionInfo = new CommonSettingCombine("datasourceConnectionInfo", "");
+				datasourceConnectionInfo.add(engineType,server,dataBase,user,password);
+				datasetInfo.add(type,name,dataSourceName,datasourceConnectionInfo);
+				input.add(datasetInfo);
+			}
 			CommonSettingCombine fields = new CommonSettingCombine("fields", parameterWeightIndex.getSelectedItem().toString());
 			CommonSettingCombine statisticModes = new CommonSettingCombine("statisticModes", parameterStaticModel.getSelectedItem().toString());
 			CommonSettingCombine query = new CommonSettingCombine("query", parameterBounds.getSelectedItem().toString());
