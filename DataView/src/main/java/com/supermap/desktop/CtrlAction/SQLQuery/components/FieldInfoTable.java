@@ -1,10 +1,17 @@
 package com.supermap.desktop.CtrlAction.SQLQuery.components;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.FieldType;
+import com.supermap.data.JoinItems;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.SortTable.SortTable;
+import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
@@ -20,7 +27,7 @@ import java.util.LinkedHashMap;
  *
  * @author xiajt
  */
-public class FieldInfoTable extends SortTable {
+public class FieldInfoTable extends SmSortTable {
 
 
 	private Dataset dataset;
@@ -61,7 +68,7 @@ public class FieldInfoTable extends SortTable {
 	}
 
 	public Object[] getAllValue() {
-		int selectedRow = this.getSelectedRow();
+		int selectedRow = this.getSelectedModelRow();
 		if (selectedRow == -1 || selectedRow == 0) {
 			return null;
 		} else {
