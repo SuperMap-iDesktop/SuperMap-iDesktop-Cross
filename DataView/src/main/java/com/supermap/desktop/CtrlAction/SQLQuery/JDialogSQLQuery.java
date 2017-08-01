@@ -811,6 +811,7 @@ public class JDialogSQLQuery extends SmDialog {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			int row = tableFieldInfo.rowAtPoint(e.getPoint());
+			row = tableFieldInfo.convertRowIndexToModel(row);
 			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 				if (row == 0) {
 					if (lastComponent == textareaQueryField) {
@@ -819,21 +820,7 @@ public class JDialogSQLQuery extends SmDialog {
 						// doNothing 当选中行为0时只有查询字段可以添加，所以2个if语句不能合并
 					}
 				}
-//				else if (row == tableFieldInfo.getRowCount() - 1) {
-//					JDialogJoinItems jDialogJoinItem = new JDialogJoinItems(joinItems);
-//					jDialogJoinItem.setCurrentDataset(currentDataset);
-//					if (jDialogJoinItem.showDialog() == DialogResult.OK) {
-//						// 先设值再释放资源
-//						JoinItems joinItems = JDialogSQLQuery.this.joinItems;
-//						JDialogSQLQuery.this.joinItems = jDialogJoinItem.getJoinItems();
-//						tableFieldInfo.setJoinItem(JDialogSQLQuery.this.joinItems);
-//						joinItems.dispose();
-//					}
-//				}
 				else if (row != -1) {
-//					lastComponent.push(tableFieldInfo.getValueAt(row, 1).toString(), ADD_FUNCTION_OR_FIELD);
-//					lastComponent.push(tableFieldInfo.getSqlValueAt(row, 1), ADD_FUNCTION_OR_FIELD);
-
                     if (lastComponent.equals(textareaQueryCondition)) {
                         lastComponent.push(tableFieldInfo.getSqlValueAt(row, 1), ADD_DIRECT);
                     } else {
