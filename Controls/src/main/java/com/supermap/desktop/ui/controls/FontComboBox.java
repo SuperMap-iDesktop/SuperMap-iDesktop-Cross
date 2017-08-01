@@ -1,17 +1,24 @@
 package com.supermap.desktop.ui.controls;
 
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
+
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * 字体下拉列表
- * 
- * @author xuzw
  *
+ * @author xuzw
  */
 public class FontComboBox extends JComboBox {
 
 	private static final long serialVersionUID = 1L;
+	private static final String[] LINUX_SUPPORT_FONT_NAME = new String[]{
+			"arial", "ARIALUNI", "cour", "estre", "framd", "gautami", "georgia", "gulim", "impact", "l_10546",
+			"mingliu", "msgothic", "msmincho", "MSYH", "mvboli", "nina", "raavi", "segoe", "shruti", "smfang",
+			"simhei", "simkai", "SIMLI", "simsun", "SIMYOU", "SuperMap 500 Symbols1", "SuperMap 500 Symbols2", "Supermap Animal Symbol", "SuperMap Personage Symbol", "SuperMap Plant Symbol",
+			"SuperMap Sports Symbol", "SuperMap Symbol", "SuperMap Tools Symbol", "SuperMap Traffic Symbol", "sylfaen", "tahoma", "times", "tunga", "verdana", "WenQuanyi Micro Hei"
+	};
 
 	public FontComboBox() {
 		super();
@@ -19,12 +26,19 @@ public class FontComboBox extends JComboBox {
 		cellRenderer.setPreferredSize(new Dimension(60, 22));
 		this.setRenderer(cellRenderer);
 
-		Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
-		for (int i = 0; i < fonts.length; i++) {
-			if (!fonts[i].getName().contains("Bold")) {
-				this.addItem(fonts[i].getName());
+		if (SystemPropertyUtilities.isWindows()) {
+			Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+			for (int i = 0; i < fonts.length; i++) {
+				if (!fonts[i].getName().contains("Bold")) {
+					this.addItem(fonts[i].getName());
+				}
+			}
+		} else {
+			for (String fontName : LINUX_SUPPORT_FONT_NAME) {
+				this.addItem(fontName);
 			}
 		}
+
 	}
 }
 
