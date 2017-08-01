@@ -1,14 +1,14 @@
-package com.supermap.desktop.WorkflowView.parameters;
+package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.data.DatasetVector;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.StatisticsField.ParameterStatisticsField;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.StatisticsField.StatisticsFieldPanel;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.ParameterUpdateValueEvent;
 import com.supermap.desktop.process.parameter.events.UpdateValueListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
+import com.supermap.desktop.process.parameters.ParameterPanels.StatisticsField.ParameterStatisticsField;
+import com.supermap.desktop.process.parameters.ParameterPanels.StatisticsField.StatisticsFieldPanel;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;

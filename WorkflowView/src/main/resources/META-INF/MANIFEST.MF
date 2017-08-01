@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1501323929785
+Bnd-LastModified: 1501552843790
 Build-Jdk: 1.7.0_80
-Built-By: highsad
+Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.WorkflowView.WorkflowViewActivato
  r
 Bundle-ManifestVersion: 2

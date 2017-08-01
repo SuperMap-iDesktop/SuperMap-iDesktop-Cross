@@ -1,4 +1,4 @@
-package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.StatisticsField;
+package com.supermap.desktop.process.parameters.ParameterPanels.StatisticsField;
 
 import com.supermap.analyst.spatialstatistics.StatisticsType;
 import com.supermap.data.DatasetVector;
@@ -31,8 +31,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import static com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.StatisticsField.StatisticsFieldTableModel.COLUMN_FIELDTYPE;
-import static com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.StatisticsField.StatisticsFieldTableModel.COLUMN_STATISTICSTYPE;
+import static com.supermap.desktop.process.parameters.ParameterPanels.StatisticsField.StatisticsFieldTableModel.COLUMN_FIELDTYPE;
+import static com.supermap.desktop.process.parameters.ParameterPanels.StatisticsField.StatisticsFieldTableModel.COLUMN_STATISTICSTYPE;
 
 /**
  * Created by hanyz on 2017/5/3.
@@ -377,7 +377,11 @@ public class StatisticsFieldPanel extends JPanel {
 		buttonAddNew.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				tableModel.addRow(new StatisticsFieldInfo(dataset.getAvailableFieldName("NewField"), FieldType.TEXT, StatisticsType.FIRST));
+				String fieldName = "NewField";
+				if (dataset != null) {
+					fieldName = dataset.getAvailableFieldName(fieldName);
+				}
+				tableModel.addRow(new StatisticsFieldInfo(fieldName, FieldType.TEXT, StatisticsType.FIRST));
 				// 当手动添加了新条目，才设置最后一行可编辑-yuanR 2017.7.12
 				// todo 修改整个table可修改
 				tableModel.setColumnFieldTypeEditable(true);
