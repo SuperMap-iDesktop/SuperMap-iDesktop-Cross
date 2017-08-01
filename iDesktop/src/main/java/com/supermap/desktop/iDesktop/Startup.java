@@ -12,6 +12,7 @@ import java.util.Collections;
 public class Startup {
 	public static void main(String[] args) {
 		try {
+
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 //			UIManager.setLookAndFeel(new NimbusLookAndFeel());
 //			UIManager.setLookAndFeel(UIManager.get);
@@ -26,8 +27,10 @@ public class Startup {
 			Collections.addAll(jsonArray, args);
 			System.setProperty("DesktopCrossStartArgs", jsonArray.toJSONString());
 			Main.main(new String[0]);
+			System.exit(-1);
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 }
