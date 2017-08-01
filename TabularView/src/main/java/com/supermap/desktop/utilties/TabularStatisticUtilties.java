@@ -123,6 +123,7 @@ public class TabularStatisticUtilties {
 			((JTextField) smStatusbar.get(FIELD_NAME)).setText("");
 		} else {
 			int columnIndex = formTabular.getSelectedColumns()[0];
+			columnIndex = formTabular.getModelColumn(columnIndex);
 			((JLabel) smStatusbar.get(SELECTED_NUMBER)).setText(MessageFormat.format(TabularViewProperties.getString("String_Record_Count"), formTabular.getSelectedRows().length, formTabular.getRowCount()));
 			((JTextField) smStatusbar.get(FIELD_TYPE)).setText(formTabular.getSelectColumnType(columnIndex));
 			((JTextField) smStatusbar.get(FIELD_NAME)).setText(formTabular.getSelectColumnName(columnIndex));
