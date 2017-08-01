@@ -19,7 +19,6 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
-import net.sf.image4j.codec.bmp.BMPDecoder;
 import net.sf.image4j.codec.ico.ICODecoder;
 
 import javax.imageio.ImageIO;
@@ -451,8 +450,6 @@ public abstract class SymbolDialog extends SmDialog {
 						for (int i = 0; i < images.size(); i++) {
 							importIcon(images.get(i), file, fileName);
 						}
-					} else if (file.getPath().endsWith("bmp") || file.getPath().endsWith("BMP")) {
-						importIcon(BMPDecoder.read(file), file, fileName);
 					} else {
 						FileInputStream stream = new FileInputStream(file);
 						importIcon(ImageIO.read(stream), file, fileName);
