@@ -47,7 +47,7 @@ public class ParameterHDFSPathPanel extends SwingPanel {
 		textFieldFileInputPath.setPreferredSize(new Dimension(20, 23));
 		this.buttonInputBrowser = new JButton();
 		this.buttonInputBrowser.setText(ProcessProperties.getString("String_Browser"));
-		this.labelFileInputPath.setText(ProcessProperties.getString("String_FileInputPath"));
+		this.labelFileInputPath.setText(ProcessProperties.getString("label_ChooseFile"));
 		this.labelFileInputPath.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
 		panel.setLayout(new GridBagLayout());
 		panel.add(this.labelFileInputPath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));

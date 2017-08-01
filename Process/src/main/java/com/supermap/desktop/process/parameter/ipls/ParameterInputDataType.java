@@ -1,13 +1,13 @@
 package com.supermap.desktop.process.parameter.ipls;
 
+import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
-import com.supermap.data.Datasources;
-import com.supermap.data.EngineType;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilities.DatasetUtilities;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -16,9 +16,6 @@ import java.beans.PropertyChangeListener;
  */
 public class ParameterInputDataType extends ParameterCombine {
 	public ParameterComboBox parameterDataInputWay = new ParameterComboBox(ProcessProperties.getString("String_DataInputWay"));
-	public ParameterTextField parameterTextFieldXIndex = new ParameterTextField(ProcessProperties.getString("String_XIndex"));
-	public ParameterTextField parameterTextFieldYIndex = new ParameterTextField(ProcessProperties.getString("String_YIndex"));
-	public ParameterTextField parameterTextFieldSeparator = new ParameterTextField(ProcessProperties.getString("String_Separator"));
 	public ParameterHDFSPath parameterHDFSPath = new ParameterHDFSPath();
 
 	public ParameterTextField parameterDataSouceType = new ParameterTextField(ProcessProperties.getString("String_DataSourceType"));
@@ -38,25 +35,18 @@ public class ParameterInputDataType extends ParameterCombine {
 
 	public ParameterInputDataType() {
 		super();
+		initComponents();
 		initParameterState();
 		initConstraint();
-
 	}
 
-	private void initParameterState() {
+	private void initComponents() {
 		parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_CSVFile"), "0"),
 				new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PGDataBase"), "2"));
 		//csv文件
-		parameterTextFieldXIndex.setSelectedItem("10");
-		parameterTextFieldYIndex.setSelectedItem("11");
-		parameterTextFieldSeparator.setSelectedItem(",");
-		parameterTextFieldSeparator.setEnabled(false);
 		parameterHDFSPath.setSelectedItem("hdfs://192.168.20.189:9000/data/newyork_taxi_2013-01_14k.csv");
 		ParameterCombine parameterCombine = new ParameterCombine();
-		parameterCombine.addParameters(parameterHDFSPath,
-				parameterTextFieldXIndex,
-				parameterTextFieldYIndex,
-				parameterTextFieldSeparator);
+		parameterCombine.addParameters(parameterHDFSPath);
 		//udb文件
 		parameterDataSouceType.setSelectedItem("UDB");
 		parameterDataSouceType.setEnabled(false);
@@ -111,21 +101,20 @@ public class ParameterInputDataType extends ParameterCombine {
 		});
 		this.addParameters(parameterDataInputWay,parameterSwitch);
 		this.setDescribe(ProcessProperties.getString("String_FileInputPath"));
-
-		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
-		for (int i = 0; i < datasources.getCount(); i++) {
-			if (datasources.get(i).getEngineType() == EngineType.DATASERVER) {
-				parameterSourceDatasource.setSelectedItem(datasources.get(i));
-				parameterSourceDataset.setDatasource(datasources.get(i));
-				break;
-			}
-		}
 	}
 
 	private void initConstraint(){
 		EqualDatasourceConstraint equalSourceDatasource = new EqualDatasourceConstraint();
 		equalSourceDatasource.constrained(parameterSourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalSourceDatasource.constrained(parameterSourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+	}
+
+	private void initParameterState() {
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		if (defaultBigDataStoreDataset != null) {
+			parameterSourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
+			parameterSourceDataset.setSelectedItem(defaultBigDataStoreDataset);
+		}
 	}
 }
 
