@@ -191,6 +191,10 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 						if (comboBox.getItemAt(i).getCaption().equals(fieldName)) {
 							comboBox.setSelectedItem(fieldName);
 							break;
+						} else if (StringUtilities.isNullOrEmpty(fieldName)) {
+							comboBox.setSelectedItem(comboBox.getItemAt(i).getCaption());
+							parameterFieldComboBox.setSelectedItem(comboBox.getItemAt(i));
+							break;
 						}
 					}
 				}
@@ -203,10 +207,10 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 		isSelectingItem = false;
 	}
 
-    @Override
-    protected void descriptionVisibleChanged(boolean newValue) {
-        label.setVisible(newValue);
-    }
+	@Override
+	protected void descriptionVisibleChanged(boolean newValue) {
+		label.setVisible(newValue);
+	}
 
 	/**
 	 * @return
