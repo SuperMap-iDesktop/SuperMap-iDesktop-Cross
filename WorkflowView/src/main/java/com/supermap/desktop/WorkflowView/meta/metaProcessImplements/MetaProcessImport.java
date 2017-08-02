@@ -287,6 +287,11 @@ public class MetaProcessImport extends MetaProcess {
 		return isSuccessful;
 	}
 
+//	@Override
+//	public Class<ImportProcessLoader> getLoader() {
+//		return ImportProcessLoader.class;
+//	}
+
 	private boolean doImport() {
 		boolean isSuccessful = false;
 		long startTime = System.currentTimeMillis();

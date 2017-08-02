@@ -36,7 +36,7 @@ public class ParameterDatasource extends AbstractParameter implements ISelection
 
 
 	@Override
-	public Object getSelectedItem() {
+	public Datasource getSelectedItem() {
 		return datasource;
 	}
 

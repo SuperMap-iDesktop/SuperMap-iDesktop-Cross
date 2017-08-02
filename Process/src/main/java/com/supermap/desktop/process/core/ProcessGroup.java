@@ -3,6 +3,7 @@ package com.supermap.desktop.process.core;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.events.StatusChangeListener;
+import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
@@ -181,6 +182,11 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	@Override
 	public void reset() {
 
+	}
+
+	@Override
+	public <T extends IProcessLoader> Class<T> getLoader() {
+		return null;
 	}
 
 	@Override

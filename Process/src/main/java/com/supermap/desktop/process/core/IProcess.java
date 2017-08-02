@@ -3,6 +3,7 @@ package com.supermap.desktop.process.core;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.events.StatusChangeListener;
+import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
@@ -44,6 +45,8 @@ public interface IProcess {
 	boolean isCancelled();
 
 	void reset();
+
+	<T extends IProcessLoader> Class<T> getLoader();
 
 	void addRunningListener(RunningListener listener);
 
