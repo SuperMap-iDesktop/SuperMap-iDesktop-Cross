@@ -1,7 +1,13 @@
 package com.supermap.desktop.WorkflowView.meta.dataconversion;
 
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterButton;
+import com.supermap.desktop.process.parameter.ipls.ParameterCharset;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterFile;
+import com.supermap.desktop.process.parameter.ipls.ParameterRadioButton;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextArea;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -46,4 +52,5 @@ public interface IParameterCreator<T> {
 
 	ParameterRadioButton getParameterSetRadioButton();
 
+	ParameterDatasource getParameterResultDatasource();
 }
