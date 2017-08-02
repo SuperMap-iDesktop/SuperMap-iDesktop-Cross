@@ -1,14 +1,18 @@
-package com.supermap.desktop.WorkflowView.demo;
+package com.supermap.desktop.userConferenceDemo.demo;
 
-import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -24,8 +28,8 @@ public class Demo extends FormBaseChild {
 
 	private static final int DEFAULT_DEMO_WIDTH = 1440;
 	private static final int DEFAULT_DEMO_HEIGHT = 800;
-	private static final int DEFAULT_BIGICON_WIDTH = 1440;
-	private static final int DEFAULT_BIGICON_HEIGHT = 625;
+	private static int DEFAULT_BIGICON_WIDTH = 1440;
+	private static int DEFAULT_BIGICON_HEIGHT = 625;
 	private static final int DEFAULT_SMALLICON_WIDTH = 200;
 	private static final int DEFAULT_SMALLICON_HEIGHT = 140;
 	private static final int DEFAULT_STEP = 45;
@@ -202,18 +206,12 @@ public class Demo extends FormBaseChild {
 		// 轮播区域
 		panelCenter.setLayout(null);
 		panelCenter.setOpaque(false);
-		Dimension buttonSize = new Dimension(44, 62);
-		buttonLeft.setBounds(0, (DEFAULT_BIGICON_HEIGHT - buttonSize.height) / 2, buttonSize.width, buttonSize.height);
-		buttonRight.setBounds(DEFAULT_BIGICON_WIDTH - buttonSize.width, (DEFAULT_BIGICON_HEIGHT - buttonSize.height) / 2, buttonSize.width, buttonSize.height);
+		initButtonLeftRightLocation();
 		panelCenter.add(buttonLeft);
 		panelCenter.add(buttonRight);
-		for (int i = 0; i < videoButtons.size(); i++) {
-			if (i == 0) {
-				videoButtons.get(i).setBounds(0, 0, DEFAULT_BIGICON_WIDTH, DEFAULT_BIGICON_HEIGHT);
-			} else {
-				videoButtons.get(i).setBounds(DEFAULT_BIGICON_WIDTH, 0, DEFAULT_BIGICON_WIDTH, DEFAULT_BIGICON_HEIGHT);
-			}
-			panelCenter.add(videoButtons.get(i));
+		initButtonsLocations();
+		for (DemoParameterButton videoButton : videoButtons) {
+			panelCenter.add(videoButton);
 		}
 		panelCenter.setMinimumSize(new Dimension(DEFAULT_BIGICON_WIDTH, DEFAULT_BIGICON_HEIGHT));
 		panelCenter.setMaximumSize(new Dimension(DEFAULT_BIGICON_WIDTH, DEFAULT_BIGICON_HEIGHT));
@@ -243,6 +241,24 @@ public class Demo extends FormBaseChild {
 		this.setBackground(Color.WHITE);
 	}
 
+	private void initButtonsLocations() {
+		for (int i = 0; i < videoButtons.size(); i++) {
+			if (i == currentIndex) {
+				videoButtons.get(i).setBounds(0, 0, DEFAULT_BIGICON_WIDTH, DEFAULT_BIGICON_HEIGHT);
+			} else {
+				videoButtons.get(i).setBounds(DEFAULT_BIGICON_WIDTH * 2, 0, DEFAULT_BIGICON_WIDTH, DEFAULT_BIGICON_HEIGHT);
+			}
+		}
+	}
+
+	private void initButtonLeftRightLocation() {
+		int width = panelCenter.getWidth();
+		int height = panelCenter.getHeight();
+		Dimension buttonSize = new Dimension(44, 62);
+		buttonLeft.setBounds(0, (height - buttonSize.height) / 2, buttonSize.width, buttonSize.height);
+		buttonRight.setBounds(width - buttonSize.width, (height - buttonSize.height) / 2, buttonSize.width, buttonSize.height);
+	}
+
 
 	private void initListener() {
 		for (DemoParameterButton videoButton : videoButtons) {
@@ -256,6 +272,21 @@ public class Demo extends FormBaseChild {
 		}
 		buttonLeft.addActionListener(moveButtonActionListener);
 		buttonRight.addActionListener(moveButtonActionListener);
+
+		panelCenter.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				int width = panelCenter.getWidth();
+				int height = panelCenter.getHeight();
+				DEFAULT_BIGICON_WIDTH = width;
+				DEFAULT_BIGICON_HEIGHT = height;
+				initButtonLeftRightLocation();
+				for (DemoParameterButton videoButton : videoButtons) {
+					videoButton.setIcon(new ImageIcon(((ImageIcon) videoButton.getIcon()).getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT)));
+				}
+				initButtonsLocations();
+			}
+		});
 	}
 
 	private void moveLeft(int next) {
@@ -280,8 +311,10 @@ public class Demo extends FormBaseChild {
 			button.setContentAreaFilled(false);
 			button.setSelected(false);
 		}
-		buttons.get(currentIndex).setContentAreaFilled(true);
-		buttons.get(currentIndex).setSelected(true);
+		if (buttons.size() > 0) {
+			buttons.get(currentIndex).setContentAreaFilled(true);
+			buttons.get(currentIndex).setSelected(true);
+		}
 	}
 
 	private void reLoadListener() {
@@ -338,11 +371,13 @@ public class Demo extends FormBaseChild {
 						nextComponent.setLocation(nextComponent.getX() - step, 0);
 						if (step > 0) {
 							if (nextComponent.getX() <= 0) {
+								nextComponent.setLocation(0, 0);
 								MoveTimer.this.stop();
 								reLoadListener();
 							}
 						} else {
 							if (nextComponent.getX() >= 0) {
+								nextComponent.setLocation(0, 0);
 								MoveTimer.this.stop();
 								reLoadListener();
 							}

@@ -1,6 +1,5 @@
-package com.supermap.desktop.WorkflowView.demo;
+package com.supermap.desktop.userConferenceDemo.demo;
 
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;

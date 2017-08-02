@@ -1,11 +1,10 @@
-package com.supermap.desktop.WorkflowView.demo;
+package com.supermap.desktop.userConferenceDemo.demo;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.WorkflowView.demo.Demo;
 import com.supermap.desktop.ui.FormBaseChild;
 
 /**
