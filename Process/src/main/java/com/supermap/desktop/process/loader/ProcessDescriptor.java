@@ -6,7 +6,11 @@ package com.supermap.desktop.process.loader;
 public class ProcessDescriptor {
 	private String className;
 	private String key;
-	private String serialID;
+
+	public ProcessDescriptor(String className, String key) {
+		this.className = className;
+		this.key = key;
+	}
 
 	public String getClassName() {
 		return className;
@@ -16,19 +20,11 @@ public class ProcessDescriptor {
 		return key;
 	}
 
-	public String getSerialID() {
-		return serialID;
-	}
-
 	public void setClassName(String className) {
 		this.className = className;
 	}
 
 	public void setKey(String key) {
 		this.key = key;
-	}
-
-	public void setSerialID(String serialID) {
-		this.serialID = serialID;
 	}
 }

@@ -5,10 +5,13 @@ import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormWorkflow;
 import com.supermap.desktop.Interface.IWorkflow;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.ImportProcessLoader;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessImport;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
 import com.supermap.desktop.event.WorkflowInitListener;
+import com.supermap.desktop.process.ProcessEnv;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.utilities.CursorUtilities;
 import org.osgi.framework.BundleActivator;
@@ -45,7 +48,7 @@ public class WorkflowViewActivator implements BundleActivator {
 				newWindowEvent(evt);
 			}
 		});
-
+		ProcessEnv.INSTANCE.registerProcessLoader(MetaProcessImport.class.getName(), ImportProcessLoader.INSTANCE);
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.implement.UserDefineType.UserDefineImportResult;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -287,10 +288,10 @@ public class MetaProcessImport extends MetaProcess {
 		return isSuccessful;
 	}
 
-//	@Override
-//	public Class<ImportProcessLoader> getLoader() {
-//		return ImportProcessLoader.class;
-//	}
+	@Override
+	public Class<? extends IProcessLoader> getLoader() {
+		return ImportProcessLoader.class;
+	}
 
 	private boolean doImport() {
 		boolean isSuccessful = false;

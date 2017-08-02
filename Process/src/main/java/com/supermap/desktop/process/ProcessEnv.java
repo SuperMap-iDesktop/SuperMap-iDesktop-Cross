@@ -1,5 +1,6 @@
 package com.supermap.desktop.process;
 
+import com.supermap.desktop.process.loader.DefaultProcessLoader;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.parameter.ipls.ParameterClassBundleNode;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -48,9 +49,13 @@ public class ProcessEnv {
 		return isExisted;
 	}
 
-	public void addProcessLoader(String className, IProcessLoader processLoader) {
+	public void registerProcessLoader(String className, IProcessLoader processLoader) {
 		if (!StringUtilities.isNullOrEmpty(className) && !this.processLoaderMap.containsKey(className)) {
 			this.processLoaderMap.put(className, processLoader);
 		}
+	}
+
+	public IProcessLoader getProcessLoader(String className) {
+		return this.processLoaderMap.containsKey(className) ? this.processLoaderMap.get(className) : DefaultProcessLoader.INSTANCE;
 	}
 }
