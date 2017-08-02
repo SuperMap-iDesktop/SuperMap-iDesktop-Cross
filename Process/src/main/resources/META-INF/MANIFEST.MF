@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1501665855563
+Bnd-LastModified: 1501676807396
 Build-Jdk: 1.7.0_80
-Built-By: Administrator
+Built-By: highsad
 Bundle-Activator: com.supermap.desktop.process.ProcessActivator
 Bundle-ManifestVersion: 2
 Bundle-Name: Process
@@ -46,13 +46,13 @@ Export-Package: com.supermap.desktop.process.constraint.annotation;versi
  permap.desktop.process.util",com.supermap.desktop.process.parameter;ver
  sion="1.0.0";uses:="com.supermap.desktop.process.parameter.interfaces",
  com.supermap.desktop.process;version="1.0.0";uses:="com.supermap.deskto
- p.process.loader,com.supermap.desktop.process.parameter.ipls,org.osgi.f
- ramework",com.supermap.desktop.process.tasks;version="1.0.0";uses:="com
- .supermap.desktop.process.core,com.supermap.desktop.process.tasks.event
- s",com.supermap.desktop.process.tasks.events;version="1.0.0";uses:="com
- .supermap.desktop.process.core,com.supermap.desktop.process.tasks",com.
- supermap.desktop.process.util;version="1.0.0";uses:="com.supermap.deskt
- op.process.core,com.supermap.desktop.process.parameter.ipls"
+ p.process.parameter.ipls,org.osgi.framework",com.supermap.desktop.proce
+ ss.tasks;version="1.0.0";uses:="com.supermap.desktop.process.core,com.s
+ upermap.desktop.process.tasks.events",com.supermap.desktop.process.task
+ s.events;version="1.0.0";uses:="com.supermap.desktop.process.core,com.s
+ upermap.desktop.process.tasks",com.supermap.desktop.process.util;versio
+ n="1.0.0";uses:="com.supermap.desktop.process.core,com.supermap.desktop
+ .process.loader,com.supermap.desktop.process.parameter.ipls"
 Import-Package: org.osgi.framework;version="[1.8,2)",org.osgi.util.track
  er;version="[1.5,2)"
 Originally-Created-By: Apache Maven Bundle Plugin

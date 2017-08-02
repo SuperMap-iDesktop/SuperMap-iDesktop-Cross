@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1501665845008
+Bnd-LastModified: 1501676799061
 Build-Jdk: 1.7.0_80
-Built-By: Administrator
+Built-By: highsad
 Bundle-ClassPath: .,lib/org.apache.felix.framework-5.4.0.jar,lib/org.apa
  che.felix.main-5.4.0.jar,lib/beautyeye_lnf-v3.7.jar,lib/fastjson-1.2.15
  .jar
