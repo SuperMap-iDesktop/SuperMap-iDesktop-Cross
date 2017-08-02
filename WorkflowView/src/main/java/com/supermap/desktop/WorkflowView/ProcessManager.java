@@ -4,7 +4,6 @@ import com.supermap.desktop.WorkflowView.ui.ProcessTree;
 import com.supermap.desktop.WorkflowView.ui.ProcessTreeNode;
 import com.supermap.desktop.WorkflowView.ui.ProcessTreeNodeBean;
 import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.loader.DefaultProcessLoader;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.PathUtilities;
@@ -34,7 +33,7 @@ public class ProcessManager extends JPanel {
 	public ProcessManager() {
 		initComponents();
 		initLayout();
-		registerProcessLoader(DefaultProcessLoader.SINGLETON);
+//		registerProcessLoader(DefaultProcessLoader.SINGLETON);
 
 	}
 
