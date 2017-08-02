@@ -297,7 +297,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         @Override
         public void caretUpdate(CaretEvent e) {
             String text = textFieldFontItalicAngl.getText();
-            if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
+            if (!SymbolSpinnerUtilties.isLegitNumber(-60d, 60d, text)) {
                 textFieldFontItalicAngl.setForeground(Color.red);
                 return;
             } else {
@@ -865,7 +865,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
      * 初始化旋转角度左侧textField值
      */
     private void initTextFieldFontItalicAngl() {
-        this.spinnerInclinationAngl.setModel(new SpinnerNumberModel(0, 0, 360, 1));
+        this.spinnerInclinationAngl.setModel(new SpinnerNumberModel(0, -60, 60, 1));
         this.spinnerInclinationAngl.setEnabled(false);
         NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerInclinationAngl.getEditor();
         this.textFieldFontItalicAngl = numberEditor.getTextField();

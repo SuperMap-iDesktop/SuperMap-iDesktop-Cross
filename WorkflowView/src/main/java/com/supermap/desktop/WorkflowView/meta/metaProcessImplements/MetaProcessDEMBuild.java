@@ -286,9 +286,10 @@ public class MetaProcessDEMBuild extends MetaProcess {
 				double sizeOf = (row * column * pixelFormatByte) / (8 * 1024 * 1024) + 0.000005;
 				sizeOf = Math.round(sizeOf * 100000) / 100000;
 				textFieldSizeOf.setSelectedItem(sizeOf);
-
-				isDatasetLine = ((DatasetVector) evt.getNewValue()).getType() == DatasetType.LINE;
-				textNumResampleTolerance.setEnabled(isDatasetLine && isInterpolateTypeTIN);
+				if (null != evt.getNewValue() && evt.getNewValue() instanceof DatasetVector) {
+					isDatasetLine = ((DatasetVector) evt.getNewValue()).getType() == DatasetType.LINE;
+					textNumResampleTolerance.setEnabled(isDatasetLine && isInterpolateTypeTIN);
+				}
 			}
 		});
 		comboBoxInterpolateType.addPropertyListener(new PropertyChangeListener() {

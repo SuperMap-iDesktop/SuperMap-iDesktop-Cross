@@ -1,11 +1,64 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
-import com.supermap.data.*;
-import com.supermap.data.conversion.*;
+import com.supermap.data.Charset;
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjFileType;
+import com.supermap.data.conversion.DataImport;
+import com.supermap.data.conversion.ImportMode;
+import com.supermap.data.conversion.ImportResult;
+import com.supermap.data.conversion.ImportSetting;
+import com.supermap.data.conversion.ImportSettingBIL;
+import com.supermap.data.conversion.ImportSettingBIP;
+import com.supermap.data.conversion.ImportSettingBMP;
+import com.supermap.data.conversion.ImportSettingBSQ;
+import com.supermap.data.conversion.ImportSettingCSV;
+import com.supermap.data.conversion.ImportSettingDBF;
+import com.supermap.data.conversion.ImportSettingDGN;
+import com.supermap.data.conversion.ImportSettingDWG;
+import com.supermap.data.conversion.ImportSettingDXF;
+import com.supermap.data.conversion.ImportSettingE00;
+import com.supermap.data.conversion.ImportSettingECW;
+import com.supermap.data.conversion.ImportSettingFileGDBVector;
+import com.supermap.data.conversion.ImportSettingGBDEM;
+import com.supermap.data.conversion.ImportSettingGIF;
+import com.supermap.data.conversion.ImportSettingGJB;
+import com.supermap.data.conversion.ImportSettingGRD;
+import com.supermap.data.conversion.ImportSettingIMG;
+import com.supermap.data.conversion.ImportSettingJP2;
+import com.supermap.data.conversion.ImportSettingJPG;
+import com.supermap.data.conversion.ImportSettingKML;
+import com.supermap.data.conversion.ImportSettingKMZ;
+import com.supermap.data.conversion.ImportSettingMAPGIS;
+import com.supermap.data.conversion.ImportSettingMIF;
+import com.supermap.data.conversion.ImportSettingModel3DS;
+import com.supermap.data.conversion.ImportSettingModelDXF;
+import com.supermap.data.conversion.ImportSettingModelFBX;
+import com.supermap.data.conversion.ImportSettingModelFLT;
+import com.supermap.data.conversion.ImportSettingModelOSG;
+import com.supermap.data.conversion.ImportSettingModelX;
+import com.supermap.data.conversion.ImportSettingMrSID;
+import com.supermap.data.conversion.ImportSettingPNG;
+import com.supermap.data.conversion.ImportSettingRAW;
+import com.supermap.data.conversion.ImportSettingSHP;
+import com.supermap.data.conversion.ImportSettingSIT;
+import com.supermap.data.conversion.ImportSettingTAB;
+import com.supermap.data.conversion.ImportSettingTEMSBuildingVector;
+import com.supermap.data.conversion.ImportSettingTEMSVector;
+import com.supermap.data.conversion.ImportSettingTIF;
+import com.supermap.data.conversion.ImportSettingVCT;
+import com.supermap.data.conversion.ImportSettingWOR;
+import com.supermap.data.conversion.ImportSteppedEvent;
+import com.supermap.data.conversion.ImportSteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
-import com.supermap.desktop.WorkflowView.meta.dataconversion.*;
+import com.supermap.desktop.WorkflowView.meta.dataconversion.IParameterCreator;
+import com.supermap.desktop.WorkflowView.meta.dataconversion.ImportParameterCreator;
+import com.supermap.desktop.WorkflowView.meta.dataconversion.ImportSettingCreator;
+import com.supermap.desktop.WorkflowView.meta.dataconversion.ImportSettingSetter;
+import com.supermap.desktop.WorkflowView.meta.dataconversion.ReflectInfo;
 import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.implement.UserDefineType.UserDefineImportResult;
@@ -15,7 +68,13 @@ import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterButton;
+import com.supermap.desktop.process.parameter.ipls.ParameterCharset;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterFile;
+import com.supermap.desktop.process.parameter.ipls.ParameterRadioButton;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextArea;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
@@ -67,6 +126,7 @@ public class MetaProcessImport extends MetaProcess {
 	private ParameterButton parameterButton;
 	private ParameterTextArea parameterTextArea;
 	private ParameterRadioButton parameterRadioButton;
+	private ParameterDatasource parameterResultDatasource;
 	private ParameterTextField datasetName;
 	private boolean isSelectingChange = false;
 	private boolean isSelectingFile = false;
@@ -81,6 +141,9 @@ public class MetaProcessImport extends MetaProcess {
 					String fileAlis = FileUtilities.getFileAlias(fileName);
 					//文件选择器编辑过程中会不断响应，所以未修改到正确的路径时不变。JFileChooserControl是否需要一个编辑提交listener
 					if (fileAlis != null) {
+						if (parameterResultDatasource != null && parameterResultDatasource.getSelectedItem() != null) {
+							fileAlis = parameterResultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(fileAlis);
+						}
 						datasetName.setSelectedItem(fileAlis);
 					}
 					//set charset
@@ -155,6 +218,7 @@ public class MetaProcessImport extends MetaProcess {
 	}
 
 	public void updateParameters() {
+		parameterResultDatasource = parameterCreator.getParameterResultDatasource();
 		parameterFile = parameterCreator.getParameterFile();
 		datasetName = parameterCreator.getParameterDataset();
 		parameterCharset = parameterCreator.getParameterCharset();

@@ -1,6 +1,12 @@
 package com.supermap.desktop.mapview.map.propertycontrols;
 
-import com.supermap.data.*;
+import com.supermap.data.GeoCompound;
+import com.supermap.data.GeoEllipse;
+import com.supermap.data.GeoPie;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.Geometry;
+import com.supermap.data.Recordset;
+import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IFormMap;
@@ -11,14 +17,26 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
-import com.supermap.ui.*;
+import com.supermap.ui.MapControl;
+import com.supermap.ui.TrackMode;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackedListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -392,6 +410,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 					}
 					//设置完之后，show出主窗体
 					if (dialog != null) {
+						System.out.println(dialog.getLocation());
 						dialog.setVisible(true);
 					}
 				}

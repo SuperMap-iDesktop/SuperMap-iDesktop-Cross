@@ -48,7 +48,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	public JDialogDatasourceOpenAndNew(JFrame owner, DatasourceOperatorType type) {
 		super(owner);
 		setModal(true);
-		setBounds(100, 100, 575, 301);
+		setBounds(100, 100, 640, 360);
 		this.setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		this.contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
