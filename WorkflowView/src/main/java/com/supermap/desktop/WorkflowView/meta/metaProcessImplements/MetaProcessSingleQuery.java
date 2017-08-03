@@ -1,6 +1,8 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -31,12 +33,9 @@ import java.util.concurrent.CancellationException;
 public class MetaProcessSingleQuery extends MetaProcess {
 
 	private ParameterIServerLogin parameterIServerLogin = new ParameterIServerLogin();
-	private ParameterBigDatasourceDatasource parameterSourceDatasource;
-	private ParameterSingleDataset parameterSourceDataset;
-
+	ParameterInputDataType parameterInputDataType = new ParameterInputDataType();
 	private ParameterBigDatasourceDatasource parameterQueryDatasource;
 	private ParameterSingleDataset parameterQueryDataset;
-
 	private ParameterComboBox parameterQueryTypeComboBox;
 
 	public MetaProcessSingleQuery() {
@@ -47,17 +46,11 @@ public class MetaProcessSingleQuery extends MetaProcess {
 	}
 
 	private void initComponents() {
-		parameterSourceDatasource = new ParameterBigDatasourceDatasource();
-		parameterSourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		parameterSourceDataset = new ParameterSingleDataset();
-		parameterSourceDataset.setDescribe(CommonProperties.getString("String_Label_SourceDataset"));
-
 		parameterQueryDatasource = new ParameterBigDatasourceDatasource();
-		parameterQueryDatasource.setDescribe(ProcessProperties.getString("String_Label_QueryDatasource"));
+		parameterQueryDatasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
 		parameterQueryDataset = new ParameterSingleDataset();
-		parameterQueryDataset.setDescribe(ProcessProperties.getString("String_Label_QueryDataset"));
-
-		parameterQueryTypeComboBox = new ParameterComboBox(CoreProperties.getString("String_OverlayAnalystType"));
+		parameterQueryDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
+		parameterQueryTypeComboBox = new ParameterComboBox(CoreProperties.getString("String_AnalystType"));
 		parameterQueryTypeComboBox.setItems(
 				new ParameterDataNode(CoreProperties.getString("String_SpatialQuery_ContainCHS"), "CONTAIN"),
 				new ParameterDataNode(CoreProperties.getString("String_SpatialQuery_CrossCHS"), "CROSS"),
@@ -69,29 +62,24 @@ public class MetaProcessSingleQuery extends MetaProcess {
 				new ParameterDataNode(CoreProperties.getString("String_SpatialQuery_TouchCHS"), "TOUCH"),
 				new ParameterDataNode(CoreProperties.getString("String_SpatialQuery_WithinCHS"), "WITHIN")
 		);
-
-		ParameterCombine parameterCombineSource = new ParameterCombine();
-		parameterCombineSource.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
-		parameterCombineSource.addParameters(parameterSourceDatasource, parameterSourceDataset);
 		ParameterCombine parameterCombineQuery = new ParameterCombine();
 		parameterCombineQuery.setDescribe(ProcessProperties.getString("String_QueryData"));
 		parameterCombineQuery.addParameters(parameterQueryDatasource, parameterQueryDataset);
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
-		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_setParameter"));
+		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_AnalystSet"));
 		parameterCombineSetting.addParameters(parameterQueryTypeComboBox);
 
-		parameters.addParameters(parameterIServerLogin, parameterCombineSource, parameterCombineQuery, parameterCombineSetting);
-		parameters.addInputParameters("source", Type.UNKOWN, parameterCombineSource);// 缺少对应的类型
+		parameters.addParameters(parameterIServerLogin, parameterInputDataType, parameterCombineQuery, parameterCombineSetting);
 		parameters.addInputParameters("Query", Type.UNKOWN, parameterCombineQuery);// 缺少对应的类型
 		parameters.addOutputParameters("QueryResult", BasicTypes.STRING, null);
 	}
 
 	private void initComponentState() {
+		parameterInputDataType.parameterDatasetType.setItems(new ParameterDataNode(ProcessProperties.getString("String_Point"), "LINE"),
+				new ParameterDataNode(ProcessProperties.getString("String_Line"), "POINT"),new ParameterDataNode(ProcessProperties.getString("String_Region"), "REGION"));
+		parameterInputDataType.parameterSourceDataset.setDatasetTypes(DatasetType.POINT,DatasetType.LINE,DatasetType.REGION);
 		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
 		if (defaultBigDataStoreDataset != null) {
-			parameterSourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
-			parameterSourceDataset.setSelectedItem(defaultBigDataStoreDataset);
-
 			parameterQueryDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterQueryDataset.setSelectedItem(defaultBigDataStoreDataset);
 
@@ -99,10 +87,6 @@ public class MetaProcessSingleQuery extends MetaProcess {
 	}
 
 	private void initConstraint() {
-		EqualDatasourceConstraint equalSourceDatasource = new EqualDatasourceConstraint();
-		equalSourceDatasource.constrained(parameterSourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalSourceDatasource.constrained(parameterSourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-
 		EqualDatasourceConstraint equalQueryDatasource = new EqualDatasourceConstraint();
 		equalQueryDatasource.constrained(parameterQueryDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalQueryDatasource.constrained(parameterQueryDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
@@ -122,21 +106,44 @@ public class MetaProcessSingleQuery extends MetaProcess {
 	public boolean execute() {
 		try {
 			IServerService service = parameterIServerLogin.login();
-			Dataset sourceDataset = parameterSourceDataset.getSelectedDataset();
+			CommonSettingCombine input = new CommonSettingCombine("input", "");
+			CommonSettingCombine datasetInfo = new CommonSettingCombine("datasetInfo", "");
+			if(parameterInputDataType.parameterDataInputWay.getSelectedData().toString().equals("0")){
+				CommonSettingCombine filePath = new CommonSettingCombine("filePath",parameterInputDataType.parameterHDFSPath.getSelectedItem().toString());
+				input.add(filePath);
+			}else if(parameterInputDataType.parameterDataInputWay.getSelectedData().toString().equals("1")){
+				CommonSettingCombine type = new CommonSettingCombine("type",parameterInputDataType.parameterDataSouceType.getSelectedItem().toString());
+				CommonSettingCombine url = new CommonSettingCombine("url",parameterInputDataType.parameterDataSoucePath.getSelectedItem().toString());
+				CommonSettingCombine datasetName = new CommonSettingCombine("datasetName",parameterInputDataType.parameterDatasetName.getSelectedItem().toString());
+				CommonSettingCombine datasetType = new CommonSettingCombine("datasetType",(String) parameterInputDataType.parameterDatasetType.getSelectedData());
+				CommonSettingCombine numSlices = new CommonSettingCombine("numSlices",parameterInputDataType.parameterSpark.getSelectedItem().toString());
+				datasetInfo.add(type,url,datasetName,datasetType);
+				input.add(datasetInfo,numSlices);
+			}else{
+				Dataset sourceDataset = parameterInputDataType.parameterSourceDataset.getSelectedDataset();
+				CommonSettingCombine dataSourceName = new CommonSettingCombine("dataSourceName",((Datasource)parameterInputDataType.parameterSourceDatasource.getSelectedItem()).getAlias());
+				CommonSettingCombine name = new CommonSettingCombine("name",sourceDataset.getName());
+				CommonSettingCombine type = new CommonSettingCombine("type",(String) parameterInputDataType.parameterDatasetType.getSelectedData());
+				CommonSettingCombine engineType = new CommonSettingCombine("engineType",parameterInputDataType.parameterEngineType.getSelectedItem().toString());
+				CommonSettingCombine server = new CommonSettingCombine("server",parameterInputDataType.parameterTextFieldAddress.getSelectedItem().toString());
+				CommonSettingCombine dataBase = new CommonSettingCombine("dataBase",parameterInputDataType.parameterDataBaseName.getSelectedItem().toString());
+				CommonSettingCombine user = new CommonSettingCombine("user",parameterInputDataType.parameterTextFieldUserName.getSelectedItem().toString());
+				CommonSettingCombine password = new CommonSettingCombine("password",parameterInputDataType.parameterTextFieldPassword.getSelectedItem().toString());
+				CommonSettingCombine datasourceConnectionInfo = new CommonSettingCombine("datasourceConnectionInfo", "");
+				datasourceConnectionInfo.add(engineType,server,dataBase,user,password);
+				datasetInfo.add(type,name,dataSourceName,datasourceConnectionInfo);
+				input.add(datasetInfo);
+			}
 			Dataset queryDataset = parameterQueryDataset.getSelectedDataset();
 			String queryType = (String) parameterQueryTypeComboBox.getSelectedData();
-
-			CommonSettingCombine input = new CommonSettingCombine("input", "");
-			input.add(new CommonSettingCombine("datasetSource", sourceDataset.getName()));
-
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
 			analyst.add(new CommonSettingCombine("datasetQuery", queryDataset.getName()));
 			analyst.add(new CommonSettingCombine("mode", queryType));
 
-			CommonSettingCombine query = new CommonSettingCombine("query", "");
-			query.add(input, analyst);
+			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
+			commonSettingCombine.add(input, analyst);
 			CursorUtilities.setWaitCursor();
-			JobResultResponse response = service.queryResult(MetaKeys.SINGLE_QUERY, query.getFinalJSon());
+			JobResultResponse response = service.queryResult(MetaKeys.SINGLE_QUERY, commonSettingCombine.getFinalJSon());
 			if (null != response) {
 				NewMessageBus messageBus = new NewMessageBus(response, new IUpdateProgress() {
 					@Override

@@ -25,8 +25,7 @@ public class ParameterInputDataType extends ParameterCombine {
 	public ParameterTextField parameterSpark = new ParameterTextField(ProcessProperties.getString("String_numSlices"));
 
 	public ParameterBigDatasourceDatasource parameterSourceDatasource = new ParameterBigDatasourceDatasource();
-	public ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset(DatasetType.POINT);
-	public ParameterComboBox parameterDatasetType1 = new ParameterComboBox(ProcessProperties.getString("String_DatasetType"));
+	public ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset();
 	public ParameterTextField parameterEngineType = new ParameterTextField(ProcessProperties.getString("String_EngineType"));
 	public ParameterTextField parameterDataBaseName = new ParameterTextField(ProcessProperties.getString("String_DataBaseName"));
 	public ParameterTextField parameterTextFieldAddress = new ParameterTextField(CoreProperties.getString("String_Server"));
@@ -52,7 +51,6 @@ public class ParameterInputDataType extends ParameterCombine {
 		parameterDataSouceType.setEnabled(false);
 		parameterDataSoucePath.setSelectedItem("F:\\20170707\\China\\China.udb");
 		parameterDatasetName.setSelectedItem("China_Capital_pt");
-		parameterDatasetType.addItem(new ParameterDataNode(ProcessProperties.getString("String_Point"), "POINT"));
 		parameterSpark.setSelectedItem("36");
 		ParameterCombine parameterCombine1 = new ParameterCombine();
 		parameterCombine1.addParameters(parameterDataSouceType,
@@ -63,7 +61,6 @@ public class ParameterInputDataType extends ParameterCombine {
 		//pg数据库
 		parameterSourceDatasource.setDescribe(ProcessProperties.getString("String_DataSourceName"));
 		parameterSourceDataset.setDescribe(ProcessProperties.getString("String_DatasetName"));
-		parameterDatasetType1.addItem(new ParameterDataNode(ProcessProperties.getString("String_Point"), "POINT"));
 		parameterEngineType.setSelectedItem("POSTGRESQL");
 		parameterEngineType.setEnabled(false);
 		parameterTextFieldAddress.setSelectedItem("192.168.15.248");
@@ -71,14 +68,15 @@ public class ParameterInputDataType extends ParameterCombine {
 		parameterTextFieldUserName.setSelectedItem("postgres");
 		parameterTextFieldPassword.setSelectedItem("supermap");
 		ParameterCombine parameterCombine2 = new ParameterCombine();
-		parameterCombine2.addParameters(parameterSourceDatasource,
-				parameterSourceDataset,
-				parameterDatasetType1,
+		parameterCombine2.addParameters(
 				parameterEngineType,
 				parameterTextFieldAddress,
 				parameterDataBaseName,
 				parameterTextFieldUserName,
-				parameterTextFieldPassword);
+				parameterTextFieldPassword,
+				parameterSourceDatasource,
+				parameterSourceDataset,
+				parameterDatasetType);
 		final ParameterSwitch parameterSwitch = new ParameterSwitch();
 		parameterSwitch.add("0", parameterCombine);
 		parameterSwitch.add("1", parameterCombine1);

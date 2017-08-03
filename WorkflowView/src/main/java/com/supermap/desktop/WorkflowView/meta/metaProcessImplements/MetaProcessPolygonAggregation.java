@@ -6,6 +6,7 @@ import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.lbs.Interface.IServerService;
 import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.lbs.params.JobResultResponse;
@@ -49,7 +50,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 		parameterAggregationType.setItems(parameterDataNode);
 		parameterAggregationType.setSelectedItem(parameterDataNode);
 
-		parameterBigDatasourceDatasource.setDescribe(ProcessProperties.getString("String_BigDataSource"));
+		parameterBigDatasourceDatasource.setDescribe(ControlsProperties.getString("String_Label_ResultDatasource"));
 		parameterSingleDataset.setDescribe(ProcessProperties.getString("String_AggregateDataset"));
 
 		parameterStaticModel.setSelectedItem("max");
@@ -74,6 +75,8 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 	}
 
 	private void initComponentState() {
+		parameterInputDataType.parameterDatasetType.setItems(new ParameterDataNode(ProcessProperties.getString("String_Point"), "POINT"));
+		parameterInputDataType.parameterSourceDataset.setDatasetTypes(DatasetType.POINT);
 		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
 		if (defaultBigDataStoreDataset != null) {
 			parameterBigDatasourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
@@ -121,7 +124,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 				Dataset sourceDataset = parameterInputDataType.parameterSourceDataset.getSelectedDataset();
 				CommonSettingCombine dataSourceName = new CommonSettingCombine("dataSourceName",((Datasource)parameterInputDataType.parameterSourceDatasource.getSelectedItem()).getAlias());
 				CommonSettingCombine name = new CommonSettingCombine("name",sourceDataset.getName());
-				CommonSettingCombine type = new CommonSettingCombine("type",(String) parameterInputDataType.parameterDatasetType1.getSelectedData());
+				CommonSettingCombine type = new CommonSettingCombine("type",(String) parameterInputDataType.parameterDatasetType.getSelectedData());
 				CommonSettingCombine engineType = new CommonSettingCombine("engineType",parameterInputDataType.parameterEngineType.getSelectedItem().toString());
 				CommonSettingCombine server = new CommonSettingCombine("server",parameterInputDataType.parameterTextFieldAddress.getSelectedItem().toString());
 				CommonSettingCombine dataBase = new CommonSettingCombine("dataBase",parameterInputDataType.parameterDataBaseName.getSelectedItem().toString());

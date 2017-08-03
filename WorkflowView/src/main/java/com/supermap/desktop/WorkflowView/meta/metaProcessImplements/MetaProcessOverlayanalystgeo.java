@@ -72,6 +72,9 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 	}
 
 	private void initComponentState() {
+		parameterInputDataType.parameterDatasetType.setItems(new ParameterDataNode(ProcessProperties.getString("String_Point"), "LINE"),
+				new ParameterDataNode(ProcessProperties.getString("String_Line"), "POINT"),new ParameterDataNode(ProcessProperties.getString("String_Region"), "REGION"));
+		parameterInputDataType.parameterSourceDataset.setDatasetTypes(DatasetType.POINT,DatasetType.LINE,DatasetType.REGION);
 		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
 		if (defaultBigDataStoreDataset != null) {
 			parameterOverlayDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
@@ -117,7 +120,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 				Dataset sourceDataset = parameterInputDataType.parameterSourceDataset.getSelectedDataset();
 				CommonSettingCombine dataSourceName = new CommonSettingCombine("dataSourceName",((Datasource)parameterInputDataType.parameterSourceDatasource.getSelectedItem()).getAlias());
 				CommonSettingCombine name = new CommonSettingCombine("name",sourceDataset.getName());
-				CommonSettingCombine type = new CommonSettingCombine("type",(String) parameterInputDataType.parameterDatasetType1.getSelectedData());
+				CommonSettingCombine type = new CommonSettingCombine("type",(String) parameterInputDataType.parameterDatasetType.getSelectedData());
 				CommonSettingCombine engineType = new CommonSettingCombine("engineType",parameterInputDataType.parameterEngineType.getSelectedItem().toString());
 				CommonSettingCombine server = new CommonSettingCombine("server",parameterInputDataType.parameterTextFieldAddress.getSelectedItem().toString());
 				CommonSettingCombine dataBase = new CommonSettingCombine("dataBase",parameterInputDataType.parameterDataBaseName.getSelectedItem().toString());

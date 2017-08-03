@@ -1,6 +1,7 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -52,6 +53,8 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 		parameterResolution.setSelectedItem("0.001");
 		parameterStaticModel.setSelectedItem("max");
 		parameterWeightIndex.setSelectedItem("col7");
+		parameterInputDataType.parameterDatasetType.setItems(new ParameterDataNode(ProcessProperties.getString("String_Point"), "POINT"));
+		parameterInputDataType.parameterSourceDataset.setDatasetTypes(DatasetType.POINT);
 	}
 
 	private void initComponentLayout() {
@@ -105,7 +108,7 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 				Dataset sourceDataset = parameterInputDataType.parameterSourceDataset.getSelectedDataset();
 				CommonSettingCombine dataSourceName = new CommonSettingCombine("dataSourceName",((Datasource)parameterInputDataType.parameterSourceDatasource.getSelectedItem()).getAlias());
 				CommonSettingCombine name = new CommonSettingCombine("name",sourceDataset.getName());
-				CommonSettingCombine type = new CommonSettingCombine("type",(String) parameterInputDataType.parameterDatasetType1.getSelectedData());
+				CommonSettingCombine type = new CommonSettingCombine("type",(String) parameterInputDataType.parameterDatasetType.getSelectedData());
 				CommonSettingCombine engineType = new CommonSettingCombine("engineType",parameterInputDataType.parameterEngineType.getSelectedItem().toString());
 				CommonSettingCombine server = new CommonSettingCombine("server",parameterInputDataType.parameterTextFieldAddress.getSelectedItem().toString());
 				CommonSettingCombine dataBase = new CommonSettingCombine("dataBase",parameterInputDataType.parameterDataBaseName.getSelectedItem().toString());
