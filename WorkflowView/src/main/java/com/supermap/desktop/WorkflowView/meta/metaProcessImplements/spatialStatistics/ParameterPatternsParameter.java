@@ -13,7 +13,13 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterFieldComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterFile;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSwitch;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 
@@ -36,7 +42,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 	private ParameterFile parameterFile = new ParameterFile();
 	private ParameterNumber parameterTextFieldKNeighbors = new ParameterNumber();
 
-	private ParameterFieldComboBox parameterSelfWeightFieldComboBox = new ParameterFieldComboBox();
+	private ParameterFieldComboBox parameterSelfWeightFieldComboBox = new ParameterFieldComboBox().setShowNullValue(true);
 
 	private ParameterCheckBox parameterCheckBoxStandardization = new ParameterCheckBox();
 	public static final String DATASET_FIELD_NAME = "dataset_Field";
