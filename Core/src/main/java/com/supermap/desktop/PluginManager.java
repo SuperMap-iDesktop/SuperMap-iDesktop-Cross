@@ -20,7 +20,7 @@ public class PluginManager {
 
 	/**
 	 * 获取插件管理器中指定索引的插件对象。
-	 * 
+	 *
 	 * @param index 插件索引
 	 * @return 指定索引的插件
 	 */
@@ -60,7 +60,7 @@ public class PluginManager {
 
 	/**
 	 * 获取PluginManager中所包含的插件总数。
-	 * 
+	 *
 	 * @return
 	 */
 	public int getCount() {
@@ -82,7 +82,7 @@ public class PluginManager {
 				// 查找所有默认工作场景下的插件配置文件
 				String workEnvironmentPath = PathUtilities.getFullPathName(_XMLTag.g_FolderWorkEnvironment, true);
 				WorkEnvironment workEnvironment = Application.getActiveApplication().getWorkEnvironmentManager().getActiveWorkEnvironment();
-				String[] pathPrams = new String[] { workEnvironmentPath, workEnvironment.getName(), name + ".config" };
+				String[] pathPrams = new String[]{workEnvironmentPath, workEnvironment.getName(), name + ".config"};
 				String configFile = PathUtilities.combinePath(pathPrams, false);
 
 				File file = new File(configFile);
@@ -143,6 +143,23 @@ public class PluginManager {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 		return result;
+	}
+
+	public Class loadClass(String className) {
+		Class loaderClass = null;
+
+		for (int i = 0; i < this.plugins.size(); i++) {
+			Plugin plugin = this.plugins.get(i);
+			try {
+				loaderClass = plugin.getBundle().loadClass(className);
+				if (loaderClass != null) {
+					break;
+				}
+			} catch (ClassNotFoundException e) {
+				continue;
+			}
+		}
+		return loaderClass;
 	}
 
 	/**

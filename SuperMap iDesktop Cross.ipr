@@ -272,6 +272,7 @@
         <module name="RealspaceView" />
         <module name="SpatialAnalyst" />
         <module name="TabularView" />
+        <module name="UserConferenceDemo" />
         <module name="UserExperience" />
         <module name="WorkflowView" />
       </profile>
@@ -301,6 +302,7 @@
       <module name="SpatialAnalyst" target="1.7" />
       <module name="SuperMap iDesktop Cross" target="1.5" />
       <module name="TabularView" target="1.7" />
+      <module name="UserConferenceDemo" target="1.7" />
       <module name="UserExperience" target="1.7" />
       <module name="WorkflowView" target="1.7" />
     </bytecodeTargetLevel>
@@ -342,7 +344,6 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/UserExperience/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
@@ -512,6 +513,7 @@
       <module fileurl="file://$PROJECT_DIR$/SpatialAnalyst/SpatialAnalyst.iml" filepath="$PROJECT_DIR$/SpatialAnalyst/SpatialAnalyst.iml" />
       <module fileurl="file://$PROJECT_DIR$/SuperMap iDesktop Cross.iml" filepath="$PROJECT_DIR$/SuperMap iDesktop Cross.iml" />
       <module fileurl="file://$PROJECT_DIR$/TabularView/TabularView.iml" filepath="$PROJECT_DIR$/TabularView/TabularView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/UserConferenceDemo/UserConferenceDemo.iml" filepath="$PROJECT_DIR$/UserConferenceDemo/UserConferenceDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/UserExperience/UserExperience.iml" filepath="$PROJECT_DIR$/UserExperience/UserExperience.iml" />
       <module fileurl="file://$PROJECT_DIR$/WorkflowView/WorkflowView.iml" filepath="$PROJECT_DIR$/WorkflowView/WorkflowView.iml" />
       <module fileurl="file://$PROJECT_DIR$/iDesktop/iDesktop.iml" filepath="$PROJECT_DIR$/iDesktop/iDesktop.iml" />

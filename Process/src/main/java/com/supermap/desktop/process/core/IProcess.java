@@ -46,7 +46,7 @@ public interface IProcess {
 
 	void reset();
 
-	<T extends IProcessLoader> Class<T> getLoader();
+	Class<? extends IProcessLoader> getLoader();
 
 	void addRunningListener(RunningListener listener);
 

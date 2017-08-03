@@ -2,6 +2,8 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.process.events.*;
+import com.supermap.desktop.process.loader.IProcessLoader;
+import com.supermap.desktop.process.loader.ProcessDescriptor;
 import com.supermap.desktop.process.util.WorkflowUtil;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
@@ -67,31 +69,32 @@ public class Workflow implements IWorkflow {
 		doc.appendChild(workflowNode);
 
 		// 处理 processes
-		Element processesNode = doc.createElement("processes");
+		Element processesNode = doc.createElement("Processes");
 		Vector<IProcess> processes = this.processMatrix.getNodes();
 		for (int i = 0; i < processes.size(); i++) {
 			IProcess process = processes.get(i);
-			Element processNode = doc.createElement("process");
-			processNode.setAttribute("key", process.getKey());
-			processNode.setAttribute("className", process.getClass().getName());
+			Element processNode = doc.createElement("Process");
+			processNode.setAttribute("Key", process.getKey());
+			processNode.setAttribute("ClassName", process.getClass().getName());
+			processNode.setAttribute("LoaderClassName", process.getLoader().getName());
 			processesNode.appendChild(processesNode);
 		}
 		workflowNode.appendChild(processesNode);
 
 		// 处理 relations
-		Element relationsNode = doc.createElement("relations");
+		Element relationsNode = doc.createElement("Relations");
 		Vector<IRelation<IProcess>> relations = this.processMatrix.getRelations();
 		for (int i = 0; i < relations.size(); i++) {
 			IRelation relation = relations.get(i);
 
 			// 目前只有一种数据匹配关系，先就只处理这一种关系的导入和导出
 			if (relation instanceof DataMatch) {
-				Element relationNode = doc.createElement("relation");
-				relationNode.setAttribute("className", relation.getClass().getName());
-				relationNode.setAttribute("fromKey", ((DataMatch) relation).getFrom().getKey());
-				relationNode.setAttribute("toKey", ((DataMatch) relation).getTo().getKey());
-				relationNode.setAttribute("fromOutputData", ((DataMatch) relation).getFromOutputData().getName());
-				relationNode.setAttribute("toInputData", ((DataMatch) relation).getToInputData().getName());
+				Element relationNode = doc.createElement("Relation");
+				relationNode.setAttribute("ClassName", relation.getClass().getName());
+				relationNode.setAttribute("FromKey", ((DataMatch) relation).getFrom().getKey());
+				relationNode.setAttribute("ToKey", ((DataMatch) relation).getTo().getKey());
+				relationNode.setAttribute("FromOutputData", ((DataMatch) relation).getFromOutputData().getName());
+				relationNode.setAttribute("ToInputData", ((DataMatch) relation).getToInputData().getName());
 				relationsNode.appendChild(relationNode);
 			}
 		}
@@ -108,9 +111,10 @@ public class Workflow implements IWorkflow {
 		Vector<IProcess> processes = this.processMatrix.getNodes();
 		for (int i = 0; i < processes.size(); i++) {
 			IProcess process = processes.get(i);
-			Element processNode = doc.createElement("process");
+			Element processNode = doc.createElement("Process");
 			processNode.setAttribute("Key", process.getKey());
 			processNode.setAttribute("ClassName", process.getClass().getName());
+			processNode.setAttribute("LoaderClassName", process.getLoader().getName());
 
 			// 一个工作流可能存在多个相同类型的 process，此时导出就需要有一个标记，用以在导入的时候匹配
 			processNode.setAttribute("SerialID", String.valueOf(process.getSerialID()));
@@ -144,12 +148,16 @@ public class Workflow implements IWorkflow {
 
 		// 处理 process
 		Element processesNode = (Element) XmlUtilities.getChildElementNodeByName(workflowNode, "Processes");
-		Element[] processNodes = XmlUtilities.getChildElementNodesByName(processesNode, "process");
+		Element[] processNodes = XmlUtilities.getChildElementNodesByName(processesNode, "Process");
 		for (int i = 0; i < processNodes.length; i++) {
 			Element processNode = processNodes[i];
-			String className = processNode.getAttribute("className");
+			String className = processNode.getAttribute("ClassName");
+			String key = processNode.getAttribute("Key");
 			int serialID = Integer.valueOf(processNode.getAttribute("SerialID"));
-			IProcess process = WorkflowUtil.newProcess(className);
+
+			String loaderClassName = processNode.getAttribute("LoaderClassName");
+			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName);
+			IProcess process = loader.loadProcess(new ProcessDescriptor(className, key));
 			process.setSerialID(serialID);
 			addProcess(process);
 		}

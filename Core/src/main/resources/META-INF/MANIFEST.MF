@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1501665854354
+Bnd-LastModified: 1501676806241
 Build-Jdk: 1.7.0_80
-Built-By: Administrator
+Built-By: highsad
 Bundle-Activator: com.supermap.desktop.core.CoreActivator
 Bundle-ClassPath: .,lib/fastjson-1.2.15.jar,lib/httpclient-4.5.2.jar,lib
  /commons-codec-1.9.jar,lib/httpcore-4.4.5.jar,lib/httpmime-4.5.2.jar,li

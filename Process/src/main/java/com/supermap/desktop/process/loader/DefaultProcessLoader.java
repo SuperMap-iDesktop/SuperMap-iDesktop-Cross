@@ -8,6 +8,7 @@ import com.supermap.desktop.utilities.StringUtilities;
  * Created by highsad on 2017/1/5.
  */
 public class DefaultProcessLoader implements IProcessLoader {
+	public final static DefaultProcessLoader INSTANCE = new DefaultProcessLoader();
 
 	@Override
 	public IProcess loadProcess(ProcessDescriptor descriptor) {
@@ -25,13 +26,7 @@ public class DefaultProcessLoader implements IProcessLoader {
 			return null;
 		}
 
-		Class classInstance;
-		try {
-			classInstance = Class.forName(descriptor.getClassName());
-		} catch (ClassNotFoundException e) {
-			Application.getActiveApplication().getOutput().output(e);
-			classInstance = null;
-		}
+		Class classInstance = Application.getActiveApplication().getPluginManager().loadClass(descriptor.getClassName());
 
 		if (classInstance == null) {
 			return null;

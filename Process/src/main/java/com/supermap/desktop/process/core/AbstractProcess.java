@@ -7,6 +7,7 @@ import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.events.StatusChangeEvent;
 import com.supermap.desktop.process.events.StatusChangeListener;
 import com.supermap.desktop.process.loader.DefaultProcessLoader;
+import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
@@ -119,7 +120,7 @@ public abstract class AbstractProcess implements IProcess {
 	}
 
 	@Override
-	public Class<DefaultProcessLoader> getLoader() {
+	public Class<? extends IProcessLoader> getLoader() {
 		return DefaultProcessLoader.class;
 	}
 
