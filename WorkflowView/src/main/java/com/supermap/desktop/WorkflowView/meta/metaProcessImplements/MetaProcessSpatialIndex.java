@@ -7,11 +7,18 @@ import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.process.events.RelationAddedEvent;
+import com.supermap.desktop.process.events.RelationAddedListener;
+import com.supermap.desktop.process.events.RelationRemovedEvent;
+import com.supermap.desktop.process.events.RelationRemovedListener;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
 import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
@@ -19,6 +26,10 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 /**
  * @author XiaJT
@@ -33,7 +44,6 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 	public MetaProcessSpatialIndex() {
 
 		ParameterDataNode[] parameterDataNodes = new ParameterDataNode[]{
-				// fixme 支持的索引类型和数据源类型相关，目前只把所有的索引类型添加进去，未处理不支持的情况
 				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.NONE), SpatialIndexType.NONE),
 				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.RTREE), SpatialIndexType.RTREE),
 				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.MULTI_LEVEL_GRID), SpatialIndexType.MULTI_LEVEL_GRID),
@@ -42,17 +52,84 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 		};
 		datasource = new ParameterDatasourceConstrained();
 		dataset = new ParameterSingleDataset(DatasetTypeUtilities.getDatasetTypeVector());
+
+
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
 		if (datasetVector != null) {
 			datasource.setSelectedItem(datasetVector.getDatasource());
 			dataset.setSelectedItem(datasetVector);
 		}
+
 		datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameterComboBox = new ParameterComboBox(ControlsProperties.getString("String_LabelSpatialIndexType"));
+
+		ParameterCombine parameterCombine = new ParameterCombine();
+		parameterCombine.setDescribe(SOURCE_PANEL_DESCRIPTION);
+		parameterCombine.addParameters(datasource, dataset);
+
+		ParameterCombine parameterCombineSetting = new ParameterCombine();
+		parameterCombineSetting.setDescribe(SETTING_PANEL_DESCRIPTION);
+		parameterCombineSetting.addParameters(parameterComboBox);
+
 		parameterComboBox.setItems(parameterDataNodes);
-		parameters.setParameters(datasource, dataset, parameterComboBox);
+		parameters.setParameters(parameterCombine, parameterCombineSetting);
+
+		initSpatialIndexTypes((DatasetVector) dataset.getSelectedItem());
+		initListeners();
+
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, datasource, dataset);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.VECTOR, dataset);
+	}
+
+	private void initListeners() {
+		dataset.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals(ParameterSingleDataset.DATASET_FIELD_NAME)) {
+					DatasetVector datasetVector = (DatasetVector) dataset.getSelectedItem();
+					initSpatialIndexTypes(datasetVector);
+				}
+			}
+		});
+
+
+	}
+
+	@Override
+	protected void workflowChanged(Workflow oldWorkflow, Workflow workflow) {
+		getWorkflow().addRelationAddedListener(new RelationAddedListener<IProcess>() {
+			@Override
+			public void relationAdded(RelationAddedEvent<IProcess> e) {
+				if (e.getRelation().getTo() == MetaProcessSpatialIndex.this) {
+					initSpatialIndexTypes(null);
+				}
+			}
+		});
+		getWorkflow().addRelationRemovedListener(new RelationRemovedListener<IProcess>() {
+			@Override
+			public void relationRemoved(RelationRemovedEvent<IProcess> e) {
+				initSpatialIndexTypes((DatasetVector) dataset.getSelectedItem());
+			}
+		});
+	}
+
+	private void initSpatialIndexTypes(DatasetVector datasetVector) {
+		if (datasetVector == null) {
+			SpatialIndexType[] allSpatialIndexType = SpatialIndexTypeUtilities.ALL_SPATIAL_INDEX_TYPE;
+			ArrayList<ParameterDataNode> items = new ArrayList<>();
+			for (SpatialIndexType spatialIndexType : allSpatialIndexType) {
+				items.add(new ParameterDataNode(SpatialIndexTypeUtilities.toString(spatialIndexType), spatialIndexType));
+			}
+			parameterComboBox.setItems(items.toArray(new ParameterDataNode[items.size()]));
+		} else {
+			SpatialIndexType[] allSpatialIndexType = SpatialIndexTypeUtilities.getDatasetSupportTypes(datasetVector);
+			ArrayList<ParameterDataNode> items = new ArrayList<>();
+			for (SpatialIndexType spatialIndexType : allSpatialIndexType) {
+				items.add(new ParameterDataNode(SpatialIndexTypeUtilities.toString(spatialIndexType), spatialIndexType));
+			}
+			parameterComboBox.setItems(items.toArray(new ParameterDataNode[items.size()]));
+			parameterComboBox.setSelectedItem(datasetVector.getSpatialIndexType());
+		}
 	}
 
 	@Override

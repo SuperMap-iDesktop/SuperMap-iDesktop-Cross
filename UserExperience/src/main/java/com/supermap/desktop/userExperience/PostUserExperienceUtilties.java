@@ -2,8 +2,8 @@ package com.supermap.desktop.userExperience;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.utilities.FileLocker;
+import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.NetworkUtilties;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -71,13 +71,13 @@ public class PostUserExperienceUtilties {
 					}
 				}
 			} catch (IOException e) {
-				Application.getActiveApplication().getOutput().output(e);
+				LogUtilities.error(e.getMessage(), e);
 				return false;
 			} finally {
 				try {
 					httpClient.close();
 				} catch (IOException e) {
-					Application.getActiveApplication().getOutput().output(e);
+					LogUtilities.error(e.getMessage(), e);
 				}
 			}
 			return result;

@@ -51,11 +51,16 @@ public abstract class AbstractProcess implements IProcess {
 		if (this.workflow != null && this.workflow != workflow) {
 			getParameters().unbindWorkflow(this.workflow);
 		}
+		Workflow oldWorkflow = this.workflow;
 		this.workflow = workflow;
-
+		workflowChanged(oldWorkflow, workflow);
 		if (this.workflow != null) {
 			getParameters().bindWorkflow(this.workflow);
 		}
+	}
+
+	protected void workflowChanged(Workflow oldWorkflow, Workflow workflow) {
+
 	}
 
 	@Override

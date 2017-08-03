@@ -6,7 +6,11 @@ import com.supermap.data.SpatialIndexType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.SpatialIndexTypeProperties;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SpatialIndexTypeUtilities {
 	private SpatialIndexTypeUtilities() {
@@ -63,13 +67,32 @@ public class SpatialIndexTypeUtilities {
 		return result;
 	}
 
+
+	/**
+	 *
+	 * @param dataset
+	 * @return
+	 */
+	public static SpatialIndexType[] getDatasetSupportTypes(Dataset dataset) {
+		if (dataset == null || !(dataset instanceof DatasetVector)) {
+			return null;
+		}
+		List<SpatialIndexType> supportSpatialIndex = new ArrayList<>();
+		for (SpatialIndexType spatialIndexType : ALL_SPATIAL_INDEX_TYPE) {
+			if (((DatasetVector) dataset).isSpatialIndexTypeSupported(spatialIndexType)) {
+				supportSpatialIndex.add(spatialIndexType);
+			}
+		}
+		return supportSpatialIndex.toArray(new SpatialIndexType[supportSpatialIndex.size()]);
+	}
+
 	/**
 	 * 获得数据集支持的空间索引类型
 	 *
 	 * @param dataset 数据集
 	 * @return 支持的类型
 	 */
-	public static String[] getSupportSpatialIndexType(Dataset dataset) {
+	public static String[] getSupportSpatialIndexTypeNames(Dataset dataset) {
 		if (dataset == null || !(dataset instanceof DatasetVector)) {
 			return null;
 		}
@@ -88,7 +111,7 @@ public class SpatialIndexTypeUtilities {
 	 * @param datasets 数据集
 	 * @return 支持的类型
 	 */
-	public static String[] getSupportSpatialIndexTypes(List<Dataset> datasets) {
+	public static String[] getSupportSpatialIndexTypeNames(List<Dataset> datasets) {
 		if (datasets.size() <= 0) {
 			return new String[0];
 		}
@@ -102,7 +125,7 @@ public class SpatialIndexTypeUtilities {
 
 		String[] supportSpatialIndexType;
 		for (Dataset dataset : datasets) {
-			supportSpatialIndexType = getSupportSpatialIndexType(dataset);
+			supportSpatialIndexType = getSupportSpatialIndexTypeNames(dataset);
 			for (String s : supportSpatialIndexType) {
 				hashMap.put(s, hashMap.get(s) + 1);
 			}
