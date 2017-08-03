@@ -6,13 +6,7 @@ import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -277,7 +271,15 @@ public class Demo extends FormBaseChild {
 				DEFAULT_BIGICON_HEIGHT = height;
 				initButtonLeftRightLocation();
 				for (DemoParameterButton videoButton : videoButtons) {
-					videoButton.setIcon(new ImageIcon(((ImageIcon) videoButton.getIcon()).getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT)));
+					ImageIcon srcImage = (ImageIcon) videoButton.getSrc();
+					double widthScale = width / (double) srcImage.getIconWidth();
+					double heightScale = height / (double) srcImage.getIconHeight();
+					double scale = Math.min(widthScale, heightScale);
+
+					int scaledWidth = Double.valueOf(srcImage.getIconWidth() * scale).intValue();
+					int sacledHeight = Double.valueOf(srcImage.getIconHeight() * scale).intValue();
+					videoButton.setIcon(new ImageIcon(srcImage.getImage().getScaledInstance(scaledWidth, sacledHeight, Image.SCALE_SMOOTH)));
+//					videoButton.setIcon(new ImageIcon(((ImageIcon) videoButton.getSrc()).getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
 				}
 				initButtonsLocations();
 			}
