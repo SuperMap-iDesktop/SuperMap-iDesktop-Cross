@@ -127,13 +127,8 @@ public class Demo extends FormBaseChild {
 				}
 			}
 			if (next != -1) {
-				for (int i = 0; i < videoButtons.size(); i++) {
-					if (i != next) {
-						videoButtons.get(i).setLocation(-DEFAULT_DEMO_WIDTH, 0);
-					} else {
-						videoButtons.get(i).setLocation(0, 0);
-					}
-				}
+				currentIndex = next;
+				initButtonsLocations();
 			}
 			clearButtonAreaFill(next);
 		}
@@ -293,6 +288,7 @@ public class Demo extends FormBaseChild {
 		moveTime.setCurrentComponent(videoButtons.get(currentIndex));
 		moveTime.setNextComponent(videoButtons.get(next));
 		currentIndex = next;
+		initButtonsLocations();
 		moveTime.startLeft();
 	}
 
@@ -300,6 +296,7 @@ public class Demo extends FormBaseChild {
 		moveTime.setCurrentComponent(videoButtons.get(currentIndex));
 		moveTime.setNextComponent(videoButtons.get(next));
 		currentIndex = next;
+		initButtonsLocations();
 		moveTime.startRight();
 	}
 
