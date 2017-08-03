@@ -1,6 +1,7 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
 import com.supermap.data.SpatialIndexType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -50,7 +51,12 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.TILE), SpatialIndexType.TILE),
 				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.QTREE), SpatialIndexType.QTREE),
 		};
-		datasource = new ParameterDatasourceConstrained();
+		datasource = new ParameterDatasourceConstrained() {
+			@Override
+			protected boolean isDatasourceValueLegal(Datasource parameterValue) {
+				return !parameterValue.isReadOnly();
+			}
+		};
 		dataset = new ParameterSingleDataset(DatasetTypeUtilities.getDatasetTypeVector());
 
 
