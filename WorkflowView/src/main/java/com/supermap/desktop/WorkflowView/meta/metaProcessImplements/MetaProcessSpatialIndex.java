@@ -1,5 +1,6 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
+import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.data.SpatialIndexType;
@@ -26,7 +27,6 @@ import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
@@ -59,7 +59,8 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 				return !parameterValue.isReadOnly();
 			}
 		};
-		dataset = new ParameterSingleDataset(DatasetTypeUtilities.getDatasetTypeVector());
+		dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.CAD,
+				DatasetType.LINEM, DatasetType.NETWORK, DatasetType.NETWORK3D, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D);
 
 
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
