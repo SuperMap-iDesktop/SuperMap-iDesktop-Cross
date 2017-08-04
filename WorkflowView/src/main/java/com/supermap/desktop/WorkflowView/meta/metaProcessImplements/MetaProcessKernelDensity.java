@@ -1,7 +1,6 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.Datasource;
+import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -14,11 +13,16 @@ import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterIServerLogin;
+import com.supermap.desktop.process.parameter.ipls.ParameterInputDataType;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
+
 import java.util.concurrent.CancellationException;
 
 
@@ -44,6 +48,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	}
 
 	private void initComponents() {
+		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_KernelDensity"), "1");
 		parameterComboBoxAnalyseType.setItems(parameterDataNode);
 		parameterComboBoxAnalyseType.setSelectedItem(parameterDataNode);
@@ -112,33 +117,11 @@ public class MetaProcessKernelDensity extends MetaProcess {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
-			CommonSettingCombine datasetInfo = new CommonSettingCombine("datasetInfo", "");
-			if(parameterInputDataType.parameterDataInputWay.getSelectedData().toString().equals("0")){
-				CommonSettingCombine filePath = new CommonSettingCombine("filePath",parameterInputDataType.parameterHDFSPath.getSelectedItem().toString());
-				input.add(filePath);
-			}else if(parameterInputDataType.parameterDataInputWay.getSelectedData().toString().equals("1")){
-				CommonSettingCombine type = new CommonSettingCombine("type",parameterInputDataType.parameterDataSouceType.getSelectedItem().toString());
-				CommonSettingCombine url = new CommonSettingCombine("url",parameterInputDataType.parameterDataSoucePath.getSelectedItem().toString());
-				CommonSettingCombine datasetName = new CommonSettingCombine("datasetName",parameterInputDataType.parameterDatasetName.getSelectedItem().toString());
-				CommonSettingCombine datasetType = new CommonSettingCombine("datasetType",(String) parameterInputDataType.parameterDatasetType.getSelectedData());
-				CommonSettingCombine numSlices = new CommonSettingCombine("numSlices",parameterInputDataType.parameterSpark.getSelectedItem().toString());
-				datasetInfo.add(type,url,datasetName,datasetType);
-				input.add(datasetInfo,numSlices);
-			}else{
-				Dataset sourceDataset = parameterInputDataType.parameterSourceDataset.getSelectedDataset();
-				CommonSettingCombine dataSourceName = new CommonSettingCombine("dataSourceName",((Datasource)parameterInputDataType.parameterSourceDatasource.getSelectedItem()).getAlias());
-				CommonSettingCombine name = new CommonSettingCombine("name",sourceDataset.getName());
-				CommonSettingCombine type = new CommonSettingCombine("type",(String) parameterInputDataType.parameterDatasetType1.getSelectedData());
-				CommonSettingCombine engineType = new CommonSettingCombine("engineType",parameterInputDataType.parameterEngineType.getSelectedItem().toString());
-				CommonSettingCombine server = new CommonSettingCombine("server",parameterInputDataType.parameterTextFieldAddress.getSelectedItem().toString());
-				CommonSettingCombine dataBase = new CommonSettingCombine("dataBase",parameterInputDataType.parameterDataBaseName.getSelectedItem().toString());
-				CommonSettingCombine user = new CommonSettingCombine("user",parameterInputDataType.parameterTextFieldUserName.getSelectedItem().toString());
-				CommonSettingCombine password = new CommonSettingCombine("password",parameterInputDataType.parameterTextFieldPassword.getSelectedItem().toString());
-				CommonSettingCombine datasourceConnectionInfo = new CommonSettingCombine("datasourceConnectionInfo", "");
-				datasourceConnectionInfo.add(engineType,server,dataBase,user,password);
-				datasetInfo.add(type,name,dataSourceName,datasourceConnectionInfo);
-				input.add(datasetInfo);
-			}
+
+
+			parameterInputDataType.initSourceInput(input);
+
+
 			CommonSettingCombine method = new CommonSettingCombine("method",(String) parameterComboBoxAnalyseType.getSelectedData());
 			CommonSettingCombine meshType = new CommonSettingCombine("meshType",(String) parameterComboBoxMeshType.getSelectedData());
 			CommonSettingCombine fields = new CommonSettingCombine("fields",(String) parameterIndex.getSelectedItem());

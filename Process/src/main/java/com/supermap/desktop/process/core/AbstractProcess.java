@@ -7,6 +7,7 @@ import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.events.StatusChangeEvent;
 import com.supermap.desktop.process.events.StatusChangeListener;
 import com.supermap.desktop.process.loader.DefaultProcessLoader;
+import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
@@ -50,11 +51,16 @@ public abstract class AbstractProcess implements IProcess {
 		if (this.workflow != null && this.workflow != workflow) {
 			getParameters().unbindWorkflow(this.workflow);
 		}
+		Workflow oldWorkflow = this.workflow;
 		this.workflow = workflow;
-
+		workflowChanged(oldWorkflow, workflow);
 		if (this.workflow != null) {
 			getParameters().bindWorkflow(this.workflow);
 		}
+	}
+
+	protected void workflowChanged(Workflow oldWorkflow, Workflow workflow) {
+
 	}
 
 	@Override
@@ -119,7 +125,7 @@ public abstract class AbstractProcess implements IProcess {
 	}
 
 	@Override
-	public Class<DefaultProcessLoader> getLoader() {
+	public Class<? extends IProcessLoader> getLoader() {
 		return DefaultProcessLoader.class;
 	}
 

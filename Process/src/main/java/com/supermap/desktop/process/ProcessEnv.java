@@ -1,12 +1,8 @@
 package com.supermap.desktop.process;
 
-import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.parameter.ipls.ParameterClassBundleNode;
-import com.supermap.desktop.utilities.StringUtilities;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 存储到工作空间里以如下固定格式存储
@@ -19,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProcessEnv {
 	public static final ProcessEnv INSTANCE = new ProcessEnv();
 	private ArrayList<ParameterClassBundleNode> packages = new ArrayList<>();
-	private Map<String, IProcessLoader> processLoaderMap = new ConcurrentHashMap<>();
 
 	private ProcessEnv() {
 
@@ -46,11 +41,5 @@ public class ProcessEnv {
 			}
 		}
 		return isExisted;
-	}
-
-	public void addProcessLoader(String className, IProcessLoader processLoader) {
-		if (!StringUtilities.isNullOrEmpty(className) && !this.processLoaderMap.containsKey(className)) {
-			this.processLoaderMap.put(className, processLoader);
-		}
 	}
 }

@@ -10,7 +10,8 @@ import com.supermap.desktop.utilities.StringUtilities;
  * Created by highsad on 2017/8/1.
  */
 public class ImportProcessLoader implements IProcessLoader {
-	private final static String IMPORT = "import";
+	private final static String IMPORT = "Import";
+	public final static ImportProcessLoader INSTANCE = new ImportProcessLoader();
 
 	@Override
 	public IProcess loadProcess(ProcessDescriptor descriptor) {

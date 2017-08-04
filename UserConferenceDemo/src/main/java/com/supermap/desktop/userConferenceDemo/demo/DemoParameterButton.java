@@ -1,6 +1,5 @@
-package com.supermap.desktop.WorkflowView.demo;
+package com.supermap.desktop.userConferenceDemo.demo;
 
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -12,11 +11,13 @@ import java.awt.*;
 public class DemoParameterButton extends JButton {
 	private final String filePath;
 	private String name;
+	private Icon src;
 
 
 	public DemoParameterButton(Icon icon, String filePath, String name) {
 		this(null, icon, filePath);
 		this.name = name;
+		this.src = icon;
 	}
 
 	public DemoParameterButton(String text, Icon icon, String filePath) {
@@ -43,6 +44,10 @@ public class DemoParameterButton extends JButton {
 		} else {
 			return null;
 		}
+	}
+
+	public Icon getSrc() {
+		return src;
 	}
 }
 

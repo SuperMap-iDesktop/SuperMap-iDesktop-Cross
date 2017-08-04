@@ -66,11 +66,13 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 	}
 
 	public void setItems(ParameterDataNode... items) {
+		ArrayList<ParameterDataNode> oldValue = (ArrayList<ParameterDataNode>) this.items.clone();
 		this.items.clear();
 		Collections.addAll(this.items, items);
 		if (items.length > 0) {
 			value = items[0];
 		}
+		firePropertyChangeListener(new PropertyChangeEvent(this, comboBoxItems, oldValue, items));
 	}
 
 	@Override

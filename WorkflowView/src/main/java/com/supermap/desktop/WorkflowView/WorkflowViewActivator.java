@@ -45,7 +45,6 @@ public class WorkflowViewActivator implements BundleActivator {
 				newWindowEvent(evt);
 			}
 		});
-
 	}
 
 	@Override

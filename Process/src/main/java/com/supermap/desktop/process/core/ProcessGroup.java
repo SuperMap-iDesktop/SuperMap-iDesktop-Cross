@@ -185,7 +185,7 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	}
 
 	@Override
-	public <T extends IProcessLoader> Class<T> getLoader() {
+	public Class<? extends IProcessLoader> getLoader() {
 		return null;
 	}
 

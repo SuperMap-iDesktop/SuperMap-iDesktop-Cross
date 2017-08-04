@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1501552824261
+Bnd-LastModified: 1501676820952
 Build-Jdk: 1.7.0_80
-Built-By: Administrator
+Built-By: highsad
 Bundle-Activator: com.supermap.desktop.dataview.DataViewActivator
 Bundle-ManifestVersion: 2
 Bundle-Name: DataView

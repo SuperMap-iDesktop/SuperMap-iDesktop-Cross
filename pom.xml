@@ -33,6 +33,7 @@
         <module>Process</module>
         <module>UserExperience</module>
         <module>WorkflowView</module>
+        <module>UserConferenceDemo</module>
     </modules>
 
     <properties>
