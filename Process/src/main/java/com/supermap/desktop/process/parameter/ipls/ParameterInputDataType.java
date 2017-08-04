@@ -2,10 +2,12 @@ package com.supermap.desktop.process.parameter.ipls;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
 import java.beans.PropertyChangeEvent;
@@ -15,22 +17,22 @@ import java.beans.PropertyChangeListener;
  * Created by caolp on 2017-07-27.
  */
 public class ParameterInputDataType extends ParameterCombine {
-	public ParameterComboBox parameterDataInputWay = new ParameterComboBox(ProcessProperties.getString("String_DataInputWay"));
-	public ParameterHDFSPath parameterHDFSPath = new ParameterHDFSPath();
+	private ParameterComboBox parameterDataInputWay = new ParameterComboBox(ProcessProperties.getString("String_DataInputWay"));
+	private ParameterHDFSPath parameterHDFSPath = new ParameterHDFSPath();
 
-	public ParameterTextField parameterDataSouceType = new ParameterTextField(ProcessProperties.getString("String_DataSourceType"));
-	public ParameterTextField parameterDataSoucePath = new ParameterTextField(ProcessProperties.getString("String_DataSourcePath"));
-	public ParameterTextField parameterDatasetName = new ParameterTextField(ProcessProperties.getString("String_DatasetName"));
-	public ParameterComboBox parameterDatasetType = new ParameterComboBox(ProcessProperties.getString("String_DatasetType"));
-	public ParameterTextField parameterSpark = new ParameterTextField(ProcessProperties.getString("String_numSlices"));
+	private ParameterTextField parameterDataSourceType = new ParameterTextField(ProcessProperties.getString("String_DataSourceType"));
+	private ParameterTextField parameterDataSourcePath = new ParameterTextField(ProcessProperties.getString("String_DataSourcePath"));
+	private ParameterTextField parameterDatasetName = new ParameterTextField(ProcessProperties.getString("String_DatasetName"));
+	private ParameterComboBox parameterDatasetType = new ParameterComboBox(ProcessProperties.getString("String_DatasetType"));
+	private ParameterTextField parameterSpark = new ParameterTextField(ProcessProperties.getString("String_numSlices"));
 
-	public ParameterBigDatasourceDatasource parameterSourceDatasource = new ParameterBigDatasourceDatasource();
-	public ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset();
-	public ParameterTextField parameterEngineType = new ParameterTextField(ProcessProperties.getString("String_EngineType"));
-	public ParameterTextField parameterDataBaseName = new ParameterTextField(ProcessProperties.getString("String_DataBaseName"));
-	public ParameterTextField parameterTextFieldAddress = new ParameterTextField(CoreProperties.getString("String_Server"));
-	public ParameterTextField parameterTextFieldUserName = new ParameterTextField(ProcessProperties.getString("String_UserName"));
-	public ParameterPassword parameterTextFieldPassword = new ParameterPassword(ProcessProperties.getString("String_PassWord"));
+	private ParameterBigDatasourceDatasource parameterSourceDatasource = new ParameterBigDatasourceDatasource();
+	private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset();
+	private ParameterTextField parameterEngineType = new ParameterTextField(ProcessProperties.getString("String_EngineType"));
+	private ParameterTextField parameterDataBaseName = new ParameterTextField(ProcessProperties.getString("String_DataBaseName"));
+	private ParameterTextField parameterTextFieldAddress = new ParameterTextField(CoreProperties.getString("String_Server"));
+	private ParameterTextField parameterTextFieldUserName = new ParameterTextField(ProcessProperties.getString("String_UserName"));
+	private ParameterPassword parameterTextFieldPassword = new ParameterPassword(ProcessProperties.getString("String_PassWord"));
 
 	public ParameterInputDataType() {
 		super();
@@ -47,14 +49,14 @@ public class ParameterInputDataType extends ParameterCombine {
 		ParameterCombine parameterCombine = new ParameterCombine();
 		parameterCombine.addParameters(parameterHDFSPath);
 		//udb文件
-		parameterDataSouceType.setSelectedItem("UDB");
-		parameterDataSouceType.setEnabled(false);
-		parameterDataSoucePath.setSelectedItem("F:\\20170707\\China\\China.udb");
+		parameterDataSourceType.setSelectedItem("UDB");
+		parameterDataSourceType.setEnabled(false);
+		parameterDataSourcePath.setSelectedItem("F:\\20170707\\China\\China.udb");
 		parameterDatasetName.setSelectedItem("China_Capital_pt");
 		parameterSpark.setSelectedItem("36");
 		ParameterCombine parameterCombine1 = new ParameterCombine();
-		parameterCombine1.addParameters(parameterDataSouceType,
-				parameterDataSoucePath,
+		parameterCombine1.addParameters(parameterDataSourceType,
+				parameterDataSourcePath,
 				parameterDatasetName,
 				parameterDatasetType,
 				parameterSpark);
@@ -97,11 +99,11 @@ public class ParameterInputDataType extends ParameterCombine {
 				}
 			}
 		});
-		this.addParameters(parameterDataInputWay,parameterSwitch);
+		this.addParameters(parameterDataInputWay, parameterSwitch);
 		this.setDescribe(ProcessProperties.getString("String_FileInputPath"));
 	}
 
-	private void initConstraint(){
+	private void initConstraint() {
 		EqualDatasourceConstraint equalSourceDatasource = new EqualDatasourceConstraint();
 		equalSourceDatasource.constrained(parameterSourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalSourceDatasource.constrained(parameterSourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
@@ -113,6 +115,45 @@ public class ParameterInputDataType extends ParameterCombine {
 			parameterSourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterSourceDataset.setSelectedItem(defaultBigDataStoreDataset);
 		}
+	}
+
+	public void initSourceInput(CommonSettingCombine input) {
+		CommonSettingCombine datasetInfo = new CommonSettingCombine("datasetInfo", "");
+		if (parameterDataInputWay.getSelectedData().toString().equals("0")) {
+			CommonSettingCombine filePath = new CommonSettingCombine("filePath", parameterHDFSPath.getSelectedItem().toString());
+			input.add(filePath);
+		} else if (parameterDataInputWay.getSelectedData().toString().equals("1")) {
+			CommonSettingCombine type = new CommonSettingCombine("type", parameterDataSourceType.getSelectedItem().toString());
+			CommonSettingCombine url = new CommonSettingCombine("url", parameterDataSourcePath.getSelectedItem().toString());
+			CommonSettingCombine datasetName = new CommonSettingCombine("datasetName", parameterDatasetName.getSelectedItem().toString());
+			CommonSettingCombine datasetType = new CommonSettingCombine("datasetType", (String) parameterDatasetType.getSelectedData());
+			CommonSettingCombine numSlices = new CommonSettingCombine("numSlices", parameterSpark.getSelectedItem().toString());
+			datasetInfo.add(type, url, datasetName, datasetType);
+			input.add(datasetInfo, numSlices);
+		} else {
+			Dataset sourceDataset = parameterSourceDataset.getSelectedDataset();
+			CommonSettingCombine dataSourceName = new CommonSettingCombine("dataSourceName", parameterSourceDatasource.getSelectedItem().getAlias());
+			CommonSettingCombine name = new CommonSettingCombine("name", sourceDataset.getName());
+			CommonSettingCombine type = new CommonSettingCombine("type", (String) parameterDatasetType.getSelectedData());
+			CommonSettingCombine engineType = new CommonSettingCombine("engineType", parameterEngineType.getSelectedItem().toString());
+			CommonSettingCombine server = new CommonSettingCombine("server", parameterTextFieldAddress.getSelectedItem().toString());
+			CommonSettingCombine dataBase = new CommonSettingCombine("dataBase", parameterDataBaseName.getSelectedItem().toString());
+			CommonSettingCombine user = new CommonSettingCombine("user", parameterTextFieldUserName.getSelectedItem().toString());
+			CommonSettingCombine password = new CommonSettingCombine("password", parameterTextFieldPassword.getSelectedItem().toString());
+			CommonSettingCombine datasourceConnectionInfo = new CommonSettingCombine("datasourceConnectionInfo", "");
+			datasourceConnectionInfo.add(engineType, server, dataBase, user, password);
+			datasetInfo.add(type, name, dataSourceName, datasourceConnectionInfo);
+			input.add(datasetInfo);
+		}
+	}
+
+	public void setSupportDatasetType(DatasetType... datasetTypes) {
+		parameterDatasetType.removeAllItems();
+		for (DatasetType datasetType : datasetTypes) {
+			parameterDatasetType.addItem(new ParameterDataNode(DatasetTypeUtilities.toString(datasetType), datasetType.name()));
+		}
+		parameterSourceDataset.setDatasetTypes(datasetTypes);
+
 	}
 }
 
