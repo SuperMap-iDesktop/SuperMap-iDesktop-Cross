@@ -613,8 +613,8 @@ public class FirstStepPane extends JPanel implements IState {
 			String[] names = Toolkit.GetMongoDBNames(serverName, "", "");
 			databaseNames.addAll(Arrays.asList(names));
 			//非验证模式直接置灰账号输入--根据组件mongo2.6测试报告，非验证模式下输入密码没有必要
-			this.textFieldUserName.setText(null);
-			this.textFieldUserPassword.setText(null);
+			/*this.textFieldUserName.setText(null);
+			this.textFieldUserPassword.setText(null);*/
 //			this.textFieldUserName.setEnabled(false);
 //			this.textFieldUserPassword.setEnabled(false);
 		} catch (Exception e) {

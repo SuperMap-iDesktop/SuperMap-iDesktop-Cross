@@ -3,11 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.ConversionAnalyst;
 import com.supermap.analyst.spatialanalyst.ConversionAnalystParameter;
 import com.supermap.analyst.spatialanalyst.SmoothMethod;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetImage;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -18,15 +14,7 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterColor;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -54,7 +42,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 	private ParameterCheckBox checkBoxThinRaster;
 	private ParameterCombine vertorizeLineSetting;
 
-	private ParameterColor textFieldNoValue;
+	private ParameterNumber textFieldNoValue;
 	private ParameterNumber textFieldNoValueTolerance;
 	private ParameterTextField textFieldGridField;
 	private ParameterCheckBox checkBoxChooseSpecifiedValue;
@@ -88,7 +76,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		textFieldSmoothDegree = new ParameterNumber(CommonProperties.getString("String_Smooth"));
 		checkBoxThinRaster = new ParameterCheckBox(CommonProperties.getString("String_CheckBox_IsThinRaster"));
 
-		textFieldNoValue = new ParameterColor(CommonProperties.getString("String_Label_NoData"));
+		textFieldNoValue = new ParameterNumber(CommonProperties.getString("String_Label_NoData"));
 		textFieldNoValueTolerance = new ParameterNumber(CommonProperties.getString("String_Label_NoValueTolerance"));
 		textFieldGridField = new ParameterTextField(CommonProperties.getString("String_m_labelGridValueFieldText"));
 		checkBoxChooseSpecifiedValue = new ParameterCheckBox(CommonProperties.getString("String_CheckBox_ChooseSpecifiedValue"));
@@ -139,9 +127,9 @@ public class MetaProcessRasterToVector extends MetaProcess {
 			textFieldGridValue.setEnabled(false);
 			textFieldGridValueTolerance.setEnabled(false);
 			if (datasetGrid instanceof DatasetGrid){
-				textFieldNoValue.setSelectedItem(new Color((int) ((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue()));
+				textFieldNoValue.setSelectedItem(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue());
 			}else if (datasetGrid instanceof DatasetImage){
-				textFieldNoValue.setSelectedItem(new Color(16777215));
+				textFieldNoValue.setSelectedItem("16777215");
 			}
 		}
 
@@ -202,9 +190,9 @@ public class MetaProcessRasterToVector extends MetaProcess {
 				textFieldGridValue.setEnabled(false);
 				textFieldGridValueTolerance.setEnabled(false);
 				if (sourceDataset.getSelectedItem() instanceof DatasetGrid) {
-					textFieldNoValue.setSelectedItem(new Color((int) ((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue()));
+					textFieldNoValue.setSelectedItem(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue());
 				} else if (sourceDataset.getSelectedItem() instanceof DatasetImage) {
-					textFieldNoValue.setSelectedItem(new Color(16777215));
+					textFieldNoValue.setSelectedItem("16777215");
 				}
 			}
 		});
@@ -283,8 +271,8 @@ public class MetaProcessRasterToVector extends MetaProcess {
 				if (comboBoxBackColor.getSelectedItem() == null) {
 					Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_GridToVector_NotSetColor"));
 				} else {
-					analystParameter.setBackOrNoValue(comboBoxBackColor.getColorRBG());
 					//System.out.println((long) ((Color) comboBoxBackColor.getSelectedItem()).getRGB());
+					analystParameter.setBackOrNoValue(comboBoxBackColor.getColorRBG());
 				}
 				analystParameter.setBackOrNoValueTolerance(Double.valueOf(textFieldColorTolerance.getSelectedItem().toString()));
 			}
