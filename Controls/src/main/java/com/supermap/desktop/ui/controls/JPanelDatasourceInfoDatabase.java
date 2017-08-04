@@ -312,14 +312,16 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 		String moduleSaveDCF = "ModuleSaveDCF";
 		if (!SmFileChoose.isModuleExist(moduleSaveDCF)) {
 			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_dcfFile"), "dcf");
-			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"), ControlsProperties.getString("String_saveAsDCF"), moduleSaveDCF, "GetDirectories");
+			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"), ControlsProperties.getString("String_saveAsDCF"), moduleSaveDCF, "SaveOne");
 		}
 
 		SmFileChoose fileChooserForSaveDCF = new SmFileChoose(moduleSaveDCF);
 		fileChooserForSaveDCF.setSelectedFile(new File("DatabaseConnectionFile.dcf"));
 		if (fileChooserForSaveDCF.showSaveDialog(JPanelDatasourceInfoDatabase.this) == JFileChooser.APPROVE_OPTION) {
 			DatasourceConnectionInfo connectionInfo = getConnectionInfo();
-			connectionInfo.setAlias(jTextFieldDatasourceAlias.getText());
+			if (!StringUtilities.isNullOrEmpty(jTextFieldDatasourceAlias.getText())) {
+				connectionInfo.setAlias(jTextFieldDatasourceAlias.getText());
+			}
 			String dcfPath = fileChooserForSaveDCF.getFilePath();
 			if (!StringUtilities.isNullOrEmpty(dcfPath)) {
 				saveDCFFile(connectionInfo, dcfPath);
@@ -359,6 +361,7 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 						} else {
 							setOtherEngineTypeInfo(connectionInfo, engineType);
 						}
+						jCheckBoxReadonly.setSelected(connectionInfo.isReadOnly());
 					} else {
 						Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_ErrorEngineType"));
 					}
@@ -383,36 +386,64 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 
 	private void setMysqlPlusInfo(DatasourceConnectionInfo connectionInfo) {
 		//导入成功后设置界面
-		String server = connectionInfo.getServer();
 		String regexPlusSign = "\\+";
+		String server = connectionInfo.getServer();
 		if (!StringUtilities.isNullOrEmpty(server) && server.contains(plusSign)) {
-			String mysqlServer = server.split(regexPlusSign)[0];
-			String mongoServer = server.split(regexPlusSign)[1];
-			((JTextField) jComboBoxServer.getEditor().getEditorComponent()).setText(nullStr.equals(mysqlServer) ? "" : mysqlServer);
-			jTextFieldServerMongo.setText(mongoServer);
+			if (server.split(regexPlusSign).length == 1 && server.startsWith(plusSign)) {
+				((JTextField) jComboBoxServer.getEditor().getEditorComponent()).setText(server.split(regexPlusSign)[0]);
+			} else if (server.split(regexPlusSign).length == 1 && server.endsWith(plusSign)) {
+				jTextFieldServerMongo.setText(server.split(regexPlusSign)[1]);
+			} else if (server.split(regexPlusSign).length == 2) {
+				String mysqlServer = server.split(regexPlusSign)[0];
+				String mongoServer = server.split(regexPlusSign)[1];
+				((JTextField) jComboBoxServer.getEditor().getEditorComponent()).setText(nullStr.equals(mysqlServer) ? "" : mysqlServer);
+				jTextFieldServerMongo.setText(mongoServer);
+			}
 		}
 		String dataBase = connectionInfo.getDatabase();
-		if (!StringUtilities.isNullOrEmpty(dataBase) && server.contains(plusSign)) {
-			String mysqlDatabase = dataBase.split(regexPlusSign)[0];
-			String mongoDatabase = dataBase.split(regexPlusSign)[1];
-			jTextFieldDatabaseName.setText(nullStr.equals(mysqlDatabase) ? "" : mysqlDatabase);
-			jTextFieldDatabaseNameMongo.setText(nullStr.equals(mongoDatabase) ? "" : mongoDatabase);
+		if (!StringUtilities.isNullOrEmpty(dataBase) && dataBase.contains(plusSign)) {
+			if (dataBase.split(regexPlusSign).length == 1 && dataBase.startsWith(plusSign)) {
+				jTextFieldDatabaseName.setText(dataBase.split(regexPlusSign)[0]);
+			} else if (dataBase.split(regexPlusSign).length == 1 && dataBase.endsWith(plusSign)) {
+				jTextFieldDatabaseNameMongo.setText(dataBase.split(regexPlusSign)[1]);
+			} else if (dataBase.split(regexPlusSign).length == 2) {
+				String mysqlDatabase = dataBase.split(regexPlusSign)[0];
+				String mongoDatabase = dataBase.split(regexPlusSign)[1];
+				jTextFieldDatabaseName.setText(nullStr.equals(mysqlDatabase) ? "" : mysqlDatabase);
+				jTextFieldDatabaseNameMongo.setText(nullStr.equals(mongoDatabase) ? "" : mongoDatabase);
+			}
 		}
 		String user = connectionInfo.getUser();
-		if (!StringUtilities.isNullOrEmpty(user) && server.contains(plusSign)) {
-			String mysqlUser = user.split(regexPlusSign)[0];
-			String mongoUser = user.split(regexPlusSign)[1];
-			jTextFieldUser.setText(nullStr.equals(mysqlUser) ? "" : mysqlUser);
-			jTextFieldUserMongo.setText(nullStr.equals(mongoUser) ? "" : mongoUser);
+		if (!StringUtilities.isNullOrEmpty(user) && user.contains(plusSign)) {
+			if (user.split(regexPlusSign).length == 1 && user.startsWith(plusSign)) {
+				jTextFieldUser.setText(user.split(regexPlusSign)[0]);
+			} else if (user.split(regexPlusSign).length == 1 && user.endsWith(plusSign)) {
+				jTextFieldUserMongo.setText(user.split(regexPlusSign)[1]);
+			} else if (user.split(regexPlusSign).length == 2) {
+				String mysqlUser = user.split(regexPlusSign)[0];
+				String mongoUser = user.split(regexPlusSign)[1];
+				jTextFieldUser.setText(nullStr.equals(mysqlUser) ? "" : mysqlUser);
+				jTextFieldUserMongo.setText(nullStr.equals(mongoUser) ? "" : mongoUser);
+			}
 		}
-		String password = connectionInfo.getUser();
-		if (!StringUtilities.isNullOrEmpty(password) && server.contains(plusSign)) {
-			String mysqlPassword = password.split(regexPlusSign)[0];
-			String mongoPassword = password.split(regexPlusSign)[1];
-			jTextFieldUser.setText(nullStr.equals(mysqlPassword) ? "" : mysqlPassword);
-			jTextFieldUserMongo.setText(nullStr.equals(mongoPassword) ? "" : mongoPassword);
+		String password = connectionInfo.getPassword();
+		if (!StringUtilities.isNullOrEmpty(password) && password.contains(plusSign)) {
+			if (password.split(regexPlusSign).length == 1 && password.startsWith(plusSign)) {
+				jPasswordField.setText(password.split(regexPlusSign)[0]);
+			} else if (password.split(regexPlusSign).length == 1 && password.endsWith(plusSign)) {
+				jPasswordFieldMongo.setText(password.split(regexPlusSign)[1]);
+			} else if (password.split(regexPlusSign).length == 2) {
+				String mysqlPassword = password.split(regexPlusSign)[0];
+				String mongoPassword = password.split(regexPlusSign)[1];
+				jPasswordField.setText(nullStr.equals(mysqlPassword) ? "" : mysqlPassword);
+				jPasswordFieldMongo.setText(nullStr.equals(mongoPassword) ? "" : mongoPassword);
+			}
+		}
+		if (!StringUtilities.isNullOrEmpty(connectionInfo.getAlias())) {
+			jTextFieldDatasourceAlias.setText(connectionInfo.getAlias());
 		}
 	}
+
 
 	public void removeEvents() {
 		jComboBoxServer.getEditor().getEditorComponent().removeFocusListener(serverNameChangeListener);
