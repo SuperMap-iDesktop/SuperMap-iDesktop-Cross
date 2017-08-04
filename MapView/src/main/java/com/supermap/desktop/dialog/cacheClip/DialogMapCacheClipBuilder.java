@@ -223,29 +223,51 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			String taskPath = CacheUtilities.replacePath(cacheRoot, CacheTask);
 			File cacheFile = new File(cachePath);
 			File taskFile = new File(taskPath);
-			if (cacheFile.exists()) {
-				new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_CachePathExistError"), cachePath));
-				changePanel(buttonStep.getText().equals(ControlsProperties.getString("String_NextWay")));
-				firstStepPane.textFieldCacheName.requestFocus();
-				getContentPane().repaint();
-				result = false;
-			} else {
-				cacheFile.mkdir();
-				taskFile.mkdir();
-			}
 			if (cmdType == MultiProcessClip) {
+				//多进程切图时判断缓存名称/CacheTask文件夹是否存在,如果不存在则新建(缓存目录,任务目录,缓存名称配置文件),存在则提示
+				if (cacheFile.exists() || taskFile.exists()) {
+					result = showError();
+				} else {
+					cacheFile.mkdir();
+					taskFile.mkdir();
+				}
 				File propertyFile = new File(CacheUtilities.replacePath(cacheRoot, "Cache.property"));
 				propertyFile.createNewFile();
 				OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(propertyFile), "UTF-8");
 				writer.write("CacheName=" + cacheName);
 				writer.flush();
 				writer.close();
+			} else {
+				if (cacheFile.exists()) {
+					result = showError(cachePath);
+				} else {
+					cacheFile.mkdir();
+				}
 			}
 		} catch (IOException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		return result;
 	}
+
+	private boolean showError() {
+		new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_CachePathExistOrTaskPathExistError"));
+		changePanel();
+		return false;
+	}
+
+	private boolean showError(String cachePath) {
+		new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString(""), cachePath));
+		changePanel();
+		return false;
+	}
+
+	private void changePanel() {
+		changePanel(buttonStep.getText().equals(ControlsProperties.getString("String_NextWay")));
+		firstStepPane.textFieldCacheName.requestFocus();
+		getContentPane().repaint();
+	}
+
 
 	//Change panel
 	private void changePanel(boolean flag) {
@@ -412,6 +434,9 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
 					//Mongo类型单独处理,调用组件接口返回正确的sci
 					result = mapCacheBuilder.createMongoDB();
+					if (!new File(sciPath).exists()) {
+						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_ErrorForMongoInfo"));
+					}
 				} else if (cmdType != MultiUpdateProcessClip) {
 					result = mapCacheBuilder.toConfigFile(sciPath);
 				}

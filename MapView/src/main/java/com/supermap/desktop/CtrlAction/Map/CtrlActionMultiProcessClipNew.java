@@ -11,6 +11,8 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.mapping.Map;
 
+import javax.swing.*;
+
 /**
  * Created by xie on 2017/7/7.
  */
@@ -21,12 +23,17 @@ public class CtrlActionMultiProcessClipNew extends CtrlAction {
 
 	@Override
 	protected void run() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheNew"));
+			}
+		});
 		Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
 		if (!CacheUtilities.dynamicEffectClosed(map)) {
 			return;
 		}
 		if (CacheUtilities.voladateDatasource()) {
-			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheNew"));
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 			Map newMap = new Map(Application.getActiveApplication().getWorkspace());
 			newMap.fromXML(map.toXML());

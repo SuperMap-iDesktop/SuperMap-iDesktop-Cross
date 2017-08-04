@@ -99,7 +99,7 @@ public class DialogCacheBuilder extends JFrame {
 
 	private void shutdownMapClip() {
 		taskPath = getTaskPath("task");
-		if (new SmOptionPane().showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
+		if (new SmOptionPane(DialogCacheBuilder.this).showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(taskPath, "doing");
 			DialogCacheBuilder.this.dispose();
 			killProcess();
@@ -159,11 +159,11 @@ public class DialogCacheBuilder extends JFrame {
 			try {
 				String newProcessStr = textFieldProcessCount.getText();
 				if (StringUtilities.isInteger(newProcessStr) && Integer.valueOf(newProcessStr) < 0) {
-					new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
+					new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
 					return;
 				}
 				if (StringUtilities.isInteger(newProcessStr) || "0".equals(newProcessStr)) {
-					SmOptionPane optionPane = new SmOptionPane();
+					SmOptionPane optionPane = new SmOptionPane(DialogCacheBuilder.this);
 					int newProcessCount = Integer.valueOf(newProcessStr);
 					String logFolder = ".\\temp_log\\";
 					if (CacheUtilities.isLinux()) {
@@ -205,7 +205,7 @@ public class DialogCacheBuilder extends JFrame {
 				}
 			} catch (Exception ex) {
 				if (null != ex.getMessage()) {
-					new SmOptionPane().showConfirmDialog(ex.getMessage());
+					new SmOptionPane(DialogCacheBuilder.this).showConfirmDialog(ex.getMessage());
 				}
 			}
 		}
@@ -274,6 +274,7 @@ public class DialogCacheBuilder extends JFrame {
 		}
 
 		SmFileChoose fileChooserForWorkSpace = new SmFileChoose(modulenameForWorkspace);
+		fileChooserForWorkSpace.setOwer(DialogCacheBuilder.this);
 		this.fileChooserWorkspacePath = new JFileChooserControl();
 		this.fileChooserWorkspacePath.setFileChooser(fileChooserForWorkSpace);
 		this.fileChooserWorkspacePath.setPath(fileChooserForWorkSpace.getModuleLastPath());
@@ -287,6 +288,7 @@ public class DialogCacheBuilder extends JFrame {
 					moduleNameForCachePath, "GetDirectories");
 		}
 		SmFileChoose fileChooserForCachePath = new SmFileChoose(moduleNameForCachePath);
+		fileChooserForCachePath.setOwer(DialogCacheBuilder.this);
 		this.fileChooserCachePath = new JFileChooserControl();
 		this.fileChooserCachePath.setPath(fileChooserForCachePath.getModuleLastPath());
 		this.fileChooserCachePath.setFileChooser(fileChooserForCachePath);
@@ -409,7 +411,7 @@ public class DialogCacheBuilder extends JFrame {
 			}
 		} catch (Exception ex) {
 			if (null != ex.getMessage()) {
-				new SmOptionPane().showConfirmDialog(ex.getMessage());
+				new SmOptionPane(DialogCacheBuilder.this).showConfirmDialog(ex.getMessage());
 			}
 		}
 	}
@@ -483,7 +485,7 @@ public class DialogCacheBuilder extends JFrame {
 				updateProcesses(parentStr, cachePath, totalSciLength);
 			}
 		} else {
-			new SmOptionPane().showErrorDialog("No sci file");
+			new SmOptionPane(DialogCacheBuilder.this).showErrorDialog("No sci file");
 		}
 		buildCache = new BuildCache();
 		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
@@ -507,17 +509,17 @@ public class DialogCacheBuilder extends JFrame {
 
 		if (StringUtilities.isNullOrEmpty(workspacePath) || !new File(workspacePath).exists()
 				|| !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
-			new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WorkspaceNotExist"));
+			new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_WorkspaceNotExist"));
 			return false;
 		}
 		if (StringUtilities.isNullOrEmpty(mapName)) {
-			new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_MapNameIsNull"));
+			new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_MapNameIsNull"));
 			return false;
 		}
 
 		if (StringUtilities.isNullOrEmpty(processCount) ||
 				!(StringUtilities.isInteger(processCount) && Integer.valueOf(processCount) > 0)) {
-			new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
+			new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
 			textFieldProcessCount.requestFocus();
 			return false;
 		}
@@ -533,7 +535,7 @@ public class DialogCacheBuilder extends JFrame {
 			}
 		}
 		if (!hasMap) {
-			new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_MapIsNotExist"));
+			new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_MapIsNotExist"));
 			textFieldMapName.requestFocus();
 			return false;
 		} else {
@@ -543,7 +545,7 @@ public class DialogCacheBuilder extends JFrame {
 			for (int i = 0; i < layers.size(); i++) {
 				Dataset tempDataset = layers.get(i).getDataset();
 				if (null == tempDataset) {
-					new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_DatasetIsOpened"), layers.get(i).getName()));
+					new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_DatasetIsOpened"), layers.get(i).getName()));
 					killProcess();
 				}
 			}
@@ -551,7 +553,7 @@ public class DialogCacheBuilder extends JFrame {
 		File failedDirectory = new File(getTaskPath("failed"));
 		if (!taskDirectory.exists() || !CacheUtilities.hasSciFiles(taskDirectory)) {
 			if (failedDirectory.exists() && CacheUtilities.hasSciFiles(failedDirectory)) {
-				if (new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
+				if (new SmOptionPane(DialogCacheBuilder.this).showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
 					File[] failedSci = failedDirectory.listFiles();
 					for (int i = 0; i < failedSci.length; i++) {
 						failedSci[i].renameTo(new File(taskDirectory, failedSci[i].getName()));
@@ -560,7 +562,7 @@ public class DialogCacheBuilder extends JFrame {
 					return false;
 				}
 			} else if (!failedDirectory.exists() || !CacheUtilities.hasSciFiles(failedDirectory)) {
-				new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_TaskNotExist"));
+				new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_TaskNotExist"));
 				return false;
 			}
 		}
@@ -718,7 +720,7 @@ public class DialogCacheBuilder extends JFrame {
 				File failedFile = new File(getTaskPath("failed"));
 				File taskFile = new File(getTaskPath("task"));
 				if (failedFile.exists() && null != failedFile.list() && failedFile.list().length > 0) {
-					if (new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath())) == JOptionPane.OK_OPTION) {
+					if (new SmOptionPane(DialogCacheBuilder.this).showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath())) == JOptionPane.OK_OPTION) {
 						buttonCreate.setEnabled(true);
 						resetPathInfo();
 						File[] failedSci = failedFile.listFiles();
@@ -729,9 +731,9 @@ public class DialogCacheBuilder extends JFrame {
 						return;
 					}
 				}
-				new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), cachePath, hour, minutes, second));
+				new SmOptionPane(DialogCacheBuilder.this).showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), cachePath, hour, minutes, second));
 			} else {
-				new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_MultiCacheFailed"));
+				new SmOptionPane(DialogCacheBuilder.this).showConfirmDialog(MapViewProperties.getString("String_MultiCacheFailed"));
 			}
 			disposeInfo();
 		}

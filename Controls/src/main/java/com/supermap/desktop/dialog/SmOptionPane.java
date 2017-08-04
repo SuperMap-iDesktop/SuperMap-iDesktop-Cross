@@ -40,6 +40,11 @@ public class SmOptionPane extends SmDialog {
 		init();
 	}
 
+	public SmOptionPane(JFrame owner) {
+		super(owner);
+		init();
+	}
+
 	public SmOptionPane(JDialog owner) {
 		super(owner);
 		init();

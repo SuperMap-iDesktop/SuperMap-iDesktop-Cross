@@ -73,6 +73,8 @@ public class SmFileChoose extends JFileChooser {
 	 */
 	private File[] selectFiles;
 
+	private JFrame ower;
+
 	/**
 	 * 根据配置文件生成文件选择器
 	 */
@@ -295,21 +297,21 @@ public class SmFileChoose extends JFileChooser {
 			// 以只读方式打开按钮
 			this.setMultiSelectionEnabled(false);
 			this.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			result = this.showOpenDialog((Component) Application.getActiveApplication().getMainFrame());
+			result = this.showOpenDialog(null != ower ? ower : (Component) Application.getActiveApplication().getMainFrame());
 		} else if ("SaveOne".equals(moduleType)) {
 			this.setMultiSelectionEnabled(false);
 			this.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			result = this.showSaveDialog((Component) Application.getActiveApplication().getMainFrame());
+			result = this.showSaveDialog(null != ower ? ower : (Component) Application.getActiveApplication().getMainFrame());
 		} else if ("OpenMany".equals(moduleType)) {
 			// 以只读方式打开按钮
 			this.setMultiSelectionEnabled(true);
 			this.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			result = this.showOpenDialog((Component) Application.getActiveApplication().getMainFrame());
+			result = this.showOpenDialog(null != ower ? ower : (Component) Application.getActiveApplication().getMainFrame());
 		} else if ("GetDirectories".equals(moduleType)) {
 			this.setMultiSelectionEnabled(false);
 			this.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			this.setAcceptAllFileFilterUsed(true);
-			result = this.showOpenDialog((Component) Application.getActiveApplication().getMainFrame());
+			result = this.showOpenDialog(null != ower ? ower : (Component) Application.getActiveApplication().getMainFrame());
 		}
 		return result;
 	}
@@ -529,5 +531,13 @@ public class SmFileChoose extends JFileChooser {
 	 */
 	public String getModuleLastPath() {
 		return moduleLastPath;
+	}
+
+	public JFrame getOwer() {
+		return ower;
+	}
+
+	public void setOwer(JFrame ower) {
+		this.ower = ower;
 	}
 }
