@@ -138,8 +138,6 @@ public class CacheUtilities {
 					break;
 				}
 			}
-			Application.getActiveApplication().getWorkspace().save();
-			ToolbarUIUtilities.updataToolbarsState();
 		}
 		return result;
 	}

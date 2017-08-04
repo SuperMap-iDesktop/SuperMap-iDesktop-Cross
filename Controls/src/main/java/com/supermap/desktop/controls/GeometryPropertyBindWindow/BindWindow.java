@@ -12,7 +12,12 @@ import com.supermap.mapping.Selection;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
 import java.util.Vector;
 
 public class BindWindow implements IBindWindow {
@@ -108,7 +113,7 @@ public class BindWindow implements IBindWindow {
 			tempRows[i] = getRowBySmId(addRows[i]);
 		}
 		if (this.formTabular.getRowCount() > 0) {
-			this.formTabular.addRows(tempRows);
+			this.formTabular.addSelectionRows(tempRows);
 		}
 	}
 

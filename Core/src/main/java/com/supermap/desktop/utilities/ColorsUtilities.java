@@ -40,7 +40,7 @@ public class ColorsUtilities {
 			return 0;
 		}
 		long result = 0xFFFFFF & color.getRGB();
-		result += color.getAlpha() * 16 * 16 * 16;
+		result += ((long) color.getAlpha()) * 16777216l;
 		return result;
 	}
 }

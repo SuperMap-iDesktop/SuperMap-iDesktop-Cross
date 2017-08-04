@@ -1,5 +1,7 @@
 package com.supermap.desktop.Interface;
 
+import com.supermap.data.Dataset;
+import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
 import com.supermap.data.StatisticMode;
 import com.supermap.desktop.event.TabularValueChangedListener;
@@ -20,6 +22,8 @@ public interface IFormTabular extends IForm {
 	 * @return
 	 */
 	void setRecordset(Recordset recordset);
+
+	Dataset getDataset();
 
 	/**
 	 * 获取数据行数
@@ -52,7 +56,7 @@ public interface IFormTabular extends IForm {
 	/**
 	 * 添加选中项
 	 */
-	void addRows(int... tempRows);
+	void addSelectionRows(int... tempRows);
 
 	/**
 	 * 获取选中行的数目
@@ -138,4 +142,7 @@ public interface IFormTabular extends IForm {
 	void setHiddenSystemField(boolean hiddenSystemField);
 
 	int getModelColumn(int columnIndex);
+
+
+	void addRow(Geometry geometry);
 }
