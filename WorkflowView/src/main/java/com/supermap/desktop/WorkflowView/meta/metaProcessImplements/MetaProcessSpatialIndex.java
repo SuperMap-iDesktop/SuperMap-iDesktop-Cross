@@ -8,6 +8,7 @@ import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.events.RelationAddedEvent;
@@ -21,6 +22,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
 import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
@@ -97,6 +99,9 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 				}
 			}
 		});
+		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
+		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
 
 	}
