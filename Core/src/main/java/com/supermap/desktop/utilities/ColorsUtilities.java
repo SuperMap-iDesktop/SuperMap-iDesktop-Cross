@@ -34,4 +34,13 @@ public class ColorsUtilities {
 
 		return true;
 	}
+
+	public static long getColorRgbValue(Color color) {
+		if (color == null) {
+			return 0;
+		}
+		long result = 0xFFFFFF & color.getRGB();
+		result += color.getAlpha() * 16 * 16 * 16;
+		return result;
+	}
 }

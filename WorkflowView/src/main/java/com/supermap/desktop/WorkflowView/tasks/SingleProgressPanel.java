@@ -112,8 +112,8 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 		this.labelTitle.setVisible(isVisible);
 	}
 
-	public boolean cancel() {
-		return this.worker.cancel(false);
+	public void cancel() {
+		this.worker.cancel();
 	}
 
 	public void reset() {
@@ -132,6 +132,6 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 
 	@Override
 	public void done() {
-		// this.button
+		this.buttonRun.setProcedure(ButtonExecutor.READY);
 	}
 }
