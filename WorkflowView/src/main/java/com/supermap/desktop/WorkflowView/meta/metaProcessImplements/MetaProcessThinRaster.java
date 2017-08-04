@@ -14,10 +14,16 @@ import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterColor;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -32,7 +38,7 @@ public class MetaProcessThinRaster extends MetaProcess{
 	private ParameterSingleDataset sourceDataset;
 	private ParameterCombine sourceData;
 
-	private ParameterNumber textFieldNoValue;
+	private ParameterColor parameterColor;
 	private ParameterNumber textFieldNoValueTolerance;
 	private ParameterCombine parameterSetting;
 
@@ -56,7 +62,7 @@ public class MetaProcessThinRaster extends MetaProcess{
 		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
 		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 
-		textFieldNoValue = new ParameterNumber(CommonProperties.getString("String_Label_NoData"));
+		parameterColor = new ParameterColor(CommonProperties.getString("String_Label_NoData"));
 		textFieldNoValueTolerance = new ParameterNumber(CommonProperties.getString("String_Label_NoValueTolerance"));
 
 		sourceData = new ParameterCombine();
@@ -65,7 +71,7 @@ public class MetaProcessThinRaster extends MetaProcess{
 
 		parameterSetting = new ParameterCombine();
 		parameterSetting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		parameterSetting.addParameters(textFieldNoValue, textFieldNoValueTolerance);
+		parameterSetting.addParameters(parameterColor, textFieldNoValueTolerance);
 
 		resultData = new ParameterCombine();
 		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
@@ -93,15 +99,15 @@ public class MetaProcessThinRaster extends MetaProcess{
 			this.sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			this.sourceDataset.setSelectedItem(datasetGrid);
 			if (datasetGrid instanceof DatasetGrid) {
-				textFieldNoValue.setSelectedItem(((DatasetGrid) datasetGrid).getNoValue());
+				parameterColor.setSelectedItem(new Color((int) ((DatasetGrid) datasetGrid).getNoValue()));
 			} else {
-				textFieldNoValue.setSelectedItem("16777215");
+				parameterColor.setSelectedItem(new Color(16777215));
 			}
 		}
 
 		resultDataset.setSelectedItem("result_thinRaster");
 		//textFieldNoValue.setSelectedItem("-9999");
-		textFieldNoValue.setRequisite(true);
+		parameterColor.setRequisite(true);
 		textFieldNoValueTolerance.setSelectedItem("0");
 		textFieldNoValueTolerance.setMinValue(0);
 		textFieldNoValueTolerance.setIsIncludeMin(true);
@@ -113,9 +119,9 @@ public class MetaProcessThinRaster extends MetaProcess{
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (sourceDataset.getSelectedItem() instanceof DatasetGrid) {
-					textFieldNoValue.setSelectedItem(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue());
+					parameterColor.setSelectedItem(new Color((int) ((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue()));
 				} else if (sourceDataset.getSelectedItem() instanceof DatasetImage) {
-					textFieldNoValue.setSelectedItem("16777215");
+					parameterColor.setSelectedItem(new Color(16777215));
 				}
 			}
 		});
@@ -138,7 +144,7 @@ public class MetaProcessThinRaster extends MetaProcess{
 			}
 			ConversionAnalyst.addSteppedListener(steppedListener);
 
-			Dataset result = ConversionAnalyst.thinRaster(src, Math.round(Double.valueOf(this.textFieldNoValue.getSelectedItem().toString())), Double.valueOf(this.textFieldNoValueTolerance.getSelectedItem().toString()), this.resultDataset.getResultDatasource(), datasetName);
+			Dataset result = ConversionAnalyst.thinRaster(src, parameterColor.getColorRBG(), Double.valueOf(this.textFieldNoValueTolerance.getSelectedItem().toString()), this.resultDataset.getResultDatasource(), datasetName);
 
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
