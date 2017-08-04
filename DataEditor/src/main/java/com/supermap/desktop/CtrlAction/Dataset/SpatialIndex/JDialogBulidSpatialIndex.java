@@ -458,7 +458,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		for (int selectedRow : selectedRows) {
 			if (currentSpatialIndexType == null) {
 				currentSpatialIndexType = (String) this.tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE);
-			} else if (!currentSpatialIndexType.equals((String) this.tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE))) {
+			} else if (!currentSpatialIndexType.equals(this.tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE))) {
 				currentSpatialIndexType = null;
 				break;
 			}
