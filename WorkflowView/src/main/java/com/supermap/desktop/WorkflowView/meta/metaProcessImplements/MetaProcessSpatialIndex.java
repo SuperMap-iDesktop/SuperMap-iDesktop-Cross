@@ -86,7 +86,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 		initSpatialIndexTypes((DatasetVector) dataset.getSelectedItem());
 		initListeners();
 
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, datasource, dataset);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, parameterCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.VECTOR, dataset);
 	}
 
@@ -109,20 +109,23 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 
 	@Override
 	protected void workflowChanged(Workflow oldWorkflow, Workflow workflow) {
-		getWorkflow().addRelationAddedListener(new RelationAddedListener<IProcess>() {
-			@Override
-			public void relationAdded(RelationAddedEvent<IProcess> e) {
-				if (e.getRelation().getTo() == MetaProcessSpatialIndex.this) {
-					initSpatialIndexTypes(null);
+		if (workflow != null) {
+
+			getWorkflow().addRelationAddedListener(new RelationAddedListener<IProcess>() {
+				@Override
+				public void relationAdded(RelationAddedEvent<IProcess> e) {
+					if (e.getRelation().getTo() == MetaProcessSpatialIndex.this) {
+						initSpatialIndexTypes(null);
+					}
 				}
-			}
-		});
-		getWorkflow().addRelationRemovedListener(new RelationRemovedListener<IProcess>() {
-			@Override
-			public void relationRemoved(RelationRemovedEvent<IProcess> e) {
-				initSpatialIndexTypes((DatasetVector) dataset.getSelectedItem());
-			}
-		});
+			});
+			getWorkflow().addRelationRemovedListener(new RelationRemovedListener<IProcess>() {
+				@Override
+				public void relationRemoved(RelationRemovedEvent<IProcess> e) {
+					initSpatialIndexTypes((DatasetVector) dataset.getSelectedItem());
+				}
+			});
+		}
 	}
 
 	private void initSpatialIndexTypes(DatasetVector datasetVector) {
