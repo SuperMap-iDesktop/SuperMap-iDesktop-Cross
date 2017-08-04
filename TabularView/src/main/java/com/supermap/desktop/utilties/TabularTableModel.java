@@ -4,6 +4,7 @@ import com.supermap.data.CursorType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
+import com.supermap.data.Geometry;
 import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.enums.TabularChangedType;
@@ -117,12 +118,12 @@ public class TabularTableModel extends AbstractTableModel {
 		// int key = getKey(rowIndex, columnIndex);
 		// Object value = tabularCache.getValue(key);
 		// if (null == value) {
-		Object value = null;
+		Object value;
 		moveToRow(rowIndex);
 		value = recordset.getFieldValue(columnIndex);
-		if (value instanceof Double && null != value && Double.isInfinite((double) value)) {
+		if (value instanceof Double && Double.isInfinite((double) value)) {
 			value = TabularViewProperties.getString("String_Infinite");
-		} else if (value instanceof Float && null != value && Float.isInfinite((float) value)) {
+		} else if (value instanceof Float && Float.isInfinite((float) value)) {
 			value = TabularViewProperties.getString("String_Infinite");
 		} else if (recordset.getFieldInfos().get(columnIndex).getType().equals(FieldType.LONGBINARY) && null != value) {
 			value = "BinaryData";
@@ -145,6 +146,22 @@ public class TabularTableModel extends AbstractTableModel {
 			return;
 		}
 
+		while (rowIndex != nowRow) {
+			if (rowIndex > nowRow) {
+				nowRow++;
+				recordset.moveNext();
+			} else {
+				nowRow--;
+				recordset.movePrev();
+			}
+		}
+	}
+
+	private void gotoRow(int rowIndex) {
+		if (recordset == null || recordset.isClosed()) {
+			return;
+		}
+		int nowRow = recordset.getID();
 		while (rowIndex != nowRow) {
 			if (rowIndex > nowRow) {
 				nowRow++;
@@ -409,5 +426,17 @@ public class TabularTableModel extends AbstractTableModel {
 
 	public int getModelColumn(int columnIndex) {
 		return getFieldIndex(columnIndex);
+	}
+
+	public boolean addRow(Geometry geometry) {
+		int id = recordset.getID();
+		boolean result = recordset.addNew(geometry);
+		// TODO: 2017/8/4 历史
+		recordset.update();
+		gotoRow(id);
+		if (result) {
+			fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
+		}
+		return result;
 	}
 }

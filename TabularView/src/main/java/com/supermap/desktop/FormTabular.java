@@ -1,7 +1,9 @@
 package com.supermap.desktop;
 
+import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldType;
+import com.supermap.data.Geometry;
 import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
 import com.supermap.data.StatisticMode;
@@ -23,8 +25,10 @@ import com.supermap.desktop.event.TabularValueChangedListener;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 import com.supermap.desktop.utilties.TabularStatisticUtilties;
 import com.supermap.desktop.utilties.TabularTableModel;
 
@@ -34,6 +38,8 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
@@ -173,7 +179,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				int column = jTableTabular.columnAtPoint(e.getPoint());
 				if (column >= 0 && column < jTableTabular.getColumnCount()) {
 					setSelectedColumn(tableClickedColumn, column);
-					jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(0, column, true));
 				}
 			}
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
@@ -236,26 +241,23 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		scrollPaneUpperLeftLabel.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		jScrollPaneChildWindow.setCorner(JScrollPane.UPPER_LEFT_CORNER, scrollPaneUpperLeftLabel);
 
-		add(jScrollPaneChildWindow, BorderLayout.CENTER);
+//		add(jScrollPaneChildWindow, BorderLayout.CENTER);
 		if (Application.getActiveApplication().getMainFrame() != null) {
 			IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
 			this.FormSuperTabularContextMenu = (JPopupMenu) manager.get("SuperMap.Desktop.FormSuperTabular.FormSuperTabularContextMenu");
 		}
-
-//		this.addListener(new DockingWindowAdapter() {
-//			@Override
-//			public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
-//				if (evt.getSource().equals(FormTabular.this)) {
-//					removeListener(this);
-//					unRegisterEvents();
-//					recordset.dispose();
-//				}
-//			}
-//		});
 		invokeFocus();
 		initStatusbars();
 		addRedoListener();
 		registerEvents();
+		reLayout();
+	}
+
+	private void reLayout() {
+		this.removeAll();
+		this.setLayout(new GridBagLayout());
+		this.add(jScrollPaneChildWindow, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
+		this.add(getStatusbar(), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
 	}
 
 	/**
@@ -319,16 +321,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.jTableTabular.getTableHeader().addMouseMotionListener(columnHeaderMouseMotionListener);
 
 		this.jTableTabular.getTableHeader().addMouseListener(columnHeaderMouseListener);
-//		((JCheckBox) getStatusbar().get(TabularStatisticUtilties.HIDDEN_SYSTEM_FIELD)).addItemListener(new ItemListener() {
-//			@Override
-//			public void itemStateChanged(ItemEvent e) {
-//				if (isCheckBoxListenerEnable && e.getStateChange() == ItemEvent.SELECTED) {
-//					boolean isHiddenSystemField = ((JCheckBox) getStatusbar().get(TabularStatisticUtilties.HIDDEN_SYSTEM_FIELD)).isSelected();
-//					tabularTableModel.setHiddenSystemField(isHiddenSystemField);
-//					GlobalParameters.setIsTabularHiddenSystemField(isHiddenSystemField);
-//				}
-//			}
-//		});
 
 		GlobalParameters.addGlobalParametersChangedListener(new GlobalParametersChangedListener() {
 			@Override
@@ -337,6 +329,25 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 					boolean b = (Boolean) globalParametersChangedEvent.getNewValue();
 					((JCheckBox) getStatusbar().get(TabularStatisticUtilties.HIDDEN_SYSTEM_FIELD)).setSelected(b);
 					tabularTableModel.setHiddenSystemField(b);
+				}
+			}
+		});
+
+		initTableModelListener();
+	}
+
+	private void initTableModelListener() {
+		jTableTabular.getModel().addTableModelListener(new TableModelListener() {
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				if (e.getType() == TableModelEvent.INSERT) {
+//					rowHeader.repaint();
+//					jTableTabular.setRowSelectionInterval(e.getFirstRow(), e.getLastRow());
+//					jTableTabular.setColumnSelectionInterval(0, tabularTableModel.getColumnCount() - 1);
+//					jTableTabular.repaint();
+//					jTableTabular.scrollRectToVisible(jTableTabular.getCellRect(getRowCount() - 1, 1, true));
+//					goToRow(e.getLastRow());
+					// 没用，选中不了最后一行
 				}
 			}
 		});
@@ -459,6 +470,14 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			jTableTabular.getColumnModel().getColumn(i).setMinWidth(MIN_COLUMN_WIDTH);
 			jTableTabular.getColumnModel().getColumn(i).setPreferredWidth(PREFER_COLUMN_WIDTH);
 		}
+	}
+
+	@Override
+	public Dataset getDataset() {
+		if (getRecordset() == null) {
+			return null;
+		}
+		return getRecordset().getDataset();
 	}
 
 	/**
@@ -622,7 +641,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				int column = jTableTabular.getSelectedColumn();
 				int row = jTableTabular.getSelectedRow();
 				if (row != -1 && column != -1) {
-					((TabularTableModel) jTableTabular.getModel()).setValueAt(jTableTabular.getCellEditor(row, column).getCellEditorValue(), row, column);
+					jTableTabular.getModel().setValueAt(jTableTabular.getCellEditor(row, column).getCellEditorValue(), row, column);
 				}
 			}
 
@@ -721,7 +740,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		} else {
 			tableEditHistoryManager.clear();
 		}
-
+		initTableModelListener();
 	}
 
 	private void checkStatisticsResultState(int[] beforeSelectedColumn) {
@@ -771,7 +790,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	@Override
-	public void addRows(int... addRows) {
+	public void addSelectionRows(int... addRows) {
 		this.jTableTabular.clearSelection();
 		if (addRows.length == 0) {
 			return;
@@ -1045,5 +1064,11 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	@Override
 	public int getModelColumn(int columnIndex) {
 		return tabularTableModel.getModelColumn(columnIndex);
+	}
+
+	@Override
+	public void addRow(Geometry geometry) {
+		TableUtilities.stopEditing(this.getjTableTabular());
+		tabularTableModel.addRow(geometry);
 	}
 }

@@ -272,7 +272,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 					Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_GridToVector_NotSetColor"));
 				} else {
 					//System.out.println((long) ((Color) comboBoxBackColor.getSelectedItem()).getRGB());
-					analystParameter.setBackOrNoValue((long) ((Color) comboBoxBackColor.getSelectedItem()).getRGB());
+					analystParameter.setBackOrNoValue(comboBoxBackColor.getColorRBG());
 				}
 				analystParameter.setBackOrNoValueTolerance(Double.valueOf(textFieldColorTolerance.getSelectedItem().toString()));
 			}
