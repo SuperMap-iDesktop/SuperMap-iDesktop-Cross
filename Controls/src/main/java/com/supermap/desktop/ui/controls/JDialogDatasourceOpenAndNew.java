@@ -35,7 +35,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	private JPanelDatasourceInfoWeb panelDatasourceInfoWeb;
 	private transient GroupLayout gl_contentPanel;
 	private DatasourceOperatorType datasourceOperatorType;
-	private transient EngineType engineTypeTemp;
+	private transient EngineType engineTypeWeb;
 	private CommonListCellRenderer commonCellRender = new CommonListCellRenderer();
 
 	// UI End of variables declaration
@@ -48,7 +48,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	public JDialogDatasourceOpenAndNew(JFrame owner, DatasourceOperatorType type) {
 		super(owner);
 		setModal(true);
-		setBounds(100, 100, 640, 360);
+		setBounds(100, 100, 736, 442);
 		this.setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		this.contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -202,7 +202,11 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		DataCell dmDataCell = new DataCell(ControlsProperties.getString("String_DM"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.DM))));
 		DataCell kingBaseDataCell = new DataCell(ControlsProperties.getString("String_KingBase"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.KINGBASE))));
 		DataCell mySqlDataCell = new DataCell(ControlsProperties.getString("String_MySQL"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.MYSQL))));
-
+		DataCell mySqlPLUSDataCell = new DataCell(ControlsProperties.getString("String_MySQLPlus"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.MYSQLPlus))));
+		DataCell beyonDBDataCell = new DataCell(ControlsProperties.getString("String_BeyonDB"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.BEYONDB))));
+		DataCell highgoDBDataCell = new DataCell(ControlsProperties.getString("String_HiGODB"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.HIGHGODB))));
+		DataCell kDBDataCell = new DataCell(ControlsProperties.getString("String_KDB"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.KDB))));
+		DataCell arcSDE = new DataCell(ControlsProperties.getString("String_SDE"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.SDE))));
 		if (SystemPropertyUtilities.isWindows()) {
 			listModel.addElement(sqlDataCell);
 			listModel.addElement(oracleDataCell);
@@ -212,6 +216,11 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 			listModel.addElement(dmDataCell);
 			listModel.addElement(kingBaseDataCell);
 			listModel.addElement(mySqlDataCell);
+			listModel.addElement(mySqlPLUSDataCell);
+			listModel.addElement(beyonDBDataCell);
+			listModel.addElement(highgoDBDataCell);
+			listModel.addElement(kDBDataCell);
+			listModel.addElement(arcSDE);
 		} else {
 			listModel.addElement(oracleDataCell);
 			listModel.addElement(oracleSpatialDataCell);
@@ -220,6 +229,11 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 			listModel.addElement(dmDataCell);
 			listModel.addElement(kingBaseDataCell);
 			listModel.addElement(mySqlDataCell);
+			listModel.addElement(mySqlPLUSDataCell);
+			listModel.addElement(beyonDBDataCell);
+			listModel.addElement(highgoDBDataCell);
+			listModel.addElement(kDBDataCell);
+			listModel.addElement(arcSDE);
 		}
 		return listModel;
 	}
@@ -232,9 +246,12 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 				switch (datasourceOperatorType) {
 					case NEWDATABASE:
 						result = setCaseOpenDatabase(index);
+						((JPanelDatasourceInfoDatabase) result).isOpenDatasource(false);
+						((JPanelDatasourceInfoDatabase) result).showWarning();
 						break;
 					case OPENDATABASE:
 						result = setCaseOpenDatabase(index);
+						((JPanelDatasourceInfoDatabase) result).showWarning();
 						break;
 					case OPENWEB:
 						result = setCaseOpenWeb(index, engineType);
@@ -257,43 +274,42 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 			this.panelDatasourceInfoDatabase = new JPanelDatasourceInfoDatabase();
 		}
 		engineType = getEngineType(index);
-		// 暂不支持ArcSDE
 		this.panelDatasourceInfoDatabase.setDatasourceType(engineType);
 		result = this.panelDatasourceInfoDatabase;
 		return result;
 	}
 
 	private JPanel setCaseOpenWeb(int index, EngineType engineType) {
-		engineTypeTemp = engineType;
+		engineTypeWeb = engineType;
 		if (this.panelDatasourceInfoWeb == null) {
 			this.panelDatasourceInfoWeb = new JPanelDatasourceInfoWeb();
 		}
 		switch (index) {
 			case 0: // OGC
-				engineTypeTemp = EngineType.OGC;
+				engineTypeWeb = EngineType.OGC;
 				break;
 			case 1: // iServerRest
-				engineTypeTemp = EngineType.ISERVERREST;
+				engineTypeWeb = EngineType.ISERVERREST;
 				break;
 			case 2: // SuperMapCloud
-				engineTypeTemp = EngineType.SUPERMAPCLOUD;
+				engineTypeWeb = EngineType.SUPERMAPCLOUD;
 				break;
 			case 3: // GoogleMaps
-				engineTypeTemp = EngineType.GOOGLEMAPS;
+				engineTypeWeb = EngineType.GOOGLEMAPS;
 				break;
 			case 4: // BaiduMap
-				engineTypeTemp = EngineType.BAIDUMAPS;
+				engineTypeWeb = EngineType.BAIDUMAPS;
 				break;
 			case 5: // OpenStreetMaps
-				engineTypeTemp = EngineType.OPENSTREETMAPS;
+				engineTypeWeb = EngineType.OPENSTREETMAPS;
 				break;
 			case 6:
-				engineTypeTemp = EngineType.DATASERVER;
+				engineTypeWeb = EngineType.DATASERVER;
 			default:
 				break;
 		}
 
-		this.panelDatasourceInfoWeb.setDatasourceType(engineTypeTemp);
+		this.panelDatasourceInfoWeb.setDatasourceType(engineTypeWeb);
 		return panelDatasourceInfoWeb;
 	}
 
@@ -325,6 +341,21 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 				case 7: // MySQL
 					engineType = EngineType.MYSQL;
 					break;
+				case 8://MySQLPlus
+					engineType = EngineType.MYSQLPlus;
+					break;
+				case 9://BeyonDB
+					engineType = EngineType.BEYONDB;
+					break;
+				case 10://HIGHGODB
+					engineType = EngineType.HIGHGODB;
+					break;
+				case 11://KDB
+					engineType = EngineType.KDB;
+					break;
+				case 12://SDE
+					engineType = EngineType.SDE;
+					break;
 				default:
 					break;
 			}
@@ -350,6 +381,21 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 					break;
 				case 6: // MYSQL
 					engineType = EngineType.MYSQL;
+					break;
+				case 7://MySQLPlus
+					engineType = EngineType.MYSQLPlus;
+					break;
+				case 8://BeyonDB
+					engineType = EngineType.BEYONDB;
+					break;
+				case 9://HIGHGODB
+					engineType = EngineType.HIGHGODB;
+					break;
+				case 10://KDB
+					engineType = EngineType.KDB;
+					break;
+				case 11://SDE
+					engineType = EngineType.SDE;
 					break;
 				default:
 					break;
@@ -378,19 +424,19 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 				openFlag = this.panelDatasourceInfoDatabase.loadDatasource();
 
 				if (JPanelDatasourceInfoDatabase.LOAD_DATASOURCE_SUCCESSFUL == openFlag) {
-					this.CloseDialog();
+					this.closeDialog();
 				}
 			} else if (DatasourceOperatorType.NEWDATABASE == this.datasourceOperatorType) {
 				// 新建数据库型数据源
 				openFlag = this.panelDatasourceInfoDatabase.createDatasource();
 				if (JPanelDatasourceInfoDatabase.CREATE_DATASOURCE_SUCCESSFUL == openFlag) {
-					this.CloseDialog();
+					this.closeDialog();
 				}
 			} else if (DatasourceOperatorType.OPENWEB == this.datasourceOperatorType) {
 				// 打开web型数据源
 				openFlag = this.panelDatasourceInfoWeb.loadDatasource();
 				if (JPanelDatasourceInfoWeb.LOAD_DATASOURCE_SUCCESSFUL == openFlag) {
-					this.CloseDialog();
+					this.closeDialog();
 				}
 			}
 		} finally {
@@ -401,16 +447,21 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 	/**
 	 * 返回按钮点击事件， 点击时调用关闭函数。
 	 *
-	 * @see #CloseDialog()
+	 * @see #closeDialog()
 	 */
 	private void cancelButtonClicked() {
-		this.CloseDialog();
+		if (this.datasourceOperatorType == DatasourceOperatorType.OPENDATABASE
+				|| this.datasourceOperatorType == DatasourceOperatorType.NEWDATABASE) {
+			panelDatasourceInfoDatabase.removeEvents();
+		} else if (this.datasourceOperatorType == DatasourceOperatorType.OPENWEB) {
+		}
+		this.closeDialog();
 	}
 
 	/**
 	 * 关闭对话框
 	 */
-	private void CloseDialog() {
+	private void closeDialog() {
 		this.dispose();
 	}
 

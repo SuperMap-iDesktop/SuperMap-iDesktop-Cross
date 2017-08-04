@@ -161,8 +161,8 @@ public class ComponentDropDown extends SmButtonDropdown {
     }
 
     public class RightArrowButton extends JButton {
-        private JLabel labelText;
-        private JLabel labelImage;
+        public JLabel labelText;
+        public JLabel labelImage;
         public RightArrowButton(String text) {
             initRightArrowButton(text);
         }

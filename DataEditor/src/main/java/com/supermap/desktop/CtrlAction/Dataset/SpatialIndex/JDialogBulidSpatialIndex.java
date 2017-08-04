@@ -1,6 +1,10 @@
 package com.supermap.desktop.CtrlAction.Dataset.SpatialIndex;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
+import com.supermap.data.SpatialIndexInfo;
+import com.supermap.data.SpatialIndexType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
@@ -14,7 +18,11 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.SpatialIndexInfoUtilities;
+import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -22,7 +30,13 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -435,7 +449,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		for (int selectedRow : selectedRows) {
 			datasetList.add((Dataset) this.tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DATASET));
 		}
-		this.comboBoxIndexType.setModel(new DefaultComboBoxModel(SpatialIndexTypeUtilities.getSupportSpatialIndexTypes(datasetList)));
+		this.comboBoxIndexType.setModel(new DefaultComboBoxModel(SpatialIndexTypeUtilities.getSupportSpatialIndexTypeNames(datasetList)));
 	}
 
 	private void resetComboboxIndexTypeSelectItem() {
@@ -444,7 +458,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		for (int selectedRow : selectedRows) {
 			if (currentSpatialIndexType == null) {
 				currentSpatialIndexType = (String) this.tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE);
-			} else if (!currentSpatialIndexType.equals((String) this.tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE))) {
+			} else if (!currentSpatialIndexType.equals(this.tableDatasets.getValueAt(selectedRow, SpatialIndexTableModel.COLUMN_DEAL_INDEX_TYPE))) {
 				currentSpatialIndexType = null;
 				break;
 			}
@@ -594,7 +608,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		@Override
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 			getCombobox();
-			this.comboBox.setModel(new DefaultComboBoxModel<String>(SpatialIndexTypeUtilities.getSupportSpatialIndexType((Dataset) table.getValueAt(row,
+			this.comboBox.setModel(new DefaultComboBoxModel<String>(SpatialIndexTypeUtilities.getSupportSpatialIndexTypeNames((Dataset) table.getValueAt(row,
 					SpatialIndexTableModel.COLUMN_DATASET))));
 			this.comboBox.setSelectedItem(table.getValueAt(row, column));
 			return this.comboBox;

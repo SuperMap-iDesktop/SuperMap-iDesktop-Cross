@@ -51,13 +51,12 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	private ParameterDatasourceConstrained parameterSourceDatasource = new ParameterDatasourceConstrained();
 	private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset();
 	private ParameterDatasourceConstrained parameterOverlayDatasource = new ParameterDatasourceConstrained();
-	private ParameterSingleDataset parameterOverlayDataset = new ParameterSingleDataset(DatasetType.REGION);
+	private ParameterSingleDataset parameterOverlayDataset = new ParameterSingleDataset(DatasetType.POINT,DatasetType.LINE,DatasetType.REGION);
 	private ParameterDatasourceConstrained parameterResultDatasource = new ParameterDatasourceConstrained();
 	private ParameterTextField parameterSaveDataset = new ParameterTextField();
 	private ParameterFieldSetDialog parameterFieldSetDialog = new ParameterFieldSetDialog();
 	private ParameterTextField parameterTolerance = new ParameterTextField();
 	private ParameterLabel parameterUnit = new ParameterLabel();
-//	private ParameterCheckBox parameterCheckBoxIsCompareResult = new ParameterCheckBox();
 
 	private SteppedListener steppedListener = new SteppedListener() {
 		@Override
@@ -146,8 +145,6 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	}
 
 	private void initParameterStates() {
-
-
 		if (this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE) {
 			parameterSourceDataset.setDatasetTypes(DatasetType.REGION);
 		} else {
