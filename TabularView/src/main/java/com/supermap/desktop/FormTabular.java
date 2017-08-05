@@ -1,6 +1,5 @@
 package com.supermap.desktop;
 
-import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldType;
 import com.supermap.data.Geometry;
@@ -473,7 +472,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	@Override
-	public Dataset getDataset() {
+	public DatasetVector getDataset() {
 		if (getRecordset() == null) {
 			return null;
 		}
@@ -1070,5 +1069,20 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	public void addRow(Geometry geometry) {
 		TableUtilities.stopEditing(this.getjTableTabular());
 		tabularTableModel.addRow(geometry);
+	}
+
+	@Override
+	public void deleteRows(int[] viewRows) {
+		int[] modelRows = new int[viewRows.length];
+		for (int i = 0; i < viewRows.length; i++) {
+			int viewRow = viewRows[i];
+			modelRows[i] = getModelRow(viewRow);
+		}
+		tabularTableModel.deleteRows(modelRows);
+	}
+
+	public int getModelRow(int viewRow) {
+		// ingore 排序需要
+		return viewRow;
 	}
 }

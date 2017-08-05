@@ -18,6 +18,7 @@ import javax.swing.table.AbstractTableModel;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -157,7 +158,7 @@ public class TabularTableModel extends AbstractTableModel {
 		}
 	}
 
-	private void gotoRow(int rowIndex) {
+	private void moveToRowWithoutCurrentIndex(int rowIndex) {
 		if (recordset == null || recordset.isClosed()) {
 			return;
 		}
@@ -428,15 +429,54 @@ public class TabularTableModel extends AbstractTableModel {
 		return getFieldIndex(columnIndex);
 	}
 
+	private int getSmIdByRow(int viewRow) {
+		moveToRow(viewRow);
+		return (int) recordset.getFieldValue("smId");
+	}
+
 	public boolean addRow(Geometry geometry) {
 		int id = recordset.getID();
 		boolean result = recordset.addNew(geometry);
 		// TODO: 2017/8/4 历史
 		recordset.update();
-		gotoRow(id);
+		TabularChangedEvent tabularChangedEvent = new TabularChangedEvent();
+		tabularChangedEvent.setTabularChangedType(TabularChangedType.ADDED);
+		tabularChangedEvent.setSmId(recordset.getID());
+		fireTabularValueChangedListener(tabularChangedEvent);
+		moveToRowWithoutCurrentIndex(id);
 		if (result) {
 			fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
 		}
 		return result;
+	}
+
+	public void deleteRows(int[] viewRows) {
+		int resultSmID = -1;
+		Arrays.sort(viewRows);
+		int first = viewRows[0];
+		if (first != 0) {
+			resultSmID = getSmIdByRow(first - 1);
+		}
+		int[] smIds = new int[viewRows.length];
+		for (int i = 0; i < viewRows.length; i++) {
+			int viewRow = viewRows[i];
+			smIds[i] = getSmIdByRow(viewRow);
+		}
+		Recordset query = recordset.getDataset().query(smIds, CursorType.DYNAMIC);
+		if (query != null && !query.isEmpty()) {
+			try {
+				query.deleteAll();
+			} finally {
+				query.close();
+			}
+			recordset.refresh();
+			if (resultSmID == -1) {
+				recordset.moveFirst();
+				nowRow = recordset.getID();
+			} else {
+				moveToRow(resultSmID);
+			}
+			fireTableDataChanged();
+		}
 	}
 }

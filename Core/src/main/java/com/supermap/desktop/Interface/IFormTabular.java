@@ -1,6 +1,6 @@
 package com.supermap.desktop.Interface;
 
-import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
 import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
 import com.supermap.data.StatisticMode;
@@ -23,7 +23,7 @@ public interface IFormTabular extends IForm {
 	 */
 	void setRecordset(Recordset recordset);
 
-	Dataset getDataset();
+	DatasetVector getDataset();
 
 	/**
 	 * 获取数据行数
@@ -145,4 +145,6 @@ public interface IFormTabular extends IForm {
 
 
 	void addRow(Geometry geometry);
+
+	void deleteRows(int[] viewRows);
 }
