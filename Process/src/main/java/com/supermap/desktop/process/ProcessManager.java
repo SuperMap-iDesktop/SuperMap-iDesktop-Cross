@@ -1,9 +1,9 @@
 package com.supermap.desktop.process;
 
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessGroup;
 import com.supermap.desktop.process.loader.IProcessLoader;
-import com.supermap.desktop.process.loader.ProcessDescriptor;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class ProcessManager {
 	private ArrayList<IProcessGroup> groups = new ArrayList<>();
 	private Map<String, IProcessLoader> loaderMap = new ConcurrentHashMap<>();
 
-	public IProcess createProcess(ProcessDescriptor processDescriptor) {
+	public IProcess createProcess(DefaultProcessDescriptor processDescriptor) {
 		if (processDescriptor == null) {
 			return null;
 		}
@@ -32,6 +32,10 @@ public class ProcessManager {
 	}
 
 	public void registerProcessLoader(String className, IProcessLoader loader) {
+		if (this.loaderMap.containsKey(className)) {
+			return;
+		}
 
+		this.loaderMap.put(className, loader);
 	}
 }

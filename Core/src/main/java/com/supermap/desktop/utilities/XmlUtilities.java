@@ -20,15 +20,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class XmlUtilities {
@@ -175,6 +167,7 @@ public class XmlUtilities {
 	public static String nodeToString(Node node) {
 		return nodeToString(node, "UTF-8");
 	}
+
 	/**
 	 * 将指定节点输出为字符串形式。
 	 *
@@ -304,6 +297,30 @@ public class XmlUtilities {
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node item = nodeList.item(i);
 				if (item != null && (node.getNodeType() == Node.ELEMENT_NODE) && name.equalsIgnoreCase(item.getNodeName())) {
+					elements.add((Element) item);
+				}
+			}
+		}
+		return elements.toArray(new Element[elements.size()]);
+	}
+
+	/**
+	 * 获取指定节点下所有子节点
+	 *
+	 * @param node
+	 * @return
+	 */
+	public static Element[] getChildElementNodesByName(Node node) {
+		if (node == null) {
+			return null;
+		}
+
+		ArrayList<Element> elements = new ArrayList<>();
+		NodeList nodeList = node.getChildNodes();
+		if (nodeList != null && nodeList.getLength() > 0) {
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node item = nodeList.item(i);
+				if (item != null && node.getNodeType() == Node.ELEMENT_NODE) {
 					elements.add((Element) item);
 				}
 			}
