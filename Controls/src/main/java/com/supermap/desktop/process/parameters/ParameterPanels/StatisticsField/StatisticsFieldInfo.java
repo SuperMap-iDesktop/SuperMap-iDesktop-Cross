@@ -25,7 +25,7 @@ public class StatisticsFieldInfo {
 //	}
 
 	// 新构造-yuanR 2017.7.12
-	StatisticsFieldInfo(String fieldName, FieldType fieldType, StatisticsType statisticsType) {
+	public StatisticsFieldInfo(String fieldName, FieldType fieldType, StatisticsType statisticsType) {
 		this.fieldName = fieldName;
 		this.fieldType = fieldType;
 		this.statisticsType = statisticsType;

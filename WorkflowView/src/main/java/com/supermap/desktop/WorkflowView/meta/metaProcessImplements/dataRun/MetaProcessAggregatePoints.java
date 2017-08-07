@@ -1,4 +1,4 @@
-package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.DataRun;
+package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 
 import com.supermap.analyst.spatialanalyst.Generalization;
 import com.supermap.data.Dataset;

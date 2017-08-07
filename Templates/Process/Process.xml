@@ -115,6 +115,8 @@
                 <process key="VectorToGrid" name="矢量栅格化"/>
             </process>
             <process name="距离栅格">
+                <process key="ShortestPath" name="计算最短路径"/>
+                <process key="SurfacePathLine" name="两点最短地表路径"/>
                 <process key="CostPathLine" name="最小耗费距离"/>
             </process>
             <process name="DEM构建">
@@ -159,6 +161,7 @@
                 <process key="DualLineToCenterLine" name="双线中心线"/>
                 <process key="RegionToCenterLine" name="面中心线"/>
                 <process key="RegionTrunkToCenterLine" name="面主干中心线"/>
+                <process key="AppendFields" name="数据集追加列"/>
             </process>
             <process key="SpatialIndex" name="重构空间索引"/>
             <!--<process key="FieldIndex" name="字段索引"/>-->

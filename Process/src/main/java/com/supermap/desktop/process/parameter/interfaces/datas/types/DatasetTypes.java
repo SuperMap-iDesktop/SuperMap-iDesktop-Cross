@@ -39,6 +39,8 @@ public final class DatasetTypes extends Type {
 
 	public final static DatasetTypes SIMPLE_VECTOR = new DatasetTypes("SimpleVector",
 			POINT.getValue() | LINE.getValue() | REGION.getValue());
+	public final static DatasetTypes SIMPLE_VECTOR_AND_GRID = new DatasetTypes("SimpleVectorAndGrid",
+			POINT.getValue() | LINE.getValue() | REGION.getValue() | GRID.getValue());
 	public final static DatasetTypes LINE_POLYGON_VECTOR = new DatasetTypes("LinePolygonVector",
 			LINE.getValue() | REGION.getValue());
 	public final static DatasetTypes VECTOR = new DatasetTypes("vector",
