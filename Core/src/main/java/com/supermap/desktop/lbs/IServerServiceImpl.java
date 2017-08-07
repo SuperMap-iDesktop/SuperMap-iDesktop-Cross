@@ -34,6 +34,7 @@ public class IServerServiceImpl implements IServerService {
 	private static final String OVERLAYANALYSTGEO_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/overlayanalystgeo.json";
 	private static final String GRIDREGIONAGGREGATION_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/aggregatePoints.json";
 	private static final String SINGLEQUERY_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/query.json";
+	private static final String DATASOURCES = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/query.json";
 
     private final String LOGIN_URL = "/iserver/services/security/login.json";
     private static final Charset UTF8 = Charsets.UTF_8;

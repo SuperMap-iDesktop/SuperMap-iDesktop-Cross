@@ -13,6 +13,6 @@ public class ParameterBigDatasourceDatasource extends ParameterDatasourceConstra
 
 	@Override
 	protected boolean isDatasourceValueLegal(Datasource parameterValue) {
-		return parameterValue != null && parameterValue.getEngineType() == EngineType.DATASERVER;
+		return parameterValue != null && parameterValue.getEngineType() == EngineType.POSTGRESQL;
 	}
 }

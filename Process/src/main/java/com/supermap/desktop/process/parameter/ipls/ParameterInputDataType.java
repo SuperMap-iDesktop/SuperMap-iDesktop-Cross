@@ -51,8 +51,8 @@ public class ParameterInputDataType extends ParameterCombine {
 		//udb文件
 		parameterDataSourceType.setSelectedItem("UDB");
 		parameterDataSourceType.setEnabled(false);
-		parameterDataSourcePath.setSelectedItem("F:\\20170707\\China\\China.udb");
-		parameterDatasetName.setSelectedItem("China_Capital_pt");
+		parameterDataSourcePath.setSelectedItem("G:\\\\ProcessingData\\\\processing.udb");
+		parameterDatasetName.setSelectedItem("newyorkPoint_P");
 		parameterSpark.setSelectedItem("36");
 		ParameterCombine parameterCombine1 = new ParameterCombine();
 		parameterCombine1.addParameters(parameterDataSourceType,
@@ -132,7 +132,7 @@ public class ParameterInputDataType extends ParameterCombine {
 			input.add(datasetInfo, numSlices);
 		} else {
 			Dataset sourceDataset = parameterSourceDataset.getSelectedDataset();
-			CommonSettingCombine dataSourceName = new CommonSettingCombine("dataSourceName", parameterSourceDatasource.getSelectedItem().getAlias());
+			//CommonSettingCombine dataSourceName = new CommonSettingCombine("dataSourceName", parameterSourceDatasource.getSelectedItem().getAlias());
 			CommonSettingCombine name = new CommonSettingCombine("name", sourceDataset.getName());
 			CommonSettingCombine type = new CommonSettingCombine("type", (String) parameterDatasetType.getSelectedData());
 			CommonSettingCombine engineType = new CommonSettingCombine("engineType", parameterEngineType.getSelectedItem().toString());
@@ -142,7 +142,7 @@ public class ParameterInputDataType extends ParameterCombine {
 			CommonSettingCombine password = new CommonSettingCombine("password", parameterTextFieldPassword.getSelectedItem().toString());
 			CommonSettingCombine datasourceConnectionInfo = new CommonSettingCombine("datasourceConnectionInfo", "");
 			datasourceConnectionInfo.add(engineType, server, dataBase, user, password);
-			datasetInfo.add(type, name, dataSourceName, datasourceConnectionInfo);
+			datasetInfo.add(type, name, datasourceConnectionInfo);
 			input.add(datasetInfo);
 		}
 	}
