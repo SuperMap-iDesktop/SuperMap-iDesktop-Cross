@@ -188,6 +188,11 @@ public class CheckCache {
 
 			manager = new TileStorageManager();
 			if (!manager.open(connection)) {
+				File checkFailedDir = new File(CacheUtilities.replacePath(file.getParentFile().getParent(), "checkFailed"));
+				if (!checkFailedDir.exists()) {
+					checkFailedDir.mkdir();
+				}
+				file.renameTo(new File(checkFailedDir, file.getName()));
 				log.writelog("error: mongo open failed!");
 				return;
 			}
@@ -195,9 +200,7 @@ public class CheckCache {
 			TileStorageInfo infoMongo = manager.getInfo();
 			resolutionsMongo = infoMongo.getResolutions();
 		}
-//		FileLocker locker = new FileLocker(file);
-//		//文件锁添加成功则执行检查任务
-//		if (locker.tryLock()) {
+
 		boolean result = true;
 		for (Double scale : cacheFile.getCacheScaleCaptions().keySet()) {
 			String caption = cacheFile.getCacheScaleCaptions().get(scale);

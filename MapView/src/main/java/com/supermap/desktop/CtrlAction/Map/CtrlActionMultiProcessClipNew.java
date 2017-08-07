@@ -21,18 +21,24 @@ public class CtrlActionMultiProcessClipNew extends CtrlAction {
 
 	@Override
 	protected void run() {
-		Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
-		if (!CacheUtilities.dynamicEffectClosed(map)) {
-			return;
-		}
-		if (CacheUtilities.voladateDatasource()) {
-			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheNew"));
-			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
-			Map newMap = new Map(Application.getActiveApplication().getWorkspace());
-			newMap.fromXML(map.toXML());
-			mapCacheBuilder.setMap(newMap);
-			new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.MultiProcessClip, mapCacheBuilder).showDialog();
-		}
+		Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheNew"));
+		Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
+				if (!CacheUtilities.dynamicEffectClosed(map)) {
+					return;
+				}
+				if (CacheUtilities.voladateDatasource()) {
+					MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
+					Map newMap = new Map(Application.getActiveApplication().getWorkspace());
+					newMap.fromXML(map.toXML());
+					mapCacheBuilder.setMap(newMap);
+					new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.MultiProcessClip, mapCacheBuilder).showDialog();
+				}
+			}
+		}, "thread");
+		thread.start();
 	}
 
 	@Override

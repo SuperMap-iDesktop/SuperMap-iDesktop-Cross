@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 public class ParameterFieldSetDialogPanel extends SwingPanel {
 	private ParameterFieldSetDialog parameterFieldSetDialog;
 	private JButton button = new JButton();
+	private FieldsSetDialog fieldsSetDialog = new FieldsSetDialog();
 
 	public ParameterFieldSetDialogPanel(IParameter parameter) {
 		super(parameter);
@@ -36,9 +37,7 @@ public class ParameterFieldSetDialogPanel extends SwingPanel {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// fixme 有bug，初始化问题，没接口，直接每次重新初始化
-				FieldsSetDialog fieldsSetDialog = new FieldsSetDialog(parameterFieldSetDialog.getSourceDataset(), parameterFieldSetDialog.getResultDataset());
-				if (fieldsSetDialog.showDialog() == DialogResult.OK) {
+				if (fieldsSetDialog.showDialog(parameterFieldSetDialog.getSourceDataset(), parameterFieldSetDialog.getResultDataset()) == DialogResult.OK) {
 					parameterFieldSetDialog.setSourceFieldNames(fieldsSetDialog.getSourceFields());
 					parameterFieldSetDialog.setResultFieldNames(fieldsSetDialog.getOverlayAnalystFields());
 				}

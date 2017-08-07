@@ -57,6 +57,8 @@ public class StatisticsFieldPanel extends JPanel {
 	private JLabel labelStatisticsType;
 	private JComboBox<StatisticsType> comboBoxStatisticsType;
 	private boolean isSelecting = true;
+	// 统计新加保留字段的数量
+	private int addFieldCount = 0;
 	//#enregion component
 
 	public StatisticsFieldPanel(DatasetVector dataset) {
@@ -374,16 +376,16 @@ public class StatisticsFieldPanel extends JPanel {
 			}
 		});
 
+		/**
+		 *每次添加一行新的字段，根据新建字段数，设置其字段名称，保证没有重名字段-yuanR 2017.8.7
+		 */
 		buttonAddNew.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String fieldName = "NewField";
-				if (dataset != null) {
-					fieldName = dataset.getAvailableFieldName(fieldName);
-				}
-				tableModel.addRow(new StatisticsFieldInfo(fieldName, FieldType.TEXT, StatisticsType.FIRST));
-				// 当手动添加了新条目，才设置最后一行可编辑-yuanR 2017.7.12
-				// todo 修改整个table可修改
+				addFieldCount++;
+				String newFieldName = "NewField_" + addFieldCount;
+				tableModel.addRow(new StatisticsFieldInfo(newFieldName, FieldType.TEXT, StatisticsType.FIRST));
+				// 设置整个jtable可编辑
 				tableModel.setColumnFieldTypeEditable(true);
 			}
 		});

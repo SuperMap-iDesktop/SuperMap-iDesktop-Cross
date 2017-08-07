@@ -57,15 +57,15 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
 		//流程图中不支持在地图中绘制范围，范围表示与iServer的表示相同
 		parameterBounds.setSelectedItem("-74.050,40.650,-73.850,40.850");
-		parameterIndex.setSelectedItem("col7,col8");
-		parameterMeshSize.setSelectedItem("10");
+		parameterIndex.setSelectedItem("col7");
+		parameterMeshSize.setSelectedItem("50");
 		parameterMeshSizeUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Yard"), "Yard"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Foot"), "Foot"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Mile"), "Mile")
 		);
-		parameterRadius.setSelectedItem("100");
+		parameterRadius.setSelectedItem("300");
 		parameterRadiusUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Yard"), "Yard"),
@@ -117,11 +117,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
-
-
 			parameterInputDataType.initSourceInput(input);
-
-
 			CommonSettingCombine method = new CommonSettingCombine("method",(String) parameterComboBoxAnalyseType.getSelectedData());
 			CommonSettingCombine meshType = new CommonSettingCombine("meshType",(String) parameterComboBoxMeshType.getSelectedData());
 			CommonSettingCombine fields = new CommonSettingCombine("fields",(String) parameterIndex.getSelectedItem());

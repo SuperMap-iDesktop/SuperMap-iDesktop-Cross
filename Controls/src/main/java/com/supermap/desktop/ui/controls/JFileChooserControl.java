@@ -111,10 +111,11 @@ public class JFileChooserControl extends JComponent {
 
 	public String getPath() {
 		String text = this.textEditor.getText();
-		if (!StringUtilities.isNullOrEmpty(text)) {
-			File file = new File(text);
-			file.mkdirs();
-		}
+		//fixme 文件夹不存在的问题，在用到该控件的地方自行处理，不在这里处理
+//		if (!StringUtilities.isNullOrEmpty(text)) {
+//			File file = new File(text);
+//			file.mkdirs();
+//		}
 		return text;
 	}
 

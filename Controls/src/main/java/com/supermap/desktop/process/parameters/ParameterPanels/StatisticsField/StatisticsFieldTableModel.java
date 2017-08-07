@@ -80,14 +80,8 @@ public class StatisticsFieldTableModel extends DefaultTableModel {
 
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		if (column == COLUMN_STATISTICSTYPE) {
-			return isColumnStatisticsTypeEditable;
-		}
-		// 最后一行可修改
-		if (row == statisticsFieldInfos.size() - 1) {
-			return isColumnFieldTypeEditable;
-		}
-		return false;
+		// 是否可编辑设置面向整个JTable-yuanR 2017.8.7
+		return isColumnStatisticsTypeEditable;
 	}
 
 	@Override

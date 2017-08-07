@@ -2,8 +2,8 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.desktop.WorkflowView.meta.dataconversion.MetaProcessImportFactory;
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessLoader;
-import com.supermap.desktop.process.loader.ProcessDescriptor;
 import com.supermap.desktop.utilities.StringUtilities;
 
 /**
@@ -14,7 +14,7 @@ public class ImportProcessLoader implements IProcessLoader {
 	public final static ImportProcessLoader INSTANCE = new ImportProcessLoader();
 
 	@Override
-	public IProcess loadProcess(ProcessDescriptor descriptor) {
+	public IProcess loadProcess(IProcessDescriptor descriptor) {
 		if (descriptor == null) {
 			return null;
 		}

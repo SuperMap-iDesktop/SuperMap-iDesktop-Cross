@@ -52,13 +52,13 @@ public class FieldsSetDialog extends SmDialog {
         }
     };
 
-    public FieldsSetDialog(DatasetVector sourceDataset, DatasetVector overlayAnalystDataset) {
+    public FieldsSetDialog() {
         super();
-        this.sourceDataset = sourceDataset;
-        this.overlayAnalystDataset = overlayAnalystDataset;
     }
 
-    public DialogResult showDialog() {
+    public DialogResult showDialog(DatasetVector sourceDataset, DatasetVector overlayAnalystDataset) {
+        this.sourceDataset = sourceDataset;
+        this.overlayAnalystDataset = overlayAnalystDataset;
         initComponents();
         initLayout();
         initResources();

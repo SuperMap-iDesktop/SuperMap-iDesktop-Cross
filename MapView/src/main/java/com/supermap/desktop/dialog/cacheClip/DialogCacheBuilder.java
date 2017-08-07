@@ -62,7 +62,6 @@ public class DialogCacheBuilder extends JFrame {
 	private JButton buttonRefresh;
 	private WarningOrHelpProvider helpProviderForProcessCount;
 	//scipath for restore path of .sci file
-	private File sciFile;
 	private String taskPath;
 	private int totalSciLength;
 	private long startTime;
@@ -84,7 +83,6 @@ public class DialogCacheBuilder extends JFrame {
 			if (hasTask()) {
 				shutdownMapClip();
 			} else {
-				DialogCacheBuilder.this.dispose();
 				killProcess();
 			}
 		}
@@ -99,9 +97,8 @@ public class DialogCacheBuilder extends JFrame {
 
 	private void shutdownMapClip() {
 		taskPath = getTaskPath("task");
-		if (new SmOptionPane().showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
+		if (new SmOptionPane(DialogCacheBuilder.this).showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(taskPath, "doing");
-			DialogCacheBuilder.this.dispose();
 			killProcess();
 		} else {
 			return;
@@ -159,11 +156,11 @@ public class DialogCacheBuilder extends JFrame {
 			try {
 				String newProcessStr = textFieldProcessCount.getText();
 				if (StringUtilities.isInteger(newProcessStr) && Integer.valueOf(newProcessStr) < 0) {
-					new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
+					new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
 					return;
 				}
 				if (StringUtilities.isInteger(newProcessStr) || "0".equals(newProcessStr)) {
-					SmOptionPane optionPane = new SmOptionPane();
+					SmOptionPane optionPane = new SmOptionPane(DialogCacheBuilder.this);
 					int newProcessCount = Integer.valueOf(newProcessStr);
 					String logFolder = ".\\temp_log\\";
 					if (CacheUtilities.isLinux()) {
@@ -205,7 +202,7 @@ public class DialogCacheBuilder extends JFrame {
 				}
 			} catch (Exception ex) {
 				if (null != ex.getMessage()) {
-					new SmOptionPane().showConfirmDialog(ex.getMessage());
+					new SmOptionPane(DialogCacheBuilder.this).showConfirmDialog(ex.getMessage());
 				}
 			}
 		}
@@ -224,7 +221,6 @@ public class DialogCacheBuilder extends JFrame {
 			boolean result = builder.fromConfigFile(sciFilePath);
 			if (result) {
 				progressBarTotal.setValue(0);
-				sciFile = new File(sciFilePath);
 				HashMap<Double, String> allScaleCaptions = new HashMap<>(builder.getOutputScaleCaptions());
 				if (StringUtilities.isNullOrEmpty(textFieldMapName.getText())) {
 					textFieldMapName.setText(builder.getCacheName());
@@ -274,6 +270,7 @@ public class DialogCacheBuilder extends JFrame {
 		}
 
 		SmFileChoose fileChooserForWorkSpace = new SmFileChoose(modulenameForWorkspace);
+		fileChooserForWorkSpace.setOwer(DialogCacheBuilder.this);
 		this.fileChooserWorkspacePath = new JFileChooserControl();
 		this.fileChooserWorkspacePath.setFileChooser(fileChooserForWorkSpace);
 		this.fileChooserWorkspacePath.setPath(fileChooserForWorkSpace.getModuleLastPath());
@@ -287,6 +284,7 @@ public class DialogCacheBuilder extends JFrame {
 					moduleNameForCachePath, "GetDirectories");
 		}
 		SmFileChoose fileChooserForCachePath = new SmFileChoose(moduleNameForCachePath);
+		fileChooserForCachePath.setOwer(DialogCacheBuilder.this);
 		this.fileChooserCachePath = new JFileChooserControl();
 		this.fileChooserCachePath.setPath(fileChooserForCachePath.getModuleLastPath());
 		this.fileChooserCachePath.setFileChooser(fileChooserForCachePath);
@@ -362,7 +360,6 @@ public class DialogCacheBuilder extends JFrame {
 					setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 					shutdownMapClip();
 				} else {
-					DialogCacheBuilder.this.dispose();
 					killProcess();
 				}
 			}
@@ -409,7 +406,7 @@ public class DialogCacheBuilder extends JFrame {
 			}
 		} catch (Exception ex) {
 			if (null != ex.getMessage()) {
-				new SmOptionPane().showConfirmDialog(ex.getMessage());
+				new SmOptionPane(DialogCacheBuilder.this).showConfirmDialog(ex.getMessage());
 			}
 		}
 	}
@@ -483,7 +480,7 @@ public class DialogCacheBuilder extends JFrame {
 				updateProcesses(parentStr, cachePath, totalSciLength);
 			}
 		} else {
-			new SmOptionPane().showErrorDialog("No sci file");
+			new SmOptionPane(DialogCacheBuilder.this).showErrorDialog("No sci file");
 		}
 		buildCache = new BuildCache();
 		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
@@ -503,65 +500,71 @@ public class DialogCacheBuilder extends JFrame {
 
 	private boolean validateValue(String taskPath, String workspacePath, String mapName, String processCount) {
 		boolean result = true;
-		File taskDirectory = new File(taskPath);
+		try {
+			File taskDirectory = new File(taskPath);
 
-		if (StringUtilities.isNullOrEmpty(workspacePath) || !new File(workspacePath).exists()
-				|| !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
-			new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WorkspaceNotExist"));
-			return false;
-		}
-		if (StringUtilities.isNullOrEmpty(mapName)) {
-			new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_MapNameIsNull"));
-			return false;
-		}
-
-		if (StringUtilities.isNullOrEmpty(processCount) ||
-				!(StringUtilities.isInteger(processCount) && Integer.valueOf(processCount) > 0)) {
-			new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
-			textFieldProcessCount.requestFocus();
-			return false;
-		}
-
-		WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(workspacePath);
-		Workspace workspace = new Workspace();
-		workspace.open(connectionInfo);
-		boolean hasMap = false;
-		for (int i = 0; i < workspace.getMaps().getCount(); i++) {
-			if (mapName.equals(workspace.getMaps().get(i))) {
-				hasMap = true;
-				break;
+			if (StringUtilities.isNullOrEmpty(workspacePath) || !new File(workspacePath).exists()
+					|| !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
+				new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_WorkspaceNotExist"));
+				return false;
 			}
-		}
-		if (!hasMap) {
-			new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_MapIsNotExist"));
-			textFieldMapName.requestFocus();
-			return false;
-		} else {
-			Map map = new Map(workspace);
-			map.open(mapName);
-			ArrayList<Layer> layers = MapUtilities.getLayers(map);
-			for (int i = 0; i < layers.size(); i++) {
-				Dataset tempDataset = layers.get(i).getDataset();
-				if (null == tempDataset) {
-					new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_DatasetIsOpened"), layers.get(i).getName()));
-					killProcess();
+			if (StringUtilities.isNullOrEmpty(mapName)) {
+				new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_MapNameIsNull"));
+				return false;
+			}
+
+			if (StringUtilities.isNullOrEmpty(processCount) ||
+					!(StringUtilities.isInteger(processCount) && Integer.valueOf(processCount) > 0)) {
+				new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
+				textFieldProcessCount.requestFocus();
+				return false;
+			}
+
+			WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(workspacePath);
+			Workspace workspace = new Workspace();
+			workspace.open(connectionInfo);
+			boolean hasMap = false;
+			for (int i = 0; i < workspace.getMaps().getCount(); i++) {
+				if (mapName.equals(workspace.getMaps().get(i))) {
+					hasMap = true;
+					break;
 				}
 			}
-		}
-		File failedDirectory = new File(getTaskPath("failed"));
-		if (!taskDirectory.exists() || !CacheUtilities.hasSciFiles(taskDirectory)) {
-			if (failedDirectory.exists() && CacheUtilities.hasSciFiles(failedDirectory)) {
-				if (new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
-					File[] failedSci = failedDirectory.listFiles();
-					for (int i = 0; i < failedSci.length; i++) {
-						failedSci[i].renameTo(new File(taskDirectory, failedSci[i].getName()));
+			if (!hasMap) {
+				new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_MapIsNotExist"));
+				textFieldMapName.requestFocus();
+				return false;
+			} else {
+				Map map = new Map(workspace);
+				map.open(mapName);
+				ArrayList<Layer> layers = MapUtilities.getLayers(map);
+				for (int i = 0; i < layers.size(); i++) {
+					Dataset tempDataset = layers.get(i).getDataset();
+					if (null == tempDataset) {
+						new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_DatasetIsOpened"), layers.get(i).getName()));
+						return false;
 					}
-				} else {
+				}
+			}
+			File failedDirectory = new File(getTaskPath("failed"));
+			if (!taskDirectory.exists() || !CacheUtilities.hasSciFiles(taskDirectory)) {
+				if (failedDirectory.exists() && CacheUtilities.hasSciFiles(failedDirectory)) {
+					if (new SmOptionPane(DialogCacheBuilder.this).showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
+						File[] failedSci = failedDirectory.listFiles();
+						for (int i = 0; i < failedSci.length; i++) {
+							failedSci[i].renameTo(new File(taskDirectory, failedSci[i].getName()));
+						}
+					} else {
+						return false;
+					}
+				} else if (!failedDirectory.exists() || !CacheUtilities.hasSciFiles(failedDirectory)) {
+					new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_TaskNotExist"));
 					return false;
 				}
-			} else if (!failedDirectory.exists() || !CacheUtilities.hasSciFiles(failedDirectory)) {
-				new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_TaskNotExist"));
-				return false;
+			}
+		} catch (Exception e) {
+			if (null != e.getMessage()) {
+				new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(e.getMessage());
 			}
 		}
 		return result;
@@ -667,7 +670,6 @@ public class DialogCacheBuilder extends JFrame {
 		this.captions = null;
 		this.scrollPaneProgresses = null;
 		this.captionCount = null;
-		DialogCacheBuilder.this.dispose();
 		killProcess();
 	}
 
@@ -693,47 +695,52 @@ public class DialogCacheBuilder extends JFrame {
 
 	public void getResult(String cachePath, long startTime) {
 		synchronized (resultLock) {
-			boolean result = false;
-			File resultDir = new File(cachePath);
-			if (resultDir.list().length > 1) {
-				result = true;
-			}
-			if (result) {
-				long endTime = System.currentTimeMillis();
-				long totalTime = endTime - startTime;
-				long hour = 0;
-				long minutes = 0;
-				long second = 0;
-				if (totalTime >= 3600000) {
-					hour = totalTime / 3600000;
-					minutes = (totalTime % 3600000) / 60000;
-					second = ((totalTime % 3600000) % 60000) / 1000;
-				} else if (totalTime >= 60000) {
-					minutes = totalTime / 60000;
-					second = (totalTime % 60000) / 1000;
-				} else {
-					second = totalTime / 1000;
+			try {
+				boolean result = false;
+				File resultDir = new File(cachePath);
+				if (resultDir.list().length > 1) {
+					result = true;
 				}
-
-				File failedFile = new File(getTaskPath("failed"));
-				File taskFile = new File(getTaskPath("task"));
-				if (failedFile.exists() && null != failedFile.list() && failedFile.list().length > 0) {
-					if (new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath())) == JOptionPane.OK_OPTION) {
-						buttonCreate.setEnabled(true);
-						resetPathInfo();
-						File[] failedSci = failedFile.listFiles();
-						for (int i = 0; i < failedSci.length; i++) {
-							failedSci[i].renameTo(new File(taskFile, failedSci[i].getName()));
-						}
-						buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
-						return;
+				if (result) {
+					long endTime = System.currentTimeMillis();
+					long totalTime = endTime - startTime;
+					long hour = 0;
+					long minutes = 0;
+					long second = 0;
+					if (totalTime >= 3600000) {
+						hour = totalTime / 3600000;
+						minutes = (totalTime % 3600000) / 60000;
+						second = ((totalTime % 3600000) % 60000) / 1000;
+					} else if (totalTime >= 60000) {
+						minutes = totalTime / 60000;
+						second = (totalTime % 60000) / 1000;
+					} else {
+						second = totalTime / 1000;
 					}
+
+					File failedFile = new File(getTaskPath("failed"));
+					File taskFile = new File(getTaskPath("task"));
+					if (failedFile.exists() && null != failedFile.list() && failedFile.list().length > 0) {
+						if (new SmOptionPane(DialogCacheBuilder.this).showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath())) == JOptionPane.OK_OPTION) {
+							buttonCreate.setEnabled(true);
+							resetPathInfo();
+							File[] failedSci = failedFile.listFiles();
+							for (int i = 0; i < failedSci.length; i++) {
+								failedSci[i].renameTo(new File(taskFile, failedSci[i].getName()));
+							}
+							buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
+							return;
+						}
+					}
+					new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), cachePath, hour, minutes, second));
+				} else {
+					new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(MapViewProperties.getString("String_MultiCacheFailed"));
 				}
-				new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), cachePath, hour, minutes, second));
-			} else {
-				new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_MultiCacheFailed"));
+			} catch (Exception e) {
+				if (null != e.getMessage()) {
+					new SmOptionPane(DialogCacheBuilder.this).showErrorDialog(e.getMessage());
+				}
 			}
-			disposeInfo();
 		}
 	}
 

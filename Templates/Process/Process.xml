@@ -114,6 +114,10 @@
                 <process key="ThinRaster" name="栅格细化"/>
                 <process key="VectorToGrid" name="矢量栅格化"/>
             </process>
+            <process name="距离栅格">
+                <process key="ShortestPath" name="计算最短路径"/>
+                <process key="SurfacePathLine" name="两点最短地表路径"/>
+            </process>
             <process name="DEM构建">
                 <process key="DEMBuild" name="DEM构建"/>
                 <process key="DEMLake" name="DEM挖湖"/>
@@ -156,6 +160,7 @@
                 <process key="DualLineToCenterLine" name="双线中心线"/>
                 <process key="RegionToCenterLine" name="面中心线"/>
                 <process key="RegionTrunkToCenterLine" name="面主干中心线"/>
+                <process key="AppendFields" name="数据集追加列"/>
             </process>
             <process key="SpatialIndex" name="重构空间索引"/>
             <!--<process key="FieldIndex" name="字段索引"/>-->
@@ -207,7 +212,7 @@
             <!--<process key="ConnectedDrainage" name="连接水系"/>-->
             <!--</process>-->
         </process>
-        <process name="Online" iconPath="/processresources/Process/online.png">
+        <process name="大数据" iconPath="/processresources/Process/online.png">
             <!--  <process name="空间叠加">
                   <process key="ObjectLevelOverlayAnalysis" name="对象级叠加分析"/>
                   <process key="OverlayAnalysis" name="叠加分析"/>
@@ -246,7 +251,7 @@
             <process key="SingleQuery" name="单对象查询"/>
             <process key="GridRegionAggregation" name="网格面聚合分析"/>
             <process key="PolygonAggregation" name="多边形聚合分析"/>
-
+            <process key="SummaryRegion" name="范围汇总分析"/>
         </process>
     </process>
 </root>
