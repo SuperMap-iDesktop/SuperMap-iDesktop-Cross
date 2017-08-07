@@ -75,7 +75,7 @@ public class JDialogHDFSFiles extends SmDialog {
     private ActionListener okListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (!StringUtilities.isNullOrEmpty(panelHDFSFiles.getURL()) && panelHDFSFiles.getTable().getSelectedRow() > 0) {
+            if (!StringUtilities.isNullOrEmpty(panelHDFSFiles.getURL()) && panelHDFSFiles.getTable().getSelectedRow() >= 0) {
                 String name = (String) panelHDFSFiles.getTable().getModel().getValueAt(panelHDFSFiles.getTable().getSelectedRow(), 0);
                 String url = panelHDFSFiles.getURL();
                 if (!url.endsWith("/")) {
