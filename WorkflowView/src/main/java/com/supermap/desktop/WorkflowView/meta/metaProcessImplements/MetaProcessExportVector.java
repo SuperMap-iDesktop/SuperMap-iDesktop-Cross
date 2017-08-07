@@ -1,12 +1,7 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.Charset;
-import com.supermap.data.conversion.CADVersion;
-import com.supermap.data.conversion.ExportSetting;
-import com.supermap.data.conversion.ExportSettingDWG;
-import com.supermap.data.conversion.ExportSettingDXF;
-import com.supermap.data.conversion.ExportSteppedEvent;
-import com.supermap.data.conversion.ExportSteppedListener;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessAbstractExport;
@@ -136,11 +131,13 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 				this.cadVersion.setSelectedItem(((ExportSettingDXF) newExportSetting).getVersion());
 			}
 		}
-		this.charset.setEnabled(true);
-		this.charset.setSelectedItem(newExportSetting.getTargetFileCharset());
-		this.expression.setEnabled(true);
-		this.sqlExpression.setEnabled(true);
-		this.expression.setSelectedItem(newExportSetting.getFilter());
+		if (null != newExportSetting) {
+			this.charset.setEnabled(true);
+			this.charset.setSelectedItem(newExportSetting.getTargetFileCharset());
+			this.expression.setEnabled(true);
+			this.sqlExpression.setEnabled(true);
+			this.expression.setSelectedItem(newExportSetting.getFilter());
+		}
 	}
 
 	@Override

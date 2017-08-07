@@ -104,6 +104,8 @@ public class MetaKeys {
 	public static final String CONVERSION_LINE2D_TO_3D = "Conversion_Line2DTo3D";
 	public static final String CONVERSION_REGION2D_TO_3D = "Conversion_Region2DTo3D";
 
+	public static final String APPENDFIELDS = "AppendFields";
+
 	// 大数据
 	public static final String HEAT_MAP = "HeatMap";
 	public static final String SIMPLE_DENSITY = "SimpleDensity";

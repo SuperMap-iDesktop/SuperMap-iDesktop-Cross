@@ -10,8 +10,6 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.mapping.Map;
 
-import javax.swing.*;
-
 /**
  * Created by xie on 2017/7/7.
  */
@@ -22,23 +20,24 @@ public class CtrlActionWorkSpaceMultiProcessClipNew extends CtrlAction {
 
 	@Override
 	protected void run() {
-		SwingUtilities.invokeLater(new Runnable() {
+		Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheNew"));
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheNew"));
+				Map map = CacheUtilities.getWorkspaceSelectedMap();
+				if (!CacheUtilities.dynamicEffectClosed(map)) {
+					return;
+				}
+				if (CacheUtilities.voladateDatasource()) {
+					MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
+					Map newMap = new Map(Application.getActiveApplication().getWorkspace());
+					newMap.fromXML(map.toXML());
+					mapCacheBuilder.setMap(newMap);
+					new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.MultiProcessClip, mapCacheBuilder).showDialog();
+				}
 			}
 		});
-		Map map = CacheUtilities.getWorkspaceSelectedMap();
-		if (!CacheUtilities.dynamicEffectClosed(map)) {
-			return;
-		}
-		if (CacheUtilities.voladateDatasource()) {
-			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
-			Map newMap = new Map(Application.getActiveApplication().getWorkspace());
-			newMap.fromXML(map.toXML());
-			mapCacheBuilder.setMap(newMap);
-			new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.MultiProcessClip, mapCacheBuilder).showDialog();
-		}
+		thread.start();
 	}
 
 	@Override
