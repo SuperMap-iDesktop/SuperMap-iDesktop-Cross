@@ -76,10 +76,10 @@ public abstract class MetaProcessISO extends MetaProcess {
 			maxGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMaxValue());
 			minGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMinValue());
 		}
-		ParameterDataNode selectedNode = new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_NONE"), SmoothMethod.NONE);
+		ParameterDataNode selectedNode = new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_NONE"), SmoothMethod.NONE);
 		this.smoothMethod.setItems(selectedNode,
-				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
-				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH));
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_BSLine"), SmoothMethod.BSPLINE),
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_POLISH"), SmoothMethod.POLISH));
 		this.smoothMethod.setSelectedItem(selectedNode);
 		this.smoothNess.setEnabled(false);
 		reloadValue();

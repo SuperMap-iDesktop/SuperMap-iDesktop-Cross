@@ -114,6 +114,9 @@
                 <process key="ThinRaster" name="栅格细化"/>
                 <process key="VectorToGrid" name="矢量栅格化"/>
             </process>
+            <process name="距离栅格">
+                <process key="CostPathLine" name="最小耗费距离"/>
+            </process>
             <process name="DEM构建">
                 <process key="DEMBuild" name="DEM构建"/>
                 <process key="DEMLake" name="DEM挖湖"/>

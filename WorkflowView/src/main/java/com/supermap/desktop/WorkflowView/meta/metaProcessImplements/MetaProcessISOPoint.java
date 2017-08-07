@@ -104,10 +104,10 @@ public class MetaProcessISOPoint extends MetaProcess {
 		this.terrainInterpolateType.setItems(selectedInterpolateType,
 				new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_Kriging"), TerrainInterpolateType.KRIGING),
 				new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_TIN"), TerrainInterpolateType.TIN));
-		ParameterDataNode selectedSmoothNode = new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_NONE"), SmoothMethod.NONE);
+		ParameterDataNode selectedSmoothNode = new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_NONE"), SmoothMethod.NONE);
 		this.smoothMethod.setItems(selectedSmoothNode,
-				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
-				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH));
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_BSLine"), SmoothMethod.BSPLINE),
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_POLISH"), SmoothMethod.POLISH));
 		this.smoothMethod.setSelectedItem(selectedSmoothNode);
 		this.smoothNess.setEnabled(false);
 	}
