@@ -1622,8 +1622,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		if (activeLayers != null && activeLayers.length > 0) {
 			for (int i = 0; i < activeLayers.length; i++) {
 				if (activeLayers[i].getDataset() instanceof DatasetVector) {
-					TabularUtilities.refreshTabularForm((DatasetVector) activeLayers[i].getDataset());
-
+					TabularUtilities.refreshTabularDatas((DatasetVector) activeLayers[i].getDataset());
 				}
 			}
 		}

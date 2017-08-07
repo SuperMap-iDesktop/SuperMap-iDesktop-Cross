@@ -1,11 +1,25 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EditType;
+import com.supermap.data.GeoCompound;
+import com.supermap.data.Geometry;
+import com.supermap.data.Point2D;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.geometryoperation.*;
+import com.supermap.desktop.geometryoperation.EditControllerAdapter;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.geometryoperation.IEditController;
+import com.supermap.desktop.geometryoperation.IEditModel;
+import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.ArrayUtilities;
+import com.supermap.desktop.utilities.GeoStyleUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.RecordsetUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackMode;
@@ -211,8 +225,8 @@ public class GeometryCopyEditor extends AbstractEditor {
                         environment.getMapControl().getEditHistory().add(EditType.ADDNEW, toSelectedRecordset, false);
 
                         // 刷新一下桌面的属性表窗口
-                        TabularUtilities.refreshTabularForm(toSelectedRecordset.getDataset());
-                        toSelectedRecordset.close();
+	                    TabularUtilities.refreshTabularStructure(toSelectedRecordset.getDataset());
+	                    toSelectedRecordset.close();
                         toSelectedRecordset.dispose();
                     }
                 }

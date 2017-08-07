@@ -19,7 +19,7 @@ import com.supermap.desktop.utilities.DatasetTypeUtilities;
  * Created by xie on 2017/8/5.
  * 追加列
  */
-public class MetaProcessUpdateFields extends MetaProcess {
+public class MetaProcessAppendFields extends MetaProcess {
 	private final String INPUT_DATA = CommonProperties.getString("String_ColumnHeader_SourceData");
 	private final String OUTPUT_DATA = CommonProperties.getString("String_ColumnHeader_TargetData");
 	private ParameterCombine sourceDataCombine;
@@ -31,7 +31,7 @@ public class MetaProcessUpdateFields extends MetaProcess {
 	private ParameterSingleDataset targetDataset;
 	private ParameterFieldComboBox targetLinkedField;
 
-	public MetaProcessUpdateFields() {
+	public MetaProcessAppendFields() {
 		initParameters();
 		initConstrant();
 	}
@@ -46,6 +46,8 @@ public class MetaProcessUpdateFields extends MetaProcess {
 		targetDatasourceConstraint.constrained(targetDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
 		EqualDatasetConstraint datasetConstraint = new EqualDatasetConstraint();
+		datasetConstraint.constrained(sourceDataset,ParameterSingleDataset.DATASET_FIELD_NAME);
+		datasetConstraint.constrained(targetDataset,ParameterFieldComboBox.DATASET_FIELD_NAME);
 	}
 
 	private void initParameters() {

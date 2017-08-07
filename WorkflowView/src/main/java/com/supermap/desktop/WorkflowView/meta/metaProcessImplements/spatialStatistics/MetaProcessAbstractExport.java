@@ -15,6 +15,7 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
@@ -186,9 +187,15 @@ public class MetaProcessAbstractExport extends MetaProcess {
 				FileType fileType = (FileType) supportType.getSelectedData();
 				if (FileType.TEMSClutter == fileType) {
 					if (!filePath.endsWith(File.separator)) {
-						result = filePath + File.separator + fileName + "." + "b";
+						result = filePath + File.separator + fileName + ".b";
 					} else {
-						result = filePath + fileName + "." + "b";
+						result = filePath + fileName + ".b";
+					}
+				}else if(FileType.ModelX == fileType) {
+					if (!filePath.endsWith(File.separator)) {
+						result = filePath + File.separator + fileName + ".x";
+					} else {
+						result = filePath + fileName + ".x";
 					}
 				} else {
 					if (!filePath.endsWith(File.separator)) {
@@ -290,5 +297,10 @@ public class MetaProcessAbstractExport extends MetaProcess {
 	@Override
 	public String getKey() {
 		return null;
+	}
+
+	@Override
+	public IParameterPanel getComponent() {
+		return parameters.getPanel();
 	}
 }

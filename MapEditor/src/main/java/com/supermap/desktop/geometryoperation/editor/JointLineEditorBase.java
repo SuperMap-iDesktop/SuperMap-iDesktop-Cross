@@ -43,7 +43,7 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 
             if (formCombination.showDialog() == DialogResult.OK) {
                 jointLine(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
-                TabularUtilities.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
+	            TabularUtilities.refreshTabularStructure((DatasetVector) formCombination.getEditLayer().getDataset());
             }
         } finally {
             CursorUtilities.setDefaultCursor(environment.getMapControl());
