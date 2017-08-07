@@ -231,7 +231,7 @@ public class ConcertEditor extends AbstractEditor {
                         sourceRecordset.edit();
                         sourceRecordset.setGeometry(newGeometry);
                         sourceRecordset.update();
-                        TabularUtilities.refreshTabularForm(sourceRecordset.getDataset());
+	                    TabularUtilities.refreshTabularStructure(sourceRecordset.getDataset());
                     }
                 } finally {
                     newGeometry.dispose();

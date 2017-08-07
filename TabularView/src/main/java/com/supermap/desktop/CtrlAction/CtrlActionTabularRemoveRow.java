@@ -2,7 +2,6 @@ package com.supermap.desktop.CtrlAction;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormTabular;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -29,7 +28,8 @@ public class CtrlActionTabularRemoveRow extends CtrlAction {
 		if (selectedRows.length > 0) {
 			if (UICommonToolkit.showConfirmDialogWithCancel(CoreProperties.getString("String_TabularRemoveRow_Warning")) == JOptionPane.YES_OPTION) {
 				formTabular.deleteRows(selectedRows);
-				TabularUtilities.refreshTabularForm(((DatasetVector) formTabular.getDataset()));
+
+				TabularUtilities.refreshTabularDatas(formTabular.getDataset());
 			}
 		}
 

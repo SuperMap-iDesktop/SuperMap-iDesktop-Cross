@@ -34,7 +34,7 @@ public class TabularTableModel extends AbstractTableModel {
 	private transient Recordset recordset;
 	private transient FieldInfos fieldInfos;
 	private transient FieldInfos fieldInfosDataset;
-	private int nowRow = 0;
+	private int currentRow = 0;
 	// private TabularCache tabularCache = new TabularCache();
 	private SimpleDateFormat resultFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", Locale.US);
 	private List<TabularValueChangedListener> tabularValueChangedListeners = new ArrayList<>();
@@ -47,7 +47,7 @@ public class TabularTableModel extends AbstractTableModel {
 	private void init() {
 		if (this.recordset != null) {
 			this.recordset.moveFirst();
-			nowRow = 0;
+			currentRow = 0;
 			this.fieldInfos = recordset.getFieldInfos();
 			this.fieldInfosDataset = recordset.getDataset().getFieldInfos();
 		}
@@ -147,12 +147,12 @@ public class TabularTableModel extends AbstractTableModel {
 			return;
 		}
 
-		while (rowIndex != nowRow) {
-			if (rowIndex > nowRow) {
-				nowRow++;
+		while (rowIndex != currentRow) {
+			if (rowIndex > currentRow) {
+				currentRow++;
 				recordset.moveNext();
 			} else {
-				nowRow--;
+				currentRow--;
 				recordset.movePrev();
 			}
 		}
@@ -350,7 +350,6 @@ public class TabularTableModel extends AbstractTableModel {
 	 */
 	public Recordset sortRecordset(String sortKind, int... selectedColumns) {
 		DatasetVector datasetVector = recordset.getDataset();
-
 		boolean isFirst = true;
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < selectedColumns.length; i++) {
@@ -437,12 +436,7 @@ public class TabularTableModel extends AbstractTableModel {
 	public boolean addRow(Geometry geometry) {
 		int id = recordset.getID();
 		boolean result = recordset.addNew(geometry);
-		// TODO: 2017/8/4 历史
 		recordset.update();
-		TabularChangedEvent tabularChangedEvent = new TabularChangedEvent();
-		tabularChangedEvent.setTabularChangedType(TabularChangedType.ADDED);
-		tabularChangedEvent.setSmId(recordset.getID());
-		fireTabularValueChangedListener(tabularChangedEvent);
 		moveToRowWithoutCurrentIndex(id);
 		if (result) {
 			fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
@@ -472,11 +466,17 @@ public class TabularTableModel extends AbstractTableModel {
 			recordset.refresh();
 			if (resultSmID == -1) {
 				recordset.moveFirst();
-				nowRow = recordset.getID();
+				currentRow = recordset.getID();
 			} else {
-				moveToRow(resultSmID);
+				recordset.seekID(resultSmID);
 			}
 			fireTableDataChanged();
 		}
+	}
+
+	public void refresh() {
+		recordset.refresh();
+		currentRow = recordset.getID();
+		fireTableDataChanged();
 	}
 }

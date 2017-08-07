@@ -616,6 +616,9 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 	@Override
 	public void setRecordset(Recordset recordset) {
+
+		DatasetVector oldDataset = recordset.getDataset();
+
 		// 数据信息
 		if (this.tabularTableModel != null) {
 			this.tabularTableModel.dispose();
@@ -1084,5 +1087,11 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	public int getModelRow(int viewRow) {
 		// ingore 排序需要
 		return viewRow;
+	}
+
+	@Override
+	public void refresh() {
+		tabularTableModel.refresh();
+		jScrollPaneChildWindow.repaint();
 	}
 }

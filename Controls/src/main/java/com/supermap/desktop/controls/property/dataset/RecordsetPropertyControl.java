@@ -409,7 +409,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 			tableModel.removeAllRows();
 			tableModel.intializeRows(this.datasetVector.getFieldInfos());
 
-			TabularUtilities.refreshTabularForm(this.datasetVector);
+			TabularUtilities.refreshTabularStructure(this.datasetVector);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

@@ -147,4 +147,6 @@ public interface IFormTabular extends IForm {
 	void addRow(Geometry geometry);
 
 	void deleteRows(int[] viewRows);
+
+	void refresh();
 }

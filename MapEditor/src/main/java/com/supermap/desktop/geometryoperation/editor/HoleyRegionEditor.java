@@ -1,6 +1,13 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EditType;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Geometrist;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
@@ -29,7 +36,7 @@ public class HoleyRegionEditor extends AbstractEditor {
 			if (formCombination.showDialog() == DialogResult.OK) {
 				CursorUtilities.setWaitCursor(environment.getMapControl());
 				holeyRegion(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
-				TabularUtilities.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
+				TabularUtilities.refreshTabularStructure((DatasetVector) formCombination.getEditLayer().getDataset());
 			}
 		} finally {
 			CursorUtilities.setDefaultCursor(environment.getMapControl());
