@@ -11,7 +11,7 @@ public class MetaKeys {
 	public static final String SET_PROJECTION = "SetProjection";
 	public static final String EXPORTGRID = "ExportGrid";
 	public static final String EXPORTVECTOR = "ExportVector";
-	public static final String FIELD_INDEX="FieldIndex";
+	public static final String FIELD_INDEX = "FieldIndex";
 
 	public static final String GRIDREGION_AGGREGATION = "GridRegionAggregation";
 	public static final String POLYGON_AGGREGATION = "PolygonAggregation";
@@ -41,7 +41,10 @@ public class MetaKeys {
 	public static final String SQL_QUERY = "SqlQuery";
 	public static final String HYDROLOGICAL_ANALYST = "HydrologicalAnalyst";
 	public static final String EMPTY = "Empty";
-	public static final String SHORTEST_PATH="ShortestPath";
+
+	// 距离栅格
+	public static final String SHORTEST_PATH = "ShortestPath";
+	public static final String SURFACE_PATH_LINE = "SurfacePathLine";
 
 	// 水文分析
 	public static final String FillingPseudoDepressions = "FillingPseudoDepressions";
