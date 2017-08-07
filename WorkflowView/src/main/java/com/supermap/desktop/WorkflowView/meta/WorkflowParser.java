@@ -163,7 +163,7 @@ public class WorkflowParser {
 		} else if (MetaKeys.POLYGON_AGGREGATION.equals(key)) {
 			result = new MetaProcessPolygonAggregation();
 		}else if (MetaKeys.SUMMARYREGION.equals(key)) {
-			result = new MetaProcessSummaryregion();
+			result = new MetaProcessSummaryRegion();
 		} else if (MetaKeys.INTERPOLATOR_IDW.equals(key)) {
 			result = new MetaProcessInterpolator(InterpolationAlgorithmType.IDW);
 		} else if (MetaKeys.INTERPOLATOR_RBF.equals(key)) {
