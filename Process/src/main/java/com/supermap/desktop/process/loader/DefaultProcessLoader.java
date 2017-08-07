@@ -11,7 +11,7 @@ public class DefaultProcessLoader implements IProcessLoader {
 	public final static DefaultProcessLoader INSTANCE = new DefaultProcessLoader();
 
 	@Override
-	public IProcess loadProcess(ProcessDescriptor descriptor) {
+	public IProcess loadProcess(IProcessDescriptor descriptor) {
 		if (descriptor == null) {
 			return null;
 		}

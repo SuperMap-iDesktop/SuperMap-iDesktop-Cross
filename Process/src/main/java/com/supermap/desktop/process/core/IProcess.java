@@ -26,10 +26,6 @@ public interface IProcess {
 
 	void setSerialID(int serialID);
 
-	IProcessGroup getParent();
-
-	void setParent(ProcessGroup parent);
-
 	String getTitle();
 
 	Inputs getInputs();
@@ -57,9 +53,5 @@ public interface IProcess {
 	void removeStatusChangeListener(StatusChangeListener listener);
 
 	IParameterPanel getComponent();
-
-	String toXml();
-
-	void fromXml(String xml);
 }
 

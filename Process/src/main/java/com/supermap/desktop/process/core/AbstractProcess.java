@@ -22,7 +22,6 @@ public abstract class AbstractProcess implements IProcess {
 	private volatile RunningStatus status = RunningStatus.NORMAL;
 	private EventListenerList listenerList = new EventListenerList();
 	private Workflow workflow;
-	protected IProcessGroup parent;
 	private Inputs inputs = new Inputs(this);
 	private Outputs outputs = new Outputs(this);
 	private int serialID = 0;
@@ -186,25 +185,5 @@ public abstract class AbstractProcess implements IProcess {
 				((StatusChangeListener) listeners[i + 1]).statusChange(e);
 			}
 		}
-	}
-
-	@Override
-	public IProcessGroup getParent() {
-		return parent;
-	}
-
-	@Override
-	public void setParent(ProcessGroup parent) {
-		this.parent = parent;
-	}
-
-	@Override
-	public String toXml() {
-		return "Key = " + getKey();
-	}
-
-	@Override
-	public void fromXml(String xml) {
-
 	}
 }
