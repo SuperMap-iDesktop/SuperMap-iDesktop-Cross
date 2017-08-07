@@ -253,8 +253,8 @@ public class ParameterOverlayAnalystPanel extends SwingPanel implements IParamet
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (null != comboboxSourceDataset.getSelectedDataset() && null != comboboxOverlayAnalystDataset.getSelectedDataset()) {
-					FieldsSetDialog fieldSetDialog = new FieldsSetDialog((DatasetVector) comboboxSourceDataset.getSelectedDataset(), (DatasetVector) comboboxOverlayAnalystDataset.getSelectedDataset());
-					if (fieldSetDialog.showDialog().equals(DialogResult.OK)) {
+					FieldsSetDialog fieldSetDialog = new FieldsSetDialog();
+					if (fieldSetDialog.showDialog((DatasetVector) comboboxSourceDataset.getSelectedDataset(), (DatasetVector) comboboxOverlayAnalystDataset.getSelectedDataset()).equals(DialogResult.OK)) {
 						if (!isSelectingItem && null != fieldSetDialog.getSourceFields() && null != fieldSetDialog.getOverlayAnalystFields()) {
 							isSelectingItem = true;
 							overlayAnalystInfo.analystParameter.setSourceRetainedFields(fieldSetDialog.getSourceFields());

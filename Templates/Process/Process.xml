@@ -156,6 +156,7 @@
                 <process key="DualLineToCenterLine" name="双线中心线"/>
                 <process key="RegionToCenterLine" name="面中心线"/>
                 <process key="RegionTrunkToCenterLine" name="面主干中心线"/>
+                <process key="AppendFields" name="数据集追加列"/>
             </process>
             <process key="SpatialIndex" name="重构空间索引"/>
             <!--<process key="FieldIndex" name="字段索引"/>-->

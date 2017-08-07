@@ -314,8 +314,8 @@ public class OverlayAnalystDialog extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (null != comboboxSourceDataset.getSelectedDataset() && null != comboboxOverlayAnalystDataset.getSelectedDataset()) {
-				FieldsSetDialog fieldSetDialog = new FieldsSetDialog((DatasetVector) comboboxSourceDataset.getSelectedDataset(), (DatasetVector) comboboxOverlayAnalystDataset.getSelectedDataset());
-				if (fieldSetDialog.showDialog().equals(DialogResult.OK)) {
+				FieldsSetDialog fieldSetDialog = new FieldsSetDialog();
+				if (fieldSetDialog.showDialog((DatasetVector) comboboxSourceDataset.getSelectedDataset(), (DatasetVector) comboboxOverlayAnalystDataset.getSelectedDataset()).equals(DialogResult.OK)) {
 					if (null != fieldSetDialog.getSourceFields() && null != fieldSetDialog.getOverlayAnalystFields()) {
 						parameter.setSourceRetainedFields(fieldSetDialog.getSourceFields());
 						parameter.setOperationRetainedFields(fieldSetDialog.getOverlayAnalystFields());
@@ -435,9 +435,10 @@ public class OverlayAnalystDialog extends SmDialog {
 		scrollPane.setMinimumSize(new Dimension(100, 200));
 		JPanel panelBasicAnalyst = new JPanel();
 		panelBasicAnalyst.setLayout(new GridBagLayout());
-		panelBasicAnalyst.add(this.panelSource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
-		panelBasicAnalyst.add(this.panelOverlayAnalyst, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
-		panelBasicAnalyst.add(this.panelTarget, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
+		panelBasicAnalyst.add(this.panelSource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 0).setFill(GridBagConstraints.BOTH));
+		panelBasicAnalyst.add(this.panelOverlayAnalyst, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 0).setFill(GridBagConstraints.BOTH));
+		panelBasicAnalyst.add(this.panelTarget, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 0).setFill(GridBagConstraints.BOTH));
+		panelBasicAnalyst.add(new JPanel(), new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
 		JPanel panelButton = new JPanel();
 		panelButton.setLayout(new GridBagLayout());
 		panelButton.add(this.buttonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(0, 0, 10, 5));

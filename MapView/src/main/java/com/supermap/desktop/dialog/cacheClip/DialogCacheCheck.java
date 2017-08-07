@@ -1,7 +1,5 @@
 package com.supermap.desktop.dialog.cacheClip;
 
-import com.supermap.data.Workspace;
-import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.CacheWriter;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -78,7 +76,6 @@ public class DialogCacheCheck extends JFrame {
 		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(taskPath, "checking");
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			DialogCacheCheck.this.dispose();
 			killProcess();
 		} else {
 			return;
@@ -114,7 +111,6 @@ public class DialogCacheCheck extends JFrame {
 					setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 					shutdownMapCheck();
 				} else {
-					DialogCacheCheck.this.dispose();
 					killProcess();
 				}
 			}
@@ -213,7 +209,7 @@ public class DialogCacheCheck extends JFrame {
 		File taskFile = new File(getTaskPath("task"));
 		File failedDirectory = new File(getTaskPath("failed"));
 		if (hasCheckFailedScis(buildFile)) {
-			return true;
+			return false;
 		}
 		if (!buildFile.exists() || !CacheUtilities.hasSciFiles(buildFile)) {
 			//build下不存在sci,faild下存在则提示有失败的文件，如果用户点击是则重切
@@ -242,7 +238,8 @@ public class DialogCacheCheck extends JFrame {
 		boolean result = false;
 		File checkFailedDirectory = new File(getTaskPath("checkFailed"));
 		if (checkFailedDirectory.exists() && CacheUtilities.hasSciFiles(checkFailedDirectory)) {
-			if (new SmOptionPane(DialogCacheCheck.this).showConfirmDialogYesNo(MapViewProperties.getString("String_WarningForMongoChecked")) == JOptionPane.OK_OPTION) {
+			if (JOptionPane.showConfirmDialog(DialogCacheCheck.this, MapViewProperties.getString("String_WarningForMongoChecked"), "", JOptionPane.YES_NO_OPTION)
+					== JOptionPane.OK_OPTION) {
 				//有异常中断遗留的检查任务,提示是否重新检查
 				File[] checkFailed = checkFailedDirectory.listFiles();
 				for (int i = 0; i < checkFailed.length; i++) {
@@ -376,29 +373,20 @@ public class DialogCacheCheck extends JFrame {
 							//hanyzh:写入UDB有可能抛异常，不要影响后面的执行--error2Udb试图两次打开UDB异常
 						}
 					}
-//					DatasourceConnectionInfo info = new DatasourceConnectionInfo();
-//					info.setServer(datasourcePath);
-//					info.setAlias("check");
-//					info.setEngineType(EngineType.UDB);
-//					if (null != Application.getActiveApplication().getWorkspace()) {
-//						Application.getActiveApplication().getWorkspace().getDatasources().open(info);
-//					}
-					String taskPath = getTaskPath("build");
-					File builedFile = new File(taskPath);
+					File builedFile = new File(getTaskPath("build"));
 					if (hasCheckFailedScis(builedFile)) {
 						//有异常中断的检查任务且用户要重新检查则重新检查
 						progressBar.setValue(0);
 						buttonOK.setEnabled(true);
-						return;
+					} else {
+						if (checkBoxCacheBuild.isSelected()) {
+							//是否重切错误瓦片
+							reBuiledCache(tileSize);
+						}
 					}
-					if (checkBoxCacheBuild.isSelected()) {
-						//是否重切错误瓦片
-						reBuiledCache(tileSize);
-					}
-					dialogDispose();
 				} catch (Exception ex) {
 					if (null != ex.getMessage()) {
-						new SmOptionPane(DialogCacheCheck.this).showConfirmDialog(ex.getMessage());
+						new SmOptionPane(DialogCacheCheck.this).showErrorDialog(ex.getMessage());
 					}
 				}
 			}
@@ -445,11 +433,6 @@ public class DialogCacheCheck extends JFrame {
 		progressBar.setValue((int) ((totalSciCount - currentCount + 0.0) / totalSciCount) * 100);
 	}
 
-	private void dialogDispose() {
-		removeEvents();
-		DialogCacheCheck.this.dispose();
-		killProcess();
-	}
 
 	private void killProcess() {
 		System.exit(1);
