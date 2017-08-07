@@ -4,8 +4,10 @@ import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.MetaProcessImportFactory;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.DataRun.*;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.*;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessShortestPath;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridDistance.MetaProcessSurfacePathLine;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.*;
 import com.supermap.desktop.process.ProcessProperties;
@@ -311,11 +313,13 @@ public class WorkflowParser {
 			result = new MetaProcessRegionToCenterLine();
 		} else if (MetaKeys.REGION_TRUNK_TO_CENTERLINE.equals(key)) {
 			result = new MetaProcessRegionTrunkToCenterLine();
-		} else if(MetaKeys.APPENDFIELDS.equals(key)){
+		} else if (MetaKeys.APPENDFIELDS.equals(key)) {
 			result = new MetaProcessUpdateFields();
-		}else if (MetaKeys.SHORTEST_PATH.equals(key)) {
+		} else if (MetaKeys.SHORTEST_PATH.equals(key)) {
 			result = new MetaProcessShortestPath();
-		}else {
+		} else if (MetaKeys.SURFACE_PATH_LINE.equals(key)) {
+			result = new MetaProcessSurfacePathLine();
+		} else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}
 
