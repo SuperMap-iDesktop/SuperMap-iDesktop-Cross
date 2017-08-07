@@ -116,6 +116,7 @@ public class MetaKeys {
 	public static final String KERNEL_DENSITY = "KernelDensity";
 	public static final String OVERLAYANALYSTGEO = "overlayanalystgeo";
 	public static final String SINGLE_QUERY = "SingleQuery";
+	public static final String SUMMARYREGION="SummaryRegion";
 
 	public static final String USER_DEFINE_PROJECTION = "UserDefineProjection";
 }

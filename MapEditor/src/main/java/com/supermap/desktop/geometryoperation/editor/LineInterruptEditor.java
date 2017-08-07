@@ -1,13 +1,30 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EditType;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoPoint;
+import com.supermap.data.Geometrist;
+import com.supermap.data.Geometry;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
+import com.supermap.data.SpatialQueryMode;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
-import com.supermap.desktop.geometryoperation.*;
+import com.supermap.desktop.geometryoperation.EditControllerAdapter;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.geometryoperation.IEditController;
+import com.supermap.desktop.geometryoperation.IEditModel;
+import com.supermap.desktop.geometryoperation.NullEditController;
+import com.supermap.desktop.geometryoperation.RegionAndLineHighLightStyle;
 import com.supermap.desktop.geometryoperation.control.JDialogLineInterrruptSelect;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
@@ -264,8 +281,8 @@ public class LineInterruptEditor extends AbstractEditor {
             Application.getActiveApplication().getOutput().output(ex.toString());
         } finally {
             // 刷新一下桌面的属性表窗口
-            TabularUtilities.refreshTabularForm(sourceRecordset.getDataset());
-            environment.getMapControl().getEditHistory().batchEnd();
+	        TabularUtilities.refreshTabularStructure(sourceRecordset.getDataset());
+	        environment.getMapControl().getEditHistory().batchEnd();
             environment.getMap().refreshTrackingLayer();
             environment.getMap().refresh();
 

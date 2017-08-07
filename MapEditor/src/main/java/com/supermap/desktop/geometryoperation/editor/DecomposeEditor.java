@@ -107,7 +107,7 @@ public class DecomposeEditor extends AbstractEditor {
 					if (addNew.getAddHistoryIDs().size() > 0) {
 						int[] ids = ArrayUtilities.convertToInt(addNew.getAddHistoryIDs().toArray(new Integer[addNew.getAddHistoryIDs().size()]));
 						editLayer.getSelection().addRange(ids);
-						TabularUtilities.refreshTabularForm((DatasetVector) editLayer.getDataset());
+						TabularUtilities.refreshTabularStructure((DatasetVector) editLayer.getDataset());
 						Application
 								.getActiveApplication()
 								.getOutput()

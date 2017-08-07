@@ -18,6 +18,7 @@ import javax.swing.table.AbstractTableModel;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -33,7 +34,7 @@ public class TabularTableModel extends AbstractTableModel {
 	private transient Recordset recordset;
 	private transient FieldInfos fieldInfos;
 	private transient FieldInfos fieldInfosDataset;
-	private int nowRow = 0;
+	private int currentRow = 0;
 	// private TabularCache tabularCache = new TabularCache();
 	private SimpleDateFormat resultFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", Locale.US);
 	private List<TabularValueChangedListener> tabularValueChangedListeners = new ArrayList<>();
@@ -46,7 +47,7 @@ public class TabularTableModel extends AbstractTableModel {
 	private void init() {
 		if (this.recordset != null) {
 			this.recordset.moveFirst();
-			nowRow = 0;
+			currentRow = 0;
 			this.fieldInfos = recordset.getFieldInfos();
 			this.fieldInfosDataset = recordset.getDataset().getFieldInfos();
 		}
@@ -146,18 +147,18 @@ public class TabularTableModel extends AbstractTableModel {
 			return;
 		}
 
-		while (rowIndex != nowRow) {
-			if (rowIndex > nowRow) {
-				nowRow++;
+		while (rowIndex != currentRow) {
+			if (rowIndex > currentRow) {
+				currentRow++;
 				recordset.moveNext();
 			} else {
-				nowRow--;
+				currentRow--;
 				recordset.movePrev();
 			}
 		}
 	}
 
-	private void gotoRow(int rowIndex) {
+	private void moveToRowWithoutCurrentIndex(int rowIndex) {
 		if (recordset == null || recordset.isClosed()) {
 			return;
 		}
@@ -349,7 +350,6 @@ public class TabularTableModel extends AbstractTableModel {
 	 */
 	public Recordset sortRecordset(String sortKind, int... selectedColumns) {
 		DatasetVector datasetVector = recordset.getDataset();
-
 		boolean isFirst = true;
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < selectedColumns.length; i++) {
@@ -428,15 +428,55 @@ public class TabularTableModel extends AbstractTableModel {
 		return getFieldIndex(columnIndex);
 	}
 
+	private int getSmIdByRow(int viewRow) {
+		moveToRow(viewRow);
+		return (int) recordset.getFieldValue("smId");
+	}
+
 	public boolean addRow(Geometry geometry) {
 		int id = recordset.getID();
 		boolean result = recordset.addNew(geometry);
-		// TODO: 2017/8/4 历史
 		recordset.update();
-		gotoRow(id);
+		moveToRowWithoutCurrentIndex(id);
 		if (result) {
 			fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
 		}
 		return result;
+	}
+
+	public void deleteRows(int[] viewRows) {
+		int resultSmID = -1;
+		Arrays.sort(viewRows);
+		int first = viewRows[0];
+		if (first != 0) {
+			resultSmID = getSmIdByRow(first - 1);
+		}
+		int[] smIds = new int[viewRows.length];
+		for (int i = 0; i < viewRows.length; i++) {
+			int viewRow = viewRows[i];
+			smIds[i] = getSmIdByRow(viewRow);
+		}
+		Recordset query = recordset.getDataset().query(smIds, CursorType.DYNAMIC);
+		if (query != null && !query.isEmpty()) {
+			try {
+				query.deleteAll();
+			} finally {
+				query.close();
+			}
+			recordset.refresh();
+			if (resultSmID == -1) {
+				recordset.moveFirst();
+				currentRow = recordset.getID();
+			} else {
+				recordset.seekID(resultSmID);
+			}
+			fireTableDataChanged();
+		}
+	}
+
+	public void refresh() {
+		recordset.refresh();
+		currentRow = recordset.getID();
+		fireTableDataChanged();
 	}
 }

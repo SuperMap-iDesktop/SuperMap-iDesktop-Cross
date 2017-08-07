@@ -42,4 +42,5 @@ public class ParameterType {
 	public static final String FIELD_GROUP = "fieldGroup";
 	public static final String DATASET_CHOOSER="DatasetChooser";
 	public static final String SQL_EXPRESSION="SQLExpression";
+	public static final String MULTIFIELDSET="MultiFieldSet";
 }

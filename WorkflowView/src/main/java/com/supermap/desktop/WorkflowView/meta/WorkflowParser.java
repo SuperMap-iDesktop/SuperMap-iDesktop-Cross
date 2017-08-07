@@ -4,9 +4,9 @@ import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.MetaProcessImportFactory;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.*;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessAppendFields;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.*;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessShortestPath;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridDistance.MetaProcessSurfacePathLine;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.*;
@@ -162,6 +162,8 @@ public class WorkflowParser {
 			result = new MetaProcessGridRegionAggregation();
 		} else if (MetaKeys.POLYGON_AGGREGATION.equals(key)) {
 			result = new MetaProcessPolygonAggregation();
+		}else if (MetaKeys.SUMMARYREGION.equals(key)) {
+			result = new MetaProcessSummaryRegion();
 		} else if (MetaKeys.INTERPOLATOR_IDW.equals(key)) {
 			result = new MetaProcessInterpolator(InterpolationAlgorithmType.IDW);
 		} else if (MetaKeys.INTERPOLATOR_RBF.equals(key)) {
@@ -314,7 +316,7 @@ public class WorkflowParser {
 		} else if (MetaKeys.REGION_TRUNK_TO_CENTERLINE.equals(key)) {
 			result = new MetaProcessRegionTrunkToCenterLine();
 		} else if (MetaKeys.APPENDFIELDS.equals(key)) {
-			result = new MetaProcessUpdateFields();
+			result = new MetaProcessAppendFields();
 		} else if (MetaKeys.SHORTEST_PATH.equals(key)) {
 			result = new MetaProcessShortestPath();
 		} else if (MetaKeys.SURFACE_PATH_LINE.equals(key)) {
