@@ -41,6 +41,7 @@ public class MetaKeys {
 	public static final String SQL_QUERY = "SqlQuery";
 	public static final String HYDROLOGICAL_ANALYST = "HydrologicalAnalyst";
 	public static final String EMPTY = "Empty";
+	public static final String SHORTEST_PATH="ShortestPath";
 
 	// 水文分析
 	public static final String FillingPseudoDepressions = "FillingPseudoDepressions";
