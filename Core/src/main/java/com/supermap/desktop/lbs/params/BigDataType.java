@@ -12,7 +12,7 @@ public class BigDataType {
 	public static BigDataType Heatmap = new BigDataType("Heatmap", "mongodb");
 	public static BigDataType GridRegionAggregation = new BigDataType("GridRegionAggregation","map-summaryMesh");
 	public static BigDataType OverlayAnalystGeo = new BigDataType("OverlayAnalystGeo", "map-overlayAnalystGeo");
-
+	public static BigDataType SummaryRegion = new BigDataType("SummaryRegion", "map-summaryRegion");
 
 	private BigDataType(String resultName, String message) {
 		this.resultName = resultName;

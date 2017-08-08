@@ -162,7 +162,7 @@ public class WorkflowParser {
 			result = new MetaProcessGridRegionAggregation();
 		} else if (MetaKeys.POLYGON_AGGREGATION.equals(key)) {
 			result = new MetaProcessPolygonAggregation();
-		}else if (MetaKeys.SUMMARYREGION.equals(key)) {
+		}else if (MetaKeys.SUMMARY_REGION.equals(key)) {
 			result = new MetaProcessSummaryRegion();
 		} else if (MetaKeys.INTERPOLATOR_IDW.equals(key)) {
 			result = new MetaProcessInterpolator(InterpolationAlgorithmType.IDW);
@@ -326,7 +326,6 @@ public class WorkflowParser {
 		}else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}
-
 
 		return result;
 	}
