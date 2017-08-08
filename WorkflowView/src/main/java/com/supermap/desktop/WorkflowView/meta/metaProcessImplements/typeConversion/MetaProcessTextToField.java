@@ -20,12 +20,6 @@ import com.supermap.desktop.utilities.DatasetUtilities;
  */
 public class MetaProcessTextToField extends MetaProcessTypeConversion {
 
-	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
-	private final static String OUTPUT_DATA = "TextToFieldResult";
-
-	private ParameterDatasourceConstrained sourceDatasource;
-	private ParameterSingleDataset dataset;
-
 	private ParameterFieldComboBox parameterFieldComboBox;
 
 	public MetaProcessTextToField() {
@@ -36,8 +30,9 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 	}
 
 	private void initParameters() {
-		sourceDatasource = new ParameterDatasourceConstrained();
-		dataset = new ParameterSingleDataset(DatasetType.TEXT);
+		OUTPUT_DATA = "TextToFieldResult";
+		inputDatasource = new ParameterDatasourceConstrained();
+		inputDataset = new ParameterSingleDataset(DatasetType.TEXT);
 
 		parameterFieldComboBox = new ParameterFieldComboBox(ProcessProperties.getString("String_ComboBox_PendingTextField"));
 		parameterFieldComboBox.setFieldType(new FieldType[]{FieldType.TEXT, FieldType.WTEXT});
@@ -47,7 +42,7 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 
 		// 源数据
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
-		parameterCombineSourceData.addParameters(sourceDatasource, dataset);
+		parameterCombineSourceData.addParameters(inputDatasource, inputDataset);
 		parameterCombineSourceData.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
 
 		//参数设置
@@ -64,11 +59,11 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 	private void initParameterConstraint() {
 
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(inputDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(inputDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
-		equalDatasetConstraint.constrained(dataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		equalDatasetConstraint.constrained(inputDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
 		equalDatasetConstraint.constrained(parameterFieldComboBox, ParameterFieldComboBox.DATASET_FIELD_NAME);
 
 
@@ -77,8 +72,8 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 	private void initParametersState() {
 		Dataset defaultDataset = DatasetUtilities.getDefaultDataset(DatasetType.TEXT);
 		if (defaultDataset != null) {
-			sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
-			dataset.setSelectedItem(defaultDataset);
+			inputDatasource.setSelectedItem(defaultDataset.getDatasource());
+			inputDataset.setSelectedItem(defaultDataset);
 			parameterFieldComboBox.setFieldName((DatasetVector) defaultDataset);
 		}
 	}
@@ -93,7 +88,7 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
 			} else {
-				src = (DatasetVector) dataset.getSelectedDataset();
+				src = (DatasetVector) inputDataset.getSelectedDataset();
 			}
 
 			// 首先判断操作的字段是原先有的还是需要新创建

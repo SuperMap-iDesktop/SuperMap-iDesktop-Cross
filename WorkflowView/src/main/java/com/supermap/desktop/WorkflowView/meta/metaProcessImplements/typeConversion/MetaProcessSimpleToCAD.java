@@ -22,7 +22,6 @@ import java.util.Map;
  * Created By Chens on 2017/7/22 0022
  */
 public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
-	private static final String OUTPUT_DATA = "SimpleToCADResult";
 
 	public MetaProcessSimpleToCAD() {
 		initParameters();
@@ -30,6 +29,7 @@ public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
 	}
 
 	private void initParameters() {
+		OUTPUT_DATA = "SimpleToCADResult";
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.MODEL);
 		outputData = new ParameterSaveDataset();

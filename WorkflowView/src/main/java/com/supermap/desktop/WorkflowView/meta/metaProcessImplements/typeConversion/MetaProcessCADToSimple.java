@@ -24,7 +24,6 @@ import java.util.Map;
  * Created By Chens on 2017/7/21 0021
  */
 public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
-	private static final String OUTPUT_DATA = "CADToSimpleResult";
 
 	private ParameterComboBox comboBoxType;
 
@@ -37,6 +36,7 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 	}
 
 	private void initParameters() {
+		OUTPUT_DATA = "CADToSimpleResult";
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(DatasetType.CAD);
 		outputData = new ParameterSaveDataset();

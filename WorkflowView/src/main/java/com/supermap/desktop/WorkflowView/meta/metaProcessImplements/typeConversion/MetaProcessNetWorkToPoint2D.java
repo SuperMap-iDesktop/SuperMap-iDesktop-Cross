@@ -25,14 +25,13 @@ import java.util.Map;
  */
 public class MetaProcessNetWorkToPoint2D extends MetaProcessTypeConversion {
 
-	private static final String OUTPUT_DATA = "NetWorkToPoint2DResult";
-
 	public MetaProcessNetWorkToPoint2D() {
 		initParameters();
 		initParameterConstraint();
 	}
 
 	private void initParameters() {
+		OUTPUT_DATA = "NetWorkToPoint2DResult";
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(DatasetType.NETWORK);
 		outputData = new ParameterSaveDataset();
