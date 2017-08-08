@@ -7,13 +7,9 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CoreProperties;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class TabularUtilities {
 
@@ -55,11 +51,11 @@ public class TabularUtilities {
 	}
 
 	/**
-	 * 刷新已打开的指定数据集的属性表
+	 * 刷新指定数据集的属性表的结构
 	 *
 	 * @param datasetVector
 	 */
-	public static void refreshTabularForm(DatasetVector datasetVector) {
+	public static void refreshTabularStructure(DatasetVector datasetVector) {
 		for (int i = 0; i < Application.getActiveApplication().getMainFrame().getFormManager().getCount(); i++) {
 			IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(i);
 
@@ -67,6 +63,22 @@ public class TabularUtilities {
 				// 刷新已打开的当前修改数据的属性表，不同的窗口绑定不同的表格
 				Recordset recordset = datasetVector.getRecordset(false, CursorType.DYNAMIC);
 				((IFormTabular) form).setRecordset(recordset);
+			}
+		}
+	}
+
+	/**
+	 * 刷新指定数据集的属性表的结构
+	 *
+	 * @param datasetVector
+	 */
+	public static void refreshTabularDatas(DatasetVector datasetVector) {
+		for (int i = 0; i < Application.getActiveApplication().getMainFrame().getFormManager().getCount(); i++) {
+			IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(i);
+
+			if (form instanceof IFormTabular && ((IFormTabular) form).getRecordset().getDataset() == datasetVector) {
+				// 刷新已打开的当前修改数据的属性表，不同的窗口绑定不同的表格
+				((IFormTabular) form).refresh();
 			}
 		}
 	}

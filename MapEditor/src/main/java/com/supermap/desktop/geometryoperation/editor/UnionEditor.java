@@ -6,10 +6,8 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoStyle;
-import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
-import com.supermap.data.Point2D;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
@@ -48,7 +46,7 @@ public class UnionEditor extends AbstractEditor {
 				CursorUtilities.setWaitCursor(environment.getMapControl());
 				union(environment, form.getEditLayer(), form.getPropertyData());
 
-				TabularUtilities.refreshTabularForm((DatasetVector) form.getEditLayer().getDataset());
+				TabularUtilities.refreshTabularStructure((DatasetVector) form.getEditLayer().getDataset());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

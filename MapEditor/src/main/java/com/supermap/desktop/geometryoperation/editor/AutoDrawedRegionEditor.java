@@ -184,7 +184,7 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
                         environment.getActiveEditableLayer().getSelection().clear();
                         environment.getActiveEditableLayer().getSelection().add(targetRecordset.getID());
                         environment.getMapControl().getEditHistory().add(EditType.ADDNEW, targetRecordset, true);
-                        TabularUtilities.refreshTabularForm(targetRecordset.getDataset());
+	                    TabularUtilities.refreshTabularStructure(targetRecordset.getDataset());
                     }
                 }
             }

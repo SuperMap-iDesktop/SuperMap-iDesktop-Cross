@@ -2,13 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
 import com.supermap.analyst.spatialanalyst.OverlayAnalystParameter;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasource;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -18,16 +12,11 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterFieldSetDialog;
-import com.supermap.desktop.process.parameter.ipls.ParameterLabel;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
@@ -51,7 +40,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	private ParameterDatasourceConstrained parameterSourceDatasource = new ParameterDatasourceConstrained();
 	private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset();
 	private ParameterDatasourceConstrained parameterOverlayDatasource = new ParameterDatasourceConstrained();
-	private ParameterSingleDataset parameterOverlayDataset = new ParameterSingleDataset(DatasetType.POINT,DatasetType.LINE,DatasetType.REGION);
+	private ParameterSingleDataset parameterOverlayDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 	private ParameterDatasourceConstrained parameterResultDatasource = new ParameterDatasourceConstrained();
 	private ParameterTextField parameterSaveDataset = new ParameterTextField();
 	private ParameterFieldSetDialog parameterFieldSetDialog = new ParameterFieldSetDialog();
@@ -79,6 +68,11 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 			}
 		}
 	};
+
+	@Override
+	public Class<? extends IProcessLoader> getLoader() {
+		return OverlayProcessLoader.class;
+	}
 
 	public MetaProcessOverlayAnalyst(OverlayAnalystType analystType) {
 		this.analystType = analystType;

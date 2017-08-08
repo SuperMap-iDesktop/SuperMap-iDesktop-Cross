@@ -1,10 +1,25 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EditType;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Geometry;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.Recordset;
+import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.IRegionConvertor;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
-import com.supermap.desktop.geometryoperation.*;
+import com.supermap.desktop.geometryoperation.EditControllerAdapter;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.geometryoperation.IEditController;
+import com.supermap.desktop.geometryoperation.IEditModel;
+import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilities.ListUtilities;
@@ -189,7 +204,7 @@ public class ResizeEditor extends AbstractEditor {
                     selection.clear();
                 }
                 MapUtilities.clearTrackingObjects(environment.getMap(), TAG_RESIZE);
-                TabularUtilities.refreshTabularForm(recordset.getDataset());
+	            TabularUtilities.refreshTabularStructure(recordset.getDataset());
 
                 environment.getMap().refresh();
                 environment.getMapControl().revalidate();

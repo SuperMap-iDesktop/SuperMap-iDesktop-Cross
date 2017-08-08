@@ -894,7 +894,12 @@ public class FirstStepPane extends JPanel implements IState {
 		this.fileChooserControlFileCache = new JFileChooserControl();
 		String moduleName = "ChooseCacheClipDirectories";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
-			SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
+			String defaultPath = System.getProperty("user.dir") + File.separator + "Cache";
+			File cachePath = new File(defaultPath);
+			if (!cachePath.exists()) {
+				cachePath.mkdir();
+			}
+			SmFileChoose.addNewNode("", defaultPath, GlobalParameters.getDesktopTitle(),
 					moduleName, "GetDirectories");
 		}
 

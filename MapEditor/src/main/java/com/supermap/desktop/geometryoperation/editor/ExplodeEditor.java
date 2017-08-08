@@ -1,6 +1,15 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EngineType;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.recordset.RecordsetAddNew;
 import com.supermap.desktop.core.recordset.RecordsetSet;
@@ -73,7 +82,7 @@ public class ExplodeEditor extends AbstractEditor {
 											.output(MessageFormat.format(MapEditorProperties.getString("String_GeometryEdit_ExplodeLineOutput"),
 													layer.getName(), id, resultGeoLines.get(id).size()));
 								}
-								TabularUtilities.refreshTabularForm(recordset.getDataset());
+								TabularUtilities.refreshTabularStructure(recordset.getDataset());
 							}
 						}
 					} finally {

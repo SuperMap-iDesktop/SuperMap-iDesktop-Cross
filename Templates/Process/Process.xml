@@ -213,7 +213,7 @@
             <!--<process key="ConnectedDrainage" name="连接水系"/>-->
             <!--</process>-->
         </process>
-        <process name="Online" iconPath="/processresources/Process/online.png">
+        <process name="大数据" iconPath="/processresources/Process/online.png">
             <!--  <process name="空间叠加">
                   <process key="ObjectLevelOverlayAnalysis" name="对象级叠加分析"/>
                   <process key="OverlayAnalysis" name="叠加分析"/>
@@ -252,7 +252,7 @@
             <process key="SingleQuery" name="单对象查询"/>
             <process key="GridRegionAggregation" name="网格面聚合分析"/>
             <process key="PolygonAggregation" name="多边形聚合分析"/>
-
+            <process key="SummaryRegion" name="范围汇总分析"/>
         </process>
     </process>
 </root>
