@@ -33,8 +33,8 @@ public class CheckCache {
 	private static final int INDEX_CACHEROOT = 0;
 	private static final int INDEX_SCIPATH = 1;
 	//	private static final int INDEX_MERGETASKCOUNT = 2;
-	private static final int INDEX_ERROR2UDB = 3;
-	private static final int INDEX_BOUNDARYREGION = 4;
+	private static final int INDEX_ERROR2UDB = 2;
+	private static final int INDEX_BOUNDARYREGION = 3;
 
 	public void startProcess(int processCount, String[] params) {
 		try {
@@ -80,10 +80,10 @@ public class CheckCache {
 //		if (params.length > 2) {
 //			mergeTaskCount = Integer.valueOf(params[INDEX_MERGETASKCOUNT]);
 //		}
-		if (params.length > 3) {
+		if (params.length > 2) {
 			this.error2udb = Boolean.valueOf(params[INDEX_ERROR2UDB]);
 		}
-		if (params.length > 4) {
+		if (params.length > 3) {
 			this.boundaryRegion = Toolkit.GeoJsonToGemetry(params[INDEX_BOUNDARYREGION]);
 		}
 

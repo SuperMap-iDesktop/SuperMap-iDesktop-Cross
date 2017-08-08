@@ -19,6 +19,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.beans.PropertyChangeEvent;
@@ -87,9 +88,7 @@ public class MetaProcessAbstractExport extends MetaProcess {
 		this.sourceInfo = new ParameterCombine();
 		this.sourceInfo.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
 		this.dataset = new ParameterSingleDataset();
-		if (Application.getActiveApplication().getWorkspace().getDatasources() != null && Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
-			this.dataset.setDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
-		}
+		this.dataset.setDatasource(DatasourceUtilities.getDefaultResultDatasource());
 		this.sourceInfo.addParameters(datasource, dataset);
 		EqualDatasourceConstraint constraint = new EqualDatasourceConstraint();
 		constraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
@@ -191,7 +190,7 @@ public class MetaProcessAbstractExport extends MetaProcess {
 					} else {
 						result = filePath + fileName + ".b";
 					}
-				}else if(FileType.ModelX == fileType) {
+				} else if (FileType.ModelX == fileType) {
 					if (!filePath.endsWith(File.separator)) {
 						result = filePath + File.separator + fileName + ".x";
 					} else {

@@ -20,6 +20,7 @@ import java.beans.PropertyChangeListener;
 /**
  * Created by yuanR on 2017/7/18.
  * 矢量重采样
+ * 重采样会修改原数据，当操作的面数据集为只读数据集时，设置为不能进行拓扑预处理
  */
 public class MetaProcessVectorResample extends MetaProcess {
 	private final static String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
@@ -100,7 +101,6 @@ public class MetaProcessVectorResample extends MetaProcess {
 		parameterResampleType.setSelectedItem(ResampleType.RTBEND);
 		reloadValue();
 		parameterVertexTolerance.setEnabled(false);
-
 	}
 
 	private void initParameterConstraint() {
@@ -118,19 +118,7 @@ public class MetaProcessVectorResample extends MetaProcess {
 			}
 		});
 
-		datasource.addPropertyListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				if (evt.getPropertyName().equals(ParameterDatasource.DATASOURCE_FIELD_NAME)) {
-					Dataset datasetVector = DatasetUtilities.getDefaultDataset(DatasetType.LINE, DatasetType.REGION);
-					if (datasetVector != null) {
-						dataset.setSelectedItem(datasetVector);
-					}
-				}
-			}
-		});
-
-//		// 当数据集改变时，根据数据集类型给予不同的单位值
+		// 当数据集改变时，根据数据集类型给予不同的单位值，并且设置拓扑预处理和保留小对象是否可用
 		dataset.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -154,11 +142,23 @@ public class MetaProcessVectorResample extends MetaProcess {
 				parameterVertexTolerance.setUnit(ProcessProperties.getString("String_Label_degree"));
 				parameterResampleTolerance.setSelectedItem(0.0001);
 				parameterVertexTolerance.setSelectedItem(0.0001);
+
+				parameterisSaveSmallGeometry.setEnabled(false);
+				parameterisTopologyPreprocess.setSelectedItem(false);
+				parameterisTopologyPreprocess.setEnabled(false);
 			} else if (datasetType.equals(DatasetType.REGION)) {
 				parameterResampleTolerance.setUnit(ProcessProperties.getString("String_Label_meter"));
 				parameterVertexTolerance.setUnit(ProcessProperties.getString("String_Label_meter"));
 				parameterResampleTolerance.setSelectedItem(10);
 				parameterVertexTolerance.setSelectedItem(10);
+				// 根据可读与否设置拓扑预处理是否可用--yuanR 2017.8.8
+				if (dataset.getSelectedItem().isReadOnly()) {
+					parameterisTopologyPreprocess.setEnabled(false);
+				} else {
+					parameterisSaveSmallGeometry.setEnabled(true);
+					parameterisTopologyPreprocess.setEnabled(true);
+				}
+
 			}
 		}
 	}
@@ -185,13 +185,14 @@ public class MetaProcessVectorResample extends MetaProcess {
 			resampleInformation.setResampleType(resampleType);
 			resampleInformation.setTolerance(tolerance);
 			resampleInformation.setTopologyPreprocess(isTopologyPreprocess);
+
 			if (isTopologyPreprocess) {
 				resampleInformation.setVertexInterval(vertexTolerance);
 			}
-
 			datasetVector.addSteppedListener(this.steppedListener);
 			isSuccessful = datasetVector.resample(resampleInformation, true, isSaveSmallGeometry);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(datasetVector);
+
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

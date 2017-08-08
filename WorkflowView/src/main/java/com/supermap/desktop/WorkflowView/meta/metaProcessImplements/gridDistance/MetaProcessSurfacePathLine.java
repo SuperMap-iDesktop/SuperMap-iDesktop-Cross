@@ -23,6 +23,7 @@ import java.beans.PropertyChangeListener;
 
 /**
  * Created by yuanR on 2017/8/7.
+ * 两点间最短地表路径
  */
 public class MetaProcessSurfacePathLine extends MetaProcess {
 
@@ -31,7 +32,6 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
-
 
 	// 原点和目标点的坐标值
 	private ParameterNumber parameterSourcePointX;
@@ -53,7 +53,6 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 		initParameters();
 		initParametersState();
 		initParameterConstrint();
-		//registerListener();
 	}
 
 	private void initParameters() {
@@ -81,9 +80,9 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 
 		// 光滑方式
 		parameterPathLineSmoothMethod = new ParameterComboBox(CommonProperties.getString("String_SmoothMethod"));
-		parameterPathLineSmoothMethod.setItems(new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_NONE"), SmoothMethod.NONE),
-				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
-				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH));
+		parameterPathLineSmoothMethod.setItems(new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_NONE"), SmoothMethod.NONE),
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_BSLine"), SmoothMethod.BSPLINE),
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_POLISH"), SmoothMethod.POLISH));
 		// 光滑系数
 		parameterPathLineSmoothDegree = new ParameterNumber(CommonProperties.getString("String_Smooth"));
 		parameterPathLineSmoothDegree.setSelectedItem("2");
@@ -163,15 +162,14 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 				}
 			}
 		});
-
 	}
-
 
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
 		PathLineResult pathLineResult = null;
 		DatasetGrid datasetGrid = null;
+		Recordset resultRecordset = null;
 		try {
 
 			if (this.getParameters().getInputs().getData(INPUT_DATA) != null
@@ -201,33 +199,30 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 			pathLineResult = DistanceAnalyst.surfacePathLine(sourcePoint, targetPoint, distanceAnalystParameter);
 
 			if (pathLineResult != null) {
-				// 当有结果生成的时候再创建数据集来存放结果
-				String datasetName = resultDataset.getDatasetName();
-				datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 				// 创建新的线数据集
 				DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
-				datasetVectorInfo.setName(resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(resultDataset.getDatasetName()));
+				datasetVectorInfo.setName(this.resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(this.resultDataset.getDatasetName()));
 				datasetVectorInfo.setType(DatasetType.LINE);
-				DatasetVector dataset = resultDataset.getResultDatasource().getDatasets().create(datasetVectorInfo);
-				dataset.setPrjCoordSys(datasetGrid.getPrjCoordSys());
+				DatasetVector resultDataset = this.resultDataset.getResultDatasource().getDatasets().create(datasetVectorInfo);
+				resultDataset.setPrjCoordSys(datasetGrid.getPrjCoordSys());
 				// 给新建的数据集中添加分析出的结果
-				GeoLine geoLine = pathLineResult.getPathLine();
-				Recordset recordset = dataset.getRecordset(false, CursorType.DYNAMIC);
-				recordset.addNew(geoLine);
-				geoLine.dispose();
-				recordset.update();
-				recordset.close();
-				recordset.dispose();
-				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
-				isSuccessful = dataset != null;
+				resultRecordset = resultDataset.getRecordset(false, CursorType.DYNAMIC);
+				resultRecordset.addNew(pathLineResult.getPathLine());
+				resultRecordset.update();
+
+				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+				isSuccessful = resultDataset != null;
 			} else {
 				isSuccessful = false;
 			}
 
 		} catch (Exception e) {
+
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			DistanceAnalyst.addSteppedListener(this.steppedListener);
+			resultRecordset.close();
+			resultRecordset.dispose();
+			DistanceAnalyst.removeSteppedListener(this.steppedListener);
 		}
 		return isSuccessful;
 	}

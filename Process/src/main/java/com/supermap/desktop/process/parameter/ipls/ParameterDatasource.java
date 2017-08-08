@@ -24,6 +24,7 @@ public class ParameterDatasource extends AbstractParameter implements ISelection
 	@ParameterField(name = DATASOURCE_FIELD_NAME)
 	private Datasource datasource;
 	private String describe = CommonProperties.getString(CommonProperties.Label_Datasource);
+	private boolean isReadOnlyNeeded;
 
 	public ParameterDatasource() {
 		this.addValueLegalListener(new ParameterValueLegalListener() {
@@ -48,6 +49,14 @@ public class ParameterDatasource extends AbstractParameter implements ISelection
 				return DO_NOT_CARE;
 			}
 		});
+	}
+
+	public boolean isReadOnlyNeeded() {
+		return isReadOnlyNeeded;
+	}
+
+	public void setReadOnlyNeeded(boolean readOnlyNeeded) {
+		isReadOnlyNeeded = readOnlyNeeded;
 	}
 
 	protected Object isDatasourceSelected(Datasource parameterValue) {

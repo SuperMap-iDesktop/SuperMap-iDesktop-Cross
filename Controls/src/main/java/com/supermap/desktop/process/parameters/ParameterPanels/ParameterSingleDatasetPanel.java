@@ -1,28 +1,6 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetCreatedEvent;
-import com.supermap.data.DatasetCreatedListener;
-import com.supermap.data.DatasetDeletingAllEvent;
-import com.supermap.data.DatasetDeletingAllListener;
-import com.supermap.data.DatasetDeletingEvent;
-import com.supermap.data.DatasetDeletingListener;
-import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
-import com.supermap.data.DatasourceClosingEvent;
-import com.supermap.data.DatasourceClosingListener;
-import com.supermap.data.DatasourceCreatedEvent;
-import com.supermap.data.DatasourceCreatedListener;
-import com.supermap.data.DatasourceOpenedEvent;
-import com.supermap.data.DatasourceOpenedListener;
-import com.supermap.data.Datasources;
-import com.supermap.data.Workspace;
-import com.supermap.data.WorkspaceClosedEvent;
-import com.supermap.data.WorkspaceClosedListener;
-import com.supermap.data.WorkspaceCreatedEvent;
-import com.supermap.data.WorkspaceCreatedListener;
-import com.supermap.data.WorkspaceOpenedEvent;
-import com.supermap.data.WorkspaceOpenedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
@@ -125,7 +103,6 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 			this.datasetComboBox = new DatasetComboBox(this.datasource.getDatasets());
 		} else {
 			this.datasetComboBox = new DatasetComboBox();
-
 		}
 
 		this.datasetComboBox.setShowNullValue(parameterSingleDataset.isShowNullValue());

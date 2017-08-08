@@ -218,6 +218,10 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				return result;
 			}
 			String cacheRoot = firstStepPane.fileChooserControlFileCache.getPath();
+			File rootFile = new File(cacheRoot);
+			if (!rootFile.exists()) {
+				rootFile.mkdir();
+			}
 			String cacheName = firstStepPane.textFieldCacheName.getText();
 			String cachePath = CacheUtilities.replacePath(cacheRoot, cacheName);
 			String taskPath = CacheUtilities.replacePath(cacheRoot, CacheTask);

@@ -104,7 +104,7 @@ public class FirstStepPane extends JPanel implements IState {
 	private JLabel labelCacheName;
 	private JLabel labelCachePath;
 	private WarningOrHelpProvider warningProviderCacheNameIllegal;
-	private WarningOrHelpProvider warningProviderCachePathIllegal;
+//	private WarningOrHelpProvider warningProviderCachePathIllegal;
 	public JTextField textFieldCacheName;
 
 	private JLabel labelSaveType;
@@ -339,7 +339,7 @@ public class FirstStepPane extends JPanel implements IState {
 		pathSetting.add(this.warningProviderCacheNameIllegal, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 0, 5, 10));
 		pathSetting.add(this.textFieldCacheName, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
 		pathSetting.add(this.labelCachePath, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-		pathSetting.add(this.warningProviderCachePathIllegal, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
+//		pathSetting.add(this.warningProviderCachePathIllegal, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
 		pathSetting.add(this.fileChooserControlFileCache, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
 		JPanel storeType = new JPanel();
 		storeType.setBorder(BorderFactory.createTitledBorder(MapViewProperties.getString("MapCache_OutputSetting")));
@@ -461,7 +461,7 @@ public class FirstStepPane extends JPanel implements IState {
 			this.textFieldCacheName.setText(this.mapCacheBuilder.getCacheName());
 		}
 		this.warningProviderCacheNameIllegal.hideWarning();
-		this.warningProviderCachePathIllegal.hideWarning();
+//		this.warningProviderCachePathIllegal.hideWarning();
 	}
 
 	private void registEvents() {
@@ -762,7 +762,7 @@ public class FirstStepPane extends JPanel implements IState {
 	};
 
 	private boolean enabled() {
-		return isRightCacheName() && isRightCachePath() && isAllRightSaveTypeSetting();
+		return isRightCacheName()  && isAllRightSaveTypeSetting();
 	}
 
 	//Validate cache name is right
@@ -826,24 +826,24 @@ public class FirstStepPane extends JPanel implements IState {
 	}
 
 	//Validate is right cache path
-	private boolean isRightCachePath() {
-		boolean result = true;
-		if (this.fileChooserControlFileCache.getPath().isEmpty()) {
-			result = false;
-			this.warningProviderCachePathIllegal.showWarning();
-			return result;
-		} else {
-			File file = new File(this.fileChooserControlFileCache.getPath());
-			if (!file.exists() && !file.isDirectory()) {
-				result = false;
-				this.warningProviderCachePathIllegal.showWarning(MapViewProperties.getString("MapCache_WarningCachePathIsNotExits"));
-				return result;
-			} else {
-				this.warningProviderCachePathIllegal.hideWarning();
-			}
-		}
-		return result;
-	}
+//	private boolean isRightCachePath() {
+//		boolean result = true;
+//		if (this.fileChooserControlFileCache.getPath().isEmpty()) {
+//			result = false;
+//			this.warningProviderCachePathIllegal.showWarning();
+//			return result;
+//		} else {
+//			File file = new File(this.fileChooserControlFileCache.getPath());
+//			if (!file.exists() && !file.isDirectory()) {
+//				result = false;
+//				this.warningProviderCachePathIllegal.showWarning(MapViewProperties.getString("MapCache_WarningCachePathIsNotExits"));
+//				return result;
+//			} else {
+//				this.warningProviderCachePathIllegal.hideWarning();
+//			}
+//		}
+//		return result;
+//	}
 
 	private void initResources() {
 
@@ -889,16 +889,12 @@ public class FirstStepPane extends JPanel implements IState {
 		this.labelCacheName = new JLabel();
 		this.labelCachePath = new JLabel();
 		this.warningProviderCacheNameIllegal = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_WarningCacheNameIsEmpty"), true);
-		this.warningProviderCachePathIllegal = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_WarningCachePathIsEmpty"), true);
+//		this.warningProviderCachePathIllegal = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_WarningCachePathIsEmpty"), true);
 		this.textFieldCacheName = new JTextField();
 		this.fileChooserControlFileCache = new JFileChooserControl();
 		String moduleName = "ChooseCacheClipDirectories";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			String defaultPath = System.getProperty("user.dir") + File.separator + "Cache";
-			File cachePath = new File(defaultPath);
-			if (!cachePath.exists()) {
-				cachePath.mkdir();
-			}
 			SmFileChoose.addNewNode("", defaultPath, GlobalParameters.getDesktopTitle(),
 					moduleName, "GetDirectories");
 		}

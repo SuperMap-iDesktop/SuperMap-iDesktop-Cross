@@ -19,27 +19,30 @@ import com.supermap.desktop.utilities.RecordsetUtilities;
 import java.util.Map;
 
 /**
- * Created By Chens on 2017/7/22 0022
+ * Created by yuanR on 2017/8/8  .
+ * 网络数据集转化为点数据集
+ * 网络数据集当中包含点数据集，只需要取出来即可
  */
-public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
+public class MetaProcessNetWorkToPoint2D extends MetaProcessTypeConversion {
 
-	public MetaProcessSimpleToCAD() {
+	public MetaProcessNetWorkToPoint2D() {
 		initParameters();
 		initParameterConstraint();
 	}
 
 	private void initParameters() {
-		OUTPUT_DATA = "SimpleToCADResult";
+		OUTPUT_DATA = "NetWorkToPoint2DResult";
 		inputDatasource = new ParameterDatasourceConstrained();
-		inputDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.MODEL);
+		inputDataset = new ParameterSingleDataset(DatasetType.NETWORK);
 		outputData = new ParameterSaveDataset();
 
-		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.MODEL);
+		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.NETWORK);
 		if (dataset != null) {
 			inputDatasource.setSelectedItem(dataset.getDatasource());
 			inputDataset.setSelectedItem(dataset);
 		}
-		outputData.setSelectedItem("result_simpleToCAD");
+
+		outputData.setSelectedItem("result_networkToPoint2D");
 
 		ParameterCombine inputCombine = new ParameterCombine();
 		inputCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
@@ -50,7 +53,7 @@ public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
 
 		parameters.setParameters(inputCombine, outputCombine);
 		parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.CAD, outputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.TEXT, outputCombine);
 	}
 
 	private void initParameterConstraint() {
@@ -60,59 +63,54 @@ public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
 	}
 
 	@Override
-	public IParameters getParameters() {
-		return parameters;
-	}
-
-	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
 		Recordset recordsetResult = null;
-
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
-
+			fireRunning(new RunningEvent(MetaProcessNetWorkToPoint2D.this, 0, "start"));
 			DatasetVector src = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
 			} else {
 				src = (DatasetVector) inputDataset.getSelectedDataset();
 			}
+
+			// 从网络数据集中取出点数据集
+			DatasetVector datasetPoint = src.getChildDataset();
+			// 创建新的数据集
 			DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
 			datasetVectorInfo.setName(outputData.getResultDatasource().getDatasets().getAvailableDatasetName(outputData.getDatasetName()));
-			datasetVectorInfo.setType(DatasetType.CAD);
+			datasetVectorInfo.setType(datasetPoint.getType());
 			DatasetVector resultDataset = outputData.getResultDatasource().getDatasets().create(datasetVectorInfo);
-			resultDataset.setPrjCoordSys(src.getPrjCoordSys());
-			for (int i = 0; i < src.getFieldInfos().getCount(); i++) {
-				FieldInfo fieldInfo = src.getFieldInfos().get(i);
+			resultDataset.setPrjCoordSys(datasetPoint.getPrjCoordSys());
+			// 根据取出的点数据集给新建数据集添加属性字段
+			for (int i = 0; i < datasetPoint.getFieldInfos().getCount(); i++) {
+				FieldInfo fieldInfo = datasetPoint.getFieldInfos().get(i);
 				if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().equals("smuserid")) {
 					resultDataset.getFieldInfos().add(fieldInfo);
 				}
 			}
+
 			recordsetResult = resultDataset.getRecordset(false, CursorType.DYNAMIC);
 			recordsetResult.addSteppedListener(steppedListener);
+
 			recordsetResult.getBatch().setMaxRecordCount(2000);
 			recordsetResult.getBatch().begin();
 
-			Recordset recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
+			Recordset recordsetInput = datasetPoint.getRecordset(false, CursorType.STATIC);
+			recordsetInput.moveFirst();
 			while (!recordsetInput.isEOF()) {
-				Geometry geometry = null;
-				try {
-					geometry = recordsetInput.getGeometry();
-					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-					recordsetResult.addNew(geometry, value);
-				} finally {
-					if (geometry != null) {
-						geometry.dispose();
-					}
-				}
+				//  获得属性表信息
+				Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
+				recordsetResult.addNew(recordsetInput.getGeometry(), value);
 				recordsetInput.moveNext();
 			}
 			recordsetResult.getBatch().update();
 			recordsetInput.close();
 			recordsetInput.dispose();
+
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
-			fireRunning(new RunningEvent(this, 100, "finish"));
+			fireRunning(new RunningEvent(MetaProcessNetWorkToPoint2D.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -122,17 +120,22 @@ public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
 				recordsetResult.dispose();
 			}
 		}
-
 		return isSuccessful;
 	}
 
 	@Override
+	public IParameters getParameters() {
+		return parameters;
+	}
+
+	@Override
 	public String getKey() {
-		return MetaKeys.CONVERSION_SIMPLE_TO_CAD;
+		return MetaKeys.CONVERSION_NETWORK_TO_POINT2D;
 	}
 
 	@Override
 	public String getTitle() {
-		return ProcessProperties.getString("String_Title_SimpleToCAD");
+		return ProcessProperties.getString("String_Title_NetworkToPoint2D");
 	}
+
 }

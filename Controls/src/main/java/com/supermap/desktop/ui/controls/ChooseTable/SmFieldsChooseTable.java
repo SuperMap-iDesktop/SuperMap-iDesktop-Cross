@@ -2,7 +2,7 @@ package com.supermap.desktop.ui.controls.ChooseTable;
 
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.CheckTableModle;
+import com.supermap.desktop.ui.CheckTableModel;
 import com.supermap.desktop.ui.controls.CheckHeaderCellRenderer;
 
 import javax.swing.*;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * Created by lixiaoyao on 2017/2/10.
  */
 public class SmFieldsChooseTable extends JTable {
-    CheckTableModle checkTableModle = null;
+    CheckTableModel checkTableModel = null;
     private final Object[] tableTitle = {"", CommonProperties.getString("String_Field_Caption")};
     private final static int checkColumnIndex=0;
     private final static int checkColumnIndexMaxSize=40;
@@ -28,8 +28,8 @@ public class SmFieldsChooseTable extends JTable {
     }
 
     public SmFieldsChooseTable(DatasetVector datasetVector) {
-        this.checkTableModle = new CheckTableModle(getData(datasetVector), tableTitle, enableColumn);
-        this.setModel(this.checkTableModle);
+        this.checkTableModel = new CheckTableModel(getData(datasetVector), tableTitle, enableColumn);
+        this.setModel(this.checkTableModel);
         this.getColumn(this.getModel().getColumnName(checkColumnIndex)).setMaxWidth(checkColumnIndexMaxSize);
         init();
     }

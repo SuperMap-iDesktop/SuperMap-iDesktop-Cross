@@ -1,6 +1,6 @@
 package com.supermap.desktop.ui.controls.ChooseTable;
 
-import com.supermap.desktop.ui.CheckTableModle;
+import com.supermap.desktop.ui.CheckTableModel;
 import com.supermap.desktop.ui.controls.CheckHeaderCellRenderer;
 
 import javax.swing.*;
@@ -12,7 +12,7 @@ import java.awt.event.MouseListener;
  * Created by lixiaoyao on 2017/2/28.
  */
 public class SmChooseTable extends JTable {
-    private CheckTableModle checkTableModle = null;
+    private CheckTableModel checkTableModel = null;
     private final static int rowHeight = 23;
     private final static int enableColumn = 0;
     private int checkColumnIndex = 0;
@@ -26,8 +26,8 @@ public class SmChooseTable extends JTable {
 
     //  选择列除了checkbox外没有任何其他文字或图片
     public SmChooseTable(Object data[][], Object titles[]) {
-        this.checkTableModle = new CheckTableModle(data, titles, enableColumn);
-        this.setModel(this.checkTableModle);
+        this.checkTableModel = new CheckTableModel(data, titles, enableColumn);
+        this.setModel(this.checkTableModel);
         init();
         this.removeMouseListener(this.mouseListener);
     }

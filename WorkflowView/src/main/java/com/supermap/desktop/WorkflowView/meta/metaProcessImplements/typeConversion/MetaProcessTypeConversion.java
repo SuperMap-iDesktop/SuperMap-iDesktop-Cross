@@ -6,7 +6,6 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.properties.CommonProperties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.Map;
  * Created By Chens on 2017/7/21 0021
  */
 public abstract class MetaProcessTypeConversion extends MetaProcess {
-	protected static final String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	protected static final String INPUT_DATA = SOURCE_PANEL_DESCRIPTION;
 	protected String OUTPUT_DATA;
 	protected ParameterDatasourceConstrained inputDatasource;
 	protected ParameterSingleDataset inputDataset;

@@ -4,78 +4,12 @@ import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.MetaProcessImportFactory;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.EmptyMetaProcess;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessBuffer;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessComputeDistance;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessDEMBuild;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessDEMLake;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessDualLineToCenterLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessExportGrid;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessExportVector;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessFieldIndex;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridRegionAggregation;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessHeatMap;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessISOLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessISOPoint;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessISORegion;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessInterpolator;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessKernelDensity;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessOverlayanalystgeo;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessPickupBorder;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessPolygonAggregation;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessProjection;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessRasterToVector;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessRegionToCenterLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessRegionTrunkToCenterLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessSetProjection;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessShortestPath;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessSimpleDensity;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessSingleQuery;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessSpatialIndex;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessSqlQuery;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessSummaryRegion;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessThiessenPolygon;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessThinRaster;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessVectorToRaster;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessAggregatePoints;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessAppendFields;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessEdgeMatch;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessLinePolygonSmooth;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessRarefyPoints;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessVectorResample;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.*;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridDistance.MetaProcessSurfacePathLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessAutoCorrelation;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessAverageNearestNeighbor;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessCentralElement;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessClusterOutlierAnalyst;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessDirectional;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessGeographicWeightedRegression;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessHighOrLowClustering;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessHotSpotAnalyst;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessIncrementalAutoCorrelation;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessLinearDirectionalMean;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessMeanCenter;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessMedianCenter;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessOptimizedHotSpotAnalyst;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessStandardDistance;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcess2DTo3D;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessCADToSimple;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessEPSToSimple;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessFieldToText;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessLine3DTo2D;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessLineToPoint;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessLineToRegion;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessPoint3DTo2D;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessPointToLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessRegion3DTo2D;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessRegionToLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessRegionToPoint;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessSimpleToCAD;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessTabularPointToRegion;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessTabularToPoint;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessTextToField;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcessTextToPoint;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.*;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -228,9 +162,9 @@ public class WorkflowParser {
 			result = new MetaProcessGridRegionAggregation();
 		} else if (MetaKeys.POLYGON_AGGREGATION.equals(key)) {
 			result = new MetaProcessPolygonAggregation();
-		} else if (MetaKeys.SUMMARYREGION.equals(key)) {
+		} else if (MetaKeys.SUMMARY_REGION.equals(key)) {
 			result = new MetaProcessSummaryRegion();
-		} else if (MetaKeys.INTERPOLATOR_IDW.equals(key)) {
+		}  else if (MetaKeys.INTERPOLATOR_IDW.equals(key)) {
 			result = new MetaProcessInterpolator(InterpolationAlgorithmType.IDW);
 		} else if (MetaKeys.INTERPOLATOR_RBF.equals(key)) {
 			result = new MetaProcessInterpolator(InterpolationAlgorithmType.RBF);
@@ -371,6 +305,12 @@ public class WorkflowParser {
 			result = new MetaProcess2DTo3D(DatasetType.LINE);
 		} else if (MetaKeys.CONVERSION_REGION2D_TO_3D.equals(key)) {
 			result = new MetaProcess2DTo3D(DatasetType.REGION);
+		} else if (MetaKeys.CONVERSION_NETWORK_TO_POINT2D.equals(key)) {
+			result = new MetaProcessNetWorkToPoint2D();
+		} else if (MetaKeys.CONVERSION_NETWORK_TO_LINE.equals(key)) {
+			result = new MetaProcessNetWorkToLine();
+		} else if (MetaKeys.CONVERSION_LINEM_TO_LINE.equals(key)) {
+			result = new MetaProcessLineMToLine();
 		} else if (MetaKeys.EDGE_MATCH.equals(key)) {
 			result = new MetaProcessEdgeMatch();
 		} else if (MetaKeys.PICKUP_BORDER.equals(key)) {
@@ -387,10 +327,15 @@ public class WorkflowParser {
 			result = new MetaProcessShortestPath();
 		} else if (MetaKeys.SURFACE_PATH_LINE.equals(key)) {
 			result = new MetaProcessSurfacePathLine();
+		} else if (MetaKeys.COST_PATH_LINE.equals(key)) {
+			result = new MetaProcessCostPathLine();
+		} else if (MetaKeys.ELIMINATE.equals(key)) {
+			result = new MetaProcessEliminate();
+		} else if (MetaKeys.CREATE_DISTANCE_RASTER.equals(key)) {
+			result = new MetaProcessCreateDistanceRaster();
 		} else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}
-
 
 		return result;
 	}
