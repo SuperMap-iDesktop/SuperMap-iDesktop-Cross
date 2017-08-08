@@ -1,19 +1,27 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterFieldComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * Created by xie on 2017/8/5.
@@ -30,6 +38,7 @@ public class MetaProcessAppendFields extends MetaProcess {
 	private ParameterDatasource targetDatasource;
 	private ParameterSingleDataset targetDataset;
 	private ParameterFieldComboBox targetLinkedField;
+	private ParameterMultiFieldSet multiFieldSet;
 
 	public MetaProcessAppendFields() {
 		initParameters();
@@ -45,15 +54,21 @@ public class MetaProcessAppendFields extends MetaProcess {
 		targetDatasourceConstraint.constrained(targetDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		targetDatasourceConstraint.constrained(targetDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
-		EqualDatasetConstraint datasetConstraint = new EqualDatasetConstraint();
-		datasetConstraint.constrained(sourceDataset,ParameterSingleDataset.DATASET_FIELD_NAME);
-		datasetConstraint.constrained(targetDataset,ParameterFieldComboBox.DATASET_FIELD_NAME);
+		EqualDatasetConstraint datasetConstraint1 = new EqualDatasetConstraint();
+		datasetConstraint1.constrained(sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		datasetConstraint1.constrained(multiFieldSet, ParameterMultiFieldSet.SOURCE_DATASET);
+
 	}
 
 	private void initParameters() {
 
+		Datasource datasource = DatasourceUtilities.getDefaultResultDatasource();
+		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetTypeUtilities.getDatasetTypeVector());
+
 		this.targetDatasource = new ParameterDatasource();
+		this.targetDatasource.setReadOnlyNeeded(false);
 		this.targetDataset = new ParameterSingleDataset();
+		this.targetDataset.setDatasource(datasource);
 		this.targetDataset.setDatasetTypes(DatasetTypeUtilities.getDatasetTypeVector());
 		this.targetLinkedField = new ParameterFieldComboBox();
 		this.targetLinkedField.setDescribe(ProcessProperties.getString("String_ConnectionField"));
@@ -63,21 +78,47 @@ public class MetaProcessAppendFields extends MetaProcess {
 
 		this.sourceDatasource = new ParameterDatasource();
 		this.sourceDataset = new ParameterSingleDataset();
+		this.sourceDataset.setDatasource(datasource);
 		this.sourceDataset.setDatasetTypes(DatasetTypeUtilities.getDatasetTypeVector());
 		this.sourceLinkedField = new ParameterFieldComboBox();
 		this.sourceLinkedField.setDescribe(ProcessProperties.getString("String_ConnectionField"));
 		this.sourceDataCombine = new ParameterCombine();
 		this.sourceDataCombine.setDescribe(INPUT_DATA);
 		this.sourceDataCombine.addParameters(sourceDatasource, sourceDataset, sourceLinkedField);
+		this.multiFieldSet = new ParameterMultiFieldSet();
+		if (null != dataset) {
+			this.sourceDataset.setSelectedItem(dataset);
+			this.targetDataset.setSelectedItem(dataset);
+			this.sourceLinkedField.setFieldName((DatasetVector) dataset);
+			this.targetLinkedField.setFieldName((DatasetVector) dataset);
+			this.multiFieldSet.setDataset((DatasetVector) dataset);
+		}
 
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceDataCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.VECTOR, targetDataCombine);
-		this.parameters.setParameters(targetDataCombine, sourceDataCombine);
+		this.parameters.setParameters(targetDataCombine, sourceDataCombine, multiFieldSet);
 	}
+
 
 	@Override
 	public boolean execute() {
-		return false;
+		fireRunning(new RunningEvent(this, 0, "start"));
+		DatasetVector datasetVector = (DatasetVector) targetDataset.getSelectedDataset();
+		String sourceLinked = targetLinkedField.getFieldName();
+		String targetLineed = sourceLinkedField.getFieldName();
+		DatasetVector targetDatasetVector = (DatasetVector) sourceDataset.getSelectedDataset();
+		String[] sourceFields = multiFieldSet.getDatasetFieldInfo().getSourceFields();
+		String[] targetFields = multiFieldSet.getDatasetFieldInfo().getTargetFields();
+		datasetVector.addSteppedListener(this.steppedListener);
+		boolean result = datasetVector.appendFields(targetDatasetVector, sourceLinked, targetLineed, sourceFields, targetFields);
+		if (result) {
+			fireRunning(new RunningEvent(this, 100,"success"));
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsSuccess"),targetDatasetVector.getName(),datasetVector.getName()));
+		}else{
+			fireRunning(new RunningEvent(this, 100,"failed"));
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsFailed"),targetDatasetVector.getName(),datasetVector.getName()));
+		}
+		return result;
 	}
 
 	@Override

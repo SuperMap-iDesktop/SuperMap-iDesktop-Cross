@@ -1,7 +1,7 @@
 package com.supermap.desktop.ui.controls.ChooseTable;
 
-import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfo;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CheckHeaderCellRenderer;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
@@ -17,36 +17,42 @@ import java.util.ArrayList;
 public class SmMultiFieldsChooseTable extends JTable {
 	MultipleCheckboxTableModel checkTableModle = null;
 	private final Object[] TABLETITLE = {"", CommonProperties.getString("String_SourceFieldName")
-			, CommonProperties.getString("String_TargetFieldName"), CommonProperties.getString("String__FieldType")};
+			, CommonProperties.getString("String_TargetFieldName"), CommonProperties.getString("String_Field_Type")};
 	private final boolean[] ENABLECOLUMNS = {true, false, true, false};
 	private final int checkColumnIndexMaxSize = 40;
 	private final int rowHeight = 23;
-	private final int enableColumn = 0;
 	private final int TABLE_COLUMN_CHECKABLE = 0;
 	private final int TABLE_COLUMN_SOURCEFIELDNAME = 1;
 	private final int TABLE_COLUMN_TARGETFIELDNAME = 2;
 	private final int TABLE_COLUMN_FIELDTYPE = 3;
+	private boolean isSelectionChanged = false;
 	ArrayList<Info> notSystemFieldInfos = new ArrayList<>();
 	private ListSelectionListener listListener = new ListSelectionListener() {
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
-			int[] selectRows = SmMultiFieldsChooseTable.this.getSelectedRows();
-			for (int i = 0, length = selectRows.length; i < length; i++) {
-				notSystemFieldInfos.get(selectRows[i]).setTargetFieldName(String.valueOf(getValueAt(selectRows[i], TABLE_COLUMN_TARGETFIELDNAME)));
+			if (!isSelectionChanged) {
+				isSelectionChanged = true;
+				int[] selectRows = SmMultiFieldsChooseTable.this.getSelectedRows();
+				for (int i = 0, length = selectRows.length; i < length; i++) {
+					notSystemFieldInfos.get(selectRows[i]).setTargetFieldName(String.valueOf(getValueAt(selectRows[i], TABLE_COLUMN_TARGETFIELDNAME)));
+				}
+				isSelectionChanged = false;
 			}
 		}
 	};
 
-	public SmMultiFieldsChooseTable(Dataset datasetVector) {
-		this.checkTableModle = new MultipleCheckboxTableModel(getData((DatasetVector) datasetVector), TABLETITLE, ENABLECOLUMNS);
-		this.setModel(this.checkTableModle);
-		this.getColumn(this.getModel().getColumnName(TABLE_COLUMN_CHECKABLE)).setMaxWidth(checkColumnIndexMaxSize);
-		init();
+	public SmMultiFieldsChooseTable(DatasetVector datasetVector) {
+		init(datasetVector);
 	}
 
-	private void init() {
+	public void init(DatasetVector datasetVector) {
+		this.checkTableModle = new MultipleCheckboxTableModel(getData(datasetVector), TABLETITLE, ENABLECOLUMNS);
+		this.setModel(this.checkTableModle);
+		this.getColumn(this.getModel().getColumnName(TABLE_COLUMN_CHECKABLE)).setMaxWidth(checkColumnIndexMaxSize);
 		this.setRowHeight(rowHeight);
+		this.getColumnModel().getColumn(TABLE_COLUMN_CHECKABLE).setCellRenderer(new MultipleCheckboxTableRenderer());
 		this.getTableHeader().getColumnModel().getColumn(TABLE_COLUMN_CHECKABLE).setHeaderRenderer(new CheckHeaderCellRenderer(this, "", false));
+		this.getSelectionModel().removeListSelectionListener(this.listListener);
 		this.getSelectionModel().addListSelectionListener(this.listListener);
 	}
 
@@ -54,40 +60,39 @@ public class SmMultiFieldsChooseTable extends JTable {
 		if (datasetVector == null) {
 			return new Object[0][0];
 		}
-		int count = 0;
+		ArrayList<FieldInfo> fieldInfos = new ArrayList<>();
 		for (int i = 0; i < datasetVector.getFieldInfos().getCount(); i++) {
 			if (!datasetVector.getFieldInfos().get(i).isSystemField()) {
-				count++;
+				fieldInfos.add(datasetVector.getFieldInfos().get(i));
 			}
 		}
-		Object data[][] = new Object[count][4];
-		for (int i = 0; i < datasetVector.getFieldInfos().getCount(); i++) {
-			if (!datasetVector.getFieldInfos().get(i).isSystemField()) {
-				data[i][TABLE_COLUMN_CHECKABLE] = false;
-				data[i][TABLE_COLUMN_SOURCEFIELDNAME] = datasetVector.getFieldInfos().get(i).getCaption();
-				data[i][TABLE_COLUMN_TARGETFIELDNAME] = datasetVector.getFieldInfos().get(i).getCaption();
-				data[i][TABLE_COLUMN_FIELDTYPE] = FieldTypeUtilities.getFieldTypeName(datasetVector.getFieldInfos().get(i).getType());
-				Info info = new Info();
-				info.setSourceFieldName(datasetVector.getFieldInfos().get(i).getName());
-				info.setTargetFieldName(datasetVector.getFieldInfos().get(i).getName());
-				notSystemFieldInfos.add(info);
-			}
+		int size = fieldInfos.size();
+		Object data[][] = new Object[size][4];
+		for (int i = 0; i < size; i++) {
+			data[i][TABLE_COLUMN_CHECKABLE] = false;
+			data[i][TABLE_COLUMN_SOURCEFIELDNAME] = fieldInfos.get(i).getName();
+			data[i][TABLE_COLUMN_TARGETFIELDNAME] = fieldInfos.get(i).getName();
+			data[i][TABLE_COLUMN_FIELDTYPE] = FieldTypeUtilities.getFieldTypeName(fieldInfos.get(i).getType());
+			Info info = new Info();
+			info.setSourceFieldName(fieldInfos.get(i).getName());
+			info.setTargetFieldName(fieldInfos.get(i).getName());
+			notSystemFieldInfos.add(info);
 		}
 		return data;
 	}
 
-	public ArrayList getSelectedFieldsName() {
+	public ArrayList<Info> getSelectedFieldsName() {
 		ArrayList<Info> selectedFieldsName = new ArrayList();
 
 		for (int i = 0; i < this.getRowCount(); i++) {
-			if ((Boolean) this.getValueAt(i, TABLE_COLUMN_CHECKABLE)) {
+			if (((boolean) this.getValueAt(i, TABLE_COLUMN_CHECKABLE))) {
 				selectedFieldsName.add(notSystemFieldInfos.get(i));
 			}
 		}
 		return selectedFieldsName;
 	}
 
-	class Info {
+	public class Info {
 		private String sourceFieldName;
 		private String targetFieldName;
 
