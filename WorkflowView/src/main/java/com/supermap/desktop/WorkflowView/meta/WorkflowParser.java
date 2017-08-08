@@ -321,6 +321,8 @@ public class WorkflowParser {
 			result = new MetaProcessSurfacePathLine();
 		} else if (MetaKeys.COST_PATH_LINE.equals(key)) {
 			result = new MetaProcessCostPathLine();
+		} else if (MetaKeys.ELIMINATE.equals(key)) {
+			result = new MetaProcessEliminate();
 		} else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}

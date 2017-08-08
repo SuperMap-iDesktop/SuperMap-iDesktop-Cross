@@ -42,6 +42,7 @@ public class MetaKeys {
 	public static final String HYDROLOGICAL_ANALYST = "HydrologicalAnalyst";
 	public static final String EMPTY = "Empty";
 	public static final String COST_PATH_LINE = "CostPathLine";
+	public static final String ELIMINATE = "Eliminate";
 
 	// 距离栅格
 	public static final String SHORTEST_PATH = "ShortestPath";

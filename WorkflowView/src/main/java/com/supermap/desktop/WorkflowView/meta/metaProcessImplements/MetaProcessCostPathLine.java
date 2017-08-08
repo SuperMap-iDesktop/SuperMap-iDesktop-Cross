@@ -27,12 +27,9 @@ import java.beans.PropertyChangeListener;
  * 最小耗费距离
  */
 public class MetaProcessCostPathLine extends MetaProcess {
-	private static final String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	private static final String COST_DATA = ProcessProperties.getString("String_GroupBox_CostData");
 	private static final String OUTPUT_DATA = "CostPathLineResult";
 
-	private ParameterDatasourceConstrained sourceDatasources;
-	private ParameterSingleDataset sourceDataset;
 	private ParameterDatasourceConstrained costDatasources;
 	private ParameterSingleDataset costDataset;
 	private ParameterSaveDataset resultDataset;
@@ -53,8 +50,6 @@ public class MetaProcessCostPathLine extends MetaProcess {
 	}
 
 	private void initParameters() {
-		sourceDatasources = new ParameterDatasourceConstrained();
-		sourceDataset = new ParameterSingleDataset(DatasetType.GRID);
 		costDatasources = new ParameterDatasourceConstrained();
 		costDataset = new ParameterSingleDataset(DatasetType.GRID);
 		resultDataset = new ParameterSaveDataset();
@@ -69,11 +64,8 @@ public class MetaProcessCostPathLine extends MetaProcess {
 		comboBoxSmoothMethod = new ParameterComboBox(CommonProperties.getString("String_SmoothMethod"));
 		numberSmoothDegree = new ParameterNumber(ProcessProperties.getString("String_Label_Smoothness"));
 
-		ParameterCombine sourceCombine = new ParameterCombine();
-		sourceCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
-		sourceCombine.addParameters(sourceDatasources, sourceDataset);
 		ParameterCombine costCombine = new ParameterCombine();
-		costCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
+		costCombine.setDescribe(ProcessProperties.getString("String_GroupBox_CostData"));
 		costCombine.addParameters(costDatasources, costDataset);
 		ParameterCombine settingCombine = new ParameterCombine();
 		settingCombine.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
@@ -82,17 +74,12 @@ public class MetaProcessCostPathLine extends MetaProcess {
 		outputCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		outputCombine.addParameters(resultDataset);
 
-		parameters.setParameters(sourceCombine, costCombine, settingCombine, outputCombine);
-		parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceCombine);
+		parameters.setParameters(costCombine, settingCombine, outputCombine);
 		parameters.addInputParameters(COST_DATA, DatasetTypes.GRID, costCombine);
 		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, outputCombine);
 	}
 
 	private void initParameterConstraint() {
-		EqualDatasourceConstraint constraintSource = new EqualDatasourceConstraint();
-		constraintSource.constrained(sourceDatasources, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		constraintSource.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-
 		EqualDatasourceConstraint constraintSource1 = new EqualDatasourceConstraint();
 		constraintSource1.constrained(costDatasources, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		constraintSource1.constrained(costDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
@@ -103,8 +90,6 @@ public class MetaProcessCostPathLine extends MetaProcess {
 	private void initParametersState() {
 		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
 		if (datasetGrid != null) {
-			sourceDatasources.setSelectedItem(datasetGrid.getDatasource());
-			sourceDataset.setSelectedItem(datasetGrid);
 			costDatasources.setSelectedItem(datasetGrid.getDatasource());
 			costDataset.setSelectedItem(datasetGrid);
 		}
@@ -112,10 +97,14 @@ public class MetaProcessCostPathLine extends MetaProcess {
 		comboBoxSmoothMethod.setItems(new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_NONE"), SmoothMethod.NONE),
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_BSLine"), SmoothMethod.BSPLINE),
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_POLISH"), SmoothMethod.POLISH));
-		numberOriginX.setSelectedItem(0.0);
-		numberOriginY.setSelectedItem(0.0);
-		numberTargetX.setSelectedItem(0.0);
-		numberTargetY.setSelectedItem(0.0);
+//		numberOriginX.setSelectedItem(0.0);
+//		numberOriginY.setSelectedItem(0.0);
+//		numberTargetX.setSelectedItem(0.0);
+//		numberTargetY.setSelectedItem(0.0);
+ 		numberOriginX.setSelectedItem(115.92768708727253);
+		numberOriginY.setSelectedItem(40.003289848431905);
+		numberTargetX.setSelectedItem(116.5062230427751);
+		numberTargetY.setSelectedItem(40.37178408760552);
 		numberSmoothDegree.setSelectedItem(2);
 		numberSmoothDegree.setEnabled(false);
 	}
@@ -158,24 +147,17 @@ public class MetaProcessCostPathLine extends MetaProcess {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			DistanceAnalyst.addSteppedListener(steppedListener);
 
-			DatasetGrid src = null;
-			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
-				src = (DatasetGrid) parameters.getInputs().getData(INPUT_DATA).getValue();
-			} else {
-				src = (DatasetGrid) sourceDataset.getSelectedItem();
-			}
 			DatasetGrid srcCost = null;
-			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
-				srcCost = (DatasetGrid) parameters.getInputs().getData(INPUT_DATA).getValue();
+			if (parameters.getInputs().getData(COST_DATA).getValue() != null) {
+				srcCost = (DatasetGrid) parameters.getInputs().getData(COST_DATA).getValue();
 			} else {
-				srcCost = (DatasetGrid) sourceDataset.getSelectedItem();
+				srcCost = (DatasetGrid) costDataset.getSelectedItem();
 			}
 
 			DistanceAnalystParameter distanceAnalystParameter = new DistanceAnalystParameter();
-			distanceAnalystParameter.setSourceDataset(src);
 			distanceAnalystParameter.setCostGrid(srcCost);
 			distanceAnalystParameter.setPathLineSmoothMethod((SmoothMethod) comboBoxSmoothMethod.getSelectedData());
-			if (numberSmoothDegree.isEnabled() == true && numberSmoothDegree.getSelectedItem() != null) {
+			if (numberSmoothDegree.isEnabled() && numberSmoothDegree.getSelectedItem() != null) {
 				distanceAnalystParameter.setPathLineSmoothDegree(Integer.parseInt(numberSmoothDegree.getSelectedItem().toString()));
 			}
 
@@ -186,23 +168,23 @@ public class MetaProcessCostPathLine extends MetaProcess {
 			Point2D pointOrigin = new Point2D(originX, originY);
 			Point2D pointTarget = new Point2D(targetX, targetY);
 			PathLineResult pathLineResult = DistanceAnalyst.costPathLine(pointOrigin, pointTarget, distanceAnalystParameter);
-			DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
-			datasetVectorInfo.setName(resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(resultDataset.getDatasetName()));
-			datasetVectorInfo.setType(DatasetType.LINE);
-			DatasetVector result = resultDataset.getResultDatasource().getDatasets().create(datasetVectorInfo);
-			result.setPrjCoordSys(src.getPrjCoordSys());
 			if (pathLineResult != null) {
+				DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
+				datasetVectorInfo.setName(resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(resultDataset.getDatasetName()));
+				datasetVectorInfo.setType(DatasetType.LINE);
+				DatasetVector result = resultDataset.getResultDatasource().getDatasets().create(datasetVectorInfo);
+				result.setPrjCoordSys(srcCost.getPrjCoordSys());
 				Recordset recordset = result.getRecordset(false, CursorType.DYNAMIC);
-				recordset.addNew(pathLineResult.getPathLine());
 				recordset.getBatch().setMaxRecordCount(2000);
 				recordset.getBatch().begin();
+				recordset.addNew(pathLineResult.getPathLine());
 				recordset.getBatch().update();
 				recordset.dispose();
+				parameters.getOutputs().getData(OUTPUT_DATA).setValue(result);
+				fireRunning(new RunningEvent(this, 100, "finished"));
 			}
 			isSuccessful = pathLineResult != null;
-			parameters.getOutputs().getData(OUTPUT_DATA).setValue(result);
 
-			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}finally {
