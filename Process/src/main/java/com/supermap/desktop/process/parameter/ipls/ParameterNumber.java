@@ -37,6 +37,9 @@ public class ParameterNumber extends ParameterTextField {
 					if (textFieldValue.endsWith(".")) {
 						return false;
 					}
+					if (textFieldValue.split("\\.").length > 2) {
+						return false;
+					}
 					Double aDouble = DoubleUtilities.stringToValue(textFieldValue);
 					if (isMinValueEnable && (aDouble < minValue || (!isIncludeMin && aDouble == minValue))) {
 						return false;
