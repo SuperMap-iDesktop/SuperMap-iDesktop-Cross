@@ -1,6 +1,11 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EditType;
+import com.supermap.data.Geometry;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
@@ -45,7 +50,7 @@ public class IntersectEditor extends AbstractEditor {
 			if (form.showDialog() == DialogResult.OK) {
 				CursorUtilities.setWaitCursor(environment.getMapControl());
 				intersect(environment, form.getEditLayer(), form.getPropertyData());
-				TabularUtilities.refreshTabularForm((DatasetVector) form.getEditLayer().getDataset());
+				TabularUtilities.refreshTabularStructure((DatasetVector) form.getEditLayer().getDataset());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

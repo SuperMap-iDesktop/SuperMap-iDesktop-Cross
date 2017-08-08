@@ -137,7 +137,7 @@ public class DatasetTypeUtilities {
 
 	public static DatasetType[] getDatasetTypeVector() {
 		return new DatasetType[]{
-				POINT, LINE, REGION, POINT3D, LINE3D, REGION3D, LINEM, TABULAR, NETWORK, NETWORK3D, CAD, TEXT
+				POINT, LINE, REGION, POINT3D, LINE3D, REGION3D, LINEM, TABULAR, NETWORK, NETWORK3D, CAD, TEXT, MODEL
 		};
 	}
 
