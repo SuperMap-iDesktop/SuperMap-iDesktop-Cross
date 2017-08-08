@@ -6,6 +6,7 @@ import com.supermap.desktop.FormTabular;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.utilities.TabularUtilities;
 
 /**
  * @author XiaJT
@@ -22,6 +23,7 @@ public class CtrlActionTabularAddRow extends CtrlAction {
 		if (activeForm instanceof FormTabular && ((FormTabular) activeForm).getDataset().getType() == DatasetType.TABULAR) {
 			FormTabular formTabular = (FormTabular) activeForm;
 			formTabular.addRow(null);
+			TabularUtilities.refreshTabularDatas(formTabular.getDataset());
 			formTabular.goToRow(formTabular.getRowCount() - 1);
 		}
 	}

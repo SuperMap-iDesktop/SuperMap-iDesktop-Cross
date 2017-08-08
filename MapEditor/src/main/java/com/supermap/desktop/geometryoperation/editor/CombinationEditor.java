@@ -1,6 +1,10 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EditType;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
@@ -45,7 +49,7 @@ public class CombinationEditor extends AbstractEditor {
 				CursorUtilities.setWaitCursor(environment.getMapControl());
 				MouseMotionListener[] listeners = environment.getMapControl().getMouseMotionListeners();
 				combination(environment, formCombination.getEditLayer(), formCombination.getPropertyData());
-				TabularUtilities.refreshTabularForm((DatasetVector) formCombination.getEditLayer().getDataset());
+				TabularUtilities.refreshTabularStructure((DatasetVector) formCombination.getEditLayer().getDataset());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
