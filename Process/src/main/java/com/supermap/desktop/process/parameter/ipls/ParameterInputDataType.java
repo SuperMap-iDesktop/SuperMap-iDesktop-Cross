@@ -28,6 +28,7 @@ public class ParameterInputDataType extends ParameterCombine {
 
 	private ParameterBigDatasourceDatasource parameterSourceDatasource = new ParameterBigDatasourceDatasource();
 	private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset();
+	private ParameterComboBox parameterDatasetType1 = new ParameterComboBox(ProcessProperties.getString("String_DatasetType"));
 	private ParameterTextField parameterEngineType = new ParameterTextField(ProcessProperties.getString("String_EngineType"));
 	private ParameterTextField parameterDataBaseName = new ParameterTextField(ProcessProperties.getString("String_DataBaseName"));
 	private ParameterTextField parameterTextFieldAddress = new ParameterTextField(CoreProperties.getString("String_Server"));
@@ -78,7 +79,7 @@ public class ParameterInputDataType extends ParameterCombine {
 				parameterTextFieldPassword,
 				parameterSourceDatasource,
 				parameterSourceDataset,
-				parameterDatasetType);
+				parameterDatasetType1);
 		final ParameterSwitch parameterSwitch = new ParameterSwitch();
 		parameterSwitch.add("0", parameterCombine);
 		parameterSwitch.add("1", parameterCombine1);
@@ -134,7 +135,7 @@ public class ParameterInputDataType extends ParameterCombine {
 			Dataset sourceDataset = parameterSourceDataset.getSelectedDataset();
 			//CommonSettingCombine dataSourceName = new CommonSettingCombine("dataSourceName", parameterSourceDatasource.getSelectedItem().getAlias());
 			CommonSettingCombine name = new CommonSettingCombine("name", sourceDataset.getName());
-			CommonSettingCombine type = new CommonSettingCombine("type", (String) parameterDatasetType.getSelectedData());
+			CommonSettingCombine type = new CommonSettingCombine("type", (String) parameterDatasetType1.getSelectedData());
 			CommonSettingCombine engineType = new CommonSettingCombine("engineType", parameterEngineType.getSelectedItem().toString());
 			CommonSettingCombine server = new CommonSettingCombine("server", parameterTextFieldAddress.getSelectedItem().toString());
 			CommonSettingCombine dataBase = new CommonSettingCombine("dataBase", parameterDataBaseName.getSelectedItem().toString());
@@ -149,8 +150,10 @@ public class ParameterInputDataType extends ParameterCombine {
 
 	public void setSupportDatasetType(DatasetType... datasetTypes) {
 		parameterDatasetType.removeAllItems();
+		parameterDatasetType1.removeAllItems();
 		for (DatasetType datasetType : datasetTypes) {
 			parameterDatasetType.addItem(new ParameterDataNode(DatasetTypeUtilities.toString(datasetType), datasetType.name()));
+			parameterDatasetType1.addItem(new ParameterDataNode(DatasetTypeUtilities.toString(datasetType), datasetType.name()));
 		}
 		parameterSourceDataset.setDatasetTypes(datasetTypes);
 
