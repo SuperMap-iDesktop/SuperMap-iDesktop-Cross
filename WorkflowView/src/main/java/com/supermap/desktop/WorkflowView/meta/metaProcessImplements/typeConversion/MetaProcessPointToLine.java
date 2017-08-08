@@ -19,13 +19,9 @@ import java.util.Map;
 
 /**
  * Created By Chens on 2017/7/24 0024
+ * 点数据集转换为线数据集
  */
 public class MetaProcessPointToLine extends MetaProcessTypeConversion {
-	private static final String OUTPUT_DATA = "PointToLineResult";
-
-	private ParameterDatasourceConstrained inputDatasource;
-	private ParameterSingleDataset inputDataset;
-	private ParameterSaveDataset outputData;
 	private ParameterFieldComboBox comboBoxConnect;
 
 	public MetaProcessPointToLine() {
@@ -34,6 +30,7 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
 	}
 
 	private void initParameters() {
+		OUTPUT_DATA = "PointToLineResult";
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(DatasetType.POINT);
 		outputData = new ParameterSaveDataset();
@@ -182,7 +179,6 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
 				recordsetResult.dispose();
 			}
 		}
-
 		return isSuccessful;
 	}
 }

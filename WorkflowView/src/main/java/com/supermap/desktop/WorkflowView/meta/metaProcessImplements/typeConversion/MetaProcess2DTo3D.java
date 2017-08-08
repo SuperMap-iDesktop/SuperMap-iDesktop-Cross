@@ -58,7 +58,6 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 			comboBoxFrom.setFieldName((DatasetVector) dataset);
 			comboBoxTo.setFieldName((DatasetVector) dataset);
 		}
-		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
 		comboBoxZ.setFieldType(fieldType);
 		comboBoxFrom.setFieldType(fieldType);
 		comboBoxTo.setFieldType(fieldType);

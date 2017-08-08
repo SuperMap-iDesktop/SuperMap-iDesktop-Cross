@@ -162,7 +162,9 @@ public class WorkflowParser {
 			result = new MetaProcessGridRegionAggregation();
 		} else if (MetaKeys.POLYGON_AGGREGATION.equals(key)) {
 			result = new MetaProcessPolygonAggregation();
-		} else if (MetaKeys.INTERPOLATOR_IDW.equals(key)) {
+		} else if (MetaKeys.SUMMARY_REGION.equals(key)) {
+			result = new MetaProcessSummaryRegion();
+		}  else if (MetaKeys.INTERPOLATOR_IDW.equals(key)) {
 			result = new MetaProcessInterpolator(InterpolationAlgorithmType.IDW);
 		} else if (MetaKeys.INTERPOLATOR_RBF.equals(key)) {
 			result = new MetaProcessInterpolator(InterpolationAlgorithmType.RBF);
@@ -303,6 +305,12 @@ public class WorkflowParser {
 			result = new MetaProcess2DTo3D(DatasetType.LINE);
 		} else if (MetaKeys.CONVERSION_REGION2D_TO_3D.equals(key)) {
 			result = new MetaProcess2DTo3D(DatasetType.REGION);
+		} else if (MetaKeys.CONVERSION_NETWORK_TO_POINT2D.equals(key)) {
+			result = new MetaProcessNetWorkToPoint2D();
+		} else if (MetaKeys.CONVERSION_NETWORK_TO_LINE.equals(key)) {
+			result = new MetaProcessNetWorkToLine();
+		} else if (MetaKeys.CONVERSION_LINEM_TO_LINE.equals(key)) {
+			result = new MetaProcessLineMToLine();
 		} else if (MetaKeys.EDGE_MATCH.equals(key)) {
 			result = new MetaProcessEdgeMatch();
 		} else if (MetaKeys.PICKUP_BORDER.equals(key)) {

@@ -108,6 +108,10 @@ public class MetaKeys {
 	public static final String CONVERSION_POINT2D_TO_3D = "Conversion_Point2DTo3D";
 	public static final String CONVERSION_LINE2D_TO_3D = "Conversion_Line2DTo3D";
 	public static final String CONVERSION_REGION2D_TO_3D = "Conversion_Region2DTo3D";
+	public static final String CONVERSION_NETWORK_TO_POINT2D = "Conversion_NetWorkToPoint2D";
+	public static final String CONVERSION_NETWORK_TO_LINE = "Conversion_NetWorkToLine";
+	public static final String CONVERSION_LINEM_TO_LINE = "Conversion_LineMToLine";
+
 
 	public static final String APPENDFIELDS = "AppendFields";
 
