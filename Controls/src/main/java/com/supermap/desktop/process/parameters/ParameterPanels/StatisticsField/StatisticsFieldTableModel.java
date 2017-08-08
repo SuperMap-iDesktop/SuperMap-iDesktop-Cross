@@ -21,7 +21,7 @@ public class StatisticsFieldTableModel extends DefaultTableModel {
 	public static final int COLUMN_FIELDNAME = 0;
 	public static final int COLUMN_FIELDTYPE = 1;
 	public static final int COLUMN_STATISTICSTYPE = 2;
-	private boolean isColumnFieldTypeEditable = false;
+
 	private boolean isColumnStatisticsTypeEditable = true;
 
 	public ArrayList<StatisticsFieldInfo> getStatisticsFieldInfos() {
@@ -43,7 +43,6 @@ public class StatisticsFieldTableModel extends DefaultTableModel {
 			this.statisticsFieldInfos = statisticsFieldInfos;
 		}
 	}
-
 
 	@Override
 	public int getRowCount() {
@@ -80,8 +79,14 @@ public class StatisticsFieldTableModel extends DefaultTableModel {
 
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		// 是否可编辑设置面向整个JTable-yuanR 2017.8.7
-		return isColumnStatisticsTypeEditable;
+		if (column == COLUMN_STATISTICSTYPE) {
+			return isColumnStatisticsTypeEditable;
+		}
+		// 当是非系统字段时，可允许修改
+		if (!statisticsFieldInfos.get(row).isSmField()) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -126,18 +131,6 @@ public class StatisticsFieldTableModel extends DefaultTableModel {
 			return StatisticsType.class;
 		}
 		return super.getColumnClass(columnIndex);
-	}
-
-	public boolean isColumnFieldTypeEditable() {
-		return isColumnFieldTypeEditable;
-	}
-
-	public void setColumnFieldTypeEditable(boolean columnFieldTypeEditable) {
-		isColumnFieldTypeEditable = columnFieldTypeEditable;
-	}
-
-	public boolean isColumnStatisticsTypeEditable() {
-		return isColumnStatisticsTypeEditable;
 	}
 
 	public void setColumnStatisticsTypeEditable(boolean columnStatisticsTypeEditable) {

@@ -57,9 +57,8 @@ public class StatisticsFieldPanel extends JPanel {
 	private JLabel labelStatisticsType;
 	private JComboBox<StatisticsType> comboBoxStatisticsType;
 	private boolean isSelecting = true;
-	// 统计新加保留字段的数量
+	// 新加统计保留字段的数量
 	private int addFieldCount = 0;
-	//#enregion component
 
 	public StatisticsFieldPanel(DatasetVector dataset) {
 		super();
@@ -167,7 +166,7 @@ public class StatisticsFieldPanel extends JPanel {
 					boolean fieldInfoAddOnce = false;
 					ArrayList<StatisticsType> supportedStatisticsType = getSupportedStatisticsType(fieldInfo.getType());
 					for (StatisticsType statisticsType : supportedStatisticsType) {
-						StatisticsFieldInfo statisticsFieldInfo = new StatisticsFieldInfo(fieldInfo.getName(), fieldInfo.getType(), statisticsType);
+						StatisticsFieldInfo statisticsFieldInfo = new StatisticsFieldInfo(fieldInfo.getName(), fieldInfo.getType(), statisticsType, true);
 						this.statisticsFieldInfoAll.add(statisticsFieldInfo);//添加所有合理的字段、统计组合
 						if (!fieldInfoAddOnce) {
 							this.statisticsFieldInfoIncluded.add(statisticsFieldInfo);//默认初始化表格只显示每个字段一次
@@ -178,6 +177,7 @@ public class StatisticsFieldPanel extends JPanel {
 			}
 		}
 		tableModel.setStatisticsFieldInfos(statisticsFieldInfoIncluded);
+
 		if (tableModel.getRowCount() > 0) {
 			table.setRowSelectionInterval(0, 0);
 			initStatisticsTypeComboBox();
@@ -384,9 +384,7 @@ public class StatisticsFieldPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				addFieldCount++;
 				String newFieldName = "NewField_" + addFieldCount;
-				tableModel.addRow(new StatisticsFieldInfo(newFieldName, FieldType.TEXT, StatisticsType.FIRST));
-				// 设置整个jtable可编辑
-				tableModel.setColumnFieldTypeEditable(true);
+				tableModel.addRow(new StatisticsFieldInfo(newFieldName, FieldType.TEXT, StatisticsType.FIRST, false));
 			}
 		});
 		buttonSelectAll.addActionListener(new ActionListener() {
