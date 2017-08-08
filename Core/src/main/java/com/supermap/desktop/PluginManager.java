@@ -113,6 +113,26 @@ public class PluginManager {
 		return index;
 	}
 
+	private void loadProcesses(Plugin plugin) {
+		boolean isProcessBundleLoaded = false;
+		for (int i = 0; i < this.plugins.size(); i++) {
+			if (this.plugins.get(i).equals("SuperMap.Desktop.process")) {
+				isProcessBundleLoaded = true;
+				break;
+			}
+		}
+
+		if (isProcessBundleLoaded) {
+			Element processManagerElement = plugin.getPluginInfo().getProcessManagerElement();
+			if (processManagerElement == null) {
+				return;
+			}
+
+			Element[] processGroupNodes = XmlUtilities.getChildElementNodesByName(processManagerElement, "ProcessGroup");
+			Element[] processNodes = XmlUtilities.getChildElementNodesByName(processManagerElement, "Process");
+		}
+	}
+
 	public Plugin getBundle(String name) {
 		Plugin plugin = null;
 		try {
