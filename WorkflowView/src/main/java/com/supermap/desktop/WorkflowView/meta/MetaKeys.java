@@ -42,6 +42,7 @@ public class MetaKeys {
 	public static final String HYDROLOGICAL_ANALYST = "HydrologicalAnalyst";
 	public static final String EMPTY = "Empty";
 	public static final String SHORTEST_PATH="ShortestPath";
+	public static final String CREATE_DISTANCE_RASTER="CreateDistanceRaster";
 
 	// 水文分析
 	public static final String FillingPseudoDepressions = "FillingPseudoDepressions";

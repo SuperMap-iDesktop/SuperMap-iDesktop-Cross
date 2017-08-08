@@ -315,6 +315,8 @@ public class WorkflowParser {
 			result = new MetaProcessUpdateFields();
 		}else if (MetaKeys.SHORTEST_PATH.equals(key)) {
 			result = new MetaProcessShortestPath();
+		}else if (MetaKeys.CREATE_DISTANCE_RASTER.equals(key)) {
+			result = new MetaProcessCreateDistanceRaster();
 		}else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}

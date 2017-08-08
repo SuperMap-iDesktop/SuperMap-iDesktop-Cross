@@ -115,6 +115,7 @@
                 <process key="VectorToGrid" name="矢量栅格化"/>
             </process>
             <process name="距离栅格">
+                <process key="CreateDistanceRaster" name="生成距离栅格"/>
                 <process key="ShortestPath" name="计算最短路径"/>
                 <process key="SurfacePathLine" name="两点最短地表路径"/>
             </process>
