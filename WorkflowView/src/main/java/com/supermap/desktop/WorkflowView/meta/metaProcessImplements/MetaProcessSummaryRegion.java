@@ -160,7 +160,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	public boolean execute() {
 		try {
 			if (parameterStandardFields.getSelectedItem().toString().equals("false") && parameterWeightedFields.getSelectedItem().toString().equals("false")) {
-				Application.getActiveApplication().getOutput().output("以标准属字段统计和以权重字段统计至少选中一个！");
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SummaryRegionMessage"));
 				return false;
 			}
 			fireRunning(new RunningEvent(this, 0, "start"));
