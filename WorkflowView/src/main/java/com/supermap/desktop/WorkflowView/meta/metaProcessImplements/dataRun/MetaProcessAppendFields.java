@@ -19,8 +19,6 @@ import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 
 /**
@@ -102,21 +100,26 @@ public class MetaProcessAppendFields extends MetaProcess {
 
 	@Override
 	public boolean execute() {
+		boolean result = false;
 		fireRunning(new RunningEvent(this, 0, "start"));
 		DatasetVector datasetVector = (DatasetVector) targetDataset.getSelectedDataset();
 		String sourceLinked = targetLinkedField.getFieldName();
 		String targetLineed = sourceLinkedField.getFieldName();
 		DatasetVector targetDatasetVector = (DatasetVector) sourceDataset.getSelectedDataset();
-		String[] sourceFields = multiFieldSet.getDatasetFieldInfo().getSourceFields();
-		String[] targetFields = multiFieldSet.getDatasetFieldInfo().getTargetFields();
-		datasetVector.addSteppedListener(this.steppedListener);
-		boolean result = datasetVector.appendFields(targetDatasetVector, sourceLinked, targetLineed, sourceFields, targetFields);
-		if (result) {
-			fireRunning(new RunningEvent(this, 100,"success"));
-			Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsSuccess"),targetDatasetVector.getName(),datasetVector.getName()));
+		if (null != multiFieldSet.getDatasetFieldInfo()) {
+			String[] sourceFields = multiFieldSet.getDatasetFieldInfo().getSourceFields();
+			String[] targetFields = multiFieldSet.getDatasetFieldInfo().getTargetFields();
+			datasetVector.addSteppedListener(this.steppedListener);
+			result = datasetVector.appendFields(targetDatasetVector, sourceLinked, targetLineed, sourceFields, targetFields);
+			if (result) {
+				fireRunning(new RunningEvent(this, 100, "success"));
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsSuccess"), targetDatasetVector.getName(), datasetVector.getName()));
+			} else {
+				fireRunning(new RunningEvent(this, 100, "failed"));
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsFailed"), targetDatasetVector.getName(), datasetVector.getName()));
+			}
 		}else{
-			fireRunning(new RunningEvent(this, 100,"failed"));
-			Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsFailed"),targetDatasetVector.getName(),datasetVector.getName()));
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_AppendFieldsIsNull"));
 		}
 		return result;
 	}

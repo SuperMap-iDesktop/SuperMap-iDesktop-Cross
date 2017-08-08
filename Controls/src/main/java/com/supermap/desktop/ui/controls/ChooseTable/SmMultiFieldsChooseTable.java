@@ -68,6 +68,7 @@ public class SmMultiFieldsChooseTable extends JTable {
 		}
 		int size = fieldInfos.size();
 		Object data[][] = new Object[size][4];
+		this.notSystemFieldInfos.clear();
 		for (int i = 0; i < size; i++) {
 			data[i][TABLE_COLUMN_CHECKABLE] = false;
 			data[i][TABLE_COLUMN_SOURCEFIELDNAME] = fieldInfos.get(i).getName();
