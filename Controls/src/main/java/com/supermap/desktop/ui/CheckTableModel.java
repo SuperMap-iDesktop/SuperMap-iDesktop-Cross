@@ -5,10 +5,10 @@ import javax.swing.table.DefaultTableModel;
 /**
  * Created by xie on 2016/12/8.
  */
-public class CheckTableModle extends DefaultTableModel {
+public class CheckTableModel extends DefaultTableModel {
     private int enableColumn;
 
-    public CheckTableModle(Object[][] data, Object[] columnNames, int enableColumn) {
+    public CheckTableModel(Object[][] data, Object[] columnNames, int enableColumn) {
         super(data, columnNames);
         this.enableColumn = enableColumn;
     }

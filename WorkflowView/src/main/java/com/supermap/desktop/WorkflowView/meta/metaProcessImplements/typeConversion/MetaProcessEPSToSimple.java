@@ -22,8 +22,6 @@ import java.util.Map;
  * Created By Chens on 2017/7/26 0026
  */
 public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
-	private static final String OUTPUT_DATA = "EPSToSimpleResult";
-
 	public MetaProcessEPSToSimple() {
 		initParameters();
 		initParameterConstraint();
@@ -31,6 +29,7 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 	}
 
 	private void initParameters() {
+		OUTPUT_DATA = "EPSToSimpleResult";
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(DatasetType.POINTEPS, DatasetType.LINEEPS, DatasetType.REGIONEPS);
 		outputData = new ParameterSaveDataset();

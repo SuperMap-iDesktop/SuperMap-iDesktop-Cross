@@ -1,6 +1,6 @@
 package com.supermap.desktop.process.parameter.ipls;
 
-import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
@@ -14,17 +14,25 @@ public class ParameterMultiFieldSet extends AbstractParameter {
 	public static final String DATASET_FIELDINFO = "datasetFieldInfo";
 	public static final String SOURCE_DATASET = "sourceDataset";
 	@ParameterField(name = DATASET_FIELDINFO)
-	private DatasetFieldInfo datasetInfo;
+	public DatasetFieldInfo datasetFieldInfo;
 	@ParameterField(name = SOURCE_DATASET)
-	private Dataset dataset;
+	private DatasetVector datasetVector;
 
-	public DatasetFieldInfo getDatasetInfo() {
-		return datasetInfo;
+	public void setDatasetFieldInfo(DatasetFieldInfo datasetFieldInfo) {
+		this.datasetFieldInfo = datasetFieldInfo;
 	}
 
-	public void setDataset(Dataset dataset) {
-		firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELDINFO, this.datasetInfo, datasetInfo));
-		this.datasetInfo = datasetInfo;
+	public DatasetFieldInfo getDatasetFieldInfo() {
+		return datasetFieldInfo;
+	}
+
+	public DatasetVector getDatasetVector() {
+		return datasetVector;
+	}
+
+	public void setDataset(DatasetVector datasetVector) {
+		firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELDINFO, this.datasetVector, datasetVector));
+		this.datasetVector = datasetVector;
 	}
 
 
@@ -33,25 +41,9 @@ public class ParameterMultiFieldSet extends AbstractParameter {
 		return ParameterType.MULTIFIELDSET;
 	}
 
-	public class DatasetFieldInfo {
-		private Dataset dataset;
+	public static class DatasetFieldInfo {
 		private String[] sourceFields;
 		private String[] targetFields;
-		public DatasetFieldInfo(Dataset dataset){
-			this.dataset = dataset;
-			initFieldsInfo();
-		}
-
-		private void initFieldsInfo() {
-		}
-
-		public Dataset getDataset() {
-			return dataset;
-		}
-
-		public void setDataset(Dataset dataset) {
-			this.dataset = dataset;
-		}
 
 		public String[] getSourceFields() {
 			return sourceFields;

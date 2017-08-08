@@ -4,8 +4,8 @@ import com.supermap.data.Datasources;
 import com.supermap.data.EngineType;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -176,6 +176,32 @@ public class CacheUtilities {
 		images.add(toolkit.createImage(path + "iDesktop_Cross_256.png"));
 		images.add(toolkit.createImage(path + "iDesktop Cross.ico"));
 		return images;
+	}
+
+	private static Image getIconImage() {
+		String path = PathUtilities.getRootPathName();
+		String[] paths = new String[2];
+		paths[0] = path;
+		paths[1] = "../Resources/Frame";
+		path = PathUtilities.combinePath(paths, true);
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		return toolkit.createImage(path + "iDesktop_Cross_24.png");
+	}
+
+	public static int showMessageDialog(Component parent,String message) {
+		JOptionPane optionPane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_OPTION);
+		JDialog dialog = optionPane.createDialog(parent,GlobalParameters.getDesktopTitle());
+		dialog.setIconImage(getIconImage());
+		dialog.setVisible(true);
+		return (int) optionPane.getValue();
+	}
+
+	public static int showConfirmDialog(Component parent,String message) {
+		JOptionPane optionPane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION);
+		JDialog dialog = optionPane.createDialog(parent,GlobalParameters.getDesktopTitle());
+		dialog.setIconImage(getIconImage());
+		dialog.setVisible(true);
+		return (int) optionPane.getValue();
 	}
 
 	/**

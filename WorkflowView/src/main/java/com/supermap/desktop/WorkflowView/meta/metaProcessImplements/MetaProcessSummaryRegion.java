@@ -159,14 +159,18 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	@Override
 	public boolean execute() {
 		try {
+			if (parameterStandardFields.getSelectedItem().toString().equals("false") && parameterWeightedFields.getSelectedItem().toString().equals("false")) {
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SummaryRegionMessage"));
+				return false;
+			}
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
 			parameterInputDataType.initSourceInput(input);
 			CommonSettingCombine type = new CommonSettingCombine("type", parameterSummaryType.getSelectedData().toString());
-			CommonSettingCombine bounds = new CommonSettingCombine("bounds", parametersumShape.getSelectedItem().toString());
-			CommonSettingCombine sumShape = new CommonSettingCombine("sumShape", parameterBounds.getSelectedItem().toString());
+			CommonSettingCombine bounds = new CommonSettingCombine("bounds", parameterBounds.getSelectedItem().toString());
+			CommonSettingCombine sumShape = new CommonSettingCombine("sumShape", parametersumShape.getSelectedItem().toString());
 			CommonSettingCombine standardSummaryFields = new CommonSettingCombine("standardSummaryFields", parameterStandardFields.getSelectedItem().toString());
 			CommonSettingCombine weightedSummaryFields = new CommonSettingCombine("weightedSummaryFields", parameterWeightedFields.getSelectedItem().toString());
 			CommonSettingCombine standardFields = new CommonSettingCombine("standardFields", parameterFeildName.getSelectedItem().toString());
@@ -179,20 +183,20 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 				CommonSettingCombine meshSizeUnit = new CommonSettingCombine("meshSizeUnit", parameterMeshSizeUnit.getSelectedData().toString());
 				analyst.add(meshType, bounds, standardSummaryFields, weightedSummaryFields, resolution, meshSizeUnit, sumShape);
 				if (parameterStandardFields.getSelectedItem().toString().equals("true")) {
-					analyst.add(meshType, bounds, standardSummaryFields, standardFields, standardStatisticModes, weightedSummaryFields, resolution, meshSizeUnit, sumShape);
+					analyst.add(standardFields, standardStatisticModes);
 				}
 				if (parameterWeightedFields.getSelectedItem().toString().equals("true")) {
-					analyst.add(meshType, bounds, standardSummaryFields, standardFields, standardStatisticModes, weightedSummaryFields, weightedFields, weightedStatisticModes, resolution, meshSizeUnit, sumShape);
+					analyst.add(weightedFields,weightedStatisticModes);
 				}
 			} else {
 				Dataset dataset = parameterSingleDataset.getSelectedDataset();
 				CommonSettingCombine regionDataset = new CommonSettingCombine("regionDataset", dataset.getName());
 				analyst.add(regionDataset, bounds, standardSummaryFields, weightedSummaryFields, sumShape);
 				if (parameterStandardFields.getSelectedItem().toString().equals("true")) {
-					analyst.add(regionDataset, bounds, standardSummaryFields, standardFields, standardStatisticModes, weightedSummaryFields, sumShape);
+					analyst.add(standardFields, standardStatisticModes);
 				}
 				if (parameterWeightedFields.getSelectedItem().toString().equals("true")) {
-					analyst.add(regionDataset, bounds, standardSummaryFields, standardFields, standardStatisticModes, weightedSummaryFields, weightedFields, weightedStatisticModes, sumShape);
+					analyst.add(weightedFields,weightedStatisticModes);
 				}
 			}
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
@@ -248,4 +252,5 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	public String getKey() {
 		return MetaKeys.SUMMARY_REGION;
 	}
+
 }
