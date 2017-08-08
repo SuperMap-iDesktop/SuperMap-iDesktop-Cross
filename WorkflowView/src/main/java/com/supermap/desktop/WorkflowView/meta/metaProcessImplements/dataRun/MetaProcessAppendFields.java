@@ -1,8 +1,6 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -59,7 +57,12 @@ public class MetaProcessAppendFields extends MetaProcess {
 	}
 
 	private void initParameters() {
-
+		steppedListener = new SteppedListener() {
+			@Override
+			public void stepped(SteppedEvent steppedEvent) {
+				fireRunning(new RunningEvent(MetaProcessAppendFields.this, steppedEvent.getPercent(), steppedEvent.getMessage()));
+			}
+		};
 		Datasource datasource = DatasourceUtilities.getDefaultResultDatasource();
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetTypeUtilities.getDatasetTypeVector());
 
@@ -118,7 +121,7 @@ public class MetaProcessAppendFields extends MetaProcess {
 				fireRunning(new RunningEvent(this, 100, "failed"));
 				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsFailed"), targetDatasetVector.getName(), datasetVector.getName()));
 			}
-		}else{
+		} else {
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_AppendFieldsIsNull"));
 		}
 		return result;

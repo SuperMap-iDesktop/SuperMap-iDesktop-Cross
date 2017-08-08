@@ -734,14 +734,10 @@ public class DialogCacheBuilder extends JFrame {
 							return;
 						}
 					}
-					if (CacheUtilities.showConfirmDialog(DialogCacheBuilder.this, MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess")
-							, cachePath, hour, minutes, second)) == JOptionPane.OK_OPTION) {
-						disposeInfo();
-					}
+					CacheUtilities.showMessageDialog(DialogCacheBuilder.this, MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), cachePath, hour, minutes, second));
+
 				} else {
-					if (CacheUtilities.showConfirmDialog(DialogCacheBuilder.this, MapViewProperties.getString("String_MultiCacheFailed")) == JOptionPane.OK_OPTION) {
-						disposeInfo();
-					}
+					CacheUtilities.showMessageDialog(DialogCacheBuilder.this, MapViewProperties.getString("String_MultiCacheFailed"));
 				}
 				disposeInfo();
 			} catch (Exception e) {

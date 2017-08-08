@@ -200,7 +200,7 @@ public class DialogCacheCheck extends JFrame {
 	private boolean validateValue(String sciPath, String processCount) {
 		boolean result = true;
 		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || processCount.equals("0"))) {
-			CacheUtilities.showConfirmDialog(DialogCacheCheck.this,MapViewProperties.getString("String_CheckProcessCountError"));
+			CacheUtilities.showMessageDialog(DialogCacheCheck.this,MapViewProperties.getString("String_CheckProcessCountError"));
 			return false;
 		}
 		File buildFile = new File(sciPath);
@@ -269,7 +269,7 @@ public class DialogCacheCheck extends JFrame {
 			}
 		} catch (Exception ex) {
 			if (null != ex.getMessage()) {
-				CacheUtilities.showConfirmDialog(DialogCacheCheck.this,ex.getMessage());
+				CacheUtilities.showMessageDialog(DialogCacheCheck.this,ex.getMessage());
 			}
 		}
 	}
