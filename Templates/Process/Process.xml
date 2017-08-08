@@ -194,7 +194,11 @@
                     <process key="Conversion_Line3DTo2D" name="三维线->二维线"/>
                     <process key="Conversion_Region3DTo2D" name="三维面->二维面"/>
                 </process>
-
+                <process name="网络数据转点/线数据">
+                    <process key="Conversion_NetWorkToPoint2D" name="网络->点"/>
+                    <process key="Conversion_NetWorkToLine" name="网络->线"/>
+                    <process key="Conversion_LineMToLine" name="路由->线"/>
+                </process>
             </process>
 
 

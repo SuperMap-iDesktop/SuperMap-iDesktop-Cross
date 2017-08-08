@@ -2,11 +2,12 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConvers
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.geometry.Abstract.IGeometry;
-import com.supermap.desktop.geometry.Implements.DGeometryFactory;
+import com.supermap.desktop.WorkflowView.meta.MetaKeys;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
@@ -18,39 +19,31 @@ import com.supermap.desktop.utilities.RecordsetUtilities;
 import java.util.Map;
 
 /**
- * 当只有源数据及结果数据，且输入输出数据集类型都只有一种时，可用此模板
- * by Chens
+ * Created by yuanR on 2017/8/8  .
+ * 网络数据集转化为点数据集
+ * 网络数据集当中包含点数据集，只需要取出来即可
  */
-public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversion {
-	protected static String OUTPUT_DATA = "OutputData";
+public class MetaProcessNetWorkToPoint2D extends MetaProcessTypeConversion {
 
-	private DatasetType inputType;
-	private DatasetType outputType;
+	private static final String OUTPUT_DATA = "NetWorkToPoint2DResult";
 
-	public MetaProcessPointLineRegion(DatasetType inputType, DatasetType outputType) {
-		this.inputType = inputType;
-		this.outputType = outputType;
-
-		initHook();
+	public MetaProcessNetWorkToPoint2D() {
 		initParameters();
 		initParameterConstraint();
 	}
 
-	protected abstract void initHook();
-
-	protected abstract String getOutputName();
-
 	private void initParameters() {
 		inputDatasource = new ParameterDatasourceConstrained();
-		inputDataset = new ParameterSingleDataset(inputType);
+		inputDataset = new ParameterSingleDataset(DatasetType.NETWORK);
 		outputData = new ParameterSaveDataset();
-		outputData.setSelectedItem(getOutputName());
 
-		Dataset dataset = DatasetUtilities.getDefaultDataset(inputType);
+		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.NETWORK);
 		if (dataset != null) {
 			inputDatasource.setSelectedItem(dataset.getDatasource());
 			inputDataset.setSelectedItem(dataset);
 		}
+
+		outputData.setSelectedItem("result_networkToPoint2D");
 
 		ParameterCombine inputCombine = new ParameterCombine();
 		inputCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
@@ -60,8 +53,8 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 		outputCombine.addParameters(outputData);
 
 		parameters.setParameters(inputCombine, outputCombine);
-		parameters.addInputParameters(INPUT_DATA, datasetTypeToTypes(inputType), inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, datasetTypeToTypes(outputType), outputCombine);
+		parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, inputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.TEXT, outputCombine);
 	}
 
 	private void initParameterConstraint() {
@@ -71,17 +64,11 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 	}
 
 	@Override
-	public IParameters getParameters() {
-		return parameters;
-	}
-
-	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
 		Recordset recordsetResult = null;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
-
+			fireRunning(new RunningEvent(MetaProcessNetWorkToPoint2D.this, 0, "start"));
 			DatasetVector src = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -89,14 +76,17 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 				src = (DatasetVector) inputDataset.getSelectedDataset();
 			}
 
+			// 从网络数据集中取出点数据集
+			DatasetVector datasetPoint = src.getChildDataset();
+			// 创建新的数据集
 			DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
 			datasetVectorInfo.setName(outputData.getResultDatasource().getDatasets().getAvailableDatasetName(outputData.getDatasetName()));
-			datasetVectorInfo.setType(outputType);
+			datasetVectorInfo.setType(datasetPoint.getType());
 			DatasetVector resultDataset = outputData.getResultDatasource().getDatasets().create(datasetVectorInfo);
-
-			resultDataset.setPrjCoordSys(src.getPrjCoordSys());
-			for (int i = 0; i < src.getFieldInfos().getCount(); i++) {
-				FieldInfo fieldInfo = src.getFieldInfos().get(i);
+			resultDataset.setPrjCoordSys(datasetPoint.getPrjCoordSys());
+			// 根据取出的点数据集给新建数据集添加属性字段
+			for (int i = 0; i < datasetPoint.getFieldInfos().getCount(); i++) {
+				FieldInfo fieldInfo = datasetPoint.getFieldInfos().get(i);
 				if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().equals("smuserid")) {
 					resultDataset.getFieldInfos().add(fieldInfo);
 				}
@@ -108,25 +98,20 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 			recordsetResult.getBatch().setMaxRecordCount(2000);
 			recordsetResult.getBatch().begin();
 
-			Recordset recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
+			Recordset recordsetInput = datasetPoint.getRecordset(false, CursorType.STATIC);
+			recordsetInput.moveFirst();
 			while (!recordsetInput.isEOF()) {
-				IGeometry geometry = null;
-				try {
-					geometry = DGeometryFactory.create(recordsetInput.getGeometry());
-					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-					isSuccessful = convert(recordsetResult, geometry, value);
-				} finally {
-					if (geometry != null) {
-						geometry.dispose();
-					}
-				}
+				//  获得属性表信息
+				Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
+				recordsetResult.addNew(recordsetInput.getGeometry(), value);
 				recordsetInput.moveNext();
 			}
 			recordsetResult.getBatch().update();
 			recordsetInput.close();
 			recordsetInput.dispose();
+
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
-			fireRunning(new RunningEvent(this, 100, "finish"));
+			fireRunning(new RunningEvent(MetaProcessNetWorkToPoint2D.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -136,9 +121,22 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 				recordsetResult.dispose();
 			}
 		}
-
 		return isSuccessful;
 	}
 
-	protected abstract boolean convert(Recordset recordset, IGeometry geometry, Map<String, Object> value);
+	@Override
+	public IParameters getParameters() {
+		return parameters;
+	}
+
+	@Override
+	public String getKey() {
+		return MetaKeys.CONVERSION_NETWORK_TO_POINT2D;
+	}
+
+	@Override
+	public String getTitle() {
+		return ProcessProperties.getString("String_Title_NetworkToPoint2D");
+	}
+
 }
