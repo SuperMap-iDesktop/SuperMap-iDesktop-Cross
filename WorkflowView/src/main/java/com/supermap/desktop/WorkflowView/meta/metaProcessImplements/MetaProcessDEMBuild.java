@@ -62,10 +62,10 @@ public class MetaProcessDEMBuild extends MetaProcess {
 	private ParameterSingleDataset eraseDataset;
 	//endregion
 
-	private static final String INPUT_DATA = "SourceData";
-	private static final String LAKE_DATA = "LakeData";
-	private static final String CLIP_DATA = "ClipData";
-	private static final String ERASE_DATA = "EraseData";
+	private static final String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	private static final String LAKE_DATA = CommonProperties.getString("String_GroupBox_LakeData");
+	private static final String CLIP_DATA = ProcessProperties.getString("String_GroupBox_ClipData");
+	private static final String ERASE_DATA = ProcessProperties.getString("String_GroupBox_EraseData");
 	private static final String OUTPUT_DATA = "DEMBuildResult";
 
 	/*重采样距离需要源数据集为线类型且插值方法为TIN，因此设置两个开关*/

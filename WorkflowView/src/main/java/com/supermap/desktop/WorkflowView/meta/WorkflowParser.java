@@ -162,8 +162,6 @@ public class WorkflowParser {
 			result = new MetaProcessGridRegionAggregation();
 		} else if (MetaKeys.POLYGON_AGGREGATION.equals(key)) {
 			result = new MetaProcessPolygonAggregation();
-		} else if (MetaKeys.SUMMARYREGION.equals(key)) {
-			result = new MetaProcessSummaryRegion();
 		} else if (MetaKeys.INTERPOLATOR_IDW.equals(key)) {
 			result = new MetaProcessInterpolator(InterpolationAlgorithmType.IDW);
 		} else if (MetaKeys.INTERPOLATOR_RBF.equals(key)) {
@@ -327,10 +325,15 @@ public class WorkflowParser {
 			result = new MetaProcessShortestPath();
 		} else if (MetaKeys.SURFACE_PATH_LINE.equals(key)) {
 			result = new MetaProcessSurfacePathLine();
+		} else if (MetaKeys.COST_PATH_LINE.equals(key)) {
+			result = new MetaProcessCostPathLine();
+		} else if (MetaKeys.ELIMINATE.equals(key)) {
+			result = new MetaProcessEliminate();
+		} else if (MetaKeys.CREATE_DISTANCE_RASTER.equals(key)) {
+			result = new MetaProcessCreateDistanceRaster();
 		} else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}
-
 
 		return result;
 	}
