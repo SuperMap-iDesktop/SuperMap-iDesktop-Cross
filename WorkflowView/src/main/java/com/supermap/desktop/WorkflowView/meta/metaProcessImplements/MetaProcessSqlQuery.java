@@ -160,7 +160,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		String datasetName = parameterSaveDataset.getDatasetName();
 		if (resultDatasource != null && !StringUtilities.isNullOrEmpty(datasetName)) {
 			try {
-				resultDataset = resultDatasource.recordsetToDataset(resultRecord, datasetName);
+				resultDataset = resultDatasource.recordsetToDataset(resultRecord, resultDatasource.getDatasets().getAvailableDatasetName(datasetName));
 			} catch (Exception e) {
 				resultDataset = null;
 			}
