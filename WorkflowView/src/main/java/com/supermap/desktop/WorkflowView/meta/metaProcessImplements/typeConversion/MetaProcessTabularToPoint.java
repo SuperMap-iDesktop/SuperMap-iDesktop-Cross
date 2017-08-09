@@ -17,7 +17,6 @@ import com.supermap.desktop.utilities.RecordsetUtilities;
 import java.util.Map;
 
 public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
-	private static final String OUTPUT_DATA = "TabularToPointResult";
 
 	private ParameterFieldComboBox comboBoxX;
 	private ParameterFieldComboBox comboBoxY;
@@ -28,6 +27,7 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
 	}
 
 	private void initParameters() {
+		OUTPUT_DATA = "TabularToPointResult";
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION,
 				DatasetType.TEXT, DatasetType.TABULAR, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.CAD);
@@ -42,7 +42,6 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
 			comboBoxY.setFieldName(datasetVector);
 			comboBoxX.setFieldName(datasetVector);
 		}
-		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
 		comboBoxX.setFieldType(fieldType);
 		comboBoxY.setFieldType(fieldType);
 		outputData.setSelectedItem("result_tabularToPoint");

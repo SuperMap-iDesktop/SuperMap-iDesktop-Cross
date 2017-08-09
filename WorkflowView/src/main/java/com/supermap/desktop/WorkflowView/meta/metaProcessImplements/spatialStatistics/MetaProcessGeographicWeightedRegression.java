@@ -48,7 +48,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 	}
 
 	private void initParameter() {
-		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
+//		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
 		parameterExplanatory.setFieldType(fieldType);
 		parameterModelField.setFieldType(fieldType);
 		parameterBandWidthType.setItems(new ParameterDataNode(ProcessProperties.getString("String_BindWidthType_AICC"), BandWidthType.AICC),

@@ -25,8 +25,8 @@ import java.beans.PropertyChangeListener;
  * Created by Chen on 2017/6/22 0022.
  */
 public class MetaProcessDEMLake extends MetaProcess {
-	private final static String DEM_DATA = "DEMData";
-	private final static String LAKE_DATA = "LakeData";
+	private final static String DEM_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	private final static String LAKE_DATA = CommonProperties.getString("String_GroupBox_LakeData");
 	private final static String OUTPUT_DATA = "OutputData";
 
 	private ParameterDatasourceConstrained DEMDatasource;
@@ -70,19 +70,15 @@ public class MetaProcessDEMLake extends MetaProcess {
 		}
 
 		lakeDatasource = new ParameterDatasourceConstrained();
-		lakeDatasource.setDescribe(CommonProperties.getString("String_LakeDatasource"));
 		lakeDataset = new ParameterSingleDataset(DatasetType.REGION);
-		lakeDataset.setDescribe(CommonProperties.getString("String_LakeDataset"));
 		Dataset datasetRegion = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
+		heightFieldComboBox = new ParameterFieldComboBox(ProcessProperties.getString("String_Label_HeightField"));
+		heightFieldComboBox.setFieldType(fieldType);
 		if (datasetRegion != null) {
 			lakeDatasource.setSelectedItem(datasetRegion.getDatasource());
 			lakeDataset.setSelectedItem(datasetRegion);
+			heightFieldComboBox.setFieldName((DatasetVector) datasetRegion);
 		}
-
-		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
-		heightFieldComboBox = new ParameterFieldComboBox(ProcessProperties.getString("String_Label_HeightField"));
-		heightFieldComboBox.setFieldType(fieldType);
-		heightFieldComboBox.setDataset((DatasetVector) lakeDataset.getSelectedItem());
 
 		heightValue = new ParameterNumber(ProcessProperties.getString("String_BuildLake_Elevation"));
 		heightValue.setSelectedItem(-9999);
@@ -111,7 +107,6 @@ public class MetaProcessDEMLake extends MetaProcess {
 		this.parameters.addInputParameters(LAKE_DATA, DatasetTypes.REGION, lakeDataCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, DEMDataCombine);
 
-
 		fieldOrValue.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -121,7 +116,6 @@ public class MetaProcessDEMLake extends MetaProcess {
 				}
 			}
 		});
-
 	}
 
 	@Override
@@ -133,7 +127,9 @@ public class MetaProcessDEMLake extends MetaProcess {
 
 			TerrainBuilderParameter terrainBuilderParameter = new TerrainBuilderParameter();
 			terrainBuilderParameter.setLakeDataset((DatasetVector) lakeDataset.getSelectedItem());
-			terrainBuilderParameter.setLakeAltitudeFiled(heightFieldComboBox.getSelectedItem().toString());
+			if (heightFieldComboBox.getSelectedItem() != null) {
+				terrainBuilderParameter.setLakeAltitudeFiled(heightFieldComboBox.getSelectedItem().toString());
+			}
 
 			TerrainBuilder.addSteppedListener(this.steppedListener);
 
@@ -146,12 +142,11 @@ public class MetaProcessDEMLake extends MetaProcess {
 
 			ParameterDataNode node = (ParameterDataNode) fieldOrValue.getSelectedItem();
 			if (fieldOrValue.getItemIndex(node) == 0) {
-				TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), heightFieldComboBox.getSelectedItem().toString());
+				isSuccessful = TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), heightFieldComboBox.getSelectedItem().toString());
 			} else if (fieldOrValue.getItemIndex(node) == 1) {
-				TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), Double.valueOf(heightValue.getSelectedItem().toString()));
+				isSuccessful = TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), Double.valueOf(heightValue.getSelectedItem().toString()));
 			}
-			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(DEMDataset.getSelectedItem());
-			isSuccessful = true;
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
 
 			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {

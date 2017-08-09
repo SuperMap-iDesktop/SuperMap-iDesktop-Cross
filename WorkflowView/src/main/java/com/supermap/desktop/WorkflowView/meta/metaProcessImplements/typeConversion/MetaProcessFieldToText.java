@@ -25,8 +25,6 @@ import java.util.Map;
  * 字段转文本数据
  */
 public class MetaProcessFieldToText extends MetaProcessTypeConversion {
-	private static final String OUTPUT_DATA = "FieldToTextResult";
-
 	private ParameterFieldComboBox fieldComboBox;
 
 	public MetaProcessFieldToText() {
@@ -35,6 +33,7 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 	}
 
 	private void initParameters() {
+		OUTPUT_DATA = "FieldToTextResult";
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.MODEL);
 		outputData = new ParameterSaveDataset();

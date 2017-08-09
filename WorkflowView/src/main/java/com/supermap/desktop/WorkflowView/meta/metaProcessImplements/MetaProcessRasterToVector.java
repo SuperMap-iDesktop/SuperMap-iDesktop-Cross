@@ -138,9 +138,9 @@ public class MetaProcessRasterToVector extends MetaProcess {
 				new ParameterDataNode(CommonProperties.getString("String_Item_Line"), DatasetType.LINE),
 				new ParameterDataNode(CommonProperties.getString("String_Item_Region"), DatasetType.REGION));
 
-		comboBoxSmoothMethod.setItems(new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_NONE"), SmoothMethod.NONE),
-				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
-				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH));
+		comboBoxSmoothMethod.setItems(new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_NONE"), SmoothMethod.NONE),
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_BSLine"), SmoothMethod.BSPLINE),
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_POLISH"), SmoothMethod.POLISH));
 		textFieldSmoothDegree.setSelectedItem("2");
 		textFieldSmoothDegree.setMinValue(2);
 		textFieldSmoothDegree.setMaxValue(10);

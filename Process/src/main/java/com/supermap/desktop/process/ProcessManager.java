@@ -1,24 +1,25 @@
 package com.supermap.desktop.process;
 
 import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
+import com.supermap.desktop.process.loader.DefaultProcessGroup;
+import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessGroup;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.utilities.StringUtilities;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/8/4.
  */
-public class ProcessManager {
-	private ArrayList<IProcess> processes = new ArrayList<>();
-	private ArrayList<IProcessGroup> groups = new ArrayList<>();
+public class ProcessManager extends DefaultProcessGroup {
+	private Map<String, IProcessGroup> groupMap = new ConcurrentHashMap<>();
 	private Map<String, IProcessLoader> loaderMap = new ConcurrentHashMap<>();
 
-	public IProcess createProcess(DefaultProcessDescriptor processDescriptor) {
+	public final static ProcessManager INSTANCE = new ProcessManager();
+
+	public IProcess createProcess(IProcessDescriptor processDescriptor) {
 		if (processDescriptor == null) {
 			return null;
 		}

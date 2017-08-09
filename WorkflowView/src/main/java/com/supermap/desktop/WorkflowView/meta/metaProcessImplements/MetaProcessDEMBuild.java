@@ -62,10 +62,10 @@ public class MetaProcessDEMBuild extends MetaProcess {
 	private ParameterSingleDataset eraseDataset;
 	//endregion
 
-	private static final String INPUT_DATA = "SourceData";
-	private static final String LAKE_DATA = "LakeData";
-	private static final String CLIP_DATA = "ClipData";
-	private static final String ERASE_DATA = "EraseData";
+	private static final String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
+	private static final String LAKE_DATA = CommonProperties.getString("String_GroupBox_LakeData");
+	private static final String CLIP_DATA = ProcessProperties.getString("String_GroupBox_ClipData");
+	private static final String ERASE_DATA = ProcessProperties.getString("String_GroupBox_EraseData");
 	private static final String OUTPUT_DATA = "DEMBuildResult";
 
 	/*重采样距离需要源数据集为线类型且插值方法为TIN，因此设置两个开关*/
@@ -81,33 +81,25 @@ public class MetaProcessDEMBuild extends MetaProcess {
 
 	private void initParameters() {
 		sourceDatasources = new ParameterDatasourceConstrained();
-		sourceDatasources.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE);
-		sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
 		sourceData.addParameters(sourceDatasources, sourceDataset);
 
 		lakeDatasource = new ParameterDatasourceConstrained();
-		lakeDatasource.setDescribe(CommonProperties.getString("String_LakeDatasource"));
 		lakeDataset = new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
-		lakeDataset.setDescribe(CommonProperties.getString("String_LakeDataset"));
 		ParameterCombine lakeData = new ParameterCombine();
 		lakeData.setDescribe(CommonProperties.getString("String_GroupBox_LakeData"));
 		lakeData.addParameters(lakeDatasource, lakeDataset);
 
 		clipDatasource = new ParameterDatasourceConstrained();
-		clipDatasource.setDescribe(ProcessProperties.getString("String_Label_ClipDatasource"));
 		clipDataset = new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
-		clipDataset.setDescribe(ProcessProperties.getString("String_Label_ClipDataset"));
 		ParameterCombine clipData = new ParameterCombine();
 		clipData.setDescribe(ProcessProperties.getString("String_GroupBox_ClipData"));
 		clipData.addParameters(clipDatasource, clipDataset);
 
 		eraseDatasource = new ParameterDatasourceConstrained();
-		eraseDatasource.setDescribe(ProcessProperties.getString("String_Label_EraseDatasource"));
 		eraseDataset = new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
-		eraseDataset.setDescribe(ProcessProperties.getString("String_Label_EraseDataset"));
 		ParameterCombine eraseData = new ParameterCombine();
 		eraseData.setDescribe(ProcessProperties.getString("String_GroupBox_EraseData"));
 		eraseData.addParameters(eraseDatasource, eraseDataset);
@@ -149,8 +141,6 @@ public class MetaProcessDEMBuild extends MetaProcess {
 	}
 
 	private void initParametersState() {
-		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
-
 		Dataset datasetVector = DatasetUtilities.getDefaultDataset(DatasetType.LINE, DatasetType.POINT);
 		if (datasetVector != null) {
 			sourceDatasources.setSelectedItem(datasetVector.getDatasource());
@@ -171,10 +161,22 @@ public class MetaProcessDEMBuild extends MetaProcess {
 		);
 		textNumResampleTolerance.setEnabled(false);
 		textNumResampleTolerance.setSelectedItem(0);
+		textFieldRowCount.setEnabled(false);
+		textFieldColumnCount.setEnabled(false);
+		textFieldSizeOf.setEnabled(false);
+		textFieldCellSize.setSelectedItem(0);
+		textFieldRowCount.setSelectedItem("0");
+		textFieldColumnCount.setSelectedItem("0");
+		textFieldSizeOf.setSelectedItem("0");
 		if (sourceDataset.getSelectedDataset() != null) {
-			double height = ((Dataset) sourceDataset.getSelectedItem()).getBounds().getHeight() / 10;
-			double width = ((Dataset) sourceDataset.getSelectedItem()).getBounds().getWidth() / 10;
+			double height = sourceDataset.getSelectedItem().getBounds().getHeight() / 10;
+			double width = sourceDataset.getSelectedItem().getBounds().getWidth() / 10;
 			textNumResampleTolerance.setMaxValue(height > width ? width : height);
+			Rectangle2D bounds = datasetVector.getBounds();
+			double cellSize = Math.sqrt(Math.pow(bounds.getHeight(), 2) + Math.pow(bounds.getWidth(), 2)) / 500;
+			textFieldCellSize.setSelectedItem(cellSize);
+			textFieldRowCount.setSelectedItem((int) (bounds.getHeight() / cellSize));
+			textFieldColumnCount.setSelectedItem((int) (bounds.getWidth() / cellSize));
 		}
 		textNumResampleTolerance.setIncludeMax(false);
 		textNumZFactor.setSelectedItem(1);
@@ -198,13 +200,6 @@ public class MetaProcessDEMBuild extends MetaProcess {
 				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT16), PixelFormat.UBIT16),
 				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT32), PixelFormat.UBIT32)
 		);
-		textFieldRowCount.setEnabled(false);
-		textFieldColumnCount.setEnabled(false);
-		textFieldSizeOf.setEnabled(false);
-		textFieldCellSize.setSelectedItem(0);
-		textFieldRowCount.setSelectedItem("0");
-		textFieldColumnCount.setSelectedItem("0");
-		textFieldSizeOf.setSelectedItem("0");
 
 		if (datasetVector != null) {
 			lakeDatasource.setSelectedItem(datasetVector.getDatasource());
@@ -299,6 +294,15 @@ public class MetaProcessDEMBuild extends MetaProcess {
 				textNumResampleTolerance.setEnabled(isDatasetLine && isInterpolateTypeTIN);
 				eraseDatasource.setEnabled(isInterpolateTypeTIN);
 				eraseDataset.setEnabled(isInterpolateTypeTIN);
+			}
+		});
+		textFieldCellSize.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				Rectangle2D bounds = sourceDataset.getSelectedDataset().getBounds();
+				double cellSize = Double.parseDouble(textFieldCellSize.getSelectedItem().toString());
+				textFieldRowCount.setSelectedItem((int) (bounds.getHeight() / cellSize));
+				textFieldColumnCount.setSelectedItem((int) (bounds.getWidth() / cellSize));
 			}
 		});
 	}

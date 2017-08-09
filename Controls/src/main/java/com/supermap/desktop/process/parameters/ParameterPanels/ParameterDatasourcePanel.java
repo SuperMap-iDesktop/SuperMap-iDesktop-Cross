@@ -83,7 +83,11 @@ public class ParameterDatasourcePanel extends SwingPanel {
 		for (int i = 0; i < datasources.getCount(); i++) {
 			Datasource datasource = datasources.get(i);
 			if (ParameterDatasourcePanel.this.parameterDatasource.isValueLegal(ParameterDatasource.DATASOURCE_FIELD_NAME, datasource)) {
-				datasourceComboBox.addItem(datasource);
+				if (datasource.isReadOnly() && ParameterDatasourcePanel.this.parameterDatasource.isReadOnlyNeeded()) {
+					datasourceComboBox.addItem(datasource);
+				} else {
+					datasourceComboBox.addItem(datasource);
+				}
 			}
 		}
 		Object selectedItem = ParameterDatasourcePanel.this.parameterDatasource.getSelectedItem();

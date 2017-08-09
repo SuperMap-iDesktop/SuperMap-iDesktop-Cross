@@ -118,6 +118,7 @@
                 <process key="CreateDistanceRaster" name="生成距离栅格"/>
                 <process key="ShortestPath" name="计算最短路径"/>
                 <process key="SurfacePathLine" name="两点最短地表路径"/>
+                <process key="CostPathLine" name="两点最小耗费距离"/>
             </process>
             <process name="DEM构建">
                 <process key="DEMBuild" name="DEM构建"/>
@@ -163,6 +164,7 @@
                 <process key="RegionToCenterLine" name="面中心线"/>
                 <process key="RegionTrunkToCenterLine" name="面主干中心线"/>
                 <process key="AppendFields" name="数据集追加列"/>
+                <process key="Eliminate" name="碎面合并"/>
             </process>
             <process key="SpatialIndex" name="重构空间索引"/>
             <!--<process key="FieldIndex" name="字段索引"/>-->
@@ -196,7 +198,11 @@
                     <process key="Conversion_Line3DTo2D" name="三维线->二维线"/>
                     <process key="Conversion_Region3DTo2D" name="三维面->二维面"/>
                 </process>
-
+                <process name="网络数据转点/线数据">
+                    <process key="Conversion_NetWorkToPoint2D" name="网络->点"/>
+                    <process key="Conversion_NetWorkToLine" name="网络->线"/>
+                    <process key="Conversion_LineMToLine" name="路由->线"/>
+                </process>
             </process>
 
 

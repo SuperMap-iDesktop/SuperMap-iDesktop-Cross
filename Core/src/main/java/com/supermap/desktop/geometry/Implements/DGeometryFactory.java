@@ -135,7 +135,7 @@ public class DGeometryFactory {
 
 	/**
 	 * 创建一个适用指定数据集类型的几何对象
-	 * 
+	 *
 	 * @param datasetType
 	 * @return
 	 */

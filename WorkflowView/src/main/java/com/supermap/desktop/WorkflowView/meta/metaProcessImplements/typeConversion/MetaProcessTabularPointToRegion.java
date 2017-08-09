@@ -23,7 +23,6 @@ import java.util.ArrayList;
  * 待优化内容：追加点属性到面属性之前需要手动创建追加字段，其创建的字段类型都为文本，之后修改为创建的字段类型和点数据字段类型相同。
  */
 public class MetaProcessTabularPointToRegion extends MetaProcessTypeConversion {
-	private static final String OUTPUT_DATA = "TabularPointToRegionResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
@@ -38,6 +37,7 @@ public class MetaProcessTabularPointToRegion extends MetaProcessTypeConversion {
 	}
 
 	private void initParameters() {
+		OUTPUT_DATA = "TabularPointToRegionResult";
 		sourceDatasource = new ParameterDatasourceConstrained();
 		sourceDataset = new ParameterSingleDataset(DatasetType.POINT);
 		targetDatasource = new ParameterDatasourceConstrained();
