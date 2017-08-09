@@ -15,6 +15,7 @@ public class PluginInfo {
 	private Element statusbarsElement = null;
 	private Element dockbarsElement = null;
 	private Element contextMenusElement = null;
+	private Element processManagerElement = null;
 
 	public PluginInfo(Element element) {
 		this.name = "";
@@ -204,6 +205,10 @@ public class PluginInfo {
 		return this.xmlContextMenus;
 	}
 
+	public Element getProcessManagerElement() {
+		return this.processManagerElement;
+	}
+
 	public Boolean IsValid() {
 		Boolean valid = false;
 		valid = true;
@@ -259,6 +264,8 @@ public class PluginInfo {
 						this.dockbarsElement = item;
 					} else if (item.getNodeName().equalsIgnoreCase(_XMLTag.g_NodeContextMenus)) {
 						this.contextMenusElement = item;
+					} else if (item.getNodeName().equalsIgnoreCase("ProcessManager")) {
+						this.processManagerElement = item;
 					}
 				}
 			}
@@ -326,7 +333,7 @@ public class PluginInfo {
 					}
 				}
 
-					XmlUtilities.saveXml(this.configLocation, document, document.getXmlEncoding());
+				XmlUtilities.saveXml(this.configLocation, document, document.getXmlEncoding());
 			}
 		}
 	}

@@ -5,44 +5,21 @@ import com.supermap.data.Dataset;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasources;
 import com.supermap.data.WorkspaceConnectionInfo;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.*;
 import com.supermap.desktop.CtrlAction.WorkspaceRecovery;
-import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.IContextMenuManager;
-import com.supermap.desktop.Interface.IDockbar;
-import com.supermap.desktop.Interface.IDockbarManager;
-import com.supermap.desktop.Interface.IFormLayout;
-import com.supermap.desktop.Interface.IFormMain;
-import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.Interface.IFrameMenuManager;
-import com.supermap.desktop.Interface.IPropertyManager;
-import com.supermap.desktop.Interface.IStatusbarManager;
-import com.supermap.desktop.Interface.IToolbarManager;
-import com.supermap.desktop.WorkEnvironment;
+import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.controls.utilities.DatasourceOpenFileUtilties;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.controls.utilities.WorkspaceUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.FormLoadedListener;
-import com.supermap.desktop.ui.controls.Dockbar;
-import com.supermap.desktop.ui.controls.DockbarManager;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.NodeDataType;
-import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.desktop.utilities.CursorUtilities;
-import com.supermap.desktop.utilities.DatasetUtilities;
-import com.supermap.desktop.utilities.DatasourceUtilities;
-import com.supermap.desktop.utilities.RecentFileUtilties;
-import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.desktop.utilities.WorkspaceUtilities;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilities.*;
 import com.supermap.layout.MapLayout;
 import com.supermap.realspace.Scene;
 import org.flexdock.docking.DockingManager;
+import org.w3c.dom.Element;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -181,6 +158,31 @@ public class FormBase extends JFrame implements IFormMain {
 
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	public void loadProcesses() {
+
+	}
+
+	private void loadProcesses(Plugin plugin) {
+		boolean isProcessBundleLoaded = false;
+		for (int i = 0; i < Application.getActiveApplication().getPluginManager().getCount(); i++) {
+			Plugin pl = Application.getActiveApplication().getPluginManager().get(i);
+			if (pl.equals("SuperMap.Desktop.process")) {
+				isProcessBundleLoaded = true;
+				break;
+			}
+		}
+
+		if (isProcessBundleLoaded) {
+			Element processManagerElement = plugin.getPluginInfo().getProcessManagerElement();
+			if (processManagerElement == null) {
+				return;
+			}
+
+			Element[] processGroupNodes = XmlUtilities.getChildElementNodesByName(processManagerElement, "ProcessGroup");
+			Element[] processNodes = XmlUtilities.getChildElementNodesByName(processManagerElement, "Process");
 		}
 	}
 

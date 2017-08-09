@@ -534,17 +534,6 @@ public class DialogCacheBuilder extends JFrame {
 				CacheUtilities.showMessageDialog(DialogCacheBuilder.this, MapViewProperties.getString("String_MapIsNotExist"));
 				textFieldMapName.requestFocus();
 				return false;
-			} else {
-				Map map = new Map(workspace);
-				map.open(mapName);
-				ArrayList<Layer> layers = MapUtilities.getLayers(map);
-				for (int i = 0; i < layers.size(); i++) {
-					Dataset tempDataset = layers.get(i).getDataset();
-					if (null == tempDataset) {
-						CacheUtilities.showMessageDialog(DialogCacheBuilder.this, MapViewProperties.getString("String_DatasetIsOpened"));
-						return false;
-					}
-				}
 			}
 			File failedDirectory = new File(getTaskPath("failed"));
 			if (!taskDirectory.exists() || !CacheUtilities.hasSciFiles(taskDirectory)) {
@@ -561,6 +550,21 @@ public class DialogCacheBuilder extends JFrame {
 				} else if (!failedDirectory.exists() || !CacheUtilities.hasSciFiles(failedDirectory)) {
 					CacheUtilities.showMessageDialog(DialogCacheBuilder.this, MapViewProperties.getString("String_TaskNotExist"));
 					return false;
+				}
+			}
+			//最后检验数据集是否存在
+			if (hasMap) {
+				Map map = new Map(workspace);
+				map.open(mapName);
+				ArrayList<Layer> layers = MapUtilities.getLayers(map);
+				for (int i = 0; i < layers.size(); i++) {
+					Dataset tempDataset = layers.get(i).getDataset();
+					if (null == tempDataset) {
+						if (CacheUtilities.showConfirmDialog(DialogCacheBuilder.this, MessageFormat.format(MapViewProperties.getString("String_DatasetIsOpened"), layers.get(i).getCaption())) == JOptionPane.OK_OPTION) {
+							return true;
+						}
+						return false;
+					}
 				}
 			}
 		} catch (Exception e) {
