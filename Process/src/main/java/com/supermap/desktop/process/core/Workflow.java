@@ -1,7 +1,19 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Interface.IWorkflow;
-import com.supermap.desktop.process.events.*;
+import com.supermap.desktop.process.events.MatrixNodeAddedEvent;
+import com.supermap.desktop.process.events.MatrixNodeAddedListener;
+import com.supermap.desktop.process.events.MatrixNodeAddingEvent;
+import com.supermap.desktop.process.events.MatrixNodeAddingListener;
+import com.supermap.desktop.process.events.MatrixNodeRemovedEvent;
+import com.supermap.desktop.process.events.MatrixNodeRemovedListener;
+import com.supermap.desktop.process.events.MatrixNodeRemovingEvent;
+import com.supermap.desktop.process.events.MatrixNodeRemovingListener;
+import com.supermap.desktop.process.events.RelationAddedListener;
+import com.supermap.desktop.process.events.RelationRemovedListener;
+import com.supermap.desktop.process.events.RelationRemovingListener;
+import com.supermap.desktop.process.events.WorkflowChangeEvent;
+import com.supermap.desktop.process.events.WorkflowChangeListener;
 import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessLoader;
@@ -65,7 +77,7 @@ public class Workflow implements IWorkflow {
 
 	@Override
 	public String serializeTo() {
-		Document doc = XmlUtilities.stringToDocument("");
+		Document doc = XmlUtilities.getEmptyDocument();
 
 		// 处理 workflow
 		Element workflowNode = doc.createElement("Workflow");

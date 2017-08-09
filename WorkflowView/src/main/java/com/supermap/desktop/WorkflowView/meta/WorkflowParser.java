@@ -4,6 +4,7 @@ import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.MetaProcessImportFactory;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessDissolve;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessAppendFields;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.*;
@@ -257,7 +258,9 @@ public class WorkflowParser {
 			result = new MetaProcessExportGrid();
 		} else if (MetaKeys.EXPORTVECTOR.equals(key)) {
 			result = new MetaProcessExportVector();
-		} else if (MetaKeys.AGGREGATE_POINTS.equals(key)) {
+		} else if (MetaKeys.DISSOLVE.equals(key)) {
+			result = new MetaProcessDissolve();
+		}else if (MetaKeys.AGGREGATE_POINTS.equals(key)) {
 			result = new MetaProcessAggregatePoints();
 		} else if (MetaKeys.RAREFY_POINTS.equals(key)) {
 			result = new MetaProcessRarefyPoints();

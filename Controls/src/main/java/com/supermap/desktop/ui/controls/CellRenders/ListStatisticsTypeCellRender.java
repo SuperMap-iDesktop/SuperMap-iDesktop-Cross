@@ -15,6 +15,8 @@ public class ListStatisticsTypeCellRender extends DefaultListCellRenderer {
 		JLabel component = new JLabel();
 		if (value != null && value instanceof StatisticsType) {
 			component.setText(StatisticsTypeUtilities.getStatisticsTypeName((StatisticsType) value));
+		}else if (value != null && value instanceof com.supermap.analyst.spatialanalyst.StatisticsType) {
+			component.setText(StatisticsTypeUtilities.getStatisticsTypeNameForOtherType((com.supermap.analyst.spatialanalyst.StatisticsType) value));
 		}
 		component.setOpaque(true);
 		if (isSelected) {

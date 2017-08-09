@@ -16,6 +16,7 @@ public class StatisticsFieldInfo {
 	private String fieldName;
 	private FieldType fieldType;
 	private StatisticsType statisticsType;
+	private Boolean isSmField;
 
 
 	// 废除此方法，此方法只能实现当前数据集属性信息的获取，并不能实现手动添加一行数据
@@ -24,11 +25,12 @@ public class StatisticsFieldInfo {
 //		this.statisticsType = statisticsType;
 //	}
 
-	// 新构造-yuanR 2017.7.12
-	public StatisticsFieldInfo(String fieldName, FieldType fieldType, StatisticsType statisticsType) {
+	// 增加参数，是否为属性表中原有字段,控制是否可修改yuanR 2017.8.8
+	public StatisticsFieldInfo(String fieldName, FieldType fieldType, StatisticsType statisticsType, Boolean isSmField) {
 		this.fieldName = fieldName;
 		this.fieldType = fieldType;
 		this.statisticsType = statisticsType;
+		this.isSmField = isSmField;
 	}
 
 	public String getFieldName() {
@@ -41,6 +43,10 @@ public class StatisticsFieldInfo {
 
 	public StatisticsType getStatisticsType() {
 		return statisticsType;
+	}
+
+	public Boolean isSmField() {
+		return isSmField;
 	}
 
 	public void setFieldName(String value) {

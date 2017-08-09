@@ -1,16 +1,20 @@
 package com.supermap.desktop.process.loader;
 
+import com.supermap.desktop.process.core.IProcess;
+
 /**
  * Created by highsad on 2017/8/4.
  */
 public interface IProcessGroup {
 	String getID();
 
-	String getName();
+	String getTitle();
+
+	void addGroup(IProcessGroup group);
 
 	IProcessGroup getGroup(String id);
 
-	IProcessGroup getGroup(int index);
+	IProcess[] getProcesses();
 
-
+	IProcess[] getProcesses(String groupID);
 }

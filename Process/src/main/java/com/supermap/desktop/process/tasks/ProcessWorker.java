@@ -11,14 +11,17 @@ import java.text.MessageFormat;
 /**
  * Created by highsad on 2017/6/22.
  */
-public class ProcessWorker extends Worker<SingleProgress> {
+public class ProcessWorker {
+	public Worker<SingleProgress> worker;
 	private IProcess process;
 	private RunningHandler runningHandler = new RunningHandler();
+	private IWorkerView view;
 
 	public ProcessWorker(IProcess process) {
 		if (process == null) {
 			throw new NullPointerException();
 		}
+
 		this.process = process;
 		this.process.addRunningListener(this.runningHandler);
 	}
@@ -27,24 +30,39 @@ public class ProcessWorker extends Worker<SingleProgress> {
 		return this.process;
 	}
 
-	@Override
-	public String getTitle() {
-		return this.process == null ? "null" : this.process.getTitle();
+
+	public void execute() {
+		if (worker != null) {
+			worker.cancel();
+		}
+		worker = new Worker<SingleProgress>() {
+			@Override
+			protected boolean doWork() {
+				return ProcessWorker.this.process.run();
+			}
+		};
+		worker.setTitle(process.getTitle());
+		worker.setView(view);
+		worker.execute();
 	}
 
-	@Override
-	protected boolean doWork() {
-		return process.run();
+	public void setView(IWorkerView view) {
+		this.view = view;
 	}
+
+	public void cancel() {
+		worker.cancel();
+	}
+
 
 	private class RunningHandler implements RunningListener {
 		@Override
 		public void running(RunningEvent e) {
 			try {
-				if (isCancelled) {
+				if (worker.isCancelled()) {
 					e.setCancel(true);
 				} else {
-					update(new SingleProgress(e.getProgress(), e.getMessage(), MessageFormat.format(CoreProperties.getString("String_RemainTime"), e.getRemainTime())));
+					worker.update(new SingleProgress(e.getProgress(), e.getMessage(), MessageFormat.format(CoreProperties.getString("String_RemainTime"), e.getRemainTime())));
 				}
 			} catch (Exception e1) {
 				e.setCancel(true);
