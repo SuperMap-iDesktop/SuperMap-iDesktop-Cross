@@ -35,6 +35,28 @@ public class StatisticsTypeUtilities {
 		return name;
 	}
 
+	public static String getStatisticsTypeNameForOtherType(com.supermap.analyst.spatialanalyst.StatisticsType type) {
+		String name = "";
+		try {
+			if (type == com.supermap.analyst.spatialanalyst.StatisticsType.MAX) {
+				name = CommonProperties.getString("String_StatisticsType_MAX");
+			} else if (type == com.supermap.analyst.spatialanalyst.StatisticsType.MIN) {
+				name = CommonProperties.getString("String_StatisticsType_MIN");
+			} else if (type == com.supermap.analyst.spatialanalyst.StatisticsType.MEAN) {
+				name = CommonProperties.getString("String_StatisticsType_MEAN");
+			}  else if (type == com.supermap.analyst.spatialanalyst.StatisticsType.SUM) {
+				name = CommonProperties.getString("String_StatisticsType_SUM");
+			} else if (type == com.supermap.analyst.spatialanalyst.StatisticsType.FIRST) {
+				name = CommonProperties.getString("String_StatisticsType_FIRST");
+			} else if (type == com.supermap.analyst.spatialanalyst.StatisticsType.LAST) {
+				name = CommonProperties.getString("String_StatisticsType_LAST");
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return name;
+	}
+
 	public static StatisticsType getStatisticsType(String statisticsTypeName) {
 		StatisticsType type = StatisticsType.FIRST;
 		try {
