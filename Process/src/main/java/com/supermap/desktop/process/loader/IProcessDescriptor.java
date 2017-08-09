@@ -8,7 +8,14 @@ import java.util.Map;
 public interface IProcessDescriptor {
 	String getClassName();
 
+	String getTitle();
+
 	String getKey();
 
+	/**
+	 * 使用 properties 属性集初始化自身属性
+	 *
+	 * @param properties
+	 */
 	void init(Map<String, String> properties);
 }

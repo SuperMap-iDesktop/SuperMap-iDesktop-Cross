@@ -54,7 +54,7 @@ public class Plugin {
 	 * 
 	 * @return 初始化成功返回 true；否则返回 false。
 	 */
-	public/* virtual */Boolean initialize() {
+	public Boolean initialize() {
 		return true;
 	}
 
@@ -63,7 +63,7 @@ public class Plugin {
 	 * 
 	 * @return 卸载成功返回 true；否则返回 false。
 	 */
-	public/* virtual */Boolean exitInstance() {
+	public Boolean exitInstance() {
 		return true;
 	}
 }
