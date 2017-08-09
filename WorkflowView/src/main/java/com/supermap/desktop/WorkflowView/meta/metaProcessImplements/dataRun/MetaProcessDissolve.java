@@ -11,8 +11,6 @@ import com.supermap.data.FieldInfo;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessRasterToVector;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessShortestPath;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
@@ -25,13 +23,10 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
-import com.supermap.desktop.utilities.StatisticsTypeUtilities;
-import org.omg.Dynamic.Parameter;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 /**
@@ -40,14 +35,14 @@ import java.text.DecimalFormat;
 public class MetaProcessDissolve extends MetaProcess {
 	private static final String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String OUTPUT_DATA = "DissolveResult";
-	private static final double STANDARD_NUMBER=1000000.0;
+	private static final double STANDARD_NUMBER = 1000000.0;
 	private DecimalFormat decimalFormat = new DecimalFormat("###############0.00000000#");
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
 	private ParameterComboBox comboBoxDissolveMode;
 	private ParameterNumber numberDissolveTolerance;
-	private ParameterTextField  textAreaSQLExpression;
+	private ParameterTextField textAreaSQLExpression;
 	private ParameterSQLExpression textSQLExpression;
 	private ParameterCheckBox checkBoxIsNullValue;
 	private ParameterFieldGroup fieldsDissolve;
@@ -55,7 +50,7 @@ public class MetaProcessDissolve extends MetaProcess {
 	private ParameterSaveDataset resultDataset;
 
 
-	public MetaProcessDissolve(){
+	public MetaProcessDissolve() {
 		initParameters();
 		initParameterConstraint();
 		initParametersState();
@@ -67,18 +62,18 @@ public class MetaProcessDissolve extends MetaProcess {
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		this.sourceDataset = new ParameterSingleDataset(DatasetType.LINE, DatasetType.REGION);
 		this.sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
-		this.comboBoxDissolveMode =new ParameterComboBox();
+		this.comboBoxDissolveMode = new ParameterComboBox();
 		this.comboBoxDissolveMode.setDescribe(ProcessProperties.getString("String_DissolveMode"));
-		this.numberDissolveTolerance=new ParameterNumber();
+		this.numberDissolveTolerance = new ParameterNumber();
 		this.numberDissolveTolerance.setDescribe(ProcessProperties.getString("String_DissolveTolerance"));
-		this.textAreaSQLExpression=new ParameterTextField();
+		this.textAreaSQLExpression = new ParameterTextField();
 		this.textAreaSQLExpression.setDescribe(ControlsProperties.getString("String_LabelFilter"));
-		this.textSQLExpression=new ParameterSQLExpression();
+		this.textSQLExpression = new ParameterSQLExpression();
 		this.textSQLExpression.setDescribe(ControlsProperties.getString("String_SuspensionPoints"));
-		this.checkBoxIsNullValue=new ParameterCheckBox();
+		this.checkBoxIsNullValue = new ParameterCheckBox();
 		this.checkBoxIsNullValue.setDescribe(ProcessProperties.getString("String_IsNullValue"));
-		this.fieldsDissolve=new ParameterFieldGroup(ProcessProperties.getString("String_DissolveFields"));
-		this.statisticsFieldGroup=new ParameterSimpleStatisticsFieldGroup(ProcessProperties.getString("String_StatisticsField"));
+		this.fieldsDissolve = new ParameterFieldGroup(ProcessProperties.getString("String_DissolveFields"));
+		this.statisticsFieldGroup = new ParameterSimpleStatisticsFieldGroup(ProcessProperties.getString("String_StatisticsField"));
 		this.resultDataset = new ParameterSaveDataset();
 		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
 		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
@@ -88,18 +83,18 @@ public class MetaProcessDissolve extends MetaProcess {
 		sourceData.addParameters(this.sourceDatasource, this.sourceDataset);
 
 		ParameterCombine parameterCombineParent = new ParameterCombine(ParameterCombine.HORIZONTAL);
-		parameterCombineParent.addParameters(this.textAreaSQLExpression,this.textSQLExpression);
+		parameterCombineParent.addParameters(this.textAreaSQLExpression, this.textSQLExpression);
 		parameterCombineParent.setWeightIndex(0);
 		this.textSQLExpression.setAnchor(GridBagConstraints.EAST);
-		ParameterCombine parameterSetting=new ParameterCombine();
+		ParameterCombine parameterSetting = new ParameterCombine();
 		parameterSetting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		parameterSetting.addParameters(this.comboBoxDissolveMode,this.numberDissolveTolerance,parameterCombineParent,this.checkBoxIsNullValue,this.fieldsDissolve,this.statisticsFieldGroup);
+		parameterSetting.addParameters(this.comboBoxDissolveMode, this.numberDissolveTolerance, parameterCombineParent, this.checkBoxIsNullValue, this.fieldsDissolve, this.statisticsFieldGroup);
 
 		ParameterCombine targetData = new ParameterCombine();
 		targetData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		targetData.addParameters(this.resultDataset);
 
-		this.parameters.setParameters(sourceData, parameterSetting,targetData);
+		this.parameters.setParameters(sourceData, parameterSetting, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.LINE_POLYGON_VECTOR, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE_POLYGON_VECTOR, targetData);
 
@@ -108,23 +103,23 @@ public class MetaProcessDissolve extends MetaProcess {
 	private void initParametersState() {
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.LINE, DatasetType.REGION);
 		this.numberDissolveTolerance.setSelectedItem(0.00001);
-		if (dataset!=null){
+		if (dataset != null) {
 			this.sourceDatasource.setSelectedItem(dataset.getDatasource());
 			this.sourceDataset.setSelectedItem(dataset);
 			this.resultDataset.setResultDatasource(dataset.getDatasource());
 			this.resultDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_Dissolve"));
 			this.numberDissolveTolerance.setUnit(dataset.getPrjCoordSys().getCoordUnit().toString());
 			//BigDecimal temp = new BigDecimal(Double.valueOf(DatasetUtilities.getDefaultTolerance((DatasetVector)dataset).getNodeSnap()));
-			this.numberDissolveTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance((DatasetVector)dataset).getNodeSnap());
-			this.fieldsDissolve.setDataset((DatasetVector)dataset);
-			this.statisticsFieldGroup.setDataset((DatasetVector)dataset);
+			this.numberDissolveTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance((DatasetVector) dataset).getNodeSnap());
+			this.fieldsDissolve.setDataset((DatasetVector) dataset);
+			this.statisticsFieldGroup.setDataset((DatasetVector) dataset);
 			this.textSQLExpression.setSelectDataset(dataset);
 		}
 
-		ParameterDataNode parameterDataNodeOnlyMultipart=new ParameterDataNode(ProcessProperties.getString("String_Dissolve_Mode_OnlyMultiPart"),DissolveType.ONLYMULTIPART);
-		ParameterDataNode parameterDataNodeOnlySingle=new ParameterDataNode(ProcessProperties.getString("String_Dissolve_Mode_Single"),DissolveType.SINGLE);
-		ParameterDataNode parameterDataNodeMultipart=new ParameterDataNode(ProcessProperties.getString("String_Dissolve_Mode_MultiPart"),DissolveType.MULTIPART);
-		this.comboBoxDissolveMode.setItems(parameterDataNodeOnlyMultipart,parameterDataNodeOnlySingle,parameterDataNodeMultipart);
+		ParameterDataNode parameterDataNodeOnlyMultipart = new ParameterDataNode(ProcessProperties.getString("String_Dissolve_Mode_OnlyMultiPart"), DissolveType.ONLYMULTIPART);
+		ParameterDataNode parameterDataNodeOnlySingle = new ParameterDataNode(ProcessProperties.getString("String_Dissolve_Mode_Single"), DissolveType.SINGLE);
+		ParameterDataNode parameterDataNodeMultipart = new ParameterDataNode(ProcessProperties.getString("String_Dissolve_Mode_MultiPart"), DissolveType.MULTIPART);
+		this.comboBoxDissolveMode.setItems(parameterDataNodeOnlyMultipart, parameterDataNodeOnlySingle, parameterDataNodeMultipart);
 		this.comboBoxDissolveMode.setSelectedItem(parameterDataNodeOnlySingle);
 		this.comboBoxDissolveMode.setRequisite(true);
 		this.numberDissolveTolerance.setMinValue(0);
@@ -171,7 +166,7 @@ public class MetaProcessDissolve extends MetaProcess {
 		boolean isSuccessful = false;
 		try {
 			fireRunning(new RunningEvent(MetaProcessDissolve.this, 0, "start"));
-			DissolveParameter dissolveParameter=new DissolveParameter();
+			DissolveParameter dissolveParameter = new DissolveParameter();
 
 			String datasetName = resultDataset.getDatasetName();
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
@@ -185,37 +180,37 @@ public class MetaProcessDissolve extends MetaProcess {
 			dissolveParameter.setDissolveType((DissolveType) this.comboBoxDissolveMode.getSelectedData());
 			dissolveParameter.setTolerance(Double.valueOf(this.numberDissolveTolerance.getSelectedItem().toString()));
 			dissolveParameter.setFilterString(this.textAreaSQLExpression.getSelectedItem().toString());
-			if (this.checkBoxIsNullValue.getSelectedItem().equals("false")){
+			if (this.checkBoxIsNullValue.getSelectedItem().equals("false")) {
 				dissolveParameter.setNullValue(false);
-			}else if (this.checkBoxIsNullValue.getSelectedItem().equals("true")){
+			} else if (this.checkBoxIsNullValue.getSelectedItem().equals("true")) {
 				dissolveParameter.setNullValue(true);
 			}
-			StatisticsType[] statisticsTypes=this.statisticsFieldGroup.getSelectedStatisticsType();
-			String[] statisticsFieldNames=getFieldName(this.statisticsFieldGroup.getSelectedFields());
-			String[] fieldNames=getFieldName(this.fieldsDissolve.getSelectedFields());
+			StatisticsType[] statisticsTypes = this.statisticsFieldGroup.getSelectedStatisticsType();
+			String[] statisticsFieldNames = getFieldName(this.statisticsFieldGroup.getSelectedFields());
+			String[] fieldNames = getFieldName(this.fieldsDissolve.getSelectedFields());
 			dissolveParameter.setFieldNames(fieldNames);
 			dissolveParameter.setStatisticsFieldNames(statisticsFieldNames);
 			dissolveParameter.setStatisticsTypes(statisticsTypes);
 
 			Generalization.addSteppedListener(steppedListener);
-			DatasetVector result=Generalization.dissolve(src, this.resultDataset.getResultDatasource(), datasetName,dissolveParameter);
+			DatasetVector result = Generalization.dissolve(src, this.resultDataset.getResultDatasource(), datasetName, dissolveParameter);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
 			fireRunning(new RunningEvent(MetaProcessDissolve.this, 100, "finished"));
 
-		}catch (Exception e){
+		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+		} finally {
 			Generalization.removeSteppedListener(steppedListener);
 		}
 
 		return isSuccessful;
 	}
 
-	private String[] getFieldName(FieldInfo fieldInfo[]){
-		String[] fieldNames=new String[fieldInfo.length];
-		for (int i=0;i<fieldInfo.length;i++){
-			fieldNames[i]=fieldInfo[i].getName();
+	private String[] getFieldName(FieldInfo fieldInfo[]) {
+		String[] fieldNames = new String[fieldInfo.length];
+		for (int i = 0; i < fieldInfo.length; i++) {
+			fieldNames[i] = fieldInfo[i].getName();
 		}
 		return fieldNames;
 	}

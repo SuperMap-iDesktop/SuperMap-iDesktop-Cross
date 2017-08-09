@@ -1,6 +1,11 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -11,7 +16,12 @@ import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextArea;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -96,7 +106,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
-
+		Recordset resultRecord = null;
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			DatasetVector currentDatasetVector = null;
@@ -120,13 +130,8 @@ public class MetaProcessSqlQuery extends MetaProcess {
 				queryParameter.setAttributeFilter((String) parameterAttributeFilter.getSelectedItem());
 				preProcessSQLQuery(queryParameter);
 				queryParameter.setSpatialQueryObject(currentDatasetVector);
-				Recordset resultRecord = currentDatasetVector.query(queryParameter);
+				resultRecord = currentDatasetVector.query(queryParameter);
 				if (resultRecord != null && resultRecord.getRecordCount() > 0) {
-					if (StringUtilities.isNullOrEmpty(queryFields)) {
-						resultRecord.dispose();
-						resultRecord = null;
-					}
-
 					fireRunning(new RunningEvent(this, 100, "finished"));
 					// 保存查询结果
 					DatasetVector datasetVector = saveQueryResult(resultRecord);
@@ -137,7 +142,9 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-
+			if (resultRecord != null) {
+				resultRecord.close();
+			}
 		}
 		return isSuccessful;
 	}
@@ -192,6 +199,9 @@ public class MetaProcessSqlQuery extends MetaProcess {
 	private String[] getQueryFieldNames(String queryFields) {
 		int bracketsCount = 0;
 		java.util.List<String> fieldNames = new ArrayList<>();
+		if (StringUtilities.isNullOrEmpty(queryFields)) {
+			return null;
+		}
 		char[] fieldNamesChars = queryFields.toCharArray();
 		StringBuilder builderFieldName = new StringBuilder();
 		for (char fieldNamesChar : fieldNamesChars) {

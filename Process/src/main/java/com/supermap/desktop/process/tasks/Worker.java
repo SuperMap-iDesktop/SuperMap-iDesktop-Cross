@@ -10,12 +10,19 @@ import java.util.List;
 public abstract class Worker<V extends Object> extends SwingWorker<Boolean, V> {
 	private IWorkerView<V> view;
 	protected volatile boolean isCancelled = false;
+	private String title;
 
 	public Worker() {
 
 	}
 
-	public abstract String getTitle();
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 	public void setView(IWorkerView<V> view) {
 		if (view == null) {

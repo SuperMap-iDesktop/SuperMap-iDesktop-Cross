@@ -19,7 +19,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * @author XiaJT
- *         平均最近邻分析
+ * 平均最近邻分析
  */
 public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 	private final static String INPUT_SOURCE_DATASET = "SourceDataset";
