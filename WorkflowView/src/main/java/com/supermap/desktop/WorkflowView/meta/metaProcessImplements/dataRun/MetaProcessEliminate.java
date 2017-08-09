@@ -54,7 +54,7 @@ public class MetaProcessEliminate extends MetaProcess {
 		settingCombine.addParameters(checkBoxDelete, numberTolerance, numberArea);
 
 		parameters.setParameters(sourceCombine, settingCombine);
-		parameters.addInputParameters(INPUT_DATA, DatasetTypes.REGION,sourceCombine);
+		parameters.addInputParameters(INPUT_DATA, DatasetTypes.REGION, sourceCombine);
 		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.REGION, sourceCombine);
 	}
 
