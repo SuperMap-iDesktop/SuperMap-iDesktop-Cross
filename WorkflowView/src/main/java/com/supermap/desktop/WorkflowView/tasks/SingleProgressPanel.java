@@ -29,7 +29,9 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 	private Runnable run = new Runnable() {
 		@Override
 		public void run() {
-			worker.execute();
+			if (worker != null) {
+				worker.execute();
+			}
 		}
 	};
 
