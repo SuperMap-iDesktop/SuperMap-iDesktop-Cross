@@ -324,7 +324,7 @@ public class WorkflowParser {
 			result = new MetaProcessRegionToCenterLine();
 		} else if (MetaKeys.REGION_TRUNK_TO_CENTERLINE.equals(key)) {
 			result = new MetaProcessRegionTrunkToCenterLine();
-		} else if (MetaKeys.APPENDFIELDS.equals(key)) {
+		} else if (MetaKeys.APPEND_FIELDS.equals(key)) {
 			result = new MetaProcessAppendFields();
 		} else if (MetaKeys.SHORTEST_PATH.equals(key)) {
 			result = new MetaProcessShortestPath();

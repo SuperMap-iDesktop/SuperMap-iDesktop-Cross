@@ -20,7 +20,7 @@ public class ImportSettingCreator implements IImportSettingCreator {
 				return new ImportSettingGPX();
 			}
 			if ("B".equalsIgnoreCase(type)) {
-				type = "BIL";
+				type = "TEMSClutter";
 			} else if ("DEM".equalsIgnoreCase(type)) {
 				type = "GBDEM";
 			} else if ("3DS".equalsIgnoreCase(type) || "X".equalsIgnoreCase(type)) {

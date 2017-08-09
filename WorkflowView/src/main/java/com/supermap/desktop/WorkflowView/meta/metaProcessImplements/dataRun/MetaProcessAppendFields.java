@@ -129,7 +129,7 @@ public class MetaProcessAppendFields extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.APPENDFIELDS;
+		return MetaKeys.APPEND_FIELDS;
 	}
 
 	@Override

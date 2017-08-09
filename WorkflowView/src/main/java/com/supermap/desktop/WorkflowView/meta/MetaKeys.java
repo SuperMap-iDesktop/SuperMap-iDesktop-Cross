@@ -114,7 +114,8 @@ public class MetaKeys {
 	public static final String CONVERSION_LINEM_TO_LINE = "Conversion_LineMToLine";
 
 
-	public static final String APPENDFIELDS = "AppendFields";
+	public static final String APPEND_FIELDS = "AppendFields";
+	public static final String APPEND_ROWS="AppendRows";
 
 	// 大数据
 	public static final String HEAT_MAP = "HeatMap";
