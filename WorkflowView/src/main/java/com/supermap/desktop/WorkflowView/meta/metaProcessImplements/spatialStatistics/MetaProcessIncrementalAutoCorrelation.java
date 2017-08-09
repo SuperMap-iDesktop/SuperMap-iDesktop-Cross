@@ -25,7 +25,7 @@ import java.text.DecimalFormat;
 
 /**
  * @author XiaJT
- *         增量空间自相关
+ * 增量空间自相关
  */
 public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 	// TODO: 2017/4/27

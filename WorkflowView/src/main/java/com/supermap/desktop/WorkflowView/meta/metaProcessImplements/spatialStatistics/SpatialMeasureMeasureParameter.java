@@ -49,7 +49,7 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 
 	protected void initParameters() {
 		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
-		parameterGroupFieldComboBox.setFieldType(new FieldType[]{FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE, FieldType.TEXT, FieldType.DATETIME,FieldType.WTEXT});
+		parameterGroupFieldComboBox.setFieldType(new FieldType[]{FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE, FieldType.TEXT, FieldType.DATETIME, FieldType.WTEXT});
 		parameterSelfWeightFieldComboBox.setFieldType(fieldType);
 		parameterWeightFieldComboBox.setFieldType(fieldType);
 

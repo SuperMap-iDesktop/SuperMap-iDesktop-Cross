@@ -13,7 +13,7 @@ import com.supermap.desktop.properties.CommonProperties;
 
 /**
  * @author XiaJT
- *         聚类和异常值分析
+ * 聚类和异常值分析
  */
 public class MetaProcessClusterOutlierAnalyst extends MetaProcessAnalyzingPatterns {
 
