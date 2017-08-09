@@ -30,7 +30,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 	private final static String TITLE_WAITING = "等待";
 	private final static String TITLE_COMPLETED = "已完成";
 	private final static String TITLE_CANCELLED = "已取消";
-	private final static String TITLE_EXCEPTION = "异常中断";
+	private final static String TITLE_EXCEPTION = "执行失败";
 	private final static String TITLE_PATTERN = "{0} ({1})";
 
 	private JPanel panelRunning;
