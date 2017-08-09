@@ -365,7 +365,7 @@ public class MetaProcessImport extends MetaProcess {
 		if (importSetting instanceof ImportSettingGPX) {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem().toString());
-			final Datasource datasource = (Datasource) ((ParameterDatasource) resultImportParameters.get(0).parameter).getSelectedItem();
+			final Datasource datasource = ((ParameterDatasource) resultImportParameters.get(0).parameter).getSelectedItem();
 			importSetting.setTargetDatasource(datasource);
 			importSetting.setTargetDatasetName(((ParameterTextField) resultImportParameters.get(1).parameter).getSelectedItem().toString());
 			((ImportSettingGPX) importSetting).addImportSteppedListener(this.importStepListener);

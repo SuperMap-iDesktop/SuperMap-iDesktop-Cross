@@ -377,7 +377,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	/**
 	 * 设置按键状态
 	 */
-	private void setButtonState() {
+	protected void setButtonState() {
 		if (0 < tableDatasetDisplay.getRowCount()) {
 			this.buttonOK.setEnabled(true);
 			this.buttonSelectAll.setEnabled(true);
@@ -419,21 +419,13 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 			}
 		};
 		datasetChooser.setSupportDatasetTypes(DatasetTypeUtilities.getDatasetTypeVector());
-		initSelectDatasource();
+		datasetChooser.setSelectedDatasource(DatasourceUtilities.getDefaultResultDatasource());
 		if (datasetChooser.showDialog() == DialogResult.OK) {
 			addInfoToMainTable();
 		}
 		setButtonState();
 	}
 
-	private void initSelectDatasource() {
-		//设置选择数据集中默认选中的数据源
-		if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0) {
-			this.datasetChooser.getWorkspaceTree().setSelectedDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
-		} else if (null != Application.getActiveApplication().getWorkspace().getDatasources()) {
-			this.datasetChooser.getWorkspaceTree().setSelectedDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
-		}
-	}
 
 	private void addInfoToMainTable() {
 		//将数据添加到展示表中
@@ -520,7 +512,9 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		if (null != datasources) {
 			for (int i = 0; i < datasources.getCount(); i++) {
 				//当前只支持POSTGRESQL类型的数据源,后续修改
-				if (datasources.get(i).getEngineType().equals(EngineType.POSTGRESQL)) {
+				if (datasources.get(i).getEngineType().equals(EngineType.POSTGRESQL)
+						|| datasources.get(i).getEngineType().equals(EngineType.UDB)
+						|| datasources.get(i).getEngineType().equals(EngineType.ORACLEPLUS)) {
 					datasourceArray.add(datasources.get(i));
 				}
 			}
