@@ -310,7 +310,7 @@ public class XmlUtilities {
 	 * @param node
 	 * @return
 	 */
-	public static Element[] getChildElementNodesByName(Node node) {
+	public static Element[] getChildElementNodes(Node node) {
 		if (node == null) {
 			return null;
 		}

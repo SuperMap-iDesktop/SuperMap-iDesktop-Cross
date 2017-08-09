@@ -12,6 +12,8 @@ public interface IProcessGroup {
 
 	void addGroup(IProcessGroup group);
 
+	void addProcess(IProcess process);
+
 	IProcessGroup getGroup(String id);
 
 	IProcess[] getProcesses();

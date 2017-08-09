@@ -17,7 +17,11 @@ public class ProcessManager extends DefaultProcessGroup {
 	private Map<String, IProcessGroup> groupMap = new ConcurrentHashMap<>();
 	private Map<String, IProcessLoader> loaderMap = new ConcurrentHashMap<>();
 
-	public final static ProcessManager INSTANCE = new ProcessManager();
+	public final static ProcessManager INSTANCE = new ProcessManager("Manager", "ProcessManager");
+
+	public ProcessManager(String id, String title) {
+		super(id, title);
+	}
 
 	public IProcess createProcess(IProcessDescriptor processDescriptor) {
 		if (processDescriptor == null) {
