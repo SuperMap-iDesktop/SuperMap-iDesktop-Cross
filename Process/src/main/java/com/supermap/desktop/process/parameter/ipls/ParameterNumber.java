@@ -40,6 +40,11 @@ public class ParameterNumber extends ParameterTextField {
 					if (textFieldValue.split("\\.").length > 2) {
 						return false;
 					}
+					for (int i = 0; i < textFieldValue.length(); i++) {
+						if (!(Character.isDigit(textFieldValue.charAt(i)) || textFieldValue.charAt(i) == '.')) {
+							return false;
+						}
+					}
 					Double aDouble = DoubleUtilities.stringToValue(textFieldValue);
 					if (isMinValueEnable && (aDouble < minValue || (!isIncludeMin && aDouble == minValue))) {
 						return false;
