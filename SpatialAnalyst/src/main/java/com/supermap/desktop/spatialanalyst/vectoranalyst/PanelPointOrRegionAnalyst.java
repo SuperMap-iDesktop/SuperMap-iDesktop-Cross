@@ -145,10 +145,10 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 	public void setPanelPointOrRegionAnalyst() {
 		// 根据数据集初始化各个面板种需要用到数据集的地方
-		this.panelBufferData.initDataset(DatasetType.LINE);
+		this.panelBufferData.initDataset(DatasetType.POINT);
 		this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(
 				this.panelBufferData.getComboBoxBufferDataDatasource().getSelectedDatasource());
-//		this.panelBufferRadius.(this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset());
+		this.panelBufferRadius.initDataset((DatasetVector) this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset());
 	}
 
 

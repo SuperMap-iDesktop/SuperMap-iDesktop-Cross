@@ -1,6 +1,5 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
-import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
@@ -55,10 +54,10 @@ public class PanelLineBufferRadiu extends JPanel {
 	}
 
 
-	public void initDataset(Dataset dataset) {
+	public void initDataset(DatasetVector dataset) {
 		if (dataset != null) {
-			this.getNumericFieldComboBoxLeft().setDataset((DatasetVector) dataset);
-			this.getNumericFieldComboBoxRight().setDataset((DatasetVector) dataset);
+			this.getNumericFieldComboBoxLeft().setDataset(dataset);
+			this.getNumericFieldComboBoxRight().setDataset(dataset);
 			// 初始化半径长度值
 			this.getNumericFieldComboBoxLeft().setSelectedItem("10");
 			this.getNumericFieldComboBoxRight().setSelectedItem("10");
