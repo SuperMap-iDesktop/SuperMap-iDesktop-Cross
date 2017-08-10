@@ -15,7 +15,6 @@ public abstract class AbstractProcessLoader implements IProcessLoader {
 	}
 
 	@Override
-
 	public IProcessDescriptor getProcessDescriptor() {
 		return this.descriptor;
 	}
