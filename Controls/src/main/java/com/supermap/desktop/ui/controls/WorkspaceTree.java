@@ -117,12 +117,7 @@ import com.supermap.desktop.event.WorkflowsChangedListener;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilities.ArrayUtilities;
-import com.supermap.desktop.utilities.DatasetUtilities;
-import com.supermap.desktop.utilities.LayoutUtilities;
-import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.WorkFlowUtilities;
-import com.supermap.desktop.utilities.WorkspaceUtilities;
+import com.supermap.desktop.utilities.*;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -1418,7 +1413,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				CollectionDatasetInfo collectionDatasetInfo = collectionDatasetInfos.get(i);
 				DatasourceConnectionInfo connectionInfo = collectionDatasetInfo.getDatasourceConnectInfo();
 				if (null != connectionInfo) {
-					Datasource datasource = getDatasource(connectionInfo);
+					Datasource datasource = DatasourceUtilities.getDatasource(connectionInfo);
 					if (null != datasource) {
 						Dataset childDataset = datasource.getDatasets().get(collectionDatasetInfo.getDatasetName());
 						if (null != childDataset) {
@@ -1484,24 +1479,6 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		return datasetNode;
 	}
 
-	private Datasource getDatasource(DatasourceConnectionInfo connectionInfo) {
-		Datasource result = null;
-		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
-		if (null != datasources) {
-			for (int i = 0; i < datasources.getCount(); i++) {
-				DatasourceConnectionInfo tempInfo = datasources.get(i).getConnectionInfo();
-				if (connectionInfo.getServer().equals(tempInfo.getServer()) &&
-						connectionInfo.getEngineType().equals(tempInfo.getEngineType())
-						&& connectionInfo.getDatabase().equals(tempInfo.getDatabase())
-						&& connectionInfo.getUser().equals(tempInfo.getUser())
-						&& connectionInfo.getPassword().equals(tempInfo.getPassword())) {
-					result = datasources.get(i);
-					break;
-				}
-			}
-		}
-		return result;
-	}
 
 	private void fillImageCollectionNodes(DatasetImageCollection imageCollection, DefaultMutableTreeNode datasetNode) {
 		String[] aliasNames = InternalDatasetImageCollection.getAliasNames(imageCollection);
