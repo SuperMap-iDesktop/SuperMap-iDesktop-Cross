@@ -7,26 +7,30 @@ import com.supermap.desktop.utilities.StringUtilities;
 /**
  * Created by highsad on 2017/1/5.
  */
-public class DefaultProcessLoader implements IProcessLoader {
-	public final static DefaultProcessLoader INSTANCE = new DefaultProcessLoader();
+public class DefaultProcessLoader extends AbstractProcessLoader {
+
+	public DefaultProcessLoader(IProcessDescriptor descriptor) {
+		super(descriptor);
+	}
+//	public final static DefaultProcessLoader INSTANCE = new DefaultProcessLoader();
 
 	@Override
-	public IProcess loadProcess(IProcessDescriptor descriptor) {
-		if (descriptor == null) {
+	public IProcess loadProcess() {
+		if (getProcessDescriptor() == null) {
 			return null;
 		}
 
-		if (StringUtilities.isNullOrEmpty(descriptor.getClassName())) {
+		if (StringUtilities.isNullOrEmpty(getProcessDescriptor().getClassName())) {
 			return null;
 		}
 
 		IProcess process = null;
 
-		if (StringUtilities.isNullOrEmpty(descriptor.getClassName())) {
+		if (StringUtilities.isNullOrEmpty(getProcessDescriptor().getClassName())) {
 			return null;
 		}
 
-		Class classInstance = Application.getActiveApplication().getPluginManager().loadClass(descriptor.getClassName());
+		Class classInstance = Application.getActiveApplication().getPluginManager().loadClass(getProcessDescriptor().getClassName());
 
 		if (classInstance == null) {
 			return null;
