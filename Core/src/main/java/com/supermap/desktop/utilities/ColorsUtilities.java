@@ -35,12 +35,16 @@ public class ColorsUtilities {
 		return true;
 	}
 
-	public static long getColorRgbValue(Color color) {
+	//获取ABGR值（大端RGB，小端BGR,先按照引擎的ABGR传入）
+	public static long getColorABGRValue(Color color) {
 		if (color == null) {
 			return 0;
 		}
-		long result = 0xFFFFFF & color.getRGB();
-		result += ((long) color.getAlpha()) * 16777216l;
+		long red = color.getRed();
+		long green = color.getGreen();
+		long blue = color.getBlue();
+		long alpha = color.getAlpha();
+		long result =  (alpha << 24) + (blue << 16) + (green << 8) + red;
 		return result;
 	}
 }
