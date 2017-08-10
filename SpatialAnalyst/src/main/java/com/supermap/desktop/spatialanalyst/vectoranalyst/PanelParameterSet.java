@@ -11,7 +11,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 
-public class PanelResultSet extends JPanel {
+public class PanelParameterSet extends JPanel {
 
 	/**
 	 *
@@ -74,7 +74,7 @@ public class PanelResultSet extends JPanel {
 		this.textFieldSemicircleLineSegment = textFieldSemicircleLineSegment;
 	}
 
-	public PanelResultSet() {
+	public PanelParameterSet() {
 		initComponent();
 		initResources();
 		setOtherPanelResultSetLayout();

@@ -226,9 +226,6 @@ public class FormBase extends JFrame implements IFormMain {
 			String loaderClassName = processNode.getAttribute("loaderClass");
 			String descriptorClassName = processNode.getAttribute("descriptorClass");
 
-			// 创建 ProcessLoader
-			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName);
-
 			// 创建 ProcessDescriptor
 			IProcessDescriptor descriptor = WorkflowUtil.newProcessDescriptor(descriptorClassName);
 			Map<String, String> properties = new HashMap<>();
@@ -239,7 +236,11 @@ public class FormBase extends JFrame implements IFormMain {
 			}
 			descriptor.init(properties);
 
-			group.addProcess(loader.loadProcess(descriptor));
+			// 创建 ProcessLoader
+			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName, descriptor);
+
+
+			group.addProcess(loader);
 		}
 	}
 
