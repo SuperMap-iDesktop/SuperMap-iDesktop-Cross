@@ -153,8 +153,8 @@ public class TasksManager {
 	private void processRemoved(IProcess process) {
 		if (this.workersMap.containsKey(process)) {
 			process.removeStatusChangeListener(this.processStatusChangeListener);
-			this.workersMap.remove(process);
 			fireWorkersChanged(new WorkersChangedEvent(this, workersMap.get(process), WorkersChangedEvent.REMOVE));
+			this.workersMap.remove(process);
 
 			// 执行过程中禁止删除节点
 			this.waiting.remove(process);
@@ -236,7 +236,7 @@ public class TasksManager {
 					process.reset();
 
 					// 重置 ProcessWorker
-					this.workersMap.put(process, new ProcessWorker(process));
+//					this.workersMap.put(process, new ProcessWorker(process));
 					moveProcess(processes.get(i), state, WORKER_STATE_WAITING);
 				}
 			}
@@ -281,7 +281,7 @@ public class TasksManager {
 		if (currentState != -1) {
 			moveProcess(process, currentState, WORKER_STATE_RUNNING);
 		}
-		if (getStatus() != WORKFLOW_STATE_RUNNING) {
+		if (getStatus() != WORKFLOW_STATE_RUNNING && getStatus() != WORKFLOW_STATE_RERUNNING) {
 			// 如果是当前不是running则说明是重新启动的。
 			status = WORKFLOW_STATE_RERUNNING;
 			if (!this.scheduler.isRunning()) {
@@ -400,7 +400,7 @@ public class TasksManager {
 			for (int i = 0; i < nextProcesses.size(); i++) {
 
 				// 该节点的所有前置节点均已执行完成准备就绪，就将节点移动到 ready
-				if (isReady(nextProcesses.get(i)) && nextProcesses.get(i).getStatus() != RunningStatus.COMPLETED) {
+				if (isReady(nextProcesses.get(i))) {//&& nextProcesses.get(i).getStatus() != RunningStatus.COMPLETED
 					waitingToReady(nextProcesses.get(i));
 				}
 			}

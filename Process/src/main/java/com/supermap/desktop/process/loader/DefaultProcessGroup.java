@@ -14,6 +14,11 @@ public class DefaultProcessGroup implements IProcessGroup {
 	private Vector<IProcessGroup> groups;
 	private Vector<IProcess> processes;
 
+	public DefaultProcessGroup(String id, String title) {
+		this.id = id;
+		this.title = title;
+	}
+
 	@Override
 	public String getID() {
 		return this.id;
@@ -35,6 +40,11 @@ public class DefaultProcessGroup implements IProcessGroup {
 		}
 
 		this.groups.add(group);
+	}
+
+	@Override
+	public void addProcess(IProcess process) {
+		this.processes.add(process);
 	}
 
 	@Override

@@ -1,21 +1,8 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Interface.IWorkflow;
-import com.supermap.desktop.process.events.MatrixNodeAddedEvent;
-import com.supermap.desktop.process.events.MatrixNodeAddedListener;
-import com.supermap.desktop.process.events.MatrixNodeAddingEvent;
-import com.supermap.desktop.process.events.MatrixNodeAddingListener;
-import com.supermap.desktop.process.events.MatrixNodeRemovedEvent;
-import com.supermap.desktop.process.events.MatrixNodeRemovedListener;
-import com.supermap.desktop.process.events.MatrixNodeRemovingEvent;
-import com.supermap.desktop.process.events.MatrixNodeRemovingListener;
-import com.supermap.desktop.process.events.RelationAddedListener;
-import com.supermap.desktop.process.events.RelationRemovedListener;
-import com.supermap.desktop.process.events.RelationRemovingListener;
-import com.supermap.desktop.process.events.WorkflowChangeEvent;
-import com.supermap.desktop.process.events.WorkflowChangeListener;
+import com.supermap.desktop.process.events.*;
 import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
-import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.util.WorkflowUtil;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -24,8 +11,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.swing.event.EventListenerList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -203,24 +188,6 @@ public class Workflow implements IWorkflow {
 				addRelation(dataMatch);
 			}
 		}
-	}
-
-	private void test(Element node) {
-		Element processNode = (Element) XmlUtilities.getChildElementNodeByName(node, "Process");
-		String processLoaderClass = processNode.getAttribute("processLoader");
-		String processDescriptorClass = processNode.getAttribute("processDescriptor");
-
-		IProcessLoader processLoader = WorkflowUtil.newProcessLoader(processLoaderClass);
-		IProcessDescriptor processDescriptor = WorkflowUtil.newProcessDescriptor(processDescriptorClass);
-
-		Map<String, String> properties = new HashMap<>();
-		Element[] childNodes = XmlUtilities.getChildElementNodesByName(processNode);
-		for (int i = 0; i < childNodes.length; i++) {
-			Element childNode = childNodes[i];
-			properties.put(childNode.getNodeName(), childNode.getNodeValue());
-		}
-		processDescriptor.init(properties);
-		IProcess process = processLoader.loadProcess(processDescriptor);
 	}
 
 	public IProcess getProcess(String key, int serialID) {

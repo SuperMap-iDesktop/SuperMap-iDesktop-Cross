@@ -14,6 +14,12 @@ import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.controls.utilities.WorkspaceUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.FormLoadedListener;
+import com.supermap.desktop.process.ProcessManager;
+import com.supermap.desktop.process.loader.DefaultProcessGroup;
+import com.supermap.desktop.process.loader.IProcessDescriptor;
+import com.supermap.desktop.process.loader.IProcessGroup;
+import com.supermap.desktop.process.loader.IProcessLoader;
+import com.supermap.desktop.process.util.WorkflowUtil;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.utilities.*;
 import com.supermap.layout.MapLayout;
@@ -33,8 +39,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.EventObject;
+import java.util.*;
 import java.util.List;
 
 public class FormBase extends JFrame implements IFormMain {
@@ -162,7 +167,10 @@ public class FormBase extends JFrame implements IFormMain {
 	}
 
 	public void loadProcesses() {
-
+		PluginManager pluginManager = Application.getActiveApplication().getPluginManager();
+		for (int i = 0; i < pluginManager.getCount(); i++) {
+			loadProcesses(pluginManager.get(i));
+		}
 	}
 
 	private void loadProcesses(Plugin plugin) {
@@ -181,8 +189,57 @@ public class FormBase extends JFrame implements IFormMain {
 				return;
 			}
 
-			Element[] processGroupNodes = XmlUtilities.getChildElementNodesByName(processManagerElement, "ProcessGroup");
-			Element[] processNodes = XmlUtilities.getChildElementNodesByName(processManagerElement, "Process");
+			loadProcessGroup(null, processManagerElement);
+		}
+	}
+
+	private void loadProcessGroup(IProcessGroup parent, Element groupElement) {
+		IProcessGroup group = null;
+
+		if (groupElement.getNodeName().equals("ProcessManager")) {
+			group = ProcessManager.INSTANCE;
+		} else if (groupElement.getNodeName().equals("ProcessGroup")) {
+			if (parent == null) {
+				return;
+			}
+
+			String groupID = groupElement.getAttribute("id");
+			String groupTitle = groupElement.getAttribute("title");
+
+			group = parent.getGroup(groupID);
+			if (group == null) {
+				group = new DefaultProcessGroup(groupID, groupTitle);
+				parent.addGroup(group);
+			}
+		}
+
+		Element[] processGroupNodes = XmlUtilities.getChildElementNodesByName(groupElement, "ProcessGroup");
+		Element[] processNodes = XmlUtilities.getChildElementNodesByName(groupElement, "Process");
+
+		// 加载子 group 节点
+		for (int i = 0; i < processGroupNodes.length; i++) {
+			loadProcessGroup(group, processGroupNodes[i]);
+		}
+
+		for (int i = 0; i < processNodes.length; i++) {
+			Element processNode = processNodes[i];
+			String loaderClassName = processNode.getAttribute("loaderClass");
+			String descriptorClassName = processNode.getAttribute("descriptorClass");
+
+			// 创建 ProcessLoader
+			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName);
+
+			// 创建 ProcessDescriptor
+			IProcessDescriptor descriptor = WorkflowUtil.newProcessDescriptor(descriptorClassName);
+			Map<String, String> properties = new HashMap<>();
+			Element[] childNodes = XmlUtilities.getChildElementNodes(processNode);
+			for (int j = 0; j < childNodes.length; i++) {
+				Element childNode = childNodes[j];
+				properties.put(childNode.getNodeName(), childNode.getNodeValue());
+			}
+			descriptor.init(properties);
+
+			group.addProcess(loader.loadProcess(descriptor));
 		}
 	}
 
