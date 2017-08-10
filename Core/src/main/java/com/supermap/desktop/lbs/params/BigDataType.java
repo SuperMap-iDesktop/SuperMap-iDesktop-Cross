@@ -11,7 +11,7 @@ public class BigDataType {
 	public static BigDataType KernelDensity = new BigDataType("KernelDensity", "map-kernelDensity");
 	public static BigDataType Heatmap = new BigDataType("Heatmap", "mongodb");
 	public static BigDataType GridRegionAggregation = new BigDataType("GridRegionAggregation","map-summaryMesh");
-	public static BigDataType OverlayAnalystGeo = new BigDataType("OverlayAnalystGeo", "map-overlayAnalystGeo");
+	public static BigDataType VectorClip = new BigDataType("VectorClip", "map-overlayAnalystGeo");
 	public static BigDataType SummaryRegion = new BigDataType("SummaryRegion", "map-summaryRegion");
 
 	private BigDataType(String resultName, String message) {

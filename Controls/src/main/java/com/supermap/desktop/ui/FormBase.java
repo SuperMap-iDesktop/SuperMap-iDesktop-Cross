@@ -208,8 +208,7 @@ public class FormBase extends JFrame implements IFormMain {
 
 			group = parent.getGroup(groupID);
 			if (group == null) {
-				group = new DefaultProcessGroup(groupID, groupTitle);
-				parent.addGroup(group);
+				group = new DefaultProcessGroup(groupID, groupTitle, parent);
 			}
 		}
 
