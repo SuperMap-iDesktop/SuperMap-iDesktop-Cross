@@ -36,6 +36,7 @@ public class TasksManager {
 	private final static int WORKFLOW_STATE_RUNNING = 1;
 	private final static int WORKFLOW_STATE_COMPLETED = 2;
 	private final static int WORKFLOW_STATE_INTERRUPTED = 3;
+	private final static int WORKFLOW_STATE_RERUNNING = 4;// 出错重新运行
 
 	public final static int WORKER_STATE_RUNNING = 1;
 	public final static int WORKER_STATE_READY = 2;
@@ -103,19 +104,9 @@ public class TasksManager {
 		return status;
 	}
 
-//	public Vector<ProcessWorker> getProcessWorkers(int workerState) {
-//		if (!this.workerQueueMaps.containsKey(workerState)) {
-//			return null;
-//		}
-//
-//		Vector<ProcessWorker> workers = new Vector<>();
-//		Vector<IProcess> processes = this.workerQueueMaps.get(workerState);
-//
-//		for (int i = 0; i < processes.size(); i++) {
-//			workers.add(this.workersMap.get(processes.get(i)));
-//		}
-//		return workers;
-//	}
+	public ProcessWorker getWorkerByProcess(IProcess process) {
+		return workersMap.get(process);
+	}
 
 	public Workflow getWorkflow() {
 		return this.workflow;
@@ -152,7 +143,7 @@ public class TasksManager {
 			process.addStatusChangeListener(this.processStatusChangeListener);
 			this.workersMap.put(process, worker);
 			this.waiting.add(process);
-			fireWorkersChanged(new WorkersChangedEvent(this, process, WorkersChangedEvent.ADD));
+			fireWorkersChanged(new WorkersChangedEvent(this, worker, WorkersChangedEvent.ADD));
 		}
 	}
 
@@ -162,8 +153,8 @@ public class TasksManager {
 	private void processRemoved(IProcess process) {
 		if (this.workersMap.containsKey(process)) {
 			process.removeStatusChangeListener(this.processStatusChangeListener);
+			fireWorkersChanged(new WorkersChangedEvent(this, workersMap.get(process), WorkersChangedEvent.REMOVE));
 			this.workersMap.remove(process);
-			fireWorkersChanged(new WorkersChangedEvent(this, process, WorkersChangedEvent.REMOVE));
 
 			// 执行过程中禁止删除节点
 			this.waiting.remove(process);
@@ -245,7 +236,7 @@ public class TasksManager {
 					process.reset();
 
 					// 重置 ProcessWorker
-					this.workersMap.put(process, new ProcessWorker(process));
+//					this.workersMap.put(process, new ProcessWorker(process));
 					moveProcess(processes.get(i), state, WORKER_STATE_WAITING);
 				}
 			}
@@ -258,16 +249,46 @@ public class TasksManager {
 		this.status = TasksManager.WORKFLOW_STATE_NORMAL;
 	}
 
+	private int getProcessState(IProcess process) {
+		for (int i = WORKER_STATE_RUNNING; i <= WORKER_STATE_EXCEPTION; i++) {
+			Vector<IProcess> iProcesses = workerQueueMaps.get(i);
+			if (iProcesses.contains(process)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	private void waitingToReady(IProcess process) {
 
-		// 只有 waiting 才可以移动到 ready
-		moveProcess(process, WORKER_STATE_WAITING, WORKER_STATE_READY);
+		// 如果出错则重新执行
+		int processState = getProcessState(process);
+		if (processState == WORKER_STATE_WAITING) {
+			moveProcess(process, WORKER_STATE_WAITING, WORKER_STATE_READY);
+		} else if (processState != -1 && processState != WORKER_STATE_RUNNING) {//&& processState != WORKER_STATE_COMPLETED
+			// 有非等待状态时的任务就绪
+//			if (status == WORKFLOW_STATE_RERUNNING) {
+			// 重启时再跑那些后续的任务？
+			moveProcess(process, processState, WORKER_STATE_READY);
+
+//			}
+		}
 	}
 
 	private void readyToRunning(IProcess process) {
 
-		// 只有 ready 才可以移动到 running
-		moveProcess(process, WORKER_STATE_READY, WORKER_STATE_RUNNING);
+		int currentState = getProcessState(process);
+		if (currentState != -1) {
+			moveProcess(process, currentState, WORKER_STATE_RUNNING);
+		}
+		if (getStatus() != WORKFLOW_STATE_RUNNING && getStatus() != WORKFLOW_STATE_RERUNNING) {
+			// 如果是当前不是running则说明是重新启动的。
+			status = WORKFLOW_STATE_RERUNNING;
+			if (!this.scheduler.isRunning()) {
+				this.workflow.setEditable(false);
+				this.scheduler.start();
+			}
+		}
 	}
 
 	private void runningToCompleted(IProcess process) {
@@ -321,13 +342,14 @@ public class TasksManager {
 
 			for (int i = 0; i < preProcesses.size(); i++) {
 				isReady = (preProcesses.get(i).getStatus() == RunningStatus.COMPLETED);
-				if (isReady == false) {
+				if (!isReady) {
 					break;
 				}
 			}
 		}
 		return isReady;
 	}
+
 
 	private class ProcessStatusChangeListener implements StatusChangeListener {
 
@@ -378,7 +400,7 @@ public class TasksManager {
 			for (int i = 0; i < nextProcesses.size(); i++) {
 
 				// 该节点的所有前置节点均已执行完成准备就绪，就将节点移动到 ready
-				if (isReady(nextProcesses.get(i))) {
+				if (isReady(nextProcesses.get(i))) {//&& nextProcesses.get(i).getStatus() != RunningStatus.COMPLETED
 					waitingToReady(nextProcesses.get(i));
 				}
 			}
@@ -398,13 +420,10 @@ public class TasksManager {
 			if (nextProcesses != null && nextProcesses.size() > 0) {
 				for (IProcess nextProcess :
 						nextProcesses) {
-					if (!waiting.contains(nextProcess)) {
-
-						// 如果后续节点不在 waiting 队列中，则抛一个异常
-						throw new UnsupportedOperationException();
+					if (waiting.contains(nextProcess)) {
+						moveProcess(nextProcess, WORKER_STATE_WAITING, WORKER_STATE_EXCEPTION);
 					}
 
-					moveProcess(nextProcess, WORKER_STATE_WAITING, WORKER_STATE_EXCEPTION);
 				}
 			}
 		}
@@ -478,6 +497,9 @@ public class TasksManager {
 						IProcess process = ready.get(i);
 						workersMap.get(process).execute();
 					}
+				} else {
+					// TODO: 2017/8/9
+
 				}
 
 				// 当等待队列、就绪队列、运行队列均已经清空，则停止任务调度，并输出日志

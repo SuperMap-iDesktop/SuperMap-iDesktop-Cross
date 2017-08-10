@@ -1,6 +1,5 @@
 package com.supermap.desktop.process.loader;
 
-import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.util.Vector;
@@ -12,7 +11,12 @@ public class DefaultProcessGroup implements IProcessGroup {
 	private String id;
 	private String title;
 	private Vector<IProcessGroup> groups;
-	private Vector<IProcess> processes;
+	private Vector<IProcessLoader> processes;
+
+	public DefaultProcessGroup(String id, String title) {
+		this.id = id;
+		this.title = title;
+	}
 
 	@Override
 	public String getID() {
@@ -38,6 +42,11 @@ public class DefaultProcessGroup implements IProcessGroup {
 	}
 
 	@Override
+	public void addProcess(IProcessLoader process) {
+		this.processes.add(process);
+	}
+
+	@Override
 	public IProcessGroup getGroup(String id) {
 		IProcessGroup group = null;
 
@@ -52,12 +61,12 @@ public class DefaultProcessGroup implements IProcessGroup {
 	}
 
 	@Override
-	public IProcess[] getProcesses() {
-		return this.processes.toArray(new IProcess[this.processes.size()]);
+	public IProcessLoader[] getProcesses() {
+		return this.processes.toArray(new IProcessLoader[this.processes.size()]);
 	}
 
 	@Override
-	public IProcess[] getProcesses(String groupID) {
+	public IProcessLoader[] getProcesses(String groupID) {
 		IProcessGroup group = getGroup(groupID);
 
 		if (group != null) {

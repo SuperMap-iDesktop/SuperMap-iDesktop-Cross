@@ -40,8 +40,11 @@ public class ParameterNumber extends ParameterTextField {
 					if (textFieldValue.split("\\.").length > 2) {
 						return false;
 					}
+					if (textFieldValue.lastIndexOf("-") > 0) {
+						return false;
+					}
 					for (int i = 0; i < textFieldValue.length(); i++) {
-						if (!(Character.isDigit(textFieldValue.charAt(i)) || textFieldValue.charAt(i) == '.')) {
+						if (!(Character.isDigit(textFieldValue.charAt(i)) || textFieldValue.charAt(i) == '.' || textFieldValue.charAt(i) == '-')) {
 							return false;
 						}
 					}

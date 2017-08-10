@@ -6,6 +6,9 @@ import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.utilities.StringUtilities;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Created by highsad on 2017/7/27.
  */
@@ -14,7 +17,7 @@ public class WorkflowUtil {
 		// 工具类，不提供构造函数
 	}
 
-	public static IProcessLoader newProcessLoader(String loaderClassName) {
+	public static IProcessLoader newProcessLoader(String loaderClassName, IProcessDescriptor descriptor) {
 		IProcessLoader loader = null;
 
 		if (StringUtilities.isNullOrEmpty(loaderClassName)) {
@@ -32,10 +35,15 @@ public class WorkflowUtil {
 		}
 
 		try {
-			loader = (IProcessLoader) classInstance.newInstance();
+			Constructor constructor = classInstance.getConstructor(IProcessDescriptor.class);
+			loader = (IProcessLoader) constructor.newInstance(descriptor);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return loader;

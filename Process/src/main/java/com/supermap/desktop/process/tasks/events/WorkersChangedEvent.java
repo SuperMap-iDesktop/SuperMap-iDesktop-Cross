@@ -1,6 +1,6 @@
 package com.supermap.desktop.process.tasks.events;
 
-import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.tasks.ProcessWorker;
 import com.supermap.desktop.process.tasks.TasksManager;
 
 import java.util.EventObject;
@@ -13,19 +13,20 @@ public class WorkersChangedEvent extends EventObject {
 	public final static int REMOVE = 2;
 
 	private TasksManager manager;
-	private IProcess process;
+	private ProcessWorker worker;
 	private int operation = 1;
 
 	/**
 	 * Constructs a prototypical Event.
 	 *
 	 * @param manager The object on which the Event initially occurred.
+	 * @param worker
 	 * @throws IllegalArgumentException if source is null.
 	 */
-	public WorkersChangedEvent(TasksManager manager, IProcess process, int operation) {
+	public WorkersChangedEvent(TasksManager manager, ProcessWorker worker, int operation) {
 		super(manager);
 		this.manager = manager;
-		this.process = process;
+		this.worker = worker;
 		this.operation = operation;
 	}
 
@@ -33,8 +34,8 @@ public class WorkersChangedEvent extends EventObject {
 		return manager;
 	}
 
-	public IProcess getProcess() {
-		return this.process;
+	public ProcessWorker getWorker() {
+		return this.worker;
 	}
 
 	public int getOperation() {
