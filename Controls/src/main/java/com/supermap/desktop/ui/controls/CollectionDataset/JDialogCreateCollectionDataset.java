@@ -52,7 +52,8 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	private CollectionDatasetTableModel tableModel;
 	//修改数据集集合时用到
 	private DatasetVector datasetVector;
-
+	//存在的数据集集合
+	private DatasetVector[] selectedDatasetVectors;
 	private int collectionType;
 	//矢量数据集集合添加子数据集
 	private boolean isSetDatasetCollectionCount;
@@ -379,7 +380,6 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	 */
 	protected void setButtonState() {
 		if (0 < tableDatasetDisplay.getRowCount()) {
-			this.buttonOK.setEnabled(true);
 			this.buttonSelectAll.setEnabled(true);
 			this.buttonInvertSelect.setEnabled(true);
 			this.buttonMoveUp.setEnabled(true);
@@ -387,9 +387,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 			this.buttonMoveDown.setEnabled(true);
 			this.buttonMoveLast.setEnabled(true);
 			this.buttonRefresh.setEnabled(true);
-
 		} else {
-			this.buttonOK.setEnabled(false);
 			this.buttonSelectAll.setEnabled(false);
 			this.buttonInvertSelect.setEnabled(false);
 			this.buttonMoveUp.setEnabled(false);
@@ -398,14 +396,15 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 			this.buttonMoveLast.setEnabled(false);
 			this.buttonRefresh.setEnabled(false);
 		}
-		if (isSetDatasetCollectionCount) {
-			//添加数据集集合时不用判断删除按钮是否可用
-			this.buttonDelete.setEnabled(false);
-			return;
-		}
+		//组件实现了删除功能屏蔽改设置
+//		if (isSetDatasetCollectionCount) {
+//			//添加数据集集合时不用判断删除按钮是否可用
+//			this.buttonDelete.setEnabled(false);
+//			return;
+//		}
 		if (tableDatasetDisplay.getSelectedRows().length > 0) {
 			this.buttonDelete.setEnabled(true);
-		} else {
+		} else if (tableDatasetDisplay.getSelectedRows().length <= 0 || tableDatasetDisplay.getRowCount() == 0) {
 			this.buttonDelete.setEnabled(false);
 		}
 	}
@@ -415,10 +414,14 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		datasetChooser = new DatasetChooser(JDialogCreateCollectionDataset.this) {
 			@Override
 			protected boolean isSupportDatasource(Datasource datasource) {
-				return !DatasourceUtilities.isWebDatasource(datasource.getEngineType()) && super.isSupportDatasource(datasource);
+				return EngineType.POSTGRESQL.equals(datasource.getEngineType()) || EngineType.ORACLEPLUS.equals(datasource.getEngineType());
 			}
 		};
-		datasetChooser.setSupportDatasetTypes(DatasetTypeUtilities.getDatasetTypeVector());
+		if (null == selectedDatasetVectors) {
+			datasetChooser.setSupportDatasetTypes(DatasetTypeUtilities.getDatasetTypeVector());
+		} else {
+			datasetChooser.setSupportDatasetTypes(new DatasetType[]{selectedDatasetVectors[0].getType()});
+		}
 		datasetChooser.setSelectedDatasource(DatasourceUtilities.getDefaultResultDatasource());
 		if (datasetChooser.showDialog() == DialogResult.OK) {
 			addInfoToMainTable();
@@ -453,6 +456,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 
 	public JDialogCreateCollectionDataset(int collectionType, DatasetVector[] datasetVectors) {
 		super();
+		this.selectedDatasetVectors = datasetVectors;
 		this.collectionType = collectionType;
 		init(datasetVectors);
 	}
@@ -498,6 +502,9 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 				datasetInfos.add(datasetInfo);
 			}
 			tableModel.updateRows(datasetInfos);
+			if (tableModel.getRowCount() > 0) {
+				this.tableDatasetDisplay.addRowSelectionInterval(0, 0);
+			}
 		}
 	}
 
@@ -679,6 +686,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		if (isSetDatasetCollectionCount) {
 			this.panelBasicInfo.setVisible(false);
 			this.setButtonState();
+			this.setTitle(ControlsProperties.getString("String_ManageCollectionDataset"));
 		}
 	}
 

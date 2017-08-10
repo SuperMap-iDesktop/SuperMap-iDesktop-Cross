@@ -71,14 +71,14 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Foot"), "Foot"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Mile"), "Mile")
 		);
-		parameterAreaUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Meter"), "SquareMeter"),
+		parameterAreaUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Mile"), "SquareMile"),
+				new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Meter"), "SquareMeter"),
 				new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Kilometer"), "SquareKiloMeter"),
 				new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Hectare"), "Hectare"),
 				new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Are"), "Are"),
 				new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Acre"), "Acre"),
 				new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Foot"), "SquareFoot"),
-				new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Yard"), "SquareYard"),
-				new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Mile"), "SquareMile")
+				new ParameterDataNode(CommonProperties.getString("String_AreaUnit_Yard"), "SquareYard")
 		);
 		ParameterCombine parameterCombineAlaysis = new ParameterCombine();
 		parameterCombineAlaysis.setDescribe(ProcessProperties.getString("String_AnalystSet"));

@@ -543,4 +543,28 @@ public class DatasourceUtilities {
 		}
 		return null;
 	}
+
+	/**
+	 * 根据数据源链接信息,从当前工作空间中获取数据源
+	 * @param connectionInfo
+	 * @return
+	 */
+	public static Datasource getDatasource(DatasourceConnectionInfo connectionInfo) {
+		Datasource result = null;
+		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+		if (null != datasources) {
+			for (int i = 0; i < datasources.getCount(); i++) {
+				DatasourceConnectionInfo tempInfo = datasources.get(i).getConnectionInfo();
+				if (connectionInfo.getServer().equals(tempInfo.getServer()) &&
+						connectionInfo.getEngineType().equals(tempInfo.getEngineType())
+						&& connectionInfo.getDatabase().equals(tempInfo.getDatabase())
+						&& connectionInfo.getUser().equals(tempInfo.getUser())
+						&& connectionInfo.getPassword().equals(tempInfo.getPassword())) {
+					result = datasources.get(i);
+					break;
+				}
+			}
+		}
+		return result;
+	}
 }

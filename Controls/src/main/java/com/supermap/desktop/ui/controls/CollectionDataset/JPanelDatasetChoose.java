@@ -26,7 +26,7 @@ import java.util.ArrayList;
  */
 public abstract class JPanelDatasetChoose extends JPanel {
 	private JScrollPane scrollPane;
-	private JTable tableDatasetDisplay;
+	protected JTable tableDatasetDisplay;
 	protected JToolBar toolBar;
 	private JButton buttonAddDataset;
 	private JButton buttonSelectAll;
@@ -43,7 +43,8 @@ public abstract class JPanelDatasetChoose extends JPanel {
 	private boolean[] enableColumn;
 	protected MultipleCheckboxTableModel tableModel;
 	private DatasetChooser datasetChooser;
-	private DatasetType[] supportDatasetTypes;
+	protected DatasetType[] supportDatasetTypes;
+	private Dataset illegalDataset;
 
 	private ActionListener addDatasetListener = new ActionListener() {
 		@Override
@@ -82,7 +83,7 @@ public abstract class JPanelDatasetChoose extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int[] selectedRows = tableDatasetDisplay.getSelectedRows();
-			for (int length = selectedRows.length, i = length; i >= 0; i--) {
+			for (int length = selectedRows.length, i = length - 1; i >= 0; i--) {
 				tableModel.removeRow(selectedRows[i]);
 				//删除数据集集合内的数据集
 				datasets.remove(selectedRows[i]);
@@ -183,6 +184,7 @@ public abstract class JPanelDatasetChoose extends JPanel {
 	}
 
 	protected void initComponents() {
+		this.datasets = new ArrayList<>();
 		this.scrollPane = new JScrollPane();
 		this.buttonAddDataset = new JButton();
 		this.buttonSelectAll = new JButton();
@@ -198,6 +200,8 @@ public abstract class JPanelDatasetChoose extends JPanel {
 		this.tableDatasetDisplay.getTableHeader().setReorderingAllowed(false);
 		this.tableDatasetDisplay.setModel(this.tableModel);
 		this.tableDatasetDisplay.setRowHeight(23);
+		this.toolBar = new JToolBar();
+		this.scrollPane.setPreferredSize(new Dimension(300, 200));
 		initToolBar();
 	}
 
@@ -369,8 +373,11 @@ public abstract class JPanelDatasetChoose extends JPanel {
 			java.util.List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
 			for (int i = 0; i < selectedDatasets.size(); i++) {
 				//添加行和数据集集合的添加顺序一致,保证两个集合内部的索引一致
-				tableModel.addRow(transFormData(selectedDatasets.get(i)));
-				datasets.add(selectedDatasets.get(i));
+				Object[] row = transFormData(selectedDatasets.get(i));
+				if (null != row) {
+					tableModel.addRow(row);
+					datasets.add(selectedDatasets.get(i));
+				}
 			}
 			if (0 < tableDatasetDisplay.getRowCount()) {
 				tableDatasetDisplay.setRowSelectionInterval(tableDatasetDisplay.getRowCount() - 1, tableDatasetDisplay.getRowCount() - 1);
@@ -407,4 +414,38 @@ public abstract class JPanelDatasetChoose extends JPanel {
 
 	//初始化时将传入的数据集集合转换为对象数组
 	protected abstract Object[][] getData(ArrayList<Dataset> datasets);
+
+	/**
+	 * 获取tableModel
+	 */
+	public MultipleCheckboxTableModel getTableModel() {
+		return tableModel;
+	}
+
+	/**
+	 * 获取表中对应的数据集集合
+	 *
+	 * @return
+	 */
+	public ArrayList<Dataset> getDatasets() {
+		return datasets;
+	}
+
+	/**
+	 * 获取非法的数据集（表中不能添加的数据集）
+	 *
+	 * @return
+	 */
+	public Dataset getIllegalDataset() {
+		return illegalDataset;
+	}
+
+	/**
+	 * 设置非法的数据集
+	 *
+	 * @param illegalDataset
+	 */
+	public void setIllegalDataset(Dataset illegalDataset) {
+		this.illegalDataset = illegalDataset;
+	}
 }

@@ -14,8 +14,11 @@ import java.util.ArrayList;
  */
 public class ParameterDatasetChooseTable extends AbstractParameter implements ISelectionParameter {
 	private static final String SOURCE_DATASETS = "SourceDatasets";
+	public static final String DATASET_FIELD_NAME = "Dataset";
 	@ParameterField(name = SOURCE_DATASETS)
 	private ArrayList<Dataset> datasets;
+	@ParameterField(name = DATASET_FIELD_NAME)
+	private Dataset dataset;
 
 	@Override
 	public void setSelectedItem(Object item) {
@@ -26,6 +29,14 @@ public class ParameterDatasetChooseTable extends AbstractParameter implements IS
 	@Override
 	public Object getSelectedItem() {
 		return datasets;
+	}
+
+	public Dataset getDataset() {
+		return dataset;
+	}
+
+	public void setDataset(Dataset dataset) {
+		this.dataset = dataset;
 	}
 
 	@Override
