@@ -15,7 +15,10 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 /**
@@ -50,25 +53,23 @@ public class ParameterMultiFieldSetPanel extends SwingPanel {
 	}
 
 	private void registEvents() {
+		final JTableHeader tableHeader = this.multiFieldsChooseTable.getTableHeader();
+		tableHeader.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() > 0) {
+					//获得选中列
+					int selectColumn = tableHeader.columnAtPoint(e.getPoint());
+					if (selectColumn == 0) {
+						setFieldInfo();
+					}
+				}
+			}
+		});
 		this.multiFieldsChooseTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				if (!isSelectionChanged && multiFieldsChooseTable.getSelectedFieldsName().size() > 0) {
-					isSelectionChanged = true;
-					ArrayList<SmMultiFieldsChooseTable.Info> infos = multiFieldsChooseTable.getSelectedFieldsName();
-					int size = infos.size();
-					String[] sourceFields = new String[size];
-					String[] targetFields = new String[size];
-					for (int i = 0; i < size; i++) {
-						sourceFields[i] = infos.get(i).getSourceFieldName();
-						targetFields[i] = infos.get(i).getTargetFieldName();
-					}
-					ParameterMultiFieldSet.DatasetFieldInfo fieldInfo = new ParameterMultiFieldSet.DatasetFieldInfo();
-					fieldInfo.setSourceFields(sourceFields);
-					fieldInfo.setTargetFields(targetFields);
-					multiFieldSet.setDatasetFieldInfo(fieldInfo);
-					isSelectionChanged = false;
-				}
+				setFieldInfo();
 			}
 		});
 		this.multiFieldSet.addFieldConstraintChangedListener(new FieldConstraintChangedListener() {
@@ -80,6 +81,25 @@ public class ParameterMultiFieldSetPanel extends SwingPanel {
 				}
 			}
 		});
+	}
+
+	private void setFieldInfo() {
+		if (!isSelectionChanged && multiFieldsChooseTable.getSelectedFieldsName().size() > 0) {
+			isSelectionChanged = true;
+			ArrayList<SmMultiFieldsChooseTable.Info> infos = multiFieldsChooseTable.getSelectedFieldsName();
+			int size = infos.size();
+			String[] sourceFields = new String[size];
+			String[] targetFields = new String[size];
+			for (int i = 0; i < size; i++) {
+				sourceFields[i] = infos.get(i).getSourceFieldName();
+				targetFields[i] = infos.get(i).getTargetFieldName();
+			}
+			ParameterMultiFieldSet.DatasetFieldInfo fieldInfo = new ParameterMultiFieldSet.DatasetFieldInfo();
+			fieldInfo.setSourceFields(sourceFields);
+			fieldInfo.setTargetFields(targetFields);
+			multiFieldSet.setDatasetFieldInfo(fieldInfo);
+			isSelectionChanged = false;
+		}
 	}
 
 }
