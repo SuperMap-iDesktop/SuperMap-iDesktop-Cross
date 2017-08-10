@@ -2,20 +2,23 @@ package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
-import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.TextFields.RightValueListener;
+import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.text.NumberFormatter;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.text.NumberFormat;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
+/**
+ * 缓冲区分析-参数设置面板
+ * yuanR 2017.8.10重构
+ * 添加控件間的监听控制
+ * 替换“半圆弧线度数”控件
+ */
 public class PanelParameterSet extends JPanel {
 
-	/**
-	 *
-	 */
+
 	private static final long serialVersionUID = 1L;
 
 	private JCheckBox checkBoxUnionBuffer;
@@ -23,55 +26,29 @@ public class PanelParameterSet extends JPanel {
 	private JCheckBox checkBoxDisplayInMap;
 	private JCheckBox checkBoxDisplayInScene;
 	private JLabel labelSemicircleLineSegment;
-	private SMFormattedTextField textFieldSemicircleLineSegment;
-	private final static String TEXT_VALUE = "100";
+	private WaringTextField textFieldSemicircleLineSegment;
+
+	private final static int DEFAULT_MIN = 4;
+	private final static int DEFAULT_MAX = 200;
 
 	public JCheckBox getCheckBoxUnionBuffer() {
 		return checkBoxUnionBuffer;
-	}
-
-	public void setCheckBoxUnionBuffer(JCheckBox checkBoxUnionBuffer) {
-		this.checkBoxUnionBuffer = checkBoxUnionBuffer;
 	}
 
 	public JCheckBox getCheckBoxRemainAttributes() {
 		return checkBoxRemainAttributes;
 	}
 
-	public void setCheckBoxRemainAttributes(JCheckBox checkBoxRemainAttributes) {
-		this.checkBoxRemainAttributes = checkBoxRemainAttributes;
-	}
-
 	public JCheckBox getCheckBoxDisplayInMap() {
 		return checkBoxDisplayInMap;
-	}
-
-	public void setCheckBoxDisplayInMap(JCheckBox checkBoxDisplayInMap) {
-		this.checkBoxDisplayInMap = checkBoxDisplayInMap;
 	}
 
 	public JCheckBox getCheckBoxDisplayInScene() {
 		return checkBoxDisplayInScene;
 	}
 
-	public void setCheckBoxDisplayInScene(JCheckBox checkBoxDisplayInScene) {
-		this.checkBoxDisplayInScene = checkBoxDisplayInScene;
-	}
-
-	public JLabel getLabelSemicircleLineSegment() {
-		return labelSemicircleLineSegment;
-	}
-
-	public void setLabelSemicircleLineSegment(JLabel labelSemicircleLineSegment) {
-		this.labelSemicircleLineSegment = labelSemicircleLineSegment;
-	}
-
-	public SMFormattedTextField getTextFieldSemicircleLineSegment() {
+	public WaringTextField getTextFieldSemicircleLineSegment() {
 		return textFieldSemicircleLineSegment;
-	}
-
-	public void setTextFieldSemicircleLineSegment(SMFormattedTextField textFieldSemicircleLineSegment) {
-		this.textFieldSemicircleLineSegment = textFieldSemicircleLineSegment;
 	}
 
 	public PanelParameterSet() {
@@ -79,6 +56,7 @@ public class PanelParameterSet extends JPanel {
 		initResources();
 		setOtherPanelResultSetLayout();
 //		setOtherPanelResultSetLayout();
+		registerEvent();
 	}
 
 	private void initComponent() {
@@ -91,19 +69,9 @@ public class PanelParameterSet extends JPanel {
 		this.checkBoxDisplayInScene.setVisible(false);
 		this.labelSemicircleLineSegment = new JLabel("SemicircleLineSegment");
 
-		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getInstance());
-		numberFormatter.setValueClass(Long.class);
-		this.textFieldSemicircleLineSegment = new SMFormattedTextField(numberFormatter);
-		this.textFieldSemicircleLineSegment.setText(TEXT_VALUE);
-		this.textFieldSemicircleLineSegment.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char keyChar = e.getKeyChar();
-				if (keyChar > '9' || keyChar < '0') {
-					e.consume();
-				}
-			}
-		});
+		this.textFieldSemicircleLineSegment = new WaringTextField("4");
+		this.textFieldSemicircleLineSegment.setInitInfo(DEFAULT_MIN, DEFAULT_MAX, WaringTextField.INTEGER_TYPE, "null");
+
 	}
 
 	private void initResources() {
@@ -172,6 +140,23 @@ public class PanelParameterSet extends JPanel {
 						.addComponent(this.labelSemicircleLineSegment)
 						.addComponent(this.textFieldSemicircleLineSegment)));
 		//@formatter:on
+	}
+
+	private void registerEvent() {
+		// 合并缓冲区checkBox监听：选中时保留原对象属性checkBox不可用
+		checkBoxUnionBuffer.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				checkBoxRemainAttributes.setSelected(false);
+				checkBoxRemainAttributes.setEnabled(!checkBoxUnionBuffer.isSelected());
+			}
+		});
+		textFieldSemicircleLineSegment.addRightValueListener(new RightValueListener() {
+			@Override
+			public void update(String value) {
+
+			}
+		});
 	}
 
 	/**

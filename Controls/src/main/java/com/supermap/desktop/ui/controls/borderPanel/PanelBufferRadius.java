@@ -1,6 +1,5 @@
 package com.supermap.desktop.ui.controls.borderPanel;
 
-import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxLengthUnit;

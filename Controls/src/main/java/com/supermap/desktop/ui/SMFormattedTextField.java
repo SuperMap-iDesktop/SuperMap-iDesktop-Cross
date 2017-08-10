@@ -14,6 +14,9 @@ import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
+/**
+ *
+ */
 public class SMFormattedTextField extends JFormattedTextField implements DocumentListener {
 
 	private static final long serialVersionUID = 1L;
