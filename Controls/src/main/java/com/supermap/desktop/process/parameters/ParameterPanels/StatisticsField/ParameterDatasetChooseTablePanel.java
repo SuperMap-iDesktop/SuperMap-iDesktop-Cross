@@ -2,8 +2,13 @@ package com.supermap.desktop.process.parameters.ParameterPanels.StatisticsField;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasetChooseTable;
+import com.supermap.desktop.process.parameters.ParameterPanels.ParameterMultiFieldSetPanel;
 import com.supermap.desktop.process.parameters.ParameterPanels.SwingPanel;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CollectionDataset.JPanelDatasetChoose;
@@ -16,10 +21,11 @@ import java.util.ArrayList;
 /**
  * Created by xie on 2017/8/9.
  */
+@ParameterPanelDescribe(parameterPanelType = ParameterType.DATASET_CHOOSE_TABLE)
 public class ParameterDatasetChooseTablePanel extends SwingPanel {
 	private ParameterDatasetChooseTable datasetChooseTable;
 	private JPanelDatasetChooseForParameter datasetChoosePanel;
-	private final String[] columnNames = {"", CommonProperties.Label_Dataset, CommonProperties.Label_Datasource};
+	private final String[] columnNames = {"", CommonProperties.getString("String_ColumnHeader_Dataset"), CommonProperties.getString("String_ColumnHeader_Datasource")};
 	private final boolean[] enables = {false, false, false};
 
 	public ParameterDatasetChooseTablePanel(IParameter parameter) {
@@ -31,6 +37,12 @@ public class ParameterDatasetChooseTablePanel extends SwingPanel {
 	private void init() {
 		initComponents();
 		initLayout();
+		datasetChooseTable.addFieldConstraintChangedListener(new FieldConstraintChangedListener() {
+			@Override
+			public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
+				event.getParameter();
+			}
+		});
 	}
 
 	private void initLayout() {
@@ -40,6 +52,7 @@ public class ParameterDatasetChooseTablePanel extends SwingPanel {
 
 	private void initComponents() {
 		this.datasetChoosePanel = new JPanelDatasetChooseForParameter((ArrayList<Dataset>) datasetChooseTable.getSelectedItem(), columnNames, enables);
+		this.datasetChoosePanel.setSupportDatasetTypes(this.datasetChooseTable.getDatasetTypes());
 	}
 
 
@@ -48,9 +61,11 @@ public class ParameterDatasetChooseTablePanel extends SwingPanel {
 		private final int COLUMN_INDEX = 0;
 		private final int COLUMN_DATASET = 1;
 		private final int COLUMN_DATASOURCE = 2;
+		private final int MAX_SIZE = 40;
 
 		public JPanelDatasetChooseForParameter(ArrayList<Dataset> datasets, String[] columnName, boolean[] enableColumn) {
 			super(datasets, columnName, enableColumn);
+			this.tableDatasetDisplay.getColumnModel().getColumn(COLUMN_INDEX).setMaxWidth(MAX_SIZE);
 		}
 
 		@Override
@@ -69,7 +84,7 @@ public class ParameterDatasetChooseTablePanel extends SwingPanel {
 		@Override
 		protected Object[] transFormData(Dataset dataset) {
 			Object[] datasetInfo = new Object[3];
-			datasetInfo[COLUMN_INDEX] = tableModel.getRowCount();
+			datasetInfo[COLUMN_INDEX] = tableModel.getRowCount() + 1;
 			datasetInfo[COLUMN_DATASET] = new DataCell(dataset);
 			DataCell cell = new DataCell();
 			cell.initDatasourceType(dataset.getDatasource());
@@ -79,7 +94,7 @@ public class ParameterDatasetChooseTablePanel extends SwingPanel {
 
 		@Override
 		public void setSupportDatasetTypes(DatasetType[] supportDatasetTypes) {
-
+			this.supportDatasetTypes = supportDatasetTypes;
 		}
 
 		@Override

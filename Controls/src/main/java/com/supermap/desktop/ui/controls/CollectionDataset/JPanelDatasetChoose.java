@@ -26,7 +26,7 @@ import java.util.ArrayList;
  */
 public abstract class JPanelDatasetChoose extends JPanel {
 	private JScrollPane scrollPane;
-	private JTable tableDatasetDisplay;
+	protected JTable tableDatasetDisplay;
 	protected JToolBar toolBar;
 	private JButton buttonAddDataset;
 	private JButton buttonSelectAll;
@@ -43,7 +43,7 @@ public abstract class JPanelDatasetChoose extends JPanel {
 	private boolean[] enableColumn;
 	protected MultipleCheckboxTableModel tableModel;
 	private DatasetChooser datasetChooser;
-	private DatasetType[] supportDatasetTypes;
+	protected DatasetType[] supportDatasetTypes;
 
 	private ActionListener addDatasetListener = new ActionListener() {
 		@Override
@@ -183,6 +183,7 @@ public abstract class JPanelDatasetChoose extends JPanel {
 	}
 
 	protected void initComponents() {
+		this.datasets = new ArrayList<>();
 		this.scrollPane = new JScrollPane();
 		this.buttonAddDataset = new JButton();
 		this.buttonSelectAll = new JButton();
@@ -198,6 +199,8 @@ public abstract class JPanelDatasetChoose extends JPanel {
 		this.tableDatasetDisplay.getTableHeader().setReorderingAllowed(false);
 		this.tableDatasetDisplay.setModel(this.tableModel);
 		this.tableDatasetDisplay.setRowHeight(23);
+		this.toolBar = new JToolBar();
+		this.scrollPane.setPreferredSize(new Dimension(300, 200));
 		initToolBar();
 	}
 
