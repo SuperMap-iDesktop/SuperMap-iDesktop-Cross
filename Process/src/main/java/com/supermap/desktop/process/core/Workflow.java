@@ -3,7 +3,6 @@ package com.supermap.desktop.process.core;
 import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.process.events.*;
 import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
-import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.util.WorkflowUtil;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -12,8 +11,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.swing.event.EventListenerList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -65,7 +62,7 @@ public class Workflow implements IWorkflow {
 
 	@Override
 	public String serializeTo() {
-		Document doc = XmlUtilities.stringToDocument("");
+		Document doc = XmlUtilities.getEmptyDocument();
 
 		// 处理 workflow
 		Element workflowNode = doc.createElement("Workflow");
@@ -159,8 +156,8 @@ public class Workflow implements IWorkflow {
 			int serialID = Integer.valueOf(processNode.getAttribute("SerialID"));
 
 			String loaderClassName = processNode.getAttribute("LoaderClassName");
-			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName);
-			IProcess process = loader.loadProcess(new DefaultProcessDescriptor(className, key));
+			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName, new DefaultProcessDescriptor(className, key));
+			IProcess process = loader.loadProcess();
 			process.setSerialID(serialID);
 			addProcess(process);
 		}
@@ -191,24 +188,6 @@ public class Workflow implements IWorkflow {
 				addRelation(dataMatch);
 			}
 		}
-	}
-
-	private void test(Element node) {
-		Element processNode = (Element) XmlUtilities.getChildElementNodeByName(node, "Process");
-		String processLoaderClass = processNode.getAttribute("processLoader");
-		String processDescriptorClass = processNode.getAttribute("processDescriptor");
-
-		IProcessLoader processLoader = WorkflowUtil.newProcessLoader(processLoaderClass);
-		IProcessDescriptor processDescriptor = WorkflowUtil.newProcessDescriptor(processDescriptorClass);
-
-		Map<String, String> properties = new HashMap<>();
-		Element[] childNodes = XmlUtilities.getChildElementNodesByName(processNode);
-		for (int i = 0; i < childNodes.length; i++) {
-			Element childNode = childNodes[i];
-			properties.put(childNode.getNodeName(), childNode.getNodeValue());
-		}
-		processDescriptor.init(properties);
-		IProcess process = processLoader.loadProcess(processDescriptor);
 	}
 
 	public IProcess getProcess(String key, int serialID) {

@@ -1,7 +1,5 @@
 package com.supermap.desktop.process.loader;
 
-import com.supermap.desktop.process.core.IProcess;
-
 /**
  * Created by highsad on 2017/8/4.
  */
@@ -12,9 +10,11 @@ public interface IProcessGroup {
 
 	void addGroup(IProcessGroup group);
 
+	void addProcess(IProcessLoader process);
+
 	IProcessGroup getGroup(String id);
 
-	IProcess[] getProcesses();
+	IProcessLoader[] getProcesses();
 
-	IProcess[] getProcesses(String groupID);
+	IProcessLoader[] getProcesses(String groupID);
 }

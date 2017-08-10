@@ -40,7 +40,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 	private JPanel panelCancelled;
 	private JPanel panelException;
 
-	private Map<IProcess, SingleProgressPanel> map = new ConcurrentHashMap<>();
+	private Map<ProcessWorker, SingleProgressPanel> map = new ConcurrentHashMap<>();
 
 	public TasksManagerPanel(TasksManager tasksManager) {
 		if (tasksManager == null) {
@@ -126,34 +126,42 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		}
 
 		int[] workerStates = TasksManager.getWorkerStates();
-		for (int i = 0; i < workerStates.length; i++) {
-			JPanel panel = getPanel(workerStates[i]);
-			Vector<IProcess> processes = this.tasksManager.getProcesses(workerStates[i]);
-			buildPanel(panel, processes);
+		for (int workerState : workerStates) {
+			JPanel panel = getPanel(workerState);
+			Vector<IProcess> processes = this.tasksManager.getProcesses(workerState);
+			Vector<ProcessWorker> workers = new Vector<>();
+			for (IProcess process : processes) {
+				ProcessWorker workerByProcess = tasksManager.getWorkerByProcess(process);
+				if (workerByProcess != null) {
+					workers.add(workerByProcess);
+				}
+			}
+			buildPanel(panel, workers);
 		}
 	}
 
-	private void buildPanel(JPanel panel, Vector<IProcess> workers) {
+	private void buildPanel(JPanel panel, Vector<ProcessWorker> workers) {
 		if (panel == null || workers == null || workers.size() == 0) {
 			return;
 		}
 
-		for (int i = 0, size = workers.size(); i < size; i++) {
-			addNewWorker(panel, workers.get(i));
+		for (ProcessWorker worker : workers) {
+			addNewWorker(panel, worker);
 		}
 	}
 
-	private void addNewWorker(JPanel panel, IProcess worker) {
+	private void addNewWorker(JPanel panel, ProcessWorker worker) {
 		if (this.map.containsKey(worker)) {
 			return;
 		}
 
-		SingleProgressPanel progressPanel = new SingleProgressPanel(worker.getTitle());
+		SingleProgressPanel progressPanel = new SingleProgressPanel(worker.getProcess().getTitle());
+		progressPanel.setWorker(worker);
 		this.map.put(worker, progressPanel);
 		panel.add(progressPanel);
 	}
 
-	private void removeWorker(IProcess worker) {
+	private void removeWorker(ProcessWorker worker) {
 		if (!this.map.containsKey(worker)) {
 			return;
 		}
@@ -228,18 +236,19 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 			return;
 		}
 
-		if (!this.map.containsKey(worker.getProcess())) {
+		if (!this.map.containsKey(worker)) {
 			return;
 		}
 
-		SingleProgressPanel progressPanel = this.map.get(worker.getProcess());
+		SingleProgressPanel progressPanel = this.map.get(worker);
 		JPanel oldContainer = getPanel(oldState);
 		JPanel newContainer = getPanel(newState);
 
 		if (newState == TasksManager.WORKER_STATE_WAITING) {
 			progressPanel.reset();
 		} else if (newState == TasksManager.WORKER_STATE_READY) {
-			progressPanel.setWorker(worker);
+			// worker与panel一一对应的，在初始化时就绑定了
+//			progressPanel.setWorker(worker);
 		}
 
 		if (oldContainer != null) {
@@ -283,7 +292,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 			return;
 		}
 
-		IProcess worker = e.getProcess();
+		ProcessWorker worker = e.getWorker();
 
 		if (e.getOperation() == WorkersChangedEvent.ADD) {
 			addNewWorker(this.panelWaiting, worker);
