@@ -6,5 +6,7 @@ import com.supermap.desktop.process.core.IProcess;
  * Created by highsad on 2017/1/5.
  */
 public interface IProcessLoader {
-	IProcess loadProcess(IProcessDescriptor descriptor);
+	IProcessDescriptor getProcessDescriptor();
+
+	IProcess loadProcess();
 }

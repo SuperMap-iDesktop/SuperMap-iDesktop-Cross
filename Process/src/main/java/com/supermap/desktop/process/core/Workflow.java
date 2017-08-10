@@ -156,8 +156,8 @@ public class Workflow implements IWorkflow {
 			int serialID = Integer.valueOf(processNode.getAttribute("SerialID"));
 
 			String loaderClassName = processNode.getAttribute("LoaderClassName");
-			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName);
-			IProcess process = loader.loadProcess(new DefaultProcessDescriptor(className, key));
+			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName, new DefaultProcessDescriptor(className, key));
+			IProcess process = loader.loadProcess();
 			process.setSerialID(serialID);
 			addProcess(process);
 		}
