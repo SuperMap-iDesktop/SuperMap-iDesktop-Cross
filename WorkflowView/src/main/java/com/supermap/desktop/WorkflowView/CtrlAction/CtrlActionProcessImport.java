@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * @author XiaJT
  */
 public class CtrlActionProcessImport extends CtrlAction {
-	private static final String processTreeClassName = "com.supermap.desktop.WorkflowView.ProcessManager";
+	private static final String processTreeClassName = "com.supermap.desktop.WorkflowView.ProcessManagerPanel";
 	private static final String ParameterManagerClassName = "com.supermap.desktop.WorkflowView.ParameterManager";
 
 	public CtrlActionProcessImport(IBaseItem caller, IForm formClass) {

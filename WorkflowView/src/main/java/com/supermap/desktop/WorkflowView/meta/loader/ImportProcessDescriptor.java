@@ -1,4 +1,6 @@
-package com.supermap.desktop.process.loader;
+package com.supermap.desktop.WorkflowView.meta.loader;
+
+import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
 
 import java.util.Map;
 

@@ -322,7 +322,7 @@ public class XmlUtilities {
 		if (nodeList != null && nodeList.getLength() > 0) {
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node item = nodeList.item(i);
-				if (item != null && node.getNodeType() == Node.ELEMENT_NODE) {
+				if (item != null && item.getNodeType() == Node.ELEMENT_NODE) {
 					elements.add((Element) item);
 				}
 			}
@@ -340,8 +340,8 @@ public class XmlUtilities {
 		if (nodeList != null && nodeList.getLength() > 0) {
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node item = nodeList.item(i);
-				if (item != null && node.getNodeType() == Node.ELEMENT_NODE) {
-					map.put(item.getNodeName(), item.getNodeValue());
+				if (item != null && item.getNodeType() == Node.ELEMENT_NODE) {
+					map.put(item.getNodeName(), item.getTextContent());
 				}
 			}
 		}

@@ -62,7 +62,7 @@ public class WorkflowUtil {
 			return null;
 		}
 
-		if (!IProcessLoader.class.isAssignableFrom(classInstance)) {
+		if (!IProcessDescriptor.class.isAssignableFrom(classInstance)) {
 			return null;
 		}
 

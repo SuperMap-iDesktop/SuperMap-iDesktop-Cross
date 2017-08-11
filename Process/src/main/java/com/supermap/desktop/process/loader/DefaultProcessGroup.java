@@ -53,6 +53,16 @@ public class DefaultProcessGroup implements IProcessGroup {
 	}
 
 	@Override
+	public int getGroupCount() {
+		return this.groups.size();
+	}
+
+	@Override
+	public int getProcessCount() {
+		return this.processes.size();
+	}
+
+	@Override
 	public void addGroup(IProcessGroup group) {
 		if (this.groups.contains(group)) {
 			return;
@@ -66,21 +76,19 @@ public class DefaultProcessGroup implements IProcessGroup {
 			return;
 		}
 
-		this.groups.add(group);
-	}
-
-	@Override
-	public void addGroup(IProcessGroup group, int index) {
-		if (this.groups.contains(group)) {
-			return;
+		int insertIndex = -1;
+		for (int i = 0; i < this.groups.size(); i++) {
+			IProcessGroup g = this.groups.get(i);
+			if (group.getIndex() < g.getIndex()) {
+				insertIndex = g.getIndex();
+				break;
+			}
 		}
 
-		if (getGroup(group.getID()) != null) {
-			return;
-		}
-
-		if (group.getParent() != this) {
-			return;
+		if (insertIndex != -1) {
+			this.groups.add(insertIndex, group);
+		} else {
+			this.groups.add(group);
 		}
 	}
 
@@ -99,13 +107,20 @@ public class DefaultProcessGroup implements IProcessGroup {
 			return;
 		}
 
+		int insertIndex = -1;
+		for (int i = 0; i < this.processes.size(); i++) {
+			IProcessLoader p = this.processes.get(i);
+			if (process.getProcessDescriptor().getIndex() < p.getProcessDescriptor().getIndex()) {
+				insertIndex = p.getProcessDescriptor().getIndex();
+				break;
+			}
+		}
+
+		if (insertIndex != -1) {
+
+		}
 		this.processes.add(process);
 		this.processLoaderMap.put(processKey, process);
-	}
-
-	@Override
-	public void addProcess(IProcessLoader process, int index) {
-
 	}
 
 	private boolean isProcessKeyValid(String processKey) {
@@ -132,6 +147,11 @@ public class DefaultProcessGroup implements IProcessGroup {
 	}
 
 	@Override
+	public IProcessGroup[] getGroups() {
+		return this.groups.toArray(new IProcessGroup[this.groups.size()]);
+	}
+
+	@Override
 	public IProcessLoader[] getProcesses() {
 		return this.processes.toArray(new IProcessLoader[this.processes.size()]);
 	}
@@ -144,6 +164,23 @@ public class DefaultProcessGroup implements IProcessGroup {
 			return group.getProcesses();
 		}
 		return null;
+	}
+
+	@Override
+	public IProcessLoader findProcess(String processKey) {
+		IProcessLoader loader = null;
+
+		if (this.processLoaderMap.containsKey(processKey)) {
+			loader = this.processLoaderMap.get(processKey);
+		} else {
+			for (int i = 0; i < this.groups.size(); i++) {
+				loader = this.groups.get(i).findProcess(processKey);
+				if (loader != null) {
+					break;
+				}
+			}
+		}
+		return loader;
 	}
 
 	@Override

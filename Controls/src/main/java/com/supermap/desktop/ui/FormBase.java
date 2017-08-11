@@ -168,17 +168,25 @@ public class FormBase extends JFrame implements IFormMain {
 	}
 
 	public void loadProcesses() {
-		PluginManager pluginManager = Application.getActiveApplication().getPluginManager();
-		for (int i = 0; i < pluginManager.getCount(); i++) {
-			loadProcesses(pluginManager.get(i));
+		try {
+			PluginManager pluginManager = Application.getActiveApplication().getPluginManager();
+			for (int i = 0; i < pluginManager.getCount(); i++) {
+				loadProcesses(pluginManager.get(i));
+			}
+		} catch (Exception e) {
+			System.out.println(e);
 		}
 	}
 
 	private void loadProcesses(Plugin plugin) {
+		if (plugin == null || plugin.getPluginInfo() == null) {
+			return;
+		}
+
 		boolean isProcessBundleLoaded = false;
 		for (int i = 0; i < Application.getActiveApplication().getPluginManager().getCount(); i++) {
 			Plugin pl = Application.getActiveApplication().getPluginManager().get(i);
-			if (pl.equals("SuperMap.Desktop.process")) {
+			if (pl.getName().equals("SuperMap.Desktop.process")) {
 				isProcessBundleLoaded = true;
 				break;
 			}

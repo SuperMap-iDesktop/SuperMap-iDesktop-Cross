@@ -21,7 +21,7 @@ import java.util.ArrayList;
  * Created by highsad on 2017/7/26.
  */
 public class WorkflowViewActivator implements BundleActivator {
-	private static final String PROCESSTREE_CLASSNAME = "com.supermap.desktop.WorkflowView.ProcessManager";
+	private static final String PROCESSTREE_CLASSNAME = "com.supermap.desktop.WorkflowView.ProcessManagerPanel";
 	private static final String PARAMETERMANAGER_CLASSNAME = "com.supermap.desktop.WorkflowView.ParameterManager";
 
 	@Override
