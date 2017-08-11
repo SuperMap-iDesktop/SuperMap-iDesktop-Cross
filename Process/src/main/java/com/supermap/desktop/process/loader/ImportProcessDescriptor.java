@@ -7,12 +7,7 @@ import java.util.Map;
  */
 public class ImportProcessDescriptor extends DefaultProcessDescriptor {
 	public final static String PROPERTY_IMPORT_TYPE = "ImportType";
-
 	private String importType;
-
-	public ImportProcessDescriptor(String className, String key) {
-		super(className, key);
-	}
 
 	public String getImportType() {
 		return importType;

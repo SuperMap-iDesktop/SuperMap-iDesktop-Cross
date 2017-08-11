@@ -3,6 +3,7 @@ package com.supermap.desktop.process.core;
 import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.process.events.*;
 import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
+import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.util.WorkflowUtil;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -11,7 +12,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.swing.event.EventListenerList;
+import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by xie on 2017/3/18.
@@ -156,7 +159,12 @@ public class Workflow implements IWorkflow {
 			int serialID = Integer.valueOf(processNode.getAttribute("SerialID"));
 
 			String loaderClassName = processNode.getAttribute("LoaderClassName");
-			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName, new DefaultProcessDescriptor(className, key));
+			IProcessDescriptor descriptor = new DefaultProcessDescriptor();
+			Map<String, String> map = new ConcurrentHashMap<>();
+			map.put("ClassName", className);
+			map.put("Key", key);
+			descriptor.init(map);
+			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName, descriptor);
 			IProcess process = loader.loadProcess();
 			process.setSerialID(serialID);
 			addProcess(process);

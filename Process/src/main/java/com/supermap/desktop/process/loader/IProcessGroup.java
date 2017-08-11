@@ -8,9 +8,15 @@ public interface IProcessGroup {
 
 	String getTitle();
 
+	int getIndex();
+
 	void addGroup(IProcessGroup group);
 
+	void addGroup(IProcessGroup group, int index);
+
 	void addProcess(IProcessLoader process);
+
+	void addProcess(IProcessLoader process, int index);
 
 	IProcessGroup getGroup(String id);
 
@@ -22,6 +28,7 @@ public interface IProcessGroup {
 
 	/**
 	 * 父Group 中是否包含指定 Key 的 ProcessLoader
+	 *
 	 * @param processKey
 	 * @return
 	 */
