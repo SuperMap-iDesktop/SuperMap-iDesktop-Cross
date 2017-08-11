@@ -284,8 +284,11 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 					panelBufferData.getComboBoxBufferDataDataset().setDatasets(datasource.getDatasets());
 					if (panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null) {
 						// 切换comboBoxDatasource时，如果comboBoxDataset为空时将字段选项置灰，默认选中数值型
+						panelBufferRadius.getNumericFieldComboBox().removeAll();
 						setComboBoxDatasetNotNull(false);
 					} else {
+						panelBufferRadius.getNumericFieldComboBox().setDataset((DatasetVector) panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset());
+						panelBufferRadius.getNumericFieldComboBox().setSelectedItem(10);
 						setComboBoxDatasetNotNull(true);
 					}
 				}
@@ -294,9 +297,11 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 			} else if (e.getSource() == panelBufferData.getComboBoxBufferDataDataset()) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-
+					panelBufferRadius.getNumericFieldComboBox().removeAllItems();
 					// 如果所选数据集不为空，创建字段ComboBox，否则不做操作
 					if (panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() != null) {
+						panelBufferRadius.getNumericFieldComboBox().setDataset((DatasetVector) panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset());
+						panelBufferRadius.getNumericFieldComboBox().setSelectedItem(10);
 						setComboBoxDatasetNotNull(true);
 					} else {
 						setComboBoxDatasetNotNull(false);
@@ -391,6 +396,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.panelBufferData.setPanelEnable(this.isComboBoxDatasetNotNull);
 		this.panelResultData.setPanelEnable(this.isComboBoxDatasetNotNull);
 		this.panelParameterSet.setPanelEnable(this.isComboBoxDatasetNotNull);
+		this.panelBufferRadius.setEnabled(this.isComboBoxDatasetNotNull);
 	}
 
 
