@@ -2,6 +2,8 @@ package com.supermap.desktop.process.util;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
+import com.supermap.desktop.process.loader.DefaultProcessLoader;
 import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -21,7 +23,7 @@ public class WorkflowUtil {
 		IProcessLoader loader = null;
 
 		if (StringUtilities.isNullOrEmpty(loaderClassName)) {
-			return null;
+			return new DefaultProcessLoader(descriptor);
 		}
 
 		Class classInstance = Application.getActiveApplication().getPluginManager().loadClass(loaderClassName);
@@ -53,7 +55,7 @@ public class WorkflowUtil {
 		IProcessDescriptor descriptor = null;
 
 		if (StringUtilities.isNullOrEmpty(processDescriptorClass)) {
-			return null;
+			return new DefaultProcessDescriptor();
 		}
 
 		Class classInstance = Application.getActiveApplication().getPluginManager().loadClass(processDescriptorClass);
