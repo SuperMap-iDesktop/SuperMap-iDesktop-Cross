@@ -1,12 +1,6 @@
 package com.supermap.desktop.utilties;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfos;
-import com.supermap.data.FieldType;
-import com.supermap.data.Geometry;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.enums.TabularChangedType;
 import com.supermap.desktop.event.TabularChangedEvent;
 import com.supermap.desktop.event.TabularValueChangedListener;
@@ -17,11 +11,7 @@ import com.supermap.desktop.utilities.DoubleUtilities;
 import javax.swing.table.AbstractTableModel;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * 属性表的TableModel
@@ -47,7 +37,7 @@ public class TabularTableModel extends AbstractTableModel {
 	private void init() {
 		if (this.recordset != null) {
 			this.recordset.moveFirst();
-			currentRow = 0;
+			this.currentRow = 0;
 			this.fieldInfos = recordset.getFieldInfos();
 			this.fieldInfosDataset = recordset.getDataset().getFieldInfos();
 		}
@@ -120,6 +110,7 @@ public class TabularTableModel extends AbstractTableModel {
 		// Object value = tabularCache.getValue(key);
 		// if (null == value) {
 		Object value;
+		// 每次赋值的时候，都需要不断移动记录集的位置
 		moveToRow(rowIndex);
 		value = recordset.getFieldValue(columnIndex);
 		if (value instanceof Double && Double.isInfinite((double) value)) {
@@ -140,20 +131,19 @@ public class TabularTableModel extends AbstractTableModel {
 	/**
 	 * 从当前位置移动到行
 	 *
-	 * @param rowIndex
+	 * @param rowIndex rowIndex意义是只当前需要赋值的行，currentRow是指当前记录集所在的行，当进行删除操作后，需要重新对应起来-yuanR
 	 */
 	public void moveToRow(int rowIndex) {
 		if (recordset == null || recordset.isClosed()) {
 			return;
 		}
-
-		while (rowIndex != currentRow) {
-			if (rowIndex > currentRow) {
-				currentRow++;
-				recordset.moveNext();
+		while (rowIndex != this.currentRow) {
+			if (rowIndex > this.currentRow) {
+				this.currentRow++;
+				this.recordset.moveNext();
 			} else {
-				currentRow--;
-				recordset.movePrev();
+				this.currentRow--;
+				this.recordset.movePrev();
 			}
 		}
 	}
@@ -444,39 +434,37 @@ public class TabularTableModel extends AbstractTableModel {
 		return result;
 	}
 
+	/**
+	 * @param viewRows
+	 */
 	public void deleteRows(int[] viewRows) {
-		int resultSmID = -1;
-		Arrays.sort(viewRows);
-		int first = viewRows[0];
-		if (first != 0) {
-			resultSmID = getSmIdByRow(first - 1);
-		}
+
 		int[] smIds = new int[viewRows.length];
 		for (int i = 0; i < viewRows.length; i++) {
 			int viewRow = viewRows[i];
 			smIds[i] = getSmIdByRow(viewRow);
 		}
-		Recordset query = recordset.getDataset().query(smIds, CursorType.DYNAMIC);
+		// 通过smid值进行记录集的查找
+		Recordset query = this.recordset.getDataset().query(smIds, CursorType.DYNAMIC);
 		if (query != null && !query.isEmpty()) {
 			try {
 				query.deleteAll();
 			} finally {
 				query.close();
+				query.dispose();
 			}
-			recordset.refresh();
-			if (resultSmID == -1) {
-				recordset.moveFirst();
-				currentRow = recordset.getID();
-			} else {
-				recordset.seekID(resultSmID);
-			}
+			// 删除操作完成后，为确保下一次getValue赋值正确，调整记录集所在的记录数
+			this.currentRow = 0;
+			this.recordset.moveFirst();
+			this.recordset.refresh();
 			fireTableDataChanged();
 		}
+
+
 	}
 
 	public void refresh() {
-		recordset.refresh();
-		currentRow = recordset.getID();
+		this.recordset.refresh();
 		fireTableDataChanged();
 	}
 }

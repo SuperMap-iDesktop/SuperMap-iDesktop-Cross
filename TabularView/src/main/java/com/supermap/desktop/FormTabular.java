@@ -122,11 +122,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 						jTableTabular.setColumnSelectionInterval(columnAtPoint, columnAtPoint);
 						jTableTabular.addRowSelectionInterval(0, jTableTabular.getRowCount() - 1);
 					}
-//					jTableTabular.clearSelection();//属性表点击表头不选中整列代码,2016年12月16日17:10:36
-//					jTableTabular.addColumnSelectionInterval(columnAtPoint, columnAtPoint);
-//					if (GlobalParameters.isHeadClickedSelectedColumn()) {
-//						jTableTabular.addRowSelectionInterval(0, jTableTabular.getRowCount() - 1);
-//					}
 				}
 				showContextMenu(e);
 			} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
@@ -177,7 +172,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			if (!e.isControlDown() && tableClickedColumn != -1) {
 				int column = jTableTabular.columnAtPoint(e.getPoint());
 				if (column >= 0 && column < jTableTabular.getColumnCount()) {
-					setSelectedColumn(tableClickedColumn, column);
+					jTableTabular.setColumnSelectionInterval(tableClickedColumn, column);
 				}
 			}
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
@@ -405,25 +400,25 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 	private void setRowHeaderMousePressed(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
-			int pick = jTableTabular.rowAtPoint(e.getPoint());
+			int pick = this.jTableTabular.rowAtPoint(e.getPoint());
 			if (pick < 0) {
 				return;
 			}
-			tableClickedRow = pick;
+			this.tableClickedRow = pick;
 			if (e.isShiftDown()) {
 				if (tableClickedRow > jTableTabular.getSelectedRow()) {
-					jTableTabular.setRowSelectionInterval(jTableTabular.getSelectedRow(), tableClickedRow);
+					this.jTableTabular.setRowSelectionInterval(this.jTableTabular.getSelectedRow(), this.tableClickedRow);
 				} else {
-					jTableTabular.setRowSelectionInterval(tableClickedRow, jTableTabular.getSelectedRow());
+					this.jTableTabular.setRowSelectionInterval(this.tableClickedRow, this.jTableTabular.getSelectedRow());
 
 				}
 			} else {
 				if (!e.isControlDown()) {
-					jTableTabular.clearSelection();
+					this.jTableTabular.clearSelection();
 				}
-				jTableTabular.addRowSelectionInterval(pick, pick);
+				this.jTableTabular.addRowSelectionInterval(pick, pick);
 			}
-			this.setSelectedColumn(jTableTabular.getColumnCount() - 1, 0);
+			this.jTableTabular.setColumnSelectionInterval(this.jTableTabular.getColumnCount() - 1, 0);
 
 		}
 		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
@@ -533,7 +528,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				}
 			}
 			return component;
-
 		}
 
 	}
@@ -765,14 +759,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		}
 	}
 
-	private void setSelectedColumn(int column1, int column2) {
-		jTableTabular.setColumnSelectionInterval(column1, column2);
-	}
-
-	private void addSelectedColumn(int column1, int column2) {
-		jTableTabular.addColumnSelectionInterval(column1, column2);
-	}
-
 	/**
 	 * 定位函数
 	 */
@@ -780,7 +766,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	public void goToRow(int goToRow) {
 		this.jTableTabular.clearSelection();
 		this.jTableTabular.setRowSelectionInterval(goToRow, goToRow);
-		setSelectedColumn(0, jTableTabular.getColumnCount() - 1);
+		jTableTabular.setColumnSelectionInterval(0, jTableTabular.getColumnCount() - 1);
 		sureRowVisible(goToRow);
 		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 	}
@@ -801,7 +787,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			if (addRows[i] != -1 && addRows[i] < jTableTabular.getRowCount()) {
 				this.jTableTabular.addRowSelectionInterval(addRows[i], addRows[i]);
 			}
-			setSelectedColumn(0, jTableTabular.getColumnCount() - 1);
+			jTableTabular.setColumnSelectionInterval(0, jTableTabular.getColumnCount() - 1);
 		}
 		sureRowVisible(addRows[0]);
 		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
@@ -834,7 +820,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		for (int i = 0; i < jTableTabular.getRowCount(); i++) {
 			this.jTableTabular.addRowSelectionInterval(i, i);
 		}
-		setSelectedColumn(selectColumn, selectColumn);
+		jTableTabular.setColumnSelectionInterval(selectColumn, selectColumn);
 		setColumnsWidth();
 		return flag;
 	}
@@ -955,12 +941,12 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				}
 				tableClickedColumn = pick;
 				if (e.isShiftDown()) {
-					setSelectedColumn(tableClickedColumn, jTableTabular.getSelectedColumn());
+					jTableTabular.setColumnSelectionInterval(tableClickedColumn, jTableTabular.getSelectedColumn());
 				} else {
 					if (!e.isControlDown()) {
 						jTableTabular.clearSelection();
 					}
-					addSelectedColumn(pick, pick);
+					jTableTabular.addColumnSelectionInterval(pick, pick);
 				}
 				if (jTableTabular.getRowCount() > 0) {
 					jTableTabular.setRowSelectionInterval(jTableTabular.getRowCount() - 1, 0);
@@ -1074,14 +1060,20 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		tabularTableModel.addRow(geometry);
 	}
 
+	/**
+	 * 给删除行方法添加删除后的行高亮显示
+	 *
+	 * @param viewRows
+	 */
 	@Override
 	public void deleteRows(int[] viewRows) {
-		int[] modelRows = new int[viewRows.length];
-		for (int i = 0; i < viewRows.length; i++) {
-			int viewRow = viewRows[i];
-			modelRows[i] = getModelRow(viewRow);
-		}
-		tabularTableModel.deleteRows(modelRows);
+		// 不太理解这里在进行什么操作，暂时移除
+//		int[] modelRows = new int[viewRows.length];
+//		for (int i = 0; i < viewRows.length; i++) {
+//			int viewRow = viewRows[i];
+//			modelRows[i] = getModelRow(viewRow);
+//		}
+		tabularTableModel.deleteRows(viewRows);
 	}
 
 	public int getModelRow(int viewRow) {
