@@ -65,8 +65,8 @@ public class FrameActivator implements BundleActivator {
 		LogUtilities.outPut(CoreProperties.getString("String_DesktopStartFinished"));
 		MainFrame mainFrame = new MainFrame();
 		Application.getActiveApplication().setMainFrame(mainFrame);
-		mainFrame.loadUI();
 		mainFrame.loadProcesses();
+		mainFrame.loadUI();
 	}
 
 	/*

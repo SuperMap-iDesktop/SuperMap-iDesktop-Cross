@@ -39,7 +39,8 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 
 public class FormBase extends JFrame implements IFormMain {
@@ -205,10 +206,11 @@ public class FormBase extends JFrame implements IFormMain {
 
 			String groupID = groupElement.getAttribute("id");
 			String groupTitle = groupElement.getAttribute("title");
+			String groupIndex = groupElement.getAttribute("index");
 
 			group = parent.getGroup(groupID);
 			if (group == null) {
-				group = new DefaultProcessGroup(groupID, groupTitle, parent);
+				group = new DefaultProcessGroup(groupID, groupTitle, groupIndex, parent);
 			}
 		}
 
@@ -227,17 +229,10 @@ public class FormBase extends JFrame implements IFormMain {
 
 			// 创建 ProcessDescriptor
 			IProcessDescriptor descriptor = WorkflowUtil.newProcessDescriptor(descriptorClassName);
-			Map<String, String> properties = new HashMap<>();
-			Element[] childNodes = XmlUtilities.getChildElementNodes(processNode);
-			for (int j = 0; j < childNodes.length; i++) {
-				Element childNode = childNodes[j];
-				properties.put(childNode.getNodeName(), childNode.getNodeValue());
-			}
-			descriptor.init(properties);
+			descriptor.init(XmlUtilities.getChildElementNodesMap(processNode));
 
 			// 创建 ProcessLoader
 			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName, descriptor);
-
 
 			group.addProcess(loader);
 		}

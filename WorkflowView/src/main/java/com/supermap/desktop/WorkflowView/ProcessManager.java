@@ -28,13 +28,10 @@ public class ProcessManager extends JPanel {
 
 	private Vector<IProcessLoader> loaders = new Vector<>();
 	private Vector<IProcess> processes = new Vector<>();
-	public static final ProcessManager SINGLETON = new ProcessManager();
 
 	public ProcessManager() {
 		initComponents();
 		initLayout();
-//		registerProcessLoader(DefaultProcessLoader.SINGLETON);
-
 	}
 
 	private void initComponents() {
