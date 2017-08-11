@@ -4,8 +4,6 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
-import com.supermap.desktop.process.parameter.ipls.ParameterFieldGroup;
-import com.supermap.desktop.ui.controls.CheckHeaderCellRenderer;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.ui.controls.smTables.*;
 import com.supermap.desktop.ui.controls.smTables.models.ModelFieldNameCaptionType;
@@ -17,8 +15,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 /**
  * Created by lixiaoyao on 2017/8/9.
@@ -34,13 +30,13 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 
 	private ITableController tableController=new TableControllerAdapter() {
 		@Override
-		public void selectedAll(ITable iTable) {
-			super.selectedAll(iTable);
+		public void selectAll(ITable iTable) {
+			super.selectAll(iTable);
 		}
 
 		@Override
-		public void selectedIInverse(ITable iTable) {
-			super.selectedIInverse(iTable);
+		public void selectInverse(ITable iTable) {
+			super.selectInverse(iTable);
 		}
 
 		@Override
@@ -52,12 +48,12 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 		}
 
 		@Override
-		public void selectedSystemField(ITable iTable) {
+		public void selectSystemField(ITable iTable) {
 			((IModel)iTable.getTablesModel()).getModelController().selectedSystemField();
 		}
 
 		@Override
-		public void selectedNonSystemField(ITable iTable) {
+		public void selectUnSystemField(ITable iTable) {
 			((IModel)iTable.getTablesModel()).getModelController().selectedNonSystemField();
 		}
 

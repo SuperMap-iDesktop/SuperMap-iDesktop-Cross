@@ -5,13 +5,13 @@ package com.supermap.desktop.ui.controls.smTables;
  */
 public interface ITableController {
 
-	public void selectedAll(ITable iTable);
+	public void selectAll(ITable iTable);
 
-	public void selectedIInverse(ITable iTable);
+	public void selectInverse(ITable iTable);
 
-	public void selectedSystemField(ITable iTable);
+	public void selectSystemField(ITable iTable);
 
-	public void selectedNonSystemField(ITable iTable);
+	public void selectUnSystemField(ITable iTable);
 
 	public void delete(ITable iTable);
 

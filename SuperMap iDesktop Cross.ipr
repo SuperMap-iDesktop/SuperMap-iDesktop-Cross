@@ -229,27 +229,11 @@
     </properties>
   </component>
   <component name="CompilerConfiguration">
-    <resourceExtensions />
-    <wildcardResourcePatterns>
-      <entry name="!?*.java" />
-      <entry name="!?*.form" />
-      <entry name="!?*.class" />
-      <entry name="!?*.groovy" />
-      <entry name="!?*.scala" />
-      <entry name="!?*.flex" />
-      <entry name="!?*.kt" />
-      <entry name="!?*.clj" />
-      <entry name="!?*.aj" />
-    </wildcardResourcePatterns>
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="false">
-        <processorPath useClasspath="true" />
-      </profile>
-      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
         <module name="Assistant" />
         <module name="Controls" />
         <module name="Core" />
@@ -288,6 +272,7 @@
       <module name="DataView" target="1.7" />
       <module name="Frame" target="1.7" />
       <module name="iDesktop" target="1.7" />
+      <module name="idesktop.cross" target="1.5" />
       <module name="LayoutEditor" target="1.7" />
       <module name="LayoutView" target="1.7" />
       <module name="LBSClient" target="1.7" />
@@ -312,9 +297,6 @@
     <file url="file://$PROJECT_DIR$/MapView/src/main/java/com/supermap/desktop/dialog/cacheClip/cache" charset="GBK" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
-  <component name="EntryPointsManager">
-    <entry_points version="2.0" />
-  </component>
   <component name="InspectionProjectProfileManager">
     <profile version="1.0">
       <option name="myName" value="Project Default" />
@@ -328,8 +310,6 @@
         <option name="SUGGEST_PRIVATE_FOR_INNERS" value="false" />
       </inspection_tool>
     </profile>
-    <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_PROFILE" value="true" />
     <version value="1.0" />
   </component>
   <component name="MavenImportPreferences">
@@ -517,13 +497,14 @@
       <module fileurl="file://$PROJECT_DIR$/UserExperience/UserExperience.iml" filepath="$PROJECT_DIR$/UserExperience/UserExperience.iml" />
       <module fileurl="file://$PROJECT_DIR$/WorkflowView/WorkflowView.iml" filepath="$PROJECT_DIR$/WorkflowView/WorkflowView.iml" />
       <module fileurl="file://$PROJECT_DIR$/iDesktop/iDesktop.iml" filepath="$PROJECT_DIR$/iDesktop/iDesktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/idesktop.cross.iml" filepath="$PROJECT_DIR$/idesktop.cross.iml" />
     </modules>
   </component>
   <component name="ProjectPlainTextFileTypeManager">
     <file url="file://$PROJECT_DIR$/SuperMap iDesktop Cross 配置指南(Linux 篇).md" />
     <file url="file://$PROJECT_DIR$/SuperMap iDesktop Cross 配置指南(Windows 篇).md" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" default="false" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" default="false" project-jdk-name="1.7" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ProjectRunConfigurationManager">
