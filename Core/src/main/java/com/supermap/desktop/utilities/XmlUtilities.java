@@ -22,6 +22,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class XmlUtilities {
 	private XmlUtilities() {
@@ -310,7 +312,7 @@ public class XmlUtilities {
 	 * @param node
 	 * @return
 	 */
-	public static Element[] getChildElementNodesByName(Node node) {
+	public static Element[] getChildElementNodes(Node node) {
 		if (node == null) {
 			return null;
 		}
@@ -326,5 +328,23 @@ public class XmlUtilities {
 			}
 		}
 		return elements.toArray(new Element[elements.size()]);
+	}
+
+	public static Map<String, String> getChildElementNodesMap(Node node) {
+		if (node == null) {
+			return null;
+		}
+
+		Map<String, String> map = new ConcurrentHashMap<>();
+		NodeList nodeList = node.getChildNodes();
+		if (nodeList != null && nodeList.getLength() > 0) {
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node item = nodeList.item(i);
+				if (item != null && node.getNodeType() == Node.ELEMENT_NODE) {
+					map.put(item.getNodeName(), item.getNodeValue());
+				}
+			}
+		}
+		return map;
 	}
 }

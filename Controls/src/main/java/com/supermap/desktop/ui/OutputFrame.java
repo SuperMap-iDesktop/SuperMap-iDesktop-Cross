@@ -176,6 +176,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 			for (StackTraceElement element : elements) {
 				output(element.toString(), InfoType.Exception);
 			}
+			exception.printStackTrace();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

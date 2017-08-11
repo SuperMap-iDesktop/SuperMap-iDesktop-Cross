@@ -192,6 +192,10 @@ public class MetaProcessSetProjection extends MetaProcess {
 				textAreaCoordInfo.setSelectedItem(prjCoorSysInfo);
 				fireRunning(new RunningEvent(this, 100, "重设投影坐标系成功。"));
 				this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(src);
+			} else {
+				// 没有主动选择，则视为维持原投影不变
+				fireRunning(new RunningEvent(this, 100, "重设投影坐标系成功。"));
+				this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(src);
 			}
 		} catch (Exception e) {
 			ret = false;

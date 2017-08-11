@@ -2,8 +2,8 @@ package com.supermap.desktop.WorkflowView.tasks;
 
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.process.tasks.IWorkerView;
+import com.supermap.desktop.process.tasks.ProcessWorker;
 import com.supermap.desktop.process.tasks.SingleProgress;
-import com.supermap.desktop.process.tasks.Worker;
 import com.supermap.desktop.ui.controls.progress.RoundProgressBar;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -19,7 +19,7 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 	private static final Color DEFAULT_FOREGROUNDCOLOR = new Color(39, 162, 223);
 	private static final Color CACEL_FOREGROUNDCOLOR = new Color(190, 190, 190);
 
-	private Worker<SingleProgress> worker;
+	private ProcessWorker worker;
 	private RoundProgressBar progressBar;
 	private JLabel labelTitle;
 	private JLabel labelMessage;
@@ -29,7 +29,9 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 	private Runnable run = new Runnable() {
 		@Override
 		public void run() {
-			worker.execute();
+			if (worker != null) {
+				worker.execute();
+			}
 		}
 	};
 
@@ -50,7 +52,7 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 		this.labelTitle.setText(title);
 	}
 
-	public void setWorker(Worker<SingleProgress> worker) {
+	public void setWorker(ProcessWorker worker) {
 		if (worker == null) {
 			throw new NullPointerException("worker can not be null.");
 		}

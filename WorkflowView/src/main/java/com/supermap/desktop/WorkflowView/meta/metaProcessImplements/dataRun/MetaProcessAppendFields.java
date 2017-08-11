@@ -16,6 +16,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 
 import java.text.MessageFormat;
 
@@ -117,6 +118,7 @@ public class MetaProcessAppendFields extends MetaProcess {
 			if (result) {
 				fireRunning(new RunningEvent(this, 100, "success"));
 				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsSuccess"), targetDatasetVector.getName(), datasetVector.getName()));
+				TabularUtilities.refreshTabularDatas(datasetVector);
 			} else {
 				fireRunning(new RunningEvent(this, 100, "failed"));
 				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsFailed"), targetDatasetVector.getName(), datasetVector.getName()));
@@ -124,12 +126,13 @@ public class MetaProcessAppendFields extends MetaProcess {
 		} else {
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_AppendFieldsIsNull"));
 		}
+		targetDatasetVector.removeSteppedListener(this.steppedListener);
 		return result;
 	}
 
 	@Override
 	public String getKey() {
-		return MetaKeys.APPENDFIELDS;
+		return MetaKeys.APPEND_FIELDS;
 	}
 
 	@Override

@@ -125,18 +125,19 @@ public class CacheUtilities {
 
 	public static boolean voladateDatasource() {
 		boolean result = true;
+		SmOptionPane optionPane = new SmOptionPane();
 		if (null != Application.getActiveApplication().getWorkspace().getDatasources()) {
 			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
 			for (int i = 0; i < datasources.getCount(); i++) {
 				if (datasources.get(i).getEngineType() == EngineType.UDB && !datasources.get(i).isReadOnly()) {
-					showMessageDialog(null, MapViewProperties.getString("String_DatasourceOpenedNotReadOnly"));
+					optionPane.showErrorDialog(MapViewProperties.getString("String_DatasourceOpenedNotReadOnly"));
 					result = false;
 					break;
 				}
 			}
 		}
 		if (WorkspaceUtilities.isWorkspaceModified()) {
-			showMessageDialog(null, MapViewProperties.getString("String_WorkSpaceNotSave"));
+			optionPane.showErrorDialog(MapViewProperties.getString("String_WorkSpaceNotSave"));
 			return false;
 		}
 		return result;

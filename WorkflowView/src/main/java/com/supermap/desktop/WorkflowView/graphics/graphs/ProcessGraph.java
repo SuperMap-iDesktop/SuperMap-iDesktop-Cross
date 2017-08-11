@@ -1,17 +1,17 @@
 package com.supermap.desktop.WorkflowView.graphics.graphs;
 
 import com.alibaba.fastjson.JSONObject;
+import com.supermap.desktop.WorkflowView.graphics.GraphCanvas;
+import com.supermap.desktop.WorkflowView.meta.MetaKeys;
+import com.supermap.desktop.WorkflowView.meta.WorkflowParser;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.EmptyMetaProcess;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.WorkflowView.meta.WorkflowParser;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.events.StatusChangeEvent;
 import com.supermap.desktop.process.events.StatusChangeListener;
-import com.supermap.desktop.WorkflowView.graphics.GraphCanvas;
-import com.supermap.desktop.WorkflowView.meta.MetaKeys;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.EmptyMetaProcess;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import sun.swing.SwingUtilities2;
@@ -94,7 +94,9 @@ public class ProcessGraph extends RectangleGraph {
 			((Graphics2D) g).fill(rectangle);
 		} else {
 			if (this.process.getStatus() == RunningStatus.COMPLETED) {
-				g.drawImage(((ImageIcon) ProcessResources.getIcon("/processresources/task/image_finish.png")).getImage(), getLocation().x + getWidth() - 20, getLocation().y + 2, 18, 18, null);
+				g.drawImage(((ImageIcon) ProcessResources.getIcon("/processresources/task/image_done.png")).getImage(), getLocation().x + getWidth() - 20, getLocation().y + 2, 18, 18, null);
+			} else if (this.process.getStatus() == RunningStatus.EXCEPTION) {
+				g.drawImage(((ImageIcon) ProcessResources.getIcon("/processresources/task/image_error.png")).getImage(), getLocation().x + getWidth() - 20, getLocation().y + 2, 18, 18, null);
 			}
 		}
 //		font = new Font(ControlsProperties.getString("String_Boldface"), Font.BOLD, 10);

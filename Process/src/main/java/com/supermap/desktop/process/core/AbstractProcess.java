@@ -70,9 +70,9 @@ public abstract class AbstractProcess implements IProcess {
 		boolean isSuccessful = false;
 
 		try {
-			if (this.status != RunningStatus.NORMAL) {
-				return false;
-			}
+//			if (this.status != RunningStatus.NORMAL) {
+//				return false;
+//			}
 
 			setStatus(RunningStatus.RUNNING);
 			isSuccessful = execute();

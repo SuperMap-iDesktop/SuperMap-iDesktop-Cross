@@ -1,10 +1,7 @@
 package com.supermap.desktop.implement.UserDefineType;
 
 import com.supermap.data.*;
-import com.supermap.data.conversion.ImportSettingGeoJson;
-import com.supermap.data.conversion.ImportSettingSCV;
-import com.supermap.data.conversion.ImportSteppedEvent;
-import com.supermap.data.conversion.ImportSteppedListener;
+import com.supermap.data.conversion.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,7 +11,7 @@ import java.util.Vector;
 /**
  * Created by xie on 2017/3/28.
  */
-public class ImportSettingGPX extends ImportSettingGeoJson {
+public class ImportSettingGPX extends ImportSettingCSV{
     private Vector steppedListeners;
 
     public ImportSettingGPX() {
@@ -115,6 +112,11 @@ public class ImportSettingGPX extends ImportSettingGeoJson {
                 ((ImportSteppedListener) listeners.elementAt(i)).stepped(event);
             }
         }
+
+    }
+
+    @Override
+    public void dispose() {
 
     }
 }

@@ -4,7 +4,6 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -46,18 +45,21 @@ public class BufferDialog extends SmDialog {
 	private MapControl mapControl;
 
 	private LocalActionListener localActionListener = new LocalActionListener();
+
+
 	private DoSome some = new DoSome() {
 		@Override
-		public void doSome(boolean isArcSegmentNumSuitable, boolean isComboBoxDatasetNotNull, boolean isRadiusNumSuitable, boolean isHasResultDatasource) {
-			panelButton.getButtonOk().setEnabled(isArcSegmentNumSuitable && isComboBoxDatasetNotNull && isRadiusNumSuitable && isHasResultDatasource);
+		public void doSome(boolean isArcSegmentNumSuitable, boolean isComboBoxDatasetNotNull, boolean isRadiusNumSuitable, boolean isHasResultDataset) {
+			panelButton.getButtonOk().setEnabled(isArcSegmentNumSuitable && isComboBoxDatasetNotNull && isRadiusNumSuitable && isHasResultDataset);
 		}
 	};
 
 	public BufferDialog() {
 		super();
-		setBufferDialog();
+		intBufferDialog();
 		// 初始化数据类型对应的缓冲区面板--yaunR
 		initPanelBufferBasic();
+
 		setResizable(true);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -69,14 +71,115 @@ public class BufferDialog extends SmDialog {
 	/**
 	 * 设置缓冲区功能底层控件属性
 	 */
-	private void setBufferDialog() {
-		removeRegisterEvent();
+	private void intBufferDialog() {
 		initComponent();
-		setComponentName();
+		initLayout();
 		initResources();
 		registerEvent();
 		initTraversalPolicy();
+		setComponentName();
 	}
+
+	private void initComponent() {
+		this.mainPanel = new JPanel();
+		// 初始化数据类型面板及其控件
+		this.labelDataType = new JLabel("DataType");
+		this.buttonGroup = new ButtonGroup();
+		this.buttonGroup.add(this.radioButtonPointOrRegion);
+		this.buttonGroup.add(this.radioButtonLine);
+		this.panelDataType = new JPanel();
+		// 初始化其他面板
+		this.panelBufferType = new JPanel();
+		this.panelBufferType.setLayout(new BorderLayout());
+		this.panelButton = new PanelButton();
+	}
+
+	/**
+	 * 设置其面板布局
+	 * yuanR 2017.3.6
+	 */
+	private void initLayout() {
+		setPanelDataTypeLayout();
+		this.mainPanel.setLayout(new BorderLayout());
+		this.mainPanel.add(this.panelDataType, BorderLayout.NORTH);
+		this.mainPanel.add(this.panelBufferType, BorderLayout.CENTER);
+		this.mainPanel.add(this.panelButton, BorderLayout.SOUTH);
+		this.getContentPane().add(this.mainPanel);
+	}
+
+	private void initResources() {
+		this.setTitle(SpatialAnalystProperties.getString("String_SingleBufferAnalysis_Capital"));
+		this.labelDataType.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_DataType"));
+		this.radioButtonLine.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_Line"));
+		this.radioButtonPointOrRegion.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_PointAndRegion"));
+	}
+
+	/**
+	 * 添加监听事件
+	 */
+	private void registerEvent() {
+		removeRegisterEvent();
+		this.radioButtonPointOrRegion.addActionListener(this.localActionListener);
+		this.radioButtonLine.addActionListener(this.localActionListener);
+		this.panelButton.getButtonOk().addActionListener(this.localActionListener);
+		this.panelButton.getButtonCancel().addActionListener(this.localActionListener);
+	}
+
+	/**
+	 * 初始化tab键的功能
+	 */
+	private void initTraversalPolicy() {
+		if (this.componentList.size() > 0) {
+			this.componentList.clear();
+		}
+		this.componentList.add(panelButton.getButtonOk());
+		this.componentList.add(panelButton.getButtonCancel());
+		this.setFocusTraversalPolicy(policy);
+		this.getRootPane().setDefaultButton(panelButton.getButtonOk());
+	}
+
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.mainPanel, "BufferDialog_mainPanel");
+		ComponentUIUtilities.setName(this.panelDataType, "BufferDialog_panelDataType");
+		ComponentUIUtilities.setName(this.labelDataType, "BufferDialog_labelDataType");
+		ComponentUIUtilities.setName(this.radioButtonPointOrRegion, "BufferDialog_radioButtonPointOrRegion");
+		ComponentUIUtilities.setName(this.radioButtonLine, "BufferDialog_radioButtonLine");
+		ComponentUIUtilities.setName(this.panelBufferType, "BufferDialog_panelBufferType");
+		ComponentUIUtilities.setName(this.panelLineBufferAnalyst, "BufferDialog_panelLineBufferAnalyst");
+		ComponentUIUtilities.setName(this.panelPointOrRegionAnalyst, "BufferDialog_panelPointOrRegionAnalyst");
+		ComponentUIUtilities.setName(this.panelButton, "BufferDialog_panelButton");
+		ComponentUIUtilities.setName(this.mapControl, "BufferDialog_mapControl");
+	}
+
+	/**
+	 * 存放两个checkBox和确定/取消按钮的面板即基层面板
+	 */
+	private void setPanelDataTypeLayout() {
+		GroupLayout panelDataTypeLayout = new GroupLayout(this.panelDataType);
+		panelDataTypeLayout.setAutoCreateGaps(true);
+		panelDataTypeLayout.setAutoCreateContainerGaps(true);
+		this.panelDataType.setLayout(panelDataTypeLayout);
+
+		//@formatter:off
+		panelDataTypeLayout.setHorizontalGroup(panelDataTypeLayout.createSequentialGroup()
+				.addComponent(this.labelDataType).addGap(30)
+				.addComponent(this.radioButtonPointOrRegion).addGap(30)
+				.addComponent(this.radioButtonLine));
+		panelDataTypeLayout.setVerticalGroup(panelDataTypeLayout.createSequentialGroup()
+				.addGroup(panelDataTypeLayout.createParallelGroup(Alignment.CENTER)
+						.addComponent(this.labelDataType)
+						.addComponent(this.radioButtonPointOrRegion)
+						.addComponent(this.radioButtonLine)));
+		//@formatter:on
+	}
+
+	private void removeRegisterEvent() {
+		this.radioButtonLine.removeActionListener(this.localActionListener);
+		this.radioButtonPointOrRegion.removeActionListener(this.localActionListener);
+		this.panelButton.getButtonOk().removeActionListener(this.localActionListener);
+		this.panelButton.getButtonCancel().removeActionListener(this.localActionListener);
+	}
+
 
 	/**
 	 * 根据地图以及树节点的选择情况，设置其缓冲区功能的核心面板属性
@@ -130,10 +233,6 @@ public class BufferDialog extends SmDialog {
 		this.panelBufferType.removeAll();
 		if (this.panelPointOrRegionAnalyst == null) {
 			this.panelPointOrRegionAnalyst = new PanelPointOrRegionAnalyst(some);
-		} else {
-			// 因为没有重新初始化面板，当切换时需要对“确定”按钮状态进行判断--yuanR 2017.3.7
-			// 点面面板仅对数据源情况进行判断
-			this.panelPointOrRegionAnalyst.judgeOKButtonisEnabled();
 		}
 		this.panelBufferType.add(this.panelPointOrRegionAnalyst);
 		pack();
@@ -145,9 +244,6 @@ public class BufferDialog extends SmDialog {
 		this.panelBufferType.removeAll();
 		if (this.panelLineBufferAnalyst == null) {
 			this.panelLineBufferAnalyst = new PanelLineBufferAnalyst(some);
-		} else {
-			// 因为没有重新初始化面板，当切换时需要对“确定”按钮状态进行判断--yuanR 2017.3.7
-			this.panelLineBufferAnalyst.judgeOKButtonisEnabled();
 		}
 		this.panelBufferType.add(this.panelLineBufferAnalyst);
 		pack();
@@ -155,90 +251,6 @@ public class BufferDialog extends SmDialog {
 		this.radioButtonLine.setSelected(true);
 	}
 
-	private void initTraversalPolicy() {
-		if (this.componentList.size() > 0) {
-			this.componentList.clear();
-		}
-		this.componentList.add(panelButton.getButtonOk());
-		this.componentList.add(panelButton.getButtonCancel());
-		this.setFocusTraversalPolicy(policy);
-		this.getRootPane().setDefaultButton(panelButton.getButtonOk());
-	}
-
-	private void initComponent() {
-		this.mainPanel = new JPanel();
-		// 初始化数据类型面板及其控件
-		this.labelDataType = new JLabel("DataType");
-		this.buttonGroup = new ButtonGroup();
-		this.buttonGroup.add(this.radioButtonPointOrRegion);
-		this.buttonGroup.add(this.radioButtonLine);
-		this.panelDataType = new JPanel();
-		// 初始化其他面板
-		this.panelBufferType = new JPanel();
-		this.panelBufferType.setLayout(new BorderLayout());
-		this.panelButton = new PanelButton();
-		initLayout();
-	}
-
-	private void setComponentName(){
-		ComponentUIUtilities.setName(this.radioButtonPointOrRegion,"BufferDialog_radioButtonPointOrRegion");
-		ComponentUIUtilities.setName(this.radioButtonLine,"BufferDialog_radioButtonLine");
-	}
-
-	/**
-	 * 设置其面板布局
-	 * yuanR 2017.3.6
-	 */
-	private void initLayout() {
-		setPanelDataTypeLayout();
-		this.mainPanel.setLayout(new BorderLayout());
-		this.mainPanel.add(this.panelDataType, BorderLayout.NORTH);
-		this.mainPanel.add(this.panelBufferType, BorderLayout.CENTER);
-		this.mainPanel.add(this.panelButton, BorderLayout.SOUTH);
-		this.getContentPane().add(this.mainPanel);
-	}
-
-
-	private void setPanelDataTypeLayout() {
-		GroupLayout panelDataTypeLayout = new GroupLayout(this.panelDataType);
-		panelDataTypeLayout.setAutoCreateGaps(true);
-		panelDataTypeLayout.setAutoCreateContainerGaps(true);
-		this.panelDataType.setLayout(panelDataTypeLayout);
-
-		//@formatter:off
-            panelDataTypeLayout.setHorizontalGroup(panelDataTypeLayout.createSequentialGroup()
-		            .addComponent(this.labelDataType).addGap(30)
-		            .addComponent(this.radioButtonPointOrRegion).addGap(30)
-		            .addComponent(this.radioButtonLine));
-            panelDataTypeLayout.setVerticalGroup(panelDataTypeLayout.createSequentialGroup()
-                      .addGroup(panelDataTypeLayout.createParallelGroup(Alignment.CENTER)
-                                .addComponent(this.labelDataType)
-		                        .addComponent(this.radioButtonPointOrRegion)
-                                .addComponent(this.radioButtonLine)));
-       //@formatter:on
-	}
-
-	private void initResources() {
-		this.setTitle(SpatialAnalystProperties.getString("String_SingleBufferAnalysis_Capital"));
-		this.labelDataType.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_DataType"));
-		this.radioButtonLine.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_Line"));
-		this.radioButtonPointOrRegion.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_PointAndRegion"));
-	}
-
-	/**
-	 * 添加监听事件
-	 */
-	private void registerEvent() {
-		this.radioButtonPointOrRegion.addActionListener(this.localActionListener);
-		this.radioButtonLine.addActionListener(this.localActionListener);
-		this.panelButton.getButtonOk().addActionListener(this.localActionListener);
-		this.panelButton.getButtonCancel().addActionListener(this.localActionListener);
-	}
-
-	private void removeRegisterEvent() {
-		this.radioButtonLine.removeActionListener(this.localActionListener);
-		this.radioButtonPointOrRegion.removeActionListener(this.localActionListener);
-	}
 
 	class LocalActionListener implements ActionListener {
 
@@ -256,10 +268,6 @@ public class BufferDialog extends SmDialog {
 		}
 	}
 
-	public void escapePressed() {
-		BufferDialog.this.dispose();
-	}
-
 	private void okButtonClicked() {
 		boolean flag = false;
 		try {
@@ -275,4 +283,9 @@ public class BufferDialog extends SmDialog {
 			BufferDialog.this.dispose();
 		}
 	}
+
+	public void escapePressed() {
+		BufferDialog.this.dispose();
+	}
+
 }

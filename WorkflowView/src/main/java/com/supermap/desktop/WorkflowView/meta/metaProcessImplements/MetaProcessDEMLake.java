@@ -27,7 +27,7 @@ import java.beans.PropertyChangeListener;
 public class MetaProcessDEMLake extends MetaProcess {
 	private final static String DEM_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String LAKE_DATA = CommonProperties.getString("String_GroupBox_LakeData");
-	private final static String OUTPUT_DATA = "OutputData";
+	private final static String OUTPUT_DATA = "DEMLakeResult";
 
 	private ParameterDatasourceConstrained DEMDatasource;
 	private ParameterSingleDataset DEMDataset;

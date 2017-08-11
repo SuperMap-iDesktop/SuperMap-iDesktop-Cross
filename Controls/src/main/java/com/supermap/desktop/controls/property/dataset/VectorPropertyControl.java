@@ -13,6 +13,7 @@ import com.supermap.desktop.ui.controls.CollectionDataset.JDialogCreateCollectio
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxCharset;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
@@ -26,6 +27,7 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
 public class VectorPropertyControl extends AbstractPropertyControl {
 
@@ -505,7 +507,22 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void buttonAddDatasetToCollection() {
-		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0);
+		ArrayList<DatasetVector> datasetVectors = new ArrayList<>();
+		ArrayList<CollectionDatasetInfo> collectionDatasetInfos = this.datasetVector.getCollectionDatasetInfos();
+		for (int i = 0; i < collectionDatasetInfos.size(); i++) {
+			CollectionDatasetInfo collectionDatasetInfo = collectionDatasetInfos.get(i);
+			DatasourceConnectionInfo connectionInfo = collectionDatasetInfo.getDatasourceConnectInfo();
+			if (null != connectionInfo) {
+				Datasource datasource = DatasourceUtilities.getDatasource(connectionInfo);
+				if (null != datasource) {
+					Dataset childDataset = datasource.getDatasets().get(collectionDatasetInfo.getDatasetName());
+					if (null != childDataset && childDataset instanceof DatasetVector) {
+						datasetVectors.add((DatasetVector) childDataset);
+					}
+				}
+			}
+		}
+		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0,datasetVectors.toArray(new DatasetVector[datasetVectors.size()]));
 		createCollectionDataset.isSetDatasetCollectionCount(true);
 		createCollectionDataset.setDatasetVector(this.datasetVector);
 		createCollectionDataset.showDialog();

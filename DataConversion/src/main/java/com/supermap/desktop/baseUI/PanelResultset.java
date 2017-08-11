@@ -6,11 +6,11 @@ import com.supermap.data.EncodeType;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IImportSettingResultset;
-import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.ImportInfo;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.importUI.PanelImport;
 import com.supermap.desktop.importUI.PanelTransformForImage;
 import com.supermap.desktop.properties.CommonProperties;
@@ -537,15 +537,11 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
 	}
 
 	private void initDatasetName() {
-		if (importSetting instanceof ImportSettingBIL || importSetting instanceof ImportSettingBIP
-				|| importSetting instanceof ImportSettingBSQ || importSetting instanceof ImportSettingTEMSClutter
-				|| importSetting instanceof ImportSettingTEMSVector) {
-			return;
-		}
 		if (layeroutType == 4 && hasSameName()) {
 			this.textFieldDatasetName.setText(importSetting.getTargetDatasetName());
 		} else if (!StringUtilities.isNullOrEmpty(importSetting.getTargetDatasetName()) && panelImports == null) {
-			this.textFieldDatasetName.setText(importSetting.getTargetDatasetName());
+			String availableName = this.comboBoxDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(importSetting.getTargetDatasetName());
+			this.textFieldDatasetName.setText(availableName);
 		} else if (StringUtilities.isNullOrEmpty(importSetting.getTargetDatasetName()) && panelImports == null) {
 			String textInfo = FileUtilities.getFileAlias(this.importSetting.getSourceFilePath());
 			if (null != textInfo) {

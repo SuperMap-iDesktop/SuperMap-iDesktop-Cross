@@ -12,9 +12,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.swing.event.EventListenerList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by xie on 2017/3/18.
@@ -65,7 +65,7 @@ public class Workflow implements IWorkflow {
 
 	@Override
 	public String serializeTo() {
-		Document doc = XmlUtilities.stringToDocument("");
+		Document doc = XmlUtilities.getEmptyDocument();
 
 		// 处理 workflow
 		Element workflowNode = doc.createElement("Workflow");
@@ -159,8 +159,13 @@ public class Workflow implements IWorkflow {
 			int serialID = Integer.valueOf(processNode.getAttribute("SerialID"));
 
 			String loaderClassName = processNode.getAttribute("LoaderClassName");
-			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName);
-			IProcess process = loader.loadProcess(new DefaultProcessDescriptor(className, key));
+			IProcessDescriptor descriptor = new DefaultProcessDescriptor();
+			Map<String, String> map = new ConcurrentHashMap<>();
+			map.put("ClassName", className);
+			map.put("Key", key);
+			descriptor.init(map);
+			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName, descriptor);
+			IProcess process = loader.loadProcess();
 			process.setSerialID(serialID);
 			addProcess(process);
 		}
@@ -191,24 +196,6 @@ public class Workflow implements IWorkflow {
 				addRelation(dataMatch);
 			}
 		}
-	}
-
-	private void test(Element node) {
-		Element processNode = (Element) XmlUtilities.getChildElementNodeByName(node, "Process");
-		String processLoaderClass = processNode.getAttribute("processLoader");
-		String processDescriptorClass = processNode.getAttribute("processDescriptor");
-
-		IProcessLoader processLoader = WorkflowUtil.newProcessLoader(processLoaderClass);
-		IProcessDescriptor processDescriptor = WorkflowUtil.newProcessDescriptor(processDescriptorClass);
-
-		Map<String, String> properties = new HashMap<>();
-		Element[] childNodes = XmlUtilities.getChildElementNodesByName(processNode);
-		for (int i = 0; i < childNodes.length; i++) {
-			Element childNode = childNodes[i];
-			properties.put(childNode.getNodeName(), childNode.getNodeValue());
-		}
-		processDescriptor.init(properties);
-		IProcess process = processLoader.loadProcess(processDescriptor);
 	}
 
 	public IProcess getProcess(String key, int serialID) {
