@@ -34,7 +34,7 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 	private ParameterComboBox parameterAggregationType = new ParameterComboBox().setDescribe(ProcessProperties.getString("String_AggregationType"));
 	private ParameterComboBox parameterMeshType = new ParameterComboBox(ProcessProperties.getString("String_MeshType"));
 	private ParameterTextField parameterBounds = new ParameterTextField().setDescribe(ProcessProperties.getString("String_AnalystBounds"));
-	private ParameterTextField parameterResolution = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Resolution"));
+	private ParameterTextField parameterResolution = new ParameterTextField().setDescribe(ProcessProperties.getString("String_MeshSize"));
 	private ParameterTextField parameterStaticModel = new ParameterTextField().setDescribe(ProcessProperties.getString("String_StaticModel"));
 	private ParameterTextField parameterWeightIndex = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Index"));
 
@@ -52,7 +52,7 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 		parameterMeshType.setSelectedItem(parameterDataNodes[0]);
 		parameterMeshType.setItems(parameterDataNodes);
 		parameterBounds.setSelectedItem("-74.050,40.650,-73.850,40.850");
-		parameterResolution.setSelectedItem("0.001");
+		parameterResolution.setSelectedItem("100");
 		parameterStaticModel.setSelectedItem("max");
 		parameterWeightIndex.setSelectedItem("col7");
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
@@ -66,8 +66,8 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 				parameterMeshType,
 				parameterBounds,
 				parameterResolution,
-				parameterStaticModel,
-				parameterWeightIndex);
+				parameterWeightIndex,
+				parameterStaticModel);
 		parameters.setParameters(
 				parameterIServerLogin,
 				parameterInputDataType,
