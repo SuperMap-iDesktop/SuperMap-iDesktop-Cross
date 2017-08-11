@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui.controls.borderPanel;
 
+import com.supermap.data.DatasetVector;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxLengthUnit;
@@ -55,6 +56,16 @@ public class PanelBufferRadius extends JPanel {
 		initLayout();
 	}
 
+	public void initDataset(DatasetVector dataset) {
+		if (dataset != null) {
+			numericFieldComboBox.setDataset(dataset);
+			// 初始化半径长度值
+			numericFieldComboBox.setSelectedItem("10");
+		} else {
+			numericFieldComboBox.setEnabled(false);
+		}
+	}
+
 	private void initComponent() {
 		this.labelUnit = new JLabel("Unit");
 		this.labelField = new JLabel("Length");
@@ -65,9 +76,9 @@ public class PanelBufferRadius extends JPanel {
 		this.setBorder(border);
 	}
 
-	private void setComponentName(){
-		ComponentUIUtilities.setName(this.comboBoxUnit,"PanelBufferRadius_comboBoxUnit");
-		ComponentUIUtilities.setName(this.numericFieldComboBox,"PanelBufferRadius_numericFieldComboBox");
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.comboBoxUnit, "PanelBufferRadius_comboBoxUnit");
+		ComponentUIUtilities.setName(this.numericFieldComboBox, "PanelBufferRadius_numericFieldComboBox");
 	}
 
 	private void initResources() {
@@ -87,15 +98,15 @@ public class PanelBufferRadius extends JPanel {
 						.addComponent(this.labelUnit)
 						.addComponent(this.labelField))
 				.addGroup(panelBufferDataLayout.createParallelGroup()
-						.addComponent(this.comboBoxUnit,5,5,Short.MAX_VALUE)
-						.addComponent(this.numericFieldComboBox,5,5,Short.MAX_VALUE)));
+						.addComponent(this.comboBoxUnit, 5, 5, Short.MAX_VALUE)
+						.addComponent(this.numericFieldComboBox, 5, 5, Short.MAX_VALUE)));
 		panelBufferDataLayout.setVerticalGroup(panelBufferDataLayout.createSequentialGroup()
 				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelUnit)
-						.addComponent(this.comboBoxUnit,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.comboBoxUnit, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelField)
-						.addComponent(this.numericFieldComboBox,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)).addGap(5,5,Short.MAX_VALUE));
+						.addComponent(this.numericFieldComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)).addGap(5, 5, Short.MAX_VALUE));
 
 		//@formatter:on
 	}

@@ -151,7 +151,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.panelBufferData.initDataset(DatasetType.LINE);
 		this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(
 				this.panelBufferData.getComboBoxBufferDataDatasource().getSelectedDatasource());
-		this.panelLineBufferRadiu.initDataset((DatasetVector)this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset());
+		this.panelLineBufferRadiu.initDataset((DatasetVector) this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset());
 	}
 
 
