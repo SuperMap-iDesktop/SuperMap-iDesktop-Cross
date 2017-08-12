@@ -95,9 +95,8 @@ public class TasksManager {
 
 	public TasksManager(Workflow workflow) {
 		this.workflow = workflow;
-
-		loadWorkflow(workflow);
 		taskStateManager = new TaskStateManager(this, workflow);
+		loadWorkflow(workflow);
 
 		this.scheduler = new Timer(500, new SchedulerActionListener());
 //		this.executor = new DefaultWorkflowExecutor();

@@ -143,17 +143,27 @@ public class FrameMenuManager implements IFrameMenuManager {
 
 	public boolean removeChildMenu(WindowType windowType) {
 		boolean result = false;
+
 		try {
-			// 取得总菜单的数目，子菜单的数目=总数目-主菜单的数目，即this.listMenus.size()
-			// modify by huchenpu 20151215
-			// 注意最后一个菜单是帮助，要移除帮助前面的所有子菜单
-			// 所以从 count - 2 开始移除，移除到 this.listMenus.size() - 1 的位置
-			int count = this.frameMenuBar.getMenuCount();
-			for (int index = count - 2; index >= this.listMenus.size() - 1; index--) {
-				this.frameMenuBar.remove(index);
+			ArrayList<IMenu> childMenus = this.childFrameMenus.get(windowType);
+			if (childMenus == null) {
+				return false;
 			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
+
+			for (int i = 0; i < childMenus.size(); i++) {
+				IMenu menu = childMenus.get(i);
+
+				if (menu instanceof JMenuItem) {
+					int index = this.frameMenuBar.getComponentIndex(((JMenuItem) menu));
+
+					if (index >= 0) {
+						this.frameMenuBar.remove(index);
+					}
+				}
+			}
+			result = true;
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
 		}
 		return result;
 	}
