@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1501676819392
+Bnd-LastModified: 1502505004219
 Build-Jdk: 1.7.0_80
 Built-By: highsad
 Bundle-Activator: com.supermap.desktop.dataeditor.DataEditorActivator
