@@ -15,9 +15,9 @@ public class ProcessTreeNodeBean {
 	private String className;
 	private String name;
 
-	private static final Icon firstIcon = ProcessResources.getIcon("/processresources/Tree_Node1.png");
+	private static final Icon firstIcon = ProcessResources.getIcon("/processresources/Image_ProcessGroup.png");
 	private static final Icon secondIcon = ProcessResources.getIcon("/processresources/Tree_Node2.png");
-	private static final Icon thirdIcon = ProcessResources.getIcon("/processresources/Tree_Node3.png");
+	private static final Icon thirdIcon = ProcessResources.getIcon("/processresources/Image_Process.png");
 
 	private ArrayList<ProcessTreeNodeBean> processTreeNodeBeanArrayList = new ArrayList<>();
 

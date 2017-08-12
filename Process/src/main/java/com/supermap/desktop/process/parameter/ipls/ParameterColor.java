@@ -62,7 +62,7 @@ public class ParameterColor extends AbstractParameter implements ISelectionParam
 		return this.value;
 	}
 
-	public long getColorRBG() {
-		return ColorsUtilities.getColorRgbValue(value);
+	public long getColorABGR() {
+		return ColorsUtilities.getColorABGRValue(value);
 	}
 }

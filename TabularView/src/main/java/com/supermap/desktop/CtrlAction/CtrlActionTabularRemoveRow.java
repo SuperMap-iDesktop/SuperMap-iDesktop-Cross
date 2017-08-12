@@ -15,6 +15,7 @@ import javax.swing.*;
 
 /**
  * @author XiaJT
+ * 属性表删除行
  */
 public class CtrlActionTabularRemoveRow extends CtrlAction {
 	public CtrlActionTabularRemoveRow(IBaseItem caller, IForm formClass) {
@@ -28,11 +29,19 @@ public class CtrlActionTabularRemoveRow extends CtrlAction {
 		if (selectedRows.length > 0) {
 			if (UICommonToolkit.showConfirmDialogWithCancel(CoreProperties.getString("String_TabularRemoveRow_Warning")) == JOptionPane.YES_OPTION) {
 				formTabular.deleteRows(selectedRows);
-
 				TabularUtilities.refreshTabularDatas(formTabular.getDataset());
+
+				// 当删除操作完成后，高量显示下一条数据-yuanR
+				if (formTabular.getRowCount() > 0) {
+					int intervalRow = selectedRows[0];
+					if (intervalRow >= formTabular.getjTableTabular().getRowCount()) {
+						intervalRow = intervalRow - 1;
+					}
+					formTabular.getjTableTabular().setRowSelectionInterval(intervalRow, intervalRow);
+					formTabular.getjTableTabular().setColumnSelectionInterval(0, formTabular.getjTableTabular().getColumnCount() - 1);
+				}
 			}
 		}
-
 	}
 
 	@Override
@@ -42,7 +51,8 @@ public class CtrlActionTabularRemoveRow extends CtrlAction {
 			boolean result = true;
 
 			FormTabular formTabular = (FormTabular) activeForm;
-			if (formTabular.getSelectedRow() == -1 || formTabular.getRecordset().isEmpty()) {
+
+			if (formTabular.getSelectedRow() == -1 || formTabular.getRecordset().isEmpty() || (formTabular.getSelectedRows().length == formTabular.getRowCount() && formTabular.getRowCount() != 1)) {
 				result = false;
 			}
 			Dataset dataset = formTabular.getDataset();

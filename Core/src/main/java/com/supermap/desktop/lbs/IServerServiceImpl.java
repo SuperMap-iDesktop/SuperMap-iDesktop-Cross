@@ -31,11 +31,10 @@ public class IServerServiceImpl implements IServerService {
     private final String HTTP_STR = "http://";
 	private static final String KERNELDENSITY_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/density.json";
 	private static final String BUILDCACHE_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/mapping/buildCache.json";
-	private static final String OVERLAYANALYSTGEO_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/overlayanalystgeo.json";
-	private static final String GRIDREGIONAGGREGATION_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/aggregatePoints.json";
+	private static final String OVERLAYANALYSTGEO_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/vectorclip.json";
+	private static final String GRIDREGIONAGGREGATION_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/aggregatepoints.json";
 	private static final String SINGLEQUERY_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/query.json";
-	private static final String DATASOURCES = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/query.json";
-
+	private static final String SUMMARYREGION_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/summaryregion.json";
     private final String LOGIN_URL = "/iserver/services/security/login.json";
     private static final Charset UTF8 = Charsets.UTF_8;
     private static final String JSON_UTF8_CONTENT_TPYE = "application/json;;charset=" + UTF8.name();
@@ -82,8 +81,10 @@ public class IServerServiceImpl implements IServerService {
 			url = HTTP_STR +IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + GRIDREGIONAGGREGATION_URL;
 		}else if(type.contains("overlayanalystgeo")){
 			url = HTTP_STR +IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + OVERLAYANALYSTGEO_URL;
-		}else if(type.contains("singleQuery")){
+		}else if(type.contains("SingleQuery")){
 			url = HTTP_STR +IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + SINGLEQUERY_URL;
+		}else if(type.contains("SummaryRegion")){
+			url = HTTP_STR +IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + SUMMARYREGION_URL;
 		}
 		return returnJobResult(url, jsonBody);
 	}

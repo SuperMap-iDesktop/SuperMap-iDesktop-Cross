@@ -1,12 +1,6 @@
 package com.supermap.desktop.WorkflowView;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.WorkflowView.meta.WorkflowParser;
-import com.supermap.desktop.process.core.*;
-import com.supermap.desktop.process.events.RelationAddedEvent;
-import com.supermap.desktop.process.events.RelationAddedListener;
-import com.supermap.desktop.process.events.RelationRemovingEvent;
-import com.supermap.desktop.process.events.RelationRemovingListener;
 import com.supermap.desktop.WorkflowView.graphics.GraphCanvas;
 import com.supermap.desktop.WorkflowView.graphics.connection.ConnectionLineGraph;
 import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovingEvent;
@@ -18,8 +12,18 @@ import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.GraphConnec
 import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.GraphDragAction;
 import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.PopupMenuAction;
 import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.Selection;
-import com.supermap.desktop.WorkflowView.meta.MetaProcess;
+import com.supermap.desktop.process.ProcessManager;
+import com.supermap.desktop.process.core.DataMatch;
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.IRelation;
+import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.process.events.RelationAddedEvent;
+import com.supermap.desktop.process.events.RelationAddedListener;
+import com.supermap.desktop.process.events.RelationRemovingEvent;
+import com.supermap.desktop.process.events.RelationRemovingListener;
+import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
+import com.supermap.desktop.utilities.StringUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -378,8 +382,14 @@ public class WorkflowCanvas extends GraphCanvas
 				if (currentDataFlavor != null) {
 					try {
 						Object transferData = transferable.getTransferData(currentDataFlavor);
-						if (transferData instanceof String) {
-							MetaProcess metaProcess = WorkflowParser.getMetaProcess((String) transferData);
+						if (!(transferData instanceof String)) {
+							return;
+						}
+
+						String processKey = (String) transferData;
+						if (!StringUtilities.isNullOrEmpty(processKey)) {
+							IProcessLoader loader = ProcessManager.INSTANCE.findProcess(processKey);
+							IProcess metaProcess = loader.loadProcess();
 							if (metaProcess == null) {
 								continue;
 							}

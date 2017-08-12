@@ -12,6 +12,8 @@ public interface IProcessDescriptor {
 
 	String getKey();
 
+	int getIndex();
+
 	/**
 	 * 使用 properties 属性集初始化自身属性
 	 *

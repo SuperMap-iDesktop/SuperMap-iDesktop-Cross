@@ -14,6 +14,13 @@ import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.controls.utilities.WorkspaceUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.FormLoadedListener;
+import com.supermap.desktop.process.ProcessManager;
+import com.supermap.desktop.process.loader.DefaultProcessGroup;
+import com.supermap.desktop.process.loader.IProcessDescriptor;
+import com.supermap.desktop.process.loader.IProcessGroup;
+import com.supermap.desktop.process.loader.IProcessLoader;
+import com.supermap.desktop.process.ui.ToolBoxMenu;
+import com.supermap.desktop.process.util.WorkflowUtil;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.utilities.*;
 import com.supermap.layout.MapLayout;
@@ -156,20 +163,45 @@ public class FormBase extends JFrame implements IFormMain {
 				}
 			});
 
+			loadProcessesMenu();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
 
-	public void loadProcesses() {
+	private void loadProcessesMenu() {
+		if (ProcessManager.INSTANCE == null) {
+			return;
+		}
 
+		JMenuBar menuBar = this.frameMenuManager.getMenuBar();
+		if (menuBar == null) {
+			return;
+		}
+
+		menuBar.add(new ToolBoxMenu(), menuBar.getComponentCount() - 1);
+	}
+
+	public void loadProcesses() {
+		try {
+			PluginManager pluginManager = Application.getActiveApplication().getPluginManager();
+			for (int i = 0; i < pluginManager.getCount(); i++) {
+				loadProcesses(pluginManager.get(i));
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 
 	private void loadProcesses(Plugin plugin) {
+		if (plugin == null || plugin.getPluginInfo() == null) {
+			return;
+		}
+
 		boolean isProcessBundleLoaded = false;
 		for (int i = 0; i < Application.getActiveApplication().getPluginManager().getCount(); i++) {
 			Plugin pl = Application.getActiveApplication().getPluginManager().get(i);
-			if (pl.equals("SuperMap.Desktop.process")) {
+			if (pl.getName().equals("SuperMap.Desktop.process")) {
 				isProcessBundleLoaded = true;
 				break;
 			}
@@ -181,8 +213,51 @@ public class FormBase extends JFrame implements IFormMain {
 				return;
 			}
 
-			Element[] processGroupNodes = XmlUtilities.getChildElementNodesByName(processManagerElement, "ProcessGroup");
-			Element[] processNodes = XmlUtilities.getChildElementNodesByName(processManagerElement, "Process");
+			loadProcessGroup(null, processManagerElement);
+		}
+	}
+
+	private void loadProcessGroup(IProcessGroup parent, Element groupElement) {
+		IProcessGroup group = null;
+
+		if (groupElement.getNodeName().equals("ProcessManager")) {
+			group = ProcessManager.INSTANCE;
+		} else if (groupElement.getNodeName().equals("ProcessGroup")) {
+			if (parent == null) {
+				return;
+			}
+
+			String groupID = groupElement.getAttribute("id");
+			String groupTitle = groupElement.getAttribute("title");
+			String groupIndex = groupElement.getAttribute("index");
+
+			group = parent.getGroup(groupID);
+			if (group == null) {
+				group = new DefaultProcessGroup(groupID, groupTitle, groupIndex, parent);
+			}
+		}
+
+		Element[] processGroupNodes = XmlUtilities.getChildElementNodesByName(groupElement, "ProcessGroup");
+		Element[] processNodes = XmlUtilities.getChildElementNodesByName(groupElement, "Process");
+
+		// 加载子 group 节点
+		for (int i = 0; i < processGroupNodes.length; i++) {
+			loadProcessGroup(group, processGroupNodes[i]);
+		}
+
+		for (int i = 0; i < processNodes.length; i++) {
+			Element processNode = processNodes[i];
+			String loaderClassName = processNode.getAttribute("loaderClass");
+			String descriptorClassName = processNode.getAttribute("descriptorClass");
+
+			// 创建 ProcessDescriptor
+			IProcessDescriptor descriptor = WorkflowUtil.newProcessDescriptor(descriptorClassName);
+			descriptor.init(XmlUtilities.getChildElementNodesMap(processNode));
+
+			// 创建 ProcessLoader
+			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName, descriptor);
+
+			group.addProcess(loader);
 		}
 	}
 

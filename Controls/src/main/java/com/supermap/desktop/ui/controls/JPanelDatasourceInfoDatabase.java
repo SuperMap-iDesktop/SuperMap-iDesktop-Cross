@@ -283,8 +283,9 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 			this.add(this.jCheckBoxReadonly, new GridBagConstraintsHelper(2, 6, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(1, 0));
 			this.add(new JPanel(), new GridBagConstraintsHelper(0, 7, 3, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 			this.add(this.jButtonDCF, new GridBagConstraintsHelper(0, 8, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 0, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-			this.jLabelMaxConnPoolNum.setVisible(false);
-			this.jTextFieldMaxConnPoolNum.setVisible(false);
+			boolean showMaxConnPoolNum = engineType == EngineType.POSTGRESQL || engineType == EngineType.ORACLEPLUS || engineType == EngineType.ORACLESPATIAL;
+			this.jLabelMaxConnPoolNum.setVisible(showMaxConnPoolNum);
+			this.jTextFieldMaxConnPoolNum.setVisible(showMaxConnPoolNum);
 			this.warningForDatasourceAlias.hideWarning();
 		}
 	}
@@ -379,7 +380,7 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 		jPasswordField.setText(connectionInfo.getPassword());
 		jTextFieldDatasourceAlias.setText(connectionInfo.getAlias());
 		jCheckBoxReadonly.setSelected(connectionInfo.isReadOnly());
-		if (engineType == EngineType.ORACLEPLUS || engineType == EngineType.POSTGRESQL) {
+		if (engineType == EngineType.ORACLEPLUS || engineType == EngineType.ORACLESPATIAL || engineType == EngineType.POSTGRESQL) {
 			jTextFieldMaxConnPoolNum.setText(String.valueOf(connectionInfo.getMaxConnPoolNum()));
 		}
 	}
@@ -573,9 +574,6 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 		jLabelEmptyUser.setVisible(false);
 
 		try {
-			boolean showMaxConnPoolNum = engineType == EngineType.POSTGRESQL || engineType == EngineType.ORACLEPLUS;
-			this.jLabelMaxConnPoolNum.setVisible(showMaxConnPoolNum);
-			this.jTextFieldMaxConnPoolNum.setVisible(showMaxConnPoolNum);
 			if (engineType == EngineType.ORACLEPLUS || engineType == EngineType.ORACLESPATIAL || engineType == EngineType.DB2) {
 				jLabelServer.setText(ControlsProperties.getString("String_Label_InstanceName"));
 				jLabelEmptyServer.setToolTipText(ControlsProperties.getString("String_ToolTipText_InstanceShouldNotEmpty"));
@@ -654,7 +652,7 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 			connectionInfo.setPassword(jPasswordFieldPasswordValue);
 			if (EngineType.SQLPLUS == engineType) {
 				connectionInfo.setDriver("SQL SERVER");
-			} else if ((EngineType.ORACLEPLUS == engineType || EngineType.POSTGRESQL == engineType)
+			} else if ((EngineType.ORACLEPLUS == engineType || EngineType.ORACLESPATIAL == engineType || EngineType.POSTGRESQL == engineType)
 					&& StringUtilities.isInteger(jTextFieldMaxConnPoolNum.getText())) {
 				connectionInfo.setMaxConnPoolNum(Integer.valueOf(jTextFieldMaxConnPoolNum.getText()));
 			}

@@ -12,7 +12,7 @@ public class MetaProcessUserDefineProjection extends MetaProcess {
 
 	@Override
 	public String getTitle() {
-		return ProcessProperties.getString("UserDefineProjection");
+		return ProcessProperties.getString("String_UserDefineProjection");
 	}
 
 	@Override

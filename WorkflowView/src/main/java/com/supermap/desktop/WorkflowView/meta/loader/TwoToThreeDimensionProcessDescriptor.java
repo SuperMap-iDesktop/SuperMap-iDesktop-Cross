@@ -1,18 +1,15 @@
-package com.supermap.desktop.process.loader;
+package com.supermap.desktop.WorkflowView.meta.loader;
+
+import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
 
 import java.util.Map;
 
 /**
- * Created by highsad on 2017/8/5.
+ * Created By Chens on 2017/8/12 0012
  */
-public class ImportProcessDescriptor extends DefaultProcessDescriptor {
+public class TwoToThreeDimensionProcessDescriptor extends DefaultProcessDescriptor {
 	public final static String PROPERTY_IMPORT_TYPE = "ImportType";
-
 	private String importType;
-
-	public ImportProcessDescriptor(String className, String key) {
-		super(className, key);
-	}
 
 	public String getImportType() {
 		return importType;

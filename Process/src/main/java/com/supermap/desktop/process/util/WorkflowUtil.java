@@ -2,9 +2,14 @@ package com.supermap.desktop.process.util;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
+import com.supermap.desktop.process.loader.DefaultProcessLoader;
 import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.utilities.StringUtilities;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by highsad on 2017/7/27.
@@ -14,11 +19,11 @@ public class WorkflowUtil {
 		// 工具类，不提供构造函数
 	}
 
-	public static IProcessLoader newProcessLoader(String loaderClassName) {
+	public static IProcessLoader newProcessLoader(String loaderClassName, IProcessDescriptor descriptor) {
 		IProcessLoader loader = null;
 
 		if (StringUtilities.isNullOrEmpty(loaderClassName)) {
-			return null;
+			return new DefaultProcessLoader(descriptor);
 		}
 
 		Class classInstance = Application.getActiveApplication().getPluginManager().loadClass(loaderClassName);
@@ -32,10 +37,15 @@ public class WorkflowUtil {
 		}
 
 		try {
-			loader = (IProcessLoader) classInstance.newInstance();
+			Constructor constructor = classInstance.getConstructor(IProcessDescriptor.class);
+			loader = (IProcessLoader) constructor.newInstance(descriptor);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return loader;
@@ -45,7 +55,7 @@ public class WorkflowUtil {
 		IProcessDescriptor descriptor = null;
 
 		if (StringUtilities.isNullOrEmpty(processDescriptorClass)) {
-			return null;
+			return new DefaultProcessDescriptor();
 		}
 
 		Class classInstance = Application.getActiveApplication().getPluginManager().loadClass(processDescriptorClass);
@@ -54,7 +64,7 @@ public class WorkflowUtil {
 			return null;
 		}
 
-		if (!IProcessLoader.class.isAssignableFrom(classInstance)) {
+		if (!IProcessDescriptor.class.isAssignableFrom(classInstance)) {
 			return null;
 		}
 

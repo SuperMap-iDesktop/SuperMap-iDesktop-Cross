@@ -8,6 +8,7 @@ import com.supermap.desktop.process.tasks.events.WorkerStateChangedEvent;
 import com.supermap.desktop.process.tasks.events.WorkerStateChangedListener;
 import com.supermap.desktop.process.tasks.events.WorkersChangedEvent;
 import com.supermap.desktop.process.tasks.events.WorkersChangedListener;
+import com.supermap.desktop.process.ui.SingleProgressPanel;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

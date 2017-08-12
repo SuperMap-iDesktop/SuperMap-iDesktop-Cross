@@ -17,7 +17,7 @@ public interface IFormTabular extends IForm {
 
 	/**
 	 * 设置数据表
-	 * 
+	 *
 	 * @param recordset
 	 * @return
 	 */
@@ -27,21 +27,21 @@ public interface IFormTabular extends IForm {
 
 	/**
 	 * 获取数据行数
-	 * 
+	 *
 	 * @return
 	 */
 	int getRowCount();
 
 	/**
 	 * 获取选中行
-	 * 
+	 *
 	 * @return
 	 */
 	int getSelectedRow();
 
 	/**
 	 * 获取选中行
-	 * 
+	 *
 	 * @return
 	 */
 	int[] getSelectedRows();
@@ -65,7 +65,7 @@ public interface IFormTabular extends IForm {
 
 	/**
 	 * 获取选中的列
-	 * 
+	 *
 	 * @return
 	 */
 	int[] getSelectedColumns();
@@ -92,23 +92,22 @@ public interface IFormTabular extends IForm {
 
 	/**
 	 * 获取字段名称
-	 * 
-	 * @param columnIndex
-	 *            列号
+	 *
+	 * @param columnIndex 列号
 	 * @return
 	 */
 	String getSelectColumnName(int columnIndex);
 
 	/**
 	 * 获取属性表table容器
-	 * 
+	 *
 	 * @return
 	 */
 	JTable getjTableTabular();
 
 	/**
 	 * 获取属性表list容器
-	 * 
+	 *
 	 * @return
 	 */
 	JList getRowHeader();

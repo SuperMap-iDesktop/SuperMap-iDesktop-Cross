@@ -1,11 +1,12 @@
-package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
+package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 
-import com.supermap.analyst.spatialanalyst.Generalization;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.topology.TopologyProcessing;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -15,19 +16,23 @@ import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
+
 /**
- * Created by lixiaoyao on 2017/7/22.
+ * Created by lixiaoyao on 2017/7/21.
  */
-public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
+public class MetaProcessPickupBorder extends MetaProcess {
+
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
-	private final static String OUTPUT_DATA = "TrunkCenterLineResult";
+	private final static String OUTPUT_DATA = "PickupResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset dataset;
 
 	private ParameterSaveDataset saveDataset;
+	private ParameterCheckBox isPreProcessed;
 
-	public MetaProcessRegionTrunkToCenterLine() {
+
+	public MetaProcessPickupBorder() {
 		initParameters();
 		initParameterConstraint();
 		initParametersState();
@@ -36,8 +41,9 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 
 	private void initParameters() {
 		this.sourceDatasource = new ParameterDatasourceConstrained();
-		this.dataset = new ParameterSingleDataset(DatasetType.REGION);
+		this.dataset = new ParameterSingleDataset(DatasetType.REGION, DatasetType.LINE);
 		this.saveDataset = new ParameterSaveDataset();
+		this.isPreProcessed = new ParameterCheckBox(CommonProperties.getString("String_TopyPreProcessed"));
 
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
@@ -45,8 +51,12 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 		ParameterCombine targetData = new ParameterCombine();
 		targetData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		targetData.addParameters(saveDataset);
-		this.parameters.setParameters(sourceData, targetData);
+		ParameterCombine paramSet = new ParameterCombine();
+		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
+		paramSet.addParameters(isPreProcessed);
+		this.parameters.setParameters(sourceData, paramSet, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.REGION, sourceData);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.LINE, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, targetData);
 	}
 
@@ -59,12 +69,14 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 	}
 
 	private void initParametersState() {
-		Dataset defaultDataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
+		Dataset defaultDataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION, DatasetType.LINE);
 		if (defaultDataset != null) {
 			sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
-			dataset.setSelectedItem(defaultDataset);
+			if (defaultDataset.getType() == DatasetType.REGION || defaultDataset.getType() == DatasetType.LINE) {
+				dataset.setSelectedItem(defaultDataset);
+			}
 			saveDataset.setResultDatasource(defaultDataset.getDatasource());
-			saveDataset.setSelectedItem(defaultDataset.getDatasource().getDatasets().getAvailableDatasetName("result_RegionTrunkToCenterLine"));
+			saveDataset.setSelectedItem(defaultDataset.getDatasource().getDatasets().getAvailableDatasetName("result_PickupBorder"));
 		}
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
@@ -72,14 +84,16 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 	}
 
 	private void initParametersListener() {
-		// do nohting ,Because the weather is so hot
+		// do nohting ,just for good looking
+		// Yes, that is so proud
 	}
+
 
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(MetaProcessRegionTrunkToCenterLine.this, 0, "start"));
+			fireRunning(new RunningEvent(MetaProcessPickupBorder.this, 0, "start"));
 
 			String datasetName = saveDataset.getDatasetName();
 			datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
@@ -90,17 +104,22 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 				src = (DatasetVector) dataset.getSelectedItem();
 			}
 
-			Recordset recordset = src.getRecordset(false, CursorType.STATIC);
+			boolean isPreProcess = false;
+			if (this.isPreProcessed.getSelectedItem().equals("true")) {
+				isPreProcess = true;
+			}
 
-			Generalization.addSteppedListener(steppedListener);
-			Dataset result = Generalization.regionToCenterLine(recordset, this.saveDataset.getResultDatasource(), datasetName);
+			TopologyProcessing.addSteppedListener(steppedListener);
+			Dataset result = TopologyProcessing.pickupBorder(src, this.saveDataset.getResultDatasource(), datasetName, isPreProcess);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
-			fireRunning(new RunningEvent(MetaProcessRegionTrunkToCenterLine.this, 100, "finished"));
+			fireRunning(new RunningEvent(MetaProcessPickupBorder.this, 100, "finished"));
+
+
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			Generalization.removeSteppedListener(steppedListener);
+			TopologyProcessing.removeSteppedListener(steppedListener);
 		}
 		return isSuccessful;
 	}
@@ -112,11 +131,11 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.REGION_TRUNK_TO_CENTERLINE;
+		return MetaKeys.PICKUP_BORDER;
 	}
 
 	@Override
 	public String getTitle() {
-		return CommonProperties.getString("String_RegionTrunkToCenterLine");
+		return CommonProperties.getString("String_PickupBorder");
 	}
 }
