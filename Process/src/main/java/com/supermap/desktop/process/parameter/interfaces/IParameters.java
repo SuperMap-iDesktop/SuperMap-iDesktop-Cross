@@ -2,6 +2,7 @@ package com.supermap.desktop.process.parameter.interfaces;
 
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.process.parameter.events.ParameterPropertyChangedListener;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
@@ -44,4 +45,12 @@ public interface IParameters {
 	void replace(ArrayList<IParameter> sources, IParameter... results);
 
 	IProcess getProcess();
+
+	boolean isReady();
+
+	void addParameterPropertyChangedListener(ParameterPropertyChangedListener parameterPropertyChangedListener);
+
+	void removeParameterPropertyChangedListener(ParameterPropertyChangedListener parameterPropertyChangedListener);
+
+
 }

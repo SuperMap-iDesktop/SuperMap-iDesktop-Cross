@@ -20,7 +20,18 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterFieldGroup;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSQLExpression;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSimpleStatisticsFieldGroup;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -188,7 +199,6 @@ public class MetaProcessDissolve extends MetaProcess {
 			StatisticsType[] statisticsTypes = this.statisticsFieldGroup.getSelectedStatisticsType();
 			String[] statisticsFieldNames = getFieldName(this.statisticsFieldGroup.getSelectedFields());
 			String[] fieldNames = getFieldName(this.fieldsDissolve.getSelectedFields());
-
 			dissolveParameter.setFieldNames(fieldNames);
 			dissolveParameter.setStatisticsFieldNames(statisticsFieldNames);
 			dissolveParameter.setStatisticsTypes(statisticsTypes);
@@ -209,16 +219,11 @@ public class MetaProcessDissolve extends MetaProcess {
 	}
 
 	private String[] getFieldName(FieldInfo fieldInfo[]) {
-		try {
-			String[] fieldNames = new String[fieldInfo.length];
-			for (int i = 0; i < fieldInfo.length; i++) {
-				fieldNames[i] = fieldInfo[i].getName();
-			}
-			return fieldNames;
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-			return null;
+		String[] fieldNames = new String[fieldInfo.length];
+		for (int i = 0; i < fieldInfo.length; i++) {
+			fieldNames[i] = fieldInfo[i].getName();
 		}
+		return fieldNames;
 	}
 
 	@Override

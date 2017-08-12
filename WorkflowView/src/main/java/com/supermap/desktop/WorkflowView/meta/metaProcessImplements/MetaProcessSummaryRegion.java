@@ -14,13 +14,23 @@ import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
+import com.supermap.desktop.process.parameter.ipls.ParameterBigDatasourceDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterIServerLogin;
+import com.supermap.desktop.process.parameter.ipls.ParameterInputDataType;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSwitch;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.CancellationException;
@@ -141,7 +151,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterCombineSetting.addParameters(parameterSummaryType, parameterSwitch, parameterStandardFields, switchStandardFields,
 				parameterWeightedFields, switchWeightedFields, parametersumShape);
 		parameters.addParameters(parameterIServerLogin, parameterInputDataType, parameterCombineSetting);
-		parameters.addOutputParameters("SummaryRegionResult", BasicTypes.STRING, null);
+		parameters.getOutputs().addData("SummaryRegionResult", Type.UNKOWN);
 	}
 
 	private void initConstraint() {
@@ -238,7 +248,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 				messageBus.run();
 			}
 			fireRunning(new RunningEvent(this, 100, "finished"));
-			parameters.getOutputs().getData("SummaryRegionResult").setValue("");
+			parameters.getOutputs().getData("OverlayResult").setValue("");
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 			return false;

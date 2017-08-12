@@ -1,12 +1,14 @@
 package com.supermap.desktop.ui.controls.smTables.models;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.FieldType;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.process.parameters.ParameterPanels.ParameterFieldGroupPanel;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.smTables.IModel;
 import com.supermap.desktop.ui.controls.smTables.IModelController;
-import com.supermap.desktop.ui.controls.smTables.ITable;
 import com.supermap.desktop.ui.controls.smTables.ModelControllerAdapter;
 import com.supermap.desktop.utilities.ArrayUtilities;
 
@@ -154,9 +156,9 @@ public class ModelFieldNameCaptionType extends DefaultTableModel implements IMod
 		public void selectedSystemField() {
 			for (int i = 0; i < tableDatas.size(); i++) {
 				if (tableDatas.get(i).fieldInfo.isSystemField()) {
-					tableDatas.get(i).isSelected=true;
-				}else{
-					tableDatas.get(i).isSelected=false;
+					tableDatas.get(i).isSelected = true;
+				} else {
+					tableDatas.get(i).isSelected = false;
 				}
 				fireTableCellUpdated(i, COLUMN_INDEX_IS_SELECTED);
 			}
@@ -166,9 +168,9 @@ public class ModelFieldNameCaptionType extends DefaultTableModel implements IMod
 		public void selectedNonSystemField() {
 			for (int i = 0; i < tableDatas.size(); i++) {
 				if (tableDatas.get(i).fieldInfo.isSystemField()) {
-					tableDatas.get(i).isSelected=false;
-				}else{
-					tableDatas.get(i).isSelected=true;
+					tableDatas.get(i).isSelected = false;
+				} else {
+					tableDatas.get(i).isSelected = true;
 				}
 				fireTableCellUpdated(i, COLUMN_INDEX_IS_SELECTED);
 			}

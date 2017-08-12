@@ -25,7 +25,7 @@ public class CtrlActionRun extends CtrlAction {
 				tasksContainer.setVisible(true);
 
 				FormWorkflow formWorkflow = (FormWorkflow) Application.getActiveApplication().getActiveForm();
-				formWorkflow.getTasksManager().run();
+				formWorkflow.run();
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

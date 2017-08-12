@@ -1,15 +1,29 @@
 package com.supermap.desktop.ui.controls.CollectionDataset;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVectorInfo;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
+import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.CharsetComboBox;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.CharsetUtilities;
+import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.DatasetTypeUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

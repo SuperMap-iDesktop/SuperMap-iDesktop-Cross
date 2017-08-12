@@ -546,6 +546,7 @@ public class DatasourceUtilities {
 
 	/**
 	 * 根据数据源链接信息,从当前工作空间中获取数据源
+	 *
 	 * @param connectionInfo
 	 * @return
 	 */
