@@ -341,7 +341,7 @@ public class XmlUtilities {
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node item = nodeList.item(i);
 				if (item != null && item.getNodeType() == Node.ELEMENT_NODE) {
-					map.put(item.getNodeName(), item.getTextContent());
+					map.put(item.getNodeName(), item.getTextContent().trim());
 				}
 			}
 		}

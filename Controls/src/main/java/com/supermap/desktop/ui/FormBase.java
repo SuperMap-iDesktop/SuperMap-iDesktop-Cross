@@ -180,6 +180,8 @@ public class FormBase extends JFrame implements IFormMain {
 		}
 
 		menuBar.add(new ToolBoxMenu(), menuBar.getComponentCount() - 1);
+		menuBar.revalidate();
+		menuBar.repaint();
 	}
 
 	public void loadProcesses() {
@@ -227,9 +229,9 @@ public class FormBase extends JFrame implements IFormMain {
 				return;
 			}
 
-			String groupID = groupElement.getAttribute("id");
-			String groupTitle = groupElement.getAttribute("title");
-			String groupIndex = groupElement.getAttribute("index");
+			String groupID = groupElement.getAttribute("id").trim();
+			String groupTitle = groupElement.getAttribute("title").trim();
+			String groupIndex = groupElement.getAttribute("index").trim();
 
 			group = parent.getGroup(groupID);
 			if (group == null) {
@@ -247,8 +249,8 @@ public class FormBase extends JFrame implements IFormMain {
 
 		for (int i = 0; i < processNodes.length; i++) {
 			Element processNode = processNodes[i];
-			String loaderClassName = processNode.getAttribute("loaderClass");
-			String descriptorClassName = processNode.getAttribute("descriptorClass");
+			String loaderClassName = processNode.getAttribute("loaderClass").trim();
+			String descriptorClassName = processNode.getAttribute("descriptorClass").trim();
 
 			// 创建 ProcessDescriptor
 			IProcessDescriptor descriptor = WorkflowUtil.newProcessDescriptor(descriptorClassName);
