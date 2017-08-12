@@ -1,6 +1,12 @@
 package com.supermap.desktop.utilties;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.FieldType;
+import com.supermap.data.Geometry;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.enums.TabularChangedType;
 import com.supermap.desktop.event.TabularChangedEvent;
 import com.supermap.desktop.event.TabularValueChangedListener;
@@ -11,7 +17,10 @@ import com.supermap.desktop.utilities.DoubleUtilities;
 import javax.swing.table.AbstractTableModel;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * 属性表的TableModel

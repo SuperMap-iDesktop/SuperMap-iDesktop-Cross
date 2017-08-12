@@ -1,6 +1,12 @@
 package com.supermap.desktop.ui;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EngineType;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldType;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.beans.EditHistoryBean;
@@ -10,22 +16,40 @@ import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.editHistory.TabularEditHistory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.tabularview.TabularViewProperties;
-import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.FileChooserControl;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SQLExpressionDialog;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.utilities.Convert;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.FieldTypeUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
+import com.supermap.desktop.utilities.UpdateColumnUtilties;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.Toolkit;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 更新列主界面

@@ -44,7 +44,7 @@ public class ColorsUtilities {
 		long green = color.getGreen();
 		long blue = color.getBlue();
 		long alpha = color.getAlpha();
-		long result =  (alpha << 24) + (blue << 16) + (green << 8) + red;
+		long result = (alpha << 24) + (blue << 16) + (green << 8) + red;
 		return result;
 	}
 }

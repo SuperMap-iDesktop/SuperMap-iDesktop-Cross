@@ -35,7 +35,7 @@ public class ModelFieldName extends DefaultTableModel implements IModel {
 		return false;
 	}
 
-	private IModelController modelController=new ModelControllerAdapter() {
+	private IModelController modelController = new ModelControllerAdapter() {
 		@Override
 		public void selectAllOrNull(boolean value) {
 			for (int i = 0; i < getRowCount(); i++) {
@@ -45,7 +45,7 @@ public class ModelFieldName extends DefaultTableModel implements IModel {
 	};
 
 	@Override
-	public IModelController getModelController(){
+	public IModelController getModelController() {
 		return this.modelController;
 	}
 }

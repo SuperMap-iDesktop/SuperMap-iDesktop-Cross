@@ -19,7 +19,7 @@ public class CtrlActionOutputDataset extends CtrlAction {
 	@Override
 	public void run() {
 		IFormTabular tabular = (IFormTabular) Application.getActiveApplication().getActiveForm();
-		JDialogOutputDataset dialogOutputDataset=new JDialogOutputDataset(tabular);
+		JDialogOutputDataset dialogOutputDataset = new JDialogOutputDataset(tabular);
 		TableUtilities.stopEditing(tabular.getjTableTabular());
 		dialogOutputDataset.showDialog();
 	}
@@ -30,9 +30,9 @@ public class CtrlActionOutputDataset extends CtrlAction {
 		if (Application.getActiveApplication().getActiveForm() instanceof IFormTabular && ((IFormTabular) Application.getActiveApplication().getActiveForm()).getRowCount() > 0) {
 			flag = true;
 			//判断是否是只读模式，只读模式不支持更新列操作，通过当前活动form数据的可读性判读是否更新
-			if(((IFormTabular) Application.getActiveApplication().getActiveForm()).getRecordset().getDataset().getDatasource().getDatasets().getCount()>0
-					&&((IFormTabular) Application.getActiveApplication().getActiveForm()).getRecordset().isReadOnly()){
-				flag=false;
+			if (((IFormTabular) Application.getActiveApplication().getActiveForm()).getRecordset().getDataset().getDatasource().getDatasets().getCount() > 0
+					&& ((IFormTabular) Application.getActiveApplication().getActiveForm()).getRecordset().isReadOnly()) {
+				flag = false;
 			}
 		}
 		return flag;

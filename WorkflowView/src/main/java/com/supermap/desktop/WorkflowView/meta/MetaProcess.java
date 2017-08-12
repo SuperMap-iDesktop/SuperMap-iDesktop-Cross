@@ -1,6 +1,5 @@
 package com.supermap.desktop.WorkflowView.meta;
 
-import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
@@ -8,7 +7,10 @@ import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.AbstractProcess;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.parameter.events.ParameterPropertyChangedEvent;
+import com.supermap.desktop.process.parameter.events.ParameterPropertyChangedListener;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.ipls.DefaultParameters;
@@ -26,9 +28,11 @@ public abstract class MetaProcess extends AbstractProcess {
 	protected static final String RESULT_PANEL_DESCRIPTION = CommonProperties.getString("String_GroupBox_ResultData");
 
 	protected static FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE, FieldType.BYTE};
+	private final ParameterPropertyChangedListener parameterPropertyChangedListener;
 
 	protected IParameters parameters = new DefaultParameters(this);
 	protected boolean finished = false;
+
 
 	protected SteppedListener steppedListener = new SteppedListener() {
 		@Override
@@ -44,6 +48,22 @@ public abstract class MetaProcess extends AbstractProcess {
 	};
 
 	public MetaProcess() {
+		parameterPropertyChangedListener = new ParameterPropertyChangedListener() {
+			@Override
+			public void parameterPropertyChanged(ParameterPropertyChangedEvent parameterPropertyChangedEvent) {
+				IParameter parameter = parameterPropertyChangedEvent.getParameter();
+				if (parameter.isRequisite()) {
+					boolean parameterReady = parameter.isReady();
+					if (parameterReady) {
+						checkReadyState();
+					} else {
+						setStatus(RunningStatus.WARNING);
+
+					}
+				}
+			}
+		};
+		parameters.addParameterPropertyChangedListener(parameterPropertyChangedListener);
 	}
 
 	@Override
@@ -63,4 +83,5 @@ public abstract class MetaProcess extends AbstractProcess {
 	public boolean isFinished() {
 		return this.getStatus() == RunningStatus.COMPLETED;
 	}
+
 }

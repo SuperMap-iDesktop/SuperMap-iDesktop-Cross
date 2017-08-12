@@ -20,7 +20,15 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -341,7 +349,7 @@ public class XmlUtilities {
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node item = nodeList.item(i);
 				if (item != null && item.getNodeType() == Node.ELEMENT_NODE) {
-					map.put(item.getNodeName(), item.getTextContent());
+					map.put(item.getNodeName(), item.getTextContent().trim());
 				}
 			}
 		}

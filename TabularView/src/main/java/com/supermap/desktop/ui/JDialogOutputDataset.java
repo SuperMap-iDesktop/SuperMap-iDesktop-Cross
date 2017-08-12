@@ -1,6 +1,16 @@
 package com.supermap.desktop.ui;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVectorInfo;
+import com.supermap.data.Datasets;
+import com.supermap.data.Datasource;
+import com.supermap.data.EncodeType;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.Geometry;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormTabular;
@@ -19,7 +29,6 @@ import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import java.awt.*;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -267,7 +276,7 @@ public class JDialogOutputDataset extends SmDialog {
 	private void changCodeType() {
 		this.comboBoxCodeType.removeAllItems();
 		if (this.comboBoxResultType.getSelectedItem().equals(CommonProperties.getString("String_AttrsTable"))
-				|| (this.tabular.getDataset().getType()!=DatasetType.LINE && this.tabular.getDataset().getType()!=DatasetType.REGION)) {
+				|| (this.tabular.getDataset().getType() != DatasetType.LINE && this.tabular.getDataset().getType() != DatasetType.REGION)) {
 			this.comboBoxCodeType.addItem(EncodeTypeUtilities.toString(EncodeType.NONE));
 		} else {
 			this.comboBoxCodeType.addItem(EncodeTypeUtilities.toString(EncodeType.BYTE));
@@ -309,7 +318,7 @@ public class JDialogOutputDataset extends SmDialog {
 
 	private void run() {
 		boolean isSuccessful = false;
-		String resultName="";
+		String resultName = "";
 		try {
 			this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 			DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
@@ -318,7 +327,7 @@ public class JDialogOutputDataset extends SmDialog {
 			} else {
 				datasetVectorInfo.setType(this.tabular.getDataset().getType());
 			}
-			resultName=this.smTextFieldLegit.getText();
+			resultName = this.smTextFieldLegit.getText();
 			datasetVectorInfo.setName(resultName);
 			datasetVectorInfo.setEncodeType(EncodeTypeUtilities.valueOf(this.comboBoxCodeType.getSelectedItem().toString()));
 			DatasetVector result = this.datasourceComboBox.getSelectedDatasource().getDatasets().create(datasetVectorInfo);
@@ -328,35 +337,35 @@ public class JDialogOutputDataset extends SmDialog {
 				FieldInfos resultFieldInfos = result.getFieldInfos();
 				FieldInfo[] selectedFieldInfo = this.tableFieldNameCaptionType.getSelectedFields();
 				for (int i = 0; i < selectedFieldInfo.length; i++) {
-					if (!selectedFieldInfo[i].getName().equals("SmID") &&!selectedFieldInfo[i].getName().equals("SmUserID")) {
+					if (!selectedFieldInfo[i].getName().equals("SmID") && !selectedFieldInfo[i].getName().equals("SmUserID")) {
 						resultFieldInfos.add(selectedFieldInfo[i]);
 					}
 				}
 			}
 
-			Recordset originRecordset = this.tabular.getDataset().getRecordset(false,CursorType.STATIC);
+			Recordset originRecordset = this.tabular.getDataset().getRecordset(false, CursorType.STATIC);
 			Recordset newRecordset = result.getRecordset(false, CursorType.DYNAMIC);
 			newRecordset.getBatch().setMaxRecordCount(2000);
 			newRecordset.getBatch().begin();
-			Geometry geometry=null;
+			Geometry geometry = null;
 
 
 			if (this.checkBoxIsSaveRows.isSelected()) {
 				int[] rows = this.tabular.getSelectedRows();
 				for (int i = 0; i < rows.length; i++) {
 					originRecordset.moveTo(rows[i]);
-					if (result.getType()!=DatasetType.TABULAR){
-						geometry=originRecordset.getGeometry().clone();
+					if (result.getType() != DatasetType.TABULAR) {
+						geometry = originRecordset.getGeometry().clone();
 					}
-					newRecordset.addNew(geometry, getFieldValues(originRecordset,newRecordset));
+					newRecordset.addNew(geometry, getFieldValues(originRecordset, newRecordset));
 				}
 			} else {
 				originRecordset.moveFirst();
-				while (!originRecordset.isEOF()){
-					if (result.getType()!=DatasetType.TABULAR){
-						geometry=originRecordset.getGeometry().clone();
+				while (!originRecordset.isEOF()) {
+					if (result.getType() != DatasetType.TABULAR) {
+						geometry = originRecordset.getGeometry().clone();
 					}
-					newRecordset.addNew(geometry, getFieldValues(originRecordset,newRecordset));
+					newRecordset.addNew(geometry, getFieldValues(originRecordset, newRecordset));
 					originRecordset.moveNext();
 				}
 			}
@@ -370,12 +379,12 @@ public class JDialogOutputDataset extends SmDialog {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-			String outputMessage="";
+			String outputMessage = "";
 			if (isSuccessful) {
-				outputMessage=MessageFormat.format(CommonProperties.getString("String_SaveAsDataset_Success"),this.datasourceComboBox.getSelectedDatasource().getAlias(),
+				outputMessage = MessageFormat.format(CommonProperties.getString("String_SaveAsDataset_Success"), this.datasourceComboBox.getSelectedDatasource().getAlias(),
 						resultName);
 			} else {
-				outputMessage=MessageFormat.format(CommonProperties.getString("String_SaveAsDataset_Failed"),this.datasourceComboBox.getSelectedDatasource().getAlias(),
+				outputMessage = MessageFormat.format(CommonProperties.getString("String_SaveAsDataset_Failed"), this.datasourceComboBox.getSelectedDatasource().getAlias(),
 						resultName);
 			}
 			Application.getActiveApplication().getOutput().output(outputMessage);
@@ -386,7 +395,7 @@ public class JDialogOutputDataset extends SmDialog {
 		this.dispose();
 	}
 
-	public Map<String, Object> getFieldValues(Recordset recordset,Recordset newRecordset) {
+	public Map<String, Object> getFieldValues(Recordset recordset, Recordset newRecordset) {
 		Map<String, Object> fieldValues = new HashMap<>();
 		FieldInfos fieldInfos = newRecordset.getFieldInfos();
 
@@ -396,7 +405,7 @@ public class JDialogOutputDataset extends SmDialog {
 				if (!fieldInfo.isSystemField()) {
 					fieldValues.put(fieldInfo.getName(), recordset.getFieldValue(fieldInfo.getName()));
 				}
-			}catch (Exception e){
+			} catch (Exception e) {
 				continue;
 			}
 

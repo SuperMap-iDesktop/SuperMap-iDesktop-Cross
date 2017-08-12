@@ -5,9 +5,25 @@ import com.supermap.data.Dataset;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasources;
 import com.supermap.data.WorkspaceConnectionInfo;
-import com.supermap.desktop.*;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.CtrlAction.WorkspaceRecovery;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.Interface.IContextMenuManager;
+import com.supermap.desktop.Interface.IDockbar;
+import com.supermap.desktop.Interface.IDockbarManager;
+import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.IFormMain;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.Interface.IFrameMenuManager;
+import com.supermap.desktop.Interface.IPropertyManager;
+import com.supermap.desktop.Interface.IStatusbarManager;
+import com.supermap.desktop.Interface.IToolbarManager;
+import com.supermap.desktop.Plugin;
+import com.supermap.desktop.PluginManager;
+import com.supermap.desktop.WorkEnvironment;
 import com.supermap.desktop.controls.utilities.DatasourceOpenFileUtilties;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
@@ -21,8 +37,19 @@ import com.supermap.desktop.process.loader.IProcessGroup;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.ui.ToolBoxMenu;
 import com.supermap.desktop.process.util.WorkflowUtil;
-import com.supermap.desktop.ui.controls.*;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.ui.controls.Dockbar;
+import com.supermap.desktop.ui.controls.DockbarManager;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.NodeDataType;
+import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.RecentFileUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
 import com.supermap.layout.MapLayout;
 import com.supermap.realspace.Scene;
 import org.flexdock.docking.DockingManager;
@@ -180,6 +207,8 @@ public class FormBase extends JFrame implements IFormMain {
 		}
 
 		menuBar.add(new ToolBoxMenu(), menuBar.getComponentCount() - 1);
+		menuBar.revalidate();
+		menuBar.repaint();
 	}
 
 	public void loadProcesses() {
@@ -227,9 +256,9 @@ public class FormBase extends JFrame implements IFormMain {
 				return;
 			}
 
-			String groupID = groupElement.getAttribute("id");
-			String groupTitle = groupElement.getAttribute("title");
-			String groupIndex = groupElement.getAttribute("index");
+			String groupID = groupElement.getAttribute("id").trim();
+			String groupTitle = groupElement.getAttribute("title").trim();
+			String groupIndex = groupElement.getAttribute("index").trim();
 
 			group = parent.getGroup(groupID);
 			if (group == null) {
@@ -247,8 +276,8 @@ public class FormBase extends JFrame implements IFormMain {
 
 		for (int i = 0; i < processNodes.length; i++) {
 			Element processNode = processNodes[i];
-			String loaderClassName = processNode.getAttribute("loaderClass");
-			String descriptorClassName = processNode.getAttribute("descriptorClass");
+			String loaderClassName = processNode.getAttribute("loaderClass").trim();
+			String descriptorClassName = processNode.getAttribute("descriptorClass").trim();
 
 			// 创建 ProcessDescriptor
 			IProcessDescriptor descriptor = WorkflowUtil.newProcessDescriptor(descriptorClassName);
