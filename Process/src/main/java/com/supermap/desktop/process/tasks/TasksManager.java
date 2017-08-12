@@ -20,7 +20,6 @@ import java.awt.event.ActionListener;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -124,7 +123,7 @@ public class TasksManager {
 		return this.workflow;
 	}
 
-	public CopyOnWriteArrayList<IProcess> getProcesses(int workerState) {
+	public Vector<IProcess> getProcesses(int workerState) {
 		return taskStateManager.get(workerState);
 	}
 
@@ -263,7 +262,8 @@ public class TasksManager {
 		public void actionPerformed(ActionEvent e) {
 			try {
 				lock.lock();
-				CopyOnWriteArrayList<IProcess> ready = taskStateManager.get(WORKER_STATE_READY);
+				Vector<IProcess> ready = taskStateManager.get(WORKER_STATE_READY);
+				// TODO: 2017/8/12
 				if (ready.size() > 0) {
 					for (int i = ready.size() - 1; i >= 0; i--) {
 						IProcess process = ready.get(i);

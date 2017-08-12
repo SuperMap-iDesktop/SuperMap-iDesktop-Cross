@@ -2,7 +2,7 @@ package com.supermap.desktop.process.tasks.taskStates;
 
 import com.supermap.desktop.process.core.IProcess;
 
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Vector;
 
 /**
  * @author XiaJT
@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class TaskState {
 	private int stateIndex;
 	private String name;
-	private CopyOnWriteArrayList<IProcess> processes = new CopyOnWriteArrayList<>();
+	private Vector<IProcess> processes = new Vector<>();
 
 	public TaskState(int stateIndex, String name) {
 		this.stateIndex = stateIndex;
@@ -35,7 +35,7 @@ public class TaskState {
 		}
 	}
 
-	public CopyOnWriteArrayList<IProcess> getProcesses() {
+	public Vector<IProcess> getProcesses() {
 		return processes;
 	}
 
