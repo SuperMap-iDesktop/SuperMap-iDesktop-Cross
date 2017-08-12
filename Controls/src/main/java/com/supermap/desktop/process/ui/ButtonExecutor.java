@@ -1,4 +1,4 @@
-package com.supermap.desktop.WorkflowView.tasks;
+package com.supermap.desktop.process.ui;
 
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.process.ProcessResources;
