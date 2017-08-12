@@ -4,21 +4,18 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
-import com.supermap.desktop.process.parameter.ipls.ParameterFieldGroup;
-import com.supermap.desktop.ui.controls.CheckHeaderCellRenderer;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
-import com.supermap.desktop.ui.controls.smTables.*;
+import com.supermap.desktop.ui.controls.smTables.IModel;
+import com.supermap.desktop.ui.controls.smTables.ITable;
+import com.supermap.desktop.ui.controls.smTables.ITableController;
+import com.supermap.desktop.ui.controls.smTables.TableControllerAdapter;
 import com.supermap.desktop.ui.controls.smTables.models.ModelFieldNameCaptionType;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 /**
  * Created by lixiaoyao on 2017/8/9.
@@ -69,7 +66,11 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 
 	public void setDataset(Dataset dataset) {
 		this.dataset = dataset;
-		init();
+		if (this.modelFieldNameCaptionType==null){
+			init();
+		}else {
+			this.modelFieldNameCaptionType.setDataset((DatasetVector)this.dataset);
+		}
 	}
 
 	public FieldType[] getFieldTypes() {
@@ -89,7 +90,8 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 	}
 
 	public FieldInfo[] getSelectedFields() {
-		return selectedFields;
+		this.selectedFields=this.modelFieldNameCaptionType.getSelectedFields();
+		return this.selectedFields;
 	}
 
 	@Override
@@ -128,25 +130,25 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 				return jLabel;
 			}
 		});
-		removeListener();
-		registerListener();
+//		removeListener();
+//		registerListener();
 	}
 
-	private TableModelListener tableModelListener=new TableModelListener() {
-		@Override
-		public void tableChanged(TableModelEvent e) {
-			if (e.getType() == TableModelEvent.UPDATE) {
-				selectedFields=modelFieldNameCaptionType.getSelectedFields();
-			}
-		}
-	};
-
-	private void registerListener(){
-		this.modelFieldNameCaptionType.addTableModelListener(this.tableModelListener);
-	}
-
-	private void removeListener(){
-		this.modelFieldNameCaptionType.removeTableModelListener(this.tableModelListener);
-	}
+//	private TableModelListener tableModelListener=new TableModelListener() {
+//		@Override
+//		public void tableChanged(TableModelEvent e) {
+//			if (e.getType() == TableModelEvent.UPDATE) {
+//				selectedFields=modelFieldNameCaptionType.getSelectedFields();
+//			}
+//		}
+//	};
+//
+//	private void registerListener(){
+//		this.modelFieldNameCaptionType.addTableModelListener(this.tableModelListener);
+//	}
+//
+//	private void removeListener(){
+//		this.modelFieldNameCaptionType.removeTableModelListener(this.tableModelListener);
+//	}
 
 }
