@@ -36,6 +36,8 @@ public interface IProcess {
 
 	boolean run();
 
+	boolean isReady();
+
 	void cancel();
 
 	boolean isCancelled();
@@ -43,6 +45,10 @@ public interface IProcess {
 	void reset();
 
 	Class<? extends IProcessLoader> getLoader();
+
+	void addProcessReadyChecker(IProcessReadyChecker processReadyChecker);
+
+	void removeProcessReadyChecker(IProcessReadyChecker processReadyChecker);
 
 	void addRunningListener(RunningListener listener);
 

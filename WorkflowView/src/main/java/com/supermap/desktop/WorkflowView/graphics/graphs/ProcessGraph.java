@@ -93,11 +93,20 @@ public class ProcessGraph extends RectangleGraph {
 			Rectangle rectangle = new Rectangle(getLocation().x, getLocation().y, getWidth() * percent / 100, 2);
 			((Graphics2D) g).fill(rectangle);
 		} else {
+			String iconPath = null;
 			if (this.process.getStatus() == RunningStatus.COMPLETED) {
-				g.drawImage(((ImageIcon) ProcessResources.getIcon("/processresources/task/image_done.png")).getImage(), getLocation().x + getWidth() - 20, getLocation().y + 2, 18, 18, null);
+				iconPath = "/processresources/task/image_done.png";
 			} else if (this.process.getStatus() == RunningStatus.EXCEPTION) {
-				g.drawImage(((ImageIcon) ProcessResources.getIcon("/processresources/task/image_error.png")).getImage(), getLocation().x + getWidth() - 20, getLocation().y + 2, 18, 18, null);
+				iconPath = "/processresources/task/image_error.png";
+			} else if (this.process.getStatus() == RunningStatus.READY) {
+//				iconPath = "/processresources/task/image_ready.png";
+			} else if (this.process.getStatus() == RunningStatus.WARNING) {
+				iconPath = "/processresources/task/image_warning.png";
 			}
+			if (iconPath != null) {
+				g.drawImage(((ImageIcon) ProcessResources.getIcon(iconPath)).getImage(), getLocation().x + getWidth() - 20, getLocation().y + 2, 18, 18, null);
+			}
+
 		}
 //		font = new Font(ControlsProperties.getString("String_Boldface"), Font.BOLD, 10);
 //		String progress = this.percent + "%";

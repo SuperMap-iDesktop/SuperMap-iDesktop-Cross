@@ -4,9 +4,13 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessEnv;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.process.parameter.events.ParameterPropertyChangedEvent;
+import com.supermap.desktop.process.parameter.events.ParameterPropertyChangedListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
+import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
@@ -14,7 +18,10 @@ import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
+import javax.swing.event.EventListenerList;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +35,14 @@ public class DefaultParameters implements IParameters {
 	protected JPanel panel;
 	protected EmptyParameterPanel parameterPanel = new EmptyParameterPanel();
 	private InputParametersManager inputParametersManager = new InputParametersManager(this);
+	private EventListenerList eventListenerLists = new EventListenerList();
+	private PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			ParameterPropertyChangedEvent parameterPropertyChangedEvent = new ParameterPropertyChangedEvent((IParameter) evt.getSource(), evt.getPropertyName(), evt.getOldValue(), evt.getOldValue());
+			fireParameterPropertyChangedListener(parameterPropertyChangedEvent);
+		}
+	};
 
 	public DefaultParameters(IProcess process) {
 		this.process = process;
@@ -47,6 +62,7 @@ public class DefaultParameters implements IParameters {
 	public void setParameters(IParameter... iParameters) {
 		if (this.parameters != null && this.parameters.size() > 0) {
 			for (IParameter parameter : parameters) {
+				parameter.removePropertyListener(propertyChangeListener);
 				parameter.dispose();
 				parameter.setParameters(null);
 			}
@@ -59,6 +75,7 @@ public class DefaultParameters implements IParameters {
 		if (this.parameters != null && this.parameters.size() > 0) {
 			for (IParameter parameter : parameters) {
 				parameter.setParameters(this);
+				parameter.addPropertyListener(propertyChangeListener);
 			}
 		}
 	}
@@ -66,6 +83,9 @@ public class DefaultParameters implements IParameters {
 	@Override
 	public void addParameters(IParameter... iParameters) {
 		Collections.addAll(parameters, iParameters);
+		for (IParameter iParameter : iParameters) {
+			iParameter.addPropertyListener(propertyChangeListener);
+		}
 		for (IParameter iParameter : iParameters) {
 			iParameter.setParameters(this);
 		}
@@ -175,5 +195,59 @@ public class DefaultParameters implements IParameters {
 	@Override
 	public Outputs getOutputs() {
 		return this.process.getOutputs();
+	}
+
+	@Override
+	public boolean isReady() {
+		Inputs inputs = getInputs();
+		InputData[] datas = inputs.getDatas();
+		for (InputData data : datas) {
+			if (!data.isBinded()) {
+				ArrayList<IParameter> parameters = data.getParameters();
+				for (IParameter parameter : parameters) {
+					if (!isParameterReady(parameter, false)) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	private boolean isParameterReady(IParameter parameter, boolean isParentRequisite) {
+		if (parameter instanceof ISelectionParameter) {
+			if ((isParentRequisite || parameter.isRequisite()) && !parameter.isReady()) {
+				return false;
+			}
+		}
+		if (parameter instanceof ParameterCombine) {
+			ArrayList<IParameter> parameterList = ((ParameterCombine) parameter).getParameterList();
+			for (IParameter iParameterChild : parameterList) {
+				if (!isParameterReady(iParameterChild, isParentRequisite || parameter.isRequisite())) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void addParameterPropertyChangedListener(ParameterPropertyChangedListener parameterPropertyChangedListener) {
+		eventListenerLists.add(ParameterPropertyChangedListener.class, parameterPropertyChangedListener);
+	}
+
+	@Override
+	public void removeParameterPropertyChangedListener(ParameterPropertyChangedListener parameterPropertyChangedListener) {
+		eventListenerLists.remove(ParameterPropertyChangedListener.class, parameterPropertyChangedListener);
+	}
+
+	protected void fireParameterPropertyChangedListener(ParameterPropertyChangedEvent parameterPropertyChangedEvent) {
+		Object[] listeners = this.eventListenerLists.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == ParameterPropertyChangedListener.class) {
+				((ParameterPropertyChangedListener) listeners[i + 1]).parameterPropertyChanged(parameterPropertyChangedEvent);
+			}
+		}
 	}
 }

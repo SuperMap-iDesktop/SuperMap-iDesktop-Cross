@@ -5,4 +5,6 @@ package com.supermap.desktop.Interface;
  */
 public interface IFormWorkflow extends IForm {
 	IWorkflow getWorkflow();
+
+	void run();
 }
