@@ -13,18 +13,21 @@ import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 
 import javax.swing.event.EventListenerList;
+import java.util.ArrayList;
 
 /**
  * Created by highsad on 2017/1/5.
  */
 public abstract class AbstractProcess implements IProcess {
 
-	private volatile RunningStatus status = RunningStatus.NORMAL;
+	protected volatile RunningStatus status = RunningStatus.NORMAL;
 	private EventListenerList listenerList = new EventListenerList();
 	private Workflow workflow;
 	private Inputs inputs = new Inputs(this);
 	private Outputs outputs = new Outputs(this);
 	private int serialID = 0;
+
+	private ArrayList<IProcessReadyChecker> processReadyCheckerList = new ArrayList<>();
 
 	public AbstractProcess() {
 		setSerialID(hashCode());
@@ -52,6 +55,7 @@ public abstract class AbstractProcess implements IProcess {
 		}
 		Workflow oldWorkflow = this.workflow;
 		this.workflow = workflow;
+		checkReadyState();
 		workflowChanged(oldWorkflow, workflow);
 		if (this.workflow != null) {
 			getParameters().bindWorkflow(this.workflow);
@@ -73,7 +77,8 @@ public abstract class AbstractProcess implements IProcess {
 //			if (this.status != RunningStatus.NORMAL) {
 //				return false;
 //			}
-
+			// TODO: 2017/8/10 运行前判断？？
+			boolean ready = isReady();
 			setStatus(RunningStatus.RUNNING);
 			isSuccessful = execute();
 
@@ -87,6 +92,36 @@ public abstract class AbstractProcess implements IProcess {
 			setStatus(RunningStatus.EXCEPTION);
 		}
 		return isSuccessful;
+	}
+
+	@Override
+	public final boolean isReady() {
+		if (!isReadyHook()) {
+			return false;
+		}
+		if (!getParameters().isReady()) {
+			return false;
+		}
+		if (processReadyCheckerList.size() > 0) {
+			for (IProcessReadyChecker iProcessReadyChecker : processReadyCheckerList) {
+				if (!iProcessReadyChecker.isReady(this)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	protected boolean isReadyHook() {
+		return true;
+	}
+
+	public void checkReadyState() {
+		if (isReady()) {
+			setStatus(RunningStatus.READY);
+		} else {
+			setStatus(RunningStatus.WARNING);
+		}
 	}
 
 	@Override
@@ -117,9 +152,10 @@ public abstract class AbstractProcess implements IProcess {
 	public void reset() {
 		RunningStatus oldStatus = this.status;
 
-		if (oldStatus != RunningStatus.NORMAL) {
-			this.status = RunningStatus.NORMAL;
-			fireStatusChange(new StatusChangeEvent(this, RunningStatus.NORMAL, oldStatus));
+		RunningStatus currentStatus = isReady() ? RunningStatus.READY : RunningStatus.WARNING;
+		if (oldStatus != currentStatus) {
+			setStatus(currentStatus);
+			fireStatusChange(new StatusChangeEvent(this, getStatus(), oldStatus));
 		}
 	}
 
@@ -145,6 +181,20 @@ public abstract class AbstractProcess implements IProcess {
 	@Override
 	public Outputs getOutputs() {
 		return this.outputs;
+	}
+
+	@Override
+	public void addProcessReadyChecker(IProcessReadyChecker processReadyChecker) {
+		if (processReadyChecker != null && !processReadyCheckerList.contains(processReadyChecker)) {
+			processReadyCheckerList.add(processReadyChecker);
+		}
+	}
+
+	@Override
+	public void removeProcessReadyChecker(IProcessReadyChecker processReadyChecker) {
+		if (processReadyChecker != null) {
+			processReadyCheckerList.remove(processReadyChecker);
+		}
 	}
 
 	@Override

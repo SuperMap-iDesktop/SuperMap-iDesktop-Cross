@@ -35,7 +35,7 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 	private List<UpdateValueListener> updateValueListeners = new ArrayList<>();
 	private boolean isDescriptionVisible = true;
 	// 添加是否为必填参数属性，默认为非必填
-	private Boolean isRequisite = false;
+	private boolean isRequisite = false;
 
 	@Override
 	public void addPanelPropertyChangedListener(PanelPropertyChangedListener panelPropertyChangedListener) {
@@ -276,7 +276,7 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 	 * @return
 	 */
 	@Override
-	public Boolean isRequisite() {
+	public boolean isRequisite() {
 		return this.isRequisite;
 	}
 
@@ -287,7 +287,12 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 	 * @param isRequisite
 	 */
 	@Override
-	public void setRequisite(Boolean isRequisite) {
+	public void setRequisite(boolean isRequisite) {
 		this.isRequisite = isRequisite;
+	}
+
+	@Override
+	public boolean isReady() {
+		return this instanceof ISelectionParameter && ((ISelectionParameter) this).getSelectedItem() != null;
 	}
 }

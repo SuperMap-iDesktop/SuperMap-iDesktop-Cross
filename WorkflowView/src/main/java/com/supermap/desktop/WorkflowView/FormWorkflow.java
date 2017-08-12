@@ -5,22 +5,27 @@ import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormWorkflow;
 import com.supermap.desktop.Interface.IWorkflow;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.dialog.SmDialogFormSaveAs;
-import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.*;
 import com.supermap.desktop.WorkflowView.graphics.ScrollGraphCanvas;
 import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovingEvent;
 import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.WorkflowView.graphics.events.GraphSelectChangedListener;
 import com.supermap.desktop.WorkflowView.graphics.events.GraphSelectedChangedEvent;
-import com.supermap.desktop.WorkflowView.graphics.graphs.IGraph;
-import com.supermap.desktop.WorkflowView.graphics.graphs.OutputGraph;
 import com.supermap.desktop.WorkflowView.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.CanvasActionProcessEvent;
 import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.CanvasActionProcessListener;
 import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.GraphDragAction;
 import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.Selection;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.dialog.SmDialogFormSaveAs;
+import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormDeactivatedListener;
+import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.FormShownListener;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.tasks.TasksManager;
 import com.supermap.desktop.ui.FormBaseChild;
@@ -370,4 +375,8 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		return this.canvas;
 	}
 
+	@Override
+	public void run() {
+		getTasksManager().run();
+	}
 }
