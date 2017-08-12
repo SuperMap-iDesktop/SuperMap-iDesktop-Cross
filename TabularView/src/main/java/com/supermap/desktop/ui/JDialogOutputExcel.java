@@ -200,10 +200,10 @@ public class JDialogOutputExcel extends SmDialog {
 		JPanel panel = new JPanel();
 		panel.setBorder(BorderFactory.createTitledBorder(TabularViewProperties.getString("String_FileInfo")));
 		panel.setLayout(new GridBagLayout());
-		panel.add(labelFileName, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0,0).setInsets(10,10,5,5).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panel.add(textFieldFileName, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1,0).setInsets(10,5,5,10).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST));
-		panel.add(labelFilePath, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0,0).setInsets(5,10,10,5).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panel.add(fileChooserControl, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1,0).setInsets(5,5,10,10).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelFileName, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setInsets(10, 10, 5, 5).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
+		panel.add(textFieldFileName, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setInsets(10, 5, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelFilePath, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setInsets(5, 10, 10, 5).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
+		panel.add(fileChooserControl, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setInsets(5, 5, 10, 10).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST));
 		return panel;
 	}
 

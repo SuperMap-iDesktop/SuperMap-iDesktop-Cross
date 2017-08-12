@@ -24,12 +24,12 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 
 	private ModelFieldNameCaptionType modelFieldNameCaptionType;
 	private Dataset dataset;
-	private FieldType[] fieldTypes=null;
-	private FieldInfo[] selectedFields=null;
-	private boolean isShowSystemField=false;
+	private FieldType[] fieldTypes = null;
+	private FieldInfo[] selectedFields = null;
+	private boolean isShowSystemField = false;
 	private static final int TABLE_COLUMN_CHECKABLE = 0;
 
-	private ITableController tableController=new TableControllerAdapter() {
+	private ITableController tableController = new TableControllerAdapter() {
 		@Override
 		public void selectAll(ITable iTable) {
 			super.selectAll(iTable);
@@ -43,19 +43,19 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 		@Override
 		public void delete(ITable iTable) {
 			int[] row = iTable.getTable().getSelectedRows();
-			for(int i=row.length-1;i>=0;i--){
-				((IModel)iTable.getTablesModel()).getModelController().delete(row[i]);
+			for (int i = row.length - 1; i >= 0; i--) {
+				((IModel) iTable.getTablesModel()).getModelController().delete(row[i]);
 			}
 		}
 
 		@Override
 		public void selectSystemField(ITable iTable) {
-			((IModel)iTable.getTablesModel()).getModelController().selectedSystemField();
+			((IModel) iTable.getTablesModel()).getModelController().selectedSystemField();
 		}
 
 		@Override
 		public void selectUnSystemField(ITable iTable) {
-			((IModel)iTable.getTablesModel()).getModelController().selectedNonSystemField();
+			((IModel) iTable.getTablesModel()).getModelController().selectedNonSystemField();
 		}
 
 	};
@@ -66,10 +66,10 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 
 	public void setDataset(Dataset dataset) {
 		this.dataset = dataset;
-		if (this.modelFieldNameCaptionType==null){
+		if (this.modelFieldNameCaptionType == null) {
 			init();
-		}else {
-			this.modelFieldNameCaptionType.setDataset((DatasetVector)this.dataset);
+		} else {
+			this.modelFieldNameCaptionType.setDataset((DatasetVector) this.dataset);
 		}
 	}
 
@@ -90,33 +90,33 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 	}
 
 	public FieldInfo[] getSelectedFields() {
-		this.selectedFields=this.modelFieldNameCaptionType.getSelectedFields();
+		this.selectedFields = this.modelFieldNameCaptionType.getSelectedFields();
 		return this.selectedFields;
 	}
 
 	@Override
-	public ITableController getTableController(){
+	public ITableController getTableController() {
 		return this.tableController;
 	}
 
 	@Override
-	public JTable getTable(){
+	public JTable getTable() {
 		return this;
 	}
 
 	@Override
-	public Boolean isCheckBoxColumn(){
+	public Boolean isCheckBoxColumn() {
 		return true;
 	}
 
 	@Override
-	public DefaultTableModel getTablesModel(){
+	public DefaultTableModel getTablesModel() {
 		return this.modelFieldNameCaptionType;
 	}
 
-	private void init(){
-		this.modelFieldNameCaptionType=new ModelFieldNameCaptionType(this.fieldTypes,this.isShowSystemField);
-		this.modelFieldNameCaptionType.setDataset((DatasetVector)this.dataset);
+	private void init() {
+		this.modelFieldNameCaptionType = new ModelFieldNameCaptionType(this.fieldTypes, this.isShowSystemField);
+		this.modelFieldNameCaptionType.setDataset((DatasetVector) this.dataset);
 		this.setModel(this.modelFieldNameCaptionType);
 		this.getColumnModel().getColumn(TABLE_COLUMN_CHECKABLE).setMaxWidth(30);
 		this.setDefaultRenderer(FieldType.class, new DefaultTableCellRenderer() {

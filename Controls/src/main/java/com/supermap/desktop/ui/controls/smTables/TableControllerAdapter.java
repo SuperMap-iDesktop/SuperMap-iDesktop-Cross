@@ -1,7 +1,6 @@
 package com.supermap.desktop.ui.controls.smTables;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.ui.controls.smTables.models.ModelFieldNameCaptionType;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

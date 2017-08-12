@@ -24,11 +24,11 @@ import java.util.ArrayList;
  */
 public class FieldsSetDialog extends SmDialog {
 
-    private TableFieldName tableFieldNameSourceFields;
-    private TableFieldName tableFieldNameOverlayAnalystFields;
-    private JButton buttonOK;
-    private JButton buttonCancel;
-    private JScrollPane scrollpaneSourceFields;
+	private TableFieldName tableFieldNameSourceFields;
+	private TableFieldName tableFieldNameOverlayAnalystFields;
+	private JButton buttonOK;
+	private JButton buttonCancel;
+	private JScrollPane scrollpaneSourceFields;
     private JScrollPane scrollpaneOverlayAnalystFields;
     private String[] sourceFields;
     private String[] overlayAnalystFields;
@@ -37,8 +37,8 @@ public class FieldsSetDialog extends SmDialog {
     private ActionListener buttonOKListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            ArrayList<String> sourceFieldList = tableFieldNameSourceFields.getSelectedFieldsName();
-            ArrayList<String> overlayAnaylstList = tableFieldNameOverlayAnalystFields.getSelectedFieldsName();
+	        ArrayList<String> sourceFieldList = tableFieldNameSourceFields.getSelectedFieldsName();
+	        ArrayList<String> overlayAnaylstList = tableFieldNameOverlayAnalystFields.getSelectedFieldsName();
 
             sourceFields = sourceFieldList.toArray(new String[sourceFieldList.size()]);
             overlayAnalystFields = overlayAnaylstList.toArray(new String[overlayAnaylstList.size()]);
@@ -100,10 +100,10 @@ public class FieldsSetDialog extends SmDialog {
         scrollpaneOverlayAnalystFields = new JScrollPane();
         panelSourceFields.setLayout(new GridBagLayout());
         panelSourceFields.add(scrollpaneSourceFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        scrollpaneSourceFields.setViewportView(tableFieldNameSourceFields);
-        panelOverlayAnalystFields.setLayout(new GridBagLayout());
-        panelOverlayAnalystFields.add(scrollpaneOverlayAnalystFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        scrollpaneOverlayAnalystFields.setViewportView(this.tableFieldNameOverlayAnalystFields);
+	    scrollpaneSourceFields.setViewportView(tableFieldNameSourceFields);
+	    panelOverlayAnalystFields.setLayout(new GridBagLayout());
+	    panelOverlayAnalystFields.add(scrollpaneOverlayAnalystFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+	    scrollpaneOverlayAnalystFields.setViewportView(this.tableFieldNameOverlayAnalystFields);
 
 
         panelSourceFields.setBorder(new TitledBorder(ControlsProperties.getString("String_Label_SourceDatasetFields")));
@@ -123,10 +123,10 @@ public class FieldsSetDialog extends SmDialog {
     }
 
     private void initComponents() {
-        this.tableFieldNameSourceFields= (TableFieldName) TableFactory.getTable("FieldName");
-        this.tableFieldNameSourceFields.setDatasetVector(sourceDataset);
-        this.tableFieldNameOverlayAnalystFields= (TableFieldName) TableFactory.getTable("FieldName");
-        this.tableFieldNameOverlayAnalystFields.setDatasetVector(overlayAnalystDataset);
+	    this.tableFieldNameSourceFields = (TableFieldName) TableFactory.getTable("FieldName");
+	    this.tableFieldNameSourceFields.setDatasetVector(sourceDataset);
+	    this.tableFieldNameOverlayAnalystFields = (TableFieldName) TableFactory.getTable("FieldName");
+	    this.tableFieldNameOverlayAnalystFields.setDatasetVector(overlayAnalystDataset);
 
 
         this.buttonOK = ComponentFactory.createButtonOK();
