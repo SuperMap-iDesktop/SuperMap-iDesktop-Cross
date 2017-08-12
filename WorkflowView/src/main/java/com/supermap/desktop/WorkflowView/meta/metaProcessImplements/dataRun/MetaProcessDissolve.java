@@ -188,6 +188,7 @@ public class MetaProcessDissolve extends MetaProcess {
 			StatisticsType[] statisticsTypes = this.statisticsFieldGroup.getSelectedStatisticsType();
 			String[] statisticsFieldNames = getFieldName(this.statisticsFieldGroup.getSelectedFields());
 			String[] fieldNames = getFieldName(this.fieldsDissolve.getSelectedFields());
+
 			dissolveParameter.setFieldNames(fieldNames);
 			dissolveParameter.setStatisticsFieldNames(statisticsFieldNames);
 			dissolveParameter.setStatisticsTypes(statisticsTypes);
@@ -208,11 +209,16 @@ public class MetaProcessDissolve extends MetaProcess {
 	}
 
 	private String[] getFieldName(FieldInfo fieldInfo[]) {
-		String[] fieldNames = new String[fieldInfo.length];
-		for (int i = 0; i < fieldInfo.length; i++) {
-			fieldNames[i] = fieldInfo[i].getName();
+		try {
+			String[] fieldNames = new String[fieldInfo.length];
+			for (int i = 0; i < fieldInfo.length; i++) {
+				fieldNames[i] = fieldInfo[i].getName();
+			}
+			return fieldNames;
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+			return null;
 		}
-		return fieldNames;
 	}
 
 	@Override
