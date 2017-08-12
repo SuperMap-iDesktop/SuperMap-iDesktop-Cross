@@ -19,6 +19,7 @@ import com.supermap.desktop.process.loader.DefaultProcessGroup;
 import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessGroup;
 import com.supermap.desktop.process.loader.IProcessLoader;
+import com.supermap.desktop.process.ui.ToolBoxMenu;
 import com.supermap.desktop.process.util.WorkflowUtil;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.utilities.*;
@@ -162,9 +163,23 @@ public class FormBase extends JFrame implements IFormMain {
 				}
 			});
 
+			loadProcessesMenu();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+	}
+
+	private void loadProcessesMenu() {
+		if (ProcessManager.INSTANCE == null) {
+			return;
+		}
+
+		JMenuBar menuBar = this.frameMenuManager.getMenuBar();
+		if (menuBar == null) {
+			return;
+		}
+
+		menuBar.add(new ToolBoxMenu(), menuBar.getComponentCount() - 1);
 	}
 
 	public void loadProcesses() {

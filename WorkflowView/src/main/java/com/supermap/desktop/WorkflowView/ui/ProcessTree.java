@@ -1,6 +1,5 @@
 package com.supermap.desktop.WorkflowView.ui;
 
-import com.supermap.desktop.WorkflowView.CtrlAction.SmDialogProcess;
 import com.supermap.desktop.controls.drop.DropAndDragHandler;
 import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
 import com.supermap.desktop.process.ProcessManager;
@@ -8,6 +7,7 @@ import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.loader.IProcessGroup;
 import com.supermap.desktop.process.loader.IProcessLoader;
+import com.supermap.desktop.process.ui.SmDialogProcess;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;

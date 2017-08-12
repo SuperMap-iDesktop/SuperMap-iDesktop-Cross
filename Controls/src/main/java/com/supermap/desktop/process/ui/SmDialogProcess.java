@@ -1,6 +1,5 @@
-package com.supermap.desktop.WorkflowView.CtrlAction;
+package com.supermap.desktop.process.ui;
 
-import com.supermap.desktop.WorkflowView.tasks.SingleProgressPanel;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.tasks.ProcessWorker;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
