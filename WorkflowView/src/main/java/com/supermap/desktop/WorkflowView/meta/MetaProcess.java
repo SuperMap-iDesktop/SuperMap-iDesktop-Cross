@@ -53,13 +53,7 @@ public abstract class MetaProcess extends AbstractProcess {
 			public void parameterPropertyChanged(ParameterPropertyChangedEvent parameterPropertyChangedEvent) {
 				IParameter parameter = parameterPropertyChangedEvent.getParameter();
 				if (parameter.isRequisite()) {
-					boolean parameterReady = parameter.isReady();
-					if (parameterReady) {
-						checkReadyState();
-					} else {
-						setStatus(RunningStatus.WARNING);
-
-					}
+					checkReadyState();
 				}
 			}
 		};
