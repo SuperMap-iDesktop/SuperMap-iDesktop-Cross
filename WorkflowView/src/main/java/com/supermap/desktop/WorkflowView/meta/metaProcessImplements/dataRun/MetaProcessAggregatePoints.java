@@ -22,7 +22,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * Created by yuanR on 2017/7/24
- * 点密度聚合
+ * 点密度聚类
  */
 public class MetaProcessAggregatePoints extends MetaProcess {
 
