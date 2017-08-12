@@ -57,8 +57,8 @@ public class JDialogOutputDataset extends SmDialog {
 	private IFormTabular tabular;
 	private final String urlStr = "/coreresources/ToolBar/";
 	private static final int MIN_SIZE = 23;
-	private final Color WORNINGCOLOR = Color.red;
-	private final Color DEFUALTCOLOR = Color.black;
+	private final Color WARNING_COLOR = Color.red;
+	private final Color DEFAULT_COLOR = Color.black;
 
 	public JDialogOutputDataset(IFormTabular tabular) {
 		super();
@@ -81,14 +81,13 @@ public class JDialogOutputDataset extends SmDialog {
 		initLayout();
 		initResources();
 		removeEvents();
-		registEvents();
+		registerEvents();
 	}
 
 	private void initComponents() {
 		this.toolBar = new JToolBar();
 		this.buttonSelectAll = new JButton();
 		this.buttonSelectInverse = new JButton();
-		//this.buttonDelete = new JButton();
 		this.buttonSelectAllSystemField = new JButton();
 		this.buttonSelectAllNonSystemField = new JButton();
 		this.scrollPane = new JScrollPane();
@@ -242,10 +241,9 @@ public class JDialogOutputDataset extends SmDialog {
 		this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
 	}
 
-	private void registEvents() {
+	private void registerEvents() {
 		this.buttonSelectAll.addActionListener(this.actionListenerSelectAll);
 		this.buttonSelectInverse.addActionListener(this.actionListenerSelectInverse);
-		//this.buttonDelete.addActionListener(this.actionListenerDelete);
 		this.buttonSelectAllSystemField.addActionListener(this.actionListenerSelectSystemField);
 		this.buttonSelectAllNonSystemField.addActionListener(this.actionListenerSelectNonSystemField);
 		this.smTextFieldLegit.addCaretListener(this.textFieldTargetDatasetCaretListener);
@@ -298,7 +296,7 @@ public class JDialogOutputDataset extends SmDialog {
 			this.tableFieldNameCaptionType.setShowSystemField(false);
 		}
 		this.tableFieldNameCaptionType.setDataset(this.tabular.getDataset());
-		this.tableFieldNameCaptionType.getTableController().selectedNonSystemField(this.tableFieldNameCaptionType);
+		this.tableFieldNameCaptionType.getTableController().selectUnSystemField(this.tableFieldNameCaptionType);
 	}
 
 	private void isCanRun() {
@@ -409,30 +407,30 @@ public class JDialogOutputDataset extends SmDialog {
 	private ActionListener actionListenerSelectAll = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			tableFieldNameCaptionType.getTableController().selectedAll(tableFieldNameCaptionType);
-			//tableFieldName.getTableController().selectedAll(tableFieldName);
+			tableFieldNameCaptionType.getTableController().selectAll(tableFieldNameCaptionType);
+			//tableFieldName.getTableController().selectAll(tableFieldName);
 		}
 	};
 
 	private ActionListener actionListenerSelectInverse = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			tableFieldNameCaptionType.getTableController().selectedIInverse(tableFieldNameCaptionType);
-			//tableFieldName.getTableController().selectedIInverse(tableFieldName);
+			tableFieldNameCaptionType.getTableController().selectInverse(tableFieldNameCaptionType);
+			//tableFieldName.getTableController().selectInverse(tableFieldName);
 		}
 	};
 
 	private ActionListener actionListenerSelectSystemField = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			tableFieldNameCaptionType.getTableController().selectedSystemField(tableFieldNameCaptionType);
+			tableFieldNameCaptionType.getTableController().selectSystemField(tableFieldNameCaptionType);
 		}
 	};
 
 	private ActionListener actionListenerSelectNonSystemField = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			tableFieldNameCaptionType.getTableController().selectedNonSystemField(tableFieldNameCaptionType);
+			tableFieldNameCaptionType.getTableController().selectUnSystemField(tableFieldNameCaptionType);
 		}
 	};
 
@@ -466,9 +464,9 @@ public class JDialogOutputDataset extends SmDialog {
 			if (null != datasource && null != datasource.getDatasets()) {
 				Datasets datasets = datasource.getDatasets();
 				if (!datasets.getAvailableDatasetName(text).equals(text)) {
-					smTextFieldLegit.setForeground(WORNINGCOLOR);
+					smTextFieldLegit.setForeground(WARNING_COLOR);
 				} else {
-					smTextFieldLegit.setForeground(DEFUALTCOLOR);
+					smTextFieldLegit.setForeground(DEFAULT_COLOR);
 				}
 				isCanRun();
 			}

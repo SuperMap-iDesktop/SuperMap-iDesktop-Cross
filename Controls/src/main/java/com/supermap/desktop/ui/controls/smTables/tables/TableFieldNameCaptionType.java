@@ -31,13 +31,13 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 
 	private ITableController tableController=new TableControllerAdapter() {
 		@Override
-		public void selectedAll(ITable iTable) {
-			super.selectedAll(iTable);
+		public void selectAll(ITable iTable) {
+			super.selectAll(iTable);
 		}
 
 		@Override
-		public void selectedIInverse(ITable iTable) {
-			super.selectedIInverse(iTable);
+		public void selectInverse(ITable iTable) {
+			super.selectInverse(iTable);
 		}
 
 		@Override
@@ -49,12 +49,12 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 		}
 
 		@Override
-		public void selectedSystemField(ITable iTable) {
+		public void selectSystemField(ITable iTable) {
 			((IModel)iTable.getTablesModel()).getModelController().selectedSystemField();
 		}
 
 		@Override
-		public void selectedNonSystemField(ITable iTable) {
+		public void selectUnSystemField(ITable iTable) {
 			((IModel)iTable.getTablesModel()).getModelController().selectedNonSystemField();
 		}
 

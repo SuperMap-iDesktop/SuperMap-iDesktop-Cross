@@ -31,13 +31,13 @@ public class TableFieldName extends JTable implements ITable {
 
 //	private ITableController tableController=new TableControllerAdapter() {
 //		@Override
-//		public void selectedAll(ITable iTable) {
-//			super.selectedAll(iTable);
+//		public void selectAll(ITable iTable) {
+//			super.selectAll(iTable);
 //		}
 //
 //		@Override
-//		public void selectedIInverse(ITable iTable) {
-//			super.selectedIInverse(iTable);
+//		public void selectInverse(ITable iTable) {
+//			super.selectInverse(iTable);
 //		}
 //
 //		@Override

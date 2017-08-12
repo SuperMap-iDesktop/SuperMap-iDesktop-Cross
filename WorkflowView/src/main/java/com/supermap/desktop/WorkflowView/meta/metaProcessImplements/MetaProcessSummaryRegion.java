@@ -14,7 +14,7 @@ import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
@@ -141,7 +141,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterCombineSetting.addParameters(parameterSummaryType, parameterSwitch, parameterStandardFields, switchStandardFields,
 				parameterWeightedFields, switchWeightedFields, parametersumShape);
 		parameters.addParameters(parameterIServerLogin, parameterInputDataType, parameterCombineSetting);
-		parameters.getOutputs().addData("SummaryRegionResult", Type.UNKOWN);
+		parameters.addOutputParameters("SummaryRegionResult", BasicTypes.STRING, null);
 	}
 
 	private void initConstraint() {
@@ -238,7 +238,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 				messageBus.run();
 			}
 			fireRunning(new RunningEvent(this, 100, "finished"));
-			parameters.getOutputs().getData("OverlayResult").setValue("");
+			parameters.getOutputs().getData("SummaryRegionResult").setValue("");
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 			return false;

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public abstract class TableControllerAdapter implements ITableController {
 
 	@Override
-	public void selectedAll(ITable iTable) {
+	public void selectAll(ITable iTable) {
 		try {
 			if (iTable.isCheckBoxColumn()) {
 				((IModel) iTable.getTablesModel()).getModelController().selectedAll();
@@ -26,7 +26,7 @@ public abstract class TableControllerAdapter implements ITableController {
 	}
 
 	@Override
-	public void selectedIInverse(ITable iTable) {
+	public void selectInverse(ITable iTable) {
 		try {
 			if (iTable.isCheckBoxColumn()) {
 				((IModel) iTable.getTablesModel()).getModelController().selectedIInverse();
@@ -60,7 +60,7 @@ public abstract class TableControllerAdapter implements ITableController {
 	选择系统字段
 	 */
 	@Override
-	public void selectedSystemField(ITable iTable) {
+	public void selectSystemField(ITable iTable) {
 
 	}
 
@@ -68,7 +68,7 @@ public abstract class TableControllerAdapter implements ITableController {
 	选择非系统字段
 	 */
 	@Override
-	public void selectedNonSystemField(ITable iTable) {
+	public void selectUnSystemField(ITable iTable) {
 
 	}
 

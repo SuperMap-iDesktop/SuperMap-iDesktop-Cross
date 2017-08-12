@@ -1,7 +1,7 @@
 package com.supermap.desktop.WorkflowView.CtrlAction;
 
-import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.WorkflowView.tasks.SingleProgressPanel;
+import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.tasks.ProcessWorker;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
@@ -13,9 +13,9 @@ import java.awt.*;
  * @author XiaJT
  */
 public class SmDialogProcess extends SmDialog {
-	private MetaProcess metaProcess;
+	private IProcess metaProcess;
 
-	public SmDialogProcess(MetaProcess metaProcess) {
+	public SmDialogProcess(IProcess metaProcess) {
 		this.metaProcess = metaProcess;
 		this.setTitle(metaProcess.getTitle());
 		JPanel panel = (JPanel) metaProcess.getComponent().getPanel();
