@@ -18,7 +18,7 @@ import com.supermap.desktop.utilities.DatasourceUtilities;
 /**
  * Created by xie on 2017/8/8.
  */
-public class MetaprocessAppendRow extends MetaProcess {
+public class MetaProcessAppendRow extends MetaProcess {
 	private final String INPUT_DATA = CommonProperties.getString("String_ColumnHeader_SourceData");
 	private final String OUTPUT_DATA = CommonProperties.getString("String_ColumnHeader_TargetData");
 	private ParameterDatasource datasource;
@@ -27,7 +27,7 @@ public class MetaprocessAppendRow extends MetaProcess {
 	private ParameterDatasetChooseTable chooseTable;
 	private ParameterCheckBox checkBox;
 
-	public MetaprocessAppendRow() {
+	public MetaProcessAppendRow() {
 		initParameters();
 	}
 
