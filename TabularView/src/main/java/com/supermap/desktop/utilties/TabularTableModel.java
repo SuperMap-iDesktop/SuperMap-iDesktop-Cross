@@ -433,11 +433,15 @@ public class TabularTableModel extends AbstractTableModel {
 	}
 
 	public boolean addRow(Geometry geometry) {
-		int id = recordset.getID();
+//		int id = recordset.getID();
 		boolean result = recordset.addNew(geometry);
 		recordset.update();
-		moveToRowWithoutCurrentIndex(id);
+//		moveToRowWithoutCurrentIndex(id)
 		if (result) {
+			// 删除操作完成后，为确保下一次getValue赋值正确，调整记录集所在的记录数
+			this.currentRow = 0;
+			this.recordset.moveFirst();
+			this.recordset.refresh();
 			fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
 		}
 		return result;
@@ -468,8 +472,6 @@ public class TabularTableModel extends AbstractTableModel {
 			this.recordset.refresh();
 			fireTableDataChanged();
 		}
-
-
 	}
 
 	public void refresh() {
