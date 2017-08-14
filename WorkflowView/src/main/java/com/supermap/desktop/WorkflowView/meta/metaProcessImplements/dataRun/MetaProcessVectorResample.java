@@ -154,8 +154,8 @@ public class MetaProcessVectorResample extends MetaProcess {
 			if (datasetType.equals(DatasetType.LINE)) {
 				parameterResampleTolerance.setUnit(ProcessProperties.getString("String_Label_degree"));
 				parameterVertexTolerance.setUnit(ProcessProperties.getString("String_Label_degree"));
-				parameterResampleTolerance.setSelectedItem(0.0001);
-				parameterVertexTolerance.setSelectedItem(0.0001);
+				parameterResampleTolerance.setSelectedItem("0.0001");
+				parameterVertexTolerance.setSelectedItem("0.0001");
 
 				parameterisSaveSmallGeometry.setSelectedItem(false);
 				parameterisSaveSmallGeometry.setEnabled(false);
@@ -164,8 +164,8 @@ public class MetaProcessVectorResample extends MetaProcess {
 			} else if (datasetType.equals(DatasetType.REGION)) {
 				parameterResampleTolerance.setUnit(ProcessProperties.getString("String_Label_meter"));
 				parameterVertexTolerance.setUnit(ProcessProperties.getString("String_Label_meter"));
-				parameterResampleTolerance.setSelectedItem(10);
-				parameterVertexTolerance.setSelectedItem(10);
+				parameterResampleTolerance.setSelectedItem("10");
+				parameterVertexTolerance.setSelectedItem("10");
 				// 根据可读与否设置拓扑预处理是否可用--yuanR 2017.8.8
 				if (dataset.getSelectedItem().isReadOnly()) {
 					parameterisSaveSmallGeometry.setSelectedItem(false);
