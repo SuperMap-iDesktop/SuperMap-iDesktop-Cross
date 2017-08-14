@@ -8,8 +8,8 @@ import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * 聚合IParameter的面板,聚合JComponent面板的请用ParameterUserDefine或自定义类型
@@ -28,6 +28,7 @@ public class ParameterCombine extends AbstractParameter {
 	private String combineType = VERTICAL;
 	private int weightIndex = -1;
 	private boolean rebuildEveryTime;
+	private ArrayList<PropertyChangeListener> propertyChangedListeners = new ArrayList<>();
 
 	public ParameterCombine() {
 
@@ -42,7 +43,7 @@ public class ParameterCombine extends AbstractParameter {
 		boolean isNeedRebuild = false;
 		for (IParameter parameter : parameters) {
 			if (this.parameterList.indexOf(parameter) == -1) {
-				this.parameterList.add(parameter);
+				addParameterToList(parameter);
 				isNeedRebuild = true;
 			}
 		}
@@ -54,7 +55,9 @@ public class ParameterCombine extends AbstractParameter {
 
 	public void addParameters(int weightIndex, IParameter... parameters) {
 		this.weightIndex = weightIndex;
-		Collections.addAll(this.parameterList, parameters);
+		for (IParameter parameter : parameters) {
+			addParameterToList(parameter);
+		}
 		firePanelRebuildListener();
 	}
 
@@ -103,10 +106,25 @@ public class ParameterCombine extends AbstractParameter {
 	public int removeParameter(IParameter parameter) {
 		int index;
 		if ((index = parameterList.indexOf(parameter)) != -1) {
-			parameterList.remove(parameter);
+			removeParameterFormList(parameter);
 			firePanelRebuildListener();
 		}
 		return index;
+	}
+
+	private void removeParameterFormList(IParameter parameter) {
+		for (PropertyChangeListener propertyChangedListener : propertyChangedListeners) {
+			parameter.removePropertyListener(propertyChangedListener);
+		}
+		parameterList.remove(parameter);
+	}
+
+	private void addParameterToList(IParameter parameter) {
+		parameterList.add(parameter);
+		parameter.setRequisite(parameter.isRequisite() || isRequisite());
+		for (PropertyChangeListener propertyChangedListener : propertyChangedListeners) {
+			parameter.addPropertyListener(propertyChangedListener);
+		}
 	}
 
 	public ArrayList<IParameter> getParameterList() {
@@ -150,5 +168,29 @@ public class ParameterCombine extends AbstractParameter {
 		}
 
 		firePanelPropertyChangedListener(new PropertyChangeEvent(this, PanelPropertyChangedListener.ENABLE, oldValue, isEnabled));
+	}
+
+	@Override
+	public void addPropertyListener(PropertyChangeListener propertyChangeListener) {
+		for (IParameter parameter : parameterList) {
+			parameter.addPropertyListener(propertyChangeListener);
+		}
+		propertyChangedListeners.add(propertyChangeListener);
+	}
+
+	@Override
+	public void removePropertyListener(PropertyChangeListener propertyChangeListener) {
+		for (IParameter parameter : parameterList) {
+			parameter.removePropertyListener(propertyChangeListener);
+		}
+		propertyChangedListeners.remove(propertyChangeListener);
+	}
+
+	@Override
+	public void setRequisite(boolean isRequisite) {
+		super.setRequisite(isRequisite);
+		for (IParameter parameter : parameterList) {
+			parameter.setRequisite(parameter.isRequisite() || isRequisite);
+		}
 	}
 }

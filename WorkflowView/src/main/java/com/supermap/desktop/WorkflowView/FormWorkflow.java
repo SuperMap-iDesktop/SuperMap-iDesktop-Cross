@@ -21,6 +21,10 @@ import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.CanvasActio
 import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.CanvasActionProcessListener;
 import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.GraphDragAction;
 import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.Selection;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.dialog.SmDialogFormSaveAs;
+import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.tasks.TasksManager;
 import com.supermap.desktop.ui.FormBaseChild;
@@ -39,7 +43,7 @@ import java.util.ArrayList;
  * Created by highsad on 2017/1/6.
  */
 public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
-	private static final String PROCESS_TREE_CLASS_NAME = "com.supermap.desktop.WorkflowView.ProcessManager";
+	private static final String PROCESS_TREE_CLASS_NAME = "com.supermap.desktop.WorkflowView.ProcessManagerPanel";
 
 	private Workflow workflow;
 	private TasksManager tasksManager;
@@ -370,4 +374,8 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		return this.canvas;
 	}
 
+	@Override
+	public void run() {
+		getTasksManager().run();
+	}
 }

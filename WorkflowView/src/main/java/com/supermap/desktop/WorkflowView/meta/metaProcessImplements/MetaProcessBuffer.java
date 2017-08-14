@@ -21,15 +21,23 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterEnum;
+import com.supermap.desktop.process.parameter.ipls.ParameterFieldComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterRadioButton;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
-import static java.lang.Double.NEGATIVE_INFINITY;
 
 /**
  * @author XiaJT
@@ -45,8 +53,8 @@ public class MetaProcessBuffer extends MetaProcess {
 	private ParameterCheckBox checkBoxBufferType;
 	private ParameterCheckBox checkBoxBufferLeft;//左缓冲
 	private ParameterCheckBox checkBoxBufferRight;//右缓冲
-	private ParameterNumber parameterNumberLeftRadius;
-	private ParameterNumber parameterNumberRightRadius;
+	private ParameterTextField parameterTextFieldLeftRadius;
+	private ParameterTextField parameterTextFieldRightRadius;
 	private ParameterFieldComboBox comboBoxFieldLeft;
 	private ParameterFieldComboBox comboBoxFieldRight;
 	private ParameterNumber parameterTextFieldSemicircleLineSegment;
@@ -99,8 +107,8 @@ public class MetaProcessBuffer extends MetaProcess {
 		radioButtonNumOrField.setItems(new ParameterDataNode[]{num, field});
 		checkBoxBufferLeft = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_Left"));
 		checkBoxBufferRight = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_Right"));
-		parameterNumberLeftRadius = new ParameterNumber(ProcessProperties.getString("String_leftRadius"));
-		parameterNumberRightRadius = new ParameterNumber(ProcessProperties.getString("String_rightRadius"));
+		parameterTextFieldLeftRadius = new ParameterTextField(ProcessProperties.getString("String_leftRadius"));
+		parameterTextFieldRightRadius = new ParameterTextField(ProcessProperties.getString("String_rightRadius"));
 		comboBoxFieldLeft = new ParameterFieldComboBox(ProcessProperties.getString("String_leftRadius"));
 		comboBoxFieldRight = new ParameterFieldComboBox(ProcessProperties.getString("String_rightRadius"));
 		parameterUnionBuffer = new ParameterCheckBox(ProcessProperties.getString("String_UnionBufferItem"));
@@ -109,7 +117,6 @@ public class MetaProcessBuffer extends MetaProcess {
 		parameterTextFieldSemicircleLineSegment.setMaxBit(0);
 		parameterTextFieldSemicircleLineSegment.setMinValue(4);
 		parameterTextFieldSemicircleLineSegment.setMaxValue(200);
-		parameterTextFieldSemicircleLineSegment.setToolTip(parameterTextFieldSemicircleLineSegment.getDescribe()+"[4,200]");
 		// 设置是否为必要参数-yuanR
 		//ParameterLabel labelSplit = new ParameterLabel();
 		//labelSplit.setDescribe("-----------------------------------------------------");
@@ -124,7 +131,7 @@ public class MetaProcessBuffer extends MetaProcess {
 				checkBoxBufferType,
 				new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(checkBoxBufferLeft, checkBoxBufferRight),
 				radioButtonNumOrField,
-				parameterNumberLeftRadius, parameterNumberRightRadius,
+				parameterTextFieldLeftRadius, parameterTextFieldRightRadius,
 				comboBoxFieldLeft, comboBoxFieldRight);
 		parameterCombineBufferRadio.setDescribe(ControlsProperties.getString("String_BufferRadius"));
 
@@ -143,7 +150,7 @@ public class MetaProcessBuffer extends MetaProcess {
 				parameterCombineParameter,
 				parameterCombineResult
 		);
-
+		parameterCombineSourceData.setRequisite(true);
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.SIMPLE_VECTOR, parameterCombineSourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATASET, DatasetTypes.REGION, parameterCombineResult);
 	}
@@ -151,13 +158,13 @@ public class MetaProcessBuffer extends MetaProcess {
 	private void setComponentEnable() {
 		checkBoxBufferLeft.setEnabled(checkBoxBufferType.isEnabled() && Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()));
 		checkBoxBufferRight.setEnabled(checkBoxBufferType.isEnabled() && Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()));
-		parameterNumberLeftRadius.setEnabled((!checkBoxBufferType.isEnabled() ||
+		parameterTextFieldLeftRadius.setEnabled((!checkBoxBufferType.isEnabled() ||
 						!Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) ||
 						(Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) &&
 								Boolean.valueOf(checkBoxBufferLeft.getSelectedItem().toString()))
 				) && radioButtonNumOrField.getSelectedItem().equals(radioButtonNumOrField.getItemAt(0))
 		);
-		parameterNumberRightRadius.setEnabled(dataset.getSelectedDataset().getType().equals(DatasetType.LINE) &&
+		parameterTextFieldRightRadius.setEnabled(dataset.getSelectedDataset().getType().equals(DatasetType.LINE) &&
 				radioButtonNumOrField.getSelectedItem().equals(radioButtonNumOrField.getItemAt(0)) &&
 				(!Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) ||
 						(Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) &&
@@ -179,11 +186,11 @@ public class MetaProcessBuffer extends MetaProcess {
 
 	private void initComponentState() {
 		parameterBufferRange.setSelectedItem(BufferRadiusUnit.Meter);
-		parameterNumberLeftRadius.setSelectedItem(10);
-		parameterNumberRightRadius.setSelectedItem(10);
+		parameterTextFieldLeftRadius.setSelectedItem("10");
+		parameterTextFieldRightRadius.setSelectedItem("10");
 		parameterTextFieldSemicircleLineSegment.setSelectedItem("100");
 		parameterBufferRange.setRequisite(true);
-		parameterNumberLeftRadius.setRequisite(true);
+		parameterTextFieldLeftRadius.setRequisite(true);
 		parameterUnionBuffer.setRequisite(true);
 		parameterRetainAttribute.setRequisite(true);
 		parameterTextFieldSemicircleLineSegment.setRequisite(true);
@@ -199,10 +206,6 @@ public class MetaProcessBuffer extends MetaProcess {
 			comboBoxFieldLeft.setFieldName((DatasetVector) datasetVector);
 			comboBoxFieldRight.setFieldName((DatasetVector) datasetVector);
 			checkBoxBufferType.setEnabled(dataset.getSelectedDataset().getType().equals(DatasetType.LINE));
-			if (!datasetVector.getType().equals(DatasetType.REGION)) {
-				parameterNumberLeftRadius.setMinValue(0);
-				parameterNumberRightRadius.setMinValue(0);
-			}
 			setComponentEnable();
 		}
 		parameterSaveDataset.setDatasetName("result_buffer");
@@ -218,13 +221,6 @@ public class MetaProcessBuffer extends MetaProcess {
 				if (dataset.getSelectedDataset() != null) {
 					checkBoxBufferType.setEnabled(dataset.getSelectedDataset().getType().equals(DatasetType.LINE));
 					setComponentEnable();
-				}
-				if (dataset.getSelectedDataset().getType().equals(DatasetType.REGION)) {
-					parameterNumberLeftRadius.setMinValue(NEGATIVE_INFINITY);
-					parameterNumberRightRadius.setMinValue(NEGATIVE_INFINITY);
-				} else {
-					parameterNumberLeftRadius.setMinValue(0);
-					parameterNumberRightRadius.setMinValue(0);
 				}
 			}
 		});
@@ -293,10 +289,10 @@ public class MetaProcessBuffer extends MetaProcess {
 			int semicircleLineSegment = Integer.valueOf(((String) parameterTextFieldSemicircleLineSegment.getSelectedItem()));
 			Object radiusLeft = null;
 			Object radiusRight = null;
-			if (parameterNumberLeftRadius.isEnabled() || (comboBoxFieldLeft.isEnabled() && comboBoxFieldLeft.getSelectedItem() != "")) {
-				radiusLeft = ((ParameterDataNode) radioButtonNumOrField.getSelectedItem()).getData().equals(0) ? Integer.valueOf((String) parameterNumberLeftRadius.getSelectedItem()) : comboBoxFieldLeft.getFieldName();
-			} else if (parameterNumberRightRadius.isEnabled() || (comboBoxFieldRight.isEnabled() && comboBoxFieldRight.getSelectedItem() != "")) {
-				radiusRight = ((ParameterDataNode) radioButtonNumOrField.getSelectedItem()).getData().equals(0) ? Integer.valueOf((String) parameterNumberRightRadius.getSelectedItem()) : comboBoxFieldRight.getFieldName();
+			if (parameterTextFieldLeftRadius.isEnabled() || (comboBoxFieldLeft.isEnabled() && comboBoxFieldLeft.getSelectedItem() != "")) {
+				radiusLeft = ((ParameterDataNode) radioButtonNumOrField.getSelectedItem()).getData().equals(0) ? Integer.valueOf((String) parameterTextFieldLeftRadius.getSelectedItem()) : comboBoxFieldLeft.getFieldName();
+			} else if (parameterTextFieldRightRadius.isEnabled() || (comboBoxFieldRight.isEnabled() && comboBoxFieldRight.getSelectedItem() != "")) {
+				radiusRight = ((ParameterDataNode) radioButtonNumOrField.getSelectedItem()).getData().equals(0) ? Integer.valueOf((String) parameterTextFieldRightRadius.getSelectedItem()) : comboBoxFieldRight.getFieldName();
 			} else {
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_NullRadius_Error"));
 				return false;

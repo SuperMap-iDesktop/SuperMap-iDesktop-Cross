@@ -1,10 +1,15 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics;
 
-import com.supermap.analyst.spatialstatistics.*;
+import com.supermap.analyst.spatialstatistics.BandWidthType;
+import com.supermap.analyst.spatialstatistics.GWRAnalystResult;
+import com.supermap.analyst.spatialstatistics.GWRParameter;
+import com.supermap.analyst.spatialstatistics.GWRSummary;
+import com.supermap.analyst.spatialstatistics.KernelFunction;
+import com.supermap.analyst.spatialstatistics.KernelType;
+import com.supermap.analyst.spatialstatistics.SpatialRelModeling;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -14,7 +19,15 @@ import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterFieldComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterFieldGroup;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSwitch;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -194,7 +207,22 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 			SpatialRelModeling.addSteppedListener(steppedListener);
 			GWRAnalystResult gwrAnalystResult = SpatialRelModeling.geographicWeightedRegression(datasetVector, parameterSaveDataset.getResultDatasource(),
 					parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()), gwrParameter);
-			isSuccessful = gwrAnalystResult != null;
+			if (gwrAnalystResult != null) {
+				parameters.getOutputs().getData(OUTPUT_DATASET).setValue(gwrAnalystResult.getResultDataset());
+				isSuccessful = true;
+				GWRSummary gwrSummary = gwrAnalystResult.getGWRSummary();
+				String result = ProcessProperties.getString("String_AIC") + gwrSummary.getAIC() + "\n"
+						+ ProcessProperties.getString("String_AICc") + gwrSummary.getAICc() + "\n"
+						+ ProcessProperties.getString("String_BandWidthDistanceTolerance") + gwrSummary.getBandwidth() + "\n"
+						+ ProcessProperties.getString("String_Edf") + gwrSummary.getEdf() + "\n"
+						+ ProcessProperties.getString("String_EffectiveNumber") + gwrSummary.getEffectiveNumber() + "\n"
+						+ ProcessProperties.getString("String_KNeighbors") + gwrSummary.getNeighbors() + "\n"
+						+ ProcessProperties.getString("String_R2") + gwrSummary.getR2() + "\n"
+						+ ProcessProperties.getString("String_R2Adjusted") + gwrSummary.getR2Adjusted() + "\n"
+						+ ProcessProperties.getString("String_ResidualSquares") + gwrSummary.getResidualSquares() + "\n"
+						+ ProcessProperties.getString("String_Sigma") + gwrSummary.getSigma();
+				Application.getActiveApplication().getOutput().output(result);
+			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {

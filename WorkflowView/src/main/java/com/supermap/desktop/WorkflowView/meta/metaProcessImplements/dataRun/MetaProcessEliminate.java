@@ -17,6 +17,8 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 /**
  * Created By Chens on 2017/8/8 0008
@@ -80,7 +82,9 @@ public class MetaProcessEliminate extends MetaProcess {
 		sourceDataset.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				numberArea.setSelectedItem(getMaxAreaTolerance((DatasetVector) sourceDataset.getSelectedDataset()));
+				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
+					numberArea.setSelectedItem(getMaxAreaTolerance((DatasetVector) evt.getNewValue()));
+				}
 			}
 		});
 	}

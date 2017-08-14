@@ -1,13 +1,16 @@
 package com.supermap.desktop.process.parameters.ParameterPanels.StatisticsField;
 
 import com.supermap.analyst.spatialanalyst.StatisticsType;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.FieldType;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
-import com.supermap.desktop.process.parameter.ipls.ParameterFieldGroup;
 import com.supermap.desktop.process.parameter.ipls.ParameterSimpleStatisticsFieldGroup;
 import com.supermap.desktop.process.parameters.ParameterPanels.SwingPanel;
 import com.supermap.desktop.ui.controls.CellRenders.ListStatisticsTypeCellRender;
@@ -27,8 +30,6 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-
-import static com.supermap.desktop.process.parameters.ParameterPanels.StatisticsField.ParameterSimpleStatisticsFieldGroupPanel.SimpleStatisticsFieldGroupTableModel.COLUMN_FIELD_STATISTICS_TYPE;
 
 /**
  * Created by lixiaoyao on 2017/8/8.
@@ -91,7 +92,7 @@ public class ParameterSimpleStatisticsFieldGroupPanel extends SwingPanel {
 		parameterSimpleStatisticsFieldGroup.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (evt.getPropertyName().equals(ParameterFieldGroup.FIELD_DATASET)) {
+				if (evt.getPropertyName().equals(parameterSimpleStatisticsFieldGroup.FIELD_DATASET)) {
 					tableModel.setDataset(parameterSimpleStatisticsFieldGroup.getDataset());
 				}
 			}
@@ -120,7 +121,7 @@ public class ParameterSimpleStatisticsFieldGroupPanel extends SwingPanel {
 
 	@Override
 	public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
-		if (event.getFieldName().equals(ParameterFieldGroup.FIELD_DATASET)) {
+		if (event.getFieldName().equals(parameterSimpleStatisticsFieldGroup.FIELD_DATASET)) {
 			tableModel.setDataset(parameterSimpleStatisticsFieldGroup.getDataset());
 		}
 	}

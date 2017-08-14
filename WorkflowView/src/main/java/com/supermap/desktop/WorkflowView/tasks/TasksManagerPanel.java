@@ -1,5 +1,6 @@
 package com.supermap.desktop.WorkflowView.tasks;
 
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.tasks.ProcessWorker;
 import com.supermap.desktop.process.tasks.TasksManager;
@@ -7,6 +8,7 @@ import com.supermap.desktop.process.tasks.events.WorkerStateChangedEvent;
 import com.supermap.desktop.process.tasks.events.WorkerStateChangedListener;
 import com.supermap.desktop.process.tasks.events.WorkersChangedEvent;
 import com.supermap.desktop.process.tasks.events.WorkersChangedListener;
+import com.supermap.desktop.process.ui.SingleProgressPanel;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -25,12 +27,13 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 	 */
 	private final static long serialVersionUID = 1L;
 	private TasksManager tasksManager;
-	private final static String TITLE_RUNNING = "正在执行";
-	private final static String TITLE_READY = "准备就绪";
-	private final static String TITLE_WAITING = "等待";
-	private final static String TITLE_COMPLETED = "已完成";
-	private final static String TITLE_CANCELLED = "已取消";
-	private final static String TITLE_EXCEPTION = "执行失败";
+	private final static String TITLE_RUNNING = ProcessProperties.getString("String_Running");
+	private final static String TITLE_READY = ProcessProperties.getString("String_Ready");
+	private final static String TITLE_WAITING = ProcessProperties.getString("String_Waiting");
+	private final static String TITLE_COMPLETED = ProcessProperties.getString("String_Completed");
+	private final static String TITLE_CANCELLED = ProcessProperties.getString("String_Cancelled");
+	private final static String TITLE_EXCEPTION = ProcessProperties.getString("String_Failed");
+	private final static String TITLE_WARNING = ProcessProperties.getString("String_warning");
 	private final static String TITLE_PATTERN = "{0} ({1})";
 
 	private JPanel panelRunning;
@@ -39,6 +42,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 	private JPanel panelCompleted;
 	private JPanel panelCancelled;
 	private JPanel panelException;
+	private JPanel panelWarning;
 
 	private Map<ProcessWorker, SingleProgressPanel> map = new ConcurrentHashMap<>();
 
@@ -98,6 +102,11 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		this.panelException.setLayout(new BoxLayout(this.panelException, BoxLayout.Y_AXIS));
 		this.panelException.setVisible(false);
 
+		this.panelWarning = new JPanel();
+		this.panelWarning.setBorder(new TitledBorder(TITLE_EXCEPTION));
+		this.panelWarning.setLayout(new BoxLayout(this.panelWarning, BoxLayout.Y_AXIS));
+		this.panelWarning.setVisible(false);
+
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);
@@ -109,6 +118,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 				.addComponent(this.panelWaiting, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addComponent(this.panelCompleted, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addComponent(this.panelCancelled, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addComponent(this.panelWarning, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addComponent(this.panelException, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
@@ -117,6 +127,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 				.addComponent(this.panelWaiting, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(this.panelCompleted, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(this.panelCancelled, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(this.panelWarning, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(this.panelException, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
 	}
 
@@ -172,6 +183,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		this.panelReady.remove(this.map.get(worker));
 		this.panelRunning.remove(this.map.get(worker));
 		this.panelWaiting.remove(this.map.get(worker));
+		this.panelWarning.remove(this.map.get(worker));
 		this.map.remove(worker);
 		validate();
 		repaint();
@@ -184,6 +196,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		this.panelReady.removeAll();
 		this.panelWaiting.removeAll();
 		this.panelCompleted.removeAll();
+		this.panelWarning.removeAll();
 	}
 
 	private void validatePanelsTitle() {
@@ -193,6 +206,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		setPanelTitle(this.panelWaiting, MessageFormat.format(TITLE_PATTERN, TITLE_WAITING, this.panelWaiting.getComponentCount()));
 		setPanelTitle(this.panelReady, MessageFormat.format(TITLE_PATTERN, TITLE_READY, this.panelReady.getComponentCount()));
 		setPanelTitle(this.panelRunning, MessageFormat.format(TITLE_PATTERN, TITLE_RUNNING, this.panelRunning.getComponentCount()));
+		setPanelTitle(this.panelWarning, MessageFormat.format(TITLE_PATTERN, TITLE_WARNING, this.panelRunning.getComponentCount()));
 	}
 
 	private void setPanelTitle(JPanel panel, String title) {
@@ -209,6 +223,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		this.panelCompleted.setVisible(this.panelCompleted.getComponentCount() > 0);
 		this.panelCancelled.setVisible(this.panelCancelled.getComponentCount() > 0);
 		this.panelException.setVisible(this.panelException.getComponentCount() > 0);
+		this.panelWarning.setVisible(this.panelWarning.getComponentCount() > 0);
 	}
 
 
@@ -226,6 +241,8 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 				return this.panelRunning;
 			case TasksManager.WORKER_STATE_WAITING:
 				return this.panelWaiting;
+			case TasksManager.WORKER_STATE_WARNING:
+				return this.panelWarning;
 			default:
 				return null;
 		}
@@ -244,11 +261,8 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		JPanel oldContainer = getPanel(oldState);
 		JPanel newContainer = getPanel(newState);
 
-		if (newState == TasksManager.WORKER_STATE_WAITING) {
+		if (newState == TasksManager.WORKER_STATE_WAITING || newState == TasksManager.WORKER_STATE_WARNING || newState == TasksManager.WORKER_STATE_READY) {
 			progressPanel.reset();
-		} else if (newState == TasksManager.WORKER_STATE_READY) {
-			// worker与panel一一对应的，在初始化时就绑定了
-//			progressPanel.setWorker(worker);
 		}
 
 		if (oldContainer != null) {

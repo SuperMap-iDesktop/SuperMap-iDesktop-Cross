@@ -7,6 +7,7 @@ import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -86,7 +87,7 @@ public class MetaProcessVectorResample extends MetaProcess {
 				parameterCombineSourceData,
 				parameterCombineParameter
 		);
-
+		parameterCombineSourceData.setRequisite(true);
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
 	}
@@ -168,6 +169,7 @@ public class MetaProcessVectorResample extends MetaProcess {
 		boolean isSuccessful = false;
 		DatasetVector datasetVector = null;
 		try {
+			fireRunning(new RunningEvent(MetaProcessVectorResample.this, 0, "start"));
 			if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
 					&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
 				datasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
@@ -192,7 +194,7 @@ public class MetaProcessVectorResample extends MetaProcess {
 			datasetVector.addSteppedListener(this.steppedListener);
 			isSuccessful = datasetVector.resample(resampleInformation, true, isSaveSmallGeometry);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(datasetVector);
-
+			fireRunning(new RunningEvent(MetaProcessVectorResample.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

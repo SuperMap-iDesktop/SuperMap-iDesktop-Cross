@@ -18,7 +18,7 @@ public class ProcessManager extends DefaultProcessGroup {
 	public final static ProcessManager INSTANCE = new ProcessManager("Manager", "ProcessManager");
 
 	public ProcessManager(String id, String title) {
-		super(id, title);
+		super(id, title, "0", null);
 	}
 
 	public IProcess createProcess(IProcessDescriptor processDescriptor) {

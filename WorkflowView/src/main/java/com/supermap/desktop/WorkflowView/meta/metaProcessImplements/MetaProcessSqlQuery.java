@@ -70,7 +70,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
 		parameterCombineSourceData.addParameters(datasource, this.dataset);
 		parameterCombineSourceData.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
-
+		parameterCombineSourceData.setRequisite(true);
 //		ParameterCombine parameterCombineSetting = new ParameterCombine();
 //		parameterCombineSetting.addParameters(this.parameterResultFields, this.parameterAttributeFilter);
 //		parameterCombineSetting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));

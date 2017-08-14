@@ -11,6 +11,7 @@ import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener
 import com.supermap.desktop.process.parameter.events.ParameterValueSelectedEvent;
 import com.supermap.desktop.process.parameter.events.UpdateValueListener;
 import com.supermap.desktop.process.parameter.interfaces.datas.Irequisite;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.event.EventListenerList;
 import java.beans.PropertyChangeEvent;
@@ -35,7 +36,7 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 	private List<UpdateValueListener> updateValueListeners = new ArrayList<>();
 	private boolean isDescriptionVisible = true;
 	// 添加是否为必填参数属性，默认为非必填
-	private Boolean isRequisite = false;
+	private boolean isRequisite = false;
 
 	@Override
 	public void addPanelPropertyChangedListener(PanelPropertyChangedListener panelPropertyChangedListener) {
@@ -276,7 +277,7 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 	 * @return
 	 */
 	@Override
-	public Boolean isRequisite() {
+	public boolean isRequisite() {
 		return this.isRequisite;
 	}
 
@@ -287,7 +288,16 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 	 * @param isRequisite
 	 */
 	@Override
-	public void setRequisite(Boolean isRequisite) {
+	public void setRequisite(boolean isRequisite) {
 		this.isRequisite = isRequisite;
+	}
+
+	@Override
+	public boolean isReady() {
+		if (!(this instanceof ISelectionParameter)) {
+			return true;
+		}
+		Object item = ((ISelectionParameter) this).getSelectedItem();
+		return item != null && (!(item instanceof String) || StringUtilities.isNullOrEmpty((String) item));
 	}
 }

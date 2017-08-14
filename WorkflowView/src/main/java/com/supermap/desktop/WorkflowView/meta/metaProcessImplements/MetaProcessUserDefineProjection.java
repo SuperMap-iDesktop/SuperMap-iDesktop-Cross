@@ -1,8 +1,8 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
+import com.supermap.desktop.process.ProcessProperties;
 
 /**
  * @author XiaJT
@@ -12,7 +12,7 @@ public class MetaProcessUserDefineProjection extends MetaProcess {
 
 	@Override
 	public String getTitle() {
-		return ProcessProperties.getString("String_UserDefineProjection");
+		return ProcessProperties.getString("UserDefineProjection");
 	}
 
 	@Override

@@ -49,8 +49,8 @@ public class BufferDialog extends SmDialog {
 
 	private DoSome some = new DoSome() {
 		@Override
-		public void doSome(boolean isArcSegmentNumSuitable, boolean isComboBoxDatasetNotNull, boolean isRadiusNumSuitable, boolean isHasResultDatasource) {
-			panelButton.getButtonOk().setEnabled(isArcSegmentNumSuitable && isComboBoxDatasetNotNull && isRadiusNumSuitable && isHasResultDatasource);
+		public void doSome(boolean isArcSegmentNumSuitable, boolean isComboBoxDatasetNotNull, boolean isRadiusNumSuitable, boolean isHasResultDataset) {
+			panelButton.getButtonOk().setEnabled(isArcSegmentNumSuitable && isComboBoxDatasetNotNull && isRadiusNumSuitable && isHasResultDataset);
 		}
 	};
 
@@ -233,10 +233,6 @@ public class BufferDialog extends SmDialog {
 		this.panelBufferType.removeAll();
 		if (this.panelPointOrRegionAnalyst == null) {
 			this.panelPointOrRegionAnalyst = new PanelPointOrRegionAnalyst(some);
-		} else {
-			// 因为没有重新初始化面板，当切换时需要对“确定”按钮状态进行判断--yuanR 2017.3.7
-			// 点面面板仅对数据源情况进行判断
-			this.panelPointOrRegionAnalyst.judgeOKButtonisEnabled();
 		}
 		this.panelBufferType.add(this.panelPointOrRegionAnalyst);
 		pack();
@@ -248,9 +244,6 @@ public class BufferDialog extends SmDialog {
 		this.panelBufferType.removeAll();
 		if (this.panelLineBufferAnalyst == null) {
 			this.panelLineBufferAnalyst = new PanelLineBufferAnalyst(some);
-		} else {
-			// 因为没有重新初始化面板，当切换时需要对“确定”按钮状态进行判断--yuanR 2017.3.7
-			this.panelLineBufferAnalyst.judgeOKButtonisEnabled();
 		}
 		this.panelBufferType.add(this.panelLineBufferAnalyst);
 		pack();
