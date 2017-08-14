@@ -29,6 +29,7 @@ public class MetaProcessVectorResample extends MetaProcess {
 
 	private ParameterDatasourceConstrained datasource;
 	private ParameterSingleDataset dataset;
+//	private ParameterSaveDataset resultDataset;
 
 	// 重采样类型
 	private ParameterComboBox parameterResampleType;
@@ -83,11 +84,19 @@ public class MetaProcessVectorResample extends MetaProcess {
 		parameterCombineParameter.addParameters(parameterResampleType, parameterResampleTolerance, parameterisSaveSmallGeometry,
 				parameterisTopologyPreprocess, parameterVertexTolerance);
 
+		// 结果数据集
+//		resultDataset = new ParameterSaveDataset();
+//		ParameterCombine parameterCombineResultData = new ParameterCombine();
+//		parameterCombineResultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
+//		parameterCombineResultData.addParameters(resultDataset);
+
+
 		parameters.setParameters(
 				parameterCombineSourceData,
 				parameterCombineParameter
+//				parameterCombineResultData
 		);
-		parameterCombineSourceData.setRequisite(true);
+
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
 	}
@@ -98,6 +107,8 @@ public class MetaProcessVectorResample extends MetaProcess {
 		if (datasetVector != null) {
 			datasource.setSelectedItem(datasetVector.getDatasource());
 			dataset.setSelectedItem(datasetVector);
+//			this.resultDataset.setResultDatasource(datasetVector.getDatasource());
+//			this.resultDataset.setSelectedItem(datasetVector.getDatasource().getDatasets().getAvailableDatasetName("result_VectorResample"));
 		}
 		parameterResampleType.setSelectedItem(ResampleType.RTBEND);
 		reloadValue();
@@ -109,6 +120,8 @@ public class MetaProcessVectorResample extends MetaProcess {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+
+//		DatasourceConstraint.getInstance().constrained(resultDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 
 		parameterisTopologyPreprocess.addPropertyListener(new PropertyChangeListener() {
 			@Override
@@ -144,6 +157,7 @@ public class MetaProcessVectorResample extends MetaProcess {
 				parameterResampleTolerance.setSelectedItem(0.0001);
 				parameterVertexTolerance.setSelectedItem(0.0001);
 
+				parameterisSaveSmallGeometry.setSelectedItem(false);
 				parameterisSaveSmallGeometry.setEnabled(false);
 				parameterisTopologyPreprocess.setSelectedItem(false);
 				parameterisTopologyPreprocess.setEnabled(false);
@@ -154,9 +168,14 @@ public class MetaProcessVectorResample extends MetaProcess {
 				parameterVertexTolerance.setSelectedItem(10);
 				// 根据可读与否设置拓扑预处理是否可用--yuanR 2017.8.8
 				if (dataset.getSelectedItem().isReadOnly()) {
+					parameterisSaveSmallGeometry.setSelectedItem(false);
+					parameterisSaveSmallGeometry.setEnabled(false);
+					parameterisTopologyPreprocess.setSelectedItem(false);
 					parameterisTopologyPreprocess.setEnabled(false);
 				} else {
+					parameterisSaveSmallGeometry.setSelectedItem(true);
 					parameterisSaveSmallGeometry.setEnabled(true);
+					parameterisTopologyPreprocess.setSelectedItem(true);
 					parameterisTopologyPreprocess.setEnabled(true);
 				}
 
@@ -167,14 +186,14 @@ public class MetaProcessVectorResample extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
-		DatasetVector datasetVector = null;
+		DatasetVector sourceDatasetVector = null;
 		try {
 			fireRunning(new RunningEvent(MetaProcessVectorResample.this, 0, "start"));
 			if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
 					&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
-				datasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
+				sourceDatasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
 			} else {
-				datasetVector = (DatasetVector) dataset.getSelectedItem();
+				sourceDatasetVector = (DatasetVector) dataset.getSelectedItem();
 			}
 
 			ResampleType resampleType = (ResampleType) parameterResampleType.getSelectedData();
@@ -191,14 +210,15 @@ public class MetaProcessVectorResample extends MetaProcess {
 			if (isTopologyPreprocess) {
 				resampleInformation.setVertexInterval(vertexTolerance);
 			}
-			datasetVector.addSteppedListener(this.steppedListener);
-			isSuccessful = datasetVector.resample(resampleInformation, true, isSaveSmallGeometry);
-			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(datasetVector);
+
+			sourceDatasetVector.addSteppedListener(this.steppedListener);
+			isSuccessful = sourceDatasetVector.resample(resampleInformation, true, isSaveSmallGeometry);
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(sourceDatasetVector);
 			fireRunning(new RunningEvent(MetaProcessVectorResample.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			datasetVector.removeSteppedListener(this.steppedListener);
+			sourceDatasetVector.removeSteppedListener(this.steppedListener);
 		}
 		return isSuccessful;
 	}

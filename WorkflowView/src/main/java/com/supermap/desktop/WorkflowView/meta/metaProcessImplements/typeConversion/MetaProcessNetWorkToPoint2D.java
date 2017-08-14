@@ -102,7 +102,7 @@ public class MetaProcessNetWorkToPoint2D extends MetaProcessTypeConversion {
 			while (!recordsetInput.isEOF()) {
 				//  获得属性表信息
 				Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-				recordsetResult.addNew(recordsetInput.getGeometry(), value);
+				isSuccessful = recordsetResult.addNew(recordsetInput.getGeometry(), value);
 				recordsetInput.moveNext();
 			}
 			recordsetResult.getBatch().update();
