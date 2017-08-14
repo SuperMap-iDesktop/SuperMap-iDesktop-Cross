@@ -4630,7 +4630,7 @@ public class CommonToolkit {
 			datasetImage.put(DatasetType.WMS, fileParentPath + "Image_DatasetWMS_Normal.png");
 			datasetImage.put(DatasetType.TEXTURE, fileParentPath + "Image_DataseSimpleDataset_Normal.png");
 			datasetImage.put(DatasetType.VOLUME, fileParentPath + "Image_DatasetVOLUME_Normal.png");
-			datasetImage.put(DatasetType.VECTORCOLLECTION, fileParentPath + "Image_DatasetUnknown_Normal.png");
+			datasetImage.put(DatasetType.VECTORCOLLECTION, fileParentPath + "Image_DatasetVectorCollection_Normal.png");
 			String filePathTopo = fileParentPath + "TopologyDatasetRelations/Image_TopologyDatasetRelations_Normal.png";
 			datasetImage.put(DatasetType.TOPOLOGY, filePathTopo);
 		}

@@ -9,10 +9,11 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.CollectionDataset.JDialogCreateCollectionDataset;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.ui.controls.comboBox.ComboBoxCharset;
+import com.supermap.desktop.utilities.CharsetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
@@ -44,7 +45,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	private JLabel labelSpatialIndexType;
 	private JTextField textFieldSpatialIndexType;
 	private JLabel labelCharset;
-	private ComboBoxCharset comboBoxCharset;
+	private CharsetComboBox comboBoxCharset;
 	private JLabel labelDatasetCount;
 	private JTextField textFieldDatasetCount;
 	private SmButton buttonSetDatasetCount;
@@ -170,7 +171,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		this.textFieldSpatialIndexType = new JTextField();
 		this.textFieldSpatialIndexType.setEditable(false);
 		this.labelCharset = new JLabel("Charset:");
-		this.comboBoxCharset = new ComboBoxCharset();
+		this.comboBoxCharset = new CharsetComboBox();
 		this.labelDatasetCount = new JLabel();
 		this.textFieldDatasetCount = new JTextField();
 		this.buttonSetDatasetCount = new SmButton();
@@ -404,7 +405,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 
 	private void comboBoxCharsetSelectedChange(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
-			this.charset = this.comboBoxCharset.getSelectedItem();
+			this.charset = CharsetUtilities.valueOf(this.comboBoxCharset.getSelectedItem().toString());
 			setComponentsEnabled();
 		}
 	}
@@ -522,7 +523,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 				}
 			}
 		}
-		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0,datasetVectors.toArray(new DatasetVector[datasetVectors.size()]));
+		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0, datasetVectors.toArray(new DatasetVector[datasetVectors.size()]));
 		createCollectionDataset.isSetDatasetCollectionCount(true);
 		createCollectionDataset.setDatasetVector(this.datasetVector);
 		createCollectionDataset.showDialog();

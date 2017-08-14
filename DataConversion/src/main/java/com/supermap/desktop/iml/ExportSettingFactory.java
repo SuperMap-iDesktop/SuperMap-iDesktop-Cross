@@ -12,6 +12,9 @@ public class ExportSettingFactory implements IExportSettingFactory {
 	@Override
 	public ExportSetting createExportSetting(Object fileType) {
 		ExportSetting result = new ExportSetting();
+		if (null == fileType) {
+			return result;
+		}
 		if (fileType.equals(FileType.BMP)) {
 			result = new ExportSettingBMP();
 		} else if (fileType.equals(FileType.DWG)) {

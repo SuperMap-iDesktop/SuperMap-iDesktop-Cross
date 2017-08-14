@@ -49,6 +49,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	private JPanel panelTableInfo;
 	private JPanel panelBasicInfo;
 	private JScrollPane scrollPane;
+	private JCheckBox checkBoxCloseDialog;
 	private CollectionDatasetTableModel tableModel;
 	//修改数据集集合时用到
 	private DatasetVector datasetVector;
@@ -59,7 +60,6 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	private boolean isSetDatasetCollectionCount;
 	//影像集合添/删子集
 	private boolean isSetImageCollectinCount;
-
 
 	private DatasetChooser datasetChooser;
 
@@ -135,20 +135,25 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	};
 
 	private void addDatasetToCollection() {
-		if (null != this.datasetVector) {
-			ArrayList<DatasetInfo> datasetInfos = tableModel.getDatasetInfos();
-			for (int i = 0; i < datasetInfos.size(); i++) {
-				if (((datasetVector.GetSubCollectionDatasetType() == DatasetType.UNKNOWN)
-						|| (datasetVector.GetSubCollectionDatasetType() == datasetInfos.get(i).getDataset().getType()))
-						&& !(datasetVector.getName().equals(datasetInfos.get(i).getDataset().getName()))) {
-					boolean result = datasetVector.addCollectionDataset((DatasetVector) datasetInfos.get(i).getDataset());
-					if (result) {
-						Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddSuccess"), datasetVector.getName(), datasetInfos.get(i).getName()));
-					} else {
-						Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddFailed"), datasetVector.getName(), datasetInfos.get(i).getName()));
+		try {
+			if (null != this.datasetVector) {
+				ArrayList<DatasetInfo> datasetInfos = tableModel.getDatasetInfos();
+				for (int i = 0; i < datasetInfos.size(); i++) {
+					if (((datasetVector.GetSubCollectionDatasetType() == DatasetType.UNKNOWN)
+							|| (datasetVector.GetSubCollectionDatasetType() == datasetInfos.get(i).getDataset().getType()))
+							&& !(datasetVector.getName().equals(datasetInfos.get(i).getDataset().getName()))) {
+						boolean result = datasetVector.addCollectionDataset((DatasetVector) datasetInfos.get(i).getDataset());
+						if (result) {
+							Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddSuccess"), datasetVector.getName(), datasetInfos.get(i).getName()));
+						} else {
+							Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddFailed"), datasetVector.getName(), datasetInfos.get(i).getName()));
+						}
 					}
 				}
 			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
 			JDialogCreateCollectionDataset.this.dispose();
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
@@ -161,31 +166,38 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 
 	private void createDatasetCollection() {
 		final Datasource datasource = datasourceComboBox.getSelectedDatasource();
-		DatasetVectorInfo info = new DatasetVectorInfo();
-		String datasetName = datasource.getDatasets().getAvailableDatasetName(textFieldDatasetName.getText());
-		info.setName(datasetName);
-		info.setType(DatasetType.VECTORCOLLECTION);
-
-		DatasetVector vector = datasource.getDatasets().create(info);
-		vector.setCharset(CharsetUtilities.valueOf(charsetComboBox.getSelectedItem().toString()));
-		ArrayList<DatasetInfo> datasetInfos = tableModel.getDatasetInfos();
-		for (int i = 0; i < datasetInfos.size(); i++) {
-			if ((vector.GetSubCollectionDatasetType() == DatasetType.UNKNOWN) || (vector.GetSubCollectionDatasetType() == datasetInfos.get(i).getDataset().getType())) {
-				boolean result = vector.addCollectionDataset((DatasetVector) datasetInfos.get(i).getDataset());
-				if (result) {
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddSuccess"), vector.getName(), datasetInfos.get(i).getName()));
-				} else {
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddFailed"), vector.getName(), datasetInfos.get(i).getName()));
+		try {
+			DatasetVectorInfo info = new DatasetVectorInfo();
+			String datasetName = datasource.getDatasets().getAvailableDatasetName(textFieldDatasetName.getText());
+			info.setName(datasetName);
+			info.setType(DatasetType.VECTORCOLLECTION);
+			DatasetVector vector = datasource.getDatasets().create(info);
+			vector.setCharset(CharsetUtilities.valueOf(charsetComboBox.getSelectedItem().toString()));
+			ArrayList<DatasetInfo> datasetInfos = tableModel.getDatasetInfos();
+			for (int i = 0; i < datasetInfos.size(); i++) {
+				if ((vector.GetSubCollectionDatasetType() == DatasetType.UNKNOWN) || (vector.GetSubCollectionDatasetType() == datasetInfos.get(i).getDataset().getType())) {
+					boolean result = vector.addCollectionDataset((DatasetVector) datasetInfos.get(i).getDataset());
+					if (result) {
+						Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddSuccess"), vector.getName(), datasetInfos.get(i).getName()));
+					} else {
+						Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddFailed"), vector.getName(), datasetInfos.get(i).getName()));
+					}
 				}
 			}
-		}
-		JDialogCreateCollectionDataset.this.dispose();
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			if (checkBoxCloseDialog.isSelected()) {
+				JDialogCreateCollectionDataset.this.dispose();
 			}
-		});
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+				}
+			});
+		}
 	}
 
 	private ActionListener cancelListener = new ActionListener() {
@@ -417,7 +429,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 				return EngineType.POSTGRESQL.equals(datasource.getEngineType()) || EngineType.ORACLEPLUS.equals(datasource.getEngineType());
 			}
 		};
-		if (null == selectedDatasetVectors) {
+		if (null == selectedDatasetVectors || selectedDatasetVectors.length == 0) {
 			datasetChooser.setSupportDatasetTypes(DatasetTypeUtilities.getDatasetTypeVector());
 		} else {
 			datasetChooser.setSupportDatasetTypes(new DatasetType[]{selectedDatasetVectors[0].getType()});
@@ -519,9 +531,9 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		if (null != datasources) {
 			for (int i = 0; i < datasources.getCount(); i++) {
 				//当前只支持POSTGRESQL类型的数据源,后续修改
-				if (datasources.get(i).getEngineType().equals(EngineType.POSTGRESQL)
+				if ((datasources.get(i).getEngineType().equals(EngineType.POSTGRESQL)
 						|| datasources.get(i).getEngineType().equals(EngineType.UDB)
-						|| datasources.get(i).getEngineType().equals(EngineType.ORACLEPLUS)) {
+						|| datasources.get(i).getEngineType().equals(EngineType.ORACLEPLUS)) && !datasources.get(i).isReadOnly()) {
 					datasourceArray.add(datasources.get(i));
 				}
 			}
@@ -539,6 +551,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		this.buttonMoveDown = new JButton();
 		this.buttonMoveLast = new JButton();
 		this.buttonRefresh = new JButton();
+		this.checkBoxCloseDialog = new JCheckBox();
 		this.tableModel = new CollectionDatasetTableModel(collectionType);
 		if (collectionType == tableModel.VECTOR_COLLECTION_TYPE) {
 			Datasource datasource = this.datasourceComboBox.getSelectedDatasource();
@@ -614,19 +627,26 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		this.buttonMoveDown.setToolTipText(CommonProperties.getString("String_ToolBar_MoveDown"));
 		this.buttonMoveLast.setToolTipText(CommonProperties.getString("String_ToolBar_MoveLast"));
 		this.buttonRefresh.setToolTipText(CommonProperties.getString("String_Tooltip_RefreshStatus"));
+		this.checkBoxCloseDialog.setText(CommonProperties.getString("String_AutoCloseForm"));
 	}
 
 	private void initLayout() {
 		initPanelTableInfoLayout();
 		initPanelBasicInfoLayout();
-		this.getContentPane().setLayout(new GridBagLayout());
-		JPanel panelButton = new JPanel();
-		panelButton.setLayout(new GridBagLayout());
-		panelButton.add(this.buttonOK, new GridBagConstraintsHelper(0, 1, 1, 1).setInsets(0, 5, 10, 10));
-		panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(1, 1, 1, 1).setInsets(0, 5, 10, 10));
-		this.getContentPane().add(this.panelTableInfo, new GridBagConstraintsHelper(0, 0, 7, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0.7, 1).setInsets(10, 10, 5, 0));
-		this.getContentPane().add(this.panelBasicInfo, new GridBagConstraintsHelper(7, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0.3, 1).setInsets(10));
-		this.getContentPane().add(panelButton, new GridBagConstraintsHelper(0, 1, 10, 1).setAnchor(GridBagConstraints.EAST));
+		if (isSetDatasetCollectionCount) {
+			this.getContentPane().setLayout(new GridBagLayout());
+			this.getContentPane().add(this.panelTableInfo, new GridBagConstraintsHelper(0, 0, 7, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0.7, 1).setInsets(10, 10, 5, 0));
+			this.getContentPane().add(this.panelBasicInfo, new GridBagConstraintsHelper(7, 0, 3, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0.3, 1).setInsets(10));
+			this.getContentPane().add(this.buttonOK, new GridBagConstraintsHelper(8, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(1, 0).setInsets(0, 10, 10, 10));
+			this.getContentPane().add(this.buttonCancel, new GridBagConstraintsHelper(9, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(0, 0).setInsets(0, 0, 10, 10));
+		} else {
+			this.getContentPane().setLayout(new GridBagLayout());
+			this.getContentPane().add(this.panelTableInfo, new GridBagConstraintsHelper(0, 0, 7, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0.7, 1).setInsets(10, 10, 5, 0));
+			this.getContentPane().add(this.panelBasicInfo, new GridBagConstraintsHelper(7, 0, 3, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0.3, 1).setInsets(10));
+			this.getContentPane().add(this.checkBoxCloseDialog, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0).setInsets(0, 10, 10, 10));
+			this.getContentPane().add(this.buttonOK, new GridBagConstraintsHelper(8, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(1, 0).setInsets(0, 10, 10, 10));
+			this.getContentPane().add(this.buttonCancel, new GridBagConstraintsHelper(9, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(0, 0).setInsets(0, 0, 10, 10));
+		}
 	}
 
 	private void initPanelBasicInfoLayout() {

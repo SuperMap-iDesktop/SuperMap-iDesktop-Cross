@@ -25,6 +25,7 @@ import java.util.ArrayList;
  * Created by xie on 2017/5/31.
  */
 public class CacheUtilities {
+	private static boolean isOutSide;
 
 	/**
 	 * Replace path
@@ -85,44 +86,6 @@ public class CacheUtilities {
 		return result;
 	}
 
-//	// 获取当前系统的所有的PidName
-//	public static Set<String> getCurrOsAllPidNameSet() throws Exception {
-//		Set<String> pidNameSet = new HashSet<>();
-//		InputStream is = null;
-//		InputStreamReader ir = null;
-//		BufferedReader br = null;
-//		String line = null;
-//		String[] array = (String[]) null;
-//		try {
-//			process p = Runtime.getRuntime().exec("TASKLIST /NH /FO CSV");
-//			is = p.getInputStream();
-//			ir = new InputStreamReader(is);
-//			br = new BufferedReader(ir);
-//			while ((line = br.readLine()) != null) {
-//				array = line.split(",");
-//				line = array[0].replaceAll("\"", "");
-//				line = line.replaceAll(".exe", "");
-//				line = line.replaceAll(".exe".toUpperCase(), "");
-//				if (!StringUtilities.isNullOrEmpty(line)) {
-//					pidNameSet.add(line);
-//				}
-//			}
-//		} catch (IOException localIOException) {
-//			throw new Exception("获取系统所有进程名出错！");
-//		} finally {
-//			if (br != null) {
-//				br.close();
-//			}
-//			if (ir != null) {
-//				ir.close();
-//			}
-//			if (is != null) {
-//				is.close();
-//			}
-//		}
-//		return pidNameSet;
-//	}
-
 	public static boolean voladateDatasource() {
 		boolean result = true;
 		SmOptionPane optionPane = new SmOptionPane();
@@ -162,29 +125,24 @@ public class CacheUtilities {
 	 * @return
 	 */
 	public static ArrayList getIconImages() {
-		String path = PathUtilities.getRootPathName();
-		String[] paths = new String[2];
-		paths[0] = path;
-		paths[1] = "../Resources/Frame";
-		path = PathUtilities.combinePath(paths, true);
+		String path = "./MapView/src/main/resources/mapviewresources/logo/";
+
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		new SmOptionPane().showErrorDialog(CoreResources.getResourceURL(path + "iDesktop_Cross_16.png").toString());
+
 		ArrayList<Image> images = new ArrayList<>();
-		images.add(toolkit.createImage(path + "iDesktop_Cross_16.png"));
-		images.add(toolkit.createImage(path + "iDesktop_Cross_24.png"));
-		images.add(toolkit.createImage(path + "iDesktop_Cross_32.png"));
-		images.add(toolkit.createImage(path + "iDesktop_Cross_64.png"));
-		images.add(toolkit.createImage(path + "iDesktop_Cross_128.png"));
-		images.add(toolkit.createImage(path + "iDesktop_Cross_256.png"));
-		images.add(toolkit.createImage(path + "iDesktop Cross.ico"));
+		images.add((toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop_Cross_16.png"))));
+		images.add(toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop_Cross_24.png")));
+		images.add(toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop_Cross_32.png")));
+		images.add(toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop_Cross_64.png")));
+		images.add(toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop_Cross_128.png")));
+		images.add(toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop_Cross_256.png")));
+		images.add(toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop Cross.ico")));
 		return images;
 	}
 
 	private static Image getIconImage() {
-		String path = PathUtilities.getRootPathName();
-		String[] paths = new String[2];
-		paths[0] = path;
-		paths[1] = "../Resources/Frame";
-		path = PathUtilities.combinePath(paths, true);
+		String path = "./MapView/src/main/resources/mapviewresources/logo/";
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		return toolkit.createImage(path + "iDesktop_Cross_24.png");
 	}
@@ -228,15 +186,16 @@ public class CacheUtilities {
 			}
 			arguments.add(javaexeHome);
 			arguments.add("-cp");
-			//Modify 获取外部定义的执行路径
 			String jarPath = System.getProperties().getProperty("java.class.path");
-			//外部没有设置路径手动赋值
 			if (!jarPath.contains("MapView.jar")) {
+				isOutSide = false;
 				if (isWindows()) {
 					jarPath = ".;" + ".\\bin\\com.supermap.data.jar;" + ".\\bin\\com.supermap.mapping.jar;" + ".\\bin\\com.supermap.tilestorage.jar;" + ".\\bin\\com.supermap.data.processing.jar;" + ".\\bundles\\require_bundles\\Core.jar;" + ".\\bundles\\require_bundles\\Controls.jar;" + ".\\bundles\\idesktop_bundles\\MapView.jar";
 				} else {
 					jarPath = "./bin/com.supermap.data.jar:" + "./bin/com.supermap.mapping.jar:" + "./bin/com.supermap.tilestorage.jar:" + "./bin/com.supermap.data.processing.jar:" + "./bundles/require_bundles/Core.jar:" + "./bundles/require_bundles/Controls.jar:" + "./bundles/idesktop_bundles/MapView.jar: ";
 				}
+			} else {
+				isOutSide = true;
 			}
 			arguments.add(jarPath);
 			arguments.add(className);
@@ -380,4 +339,5 @@ public class CacheUtilities {
 		}
 		return size > 0 ? true : false;
 	}
+
 }
