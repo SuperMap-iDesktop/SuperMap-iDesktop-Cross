@@ -66,13 +66,14 @@ public class MetaProcessEliminate extends MetaProcess {
 	}
 
 	private void initParametersState() {
+		numberTolerance.setSelectedItem(1);
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
 		if (dataset != null) {
 			sourceDatasources.setSelectedItem(dataset.getDatasource());
 			sourceDataset.setSelectedItem(dataset);
 			numberArea.setSelectedItem(getMaxAreaTolerance((DatasetVector) dataset));
+			resetNumTolerance((DatasetVector) dataset);
 		}
-		numberTolerance.setSelectedItem(1);
 		numberTolerance.setMinValue(0);
 		numberArea.setMinValue(0);
 	}
@@ -82,7 +83,9 @@ public class MetaProcessEliminate extends MetaProcess {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
-					numberArea.setSelectedItem(getMaxAreaTolerance((DatasetVector) evt.getNewValue()));
+					DatasetVector datasetVector = (DatasetVector) evt.getNewValue();
+					numberArea.setSelectedItem(getMaxAreaTolerance(datasetVector));
+					resetNumTolerance(datasetVector);
 				}
 			}
 		});
@@ -144,5 +147,19 @@ public class MetaProcessEliminate extends MetaProcess {
 		maxAreaTolerance = maxAreaTolerance / Math.pow(10, 6);
 		DecimalFormat format = new DecimalFormat("##0.00");
 		return format.format(maxAreaTolerance);
+	}
+
+	private void resetNumTolerance(DatasetVector datasetVector) {
+		double tolerance = datasetVector.getTolerance().getNodeSnap();
+		if (tolerance == 0) {
+			numberTolerance.setSelectedItem(1);
+		} else {
+			DecimalFormat format = new DecimalFormat("#0.000000000000000");
+			String result = format.format(tolerance);
+			while (result.charAt(result.length() - 1) == '0') {
+				result = result.substring(0, result.length() - 1);
+			}
+			numberTolerance.setSelectedItem(result);
+		}
 	}
 }

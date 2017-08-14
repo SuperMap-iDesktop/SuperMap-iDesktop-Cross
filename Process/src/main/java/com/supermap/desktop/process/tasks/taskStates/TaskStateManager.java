@@ -13,6 +13,7 @@ import com.supermap.desktop.process.tasks.events.WorkerStateChangedListener;
 import javax.swing.event.EventListenerList;
 import java.util.Vector;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author XiaJT
@@ -36,7 +37,7 @@ public class TaskStateManager {
 			waiting, ready, running, completed, cancelled, exception, warning
 	};
 	private ProcessStatusChangeListener processStatusChangeListener = new ProcessStatusChangeListener();
-	private Lock lock;
+	private Lock lock = new ReentrantLock();
 
 	public TaskStateManager(TasksManager tasksManager, Workflow workflow) {
 		this.tasksManager = tasksManager;
