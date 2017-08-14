@@ -12,7 +12,7 @@ import com.supermap.desktop.process.tasks.events.WorkerStateChangedListener;
 
 import javax.swing.event.EventListenerList;
 import java.util.Vector;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
 
 /**
  * @author XiaJT
@@ -36,13 +36,14 @@ public class TaskStateManager {
 			waiting, ready, running, completed, cancelled, exception, warning
 	};
 	private ProcessStatusChangeListener processStatusChangeListener = new ProcessStatusChangeListener();
+	private Lock lock;
 
 	public TaskStateManager(TasksManager tasksManager, Workflow workflow) {
 		this.tasksManager = tasksManager;
 		this.workflow = workflow;
 	}
 
-	public CopyOnWriteArrayList<IProcess> get(int stateIndex) {
+	public Vector<IProcess> get(int stateIndex) {
 		for (TaskState currentState : currentStates) {
 			if (currentState.getStateIndex() == stateIndex) {
 				return currentState.getProcesses();
@@ -117,9 +118,17 @@ public class TaskStateManager {
 
 	public void moveProcess(IProcess process, int resultState) {
 		TaskState processState = getProcessState(process);
-		if (processState != null) {
-			processState.moveProcessTo(process, getState(resultState));
-			fireWorkerStateChange(new WorkerStateChangedEvent(tasksManager, tasksManager.getWorkerByProcess(process), processState.getStateIndex(), resultState));
+		TaskState resultTaskState = getState(resultState);
+		if (processState != null && resultTaskState != null) {
+			try {
+				lock.lock();
+				processState.moveProcessTo(process, getState(resultState));
+				fireWorkerStateChange(new WorkerStateChangedEvent(tasksManager, tasksManager.getWorkerByProcess(process), processState.getStateIndex(), resultState));
+			} catch (Exception e) {
+				// todo 事务回退
+			} finally {
+				lock.unlock();
+			}
 		}
 	}
 

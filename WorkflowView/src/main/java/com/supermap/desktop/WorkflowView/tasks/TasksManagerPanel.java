@@ -16,7 +16,6 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by highsad on 2017/6/28.
@@ -140,7 +139,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		int[] workerStates = TasksManager.getWorkerStates();
 		for (int workerState : workerStates) {
 			JPanel panel = getPanel(workerState);
-			CopyOnWriteArrayList<IProcess> processes = this.tasksManager.getProcesses(workerState);
+			Vector<IProcess> processes = this.tasksManager.getProcesses(workerState);
 			Vector<ProcessWorker> workers = new Vector<>();
 			for (IProcess process : processes) {
 				ProcessWorker workerByProcess = tasksManager.getWorkerByProcess(process);

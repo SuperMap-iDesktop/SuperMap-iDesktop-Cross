@@ -11,6 +11,7 @@ import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener
 import com.supermap.desktop.process.parameter.events.ParameterValueSelectedEvent;
 import com.supermap.desktop.process.parameter.events.UpdateValueListener;
 import com.supermap.desktop.process.parameter.interfaces.datas.Irequisite;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.event.EventListenerList;
 import java.beans.PropertyChangeEvent;
@@ -293,6 +294,10 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 
 	@Override
 	public boolean isReady() {
-		return this instanceof ISelectionParameter && ((ISelectionParameter) this).getSelectedItem() != null;
+		if (!(this instanceof ISelectionParameter)) {
+			return true;
+		}
+		Object item = ((ISelectionParameter) this).getSelectedItem();
+		return item != null && (!(item instanceof String) || StringUtilities.isNullOrEmpty((String) item));
 	}
 }
