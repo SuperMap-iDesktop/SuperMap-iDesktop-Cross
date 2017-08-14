@@ -69,7 +69,7 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 		if (this.modelFieldNameCaptionType == null) {
 			init();
 		} else {
-			this.modelFieldNameCaptionType.setDataset((DatasetVector) this.dataset);
+			this.modelFieldNameCaptionType.setDataset((DatasetVector) this.dataset,this.isShowSystemField);
 		}
 	}
 
@@ -116,7 +116,11 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 
 	private void init() {
 		this.modelFieldNameCaptionType = new ModelFieldNameCaptionType(this.fieldTypes, this.isShowSystemField);
-		this.modelFieldNameCaptionType.setDataset((DatasetVector) this.dataset);
+		if (this.dataset==null){
+			this.modelFieldNameCaptionType.setDataset(null);
+		}else {
+			this.modelFieldNameCaptionType.setDataset((DatasetVector) this.dataset);
+		}
 		this.setModel(this.modelFieldNameCaptionType);
 		this.getColumnModel().getColumn(TABLE_COLUMN_CHECKABLE).setMaxWidth(30);
 		this.setDefaultRenderer(FieldType.class, new DefaultTableCellRenderer() {

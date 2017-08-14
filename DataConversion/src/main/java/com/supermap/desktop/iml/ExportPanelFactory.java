@@ -14,79 +14,79 @@ import java.util.ArrayList;
  * Created by xie on 2016/10/31.
  */
 public class ExportPanelFactory implements IExportPanelFactory {
-    public static final int SAMETYPE = 0;
-    public static final int GRIDTYPE = 1;
-    public static final int VECTORTYPE = 2;
-    public static final int GRID_AND_VECTORTYPE = 3;
+	public static final int SAMETYPE = 0;
+	public static final int GRIDTYPE = 1;
+	public static final int VECTORTYPE = 2;
+	public static final int GRID_AND_VECTORTYPE = 3;
 
-    @Override
-    public PanelExportTransform createExportPanel(DataExportDialog owner, ExportFileInfo exportsFileInfo) {
-        PanelExportTransform result = new PanelExportTransform(exportsFileInfo);
-        Object fileType = exportsFileInfo.getFileType();
-        if (FiletypeUtilities.isGridType(fileType)) {
-            result = new PanelExportTransformForGrid(owner, exportsFileInfo);
-        } else if (FiletypeUtilities.isVectorType(fileType)) {
-            result = new PanelExportTransformForVector(exportsFileInfo);
-        }
-        return result;
-    }
+	@Override
+	public PanelExportTransform createExportPanel(DataExportDialog owner, ExportFileInfo exportsFileInfo) {
+		PanelExportTransform result = new PanelExportTransform(exportsFileInfo);
+		Object fileType = exportsFileInfo.getFileType();
+		if (FiletypeUtilities.isGridType(fileType)) {
+			result = new PanelExportTransformForGrid(owner, exportsFileInfo);
+		} else if (FiletypeUtilities.isVectorType(fileType)) {
+			result = new PanelExportTransformForVector(exportsFileInfo);
+		}
+		return result;
+	}
 
-    @Override
-    public PanelExportTransform createExportPanel(DataExportDialog owner, ArrayList<PanelExportTransform> panelExports) {
-        PanelExportTransform exportPanel = null;
-        if (isSameType(panelExports)) {
-            ExportFileInfo fileInfo = panelExports.get(0).getExportsFileInfo();
-            if (FiletypeUtilities.isGridType(fileInfo.getFileType()) && fileInfo.getFileType() != FileType.CSV) {
-                exportPanel = new PanelExportTransformForGrid(owner, panelExports, SAMETYPE);
-            } else {
-                exportPanel = new PanelExportTransformForVector(panelExports, SAMETYPE);
-            }
-        } else if (isGridTypes(panelExports)) {
-            exportPanel = new PanelExportTransformForVector(panelExports, GRIDTYPE);
-        } else if (isVectorTypes(panelExports)) {
-            exportPanel = new PanelExportTransformForVector(panelExports, VECTORTYPE);
-        } else {
-            exportPanel = new PanelExportTransformForVector(panelExports, GRID_AND_VECTORTYPE);
-        }
-        return exportPanel;
-    }
+	@Override
+	public PanelExportTransform createExportPanel(DataExportDialog owner, ArrayList<PanelExportTransform> panelExports) {
+		PanelExportTransform exportPanel = null;
+		if (isSameType(panelExports)) {
+			ExportFileInfo fileInfo = panelExports.get(0).getExportsFileInfo();
+			if (FiletypeUtilities.isGridType(fileInfo.getFileType()) && fileInfo.getFileType() != FileType.CSV) {
+				exportPanel = new PanelExportTransformForGrid(owner, panelExports, SAMETYPE);
+			} else {
+				exportPanel = new PanelExportTransformForVector(panelExports, SAMETYPE);
+			}
+		} else if (isGridTypes(panelExports)) {
+			exportPanel = new PanelExportTransformForVector(panelExports, GRIDTYPE);
+		} else if (isVectorTypes(panelExports)) {
+			exportPanel = new PanelExportTransformForVector(panelExports, VECTORTYPE);
+		} else {
+			exportPanel = new PanelExportTransformForVector(panelExports, GRID_AND_VECTORTYPE);
+		}
+		return exportPanel;
+	}
 
 
-    private boolean isSameType(ArrayList<PanelExportTransform> panelExports) {
-        boolean isSameType = true;
-        ExportFileInfo exportsFileInfo = panelExports.get(0).getExportsFileInfo();
-        int size = panelExports.size();
-        for (int i = 0; i < size; i++) {
-            if (!exportsFileInfo.getFileType().equals(panelExports.get(i).getExportsFileInfo().getFileType())) {
-                isSameType = false;
-            }
-        }
-        return isSameType;
-    }
+	private boolean isSameType(ArrayList<PanelExportTransform> panelExports) {
+		boolean isSameType = true;
+		ExportFileInfo exportsFileInfo = panelExports.get(0).getExportsFileInfo();
+		int size = panelExports.size();
+		for (int i = 0; i < size; i++) {
+			if (!exportsFileInfo.getFileType().equals(panelExports.get(i).getExportsFileInfo().getFileType())) {
+				isSameType = false;
+			}
+		}
+		return isSameType;
+	}
 
-    private boolean isVectorTypes(ArrayList<PanelExportTransform> panelExports) {
-        int count = 0;
-        for (PanelExportTransform tempPanelExport : panelExports) {
-            for (Object tempFileType : FiletypeUtilities.getVectorValue()) {
-                if (tempPanelExport.getExportsFileInfo().getFileType().equals(tempFileType)) {
-                    count++;
-                }
-            }
-        }
+	private boolean isVectorTypes(ArrayList<PanelExportTransform> panelExports) {
+		int count = 0;
+		for (PanelExportTransform tempPanelExport : panelExports) {
+			for (Object tempFileType : FiletypeUtilities.getVectorValue()) {
+				if (null != tempPanelExport.getExportsFileInfo().getFileType() && tempPanelExport.getExportsFileInfo().getFileType().equals(tempFileType)) {
+					count++;
+				}
+			}
+		}
 
-        return count == panelExports.size();
-    }
+		return count == panelExports.size();
+	}
 
-    public boolean isGridTypes(ArrayList<PanelExportTransform> panelExports) {
-        int count = 0;
-        for (PanelExportTransform tempPanelExport : panelExports) {
-            for (Object tempFileType : FiletypeUtilities.getGridValue()) {
-                if (tempPanelExport.getExportsFileInfo().getFileType().equals(tempFileType)) {
-                    count++;
-                }
-            }
-        }
+	public boolean isGridTypes(ArrayList<PanelExportTransform> panelExports) {
+		int count = 0;
+		for (PanelExportTransform tempPanelExport : panelExports) {
+			for (Object tempFileType : FiletypeUtilities.getGridValue()) {
+				if (null != tempPanelExport.getExportsFileInfo().getFileType() && tempPanelExport.getExportsFileInfo().getFileType().equals(tempFileType)) {
+					count++;
+				}
+			}
+		}
 
-        return count == panelExports.size();
-    }
+		return count == panelExports.size();
+	}
 }

@@ -8,12 +8,12 @@ import com.supermap.data.conversion.FileType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IExportPanelFactory;
 import com.supermap.desktop.Interface.IPanelModel;
-import com.supermap.desktop.implement.UserDefineType.GPXAnalytic;
-import com.supermap.desktop.implement.UserDefineType.UserDefineFileType;
 import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.*;
+import com.supermap.desktop.implement.UserDefineType.GPXAnalytic;
+import com.supermap.desktop.implement.UserDefineType.UserDefineFileType;
 import com.supermap.desktop.localUtilities.CommonUtilities;
 import com.supermap.desktop.localUtilities.FiletypeUtilities;
 import com.supermap.desktop.localUtilities.LocalFileUtilities;
@@ -486,6 +486,11 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 			}
 			FileType[] fileTypes = exportSetting.getSupportedFileType();
 			int size = fileTypes.length;
+			if (size == 1 && fileTypes[0] == FileType.ModelX) {
+				//Modify DSPJ-59 屏蔽.x文件
+				Application.getActiveApplication().getOutput().output(CommonProperties.getString("String_ExportModelXError"));
+				return;
+			}
 			if (size > 0 || isGpx) {
 				Object[] temp = new Object[6];
 				temp[COLUMN_DATASET] = new DataCell(dataset);
@@ -497,9 +502,11 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 				} else {
 					for (int i = 0; i < size; i++) {
 						FileType fileType = fileTypes[i];
-						newExportSetting = exportSettingFactory.createExportSetting(fileType);
-						temp[COLUMN_EXPORTTYPE] = CommonUtilities.getDatasetName(fileType.toString());
-						exportsFileInfo.setFileType(fileType);
+						if (fileType != FileType.ModelX) {
+							newExportSetting = exportSettingFactory.createExportSetting(fileType);
+							temp[COLUMN_EXPORTTYPE] = CommonUtilities.getDatasetName(fileType.toString());
+							exportsFileInfo.setFileType(fileType);
+						}
 						break;
 					}
 				}
@@ -545,12 +552,13 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 			}
 			for (int j = 0; j < size; j++) {
 				FileType fileType = fileTypes[j];
-//                if (!fileType.equals(FileType.GEOJSON)) {
-				String datasetName = CommonUtilities.getDatasetName(fileType.toString());
-				if (!StringUtilities.isNullOrEmpty(datasetName)) {
-					this.steppedComboBox.addItem(datasetName);
+				//Modify DSPJ-59 屏蔽.x文件
+				if (fileType != FileType.ModelX) {
+					String datasetName = CommonUtilities.getDatasetName(fileType.toString());
+					if (!StringUtilities.isNullOrEmpty(datasetName)) {
+						this.steppedComboBox.addItem(datasetName);
+					}
 				}
-//                }
 			}
 			Dimension d = this.steppedComboBox.getPreferredSize();
 			this.steppedComboBox.setPreferredSize(new Dimension(d.width, d.height));

@@ -3,11 +3,11 @@ package com.supermap.desktop.iml;
 import com.supermap.data.Dataset;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.implement.UserDefineType.ExportSettingGPX;
-import com.supermap.desktop.implement.UserDefineType.UserDefineExportResult;
 import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.exportUI.DataExportDialog;
+import com.supermap.desktop.implement.UserDefineType.ExportSettingGPX;
+import com.supermap.desktop.implement.UserDefineType.UserDefineExportResult;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
 
@@ -47,7 +47,10 @@ public class ExportCallable extends UpdateProgressCallable {
 				ExportSettings exportSettings = dataExport.getExportSettings();
 				ExportFileInfo fileInfo = exportPanels.get(i).getExportsFileInfo();
 				ExportSetting tempExportSetting = fileInfo.getExportSetting();
-
+				if (null == fileInfo.getFileType()) {
+					Application.getActiveApplication().getOutput().output(CommonProperties.getString("String_FileTypeErrorWarning"));
+					continue;
+				}
 				String filePath = getFilePath(fileInfo, fileInfo.getFileName());
 				if (fileInfo.getFileType().equals(FileType.SHP) || fileInfo.getFileType().equals(FileType.E00)
 						|| fileInfo.getFileType().equals(FileType.MIF) || fileInfo.getFileType().equals(FileType.TAB)
@@ -106,7 +109,7 @@ public class ExportCallable extends UpdateProgressCallable {
 			} else {
 				result = filePath + fileName + DataConversionProperties.getString("string_index_pause") + "b";
 			}
-		}else if(FileType.ModelX == fileType) {
+		} else if (FileType.ModelX == fileType) {
 			if (!filePath.endsWith(File.separator)) {
 				result = filePath + File.separator + fileName + ".x";
 			} else {

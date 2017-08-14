@@ -71,7 +71,7 @@ public class DialogCacheCheck extends JFrame {
 
 	private void shutdownMapCheck() {
 		String taskPath = getTaskPath("build");
-		if (CacheUtilities.showConfirmDialog(DialogCacheCheck.this,MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
+		if (CacheUtilities.showConfirmDialog(DialogCacheCheck.this, MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(taskPath, "checking");
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			killProcess();
@@ -201,7 +201,7 @@ public class DialogCacheCheck extends JFrame {
 	private boolean validateValue(String sciPath, String processCount) {
 		boolean result = true;
 		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || processCount.equals("0"))) {
-			CacheUtilities.showMessageDialog(DialogCacheCheck.this,MapViewProperties.getString("String_CheckProcessCountError"));
+			CacheUtilities.showMessageDialog(DialogCacheCheck.this, MapViewProperties.getString("String_CheckProcessCountError"));
 			return false;
 		}
 		File buildFile = new File(sciPath);
@@ -213,7 +213,7 @@ public class DialogCacheCheck extends JFrame {
 		if (!buildFile.exists() || !CacheUtilities.hasSciFiles(buildFile)) {
 			//build下不存在sci,faild下存在则提示有失败的文件，如果用户点击是则重切
 			if (failedDirectory.exists() && CacheUtilities.hasSciFiles(failedDirectory)) {
-				if (CacheUtilities.showConfirmDialog(DialogCacheCheck.this,MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
+				if (CacheUtilities.showConfirmDialog(DialogCacheCheck.this, MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
 					File[] failedSci = failedDirectory.listFiles();
 					for (int i = 0; i < failedSci.length; i++) {
 						failedSci[i].renameTo(new File(taskFile, failedSci[i].getName()));
@@ -225,7 +225,7 @@ public class DialogCacheCheck extends JFrame {
 				}
 			} else if (!failedDirectory.exists() || !CacheUtilities.hasSciFiles(failedDirectory)) {
 				//build下，failed下都没有则提示没有sci
-				CacheUtilities.showMessageDialog(DialogCacheCheck.this,MapViewProperties.getString("String_CheckTaskNotExist"));
+				CacheUtilities.showMessageDialog(DialogCacheCheck.this, MapViewProperties.getString("String_CheckTaskNotExist"));
 				result = false;
 			}
 		}
@@ -254,7 +254,7 @@ public class DialogCacheCheck extends JFrame {
 
 	private void buildCache() {
 		File cacheFile = new File(fileChooseCachePath.getPath());
-		String[] tempParams = {"Multi", "null", cacheFile.getName(), fileChooseCachePath.getPath()};
+		String[] tempParams = {"Multi"};
 		CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 	}
 
@@ -270,7 +270,7 @@ public class DialogCacheCheck extends JFrame {
 			}
 		} catch (Exception ex) {
 			if (null != ex.getMessage()) {
-				CacheUtilities.showMessageDialog(DialogCacheCheck.this,ex.getMessage());
+				CacheUtilities.showMessageDialog(DialogCacheCheck.this, ex.getMessage());
 			}
 		}
 	}
@@ -385,7 +385,7 @@ public class DialogCacheCheck extends JFrame {
 					}
 				} catch (Exception ex) {
 					if (null != ex.getMessage()) {
-						CacheUtilities.showMessageDialog(DialogCacheCheck.this,ex.getMessage());
+						CacheUtilities.showMessageDialog(DialogCacheCheck.this, ex.getMessage());
 					}
 				}
 			}
@@ -396,7 +396,7 @@ public class DialogCacheCheck extends JFrame {
 		File errorFile = new File(getTaskPath("failed"));
 		File taskFile = new File(getTaskPath("task"));
 		if (errorFile.exists() && null != errorFile.list() && errorFile.list().length > 0 && tileSize != -1) {
-			if (CacheUtilities.showConfirmDialog(DialogCacheCheck.this,MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), errorFile.list().length, errorFile.getPath()))
+			if (CacheUtilities.showConfirmDialog(DialogCacheCheck.this, MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), errorFile.list().length, errorFile.getPath()))
 					== JOptionPane.OK_OPTION) {
 				File[] failedSci = errorFile.listFiles();
 				for (int i = 0; i < failedSci.length; i++) {
@@ -406,8 +406,9 @@ public class DialogCacheCheck extends JFrame {
 				buildCache();
 			}
 		} else {
-			CacheUtilities.showMessageDialog(DialogCacheCheck.this,MapViewProperties.getString("String_CacheCheckSuccess"));
+			CacheUtilities.showMessageDialog(DialogCacheCheck.this, MapViewProperties.getString("String_CacheCheckSuccess"));
 		}
+		killProcess();
 	}
 
 	private boolean taskFinished() {

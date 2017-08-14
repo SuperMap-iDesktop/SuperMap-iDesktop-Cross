@@ -10,6 +10,7 @@ import com.supermap.desktop.utilities.TabularUtilities;
 
 /**
  * @author XiaJT
+ * 属性表添加行
  */
 public class CtrlActionTabularAddRow extends CtrlAction {
 

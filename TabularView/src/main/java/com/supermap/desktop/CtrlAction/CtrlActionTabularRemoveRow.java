@@ -37,8 +37,7 @@ public class CtrlActionTabularRemoveRow extends CtrlAction {
 					if (intervalRow >= formTabular.getjTableTabular().getRowCount()) {
 						intervalRow = intervalRow - 1;
 					}
-					formTabular.getjTableTabular().setRowSelectionInterval(intervalRow, intervalRow);
-					formTabular.getjTableTabular().setColumnSelectionInterval(0, formTabular.getjTableTabular().getColumnCount() - 1);
+					formTabular.goToRow(intervalRow);
 				}
 			}
 		}

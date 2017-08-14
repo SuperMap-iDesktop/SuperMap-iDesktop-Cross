@@ -110,7 +110,7 @@ public class MetaProcessAbstractExport extends MetaProcess {
 	}
 
 	protected void resetDataset() {
-		selectDataset = (Dataset) dataset.getSelectedItem();
+		selectDataset = dataset.getSelectedItem();
 		if (null == selectDataset) {
 			return;
 		}
@@ -137,7 +137,7 @@ public class MetaProcessAbstractExport extends MetaProcess {
 				exportSetting = ExportSettingUtilities.createExportSetting(UserDefineFileType.GPX);
 			} else {
 				for (int i = 0; i < size; i++) {
-					if (!StringUtilities.isNullOrEmpty(ExportSettingUtilities.getDatasetName(fileTypes[i].toString()))) {
+					if (!StringUtilities.isNullOrEmpty(ExportSettingUtilities.getDatasetName(fileTypes[i].toString())) && fileTypes[i] != FileType.ModelX) {
 						if (0 == i) {
 							selectNode = new ParameterDataNode(ExportSettingUtilities.getDatasetName(fileTypes[0].toString()), fileTypes[0]);
 							supportType.addItem(selectNode);
@@ -184,6 +184,9 @@ public class MetaProcessAbstractExport extends MetaProcess {
 			String fileName = targetName.getSelectedItem().toString();
 			if (supportType.getSelectedData() instanceof FileType) {
 				FileType fileType = (FileType) supportType.getSelectedData();
+				if (null == fileType) {
+					return result;
+				}
 				if (FileType.TEMSClutter == fileType) {
 					if (!filePath.endsWith(File.separator)) {
 						result = filePath + File.separator + fileName + ".b";
@@ -205,6 +208,9 @@ public class MetaProcessAbstractExport extends MetaProcess {
 				}
 			} else {
 				UserDefineFileType fileType = (UserDefineFileType) supportType.getSelectedData();
+				if (null == fileType) {
+					return result;
+				}
 				if (!filePath.endsWith(File.separator)) {
 					result = filePath + File.separator + fileName + "." + fileType.toString().toLowerCase();
 				} else {
