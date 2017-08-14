@@ -1,6 +1,5 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
-import com.supermap.data.DatasetVector;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -60,10 +59,11 @@ public class ParameterFieldGroupPanel extends SwingPanel {
 //				return jLabel;
 //			}
 //		});
-		DatasetVector dataset = parameterFieldGroup.getDataset();
-		if (dataset != null) {
-			tableFieldNameCaptionType.setDataset(dataset);
-		}
+//		DatasetVector dataset = parameterFieldGroup.getDataset();
+//		if (dataset != null) {
+//			tableFieldNameCaptionType.setDataset(dataset);
+//		}
+		tableFieldNameCaptionType.setDataset(parameterFieldGroup.getDataset());
 	}
 
 	private void initListener() {
