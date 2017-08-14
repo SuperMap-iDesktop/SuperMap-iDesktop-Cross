@@ -12,21 +12,16 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.desktop.utilities.*;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeGraph;
-import com.supermap.mapping.ThemeLabel;
+import com.supermap.desktop.utilities.FileLocker;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -136,16 +131,14 @@ public class CacheUtilities {
 		String path = "./MapView/src/main/resources/mapviewresources/logo/";
 
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		new SmOptionPane().showErrorDialog(CoreResources.getResourceURL(path + "iDesktop_Cross_16.png").toString());
-
 		ArrayList<Image> images = new ArrayList<>();
-		images.add((toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop_Cross_16.png"))));
-		images.add(toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop_Cross_24.png")));
-		images.add(toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop_Cross_32.png")));
-		images.add(toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop_Cross_64.png")));
-		images.add(toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop_Cross_128.png")));
-		images.add(toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop_Cross_256.png")));
-		images.add(toolkit.createImage(CoreResources.getResourceURL(path + "iDesktop Cross.ico")));
+		images.add((toolkit.createImage(path + "iDesktop_Cross_16.png")));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_24.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_32.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_64.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_128.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_256.png"));
+		images.add(toolkit.createImage(path + "iDesktop Cross.ico"));
 		return images;
 	}
 
