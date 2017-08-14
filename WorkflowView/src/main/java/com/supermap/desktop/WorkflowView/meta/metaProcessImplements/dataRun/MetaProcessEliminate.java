@@ -17,8 +17,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.math.BigDecimal;
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
 
 /**
  * Created By Chens on 2017/8/8 0008
@@ -132,7 +131,7 @@ public class MetaProcessEliminate extends MetaProcess {
 		return isSuccessful;
 	}
 
-	private double getMaxAreaTolerance(DatasetVector datasetVector) {
+	private String getMaxAreaTolerance(DatasetVector datasetVector) {
 		double maxAreaTolerance = 0;
 		Recordset recordset = datasetVector.getRecordset(false, CursorType.DYNAMIC);
 		while (!recordset.isEOF()) {
@@ -143,6 +142,7 @@ public class MetaProcessEliminate extends MetaProcess {
 		recordset.close();
 		recordset.dispose();
 		maxAreaTolerance = maxAreaTolerance / Math.pow(10, 6);
-		return maxAreaTolerance;
+		DecimalFormat format = new DecimalFormat("##0.00");
+		return format.format(maxAreaTolerance);
 	}
 }
