@@ -1,10 +1,6 @@
 package com.supermap.desktop.ui.controls.smTables.models;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldInfos;
-import com.supermap.data.FieldType;
+import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.smTables.IModel;
@@ -102,11 +98,21 @@ public class ModelFieldNameCaptionType extends DefaultTableModel implements IMod
 		return this.dataset;
 	}
 
+	public void setDataset(DatasetVector dataset,boolean isShowSystemField){
+		this.dataset=dataset;
+		this.isShowSystemField=isShowSystemField;
+		resetTableData();
+	}
+
 	public void setDataset(DatasetVector dataset) {
 		this.dataset = dataset;
+		resetTableData();
+	}
+
+	public void resetTableData(){
 		this.tableDatas.clear();
 		if (dataset != null) {
-			FieldInfos fieldInfos = dataset.getFieldInfos();
+			FieldInfos fieldInfos = ((DatasetVector)this.dataset).getFieldInfos();
 			int count = fieldInfos.getCount();
 			for (int i = 0; i < count; i++) {
 				if (this.fieldTypes == null || ArrayUtilities.isArrayContains(this.fieldTypes, fieldInfos.get(i).getType())) {

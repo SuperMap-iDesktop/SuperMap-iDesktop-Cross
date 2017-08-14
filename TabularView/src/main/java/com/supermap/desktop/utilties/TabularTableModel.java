@@ -1,12 +1,6 @@
 package com.supermap.desktop.utilties;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfos;
-import com.supermap.data.FieldType;
-import com.supermap.data.Geometry;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.enums.TabularChangedType;
 import com.supermap.desktop.event.TabularChangedEvent;
 import com.supermap.desktop.event.TabularValueChangedListener;
@@ -415,7 +409,7 @@ public class TabularTableModel extends AbstractTableModel {
 	}
 
 	public boolean getHiddenSystemField() {
-		return false;
+		return this.isHiddenSystemField;
 	}
 
 	public void setHiddenSystemField(boolean isHiddenSystemField) {
