@@ -486,6 +486,11 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 			}
 			FileType[] fileTypes = exportSetting.getSupportedFileType();
 			int size = fileTypes.length;
+			if (size == 1 && fileTypes[0] == FileType.ModelX) {
+				//Modify DSPJ-59 屏蔽.x文件
+				Application.getActiveApplication().getOutput().output(CommonProperties.getString("String_ExportModelXError"));
+				return;
+			}
 			if (size > 0 || isGpx) {
 				Object[] temp = new Object[6];
 				temp[COLUMN_DATASET] = new DataCell(dataset);
@@ -497,7 +502,6 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 				} else {
 					for (int i = 0; i < size; i++) {
 						FileType fileType = fileTypes[i];
-						//Modify DSPJ-59 屏蔽.x文件
 						if (fileType != FileType.ModelX) {
 							newExportSetting = exportSettingFactory.createExportSetting(fileType);
 							temp[COLUMN_EXPORTTYPE] = CommonUtilities.getDatasetName(fileType.toString());

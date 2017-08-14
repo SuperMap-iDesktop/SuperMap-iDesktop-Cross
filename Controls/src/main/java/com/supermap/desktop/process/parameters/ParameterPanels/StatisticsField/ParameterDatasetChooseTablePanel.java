@@ -73,7 +73,9 @@ public class ParameterDatasetChooseTablePanel extends SwingPanel {
 	private void initComponents() {
 		this.datasetChoosePanel = new JPanelDatasetChooseForParameter((ArrayList<Dataset>) datasetChooseTable.getSelectedItem(), columnNames, enables);
 		this.datasetChoosePanel.setIllegalDataset(this.datasetChooseTable.getDataset());
-		this.datasetChoosePanel.setSupportDatasetTypes(new DatasetType[]{this.datasetChooseTable.getDataset().getType()});
+		if (null != this.datasetChooseTable.getDataset()) {
+			this.datasetChoosePanel.setSupportDatasetTypes(new DatasetType[]{this.datasetChooseTable.getDataset().getType()});
+		}
 	}
 
 
