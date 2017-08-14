@@ -69,7 +69,7 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 		if (this.modelFieldNameCaptionType == null) {
 			init();
 		} else {
-			this.modelFieldNameCaptionType.setDataset((DatasetVector) this.dataset);
+			this.modelFieldNameCaptionType.setDataset((DatasetVector) this.dataset,this.isShowSystemField);
 		}
 	}
 

@@ -1,16 +1,6 @@
 package com.supermap.desktop.ui;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasets;
-import com.supermap.data.Datasource;
-import com.supermap.data.EncodeType;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldInfos;
-import com.supermap.data.Geometry;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormTabular;
@@ -29,6 +19,7 @@ import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -68,6 +59,7 @@ public class JDialogOutputDataset extends SmDialog {
 	private static final int MIN_SIZE = 23;
 	private final Color WARNING_COLOR = Color.red;
 	private final Color DEFAULT_COLOR = Color.black;
+	private static final String NEW_FIELD_NAME_PRE="Field_";
 
 	public JDialogOutputDataset(IFormTabular tabular) {
 		super();
@@ -337,8 +329,23 @@ public class JDialogOutputDataset extends SmDialog {
 				FieldInfos resultFieldInfos = result.getFieldInfos();
 				FieldInfo[] selectedFieldInfo = this.tableFieldNameCaptionType.getSelectedFields();
 				for (int i = 0; i < selectedFieldInfo.length; i++) {
-					if (!selectedFieldInfo[i].getName().equals("SmID") && !selectedFieldInfo[i].getName().equals("SmUserID")) {
-						resultFieldInfos.add(selectedFieldInfo[i]);
+					try{
+						resultFieldInfos.add(selectedFieldInfo[i].clone());
+						//System.out.println(selectedFieldInfo[i].getName());
+					}catch (Exception e){
+						FieldInfo fieldInfo=new FieldInfo();
+						fieldInfo.setName(NEW_FIELD_NAME_PRE+selectedFieldInfo[i].getName());
+						if (selectedFieldInfo[i].getName().equals("SmID")||selectedFieldInfo[i].getName().equals("SmUserID")){
+							fieldInfo.setCaption(NEW_FIELD_NAME_PRE+selectedFieldInfo[i].getCaption());
+						}else {
+							fieldInfo.setCaption(selectedFieldInfo[i].getCaption());
+						}
+						fieldInfo.setRequired(false);
+						fieldInfo.setDefaultValue(selectedFieldInfo[i].getDefaultValue());
+						fieldInfo.setMaxLength(selectedFieldInfo[i].getMaxLength());
+						fieldInfo.setType(selectedFieldInfo[i].getType());
+						fieldInfo.setZeroLengthAllowed(selectedFieldInfo[i].isZeroLengthAllowed());
+						resultFieldInfos.add(fieldInfo);
 					}
 				}
 			}
@@ -388,6 +395,7 @@ public class JDialogOutputDataset extends SmDialog {
 						resultName);
 			}
 			Application.getActiveApplication().getOutput().output(outputMessage);
+			cancelAndCloseDailog();
 		}
 	}
 
@@ -403,7 +411,11 @@ public class JDialogOutputDataset extends SmDialog {
 			try {
 				FieldInfo fieldInfo = fieldInfos.get(i);
 				if (!fieldInfo.isSystemField()) {
-					fieldValues.put(fieldInfo.getName(), recordset.getFieldValue(fieldInfo.getName()));
+					String fieldName=fieldInfo.getName();
+					if (fieldName.indexOf(NEW_FIELD_NAME_PRE)!=-1){
+						fieldName=fieldName.replace(NEW_FIELD_NAME_PRE,"");
+					}
+					fieldValues.put(fieldInfo.getName(), recordset.getFieldValue(fieldName));
 				}
 			} catch (Exception e) {
 				continue;
