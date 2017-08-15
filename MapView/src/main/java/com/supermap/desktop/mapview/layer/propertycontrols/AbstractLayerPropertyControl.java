@@ -138,7 +138,12 @@ public abstract class AbstractLayerPropertyControl extends JPanel implements ILa
 			apply();
 
 			// 当图层树没有焦点时，在其他地方更改了可显示、可编辑等，图层树上对应节点不会刷新。应用编辑之后，刷新图层树。
-			UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+				}
+			});
 		} else {
 			int state = getLayerPropertyModel().equals(getModifiedLayerPropertyModel()) ? ChangedEvent.UNCHANGED : ChangedEvent.CHANGED;
 			fireLayerPropertyChanged(new ChangedEvent(this, state));

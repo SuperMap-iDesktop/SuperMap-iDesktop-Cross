@@ -227,11 +227,13 @@ public class LayerPropertyContainer extends JPanel {
 		// @formatter:on
 		setComponentName();
 	}
+
 	private void setComponentName() {
 		ComponentUIUtilities.setName(this.panelContainer, "LayerPropertyContainer_panelContainer");
 		ComponentUIUtilities.setName(this.checkBoxIsAutoApply, "LayerPropertyContainer_checkBoxIsAutoApply");
 		ComponentUIUtilities.setName(this.buttonApply, "LayerPropertyContainer_buttonApply");
 	}
+
 	private void initializeResources() {
 		this.checkBoxIsAutoApply.setText(ControlsProperties.getString("String_AutoApply"));
 		this.buttonApply.setText(CommonProperties.getString("String_Button_Apply"));
@@ -287,8 +289,17 @@ public class LayerPropertyContainer extends JPanel {
 			Application.getActiveApplication().getOutput().output(e2);
 		} finally {
 			setResetFlag(true);
-			UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+			updateLayersTree();
 		}
+	}
+
+	private void updateLayersTree() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+			}
+		});
 	}
 
 	private void buttonApplyClicked() {
@@ -302,7 +313,7 @@ public class LayerPropertyContainer extends JPanel {
 			Application.getActiveApplication().getOutput().output(e2);
 		} finally {
 			setResetFlag(true);
-			UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+			updateLayersTree();
 		}
 	}
 

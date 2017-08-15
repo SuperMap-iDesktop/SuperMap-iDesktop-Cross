@@ -233,7 +233,13 @@ public class LayersComponentManager extends JComponent {
 		if (map != null && map.getLayers() != null && map.getLayers().getCount() > 0) {
 			layersTree.setSelectionRow(0);
 		}
-		this.layersTree.updateUI();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				layersTree.updateUI();
+			}
+		});
+
 	}
 
 	public Scene getScene() {

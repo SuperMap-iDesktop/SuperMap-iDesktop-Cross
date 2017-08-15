@@ -221,7 +221,7 @@ public class LayersTree extends JTree {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) object;
 
 			int offset = x - this.getUI().getPathBounds(this, path).x;
-		    /*
+			/*
              * 修改为使用Render来计算点击的Icon类型 modified by gouyu 2010-12-24
 			 */
 			result = ((LayersTreeCellRenderer) this.getCellRenderer()).getHitTestIconType(node, offset);
@@ -913,20 +913,20 @@ public class LayersTree extends JTree {
 						refresh();
 					} else if (type == 2 && LayersTreeUtilties.isTreeNodeDataVisible(nodeData.getData())) {
 						setCaseTwo(obj);
-						updateUI();
+						updateLater();
 					} else if (type == 3 && LayersTreeUtilties.isTreeNodeDataVisible(nodeData.getData())) {
 						setCaseThree(obj);
-						updateUI();
+						updateLater();
 					} else if (type == 4 && LayersTreeUtilties.isTreeNodeDataVisible(nodeData.getData())) {
 						setCaseFour(obj);
-						updateUI();
+						updateLater();
 					}
 				}
 			}
 		}
 
 		private void refresh() {
-			updateUI();
+			updateLater();
 			currentMap.refresh();
 			firePropertyChangeWithLayerSelect();
 		}
@@ -1049,6 +1049,15 @@ public class LayersTree extends JTree {
 		}
 	}
 
+	private void updateLater() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateUI();
+			}
+		});
+	}
+
 	/**
 	 * 弹出风格设置窗口，返回选中的新风格
 	 */
@@ -1092,7 +1101,7 @@ public class LayersTree extends JTree {
 				if (jDialogSymbolsChange.showDialog() == DialogResult.OK) {
 					this.currentMap.refresh();
 				}
-				this.updateUI();
+				updateLater();
 				// }
 			} else if (layer != null && geoStyleList.size() == 1) {
 				GeoStyle layerStyle = geoStyleList.get(0);
@@ -1103,14 +1112,14 @@ public class LayersTree extends JTree {
 						LayerSettingVector layerSetting = (LayerSettingVector) finalLayer.getAdditionalSetting();
 						layerSetting.setStyle(geoStyle);
 						currentMap.refresh();
-						updateUI();
+						updateLater();
 					}
 				});
 				if (geostyle != null) {
 					LayerSettingVector layerSetting = (LayerSettingVector) layer.getAdditionalSetting();
 					layerSetting.setStyle(geostyle);
 					this.currentMap.refresh();
-					updateUI();
+					updateLater();
 				}
 			}
 		} catch (Exception ex) {
@@ -1287,7 +1296,7 @@ public class LayersTree extends JTree {
 			firePropertyChangeWithLayerSelect();
 			this.currentMap.refresh();
 		}
-		this.updateUI();
+		updateLater();
 	}
 
 	private GeoStyle changeGeoStyle(GeoStyle beforeStyle, SymbolType symbolType, ISymbolApply symbolApply) {

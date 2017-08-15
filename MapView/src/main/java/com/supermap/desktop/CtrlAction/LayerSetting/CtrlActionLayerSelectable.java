@@ -10,6 +10,8 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.mapping.*;
 
+import javax.swing.*;
+
 public class CtrlActionLayerSelectable extends CtrlAction {
 
 	public CtrlActionLayerSelectable(IBaseItem caller, IForm formClass) {
@@ -26,7 +28,12 @@ public class CtrlActionLayerSelectable extends CtrlAction {
 				layer.setSelectable(isSelectable);
 			}
 			formMap.getMapControl().getMap().refresh();
-			UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+				}
+			});
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
