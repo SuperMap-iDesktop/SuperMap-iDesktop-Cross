@@ -1,6 +1,8 @@
 package com.supermap.desktop.process.core;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IWorkflow;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.MatrixNodeAddedEvent;
 import com.supermap.desktop.process.events.MatrixNodeAddedListener;
 import com.supermap.desktop.process.events.MatrixNodeAddingEvent;
@@ -17,6 +19,9 @@ import com.supermap.desktop.process.events.WorkflowChangeListener;
 import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessLoader;
+import com.supermap.desktop.process.readyChecker.ProcessChangeSourceDataChecker;
+import com.supermap.desktop.process.readyChecker.WorkflowProcessReadyChecker;
+import com.supermap.desktop.process.readyChecker.WorkflowRunnableChecker;
 import com.supermap.desktop.process.util.WorkflowUtil;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
@@ -24,6 +29,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.swing.event.EventListenerList;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,6 +45,7 @@ public class Workflow implements IWorkflow {
 	private NodeMatrix<IProcess> processMatrix;
 	private EventListenerList listenerList = new EventListenerList();
 	private MatrixEventHandler handler = new MatrixEventHandler();
+	private ArrayList<IReadyChecker<Workflow>> readyCheckers = new ArrayList<>();
 
 	public Workflow(String name) {
 		this.name = name;
@@ -55,6 +63,10 @@ public class Workflow implements IWorkflow {
 		this.processMatrix.addMatrixNodeAddedListener(this.handler);
 		this.processMatrix.addMatrixNodeRemovingListener(this.handler);
 		this.processMatrix.addMatrixNodeRemovedListener(this.handler);
+
+		this.readyCheckers.add(new ProcessChangeSourceDataChecker<>());
+		this.readyCheckers.add(new WorkflowProcessReadyChecker<>());
+		this.readyCheckers.add(new WorkflowRunnableChecker<>());
 	}
 
 	@Override
@@ -214,9 +226,7 @@ public class Workflow implements IWorkflow {
 		IProcess ret = null;
 
 		Vector<IProcess> processes = getProcesses();
-		for (int i = 0; i < processes.size(); i++) {
-			IProcess process = processes.get(i);
-
+		for (IProcess process : processes) {
 			if (StringUtilities.stringEquals(process.getKey(), key) && process.getSerialID() == serialID) {
 				ret = process;
 				break;
@@ -286,12 +296,12 @@ public class Workflow implements IWorkflow {
 	}
 
 	// 获取所有的游离节点
-	public Vector<IProcess> getFreeProcesses(IProcess process) {
+	public Vector<IProcess> getFreeProcesses() {
 		return this.processMatrix.getFreeNodes();
 	}
 
 	// 获取所有的领头节点
-	public Vector<IProcess> getLeadingProcesses(IProcess process) {
+	public Vector<IProcess> getLeadingProcesses() {
 		return this.processMatrix.getLeadingNodes();
 	}
 
@@ -358,6 +368,44 @@ public class Workflow implements IWorkflow {
 				((WorkflowChangeListener) listeners[i + 1]).workflowChange(e);
 			}
 		}
+	}
+
+	public void addWorkflowReadyChecker(IReadyChecker<Workflow> readyChecker) {
+		if (readyCheckers != null && readyChecker != null) {
+			readyCheckers.add(readyChecker);
+		}
+	}
+
+	public void removeWorkflowReadyChecker(IReadyChecker<IWorkflow> readyChecker) {
+		if (readyCheckers != null && readyChecker != null) {
+			readyCheckers.remove(readyChecker);
+		}
+	}
+
+	@Override
+	public boolean isReady() {
+		boolean result = true;
+		for (IReadyChecker<Workflow> readyChecker : readyCheckers) {
+			result = result && readyChecker.isReady(this);
+		}
+		return result;
+	}
+
+	private void checkProcessChangeSourceData() {
+		ArrayList<String> changeSourceDataProcessNames = new ArrayList<>();
+		Vector<IProcess> processes = getProcesses();
+		for (IProcess process : processes) {
+			if (process.isChangeSourceData() && !changeSourceDataProcessNames.contains(process.getTitle())) {
+				changeSourceDataProcessNames.add(process.getTitle());
+			}
+		}
+		StringBuilder stringBuffer = new StringBuilder();
+		for (String changeSourceDataProcessName : changeSourceDataProcessNames) {
+			stringBuffer.append(", ").append(changeSourceDataProcessName);
+		}
+		String processNames = stringBuffer.toString();
+		processNames = processNames.substring(1);
+		Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_ProcessWillChangeSourceData"), processNames));
 	}
 
 	private class MatrixEventHandler implements MatrixNodeAddingListener<IProcess>, MatrixNodeAddedListener<IProcess>, MatrixNodeRemovingListener<IProcess>, MatrixNodeRemovedListener<IProcess> {

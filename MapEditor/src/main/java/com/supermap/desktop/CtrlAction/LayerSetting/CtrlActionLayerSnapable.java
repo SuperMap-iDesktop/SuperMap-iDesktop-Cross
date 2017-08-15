@@ -10,6 +10,8 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.mapping.*;
 
+import javax.swing.*;
+
 public class CtrlActionLayerSnapable extends CtrlAction {
 
 	public CtrlActionLayerSnapable(IBaseItem caller, IForm formClass) {
@@ -26,7 +28,12 @@ public class CtrlActionLayerSnapable extends CtrlAction {
 				layer.setSnapable(isSnap);
 			}
 			formMap.getMapControl().getMap().refresh();
-			UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+				}
+			});
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
