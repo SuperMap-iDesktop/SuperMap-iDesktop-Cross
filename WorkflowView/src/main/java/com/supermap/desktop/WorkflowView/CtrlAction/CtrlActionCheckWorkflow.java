@@ -4,6 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.WorkflowView.FormWorkflow;
+import com.supermap.desktop.WorkflowView.WorkflowViewProperties;
 import com.supermap.desktop.implement.CtrlAction;
 
 /**
@@ -18,7 +19,9 @@ public class CtrlActionCheckWorkflow extends CtrlAction {
 	protected void run() {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm instanceof FormWorkflow) {
-			((FormWorkflow) activeForm).getWorkflow().isReady();
+			if (((FormWorkflow) activeForm).getWorkflow().isReady()) {
+				Application.getActiveApplication().getOutput().output(WorkflowViewProperties.getString("String_WorkflowNoError"));
+			}
 		}
 	}
 
