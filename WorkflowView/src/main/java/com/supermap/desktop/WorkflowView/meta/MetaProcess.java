@@ -10,7 +10,6 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.events.ParameterPropertyChangedEvent;
 import com.supermap.desktop.process.parameter.events.ParameterPropertyChangedListener;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
-import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.ipls.DefaultParameters;
@@ -33,6 +32,7 @@ public abstract class MetaProcess extends AbstractProcess {
 	protected IParameters parameters = new DefaultParameters(this);
 	protected boolean finished = false;
 
+	protected boolean isChangeSourceData = false;
 
 	protected SteppedListener steppedListener = new SteppedListener() {
 		@Override
@@ -51,10 +51,7 @@ public abstract class MetaProcess extends AbstractProcess {
 		parameterPropertyChangedListener = new ParameterPropertyChangedListener() {
 			@Override
 			public void parameterPropertyChanged(ParameterPropertyChangedEvent parameterPropertyChangedEvent) {
-				IParameter parameter = parameterPropertyChangedEvent.getParameter();
-				if (parameter.isRequisite()) {
-					checkReadyState();
-				}
+				checkReadyState();
 			}
 		};
 		parameters.addParameterPropertyChangedListener(parameterPropertyChangedListener);
@@ -78,4 +75,9 @@ public abstract class MetaProcess extends AbstractProcess {
 		return this.getStatus() == RunningStatus.COMPLETED;
 	}
 
+
+	@Override
+	public boolean isChangeSourceData() {
+		return isChangeSourceData;
+	}
 }

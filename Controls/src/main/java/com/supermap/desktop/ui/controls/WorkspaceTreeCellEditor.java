@@ -5,7 +5,6 @@ import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.*;
-import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.enums.WindowType;
@@ -352,7 +351,12 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 				stringTextField = obj.toString();
 
 				fireStopCellEditing();
-				tree.updateUI();
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						tree.updateUI();
+					}
+				});
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

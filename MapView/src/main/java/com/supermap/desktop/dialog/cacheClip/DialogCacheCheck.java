@@ -2,13 +2,12 @@ package com.supermap.desktop.dialog.cacheClip;
 
 import com.supermap.data.processing.CacheWriter;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.dialog.cacheClip.cache.CheckCache;
 import com.supermap.desktop.dialog.cacheClip.cache.LogWriter;
 import com.supermap.desktop.dialog.cacheClip.cache.ProcessManager;
-import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.properties.CacheProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.JFileChooserControl;
 import com.supermap.desktop.ui.controls.SmFileChoose;
@@ -71,7 +70,7 @@ public class DialogCacheCheck extends JFrame {
 
 	private void shutdownMapCheck() {
 		String taskPath = getTaskPath("build");
-		if (CacheUtilities.showConfirmDialog(DialogCacheCheck.this, MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
+		if (CacheUtilities.showConfirmDialog(DialogCacheCheck.this, CacheProperties.getString("String_FinishCheckTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(taskPath, "checking");
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			killProcess();
@@ -139,7 +138,7 @@ public class DialogCacheCheck extends JFrame {
 		this.fileChooseCachePath.setFileChooser(fileChooserForCachePath);
 		String moduleNameForCheckBounds = "ChooseCheckBoundsFileForCheck";
 		if (!SmFileChoose.isModuleExist(moduleNameForCheckBounds)) {
-			String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MapViewProperties.getString("String_FileType_GeoJson"), "geojson"));
+			String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(CacheProperties.getString("String_FileType_GeoJson"), "geojson"));
 			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
 					moduleNameForCheckBounds, "OpenOne");
 		}
@@ -163,15 +162,15 @@ public class DialogCacheCheck extends JFrame {
 
 	private void initResources() {
 		this.setIconImages(CacheUtilities.getIconImages());
-		this.labelCachePath.setText(MapViewProperties.getString("MapCache_LabelCachePath"));
-		this.labelCheckBounds.setText(MapViewProperties.getString("String_CheckBounds"));
-		this.labelProcessCount.setText(MapViewProperties.getString("String_NewProcessCount"));
+		this.labelCachePath.setText(CacheProperties.getString("MapCache_LabelCachePath"));
+		this.labelCheckBounds.setText(CacheProperties.getString("String_CheckBounds"));
+		this.labelProcessCount.setText(CacheProperties.getString("String_NewProcessCount"));
 		this.textFieldProcessCount.setText("3");
-		this.radioButtonMultiCheck.setText(MapViewProperties.getString("String_CacheCheck_Multi"));
-		this.checkBoxSaveErrorData.setText(MapViewProperties.getString("String_SaveErrorData"));
-		this.checkBoxCacheBuild.setText(MapViewProperties.getString("String_ClipErrorCache"));
-		this.setTitle(MapViewProperties.getString("String_CacheCheck"));
-		this.labelProgress.setText(ControlsProperties.getString("String_ProgressControl_TotalProgress"));
+		this.radioButtonMultiCheck.setText(CacheProperties.getString("String_CacheCheck_Multi"));
+		this.checkBoxSaveErrorData.setText(CacheProperties.getString("String_SaveErrorData"));
+		this.checkBoxCacheBuild.setText(CacheProperties.getString("String_ClipErrorCache"));
+		this.setTitle(CacheProperties.getString("String_CacheCheck"));
+		this.labelProgress.setText(CacheProperties.getString("String_ProgressControl_TotalProgress"));
 	}
 
 	private void initLayout() {
@@ -201,7 +200,7 @@ public class DialogCacheCheck extends JFrame {
 	private boolean validateValue(String sciPath, String processCount) {
 		boolean result = true;
 		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || processCount.equals("0"))) {
-			CacheUtilities.showMessageDialog(DialogCacheCheck.this, MapViewProperties.getString("String_CheckProcessCountError"));
+			CacheUtilities.showMessageDialog(DialogCacheCheck.this, CacheProperties.getString("String_CheckProcessCountError"));
 			return false;
 		}
 		File buildFile = new File(sciPath);
@@ -213,7 +212,7 @@ public class DialogCacheCheck extends JFrame {
 		if (!buildFile.exists() || !CacheUtilities.hasSciFiles(buildFile)) {
 			//build下不存在sci,faild下存在则提示有失败的文件，如果用户点击是则重切
 			if (failedDirectory.exists() && CacheUtilities.hasSciFiles(failedDirectory)) {
-				if (CacheUtilities.showConfirmDialog(DialogCacheCheck.this, MessageFormat.format(MapViewProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
+				if (CacheUtilities.showConfirmDialog(DialogCacheCheck.this, MessageFormat.format(CacheProperties.getString("String_WarningForFailed"), failedDirectory.list().length)) == JOptionPane.OK_OPTION) {
 					File[] failedSci = failedDirectory.listFiles();
 					for (int i = 0; i < failedSci.length; i++) {
 						failedSci[i].renameTo(new File(taskFile, failedSci[i].getName()));
@@ -225,7 +224,7 @@ public class DialogCacheCheck extends JFrame {
 				}
 			} else if (!failedDirectory.exists() || !CacheUtilities.hasSciFiles(failedDirectory)) {
 				//build下，failed下都没有则提示没有sci
-				CacheUtilities.showMessageDialog(DialogCacheCheck.this, MapViewProperties.getString("String_CheckTaskNotExist"));
+				CacheUtilities.showMessageDialog(DialogCacheCheck.this, CacheProperties.getString("String_CheckTaskNotExist"));
 				result = false;
 			}
 		}
@@ -237,7 +236,7 @@ public class DialogCacheCheck extends JFrame {
 		boolean result = false;
 		File checkFailedDirectory = new File(getTaskPath("checkFailed"));
 		if (checkFailedDirectory.exists() && CacheUtilities.hasSciFiles(checkFailedDirectory)) {
-			if (JOptionPane.showConfirmDialog(DialogCacheCheck.this, MapViewProperties.getString("String_WarningForMongoChecked"), "", JOptionPane.YES_NO_OPTION)
+			if (JOptionPane.showConfirmDialog(DialogCacheCheck.this, CacheProperties.getString("String_WarningForMongoChecked"), "", JOptionPane.YES_NO_OPTION)
 					== JOptionPane.OK_OPTION) {
 				//有异常中断遗留的检查任务,提示是否重新检查
 				File[] checkFailed = checkFailedDirectory.listFiles();
@@ -396,7 +395,7 @@ public class DialogCacheCheck extends JFrame {
 		File errorFile = new File(getTaskPath("failed"));
 		File taskFile = new File(getTaskPath("task"));
 		if (errorFile.exists() && null != errorFile.list() && errorFile.list().length > 0 && tileSize != -1) {
-			if (CacheUtilities.showConfirmDialog(DialogCacheCheck.this, MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), errorFile.list().length, errorFile.getPath()))
+			if (CacheUtilities.showConfirmDialog(DialogCacheCheck.this, MessageFormat.format(CacheProperties.getString("String_Process_message_Failed"), errorFile.list().length, errorFile.getPath()))
 					== JOptionPane.OK_OPTION) {
 				File[] failedSci = errorFile.listFiles();
 				for (int i = 0; i < failedSci.length; i++) {
@@ -406,7 +405,7 @@ public class DialogCacheCheck extends JFrame {
 				buildCache();
 			}
 		} else {
-			CacheUtilities.showMessageDialog(DialogCacheCheck.this, MapViewProperties.getString("String_CacheCheckSuccess"));
+			CacheUtilities.showMessageDialog(DialogCacheCheck.this, CacheProperties.getString("String_CacheCheckSuccess"));
 		}
 		killProcess();
 	}

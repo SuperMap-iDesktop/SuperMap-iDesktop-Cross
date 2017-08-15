@@ -11,4 +11,6 @@ public interface IWorkflow {
 	String serializeTo();
 
 	void serializeFrom(String xmlDescription);
+
+	boolean isReady();
 }

@@ -9,6 +9,8 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 
+import javax.swing.*;
+
 public class CtrlActionLayerVisible extends CtrlAction {
 
 	public CtrlActionLayerVisible(IBaseItem caller, IForm formClass) {
@@ -29,7 +31,12 @@ public class CtrlActionLayerVisible extends CtrlAction {
 				}
 			}
 			formMap.getMapControl().getMap().refresh();
-			UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+				}
+			});
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

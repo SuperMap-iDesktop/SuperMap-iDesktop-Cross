@@ -38,17 +38,21 @@ public interface IProcess {
 
 	boolean isReady();
 
+	boolean checkReadyState();
+
 	void cancel();
 
 	boolean isCancelled();
+
+	void setStatus(RunningStatus status);
 
 	void reset();
 
 	Class<? extends IProcessLoader> getLoader();
 
-	void addProcessReadyChecker(IProcessReadyChecker processReadyChecker);
+	void addProcessReadyChecker(IReadyChecker<IProcess> processReadyChecker);
 
-	void removeProcessReadyChecker(IProcessReadyChecker processReadyChecker);
+	void removeProcessReadyChecker(IReadyChecker<IProcess> processReadyChecker);
 
 	void addRunningListener(RunningListener listener);
 
@@ -59,5 +63,7 @@ public interface IProcess {
 	void removeStatusChangeListener(StatusChangeListener listener);
 
 	IParameterPanel getComponent();
+
+	boolean isChangeSourceData();
 }
 

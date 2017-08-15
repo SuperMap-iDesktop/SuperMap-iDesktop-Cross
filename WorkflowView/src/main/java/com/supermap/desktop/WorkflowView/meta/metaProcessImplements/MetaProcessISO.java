@@ -65,7 +65,7 @@ public abstract class MetaProcessISO extends MetaProcess {
 			sourceDatasource.setSelectedItem(defaultDatasetGrid.getDatasource());
 			dataset.setSelectedItem(defaultDatasetGrid);
 			saveDataset.setResultDatasource(defaultDatasetGrid.getDatasource());
-			saveDataset.setSelectedItem(defaultDatasetGrid.getDatasource().getDatasets().getAvailableDatasetName("result_ISOResult"));
+			saveDataset.setSelectedItem(defaultDatasetGrid.getDatasource().getDatasets().getAvailableDatasetName(getDefaultResultName()));
 		} else {
 			saveDataset.setSelectedItem(getDefaultResultName());
 		}

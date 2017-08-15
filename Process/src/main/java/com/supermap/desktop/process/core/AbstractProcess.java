@@ -27,7 +27,7 @@ public abstract class AbstractProcess implements IProcess {
 	private Outputs outputs = new Outputs(this);
 	private int serialID = 0;
 
-	private ArrayList<IProcessReadyChecker> processReadyCheckerList = new ArrayList<>();
+	private ArrayList<IReadyChecker<IProcess>> processReadyCheckerList = new ArrayList<>();
 
 	public AbstractProcess() {
 		setSerialID(hashCode());
@@ -103,7 +103,7 @@ public abstract class AbstractProcess implements IProcess {
 			return false;
 		}
 		if (processReadyCheckerList.size() > 0) {
-			for (IProcessReadyChecker iProcessReadyChecker : processReadyCheckerList) {
+			for (IReadyChecker<IProcess> iProcessReadyChecker : processReadyCheckerList) {
 				if (!iProcessReadyChecker.isReady(this)) {
 					return false;
 				}
@@ -116,11 +116,14 @@ public abstract class AbstractProcess implements IProcess {
 		return true;
 	}
 
-	public void checkReadyState() {
+	@Override
+	public boolean checkReadyState() {
 		if (isReady()) {
 			setStatus(RunningStatus.READY);
+			return true;
 		} else {
 			setStatus(RunningStatus.WARNING);
+			return false;
 		}
 	}
 
@@ -138,7 +141,8 @@ public abstract class AbstractProcess implements IProcess {
 		return this.status == RunningStatus.CANCELLED;
 	}
 
-	protected final void setStatus(RunningStatus status) {
+	@Override
+	public final void setStatus(RunningStatus status) {
 		if (this.status != status) {
 			RunningStatus oldStatus = this.status;
 			this.status = status;
@@ -184,14 +188,14 @@ public abstract class AbstractProcess implements IProcess {
 	}
 
 	@Override
-	public void addProcessReadyChecker(IProcessReadyChecker processReadyChecker) {
+	public void addProcessReadyChecker(IReadyChecker<IProcess> processReadyChecker) {
 		if (processReadyChecker != null && !processReadyCheckerList.contains(processReadyChecker)) {
 			processReadyCheckerList.add(processReadyChecker);
 		}
 	}
 
 	@Override
-	public void removeProcessReadyChecker(IProcessReadyChecker processReadyChecker) {
+	public void removeProcessReadyChecker(IReadyChecker<IProcess> processReadyChecker) {
 		if (processReadyChecker != null) {
 			processReadyCheckerList.remove(processReadyChecker);
 		}
