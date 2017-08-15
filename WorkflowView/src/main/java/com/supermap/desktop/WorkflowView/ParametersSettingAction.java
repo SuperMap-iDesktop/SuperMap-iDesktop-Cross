@@ -26,11 +26,7 @@ public class ParametersSettingAction extends CanvasActionAdapter {
 
 			// 双击流程图节点，进行参数设置
 			if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
-				IDockbar parametersDockbar = Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(PARAMETER_MANAGER_CLASS_NAME));
-				if (parametersDockbar.isVisible()) {
-					return;
-				}
-
+				final IDockbar parametersDockbar = Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(PARAMETER_MANAGER_CLASS_NAME));
 				IGraph graph = this.canvas.findGraph(e.getPoint());
 
 				if (graph instanceof ProcessGraph) {
