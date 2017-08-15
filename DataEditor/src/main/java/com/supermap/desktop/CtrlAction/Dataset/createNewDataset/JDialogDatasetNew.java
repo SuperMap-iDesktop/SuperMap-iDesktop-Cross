@@ -29,6 +29,8 @@ import java.util.ArrayList;
 
 /**
  * @author XiaJT
+ * 新建数据集
+ * 增加创建栅格以及影像数据集，以及用模版进行创建-yuanR 2017.8.15
  */
 public class JDialogDatasetNew extends SmDialog {
 
@@ -51,6 +53,8 @@ public class JDialogDatasetNew extends SmDialog {
 		initResources();
 		addListeners();
 		initComponentStates();
+		JDialogNewImageDataset dialogNewGridDataset = new JDialogNewImageDataset();
+		dialogNewGridDataset.showDialog();
 	}
 
 	private void initComponents() {
@@ -112,8 +116,8 @@ public class JDialogDatasetNew extends SmDialog {
 		targetDatasourceColumn.setCellEditor(targetDatasourceCellEditor);
 
 		//2017.2.13 数据集类型下拉列表控件创建--yuanR
-		DatasetType[] datasetTypes = new DatasetType[]{DatasetType.POINT,DatasetType.LINE,DatasetType.REGION,DatasetType.TEXT,
-				DatasetType.CAD,DatasetType.TABULAR,DatasetType.POINT3D,DatasetType.LINE3D,DatasetType.REGION3D};
+		DatasetType[] datasetTypes = new DatasetType[]{DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT,
+				DatasetType.CAD, DatasetType.TABULAR, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D};
 		final DatasetTypeComboBox comboBoxDatasetType = new DatasetTypeComboBox(datasetTypes);
 
 		DefaultCellEditor datasetTypeCellEditor = new DefaultCellEditor(comboBoxDatasetType);
