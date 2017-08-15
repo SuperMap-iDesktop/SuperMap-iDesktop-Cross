@@ -44,7 +44,7 @@ public class MetaProcessShortestPath extends MetaProcess {
 	public MetaProcessShortestPath() {
 		initParameters();
 		initParametersState();
-		initParameterConstrint();
+		initParameterConstraint();
 	}
 
 	private void initParameters() {
@@ -119,7 +119,7 @@ public class MetaProcessShortestPath extends MetaProcess {
 		this.parameterRadioButton.setSelectedItem(parameterDataNodeCell);
 	}
 
-	private void initParameterConstrint() {
+	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(this.sourceDatasource, ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(this.sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
