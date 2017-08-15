@@ -99,40 +99,32 @@ public class MetaProcessTabularPointToRegion extends MetaProcessTypeConversion {
 
 			// 获得源数据字段
 			FieldInfos sourceFieldInfos = sourceDataset.getFieldInfos();
-			ArrayList<String> sourceFielName = new ArrayList();
-			for (int i = 0; i < sourceFieldInfos.getCount(); i++) {
-				if (!sourceFieldInfos.get(i).isSystemField()) {
-					sourceFielName.add(sourceFieldInfos.get(i).getName());
-				}
-			}
-
 			// 获得目标数据字段
 			FieldInfos tragetFieldInfos = targetDataset.getFieldInfos();
-
-			ArrayList<String> tragetFielName = new ArrayList();
-			for (int i = 0; i < tragetFieldInfos.getCount(); i++) {
-				if (!tragetFieldInfos.get(i).isSystemField()) {
-					tragetFielName.add(tragetFieldInfos.get(i).getName());
+			ArrayList<FieldInfo> newFielInfos = new ArrayList();
+			for (int i = 0; i < sourceFieldInfos.getCount(); i++) {
+				for (int j = i; j < tragetFieldInfos.getCount(); j++) {
+					if (!sourceFieldInfos.get(i).isSystemField() && !tragetFieldInfos.get(j).isSystemField()) {
+						String sourceFielName = sourceFieldInfos.get(i).getName();
+						String tragetFielName = tragetFieldInfos.get(j).getName();
+						if (!sourceFielName.contains(tragetFielName)) {
+							newFielInfos.add(sourceFieldInfos.get(i));
+						}
+					}
 				}
 			}
 
-			// 需要添加进面数据集的字段集合
-			ArrayList<String> newFielName = new ArrayList();
-			for (String name : sourceFielName) {
-				if (!tragetFielName.contains(name)) {
-					newFielName.add(name);
-				}
-			}
 			// 给目标数据集创建新的字段
 			int num = 0;
-			for (int i = 0; i < newFielName.size(); i++) {
-				if (targetDataset.isAvailableFieldName((String) newFielName.get(i))) {
+			for (int i = 0; i < newFielInfos.size(); i++) {
+				if (targetDataset.isAvailableFieldName((String) newFielInfos.get(i).getName())) {
 					FieldInfo fieldInfo = new FieldInfo();
-					fieldInfo.setName(newFielName.get(i));
+					fieldInfo.setName(newFielInfos.get(i).getName());
+					fieldInfo.setType(newFielInfos.get(i).getType());
 					tragetFieldInfos.add(fieldInfo);
 					num++;
 				} else {
-					newFielName.remove(i);
+					newFielInfos.remove(i);
 					i--;
 				}
 			}
@@ -169,7 +161,7 @@ public class MetaProcessTabularPointToRegion extends MetaProcessTypeConversion {
 			// 获得要追加的字段名称集合
 			String[] newName = new String[num];
 			for (int i = 0; i < newName.length; i++) {
-				newName[i] = newFielName.get(i);
+				newName[i] = newFielInfos.get(i).getName();
 			}
 			sourceRecordset = sourceDataset.getRecordset(false, CursorType.DYNAMIC);
 			sourceRecordset.addSteppedListener(steppedListener);
