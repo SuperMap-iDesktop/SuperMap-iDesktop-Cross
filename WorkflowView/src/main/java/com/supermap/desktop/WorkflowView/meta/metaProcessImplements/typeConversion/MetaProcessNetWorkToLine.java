@@ -31,16 +31,14 @@ public class MetaProcessNetWorkToLine extends MetaProcessPointLineRegion {
 
 	@Override
 	protected boolean convert(Recordset recordset, IGeometry geometry, Map<String, Object> value) {
-		boolean isConverted = true;
+		boolean isConverted = false;
 
 		if (geometry instanceof ILineFeature) {
 			GeoLine geoLine = (GeoLine) geometry.getGeometry();
 			for (int i = 0; i < geoLine.getPartCount(); i++) {
-				recordset.addNew(geoLine, value);
+				isConverted = recordset.addNew(geoLine, value);
 			}
 			geoLine.dispose();
-		} else {
-			isConverted = false;
 		}
 		return isConverted;
 	}

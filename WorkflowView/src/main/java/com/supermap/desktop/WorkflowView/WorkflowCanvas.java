@@ -50,6 +50,7 @@ public class WorkflowCanvas extends GraphCanvas
 	private Map<OutputData, ConnectionLineGraph> outputLinesMap = new ConcurrentHashMap<>();
 
 	private GraphConnectAction connector = new GraphConnectAction(this);
+	private ParametersSettingAction parametersSetting = new ParametersSettingAction(this);
 
 	public WorkflowCanvas(Workflow workflow) {
 		loadWorkflow(workflow);
@@ -59,6 +60,7 @@ public class WorkflowCanvas extends GraphCanvas
 		new DropTarget(this, new ProcessDropTargetHandler());
 
 		installCanvasAction(GraphConnectAction.class, this.connector);
+		installCanvasAction(ParametersSettingAction.class, this.parametersSetting);
 
 		getActionsManager().addMutexAction(GraphDragAction.class, GraphConnectAction.class);
 		getActionsManager().addMutexAction(Selection.class, GraphConnectAction.class);
