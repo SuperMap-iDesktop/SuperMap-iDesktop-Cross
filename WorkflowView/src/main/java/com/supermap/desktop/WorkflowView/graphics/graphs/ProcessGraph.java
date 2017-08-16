@@ -72,11 +72,11 @@ public class ProcessGraph extends RectangleGraph {
 	public void onPaint(Graphics g) {
 		super.onPaint(g);
 
-		Font font = new Font("宋体", Font.BOLD, 16);
+		Font font = new Font(getCanvas().getFont().getName(), Font.PLAIN, 14);
 		g.setFont(font);
 		g.setColor(Color.WHITE);
 
-		String tilte = SwingUtilities2.clipStringIfNecessary(getCanvas(), getCanvas().getFontMetrics(font), getTitle(), getWidth());
+		String tilte = getTitle();
 		int fontHeight = getCanvas().getFontMetrics(font).getHeight();
 		int fontWidth = SwingUtilities2.stringWidth(getCanvas(), getCanvas().getFontMetrics(font), tilte);
 		int fontDescent = getCanvas().getFontMetrics(font).getDescent();
