@@ -20,6 +20,10 @@ public class GraphicsUtil {
 	private GraphicsUtil() {
 	}
 
+	public static void paintText(Graphics g, String text, JComponent component, Rectangle rect) {
+
+	}
+
 	public static Point[] computeArrow(Point start, Point end) {
 		return computeArrow(start.x, start.y, end.x, end.y);
 	}

@@ -1,22 +1,8 @@
 package com.supermap.desktop.WorkflowView.graphics;
 
-import com.supermap.desktop.WorkflowView.graphics.events.GraphCreatedEvent;
-import com.supermap.desktop.WorkflowView.graphics.events.GraphCreatedListener;
-import com.supermap.desktop.WorkflowView.graphics.events.GraphCreatingEvent;
-import com.supermap.desktop.WorkflowView.graphics.events.GraphCreatingListener;
-import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovedEvent;
-import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovedListener;
-import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovingEvent;
-import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovingListener;
+import com.supermap.desktop.WorkflowView.graphics.events.*;
 import com.supermap.desktop.WorkflowView.graphics.graphs.IGraph;
-import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.CanvasAction;
-import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.CanvasActionsManager;
-import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.CanvasTranslation;
-import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.GraphDragAction;
-import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.GraphRemoveAction;
-import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.MultiSelection;
-import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.PopupMenuAction;
-import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.Selection;
+import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.*;
 import com.supermap.desktop.WorkflowView.graphics.interaction.graph.DefaultGraphEventHanderFactory;
 import com.supermap.desktop.WorkflowView.graphics.interaction.graph.IGraphEventHandlerFactory;
 import com.supermap.desktop.WorkflowView.graphics.storage.IGraphStorage;
@@ -24,15 +10,7 @@ import com.supermap.desktop.WorkflowView.graphics.storage.ListGraphs;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -268,7 +246,7 @@ public class GraphCanvas extends JComponent {
 		g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 	}
 
 	public IGraph[] findGraphs(Point point) {
