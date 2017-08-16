@@ -73,7 +73,6 @@ public class ImageDatasetPropertyPanel extends JPanel {
 		this.comboboxPixelFormat.setModel(new DefaultComboBoxModel<>(tempImagePixelFormatType.toArray(new String[tempImagePixelFormatType.size()])));
 
 		this.textFieldImageDatasetbandCount = new WaringTextField();
-		this.textFieldImageDatasetbandCount.setInitInfo(1, 100, WaringTextField.INTEGER_TYPE, "0");
 	}
 
 	private void initLayout() {
@@ -110,10 +109,10 @@ public class ImageDatasetPropertyPanel extends JPanel {
 	}
 
 	private void initStates() {
-		comboboxBlockSizeOption.setSelectedItem(tempBlockSizeOptionType.get(0));
-		comboboxPixelFormat.setSelectedItem(tempImagePixelFormatType.get(10));
-		textFieldImageDatasetbandCount.setText("1");
-
+		this.comboboxBlockSizeOption.setSelectedItem(tempBlockSizeOptionType.get(0));
+		this.comboboxPixelFormat.setSelectedItem(tempImagePixelFormatType.get(10));
+		this.textFieldImageDatasetbandCount.setText("1");
+		this.textFieldImageDatasetbandCount.setInitInfo(1, 100, WaringTextField.INTEGER_TYPE, "0");
 	}
 
 	private void registerEvent() {

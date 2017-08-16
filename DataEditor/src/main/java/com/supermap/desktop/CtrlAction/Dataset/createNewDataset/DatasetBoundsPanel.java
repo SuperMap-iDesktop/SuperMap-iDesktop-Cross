@@ -428,8 +428,8 @@ public class DatasetBoundsPanel extends JPanel {
 	public DatasetBoundsPanel() {
 		initComponents();
 		initLayout();
-		initStates();
 		registerEvent();
+		initStates();
 	}
 
 	private void initComponents() {
@@ -456,23 +456,23 @@ public class DatasetBoundsPanel extends JPanel {
 
 	private void initLayout() {
 		this.setBorder(BorderFactory.createTitledBorder(DataEditorProperties.getString("String_NewDatasetBounds")));
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new GridBagLayout());
-		mainPanel.add(this.labelCurrentViewLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10).setWeight(0, 0));
-		mainPanel.add(this.textFieldCurrentViewLeft, new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(3, 0));
-		mainPanel.add(this.mapViewBoundsButton, new GridBagConstraintsHelper(4, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(0, 0));
-		mainPanel.add(this.labelCurrentViewTop, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10).setWeight(0, 0));
-		mainPanel.add(this.textFieldCurrentViewTop, new GridBagConstraintsHelper(1, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
-		mainPanel.add(this.currentViewBoundsButton, new GridBagConstraintsHelper(4, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(0, 0));
-		mainPanel.add(this.labelCurrentViewRight, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10).setWeight(0, 0));
-		mainPanel.add(this.textFieldCurrentViewRight, new GridBagConstraintsHelper(1, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
-		mainPanel.add(this.copyButton, new GridBagConstraintsHelper(4, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(0, 0));
-		mainPanel.add(this.labelCurrentViewBottom, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10).setWeight(0, 0));
-		mainPanel.add(this.textFieldCurrentViewBottom, new GridBagConstraintsHelper(1, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
-		mainPanel.add(this.pasteButton, new GridBagConstraintsHelper(4, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(0, 0));
+//		JPanel mainPanel = new JPanel();
+		this.setLayout(new GridBagLayout());
+		this.add(this.labelCurrentViewLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10).setWeight(0, 0));
+		this.add(this.textFieldCurrentViewLeft, new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(3, 0));
+		this.add(this.mapViewBoundsButton, new GridBagConstraintsHelper(4, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(0, 0));
+		this.add(this.labelCurrentViewTop, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10).setWeight(0, 0));
+		this.add(this.textFieldCurrentViewTop, new GridBagConstraintsHelper(1, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
+		this.add(this.currentViewBoundsButton, new GridBagConstraintsHelper(4, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(0, 0));
+		this.add(this.labelCurrentViewRight, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10).setWeight(0, 0));
+		this.add(this.textFieldCurrentViewRight, new GridBagConstraintsHelper(1, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
+		this.add(this.copyButton, new GridBagConstraintsHelper(4, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(0, 0));
+		this.add(this.labelCurrentViewBottom, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10).setWeight(0, 0));
+		this.add(this.textFieldCurrentViewBottom, new GridBagConstraintsHelper(1, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
+		this.add(this.pasteButton, new GridBagConstraintsHelper(4, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(0, 0));
 
-		this.setLayout(new BorderLayout());
-		this.add(mainPanel);
+//		this.setLayout(new BorderLayout());
+//		this.add(main   Panel);
 	}
 
 	private void initStates() {

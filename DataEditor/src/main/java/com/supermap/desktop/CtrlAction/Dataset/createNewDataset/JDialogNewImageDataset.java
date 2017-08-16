@@ -2,14 +2,16 @@ package com.supermap.desktop.CtrlAction.Dataset.createNewDataset;
 
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
-import com.supermap.desktop.mapview.map.propertycontrols.PanelGroupBoxViewBounds;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Created by yuanR on 2017/8/15 0015.
@@ -19,7 +21,6 @@ public class JDialogNewImageDataset extends SmDialog {
 	private BasicInfoPanel basicInfoPanel;
 	private ResolutionPanel resolutionPanel;
 	private ImageDatasetPropertyPanel imagePropertyPanel;
-	private PanelGroupBoxViewBounds panelGroupBoxViewBounds;
 	private DatasetBoundsPanel datasetBoundsPanel;
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
@@ -27,16 +28,17 @@ public class JDialogNewImageDataset extends SmDialog {
 	public JDialogNewImageDataset() {
 		initComponents();
 		initLayout();
-
+		registerEvent();
+		this.setTitle(DataEditorProperties.getString("String_NewDatasetImage"));
 		this.setModal(true);
 		setSize(700, 420);
 		this.setLocationRelativeTo(null);
-
 	}
+
 
 	private void initComponents() {
 
-		basicInfoPanel = new BasicInfoPanel(DatasetType.GRID);
+		basicInfoPanel = new BasicInfoPanel(DatasetType.IMAGE);
 		resolutionPanel = new ResolutionPanel();
 		resolutionPanel.setBorder(BorderFactory.createTitledBorder(DataEditorProperties.getString("String_NewDataset_RatioInfo")));
 		imagePropertyPanel = new ImageDatasetPropertyPanel();
@@ -64,12 +66,12 @@ public class JDialogNewImageDataset extends SmDialog {
 								.addComponent(this.imagePropertyPanel)
 								.addComponent(this.datasetBoundsPanel))));
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-						.addComponent(this.basicInfoPanel)
-						.addComponent(this.imagePropertyPanel))
-				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-						.addComponent(this.resolutionPanel)
-						.addComponent(this.datasetBoundsPanel)));
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(this.basicInfoPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.imagePropertyPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(this.resolutionPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.datasetBoundsPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
 		//@formatter:on
 
 		// 按钮面板
@@ -84,6 +86,31 @@ public class JDialogNewImageDataset extends SmDialog {
 		this.add(buttonPanel, new GridBagConstraintsHelper(0, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setInsets(5));
 		// @formatter:on
 
+	}
 
+	private void registerEvent() {
+		this.buttonOk.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonOk_Clicked();
+			}
+		});
+
+		this.buttonCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buttonCancel_Clicked();
+			}
+		});
+	}
+
+	private void buttonOk_Clicked() {
+		setDialogResult(DialogResult.OK);
+		this.dispose();
+	}
+
+	private void buttonCancel_Clicked() {
+		setDialogResult(DialogResult.CANCEL);
+		this.dispose();
 	}
 }
