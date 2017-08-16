@@ -1,5 +1,6 @@
 package com.supermap.desktop.utilities;
 
+import com.supermap.analyst.spatialanalyst.StatisticsFieldType;
 import com.supermap.analyst.spatialstatistics.StatisticsType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CommonProperties;
@@ -35,7 +36,7 @@ public class StatisticsTypeUtilities {
 		return name;
 	}
 
-	public static String getStatisticsTypeNameForOtherType(com.supermap.analyst.spatialanalyst.StatisticsType type) {
+	public static String getStatisticsTypeNameForDatasetDissloveType(com.supermap.analyst.spatialanalyst.StatisticsType type) {
 		String name = "";
 		try {
 			if (type == com.supermap.analyst.spatialanalyst.StatisticsType.MAX) {
@@ -50,6 +51,32 @@ public class StatisticsTypeUtilities {
 				name = CommonProperties.getString("String_StatisticsType_FIRST");
 			} else if (type == com.supermap.analyst.spatialanalyst.StatisticsType.LAST) {
 				name = CommonProperties.getString("String_StatisticsType_LAST");
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return name;
+	}
+
+	public static String getStatisticsTypeNameForDatasetRarefyPointsType(com.supermap.analyst.spatialanalyst.StatisticsFieldType type) {
+		String name = "";
+		try {
+			if (type == StatisticsFieldType.AVERAGE ){
+				name = CommonProperties.getString("String_StatisticsType_MEAN");
+			} else if (type == StatisticsFieldType.MAXVALUE) {
+				name = CommonProperties.getString("String_StatisticsType_MAX");
+			} else if (type == StatisticsFieldType.MINVALUE) {
+				name = CommonProperties.getString("String_StatisticsType_MIN");
+			}  else if (type == StatisticsFieldType.SAMPLESTDDEV) {
+				name = CommonProperties.getString("String_SampleStddev");
+			} else if (type == StatisticsFieldType.SAMPLEVARIANCE) {
+				name = CommonProperties.getString("String_SampleEvariance");
+			} else if (type == StatisticsFieldType.STDDEVIATION) {
+				name = CommonProperties.getString("String_Stddev");
+			}else if (type == StatisticsFieldType.SUM) {
+				name = CommonProperties.getString("String_StatisticsType_SUM");
+			}else if (type == StatisticsFieldType.VARIANCE) {
+				name = CommonProperties.getString("String_Evariance");
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

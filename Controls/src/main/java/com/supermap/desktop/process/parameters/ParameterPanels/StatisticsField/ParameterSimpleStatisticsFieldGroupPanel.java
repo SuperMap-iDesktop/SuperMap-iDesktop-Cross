@@ -1,11 +1,7 @@
 package com.supermap.desktop.process.parameters.ParameterPanels.StatisticsField;
 
 import com.supermap.analyst.spatialanalyst.StatisticsType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldInfos;
-import com.supermap.data.FieldType;
+import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
@@ -113,7 +109,7 @@ public class ParameterSimpleStatisticsFieldGroupPanel extends SwingPanel {
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			if (component instanceof JLabel && value instanceof StatisticsType) {
-				((JLabel) component).setText(StatisticsTypeUtilities.getStatisticsTypeNameForOtherType((StatisticsType) value));
+				((JLabel) component).setText(StatisticsTypeUtilities.getStatisticsTypeNameForDatasetDissloveType((StatisticsType) value));
 			}
 			return component;
 		}
