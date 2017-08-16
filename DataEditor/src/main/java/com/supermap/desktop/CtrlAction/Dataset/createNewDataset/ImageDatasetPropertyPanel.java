@@ -66,7 +66,7 @@ public class ImageDatasetPropertyPanel extends JPanel {
 		this.tempBlockSizeOptionType.add(BlockSizeOptionUtilities.toString(BlockSizeOption.BS_1024));
 		this.comboboxBlockSizeOption.setModel(new DefaultComboBoxModel<>(tempBlockSizeOptionType.toArray(new String[tempBlockSizeOptionType.size()])));
 
-		this.comboboxBlockSizeOption.setModel(new DefaultComboBoxModel<>(tempBlockSizeOptionType.toArray(new String[tempBlockSizeOptionType.size()])));
+
 		this.comboboxPixelFormat = new JComboBox<>();
 		this.tempImagePixelFormatType = new ArrayList<>();
 		this.tempImagePixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.UBIT1));
