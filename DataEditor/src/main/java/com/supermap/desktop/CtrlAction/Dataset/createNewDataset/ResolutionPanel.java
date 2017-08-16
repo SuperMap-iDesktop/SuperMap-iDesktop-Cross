@@ -16,16 +16,31 @@ public class ResolutionPanel extends JPanel {
 	private JLabel rowCountLabel;
 	private JLabel columnCountLabel;
 
+	public WaringTextField getTextFieldResolutionX() {
+		return textFieldResolutionX;
+	}
+
+	public WaringTextField getTextFieldResolutionY() {
+		return textFieldResolutionY;
+	}
+
+	public JTextField getTextFieldRowCount() {
+		return textFieldRowCount;
+	}
+
+	public JTextField getTextFieldColumnCount() {
+		return textFieldColumnCount;
+	}
+
 	private WaringTextField textFieldResolutionX;
 	private WaringTextField textFieldResolutionY;
+
 	private JTextField textFieldRowCount;
 	private JTextField textFieldColumnCount;
 
 	private RightValueListener rightValueListener = new RightValueListener() {
 		@Override
 		public void update(String value) {
-			// 当分辨率改变时，行数和列数也相应改变
-			// todo 行数和列数与分辨率和范围有关
 		}
 	};
 
@@ -90,6 +105,7 @@ public class ResolutionPanel extends JPanel {
 		textFieldResolutionX.setText("0.5");
 		textFieldResolutionY.setText("0.5");
 		textFieldResolutionX.setInitInfo(0, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "22");
+
 		textFieldResolutionY.setInitInfo(0, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "22");
 
 

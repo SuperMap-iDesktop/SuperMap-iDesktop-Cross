@@ -20,6 +20,9 @@ import java.util.ArrayList;
  * 新建栅格/影像数据集-基本信息面板
  */
 public class BasicInfoPanel extends JPanel {
+
+	private static final long serialVersionUID = 1L;
+
 	private String datasetName;
 	private Datasource targetDatasource;
 	private EncodeType encodeType = EncodeType.NONE;
@@ -33,6 +36,7 @@ public class BasicInfoPanel extends JPanel {
 	private JComboBox<String> comboboxEncodingType;
 
 	public EncodeType getEncodeType() {
+		encodeType = EncodeTypeUtilities.valueOf((String) comboboxEncodingType.getSelectedItem());
 		return encodeType;
 	}
 
@@ -45,7 +49,6 @@ public class BasicInfoPanel extends JPanel {
 	}
 
 	public BasicInfoPanel(DatasetType inputDatasetType) {
-		super();
 		this.inputDatasetType = inputDatasetType;
 		initComponents();
 		initLayout();
@@ -66,12 +69,12 @@ public class BasicInfoPanel extends JPanel {
 			}
 		});
 
-		comboboxEncodingType.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				encodeType = EncodeTypeUtilities.valueOf((String) comboboxEncodingType.getSelectedItem());
-			}
-		});
+//		comboboxEncodingType.addItemListener(new ItemListener() {
+//			@Override
+//			public void itemStateChanged(ItemEvent e) {
+//				encodeType = EncodeTypeUtilities.valueOf((String) comboboxEncodingType.getSelectedItem());
+//			}
+//		});
 
 	}
 
