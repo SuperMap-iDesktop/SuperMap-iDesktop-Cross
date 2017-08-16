@@ -10,6 +10,8 @@ import java.text.MessageFormat;
 
 /**
  * @author XiaJT
+ * 新建数据集参数信息类
+ * 增加栅格、影像数据集的参数信息模块-yuanR2017.8.15
  */
 public class NewDatasetBean {
 	private Datasource datasource;
