@@ -48,7 +48,7 @@ public class OutputGraph extends RectangleGraph {
 	protected void onPaint(Graphics g) {
 		super.onPaint(g);
 
-		Font font = new Font("宋体", Font.BOLD, 16);
+		Font font = new Font(getCanvas().getFont().getName(), Font.PLAIN, 14);
 		g.setFont(font);
 		g.setColor(Color.WHITE);
 
@@ -61,7 +61,6 @@ public class OutputGraph extends RectangleGraph {
 		Point location = getLocation();
 		double width = getWidth();
 		double height = getHeight();
-		text = SwingUtilities2.clipStringIfNecessary(getCanvas(), getCanvas().getFontMetrics(font), text, DoubleUtilities.intValue(width));
 		g.drawString(text, DoubleUtilities.intValue(location.getX() + (width - fontWidth) / 2), DoubleUtilities.intValue(location.getY() + height / 2 + fontHeight / 2 - fontDescent));
 	}
 
