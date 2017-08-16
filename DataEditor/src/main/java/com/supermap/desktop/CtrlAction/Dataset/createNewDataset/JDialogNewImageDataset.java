@@ -1,14 +1,19 @@
 package com.supermap.desktop.CtrlAction.Dataset.createNewDataset;
 
-import com.supermap.data.DatasetType;
+import com.supermap.data.*;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.BlockSizeOptionUtilities;
+import com.supermap.desktop.utilities.PixelFormatUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +23,8 @@ import java.awt.event.ActionListener;
  */
 public class JDialogNewImageDataset extends SmDialog {
 
+	private static final long serialVersionUID = 1L;
+
 	private BasicInfoPanel basicInfoPanel;
 	private ResolutionPanel resolutionPanel;
 	private ImageDatasetPropertyPanel imagePropertyPanel;
@@ -25,7 +32,12 @@ public class JDialogNewImageDataset extends SmDialog {
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
 
-	public JDialogNewImageDataset() {
+	private NewDatasetBean newDatasetBean;
+	private GridImageExtraDatasetBean gridImageExtraDatasetBean;
+
+	public JDialogNewImageDataset(NewDatasetBean newDatasetBean) {
+		this.newDatasetBean = newDatasetBean;
+		this.gridImageExtraDatasetBean = this.newDatasetBean.getGridImageExtraDatasetBean();
 		initComponents();
 		initLayout();
 		registerEvent();
@@ -95,16 +107,72 @@ public class JDialogNewImageDataset extends SmDialog {
 				buttonOk_Clicked();
 			}
 		});
-
 		this.buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonCancel_Clicked();
 			}
 		});
+
+		this.datasetBoundsPanel.textFieldCurrentViewBottom.getTextField().addCaretListener(caretListener);
+		this.datasetBoundsPanel.textFieldCurrentViewTop.getTextField().addCaretListener(caretListener);
+		this.datasetBoundsPanel.textFieldCurrentViewLeft.getTextField().addCaretListener(caretListener);
+		this.datasetBoundsPanel.textFieldCurrentViewRight.getTextField().addCaretListener(caretListener);
+		this.resolutionPanel.getTextFieldResolutionX().getTextField().addCaretListener(caretListener);
+		this.resolutionPanel.getTextFieldResolutionY().getTextField().addCaretListener(caretListener);
 	}
 
+	private CaretListener caretListener = new CaretListener() {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			if (!StringUtilities.isNullOrEmpty(resolutionPanel.getTextFieldResolutionX().getText()) &&
+					!StringUtilities.isNullOrEmpty(resolutionPanel.getTextFieldResolutionY().getText())) {
+				double resolutionX = Double.valueOf(resolutionPanel.getTextFieldResolutionX().getText());
+				double resolutionY = Double.valueOf(resolutionPanel.getTextFieldResolutionY().getText());
+				Rectangle2D rectangle2D = datasetBoundsPanel.getRangeBound();
+				if (rectangle2D != null) {
+					int width = (int) (rectangle2D.getWidth() / resolutionX);
+					int height = (int) (rectangle2D.getHeight() / resolutionY);
+					resolutionPanel.getTextFieldRowCount().setText(String.valueOf(width));
+					resolutionPanel.getTextFieldColumnCount().setText(String.valueOf(height));
+				} else {
+					resolutionPanel.getTextFieldRowCount().setText("0");
+					resolutionPanel.getTextFieldColumnCount().setText("0");
+				}
+			} else {
+				resolutionPanel.getTextFieldRowCount().setText("0");
+				resolutionPanel.getTextFieldColumnCount().setText("0");
+			}
+		}
+	};
+
+
 	private void buttonOk_Clicked() {
+		// 当点击了确定按钮,给属性类设值
+		String name = this.basicInfoPanel.getDatasetNameTextField().getText();
+		Datasource datasource = this.basicInfoPanel.getDatasourceComboBox().getSelectedDatasource();
+		EncodeType encodeType = this.basicInfoPanel.getEncodeType();
+
+		int width = Integer.valueOf(resolutionPanel.getTextFieldRowCount().getText());
+		int height = Integer.valueOf(resolutionPanel.getTextFieldRowCount().getText());
+
+		BlockSizeOption blockSizeOption = BlockSizeOptionUtilities.valueOf(((String) imagePropertyPanel.getComboboxBlockSizeOption().getSelectedItem()));
+		PixelFormat pixelFormat = PixelFormatUtilities.valueOf(((String) imagePropertyPanel.getComboboxPixelFormat().getSelectedItem()));
+		int bandCount = Integer.valueOf(imagePropertyPanel.getTextFieldImageDatasetbandCount().getTextField().getText());
+
+		Rectangle2D rectangle2D = datasetBoundsPanel.getRangeBound();
+
+		newDatasetBean.setDatasource(datasource);
+		newDatasetBean.setDatasetName(name);
+		newDatasetBean.setDatasetType(DatasetType.IMAGE);
+		newDatasetBean.setEncodeType(encodeType);
+		newDatasetBean.getGridImageExtraDatasetBean().setBlockSizeOption(blockSizeOption);
+		newDatasetBean.getGridImageExtraDatasetBean().setPixelFormat(pixelFormat);
+		newDatasetBean.getGridImageExtraDatasetBean().setHeight(height);
+		newDatasetBean.getGridImageExtraDatasetBean().setWidth(width);
+		newDatasetBean.getGridImageExtraDatasetBean().setBandCount(bandCount);
+		newDatasetBean.getGridImageExtraDatasetBean().setRectangle(rectangle2D);
+
 		setDialogResult(DialogResult.OK);
 		this.dispose();
 	}

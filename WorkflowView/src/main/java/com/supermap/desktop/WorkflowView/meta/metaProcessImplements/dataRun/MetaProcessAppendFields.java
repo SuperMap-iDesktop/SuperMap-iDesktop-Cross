@@ -81,6 +81,7 @@ public class MetaProcessAppendFields extends MetaProcess {
 		this.targetDataset.setDatasource(datasource);
 		this.targetDataset.setDatasetTypes(DatasetTypeUtilities.getDatasetTypeVector());
 		this.targetLinkedField = new ParameterFieldComboBox();
+		this.targetLinkedField.setShowSystemField(true);
 		this.targetLinkedField.setDescribe(ProcessProperties.getString("String_ConnectionField"));
 		this.targetDataCombine = new ParameterCombine();
 		this.targetDataCombine.setDescribe(OUTPUT_DATA);
@@ -91,6 +92,7 @@ public class MetaProcessAppendFields extends MetaProcess {
 		this.sourceDataset.setDatasource(datasource);
 		this.sourceDataset.setDatasetTypes(DatasetTypeUtilities.getDatasetTypeVector());
 		this.sourceLinkedField = new ParameterFieldComboBox();
+		this.sourceLinkedField.setShowSystemField(true);
 		this.sourceLinkedField.setDescribe(ProcessProperties.getString("String_ConnectionField"));
 		this.sourceDataCombine = new ParameterCombine();
 		this.sourceDataCombine.setDescribe(INPUT_DATA);
