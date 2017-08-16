@@ -13,10 +13,7 @@ import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.ComboBoxCellEditor;
-import com.supermap.desktop.utilities.CharsetUtilities;
-import com.supermap.desktop.utilities.CoreResources;
-import com.supermap.desktop.utilities.EncodeTypeUtilities;
-import com.supermap.desktop.utilities.TableUtilities;
+import com.supermap.desktop.utilities.*;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -25,6 +22,8 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 /**
@@ -47,14 +46,15 @@ public class JDialogDatasetNew extends SmDialog {
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
 
+	private DatasetTypeComboBox comboBoxDatasetType;
+
 	public JDialogDatasetNew() {
 		initComponents();
 		initLayout();
 		initResources();
 		addListeners();
 		initComponentStates();
-		JDialogNewImageDataset dialogNewGridDataset = new JDialogNewImageDataset();
-		dialogNewGridDataset.showDialog();
+
 	}
 
 	private void initComponents() {
@@ -117,8 +117,8 @@ public class JDialogDatasetNew extends SmDialog {
 
 		//2017.2.13 数据集类型下拉列表控件创建--yuanR
 		DatasetType[] datasetTypes = new DatasetType[]{DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT,
-				DatasetType.CAD, DatasetType.TABULAR, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D};
-		final DatasetTypeComboBox comboBoxDatasetType = new DatasetTypeComboBox(datasetTypes);
+				DatasetType.CAD, DatasetType.TABULAR, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.IMAGE};
+		comboBoxDatasetType = new DatasetTypeComboBox(datasetTypes);
 
 		DefaultCellEditor datasetTypeCellEditor = new DefaultCellEditor(comboBoxDatasetType);
 		datasetTypeCellEditor.setClickCountToStart(2);
@@ -244,6 +244,21 @@ public class JDialogDatasetNew extends SmDialog {
 				checkButtonState();
 			}
 		});
+
+
+		// 给comboBoxDatasetType添加监听-yuanR2017.8.16
+		this.comboBoxDatasetType.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				DatasetTypeComboBox datasetTypeComboBox = (DatasetTypeComboBox) e.getSource();
+				// 当选择了影像数据集类型，弹出设置面板
+				if (datasetTypeComboBox.getSelectedDatasetTypeName().contains(DatasetTypeUtilities.toString(DatasetType.IMAGE))) {
+					// 给新建影像数据集面板属性设置类，并打开面板
+					JDialogNewImageDataset dialogNewGridDataset = new JDialogNewImageDataset(newDatasetTableModel.getDatasetBean(table.getSelectedRow()));
+					dialogNewGridDataset.showDialog();
+				}
+			}
+		});
 	}
 
 	private void checkButtonState() {
@@ -300,6 +315,7 @@ public class JDialogDatasetNew extends SmDialog {
 			super(new JComboBox());
 			this.setClickCountToStart(2);
 			ArrayList<String> tempcharsharsetes = new ArrayList<String>();
+
 			tempcharsharsetes.add(CharsetUtilities.toString(Charset.OEM));
 			tempcharsharsetes.add(CharsetUtilities.toString(Charset.EASTEUROPE));
 			tempcharsharsetes.add(CharsetUtilities.toString(Charset.THAI));
@@ -366,6 +382,15 @@ public class JDialogDatasetNew extends SmDialog {
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.INT16));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.INT24));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.INT32));
+			}
+			if (DatasetType.IMAGE == datasetType) {
+				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.DCT));
+				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.LZW));
+			}
+			if (DatasetType.GRID == datasetType) {
+				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.DCT));
+				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.SGL));
+				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.LZW));
 			}
 			comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempEncodeType.toArray(new String[tempEncodeType.size()])));
 			comboboxEncodingType.setSelectedItem(value);
