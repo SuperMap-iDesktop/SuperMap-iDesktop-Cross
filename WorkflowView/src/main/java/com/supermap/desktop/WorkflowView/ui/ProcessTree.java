@@ -55,7 +55,8 @@ public class ProcessTree extends JTree {
 	private void init() {
 		initComponents();
 		new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this);
-		JTreeUIUtilities.expandTree(this);
+		//modify by xie 按要求不展开节点
+//		JTreeUIUtilities.expandTree(this);
 		this.setCellRenderer(new DefaultTreeCellRenderer() {
 			@Override
 			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
@@ -82,9 +83,9 @@ public class ProcessTree extends JTree {
 				if (e.getClickCount() == 2) {
 					// 原来是双击添加到地图中，暂时改为双击后弹出窗口，方案决定后再修改
 					Object lastSelectedPathComponent = getLastSelectedPathComponent();
-//					if (lastSelectedPathComponent == null) {
-//						return;
-//					}
+					if (lastSelectedPathComponent == null) {
+						return;
+					}
 					Object userObject = ((DefaultMutableTreeNode) lastSelectedPathComponent).getUserObject();
 					if (userObject instanceof IProcessLoader) {
 						IProcess process = ((IProcessLoader) userObject).loadProcess();

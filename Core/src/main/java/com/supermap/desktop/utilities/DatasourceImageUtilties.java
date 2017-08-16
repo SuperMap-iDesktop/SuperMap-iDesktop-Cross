@@ -99,6 +99,16 @@ public class DatasourceImageUtilties {
 			return fileParentPath + "Image_OpenStreetMaps_24.png";
 		} else if (engineType == EngineType.DATASERVER) {
 			return fileParentPath + "Image_BigDataStore_24.png";
+		} else if (engineType == EngineType.MYSQLPlus) {
+			return fileParentPath + "Image_MySQLPlus_24.png";
+		} else if (engineType == EngineType.BEYONDB) {
+			return fileParentPath + "Image_BeyonDB_24.png";
+		} else if (engineType == EngineType.HIGHGODB) {
+			return fileParentPath + "Image_HiGoDB_24.png";
+		} else if (engineType == EngineType.KDB) {
+			return fileParentPath + "Image_kdb_24.png";
+		} else if (engineType == EngineType.SDE) {
+			return fileParentPath + "Image_ArcSDE_24.png";
 		}
 		return "";
 	}
