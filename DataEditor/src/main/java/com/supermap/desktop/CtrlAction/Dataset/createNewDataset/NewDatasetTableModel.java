@@ -43,7 +43,8 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			DatasetType.TABULAR,
 			DatasetType.POINT3D,
 			DatasetType.LINE3D,
-			DatasetType.REGION3D
+			DatasetType.REGION3D,
+			DatasetType.IMAGE
 	};
 
 	private final boolean[] isColumnEditable = new boolean[]{
@@ -57,6 +58,11 @@ public class NewDatasetTableModel extends DefaultTableModel {
 	public static final int COLUMN_INDEX_EncodeType = 4;
 	public static final int COLUMN_INDEX_Charset = 5;
 	public static final int COLUMN_INDEX_WindowMode = 6;
+
+
+	public NewDatasetBean getDatasetBean(int num) {
+		return datasetBeans.get(num);
+	}
 
 	private ArrayList<NewDatasetBean> datasetBeans;
 
@@ -228,6 +234,8 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			newDatasetName = "New_ParametricRegion";
 		} else if (datasetType == DatasetType.IMAGECOLLECTION) {
 			newDatasetName = "New_ImageCollection";
+		} else if (datasetType == DatasetType.IMAGE) {
+			newDatasetName = "New_Image";
 		}
 
 		return newDatasetName;

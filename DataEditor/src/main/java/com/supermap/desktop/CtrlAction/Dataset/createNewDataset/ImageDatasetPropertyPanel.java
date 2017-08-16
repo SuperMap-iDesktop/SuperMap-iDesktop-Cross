@@ -25,6 +25,18 @@ public class ImageDatasetPropertyPanel extends JPanel {
 	// 影像数据集的波段个数
 	private JLabel bandCountLabel;
 
+	public JComboBox<String> getComboboxBlockSizeOption() {
+		return comboboxBlockSizeOption;
+	}
+
+	public JComboBox<String> getComboboxPixelFormat() {
+		return comboboxPixelFormat;
+	}
+
+	public WaringTextField getTextFieldImageDatasetbandCount() {
+		return textFieldImageDatasetbandCount;
+	}
+
 	private JComboBox<String> comboboxBlockSizeOption;
 	private JComboBox<String> comboboxPixelFormat;
 	private WaringTextField textFieldImageDatasetbandCount;

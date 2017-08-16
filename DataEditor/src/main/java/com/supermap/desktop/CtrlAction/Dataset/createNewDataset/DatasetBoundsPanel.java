@@ -31,6 +31,23 @@ import static com.supermap.desktop.controls.ControlDefaultValues.*;
  */
 public class DatasetBoundsPanel extends JPanel {
 	private JLabel labelCurrentViewLeft;
+
+	public WaringTextField getTextFieldCurrentViewLeft() {
+		return textFieldCurrentViewLeft;
+	}
+
+	public WaringTextField getTextFieldCurrentViewBottom() {
+		return textFieldCurrentViewBottom;
+	}
+
+	public WaringTextField getTextFieldCurrentViewRight() {
+		return textFieldCurrentViewRight;
+	}
+
+	public WaringTextField getTextFieldCurrentViewTop() {
+		return textFieldCurrentViewTop;
+	}
+
 	public WaringTextField textFieldCurrentViewLeft;
 	private JLabel labelCurrentViewBottom;
 	public WaringTextField textFieldCurrentViewBottom;

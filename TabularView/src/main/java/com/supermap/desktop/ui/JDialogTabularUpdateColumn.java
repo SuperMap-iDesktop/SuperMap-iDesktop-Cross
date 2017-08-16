@@ -1158,7 +1158,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 						if (isSurroundByQuotationMarks(result)) {
 							result = result.substring(1, result.length() - 2);
 							if (fieldInfo.getMaxLength() < result.length()) {
-								result = result.substring(0, fieldInfo.getMaxLength() - 1);
+								result = result.substring(0, fieldInfo.getMaxLength());
 								textFieldSecondField.setText(result);
 								Application.getActiveApplication().getOutput()
 										.output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), comboBoxUpdateField.getSelectedItem().toString()));
@@ -1265,7 +1265,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private Boolean isSurroundByQuotationMarks(String express) {
 		Boolean result = false;
 		try {
-			if (express.startsWith("\\'") && express.endsWith("\\'")) {
+			if (express.startsWith("'") && express.endsWith("'")) {
 				result = true;
 			}
 		} catch (Exception ex) {
