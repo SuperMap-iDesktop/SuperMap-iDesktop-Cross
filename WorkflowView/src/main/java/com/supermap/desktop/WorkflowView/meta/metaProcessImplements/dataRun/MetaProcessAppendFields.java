@@ -1,10 +1,6 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -15,11 +11,7 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterFieldComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterMultiFieldSet;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
@@ -63,6 +55,13 @@ public class MetaProcessAppendFields extends MetaProcess {
 		datasetConstraint1.constrained(sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
 		datasetConstraint1.constrained(multiFieldSet, ParameterMultiFieldSet.SOURCE_DATASET);
 
+		EqualDatasetConstraint datasetConstraint2 = new EqualDatasetConstraint();
+		datasetConstraint2.constrained(sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		datasetConstraint2.constrained(sourceLinkedField, ParameterFieldComboBox.DATASET_FIELD_NAME);
+
+		EqualDatasetConstraint datasetConstraint3 = new EqualDatasetConstraint();
+		datasetConstraint3.constrained(targetDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		datasetConstraint3.constrained(targetLinkedField, ParameterFieldComboBox.DATASET_FIELD_NAME);
 	}
 
 	private void initParameters() {
