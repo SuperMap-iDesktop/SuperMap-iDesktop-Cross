@@ -7,4 +7,5 @@ public class TableKeys {
 	public static final String FIELD_CAPTION = "FieldCaption";
 	public static final String FIELD_NAME = "FieldName";
 	public static final String FIELD_NAME_CAPTION_TYPE = "FieldNameCaptionType";
+	public static final String STATISTICS_FIELD_FOR_RAREFY_POINTS = "StatisticsFieldForRarefyPoints";
 }

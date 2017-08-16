@@ -16,7 +16,9 @@ public class ListStatisticsTypeCellRender extends DefaultListCellRenderer {
 		if (value != null && value instanceof StatisticsType) {
 			component.setText(StatisticsTypeUtilities.getStatisticsTypeName((StatisticsType) value));
 		}else if (value != null && value instanceof com.supermap.analyst.spatialanalyst.StatisticsType) {
-			component.setText(StatisticsTypeUtilities.getStatisticsTypeNameForOtherType((com.supermap.analyst.spatialanalyst.StatisticsType) value));
+			component.setText(StatisticsTypeUtilities.getStatisticsTypeNameForDatasetDissloveType((com.supermap.analyst.spatialanalyst.StatisticsType) value));
+		}else if(value != null && value instanceof com.supermap.analyst.spatialanalyst.StatisticsFieldType){
+			component.setText(StatisticsTypeUtilities.getStatisticsTypeNameForDatasetRarefyPointsType((com.supermap.analyst.spatialanalyst.StatisticsFieldType) value));
 		}
 		component.setOpaque(true);
 		if (isSelected) {
