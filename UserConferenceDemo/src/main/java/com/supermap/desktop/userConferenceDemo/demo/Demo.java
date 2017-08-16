@@ -37,7 +37,7 @@ public class Demo extends FormBaseChild {
 	}
 
 
-	private String videoPath = PathUtilities.getFullPathName("../DemoVideo", true);
+	private String videoPath = PathUtilities.getFullPathName("../DemoVideo/Video", true);
 
 	private ArrayList<DemoParameterButton> videoButtons = new ArrayList<>();
 	private ArrayList<DemoParameterButton> buttons = new ArrayList<>();
@@ -159,15 +159,15 @@ public class Demo extends FormBaseChild {
 			ArrayList<File> videoFiles = new ArrayList<>();
 			if (file.exists() && files != null && files.length > 0) {
 				for (File currentFile : files) {
-					if (!currentFile.getName().endsWith(".png")) {
+					if (!currentFile.getName().endsWith(".png") && !currentFile.getName().endsWith(".jpg")) {
 						videoFiles.add(currentFile);
 					}
 				}
 			}
 			for (File videoFile : videoFiles) {
 				String basePath = videoFile.getAbsolutePath().split("\\.")[0];
-				String bigPic = basePath + ".png";
-				String smallPic = basePath + "small.png";
+				String bigPic = getPicPath(basePath);
+				String smallPic = getPicPath(basePath + "small");
 //				String bigPic = basePath + "_big.png";
 				if (new File(bigPic).exists()) {
 					// 往button中添加图片之前先设置其大小
@@ -189,6 +189,20 @@ public class Demo extends FormBaseChild {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String getPicPath(String basePath) {
+		String path = null;
+		String[] extensions = new String[]{".png", ".jpg"};
+
+		for (int i = 0; i < extensions.length; i++) {
+			File file = new File(basePath + extensions[i]);
+			if (file.exists()) {
+				path = file.getPath();
+				break;
+			}
+		}
+		return path;
 	}
 
 	private void initLayout() {
