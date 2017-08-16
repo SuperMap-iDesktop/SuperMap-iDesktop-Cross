@@ -306,8 +306,10 @@ public class DialogCacheBuilder extends JFrame {
 		this.labelCachePath.setText(CacheProperties.getString("MapCache_LabelCachePath"));
 		this.labelTotalProgress.setText(CacheProperties.getString("String_ProgressControl_TotalProgress"));
 		this.labelDetailProgressInfo.setText(CacheProperties.getString("String_DetailProcessInfo"));
-		this.buttonCreate.setText(CacheProperties.getString("String_BatchAddColorTableOKButton"));
 		this.buttonRefresh.setText(CacheProperties.getString("String_Refresh"));
+		this.buttonCreate.setText(CacheProperties.getString("String_BatchAddColorTableOKButton"));
+		this.buttonClose.setText(CacheProperties.getString("String_Close"));
+		this.buttonApply.setText(CacheProperties.getString("String_Apply"));
 	}
 
 

@@ -171,6 +171,8 @@ public class DialogCacheCheck extends JFrame {
 		this.checkBoxCacheBuild.setText(CacheProperties.getString("String_ClipErrorCache"));
 		this.setTitle(CacheProperties.getString("String_CacheCheck"));
 		this.labelProgress.setText(CacheProperties.getString("String_ProgressControl_TotalProgress"));
+		this.buttonOK.setText(CacheProperties.getString("String_BatchAddColorTableOKButton"));
+		this.buttonCancel.setText(CacheProperties.getString("String_Cancel"));
 	}
 
 	private void initLayout() {
