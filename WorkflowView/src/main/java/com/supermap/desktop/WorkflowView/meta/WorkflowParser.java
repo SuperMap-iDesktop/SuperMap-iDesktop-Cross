@@ -334,6 +334,8 @@ public class WorkflowParser {
 			result = new MetaProcessCostPathLine();
 		} else if (MetaKeys.ELIMINATE.equals(key)) {
 			result = new MetaProcessEliminate();
+		} else if (MetaKeys.IMAGE_COMBINE.equals(key)) {
+			result = new MetaProcessImageCombine();
 		} else if (MetaKeys.CREATE_DISTANCE_RASTER.equals(key)) {
 			result = new MetaProcessCreateDistanceRaster();
 		} else {
