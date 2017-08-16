@@ -64,7 +64,7 @@ public class MetaProcessAppendRow extends MetaProcess {
 
 	@Override
 	public String getTitle() {
-		return ProcessProperties.getString("String_AppendRow");
+		return ProcessProperties.getString("String_AppendRows");
 	}
 
 	@Override
