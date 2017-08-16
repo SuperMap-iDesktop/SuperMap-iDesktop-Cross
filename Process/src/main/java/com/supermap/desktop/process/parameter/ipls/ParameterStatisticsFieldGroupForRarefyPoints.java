@@ -37,7 +37,7 @@ public class ParameterStatisticsFieldGroupForRarefyPoints extends AbstractParame
 
 	@Override
 	public Object getSelectedItem() {
-		throw new UnsupportedOperationException("See GetSelectedFieldInfos");
+		return getSelectedStatisticsFields();
 	}
 
 	@Override
