@@ -87,6 +87,7 @@ public class MetaKeys {
 	public static final String REGION_TRUNK_TO_CENTERLINE = "RegionTrunkToCenterLine";
 	public static final String RAREFY_POINTS = "RarefyPoints";
 	public static final String DISSOLVE="Dissolve";
+	public static final String GRID_RESAMPLE="GridResample";
 	public static final String IMAGE_COMBINE="ImageCombine";
 
 	//类型转换

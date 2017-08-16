@@ -9,22 +9,20 @@ import java.text.ParseException;
 
 /**
  * 封装 JSpinner，使得每一次敲击键盘，都提交编辑，如果输入不合法则恢复上一次合法的值
- * 
- * @author highsad
  *
+ * @author highsad
  */
 public class SMSpinner extends JSpinner implements DocumentListener {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructs a spinner for the given model. The spinner has a set of previous/next buttons, and an editor appropriate for the model.
 	 *
-	 * @throws NullPointerException
-	 *             if the model is {@code null}
+	 * @throws NullPointerException if the model is {@code null}
 	 */
 	public SMSpinner(SpinnerModel model) {
 		super(model);
@@ -100,6 +98,8 @@ public class SMSpinner extends JSpinner implements DocumentListener {
 		updateEdit();
 
 		// 设置光标所处的位置
-		editor.getTextField().setCaretPosition(editor.getTextField().getText().length() - preCaretToEnd);
+		if (editor.getTextField().getText().length() - preCaretToEnd >= 0) {
+			editor.getTextField().setCaretPosition(editor.getTextField().getText().length() - preCaretToEnd);
+		}
 	}
 }

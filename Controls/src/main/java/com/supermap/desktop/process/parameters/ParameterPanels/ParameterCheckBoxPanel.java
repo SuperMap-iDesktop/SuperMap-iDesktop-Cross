@@ -1,7 +1,6 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
@@ -24,6 +23,7 @@ import java.text.MessageFormat;
 public class ParameterCheckBoxPanel extends SwingPanel implements IParameterPanel {
 
 	private ParameterCheckBox parameterCheckBox;
+
 	private JCheckBox checkBox = new JCheckBox();
 	private boolean isSelectingItem = false;
 
@@ -45,7 +45,9 @@ public class ParameterCheckBoxPanel extends SwingPanel implements IParameterPane
 		parameterCheckBox.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (!isSelectingItem && evt.getPropertyName().equals(AbstractParameter.PROPERTY_VALE)) {
+				// 对判断条件进行修改-yuanR
+				//  if (!isSelectingItem && evt.getPropertyName().equals(AbstractParameter.PROPERTY_VALE)) {
+				if (!isSelectingItem && evt.getPropertyName().equals(parameterCheckBox.PARAMETER_CHECK_BOX_VALUE)) {
 					isSelectingItem = true;
 					checkBox.setSelected(Boolean.valueOf(String.valueOf(parameterCheckBox.getSelectedItem())));
 					isSelectingItem = false;

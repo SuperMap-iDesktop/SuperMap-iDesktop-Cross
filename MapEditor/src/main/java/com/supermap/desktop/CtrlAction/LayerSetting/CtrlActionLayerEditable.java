@@ -11,6 +11,8 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerChart;
 import com.supermap.mapping.ThemeType;
 
+import javax.swing.*;
+
 public class CtrlActionLayerEditable extends CtrlAction {
 
 	public CtrlActionLayerEditable(IBaseItem caller, IForm formClass) {
@@ -35,7 +37,12 @@ public class CtrlActionLayerEditable extends CtrlAction {
 				formMap.getMapControl().setActiveEditableLayer(formMap.getActiveLayers()[0]);
 			}
 			formMap.getMapControl().getMap().refresh();
-			UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+				}
+			});
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -68,7 +75,7 @@ public class CtrlActionLayerEditable extends CtrlAction {
 					// 标签、统计、等级符号专题图，不可选择，不可编辑，不可捕捉
 					boolean isInvalidThemeLayer = layer.getTheme() != null
 							&& (layer.getTheme().getType() == ThemeType.LABEL || layer.getTheme().getType() == ThemeType.GRADUATEDSYMBOL || layer.getTheme()
-									.getType() == ThemeType.GRAPH);
+							.getType() == ThemeType.GRAPH);
 
 					if (isDatasetNull || isReadOnly || !isDatasetVector || isLayerChart || isInvalidThemeLayer) {
 						enable = false;

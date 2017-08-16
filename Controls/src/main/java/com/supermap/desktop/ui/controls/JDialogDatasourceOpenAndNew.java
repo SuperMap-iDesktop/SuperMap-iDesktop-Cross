@@ -204,7 +204,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		DataCell mySqlDataCell = new DataCell(ControlsProperties.getString("String_MySQL"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.MYSQL))));
 		DataCell mySqlPLUSDataCell = new DataCell(ControlsProperties.getString("String_MySQLPlus"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.MYSQLPlus))));
 		DataCell beyonDBDataCell = new DataCell(ControlsProperties.getString("String_BeyonDB"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.BEYONDB))));
-		DataCell highgoDBDataCell = new DataCell(ControlsProperties.getString("String_HiGODB"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.HIGHGODB))));
+		DataCell highgoDBDataCell = new DataCell(ControlsProperties.getString("String_HiGoDB"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.HIGHGODB))));
 		DataCell kDBDataCell = new DataCell(ControlsProperties.getString("String_KDB"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.KDB))));
 		DataCell arcSDE = new DataCell(ControlsProperties.getString("String_SDE"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.SDE))));
 		if (SystemPropertyUtilities.isWindows()) {
