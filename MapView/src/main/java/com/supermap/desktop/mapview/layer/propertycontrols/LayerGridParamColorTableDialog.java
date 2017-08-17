@@ -9,6 +9,7 @@ import com.supermap.desktop.controls.colorScheme.ColorsWithKeysTableModel;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
+import com.supermap.desktop.dialog.BatchAddDailog;
 import com.supermap.desktop.event.ColorTableChangeEvent;
 import com.supermap.desktop.event.ColorTableChangeListener;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -241,14 +242,14 @@ public class LayerGridParamColorTableDialog extends SmDialog {
         buttonBatchAddColor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BatchAddColorTableDailog batchAddColorTableDailog;
+                BatchAddDailog batchAddColorTableDailog;
                 int startIndex=colorsWithKeysTableModel.getRowCount();
                 if (colorsWithKeysTableModel.getRowCount()<=1){
-                    batchAddColorTableDailog=new BatchAddColorTableDailog(initDatasetKeysOrigin[0],initDatasetKeysOrigin[initDatasetKeysOrigin.length-1],initDatasetKeysOrigin.length,(JFrame) Application.getActiveApplication().getMainFrame(), true);
+                    batchAddColorTableDailog=new BatchAddDailog(initDatasetKeysOrigin[0],initDatasetKeysOrigin[initDatasetKeysOrigin.length-1],initDatasetKeysOrigin.length,(JFrame) Application.getActiveApplication().getMainFrame(), true);
                 }else{
                     List<Double> currentColorTableKeys=colorsWithKeysTableModel.getKeys();
                     Collections.sort(currentColorTableKeys);
-                    batchAddColorTableDailog=new BatchAddColorTableDailog(currentColorTableKeys.get(0),currentColorTableKeys.get(currentColorTableKeys.size()-1),initDatasetKeysOrigin.length,(JFrame) Application.getActiveApplication().getMainFrame(), true);
+                    batchAddColorTableDailog=new BatchAddDailog(currentColorTableKeys.get(0),currentColorTableKeys.get(currentColorTableKeys.size()-1),initDatasetKeysOrigin.length,(JFrame) Application.getActiveApplication().getMainFrame(), true);
                 }
                 DialogResult result=batchAddColorTableDailog.showDialog();
                 if (result==DialogResult.OK && batchAddColorTableDailog.getResultKeys()!=null){

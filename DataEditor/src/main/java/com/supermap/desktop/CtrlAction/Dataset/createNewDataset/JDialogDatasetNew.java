@@ -46,6 +46,8 @@ public class JDialogDatasetNew extends SmDialog {
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
 
+	private PropertyPanel propertyPanel;
+
 	private DatasetTypeComboBox comboBoxDatasetType;
 
 	public JDialogDatasetNew() {
@@ -54,7 +56,6 @@ public class JDialogDatasetNew extends SmDialog {
 		initResources();
 		addListeners();
 		initComponentStates();
-
 	}
 
 	private void initComponents() {
@@ -72,6 +73,8 @@ public class JDialogDatasetNew extends SmDialog {
 		checkboxAutoClose = new JCheckBox();
 		buttonOk = new SmButton();
 		buttonCancel = new SmButton();
+
+		propertyPanel = new PropertyPanel();
 
 		this.componentList.add(this.buttonOk);
 		this.componentList.add(this.buttonCancel);
@@ -148,7 +151,8 @@ public class JDialogDatasetNew extends SmDialog {
 		panel.setLayout(new GridBagLayout());
 		panel.add(toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
 		panel.add(new JScrollPane(table), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
-		panel.add(panelButton, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 0, 0, 0));
+		panel.add(panelButton, new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 0, 0, 0));
+		panel.add(propertyPanel, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
 
 		this.setLayout(new GridBagLayout());
 		this.add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10));
@@ -242,6 +246,17 @@ public class JDialogDatasetNew extends SmDialog {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				checkButtonState();
+				// 根据选择的行，设置其“设置”面板联动
+				if (table.getSelectedRow() != -1 && table.getSelectedRow() <= table.getRowCount() - 2) {
+					propertyPanel.setPanelEnable(true);
+					if (newDatasetTableModel.getDatasetBean(table.getSelectedRow()) != null) {
+						propertyPanel.initStates(newDatasetTableModel.getDatasetBean(table.getSelectedRow()));
+					}
+				}
+
+				if (table.getSelectedRow() == table.getRowCount() - 1) {
+					propertyPanel.setPanelEnable(false);
+				}
 			}
 		});
 

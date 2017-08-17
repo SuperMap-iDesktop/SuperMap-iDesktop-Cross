@@ -26,7 +26,7 @@ public class WorkflowRunnableChecker<E extends Workflow> implements IReadyChecke
 			processes.remove(leadingProcess);
 		}
 
-		int size = processes.size();
+		int size = -1;
 		while (processes.size() != size && processes.size() != 0) {
 			size = processes.size();
 			for (int i = processes.size() - 1; i >= 0; i--) {
