@@ -9,7 +9,7 @@ import javax.swing.*;
  * Created by yuanR on 2017/8/15 .
  * 新建影像数据-分辨率面板
  */
-public class ResolutionPanel extends JPanel {
+public class PanelResolution extends JPanel {
 	private JLabel resolutionXLabel;
 	private JLabel resolutionYLabel;
 	private JLabel rowCountLabel;
@@ -51,7 +51,7 @@ public class ResolutionPanel extends JPanel {
 //		}
 //	};
 
-	public ResolutionPanel() {
+	public PanelResolution() {
 		initComponents();
 		initLayout();
 		registerEvent();

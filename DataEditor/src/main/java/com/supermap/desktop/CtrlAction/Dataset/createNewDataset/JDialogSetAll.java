@@ -71,8 +71,8 @@ public class JDialogSetAll extends SmDialog {
 		// 初始化目标数据源
 		this.comboboxTargetDatasource = new DatasourceComboBox(Application.getActiveApplication().getWorkspace().getDatasources());
 
-		DatasetType[] datasetTypes = new DatasetType[]{DatasetType.POINT,DatasetType.LINE,DatasetType.REGION,DatasetType.TEXT,
-				DatasetType.CAD,DatasetType.TABULAR,DatasetType.POINT3D,DatasetType.LINE3D,DatasetType.REGION3D};
+		DatasetType[] datasetTypes = new DatasetType[]{DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT,
+				DatasetType.CAD, DatasetType.TABULAR, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D};
 		this.comboboxDatasetType = new DatasetTypeComboBox(datasetTypes);
 
 		// 初始化字符集
@@ -140,7 +140,7 @@ public class JDialogSetAll extends SmDialog {
 	private void addComponentToPanel() {
 		// 中央面板
 		// @formatter:off
-		Panel centerPanel = new Panel();
+		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new GridBagLayout());
 
 		centerPanel.add(checkBoxTargetDatasource, new GridBagConstraintsHelper(0, 0).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
@@ -159,12 +159,12 @@ public class JDialogSetAll extends SmDialog {
 		centerPanel.add(comboboxAddToNewMap, new GridBagConstraintsHelper(1, 4).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
 
 		// 按钮面板
-		Panel buttonPanel = new Panel();
+		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridBagLayout());
 
 		buttonPanel.add(buttonOk, new GridBagConstraintsHelper(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(5).setWeight(1, 1));
 		buttonPanel.add(buttonCancel, new GridBagConstraintsHelper(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(5, 0, 5, 5).setWeight(0, 1));
-	
+
 		this.setLayout(new GridBagLayout());
 		this.add(centerPanel, new GridBagConstraintsHelper(0, 0).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(5));
 		this.add(buttonPanel, new GridBagConstraintsHelper(0, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setInsets(5));

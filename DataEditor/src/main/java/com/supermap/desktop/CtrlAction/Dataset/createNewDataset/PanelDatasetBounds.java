@@ -29,7 +29,7 @@ import static com.supermap.desktop.controls.ControlDefaultValues.*;
  * Created by yuanR on 2017/8/15 0015.
  * 新建影像数据-数据集范围
  */
-public class DatasetBoundsPanel extends JPanel {
+public class PanelDatasetBounds extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -451,7 +451,7 @@ public class DatasetBoundsPanel extends JPanel {
 	}
 
 
-	public DatasetBoundsPanel() {
+	public PanelDatasetBounds() {
 		initComponents();
 		initLayout();
 		registerEvent();

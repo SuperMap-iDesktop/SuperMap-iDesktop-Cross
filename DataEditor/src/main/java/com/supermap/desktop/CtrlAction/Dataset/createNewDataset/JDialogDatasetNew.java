@@ -46,7 +46,7 @@ public class JDialogDatasetNew extends SmDialog {
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
 
-	private PropertyPanel propertyPanel;
+	private PanelDatasetNewProperty propertyPanel;
 
 	private DatasetTypeComboBox comboBoxDatasetType;
 
@@ -74,7 +74,7 @@ public class JDialogDatasetNew extends SmDialog {
 		buttonOk = new SmButton();
 		buttonCancel = new SmButton();
 
-		propertyPanel = new PropertyPanel();
+		propertyPanel = new PanelDatasetNewProperty();
 
 		this.componentList.add(this.buttonOk);
 		this.componentList.add(this.buttonCancel);

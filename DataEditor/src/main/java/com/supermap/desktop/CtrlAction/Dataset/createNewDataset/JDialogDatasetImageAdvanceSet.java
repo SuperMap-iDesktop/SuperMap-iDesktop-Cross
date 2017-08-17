@@ -14,28 +14,78 @@ import com.supermap.desktop.utilities.StringUtilities;
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
  * Created by yuanR on 2017/8/15 0015.
+ * 新建影像数据集高级设置面板
  */
-public class JDialogNewImageDataset extends SmDialog {
+public class JDialogDatasetImageAdvanceSet extends SmDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private BasicInfoPanel basicInfoPanel;
-	private ResolutionPanel resolutionPanel;
+	private PanelBasicInfoSet basicInfoPanel;
+	private PanelResolution resolutionPanel;
 	private ImageDatasetPropertyPanel imagePropertyPanel;
-	private DatasetBoundsPanel datasetBoundsPanel;
+	private PanelDatasetBounds datasetBoundsPanel;
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
 
 	private NewDatasetBean newDatasetBean;
 	private GridImageExtraDatasetBean gridImageExtraDatasetBean;
 
-	public JDialogNewImageDataset(NewDatasetBean newDatasetBean) {
+	private boolean isDatasetNameSuitable = true;
+	private boolean isWidthHeightSuitable = true;
+	private boolean isBandCountSuitable = true;
+
+	/**
+	 * ok按钮是否可用
+	 *
+	 * @param isDatasetNameSuitable
+	 * @param isWidthHeightSuitable
+	 * @param isBandCountSuitable
+	 */
+	public void setOKButtonEnabled(boolean isDatasetNameSuitable, boolean isWidthHeightSuitable, boolean isBandCountSuitable) {
+		buttonOk.setEnabled(isDatasetNameSuitable && isWidthHeightSuitable && isBandCountSuitable);
+	}
+
+
+	/**
+	 * 设置数据集名称是否正确
+	 *
+	 * @param isDatasetNameSuitable
+	 */
+	public void setDatasetNameSuitable(Boolean isDatasetNameSuitable) {
+		this.isDatasetNameSuitable = isDatasetNameSuitable;
+		setOKButtonEnabled(isDatasetNameSuitable, this.isWidthHeightSuitable, this.isBandCountSuitable);
+	}
+
+	/**
+	 * 设置波段数是否正确
+	 *
+	 * @param isBandCountSuitable
+	 */
+	public void setBandCountSuitable(Boolean isBandCountSuitable) {
+		this.isBandCountSuitable = isBandCountSuitable;
+		setOKButtonEnabled(isDatasetNameSuitable, isWidthHeightSuitable, isBandCountSuitable);
+	}
+
+	/**
+	 * 设置像素是否正确
+	 *
+	 * @param isWidthHeightSuitable
+	 */
+	public void setWidthHeightSuitable(Boolean isWidthHeightSuitable) {
+		this.isWidthHeightSuitable = isWidthHeightSuitable;
+		setOKButtonEnabled(isDatasetNameSuitable, isWidthHeightSuitable, this.isBandCountSuitable);
+	}
+
+
+	public JDialogDatasetImageAdvanceSet(NewDatasetBean newDatasetBean) {
 		this.newDatasetBean = newDatasetBean;
 		this.gridImageExtraDatasetBean = this.newDatasetBean.getGridImageExtraDatasetBean();
 		initComponents();
@@ -44,7 +94,7 @@ public class JDialogNewImageDataset extends SmDialog {
 		registerEvent();
 		this.setTitle(DataEditorProperties.getString("String_NewDatasetImage"));
 		this.setModal(true);
-		setSize(700, 360);
+		setSize(700, 400);
 		this.setLocationRelativeTo(null);
 	}
 
@@ -66,11 +116,11 @@ public class JDialogNewImageDataset extends SmDialog {
 
 	private void initComponents() {
 
-		basicInfoPanel = new BasicInfoPanel(DatasetType.IMAGE);
-		resolutionPanel = new ResolutionPanel();
+		basicInfoPanel = new PanelBasicInfoSet(DatasetType.IMAGE);
+		resolutionPanel = new PanelResolution();
 		resolutionPanel.setBorder(BorderFactory.createTitledBorder(DataEditorProperties.getString("String_NewDataset_RatioInfo")));
 		imagePropertyPanel = new ImageDatasetPropertyPanel();
-		datasetBoundsPanel = new DatasetBoundsPanel();
+		datasetBoundsPanel = new PanelDatasetBounds();
 
 		// 按钮
 		buttonOk = new SmButton(CommonProperties.getString(CommonProperties.OK));
@@ -79,7 +129,7 @@ public class JDialogNewImageDataset extends SmDialog {
 	}
 
 	private void initLayout() {
-		Panel centerPanel = new Panel();
+		JPanel centerPanel = new JPanel();
 		GroupLayout groupLayout = new GroupLayout(centerPanel);
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);
@@ -103,7 +153,7 @@ public class JDialogNewImageDataset extends SmDialog {
 		//@formatter:on
 
 		// 按钮面板
-		Panel buttonPanel = new Panel();
+		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridBagLayout());
 
 		buttonPanel.add(buttonOk, new GridBagConstraintsHelper(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(5).setWeight(1, 1));
@@ -138,41 +188,14 @@ public class JDialogNewImageDataset extends SmDialog {
 		this.resolutionPanel.getTextFieldResolutionX().getTextField().addCaretListener(caretListener);
 		this.resolutionPanel.getTextFieldResolutionY().getTextField().addCaretListener(caretListener);
 
-//		this.datasetBoundsPanel.getTextFieldCurrentViewLeft().getTextField().addFocusListener(focusAdapter);
-//		this.datasetBoundsPanel.getTextFieldCurrentViewRight().getTextField().addFocusListener(focusAdapter);
-//		this.datasetBoundsPanel.getTextFieldCurrentViewBottom().getTextField().addFocusListener(focusAdapter);
-//		this.datasetBoundsPanel.getTextFieldCurrentViewTop().getTextField().addFocusListener(focusAdapter);
-//
-//		this.resolutionPanel.getTextFieldResolutionX().getTextField().addFocusListener(focusAdapter);
-//		this.resolutionPanel.getTextFieldResolutionY().getTextField().addFocusListener(focusAdapter);
+		//  用于确定按钮是否可用的判断
+		this.basicInfoPanel.getDatasetNameTextField().getDocument().addDocumentListener(textFieldChangedListener);
+		this.imagePropertyPanel.getTextFieldImageDatasetbandCount().getTextField().getDocument().addDocumentListener(textFieldChangedListener);
+		this.resolutionPanel.getTextFieldColumnCount().getDocument().addDocumentListener(textFieldChangedListener);
+		this.resolutionPanel.getTextFieldRowCount().getDocument().addDocumentListener(textFieldChangedListener);
+
 	}
 
-//	private FocusAdapter focusAdapter = new FocusAdapter() {
-//		@Override
-//		public void focusLost(FocusEvent e) {
-//			String resolutionX = resolutionPanel.getTextFieldResolutionX().getText();
-//			String resolutionY = resolutionPanel.getTextFieldResolutionY().getText();
-//
-//			if (!StringUtilities.isNullOrEmpty(resolutionX) && !StringUtilities.isNullOrEmpty(resolutionY)) {
-//				double X = Double.valueOf(resolutionPanel.getTextFieldResolutionX().getText());
-//				double Y = Double.valueOf(resolutionPanel.getTextFieldResolutionY().getText());
-//
-//				Rectangle2D rectangle2D = datasetBoundsPanel.getRangeBound();
-//				if (rectangle2D != null) {
-//					int width = (int) (rectangle2D.getWidth() / X);
-//					int height = (int) (rectangle2D.getHeight() / Y);
-//					resolutionPanel.getTextFieldRowCount().setText(String.valueOf(width));
-//					resolutionPanel.getTextFieldColumnCount().setText(String.valueOf(height));
-//				} else {
-//					resolutionPanel.getTextFieldRowCount().setText("0");
-//					resolutionPanel.getTextFieldColumnCount().setText("0");
-//				}
-//			} else {
-//				resolutionPanel.getTextFieldRowCount().setText("0");
-//				resolutionPanel.getTextFieldColumnCount().setText("0");
-//			}
-//		}
-//	};
 
 	private CaretListener caretListener = new CaretListener() {
 		@Override
@@ -199,7 +222,6 @@ public class JDialogNewImageDataset extends SmDialog {
 			}
 		}
 	};
-
 
 	private void buttonOk_Clicked() {
 		// 当点击了确定按钮,给属性类设值
@@ -236,5 +258,130 @@ public class JDialogNewImageDataset extends SmDialog {
 	private void buttonCancel_Clicked() {
 		setDialogResult(DialogResult.CANCEL);
 		this.dispose();
+	}
+
+
+	private DocumentListener textFieldChangedListener = new JTextFieldChangedListener();
+
+
+	/**
+	 * yuanR 2017.8.17
+	 * 称文本框添加的改变事件，用以当名称输入错误、波段、像素值错误时，置灰确定按钮
+	 */
+	class JTextFieldChangedListener implements DocumentListener {
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			newFilter();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			newFilter();
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			newFilter();
+		}
+
+		/**
+		 * 当文本框改变时
+		 */
+		private void newFilter() {
+
+			// 数据名称
+			if (isAvailableDatasetName(basicInfoPanel.getDatasetNameTextField().getText())) {
+				setDatasetNameSuitable(true);
+				basicInfoPanel.getDatasetNameTextField().setForeground(Color.BLACK);
+			} else {
+				setDatasetNameSuitable(false);
+				basicInfoPanel.getDatasetNameTextField().setForeground(Color.RED);
+			}
+
+			// 波段
+			if (isBandCountSuitable(imagePropertyPanel.getTextFieldImageDatasetbandCount().getTextField().getText())) {
+				setBandCountSuitable(true);
+				imagePropertyPanel.getTextFieldImageDatasetbandCount().getTextField().setForeground(Color.BLACK);
+			} else {
+				setBandCountSuitable(false);
+				imagePropertyPanel.getTextFieldImageDatasetbandCount().getTextField().setForeground(Color.RED);
+			}
+
+			// 像素-行
+
+			if (isWidthHeightSuitable(resolutionPanel.getTextFieldColumnCount().getText())) {
+				setWidthHeightSuitable(true);
+				resolutionPanel.getTextFieldColumnCount().setForeground(Color.BLACK);
+			} else {
+				setWidthHeightSuitable(false);
+				resolutionPanel.getTextFieldColumnCount().setForeground(Color.RED);
+			}
+
+			// 像素-列
+			if (isWidthHeightSuitable(resolutionPanel.getTextFieldRowCount().getText())) {
+				setWidthHeightSuitable(true);
+				resolutionPanel.getTextFieldRowCount().setForeground(Color.BLACK);
+			} else {
+				setWidthHeightSuitable(false);
+				resolutionPanel.getTextFieldRowCount().setForeground(Color.RED);
+			}
+		}
+
+		/**
+		 * 判断波段值是否正确
+		 *
+		 * @param value
+		 * @return
+		 */
+		private boolean isBandCountSuitable(String value) {
+			if (!StringUtilities.isNullOrEmpty(value)) {
+				int bandCount = Integer.valueOf(value);
+				if (100 < bandCount || bandCount < 1) {
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				return false;
+			}
+		}
+
+
+		/**
+		 * 判断数据集名称是否合法
+		 *
+		 * @param name
+		 * @return
+		 */
+		private boolean isAvailableDatasetName(String name) {
+			if (basicInfoPanel.getDatasourceComboBox().getSelectedDatasource() != null) {
+				if (basicInfoPanel.getDatasourceComboBox().getSelectedDatasource().getDatasets().isAvailableDatasetName(name)) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+
+		/**
+		 * 判断像素值是否合法
+		 *
+		 * @param value
+		 * @return
+		 */
+		public boolean isWidthHeightSuitable(String value) {
+			if (!StringUtilities.isNullOrEmpty(value)) {
+				int count = Integer.valueOf(value);
+				if (count < 1) {
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				return false;
+			}
+		}
 	}
 }
