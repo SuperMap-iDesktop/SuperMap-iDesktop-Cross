@@ -26,6 +26,7 @@ public class ParameterType {
 	public static final String COMBINE = "Combine";
 	public static final String COLOR = "Color";
 	public static final String SIMPLE_STATISTICS_FIELD = "SimpleStatisticsField";
+	public static final String STATISTICS_FIELD_FOR_RAREFY_POINTS = "StatisticsFieldForRarefyPoints";
 
 	public static final String HDFS_PATH = "HDFSPath";
 

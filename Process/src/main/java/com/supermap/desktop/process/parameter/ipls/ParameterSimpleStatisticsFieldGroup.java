@@ -39,7 +39,7 @@ public class ParameterSimpleStatisticsFieldGroup extends AbstractParameter imple
 
 	@Override
 	public Object getSelectedItem() {
-		throw new UnsupportedOperationException("See GetSelectedFieldInfos");
+		return getSelectedFields();
 	}
 
 	@Override

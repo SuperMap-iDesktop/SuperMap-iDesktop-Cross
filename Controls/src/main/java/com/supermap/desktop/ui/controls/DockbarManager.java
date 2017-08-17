@@ -8,22 +8,23 @@ import com.supermap.desktop.event.DockbarClosedEvent;
 import com.supermap.desktop.event.DockbarClosedListener;
 import com.supermap.desktop.event.DockbarClosingEvent;
 import com.supermap.desktop.event.DockbarClosingListener;
-import com.supermap.desktop.ui.*;
+import com.supermap.desktop.ui.MainFrame;
+import com.supermap.desktop.ui.XMLDockbar;
+import com.supermap.desktop.ui.XMLDockbars;
 import com.supermap.desktop.utilities.StringUtilities;
+import org.flexdock.dockbar.event.DockableEvent;
+import org.flexdock.dockbar.event.DockableListener;
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.docking.defaults.DefaultDockingStrategy;
-import org.flexdock.dockbar.event.DockableEvent;
-import org.flexdock.dockbar.event.DockableListener;
 import org.flexdock.view.View;
 import org.flexdock.view.Viewport;
 
-import javax.print.Doc;
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * SplitWindow 某一部分设置为不可见，只会是内容不可见，SplitWindow 的布局会保持原样，可见的部分不会填充整个 SplitWindow。其他 Dock 风格的 Window 也一样。因此第一个版本不实现动态设置 visible 的功能。后续版本可能会根据需求另外选择合适的 Docking
@@ -233,6 +234,7 @@ public class DockbarManager implements IDockbarManager {
 				displayRightBottom(dockbar);
 			} else {
 				System.out.println("not register.");
+				return;
 			}
 
 			if (StringUtilities.stringEquals("minimized", dockbar.getDockState(), true)) {

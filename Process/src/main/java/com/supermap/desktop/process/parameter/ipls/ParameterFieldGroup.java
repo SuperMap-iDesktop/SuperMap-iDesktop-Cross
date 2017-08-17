@@ -39,7 +39,7 @@ public class ParameterFieldGroup extends AbstractParameter implements IMultiSele
 
 	@Override
 	public Object getSelectedItem() {
-		throw new UnsupportedOperationException("See GetSelectedFieldInfos");
+		return getSelectedFields();
 	}
 
 	@Override

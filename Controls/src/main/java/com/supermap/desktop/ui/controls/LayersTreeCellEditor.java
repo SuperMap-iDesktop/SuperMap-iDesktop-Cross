@@ -150,7 +150,12 @@ class LayersTreeCellEditor implements TreeCellEditor, KeyListener, ActionListene
 	}
 
 	private void updateUI() {
-		layersTree.updateUI();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				layersTree.updateUI();
+			}
+		});
 	}
 
 	@Override

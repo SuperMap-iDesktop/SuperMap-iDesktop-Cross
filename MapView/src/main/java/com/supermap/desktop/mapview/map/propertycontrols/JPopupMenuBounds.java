@@ -410,7 +410,6 @@ public class JPopupMenuBounds extends JPopupMenu {
 					}
 					//设置完之后，show出主窗体
 					if (dialog != null) {
-						System.out.println(dialog.getLocation());
 						dialog.setVisible(true);
 					}
 				}

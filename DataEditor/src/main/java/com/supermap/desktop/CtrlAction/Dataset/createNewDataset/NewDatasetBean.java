@@ -10,6 +10,9 @@ import java.text.MessageFormat;
 
 /**
  * @author XiaJT
+ * 新建数据集参数信息类
+ * 增加栅格、影像数据集的参数信息模块-yuanR2017.8.15
+ * GridImageExtraDatasetBean 作为补充，当
  */
 public class NewDatasetBean {
 	private Datasource datasource;
@@ -18,6 +21,7 @@ public class NewDatasetBean {
 	private EncodeType encodeType;
 	private Charset charset;
 	private AddToWindowMode addToWindowMode;
+	private GridImageExtraDatasetBean gridImageExtraDatasetBean;
 
 	public NewDatasetBean() {
 		Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
@@ -27,7 +31,9 @@ public class NewDatasetBean {
 		encodeType = EncodeType.NONE;
 		charset = Charset.UTF8;
 		addToWindowMode = AddToWindowMode.NONEWINDOW;
+		gridImageExtraDatasetBean = null;
 	}
+
 
 	public Datasource getDatasource() {
 		return datasource;
@@ -51,7 +57,8 @@ public class NewDatasetBean {
 
 	public void setDatasetType(DatasetType datasetType) {
 		this.datasetType = datasetType;
-		if (encodeType != EncodeType.NONE && datasetType != DatasetType.LINE && datasetType != DatasetType.REGION) {
+		if (encodeType != EncodeType.NONE && datasetType != DatasetType.LINE && datasetType != DatasetType.REGION
+				&& datasetType != DatasetType.IMAGE) {
 			encodeType = EncodeType.NONE;
 		}
 	}
@@ -69,7 +76,7 @@ public class NewDatasetBean {
 	}
 
 	public void setEncodeType(EncodeType encodeType) {
-		if (datasetType == DatasetType.LINE || datasetType == DatasetType.REGION) {
+		if (datasetType == DatasetType.LINE || datasetType == DatasetType.REGION || datasetType == DatasetType.IMAGE) {
 			this.encodeType = encodeType;
 		} else {
 			this.encodeType = EncodeType.NONE;
@@ -84,23 +91,64 @@ public class NewDatasetBean {
 		this.charset = charset;
 	}
 
+	public GridImageExtraDatasetBean getGridImageExtraDatasetBean() {
+		if (gridImageExtraDatasetBean == null) {
+			gridImageExtraDatasetBean = new GridImageExtraDatasetBean();
+		}
+		return gridImageExtraDatasetBean;
+	}
+
+
 	public boolean createDataset() {
 		boolean result = false;
+		// 创建dataset时根据不同的数据类型进行创建
 		if (!StringUtilities.isNullOrEmpty(datasetName)) {
-			DatasetVectorInfo info = new DatasetVectorInfo(datasetName, datasetType);
-			info.setEncodeType(encodeType);
-			Dataset dataset = null;
-			try {
-				dataset = datasource.getDatasets().create(info);
-			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_CreateNewDT_Failed"), datasetName, datasource.getAlias()));
-			}
+			if (datasetType.equals(DatasetType.IMAGE)) {
+				if (gridImageExtraDatasetBean != null) {
+					DatasetImageInfo info = new DatasetImageInfo(
+							datasetName,
+							gridImageExtraDatasetBean.getWidth(),
+							gridImageExtraDatasetBean.getHeight(),
+							gridImageExtraDatasetBean.getPixelFormat(),
+							encodeType,
+							gridImageExtraDatasetBean.getBlockSizeOption(),
+							gridImageExtraDatasetBean.getBandCount()
+					);
+					info.setBounds(gridImageExtraDatasetBean.getRectangle());
+					DatasetImage datasetImage = datasource.getDatasets().create(info);
+					try {
+						datasetImage = datasource.getDatasets().create(info);
+					} catch (Exception e) {
+						Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_CreateNewDT_Failed"), datasetName, datasource.getAlias()));
+					}
 
-			if (dataset != null) {
-				result = true;
-				String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewDT_Success"), datasetName,
-						datasource.getAlias());
-				Application.getActiveApplication().getOutput().output(information);
+					if (datasetImage != null) {
+						result = true;
+						String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewDT_Success"), datasetName,
+								datasource.getAlias());
+						Application.getActiveApplication().getOutput().output(information);
+					}
+				}
+
+
+			} else if (datasetType.equals(DatasetType.GRID)) {
+
+			} else {
+				DatasetVectorInfo info = new DatasetVectorInfo(datasetName, datasetType);
+				info.setEncodeType(encodeType);
+				Dataset dataset = null;
+				try {
+					dataset = datasource.getDatasets().create(info);
+				} catch (Exception e) {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_CreateNewDT_Failed"), datasetName, datasource.getAlias()));
+				}
+
+				if (dataset != null) {
+					result = true;
+					String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewDT_Success"), datasetName,
+							datasource.getAlias());
+					Application.getActiveApplication().getOutput().output(information);
+				}
 			}
 		}
 		return result;

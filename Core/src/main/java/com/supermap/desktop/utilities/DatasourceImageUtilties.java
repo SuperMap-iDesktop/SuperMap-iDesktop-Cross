@@ -41,6 +41,11 @@ public class DatasourceImageUtilties {
 		datasourceImage.put(EngineType.OPENSTREETMAPS, fileParentPath + "Datasource_OSM.png");
 		datasourceImage.put(EngineType.MEMORY, fileParentPath + "Image_Memory.png");
 		datasourceImage.put(EngineType.DATASERVER, fileParentPath + "Datasource_BigDataStore.png");
+		datasourceImage.put(EngineType.MYSQLPlus, fileParentPath + "Image_MySQLPlus.png");
+		datasourceImage.put(EngineType.BEYONDB, fileParentPath + "Image_BeyonDB.png");
+		datasourceImage.put(EngineType.HIGHGODB, fileParentPath + "Image_HiGoDB.png");
+		datasourceImage.put(EngineType.KDB, fileParentPath + "Image_kdb.png");
+		datasourceImage.put(EngineType.SDE, fileParentPath + "Image_ArcSDE.png");
 		datasourceImage.put(null, fileParentPath + "Image_Datasources_Normal.png");
 	}
 
@@ -99,6 +104,16 @@ public class DatasourceImageUtilties {
 			return fileParentPath + "Image_OpenStreetMaps_24.png";
 		} else if (engineType == EngineType.DATASERVER) {
 			return fileParentPath + "Image_BigDataStore_24.png";
+		} else if (engineType == EngineType.MYSQLPlus) {
+			return fileParentPath + "Image_MySQLPlus_24.png";
+		} else if (engineType == EngineType.BEYONDB) {
+			return fileParentPath + "Image_BeyonDB_24.png";
+		} else if (engineType == EngineType.HIGHGODB) {
+			return fileParentPath + "Image_HiGoDB_24.png";
+		} else if (engineType == EngineType.KDB) {
+			return fileParentPath + "Image_kdb_24.png";
+		} else if (engineType == EngineType.SDE) {
+			return fileParentPath + "Image_ArcSDE_24.png";
 		}
 		return "";
 	}
