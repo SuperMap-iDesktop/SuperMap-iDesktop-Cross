@@ -85,6 +85,7 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 
 	@Override
 	public boolean execute() {
+		boolean isSuccess;
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
@@ -135,10 +136,10 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 
 					}
 				}, DefaultOpenServerMap.INSTANCE);
-				messageBus.run();
+				isSuccess = messageBus.run();
 			} else {
 				fireRunning(new RunningEvent(this, 100, "Failed"));
-				return false;
+				isSuccess = false;
 			}
 			parameters.getOutputs().getData("GridRegionAggregationResult").setValue("");
 			CursorUtilities.setDefaultCursor();
@@ -146,7 +147,7 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 			Application.getActiveApplication().getOutput().output(e);
 			return false;
 		}
-		return true;
+		return isSuccess;
 	}
 
 	@Override

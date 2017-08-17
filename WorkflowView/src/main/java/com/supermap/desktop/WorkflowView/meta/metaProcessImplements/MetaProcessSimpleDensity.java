@@ -30,12 +30,12 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 	private ParameterComboBox parameterComboBoxAnalyseType = new ParameterComboBox(ProcessProperties.getString("String_AnalyseType"));
 	private ParameterComboBox parameterComboBoxMeshType = new ParameterComboBox(ProcessProperties.getString("String_MeshType"));
 	private ParameterDefaultValueTextField parameterIndex = new ParameterDefaultValueTextField(ProcessProperties.getString("String_Index"));
-	private ParameterDefaultValueTextField parameterBounds= new ParameterDefaultValueTextField(ProcessProperties.getString("String_AnalystBounds"));
+	private ParameterDefaultValueTextField parameterBounds = new ParameterDefaultValueTextField(ProcessProperties.getString("String_AnalystBounds"));
 	private ParameterDefaultValueTextField parameterMeshSize = new ParameterDefaultValueTextField(ProcessProperties.getString("String_MeshSize"));
 	private ParameterComboBox parameterMeshSizeUnit = new ParameterComboBox(ProcessProperties.getString("String_MeshSizeUnit"));
-	private ParameterDefaultValueTextField parameterRadius= new ParameterDefaultValueTextField(ProcessProperties.getString("String_Radius"));
-	private ParameterComboBox parameterRadiusUnit= new ParameterComboBox(ProcessProperties.getString("String_RadiusUnit"));
-	private ParameterComboBox parameterAreaUnit= new ParameterComboBox(ProcessProperties.getString("String_AreaUnit"));
+	private ParameterDefaultValueTextField parameterRadius = new ParameterDefaultValueTextField(ProcessProperties.getString("String_Radius"));
+	private ParameterComboBox parameterRadiusUnit = new ParameterComboBox(ProcessProperties.getString("String_RadiusUnit"));
+	private ParameterComboBox parameterAreaUnit = new ParameterComboBox(ProcessProperties.getString("String_AreaUnit"));
 
 
 	public MetaProcessSimpleDensity() {
@@ -108,22 +108,23 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 
 	@Override
 	public boolean execute() {
+		boolean isSuccess;
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
-			CommonSettingCombine method = new CommonSettingCombine("method",(String) parameterComboBoxAnalyseType.getSelectedData());
-			CommonSettingCombine meshType = new CommonSettingCombine("meshType",(String) parameterComboBoxMeshType.getSelectedData());
-			CommonSettingCombine fields = new CommonSettingCombine("fields",(String) parameterIndex.getSelectedItem());
-			CommonSettingCombine query = new CommonSettingCombine("query",parameterBounds.getSelectedItem().toString());
-			CommonSettingCombine resolution = new CommonSettingCombine("resolution",parameterMeshSize.getSelectedItem().toString());
-			CommonSettingCombine meshSizeUnit = new CommonSettingCombine("meshSizeUnit",(String)parameterMeshSizeUnit.getSelectedData());
-			CommonSettingCombine radius = new CommonSettingCombine("radius",parameterRadius.getSelectedItem().toString());
-			CommonSettingCombine radiusUnit = new CommonSettingCombine("radiusUnit",(String)parameterRadiusUnit.getSelectedData());
-			CommonSettingCombine areaUnit = new CommonSettingCombine("areaUnit",(String)parameterAreaUnit.getSelectedData());
+			CommonSettingCombine method = new CommonSettingCombine("method", (String) parameterComboBoxAnalyseType.getSelectedData());
+			CommonSettingCombine meshType = new CommonSettingCombine("meshType", (String) parameterComboBoxMeshType.getSelectedData());
+			CommonSettingCombine fields = new CommonSettingCombine("fields", (String) parameterIndex.getSelectedItem());
+			CommonSettingCombine query = new CommonSettingCombine("query", parameterBounds.getSelectedItem().toString());
+			CommonSettingCombine resolution = new CommonSettingCombine("resolution", parameterMeshSize.getSelectedItem().toString());
+			CommonSettingCombine meshSizeUnit = new CommonSettingCombine("meshSizeUnit", (String) parameterMeshSizeUnit.getSelectedData());
+			CommonSettingCombine radius = new CommonSettingCombine("radius", parameterRadius.getSelectedItem().toString());
+			CommonSettingCombine radiusUnit = new CommonSettingCombine("radiusUnit", (String) parameterRadiusUnit.getSelectedData());
+			CommonSettingCombine areaUnit = new CommonSettingCombine("areaUnit", (String) parameterAreaUnit.getSelectedData());
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
-			analyst.add(method,meshType,fields,query,resolution,meshSizeUnit,radius,radiusUnit,areaUnit);
+			analyst.add(method, meshType, fields, query, resolution, meshSizeUnit, radius, radiusUnit, areaUnit);
 
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input, analyst);
@@ -162,10 +163,10 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 
 					}
 				}, DefaultOpenServerMap.INSTANCE);
-				messageBus.run();
+				isSuccess = messageBus.run();
 			} else {
 				fireRunning(new RunningEvent(this, 100, "Failed"));
-				return false;
+				isSuccess = false;
 			}
 			parameters.getOutputs().getData("SimpleDensityResult").setValue("");// // TODO: 2017/5/26
 			CursorUtilities.setDefaultCursor();
@@ -173,7 +174,7 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 			Application.getActiveApplication().getOutput().output(e);
 			return false;
 		}
-		return true;
+		return isSuccess;
 	}
 
 	@Override

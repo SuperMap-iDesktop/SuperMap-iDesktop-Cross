@@ -109,6 +109,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
 	@Override
 	public boolean execute() {
+		boolean isSuccess;
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
@@ -163,10 +164,10 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
 					}
 				}, DefaultOpenServerMap.INSTANCE);
-				messageBus.run();
+				isSuccess = messageBus.run();
 			} else {
 				fireRunning(new RunningEvent(this, 100, "Failed"));
-				return false;
+				isSuccess = false;
 			}
 			parameters.getOutputs().getData("KernelDensityResult").setValue("");// // TODO: 2017/5/26
 			CursorUtilities.setDefaultCursor();
@@ -174,7 +175,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 			return false;
 		}
-		return true;
+		return isSuccess;
 	}
 
 	@Override

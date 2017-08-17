@@ -101,6 +101,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 
 	@Override
 	public boolean execute() {
+		boolean isSuccess;
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
@@ -151,10 +152,10 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 
 					}
 				}, DefaultOpenServerMap.INSTANCE);
-				messageBus.run();
-			}else{
+				isSuccess = messageBus.run();
+			} else {
 				fireRunning(new RunningEvent(this, 100, "Failed"));
-				return false;
+				isSuccess = false;
 			}
 			parameters.getOutputs().getData("PolygonAggregationResult").setValue("");// TODO: 2017/6/26 也许没结果,but
 		} catch (Exception e) {
@@ -163,7 +164,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 		} finally {
 			CursorUtilities.setDefaultCursor();
 		}
-		return true;
+		return isSuccess;
 	}
 
 	@Override

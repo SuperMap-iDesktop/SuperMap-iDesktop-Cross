@@ -159,6 +159,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 
 	@Override
 	public boolean execute() {
+		boolean isSuccess;
 		try {
 			if (parameterStandardFields.getSelectedItem().toString().equals("false") && parameterWeightedFields.getSelectedItem().toString().equals("false")) {
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SummaryRegionMessage"));
@@ -187,7 +188,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 					analyst.add(standardFields, standardStatisticModes);
 				}
 				if (parameterWeightedFields.getSelectedItem().toString().equals("true")) {
-					analyst.add(weightedFields,weightedStatisticModes);
+					analyst.add(weightedFields, weightedStatisticModes);
 				}
 			} else {
 				Dataset dataset = parameterSingleDataset.getSelectedDataset();
@@ -197,7 +198,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 					analyst.add(standardFields, standardStatisticModes);
 				}
 				if (parameterWeightedFields.getSelectedItem().toString().equals("true")) {
-					analyst.add(weightedFields,weightedStatisticModes);
+					analyst.add(weightedFields, weightedStatisticModes);
 				}
 			}
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
@@ -236,10 +237,10 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 
 					}
 				}, DefaultOpenServerMap.INSTANCE);
-				messageBus.run();
-			}else{
+				isSuccess = messageBus.run();
+			} else {
 				fireRunning(new RunningEvent(this, 100, "Failed"));
-				return false;
+				isSuccess = false;
 			}
 			parameters.getOutputs().getData("OverlayResult").setValue("");
 		} catch (Exception e) {
@@ -248,7 +249,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		} finally {
 			CursorUtilities.setDefaultCursor();
 		}
-		return true;
+		return isSuccess;
 	}
 
 	@Override
