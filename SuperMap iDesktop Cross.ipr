@@ -272,6 +272,7 @@
       <module name="DataView" target="1.7" />
       <module name="Frame" target="1.7" />
       <module name="iDesktop" target="1.7" />
+      <module name="idesktop.cross" target="1.5" />
       <module name="LayoutEditor" target="1.7" />
       <module name="LayoutView" target="1.7" />
       <module name="LBSClient" target="1.7" />
@@ -328,7 +329,6 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/MyPlugin/pom.xml" />
-        <option value="$PROJECT_DIR$/pom.xml" />
       </set>
     </option>
   </component>
@@ -500,6 +500,7 @@
       <module fileurl="file://$PROJECT_DIR$/UserExperience/UserExperience.iml" filepath="$PROJECT_DIR$/UserExperience/UserExperience.iml" />
       <module fileurl="file://$PROJECT_DIR$/WorkflowView/WorkflowView.iml" filepath="$PROJECT_DIR$/WorkflowView/WorkflowView.iml" />
       <module fileurl="file://$PROJECT_DIR$/iDesktop/iDesktop.iml" filepath="$PROJECT_DIR$/iDesktop/iDesktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/idesktop.cross.iml" filepath="$PROJECT_DIR$/idesktop.cross.iml" />
     </modules>
   </component>
   <component name="ProjectPlainTextFileTypeManager">
