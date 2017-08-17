@@ -44,7 +44,7 @@ public class ParameterDefaultValueTextField extends AbstractParameter implements
 
 	@Override
 	public Object getSelectedItem() {
-		return StringUtilities.isNullOrEmpty(value) ? defaultWarningValue : value;
+		return StringUtilities.isNullOrEmpty(value) ? (null == defaultWarningValue ? "" : defaultWarningValue) : value;
 	}
 
 	public String getDescribe() {

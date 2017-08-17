@@ -13,11 +13,7 @@ import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterIServerLogin;
-import com.supermap.desktop.process.parameter.ipls.ParameterInputDataType;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.utilities.CursorUtilities;
@@ -33,10 +29,10 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 	ParameterInputDataType parameterInputDataType = new ParameterInputDataType();
 	private ParameterComboBox parameterAggregationType = new ParameterComboBox().setDescribe(ProcessProperties.getString("String_AggregationType"));
 	private ParameterComboBox parameterMeshType = new ParameterComboBox(ProcessProperties.getString("String_MeshType"));
-	private ParameterTextField parameterBounds = new ParameterTextField().setDescribe(ProcessProperties.getString("String_AnalystBounds"));
-	private ParameterTextField parameterResolution = new ParameterTextField().setDescribe(ProcessProperties.getString("String_MeshSize"));
-	private ParameterTextField parameterStaticModel = new ParameterTextField().setDescribe(ProcessProperties.getString("String_StaticModel"));
-	private ParameterTextField parameterWeightIndex = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Index"));
+	private ParameterDefaultValueTextField parameterBounds = new ParameterDefaultValueTextField().setDescribe(ProcessProperties.getString("String_AnalystBounds"));
+	private ParameterDefaultValueTextField parameterResolution = new ParameterDefaultValueTextField().setDescribe(ProcessProperties.getString("String_MeshSize"));
+	private ParameterDefaultValueTextField parameterStaticModel = new ParameterDefaultValueTextField().setDescribe(ProcessProperties.getString("String_StaticModel"));
+	private ParameterDefaultValueTextField parameterWeightIndex = new ParameterDefaultValueTextField().setDescribe(ProcessProperties.getString("String_Index"));
 
 	public MetaProcessGridRegionAggregation() {
 		initParameters();
@@ -51,10 +47,10 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 		ParameterDataNode[] parameterDataNodes = {new ParameterDataNode(ProcessProperties.getString("String_QuadrilateralMesh"), "0"), new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1")};
 		parameterMeshType.setSelectedItem(parameterDataNodes[0]);
 		parameterMeshType.setItems(parameterDataNodes);
-		parameterBounds.setSelectedItem("-74.050,40.650,-73.850,40.850");
-		parameterResolution.setSelectedItem("100");
-		parameterStaticModel.setSelectedItem("max");
-		parameterWeightIndex.setSelectedItem("col7");
+		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
+		parameterResolution.setDefaultWarningValue("100");
+		parameterStaticModel.setDefaultWarningValue("max");
+		parameterWeightIndex.setDefaultWarningValue("col7");
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
 	}
 
@@ -140,8 +136,10 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 					}
 				}, DefaultOpenServerMap.INSTANCE);
 				messageBus.run();
+			} else {
+				fireRunning(new RunningEvent(this, 100, "Failed"));
+				return false;
 			}
-			fireRunning(new RunningEvent(this, 100, "finished"));
 			parameters.getOutputs().getData("GridRegionAggregationResult").setValue("");
 			CursorUtilities.setDefaultCursor();
 		} catch (Exception e) {

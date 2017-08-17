@@ -153,8 +153,10 @@ public class MetaProcessSingleQuery extends MetaProcess {
 					}
 				}, DefaultOpenServerMap.INSTANCE);
 				messageBus.run();
+			} else {
+				fireRunning(new RunningEvent(this, 100, "Failed"));
+				return false;
 			}
-			fireRunning(new RunningEvent(this, 100, "finished"));
 			parameters.getOutputs().getData("QueryResult").setValue("");
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

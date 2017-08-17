@@ -30,11 +30,11 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	ParameterInputDataType parameterInputDataType = new ParameterInputDataType();
 	private ParameterComboBox parameterComboBoxAnalyseType = new ParameterComboBox(ProcessProperties.getString("String_AnalyseType"));
 	private ParameterComboBox parameterComboBoxMeshType = new ParameterComboBox(ProcessProperties.getString("String_MeshType"));
-	private ParameterTextField parameterIndex = new ParameterTextField(ProcessProperties.getString("String_Index"));
-	private ParameterTextField parameterBounds = new ParameterTextField(ProcessProperties.getString("String_AnalystBounds"));
-	private ParameterTextField parameterMeshSize = new ParameterTextField(ProcessProperties.getString("String_MeshSize"));
+	private ParameterDefaultValueTextField parameterIndex = new ParameterDefaultValueTextField(ProcessProperties.getString("String_Index"));
+	private ParameterDefaultValueTextField parameterBounds = new ParameterDefaultValueTextField(ProcessProperties.getString("String_AnalystBounds"));
+	private ParameterDefaultValueTextField parameterMeshSize = new ParameterDefaultValueTextField(ProcessProperties.getString("String_MeshSize"));
 	private ParameterComboBox parameterMeshSizeUnit = new ParameterComboBox(ProcessProperties.getString("String_MeshSizeUnit"));
-	private ParameterTextField parameterRadius = new ParameterTextField(ProcessProperties.getString("String_Radius"));
+	private ParameterDefaultValueTextField parameterRadius = new ParameterDefaultValueTextField(ProcessProperties.getString("String_Radius"));
 	private ParameterComboBox parameterRadiusUnit = new ParameterComboBox(ProcessProperties.getString("String_RadiusUnit"));
 	private ParameterComboBox parameterAreaUnit = new ParameterComboBox(ProcessProperties.getString("String_AreaUnit"));
 
@@ -52,15 +52,16 @@ public class MetaProcessKernelDensity extends MetaProcess {
 				new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1"));
 
 		//流程图中不支持在地图中绘制范围，范围表示与iServer的表示相同
-		parameterBounds.setSelectedItem("-74.050,40.650,-73.850,40.850");
-		parameterMeshSize.setSelectedItem("50");
+		parameterIndex.setDefaultWarningValue("col7");
+		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
+		parameterMeshSize.setDefaultWarningValue("50");
 		parameterMeshSizeUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Yard"), "Yard"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Foot"), "Foot"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Mile"), "Mile")
 		);
-		parameterRadius.setSelectedItem("300");
+		parameterRadius.setDefaultWarningValue("300");
 		parameterRadiusUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Yard"), "Yard"),
