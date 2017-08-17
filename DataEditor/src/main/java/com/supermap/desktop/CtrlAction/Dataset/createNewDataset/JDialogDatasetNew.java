@@ -120,7 +120,7 @@ public class JDialogDatasetNew extends SmDialog {
 
 		//2017.2.13 数据集类型下拉列表控件创建--yuanR
 		DatasetType[] datasetTypes = new DatasetType[]{DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT,
-				DatasetType.CAD, DatasetType.TABULAR, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.IMAGE};
+				DatasetType.CAD, DatasetType.TABULAR, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.IMAGE, DatasetType.GRID};
 		comboBoxDatasetType = new DatasetTypeComboBox(datasetTypes);
 
 		DefaultCellEditor datasetTypeCellEditor = new DefaultCellEditor(comboBoxDatasetType);

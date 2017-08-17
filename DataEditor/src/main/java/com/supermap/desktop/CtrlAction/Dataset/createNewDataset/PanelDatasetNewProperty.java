@@ -92,7 +92,6 @@ public class PanelDatasetNewProperty extends JPanel {
 									.addComponent(this.bandCountLabel)
 									.addComponent(this.advancedSetLabel))
 							.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-
 									.addGroup(groupLayout.createSequentialGroup()
 											.addGap(16).addComponent(this.comboboxEncodingType, 150, 150, Short.MAX_VALUE))
 									.addGroup(groupLayout.createSequentialGroup()
@@ -134,10 +133,14 @@ public class PanelDatasetNewProperty extends JPanel {
 									.addComponent(this.pixelFormatLabel)
 									.addComponent(this.advancedSetLabel))
 							.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-									.addComponent(this.comboboxEncodingType, 150, 150, Short.MAX_VALUE)
-									.addComponent(this.comboboxBlockSizeOption, 150, 150, Short.MAX_VALUE)
-									.addComponent(this.comboboxPixelFormat, 150, 150, Short.MAX_VALUE)
-									.addComponent(this.buttonAdvancedSet, 150, 150, Short.MAX_VALUE))));
+									.addGroup(groupLayout.createSequentialGroup()
+											.addGap(16).addComponent(this.comboboxEncodingType, 150, 150, Short.MAX_VALUE))
+									.addGroup(groupLayout.createSequentialGroup()
+											.addGap(16).addComponent(this.comboboxBlockSizeOption, 150, 150, Short.MAX_VALUE))
+									.addGroup(groupLayout.createSequentialGroup()
+											.addGap(16).addComponent(this.comboboxPixelFormat, 150, 150, Short.MAX_VALUE))
+									.addGroup(groupLayout.createSequentialGroup()
+											.addGap(16).addComponent(this.buttonAdvancedSet, 150, 150, Short.MAX_VALUE)))));
 			groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
 					.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 							.addComponent(this.encodingTypeLabel)
@@ -186,14 +189,12 @@ public class PanelDatasetNewProperty extends JPanel {
 
 			if (this.datasetBean.getDatasetType().equals(DatasetType.IMAGE)) {
 				// 编码类型
-//				comboboxEncodingType.removeAllItems();
 				ArrayList<String> tempEncodeType = new ArrayList<>();
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.DCT));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.LZW));
 				comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempEncodeType.toArray(new String[tempEncodeType.size()])));
 				// 栅格分块
-//				comboboxBlockSizeOption.removeAllItems();
 				ArrayList<String> tempBlockSizeOptionType = new ArrayList<>();
 				tempBlockSizeOptionType.add(BlockSizeOptionUtilities.toString(BlockSizeOption.BS_64));
 				tempBlockSizeOptionType.add(BlockSizeOptionUtilities.toString(BlockSizeOption.BS_128));
@@ -202,9 +203,7 @@ public class PanelDatasetNewProperty extends JPanel {
 				tempBlockSizeOptionType.add(BlockSizeOptionUtilities.toString(BlockSizeOption.BS_1024));
 				comboboxBlockSizeOption.setModel(new DefaultComboBoxModel<>(tempBlockSizeOptionType.toArray(new String[tempBlockSizeOptionType.size()])));
 				comboboxBlockSizeOption.setSelectedItem(BlockSizeOptionUtilities.toString(this.datasetBean.getGridImageExtraDatasetBean().getBlockSizeOption()));
-
 				// 像素格式
-//				comboboxPixelFormat.removeAllItems();
 				ArrayList<String> tempImagePixelFormatType = new ArrayList<>();
 				tempImagePixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.UBIT1));
 				tempImagePixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.UBIT4));
@@ -220,22 +219,44 @@ public class PanelDatasetNewProperty extends JPanel {
 				tempImagePixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.SINGLE));
 				tempImagePixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.DOUBLE));
 				comboboxPixelFormat.setModel(new DefaultComboBoxModel<>(tempImagePixelFormatType.toArray(new String[tempImagePixelFormatType.size()])));
-				comboboxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(this.datasetBean.getGridImageExtraDatasetBean().getPixelFormat()));
+				comboboxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(this.datasetBean.getGridImageExtraDatasetBean().getPixelFormatImage()));
 				// 波段数
 				textFieldBandCount.setText(String.valueOf(this.datasetBean.getGridImageExtraDatasetBean().getBandCount()));
 
 			} else if (this.datasetBean.getDatasetType().equals(DatasetType.GRID)) {
-//				comboboxEncodingType.removeAllItems();
+				// 编码类型
 				ArrayList<String> tempEncodeType = new ArrayList<>();
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.DCT));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.SGL));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.LZW));
 				comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempEncodeType.toArray(new String[tempEncodeType.size()])));
-
+				// 栅格分块
+				ArrayList<String> tempBlockSizeOptionType = new ArrayList<>();
+				tempBlockSizeOptionType.add(BlockSizeOptionUtilities.toString(BlockSizeOption.BS_64));
+				tempBlockSizeOptionType.add(BlockSizeOptionUtilities.toString(BlockSizeOption.BS_128));
+				tempBlockSizeOptionType.add(BlockSizeOptionUtilities.toString(BlockSizeOption.BS_256));
+				tempBlockSizeOptionType.add(BlockSizeOptionUtilities.toString(BlockSizeOption.BS_512));
+				tempBlockSizeOptionType.add(BlockSizeOptionUtilities.toString(BlockSizeOption.BS_1024));
+				comboboxBlockSizeOption.setModel(new DefaultComboBoxModel<>(tempBlockSizeOptionType.toArray(new String[tempBlockSizeOptionType.size()])));
+				comboboxBlockSizeOption.setSelectedItem(BlockSizeOptionUtilities.toString(this.datasetBean.getGridImageExtraDatasetBean().getBlockSizeOption()));
+				// 像素格式
+				ArrayList<String> tempGridPixelFormatType = new ArrayList<>();
+				tempGridPixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.UBIT1));
+				tempGridPixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.UBIT4));
+				tempGridPixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.UBIT8));
+				tempGridPixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.UBIT16));
+				tempGridPixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.UBIT32));
+				tempGridPixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.BIT8));
+				tempGridPixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.BIT16));
+				tempGridPixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.BIT32));
+				tempGridPixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.BIT64));
+				tempGridPixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.SINGLE));
+				tempGridPixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.DOUBLE));
+				comboboxPixelFormat.setModel(new DefaultComboBoxModel<>(tempGridPixelFormatType.toArray(new String[tempGridPixelFormatType.size()])));
+				comboboxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(this.datasetBean.getGridImageExtraDatasetBean().getPixelFormatGrid()));
 
 			} else if (DatasetType.LINE == datasetBean.getDatasetType() || DatasetType.REGION == datasetBean.getDatasetType()) {
-//				comboboxEncodingType.removeAllItems();
 				ArrayList<String> tempEncodeType = new ArrayList<>();
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.BYTE));
@@ -243,16 +264,12 @@ public class PanelDatasetNewProperty extends JPanel {
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.INT24));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.INT32));
 				comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempEncodeType.toArray(new String[tempEncodeType.size()])));
-				// 字符集
-//				comboboxCharest.removeAllItems();
-//				comboboxCharest.setModel(new DefaultComboBoxModel<>(tempcharsharsetes.toArray(new String[tempcharsharsetes.size()])));
 
 			} else {
 				// 编码类型
 				ArrayList<String> tempEncodeType = new ArrayList<>();
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
 				comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempEncodeType.toArray(new String[tempEncodeType.size()])));
-
 			}
 			comboboxEncodingType.setSelectedItem(EncodeTypeUtilities.toString(this.datasetBean.getEncodeType()));
 			comboboxCharest.setSelectedItem(this.datasetBean.getCharset());
@@ -280,8 +297,13 @@ public class PanelDatasetNewProperty extends JPanel {
 		buttonAdvancedSet.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JDialogDatasetImageAdvanceSet dialogNewGridDataset = new JDialogDatasetImageAdvanceSet(datasetBean);
-				dialogNewGridDataset.showDialog();
+				if (datasetBean.getDatasetType().equals(DatasetType.GRID)) {
+					JDialogDatasetGridAdvanceSet dialogDatasetGridAdvanceSet = new JDialogDatasetGridAdvanceSet(datasetBean);
+					dialogDatasetGridAdvanceSet.showDialog();
+				} else if (datasetBean.getDatasetType().equals(DatasetType.IMAGE)) {
+					JDialogDatasetImageAdvanceSet dialogDatasetImageAdvanceSet = new JDialogDatasetImageAdvanceSet(datasetBean);
+					dialogDatasetImageAdvanceSet.showDialog();
+				}
 			}
 		});
 	}
@@ -296,7 +318,11 @@ public class PanelDatasetNewProperty extends JPanel {
 			} else if (e.getSource() == comboboxBlockSizeOption) {
 				datasetBean.getGridImageExtraDatasetBean().setBlockSizeOption(BlockSizeOptionUtilities.valueOf((String) comboboxBlockSizeOption.getSelectedItem()));
 			} else if (e.getSource() == comboboxPixelFormat) {
-				datasetBean.getGridImageExtraDatasetBean().setPixelFormat(PixelFormatUtilities.valueOf((String) comboboxPixelFormat.getSelectedItem()));
+				if (datasetBean.getDatasetType().equals(DatasetType.GRID)) {
+					datasetBean.getGridImageExtraDatasetBean().setPixelFormatGrid(PixelFormatUtilities.valueOf((String) comboboxPixelFormat.getSelectedItem()));
+				} else if (datasetBean.getDatasetType().equals(DatasetType.IMAGE)) {
+					datasetBean.getGridImageExtraDatasetBean().setPixelFormatImage(PixelFormatUtilities.valueOf((String) comboboxPixelFormat.getSelectedItem()));
+				}
 			}
 		}
 	};

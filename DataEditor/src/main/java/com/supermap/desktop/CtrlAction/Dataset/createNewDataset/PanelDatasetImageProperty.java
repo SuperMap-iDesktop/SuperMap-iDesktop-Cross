@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * Created by yuanR on 2017/8/15 0015.
  * 新建影像数据-图像属性面板
  */
-public class ImageDatasetPropertyPanel extends JPanel {
+public class PanelDatasetImageProperty extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -26,6 +26,13 @@ public class ImageDatasetPropertyPanel extends JPanel {
 	private JLabel pixelFormatLabel;
 	// 影像数据集的波段个数
 	private JLabel bandCountLabel;
+
+	private JComboBox<String> comboboxBlockSizeOption;
+	private JComboBox<String> comboboxPixelFormat;
+	private WaringTextField textFieldImageDatasetbandCount;
+
+	ArrayList<String> tempBlockSizeOptionType;
+	ArrayList<String> tempImagePixelFormatType;
 
 	public JComboBox<String> getComboboxBlockSizeOption() {
 		return comboboxBlockSizeOption;
@@ -39,15 +46,8 @@ public class ImageDatasetPropertyPanel extends JPanel {
 		return textFieldImageDatasetbandCount;
 	}
 
-	private JComboBox<String> comboboxBlockSizeOption;
-	private JComboBox<String> comboboxPixelFormat;
-	private WaringTextField textFieldImageDatasetbandCount;
 
-
-	ArrayList<String> tempBlockSizeOptionType;
-	ArrayList<String> tempImagePixelFormatType;
-
-	public ImageDatasetPropertyPanel() {
+	public PanelDatasetImageProperty() {
 		initComponents();
 		initLayout();
 //		initStates();
