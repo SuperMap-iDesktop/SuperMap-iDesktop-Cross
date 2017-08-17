@@ -7,9 +7,12 @@ import com.supermap.desktop.WorkflowView.meta.dataconversion.MetaProcessImportFa
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridDistance.MetaProcessSurfacePathLine;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.MetaProcessAltitudeStatistics;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.MetaProcessBasicStatistics;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.MetaProcessCommonStatistics;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.MetaProcessNeighbourStatistics;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.*;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -347,6 +350,8 @@ public class WorkflowParser {
 			result = new MetaProcessBasicStatistics();
 		} else if (MetaKeys.COMMON_STATISTIC.equals(key)) {
 			result = new MetaProcessCommonStatistics();
+		} else if (MetaKeys.HEIGHT_VALUE_STATISTIC.equals(key)) {
+			result = new MetaProcessAltitudeStatistics();
 		} else if (MetaKeys.NEIGHBOUR_STATISTIC.equals(key)) {
 			result = new MetaProcessNeighbourStatistics();
 		} else {
