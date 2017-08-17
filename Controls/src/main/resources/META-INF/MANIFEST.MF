@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1502505001380
+Bnd-LastModified: 1502932927283
 Build-Jdk: 1.7.0_80
-Built-By: highsad
+Built-By: lixiaoyao
 Bundle-Activator: com.supermap.desktop.controls.ControlsActivator
 Bundle-ClassPath: .,lib/commons-lang-2.6.jar
 Bundle-ManifestVersion: 2
@@ -31,10 +31,10 @@ Export-Package: com.supermap.desktop.controls.colorScheme;version="1.0.0
  rmap.desktop.controls.utilities;version="1.0.0";uses:="com.supermap.des
  ktop.dialog.symbolDialogs,com.supermap.desktop.ui.controls,com.supermap
  .desktop.ui.controls.TextFields",com.supermap.desktop.CtrlAction;versio
- n="1.0.0",com.supermap.desktop.dialog.ColorSchemeDialogs;version="1.0.0
- ";uses:="com.supermap.desktop.controls.colorScheme,com.supermap.desktop
- .ui.controls,com.supermap.desktop.ui.controls.SortTable",com.supermap.d
- esktop.dialog;version="1.0.0";uses:="com.supermap.desktop.ui.controls",
+ n="1.0.0",com.supermap.desktop.dialog;version="1.0.0";uses:="com.superm
+ ap.desktop.ui.controls",com.supermap.desktop.dialog.ColorSchemeDialogs;
+ version="1.0.0";uses:="com.supermap.desktop.controls.colorScheme,com.su
+ permap.desktop.ui.controls,com.supermap.desktop.ui.controls.SortTable",
  com.supermap.desktop.dialog.symbolDialogs;version="1.0.0";uses:="com.su
  permap.desktop.dialog.symbolDialogs.JpanelSymbols,com.supermap.desktop.
  ui.controls",com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols;ve
@@ -44,8 +44,8 @@ Export-Package: com.supermap.desktop.controls.colorScheme;version="1.0.0
  anels.StatisticsField,com.supermap.desktop.ui.controls.TextFields",com.
  supermap.desktop.process.parameters.ParameterPanels.StatisticsField;ver
  sion="1.0.0";uses:="com.supermap.desktop.process.parameters.ParameterPa
- nels",com.supermap.desktop.process.ui;uses:="com.supermap.desktop.ui.co
- ntrols";version="1.0.0",com.supermap.desktop.ui;version="1.0.0";uses:="
+ nels",com.supermap.desktop.process.ui;version="1.0.0";uses:="com.superm
+ ap.desktop.ui.controls",com.supermap.desktop.ui;version="1.0.0";uses:="
  com.supermap.desktop,com.supermap.desktop.ui.controls,com.supermap.desk
  top.ui.mdi",com.supermap.desktop.ui.controls;version="1.0.0";uses:="com
  .supermap.desktop,com.supermap.desktop.ui,com.supermap.desktop.ui.contr

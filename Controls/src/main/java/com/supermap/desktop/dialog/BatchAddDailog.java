@@ -1,7 +1,7 @@
-package com.supermap.desktop.mapview.layer.propertycontrols;
+package com.supermap.desktop.dialog;
 
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
-import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.RightValueListener;
@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
 /**
  * Created by lixiaoyao on 2017/3/14.
  */
-public class BatchAddColorTableDailog extends SmDialog {
+public class BatchAddDailog extends SmDialog {
     private JLabel startValue = new JLabel();
     private JLabel endValue = new JLabel();
     private JRadioButton stepLength = new JRadioButton();
@@ -37,7 +37,7 @@ public class BatchAddColorTableDailog extends SmDialog {
     private int inputSeriesNum;
     private double resultKeys[];
 
-    public BatchAddColorTableDailog(double startValue, double endVale, int seriesNum, JFrame owner, boolean model) {
+    public BatchAddDailog(double startValue, double endVale, int seriesNum, JFrame owner, boolean model) {
         super(owner, model);
         this.inputStartValue = startValue;
         this.inputEndVale = endVale;
@@ -51,17 +51,17 @@ public class BatchAddColorTableDailog extends SmDialog {
     private ActionListener actionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == BatchAddColorTableDailog.this.okSmButton) {
+            if (e.getSource() == BatchAddDailog.this.okSmButton) {
                 calculResultKeys();
-                BatchAddColorTableDailog.this.setDialogResult(DialogResult.OK);
-                BatchAddColorTableDailog.this.dispose();
-            } else if (e.getSource() == BatchAddColorTableDailog.this.cancelSmButton) {
-                BatchAddColorTableDailog.this.dispose();
-            } else if (e.getSource() == BatchAddColorTableDailog.this.resetEndValue) {
-                isNeedResetCalculEndValue = BatchAddColorTableDailog.this.resetEndValue.isSelected();
-            } else if (e.getSource() == BatchAddColorTableDailog.this.stepLength) {
+                BatchAddDailog.this.setDialogResult(DialogResult.OK);
+                BatchAddDailog.this.dispose();
+            } else if (e.getSource() == BatchAddDailog.this.cancelSmButton) {
+                BatchAddDailog.this.dispose();
+            } else if (e.getSource() == BatchAddDailog.this.resetEndValue) {
+                isNeedResetCalculEndValue = BatchAddDailog.this.resetEndValue.isSelected();
+            } else if (e.getSource() == BatchAddDailog.this.stepLength) {
                 resetTextEnableForRadio();
-            } else if (e.getSource() == BatchAddColorTableDailog.this.seriesNum) {
+            } else if (e.getSource() == BatchAddDailog.this.seriesNum) {
                 resetTextEnableForRadio();
             }
         }
@@ -196,14 +196,14 @@ public class BatchAddColorTableDailog extends SmDialog {
         ComponentUIUtilities.setName(this.cancelSmButton, "BatchAddColorTableDailog_cancelSmButton");
     }
     private void initResources() {
-        setTitle(MapViewProperties.getString("String_BatchAddColorTable"));
-        this.startValue.setText(MapViewProperties.getString("String_BatchAddColorTableMinValue"));
-        this.endValue.setText(MapViewProperties.getString("String_BatchAddColorTableMaxValue"));
-        this.stepLength.setText(MapViewProperties.getString("String_BatchAddColorTableStepLength"));
-        this.seriesNum.setText(MapViewProperties.getString("String_BatchAddColorTableSeriesNum"));
-        this.resetEndValue.setText(MapViewProperties.getString("String_BatchAddColorTableResetCalculValue"));
-        this.okSmButton.setText(MapViewProperties.getString("String_BatchAddColorTableOKButton"));
-        this.cancelSmButton.setText(MapViewProperties.getString("String_BatchAddColorTableCancelButton"));
+        setTitle(ControlsProperties.getString("String_BatchAddColorTable"));
+        this.startValue.setText(ControlsProperties.getString("String_BatchAddColorTableMinValue"));
+        this.endValue.setText(ControlsProperties.getString("String_BatchAddColorTableMaxValue"));
+        this.stepLength.setText(ControlsProperties.getString("String_BatchAddColorTableStepLength"));
+        this.seriesNum.setText(ControlsProperties.getString("String_BatchAddColorTableSeriesNum"));
+        this.resetEndValue.setText(ControlsProperties.getString("String_BatchAddColorTableResetCalculValue"));
+        this.okSmButton.setText(ControlsProperties.getString("String_BatchAddColorTableOKButton"));
+        this.cancelSmButton.setText(ControlsProperties.getString("String_BatchAddColorTableCancelButton"));
     }
 
     private void registerEvents() {

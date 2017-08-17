@@ -11,16 +11,16 @@ import org.apache.http.impl.client.CloseableHttpClient;
  * @author XiaJT
  */
 public class ParameterIServerLogin extends ParameterCombine {
-	private ParameterTextField parameterTextFieldAddress = new ParameterTextField(CoreProperties.getString("String_Server"));
-	private ParameterTextField parameterTextFieldPort = new ParameterTextField(ProcessProperties.getString("String_port"));
-	private ParameterTextField parameterTextFieldUserName = new ParameterTextField(ProcessProperties.getString("String_UserName"));
+	private ParameterDefaultValueTextField parameterTextFieldAddress = new ParameterDefaultValueTextField(CoreProperties.getString("String_Server"));
+	private ParameterDefaultValueTextField parameterTextFieldPort = new ParameterDefaultValueTextField(ProcessProperties.getString("String_port"));
+	private ParameterDefaultValueTextField parameterTextFieldUserName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_UserName"));
 	private ParameterPassword parameterTextFieldPassword = new ParameterPassword(ProcessProperties.getString("String_PassWord"));
 
 	public ParameterIServerLogin() {
 		super();
-		parameterTextFieldAddress.setSelectedItem("192.168.15.248");
-		parameterTextFieldPort.setSelectedItem("8090");
-		parameterTextFieldUserName.setSelectedItem("admin");
+		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+		parameterTextFieldPort.setDefaultWarningValue("8090");
+		parameterTextFieldUserName.setDefaultWarningValue("admin");
 		parameterTextFieldPassword.setSelectedItem("map123!@#");
 		this.addParameters(parameterTextFieldAddress, parameterTextFieldPort, parameterTextFieldUserName, parameterTextFieldPassword);
 		this.setDescribe(ProcessProperties.getString("String_loginInfo"));

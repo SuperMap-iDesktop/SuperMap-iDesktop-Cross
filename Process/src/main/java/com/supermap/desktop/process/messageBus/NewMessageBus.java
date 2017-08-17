@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.lbs.IServerServiceImpl;
-import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.lbs.Interface.IServerService;
 import com.supermap.desktop.lbs.params.*;
+import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.lang.reflect.Field;
@@ -49,9 +49,12 @@ public class NewMessageBus {
 		if (!StringUtilities.isNullOrEmpty(queryInfo)) {
 			result = JSON.parseObject(queryInfo, JobItemResultResponse.class);
 		}
-		if (null != result) {
+		if (null != result && "FAILED".equals(result.state.runState)) {
+			this.updateProgress.updateProgress(100, "0", "Failed");
+			stop = true;
+			return;
+		} else if (null != result) {
 			if (null != result.setting.serviceInfo && null != result.setting.serviceInfo.targetServiceInfos) {
-				this.updateProgress.updateProgress(100, "", "");
 				//获取iserver服务发布地址,并打开到地图，如果存在已经打开的地图则将iserver服务上的地图打开到当前地图
 				ArrayList<IServerInfo> mapsList = result.setting.serviceInfo.targetServiceInfos;
 				String serviceAddress = "";
@@ -62,6 +65,7 @@ public class NewMessageBus {
 					}
 				}
 				if (!StringUtilities.isNullOrEmpty(serviceAddress)) {
+					this.updateProgress.updateProgress(100, "0", "Finished");
 					//获取查询iserver的结果
 					stop = true;
 					String datasourceName = "";
@@ -98,7 +102,7 @@ public class NewMessageBus {
 				}
 			} else {
 				if (percent <= 99) {
-					this.updateProgress.updateProgress(new Random().nextInt(99), "", "");
+					this.updateProgress.updateProgress(new Random().nextInt(99), "", "Running");
 				}
 				Thread.sleep(100);
 			}

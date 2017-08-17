@@ -261,7 +261,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	}
 
 	private boolean showError(String cachePath) {
-		new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString(""), cachePath));
+		new SmOptionPane().showErrorDialog(MessageFormat.format(MapViewProperties.getString("String_CachePathExistError"), cachePath));
 		changePanel();
 		return false;
 	}

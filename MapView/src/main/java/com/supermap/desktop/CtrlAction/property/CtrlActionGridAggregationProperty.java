@@ -59,10 +59,15 @@ public class CtrlActionGridAggregationProperty extends CtrlAction {
 
 			java.awt.Color color= java.awt.Color.WHITE;
 			java.awt.Color maxColor=colorsComboBox.getSelectedItem().get(0);
+//			System.out.println("maxcolor");
 //			System.out.println(maxColor);
+
 //			System.out.println(colorsComboBox.getSelectedItem().getCount());
 			LayerGridAggregation layerGridAggregation=((IFormMap) activeForm).getMapControl().getMap().getLayers().AddGridAggregation(result.getDataset(), maxColor, color);
 
+//			System.out.println("mincolor");
+//			System.out.println(color);
+//
 //			System.out.println("test 组件");
 //			System.out.println(layerGridAggregation.getMaxColor());
 //			maxColor=new java.awt.Color(123,4,45);
@@ -90,7 +95,7 @@ public class CtrlActionGridAggregationProperty extends CtrlAction {
 //				System.out.println(e);
 //				System.out.println("11111111111111111111111111111");
 //			}
-
+//
 //			System.out.println("test height:输出height默认值");
 //			System.out.println(layerGridAggregation.getGridHeight());
 //			layerGridAggregation.setGridHeight(12);
