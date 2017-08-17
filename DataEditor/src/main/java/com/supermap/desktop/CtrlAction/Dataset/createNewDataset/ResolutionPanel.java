@@ -1,7 +1,6 @@
 package com.supermap.desktop.CtrlAction.Dataset.createNewDataset;
 
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.ui.controls.TextFields.RightValueListener;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
 
 import javax.swing.*;
@@ -38,16 +37,23 @@ public class ResolutionPanel extends JPanel {
 	private JTextField textFieldRowCount;
 	private JTextField textFieldColumnCount;
 
-	private RightValueListener rightValueListener = new RightValueListener() {
-		@Override
-		public void update(String value) {
-		}
-	};
+//	private FocusAdapter focusAdapter = new FocusAdapter() {
+//		@Override
+//		public void focusLost(FocusEvent e) {
+//			WaringTextField textField = (WaringTextField) e.getSource();
+//			String value = textField.getTextField().getText();
+//			if (StringUtilities.isNullOrEmpty(value)) {
+//				textField.getTextField().setText("0.5");
+//			}
+//			if (Double.valueOf(value) <= 0) {
+//				textField.getTextField().setText("0.5");
+//			}
+//		}
+//	};
 
 	public ResolutionPanel() {
 		initComponents();
 		initLayout();
-		initStates();
 		registerEvent();
 	}
 
@@ -61,6 +67,8 @@ public class ResolutionPanel extends JPanel {
 		this.textFieldResolutionY = new WaringTextField();
 		this.textFieldRowCount = new JTextField();
 		this.textFieldColumnCount = new JTextField();
+		textFieldResolutionX.setInitInfo(0, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "22");
+		textFieldResolutionY.setInitInfo(0, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "22");
 	}
 
 	private void initLayout() {
@@ -100,24 +108,20 @@ public class ResolutionPanel extends JPanel {
 
 	}
 
-	private void initStates() {
 
-		textFieldResolutionX.setText("0.5");
-		textFieldResolutionY.setText("0.5");
-		textFieldResolutionX.setInitInfo(0, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "22");
+	public void initStates(Double x, Double y, int column, int row) {
+		textFieldResolutionX.setText(String.valueOf(x));
+		textFieldResolutionY.setText(String.valueOf(y));
 
-		textFieldResolutionY.setInitInfo(0, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "22");
+		textFieldColumnCount.setText(String.valueOf(column));
+		textFieldRowCount.setText(String.valueOf(row));
 
-
-		textFieldColumnCount.setText("800");
-		textFieldRowCount.setText("800");
 		textFieldColumnCount.setEditable(false);
 		textFieldRowCount.setEditable(false);
-
 	}
 
 	private void registerEvent() {
-		this.textFieldResolutionX.addRightValueListener(rightValueListener);
-		this.textFieldResolutionY.addRightValueListener(rightValueListener);
+		this.textFieldResolutionX.registEvents();
+		this.textFieldResolutionY.registEvents();
 	}
 }

@@ -1,8 +1,7 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.events.ParameterUpdateValueEvent;
-import com.supermap.desktop.process.parameter.events.UpdateValueListener;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -12,6 +11,8 @@ import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -60,13 +61,36 @@ public class ParameterPasswordPanel extends SwingPanel implements IParameterPane
 				}
 			}
 		});
-		parameterPassword.addUpdateValueListener(new UpdateValueListener() {
+		passwordField.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
-			public void fireUpdateValue(ParameterUpdateValueEvent event) {
-				isSelectingItem = true;
-				parameterPassword.setSelectedItem(new String(passwordField.getPassword()));
-				isSelectingItem = false;
+			public void insertUpdate(DocumentEvent e) {
+				valueChanged();
 			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				valueChanged();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				valueChanged();
+			}
+
+
 		});
+	}
+
+	private void valueChanged() {
+		try {
+			isSelectingItem = true;
+			parameterPassword.setSelectedItem(new String(passwordField.getPassword()));
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			isSelectingItem = false;
+		}
+
+
 	}
 }

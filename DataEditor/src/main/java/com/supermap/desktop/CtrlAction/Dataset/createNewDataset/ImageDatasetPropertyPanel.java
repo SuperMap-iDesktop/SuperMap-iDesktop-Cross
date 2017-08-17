@@ -18,6 +18,8 @@ import java.util.ArrayList;
  */
 public class ImageDatasetPropertyPanel extends JPanel {
 
+	private static final long serialVersionUID = 1L;
+
 	// 栅格分块
 	private JLabel blockSizeOptionLabel;
 	// 影像格式
@@ -48,7 +50,7 @@ public class ImageDatasetPropertyPanel extends JPanel {
 	public ImageDatasetPropertyPanel() {
 		initComponents();
 		initLayout();
-		initStates();
+//		initStates();
 		registerEvent();
 	}
 
@@ -85,6 +87,8 @@ public class ImageDatasetPropertyPanel extends JPanel {
 		this.comboboxPixelFormat.setModel(new DefaultComboBoxModel<>(tempImagePixelFormatType.toArray(new String[tempImagePixelFormatType.size()])));
 
 		this.textFieldImageDatasetbandCount = new WaringTextField();
+		this.textFieldImageDatasetbandCount.setInitInfo(1, 100, WaringTextField.INTEGER_TYPE, "0");
+
 	}
 
 	private void initLayout() {
@@ -120,11 +124,11 @@ public class ImageDatasetPropertyPanel extends JPanel {
 
 	}
 
-	private void initStates() {
-		this.comboboxBlockSizeOption.setSelectedItem(tempBlockSizeOptionType.get(0));
-		this.comboboxPixelFormat.setSelectedItem(tempImagePixelFormatType.get(10));
-		this.textFieldImageDatasetbandCount.setText("1");
-		this.textFieldImageDatasetbandCount.setInitInfo(1, 100, WaringTextField.INTEGER_TYPE, "0");
+	public void initStates(BlockSizeOption blockSizeOption, PixelFormat format, int count) {
+		this.comboboxBlockSizeOption.setSelectedItem(BlockSizeOptionUtilities.toString(blockSizeOption));
+		this.comboboxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(format));
+		this.textFieldImageDatasetbandCount.setText(String.valueOf(count));
+
 	}
 
 	private void registerEvent() {
