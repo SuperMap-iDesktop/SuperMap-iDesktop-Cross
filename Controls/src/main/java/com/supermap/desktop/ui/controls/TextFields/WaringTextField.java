@@ -300,7 +300,11 @@ public class WaringTextField extends JPanel {
 
 	//    供外部调用判断当前的textfield输入内容是否合法
 	public boolean isError() {
-		if (this.labelWarning.getIcon() != null) {
+		String text = textField.getText();
+		if (isNeedDisplayAThousandPoints) {
+			text = backNumberFromFormat(text);
+		}
+		if (StringUtilities.isNullOrEmpty(text) || !StringUtilities.isNumber(text)) {
 			return true;
 		} else {
 			return false;
