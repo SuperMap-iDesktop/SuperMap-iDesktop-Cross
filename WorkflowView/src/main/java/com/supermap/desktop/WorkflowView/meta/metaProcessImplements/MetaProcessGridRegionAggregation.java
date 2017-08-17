@@ -49,8 +49,8 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 		parameterMeshType.setItems(parameterDataNodes);
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
 		parameterResolution.setDefaultWarningValue("100");
-		parameterStaticModel.setDefaultWarningValue("max");
-		parameterWeightIndex.setDefaultWarningValue("col7");
+		parameterStaticModel.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
+		parameterWeightIndex.setToolTip(ProcessProperties.getString("String_WeightIndexTip"));
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
 	}
 
