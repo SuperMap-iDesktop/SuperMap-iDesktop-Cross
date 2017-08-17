@@ -40,11 +40,27 @@ public class JDialogNewImageDataset extends SmDialog {
 		this.gridImageExtraDatasetBean = this.newDatasetBean.getGridImageExtraDatasetBean();
 		initComponents();
 		initLayout();
+		initStates();
 		registerEvent();
 		this.setTitle(DataEditorProperties.getString("String_NewDatasetImage"));
 		this.setModal(true);
-		setSize(700, 420);
+		setSize(700, 360);
 		this.setLocationRelativeTo(null);
+	}
+
+	private void initStates() {
+
+		basicInfoPanel.initStates(newDatasetBean);
+
+		double x = this.gridImageExtraDatasetBean.getRectangle().getWidth() / this.gridImageExtraDatasetBean.getWidth();
+		double y = this.gridImageExtraDatasetBean.getRectangle().getHeight() / this.gridImageExtraDatasetBean.getHeight();
+		resolutionPanel.initStates(x, y, this.gridImageExtraDatasetBean.getWidth(), this.gridImageExtraDatasetBean.getHeight());
+
+		datasetBoundsPanel.initStates(this.gridImageExtraDatasetBean.getRectangle());
+
+		imagePropertyPanel.initStates(this.gridImageExtraDatasetBean.getBlockSizeOption(),
+				this.gridImageExtraDatasetBean.getPixelFormat(),
+				this.gridImageExtraDatasetBean.getBandCount());
 	}
 
 
@@ -114,27 +130,65 @@ public class JDialogNewImageDataset extends SmDialog {
 			}
 		});
 
-		this.datasetBoundsPanel.textFieldCurrentViewBottom.getTextField().addCaretListener(caretListener);
-		this.datasetBoundsPanel.textFieldCurrentViewTop.getTextField().addCaretListener(caretListener);
-		this.datasetBoundsPanel.textFieldCurrentViewLeft.getTextField().addCaretListener(caretListener);
-		this.datasetBoundsPanel.textFieldCurrentViewRight.getTextField().addCaretListener(caretListener);
+		this.datasetBoundsPanel.getTextFieldCurrentViewLeft().getTextField().addCaretListener(caretListener);
+		this.datasetBoundsPanel.getTextFieldCurrentViewRight().getTextField().addCaretListener(caretListener);
+		this.datasetBoundsPanel.getTextFieldCurrentViewBottom().getTextField().addCaretListener(caretListener);
+		this.datasetBoundsPanel.getTextFieldCurrentViewTop().getTextField().addCaretListener(caretListener);
+
 		this.resolutionPanel.getTextFieldResolutionX().getTextField().addCaretListener(caretListener);
 		this.resolutionPanel.getTextFieldResolutionY().getTextField().addCaretListener(caretListener);
+
+//		this.datasetBoundsPanel.getTextFieldCurrentViewLeft().getTextField().addFocusListener(focusAdapter);
+//		this.datasetBoundsPanel.getTextFieldCurrentViewRight().getTextField().addFocusListener(focusAdapter);
+//		this.datasetBoundsPanel.getTextFieldCurrentViewBottom().getTextField().addFocusListener(focusAdapter);
+//		this.datasetBoundsPanel.getTextFieldCurrentViewTop().getTextField().addFocusListener(focusAdapter);
+//
+//		this.resolutionPanel.getTextFieldResolutionX().getTextField().addFocusListener(focusAdapter);
+//		this.resolutionPanel.getTextFieldResolutionY().getTextField().addFocusListener(focusAdapter);
 	}
+
+//	private FocusAdapter focusAdapter = new FocusAdapter() {
+//		@Override
+//		public void focusLost(FocusEvent e) {
+//			String resolutionX = resolutionPanel.getTextFieldResolutionX().getText();
+//			String resolutionY = resolutionPanel.getTextFieldResolutionY().getText();
+//
+//			if (!StringUtilities.isNullOrEmpty(resolutionX) && !StringUtilities.isNullOrEmpty(resolutionY)) {
+//				double X = Double.valueOf(resolutionPanel.getTextFieldResolutionX().getText());
+//				double Y = Double.valueOf(resolutionPanel.getTextFieldResolutionY().getText());
+//
+//				Rectangle2D rectangle2D = datasetBoundsPanel.getRangeBound();
+//				if (rectangle2D != null) {
+//					int width = (int) (rectangle2D.getWidth() / X);
+//					int height = (int) (rectangle2D.getHeight() / Y);
+//					resolutionPanel.getTextFieldRowCount().setText(String.valueOf(width));
+//					resolutionPanel.getTextFieldColumnCount().setText(String.valueOf(height));
+//				} else {
+//					resolutionPanel.getTextFieldRowCount().setText("0");
+//					resolutionPanel.getTextFieldColumnCount().setText("0");
+//				}
+//			} else {
+//				resolutionPanel.getTextFieldRowCount().setText("0");
+//				resolutionPanel.getTextFieldColumnCount().setText("0");
+//			}
+//		}
+//	};
 
 	private CaretListener caretListener = new CaretListener() {
 		@Override
 		public void caretUpdate(CaretEvent e) {
-			if (!StringUtilities.isNullOrEmpty(resolutionPanel.getTextFieldResolutionX().getText()) &&
-					!StringUtilities.isNullOrEmpty(resolutionPanel.getTextFieldResolutionY().getText())) {
-				double resolutionX = Double.valueOf(resolutionPanel.getTextFieldResolutionX().getText());
-				double resolutionY = Double.valueOf(resolutionPanel.getTextFieldResolutionY().getText());
+			String resolutionX = resolutionPanel.getTextFieldResolutionX().getText();
+			String resolutionY = resolutionPanel.getTextFieldResolutionY().getText();
+
+			if (!StringUtilities.isNullOrEmpty(resolutionX) && !StringUtilities.isNullOrEmpty(resolutionY)) {
+				double X = Double.valueOf(resolutionPanel.getTextFieldResolutionX().getText());
+				double Y = Double.valueOf(resolutionPanel.getTextFieldResolutionY().getText());
 				Rectangle2D rectangle2D = datasetBoundsPanel.getRangeBound();
-				if (rectangle2D != null) {
-					int width = (int) (rectangle2D.getWidth() / resolutionX);
-					int height = (int) (rectangle2D.getHeight() / resolutionY);
-					resolutionPanel.getTextFieldRowCount().setText(String.valueOf(width));
-					resolutionPanel.getTextFieldColumnCount().setText(String.valueOf(height));
+				if (X != 0.0 && Y != 0.0 && rectangle2D != null) {
+					int width = (int) (rectangle2D.getWidth() / X);
+					int height = (int) (rectangle2D.getHeight() / Y);
+					resolutionPanel.getTextFieldRowCount().setText(String.valueOf(height));
+					resolutionPanel.getTextFieldColumnCount().setText(String.valueOf(width));
 				} else {
 					resolutionPanel.getTextFieldRowCount().setText("0");
 					resolutionPanel.getTextFieldColumnCount().setText("0");
@@ -153,7 +207,7 @@ public class JDialogNewImageDataset extends SmDialog {
 		Datasource datasource = this.basicInfoPanel.getDatasourceComboBox().getSelectedDatasource();
 		EncodeType encodeType = this.basicInfoPanel.getEncodeType();
 
-		int width = Integer.valueOf(resolutionPanel.getTextFieldRowCount().getText());
+		int width = Integer.valueOf(resolutionPanel.getTextFieldColumnCount().getText());
 		int height = Integer.valueOf(resolutionPanel.getTextFieldRowCount().getText());
 
 		BlockSizeOption blockSizeOption = BlockSizeOptionUtilities.valueOf(((String) imagePropertyPanel.getComboboxBlockSizeOption().getSelectedItem()));
@@ -171,7 +225,9 @@ public class JDialogNewImageDataset extends SmDialog {
 		newDatasetBean.getGridImageExtraDatasetBean().setHeight(height);
 		newDatasetBean.getGridImageExtraDatasetBean().setWidth(width);
 		newDatasetBean.getGridImageExtraDatasetBean().setBandCount(bandCount);
-		newDatasetBean.getGridImageExtraDatasetBean().setRectangle(rectangle2D);
+		if (rectangle2D != null) {
+			newDatasetBean.getGridImageExtraDatasetBean().setRectangle(rectangle2D);
+		}
 
 		setDialogResult(DialogResult.OK);
 		this.dispose();

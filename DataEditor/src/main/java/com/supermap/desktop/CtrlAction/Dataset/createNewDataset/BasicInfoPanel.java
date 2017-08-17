@@ -7,7 +7,6 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
-import com.supermap.desktop.ui.controls.comboBox.ComboBoxDatasetType;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
 
 import javax.swing.*;
@@ -25,7 +24,7 @@ public class BasicInfoPanel extends JPanel {
 
 	private String datasetName;
 	private Datasource targetDatasource;
-	private EncodeType encodeType = EncodeType.NONE;
+	private EncodeType encodeType;
 	private DatasetType inputDatasetType;
 
 	private JLabel datasetNameLabel;
@@ -53,7 +52,7 @@ public class BasicInfoPanel extends JPanel {
 		initComponents();
 		initLayout();
 
-		initStates(this.inputDatasetType);
+//		initStates(this.inputDatasetType);
 		registerEvent();
 	}
 
@@ -69,49 +68,41 @@ public class BasicInfoPanel extends JPanel {
 			}
 		});
 
-//		comboboxEncodingType.addItemListener(new ItemListener() {
-//			@Override
-//			public void itemStateChanged(ItemEvent e) {
-//				encodeType = EncodeTypeUtilities.valueOf((String) comboboxEncodingType.getSelectedItem());
-//			}
-//		});
-
 	}
 
 	/**
-	 * @param inputDatasetType
+	 * @param datasetBean
 	 */
-	private void initStates(DatasetType inputDatasetType) {
-		if (inputDatasetType.equals(DatasetType.GRID)) {
-			Datasource datasource = datasourceComboBox.getSelectedDatasource();
-			datasetNameTextField.setText(datasource.getDatasets().getAvailableDatasetName("New_Grid"));
-			ArrayList<String> tempGridEncodeType = new ArrayList<>();
-			tempGridEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
-			tempGridEncodeType.add(EncodeTypeUtilities.toString(EncodeType.DCT));
-			tempGridEncodeType.add(EncodeTypeUtilities.toString(EncodeType.SGL));
-			tempGridEncodeType.add(EncodeTypeUtilities.toString(EncodeType.LZW));
-			comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempGridEncodeType.toArray(new String[tempGridEncodeType.size()])));
-			comboboxEncodingType.setSelectedItem(tempGridEncodeType.get(0));
-		} else if (inputDatasetType.equals(DatasetType.IMAGE)) {
-			Datasource datasource = datasourceComboBox.getSelectedDatasource();
-			datasetNameTextField.setText(datasource.getDatasets().getAvailableDatasetName("New_Image"));
-			ArrayList<String> tempImageEncodeType = new ArrayList<>();
-			tempImageEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
-			tempImageEncodeType.add(EncodeTypeUtilities.toString(EncodeType.DCT));
-			tempImageEncodeType.add(EncodeTypeUtilities.toString(EncodeType.LZW));
-			comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempImageEncodeType.toArray(new String[tempImageEncodeType.size()])));
-			comboboxEncodingType.setSelectedItem(tempImageEncodeType.get(0));
-		}
-
+	public void initStates(NewDatasetBean datasetBean) {
+		datasourceComboBox.setSelectedDatasource(datasetBean.getDatasource());
+		datasetNameTextField.setText(datasetBean.getDatasetName());
+		comboboxEncodingType.setSelectedItem(EncodeTypeUtilities.toString(datasetBean.getEncodeType()));
 	}
 
 	private void initComponents() {
 		this.datasetNameLabel = new JLabel(ControlsProperties.getString("String_Label_DatasetName"));
 		this.targetDatasourceLabel = new JLabel(ControlsProperties.getString("String_Label_TargetDatasource"));
 		this.encodeTypeLabel = new JLabel(CommonProperties.getString("String_Label_EncodeType"));
-		datasetNameTextField = new JTextField();
-		datasourceComboBox = new DatasourceComboBox();
-		comboboxEncodingType = new ComboBoxDatasetType();
+		this.datasetNameTextField = new JTextField();
+		this.datasourceComboBox = new DatasourceComboBox();
+		this.comboboxEncodingType = new JComboBox<>();
+
+		if (inputDatasetType.equals(DatasetType.GRID)) {
+//			comboboxEncodingType.removeAllItems();
+			ArrayList<String> tempGridEncodeType = new ArrayList<>();
+			tempGridEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
+			tempGridEncodeType.add(EncodeTypeUtilities.toString(EncodeType.DCT));
+			tempGridEncodeType.add(EncodeTypeUtilities.toString(EncodeType.SGL));
+			tempGridEncodeType.add(EncodeTypeUtilities.toString(EncodeType.LZW));
+			comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempGridEncodeType.toArray(new String[tempGridEncodeType.size()])));
+		} else if (inputDatasetType.equals(DatasetType.IMAGE)) {
+//			comboboxEncodingType.removeAllItems();
+			ArrayList<String> tempImageEncodeType = new ArrayList<>();
+			tempImageEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
+			tempImageEncodeType.add(EncodeTypeUtilities.toString(EncodeType.DCT));
+			tempImageEncodeType.add(EncodeTypeUtilities.toString(EncodeType.LZW));
+			comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempImageEncodeType.toArray(new String[tempImageEncodeType.size()])));
+		}
 	}
 
 

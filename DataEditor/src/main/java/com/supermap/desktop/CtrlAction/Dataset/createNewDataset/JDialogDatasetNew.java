@@ -269,8 +269,8 @@ public class JDialogDatasetNew extends SmDialog {
 				// 当选择了影像数据集类型，弹出设置面板
 				if (datasetTypeComboBox.getSelectedDatasetTypeName().contains(DatasetTypeUtilities.toString(DatasetType.IMAGE))) {
 					// 给新建影像数据集面板属性设置类，并打开面板
-					JDialogNewImageDataset dialogNewGridDataset = new JDialogNewImageDataset(newDatasetTableModel.getDatasetBean(table.getSelectedRow()));
-					dialogNewGridDataset.showDialog();
+//					JDialogNewImageDataset dialogNewGridDataset = new JDialogNewImageDataset(newDatasetTableModel.getDatasetBean(table.getSelectedRow()));
+//					dialogNewGridDataset.showDialog();
 				}
 			}
 		});

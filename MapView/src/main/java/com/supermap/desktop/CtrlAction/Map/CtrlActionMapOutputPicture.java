@@ -2,7 +2,7 @@ package com.supermap.desktop.CtrlAction.Map;
 
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.dialog.DiglogMapOutputPicture;
+import com.supermap.desktop.dialog.DialogMapOutputPicture;
 import com.supermap.desktop.implement.CtrlAction;
 
 /**
@@ -15,7 +15,7 @@ public class CtrlActionMapOutputPicture extends CtrlAction {
 
 	@Override
 	public void run() {
-		DiglogMapOutputPicture diglogMapOutputPicture = new DiglogMapOutputPicture();
+		DialogMapOutputPicture diglogMapOutputPicture = new DialogMapOutputPicture();
 		diglogMapOutputPicture.showDialog();
 	}
 
