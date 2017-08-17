@@ -42,6 +42,13 @@ public class MetaKeys {
 	public static final String COST_PATH_LINE = "CostPathLine";
 	public static final String ELIMINATE = "Eliminate";
 
+	//栅格统计
+	public static final String BASEIC_STATISTIC = "BasicStatistics";
+	public static final String COMMON_STATISTIC = "CommonStatistics";
+	public static final String NEIGHBOUR_STATISTIC = "NeighbourStatistics";
+	public static final String ZONAL_STATISTICS_ON_RASTER_VALUE = "ZonalStatisticsOnRasterValue";
+	public static final String HEIGHT_VALUE_STATISTIC = "HeightValueStatistics";
+
 	// 距离栅格
 	public static final String SHORTEST_PATH = "ShortestPath";
 	public static final String SURFACE_PATH_LINE = "SurfacePathLine";

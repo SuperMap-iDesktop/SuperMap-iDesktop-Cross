@@ -36,19 +36,11 @@ import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessS
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessThiessenPolygon;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessThinRaster;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessVectorToRaster;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessAggregatePoints;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessAppendFields;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessDissolve;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessDualLineToCenterLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessEdgeMatch;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessEliminate;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessLinePolygonSmooth;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessPickupBorder;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessRarefyPoints;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessRegionToCenterLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessRegionTrunkToCenterLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessVectorResample;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridDistance.MetaProcessSurfacePathLine;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.MetaProcessBasicStatistics;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.MetaProcessCommonStatistics;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.MetaProcessNeighbourStatistics;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessAutoCorrelation;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessAverageNearestNeighbor;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessCentralElement;
@@ -408,6 +400,16 @@ public class WorkflowParser {
 			result = new MetaProcessEliminate();
 		} else if (MetaKeys.CREATE_DISTANCE_RASTER.equals(key)) {
 			result = new MetaProcessCreateDistanceRaster();
+		} else if (MetaKeys.CREATE_DISTANCE_RASTER.equals(key)) {
+			result = new MetaProcessCreateDistanceRaster();
+		} else if (MetaKeys.GRID_RESAMPLE.equals(key)) {
+			result = new MetaProcessGridResample();
+		} else if (MetaKeys.BASEIC_STATISTIC.equals(key)) {
+			result = new MetaProcessBasicStatistics();
+		} else if (MetaKeys.COMMON_STATISTIC.equals(key)) {
+			result = new MetaProcessCommonStatistics();
+		} else if (MetaKeys.NEIGHBOUR_STATISTIC.equals(key)) {
+			result = new MetaProcessNeighbourStatistics();
 		} else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}

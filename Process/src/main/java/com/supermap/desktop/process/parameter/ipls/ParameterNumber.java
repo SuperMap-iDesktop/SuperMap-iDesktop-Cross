@@ -34,7 +34,7 @@ public class ParameterNumber extends ParameterTextField {
 					if (StringUtilities.isNullOrEmpty(textFieldValue)) {
 						return false;
 					}
-					if (textFieldValue.endsWith(".")) {
+					if (textFieldValue.endsWith(".")||textFieldValue.endsWith("-")) {
 						return false;
 					}
 					if (textFieldValue.split("\\.").length > 2) {
