@@ -8,6 +8,7 @@ public class ParameterType {
 	public static final String BUTTON = "Button";
 	public static final String ENUM = "Enum";
 	public static final String TEXTFIELD = "TextField";
+	public static final String DEFAULTVALUETEXTFIELD="DefaultValueTextField";
 	public static final String DOUBLE = "Double";
 	public static final String INT = "Int";
 	public static final String RADIO_BUTTON = "RadioButton";
@@ -46,4 +47,5 @@ public class ParameterType {
 	public static final String DATASET_CHOOSE_TABLE="DatasetChooseTable";
 	public static final String SQL_EXPRESSION="SQLExpression";
 	public static final String MULTIFIELDSET="MultiFieldSet";
+	public static final String SHAPE_TYPE="ShapeType";
 }

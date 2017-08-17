@@ -28,7 +28,7 @@ import java.beans.PropertyChangeListener;
  */
 public class MetaProcessGridResample extends MetaProcess {
 	private final static String INPUT_DATA = SOURCE_PANEL_DESCRIPTION;
-	private final static String OUTPUT_DATA = RESULT_PANEL_DESCRIPTION;
+	private final static String OUTPUT_DATA = "GridResampleResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
@@ -173,7 +173,7 @@ public class MetaProcessGridResample extends MetaProcess {
 			double cellSize = Double.parseDouble(numberPixel.getSelectedItem().toString());
 			ResampleMode mode = (ResampleMode) comboBoxMethod.getSelectedData();
 			GeneralizeAnalyst.addSteppedListener(steppedListener);
-			Dataset result = GeneralizeAnalyst.resample(src, cellSize, mode, src.getDatasource(), resultDataset.getDatasetName());
+			Dataset result = GeneralizeAnalyst.resample(src, cellSize, mode, resultDataset.getResultDatasource(), resultDataset.getDatasetName());
 			isSuccessful = result != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			fireRunning(new RunningEvent(this,100,"finished"));

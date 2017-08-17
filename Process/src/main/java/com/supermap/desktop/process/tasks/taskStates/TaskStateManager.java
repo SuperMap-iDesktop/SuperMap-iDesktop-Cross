@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.tasks.taskStates;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.Workflow;
@@ -45,10 +46,17 @@ public class TaskStateManager {
 	}
 
 	public Vector<IProcess> get(int stateIndex) {
-		for (TaskState currentState : currentStates) {
-			if (currentState.getStateIndex() == stateIndex) {
-				return currentState.getProcesses();
+		try {
+			lock.lock();
+			for (TaskState currentState : currentStates) {
+				if (currentState.getStateIndex() == stateIndex) {
+					return currentState.getProcesses();
+				}
 			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			lock.unlock();
 		}
 		return null;
 	}
