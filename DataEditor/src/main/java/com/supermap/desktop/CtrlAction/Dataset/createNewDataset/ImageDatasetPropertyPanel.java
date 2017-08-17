@@ -128,7 +128,6 @@ public class ImageDatasetPropertyPanel extends JPanel {
 		this.comboboxBlockSizeOption.setSelectedItem(BlockSizeOptionUtilities.toString(blockSizeOption));
 		this.comboboxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(format));
 		this.textFieldImageDatasetbandCount.setText(String.valueOf(count));
-
 	}
 
 	private void registerEvent() {

@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * Created by yuanR on 2017/8/16 0016.
  * 新建数据集-属性面板
  */
-public class PropertyPanel extends JPanel {
+public class PanelDatasetNewProperty extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -44,7 +44,7 @@ public class PropertyPanel extends JPanel {
 	//	ArrayList<String> tempcharsharsetes;
 	NewDatasetBean datasetBean;
 
-	public PropertyPanel() {
+	public PanelDatasetNewProperty() {
 		initComponents();
 		initLayout(DatasetType.POINT);
 //		initStates(this.datasetBean);
@@ -280,7 +280,7 @@ public class PropertyPanel extends JPanel {
 		buttonAdvancedSet.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JDialogNewImageDataset dialogNewGridDataset = new JDialogNewImageDataset(datasetBean);
+				JDialogDatasetImageAdvanceSet dialogNewGridDataset = new JDialogDatasetImageAdvanceSet(datasetBean);
 				dialogNewGridDataset.showDialog();
 			}
 		});
