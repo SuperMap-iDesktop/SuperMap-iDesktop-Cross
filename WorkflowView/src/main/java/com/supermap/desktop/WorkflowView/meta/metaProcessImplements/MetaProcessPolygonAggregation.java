@@ -19,6 +19,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -36,6 +37,10 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 	private ParameterSingleDataset parameterSingleDataset = new ParameterSingleDataset(DatasetType.REGION);
 	private ParameterDefaultValueTextField parameterStaticModel = new ParameterDefaultValueTextField().setDescribe(ProcessProperties.getString("String_StaticModel"));
 	private ParameterDefaultValueTextField parameterWeightIndex = new ParameterDefaultValueTextField().setDescribe(ProcessProperties.getString("String_Index"));
+	private ParameterDefaultValueTextField parameterDataBaseName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_DataBaseName"));
+	private ParameterDefaultValueTextField parameterTextFieldAddress = new ParameterDefaultValueTextField(CoreProperties.getString("String_Server"));
+	private ParameterDefaultValueTextField parameterTextFieldUserName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_UserName"));
+	private ParameterPassword parameterTextFieldPassword = new ParameterPassword(ProcessProperties.getString("String_PassWord"));
 
 	public MetaProcessPolygonAggregation() {
 		initComponents();
@@ -45,10 +50,14 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 	}
 
 	private void initComponents() {
-		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_PolygonAggregationType"), "SummaryRegionMain");
+		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_PolygonAggregationType"), "SUMMARYREGION");
+
 		parameterAggregationType.setItems(parameterDataNode);
 		parameterAggregationType.setSelectedItem(parameterDataNode);
-
+		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+		parameterDataBaseName.setDefaultWarningValue("supermap");
+		parameterTextFieldUserName.setDefaultWarningValue("postgres");
+		parameterTextFieldPassword.setSelectedItem("supermap");
 		parameterBigDatasourceDatasource.setDescribe(ControlsProperties.getString("String_Label_ResultDatasource"));
 		parameterSingleDataset.setDescribe(ProcessProperties.getString("String_AggregateDataset"));
 		parameterStaticModel.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
@@ -60,6 +69,10 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_setParameter"));
 		parameterCombineSetting.addParameters(
 				parameterAggregationType,
+				parameterTextFieldAddress,
+				parameterDataBaseName,
+				parameterTextFieldUserName,
+				parameterTextFieldPassword,
 				parameterBigDatasourceDatasource,
 				parameterSingleDataset,
 				parameterStaticModel,
@@ -74,7 +87,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 
 	private void initComponentState() {
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
 		if (defaultBigDataStoreDataset != null) {
 			parameterBigDatasourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterSingleDataset.setSelectedItem(defaultBigDataStoreDataset);
@@ -110,9 +123,10 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 			Dataset dataset = parameterSingleDataset.getSelectedDataset();
 			CommonSettingCombine fields = new CommonSettingCombine("fields", parameterWeightIndex.getSelectedItem().toString());
 			CommonSettingCombine statisticModes = new CommonSettingCombine("statisticModes", parameterStaticModel.getSelectedItem().toString());
-			CommonSettingCombine regionDataset = new CommonSettingCombine("regionDataset", dataset.getName());
+			String regionDatasourceStr = "{\\\"type\\\":\\\"pg\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + parameterTextFieldAddress.getSelectedItem() + "\\\",\\\"datasetNames\\\":[\\\"" + dataset.getName() + "\\\"],\\\"database\\\":\\\"" + parameterDataBaseName.getSelectedItem() + "\\\",\\\"user\\\":\\\"" + parameterTextFieldUserName.getSelectedItem() + "\\\",\\\"password\\\":\\\"" + parameterTextFieldPassword.getSelectedItem() + "\\\"}]}";
+			CommonSettingCombine regionDatasource = new CommonSettingCombine("regionDatasource", regionDatasourceStr);
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
-			analyst.add(fields, statisticModes, regionDataset);
+			analyst.add(fields, statisticModes, regionDatasource);
 
 			CommonSettingCombine type = new CommonSettingCombine("type", parameterAggregationType.getSelectedData().toString());
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");

@@ -37,6 +37,10 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 	private ParameterBigDatasourceDatasource parameterOverlayDatasource;
 	private ParameterSingleDataset parameterOverlayDataset;
 	private ParameterComboBox parameterOverlayTypeComboBox;
+	private ParameterDefaultValueTextField parameterDataBaseName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_DataBaseName"));
+	private ParameterDefaultValueTextField parameterTextFieldAddress = new ParameterDefaultValueTextField(CoreProperties.getString("String_Server"));
+	private ParameterDefaultValueTextField parameterTextFieldUserName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_UserName"));
+	private ParameterPassword parameterTextFieldPassword = new ParameterPassword(ProcessProperties.getString("String_PassWord"));
 
 	public MetaProcessOverlayanalystgeo() {
 		initComponents();
@@ -46,6 +50,10 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 	}
 
 	private void initComponents() {
+		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+		parameterDataBaseName.setDefaultWarningValue("supermap");
+		parameterTextFieldUserName.setDefaultWarningValue("postgres");
+		parameterTextFieldPassword.setSelectedItem("supermap");
 		parameterOverlayDatasource = new ParameterBigDatasourceDatasource();
 		parameterOverlayDatasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
 		parameterOverlayDataset = new ParameterSingleDataset(DatasetType.REGION);
@@ -59,7 +67,12 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 		ParameterCombine parameterCombineOverlay = new ParameterCombine();
 		parameterCombineOverlay.setDescribe(CommonProperties.getString("String_clipDataset"));
-		parameterCombineOverlay.addParameters(parameterOverlayDatasource, parameterOverlayDataset);
+		parameterCombineOverlay.addParameters(parameterTextFieldAddress,
+				parameterDataBaseName,
+				parameterTextFieldUserName,
+				parameterTextFieldPassword,
+				parameterOverlayDatasource,
+				parameterOverlayDataset);
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
 		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_AnalystSet"));
 		parameterCombineSetting.addParameters(parameterOverlayTypeComboBox);
@@ -71,7 +84,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 	private void initComponentState() {
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
 		if (defaultBigDataStoreDataset != null) {
 			parameterOverlayDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterOverlayDataset.setSelectedItem(defaultBigDataStoreDataset);
@@ -103,10 +116,11 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
 			Dataset overlayDataset = parameterOverlayDataset.getSelectedDataset();
-			CommonSettingCombine datasetOverlay = new CommonSettingCombine("datasetOverlay", overlayDataset.getName());
+			String inputOverlayStr = "{\\\"type\\\":\\\"pg\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + parameterTextFieldAddress.getSelectedItem() + "\\\",\\\"datasetNames\\\":[\\\"" + overlayDataset.getName() + "\\\"],\\\"database\\\":\\\"" + parameterDataBaseName.getSelectedItem() + "\\\",\\\"user\\\":\\\"" + parameterTextFieldUserName.getSelectedItem() + "\\\",\\\"password\\\":\\\"" + parameterTextFieldPassword.getSelectedItem() + "\\\"}]}";
+			CommonSettingCombine inputOverlay = new CommonSettingCombine("inputOverlay", inputOverlayStr);
 			CommonSettingCombine mode = new CommonSettingCombine("mode", (String) parameterOverlayTypeComboBox.getSelectedData());
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
-			analyst.add(datasetOverlay, mode);
+			analyst.add(inputOverlay, mode);
 
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input, analyst);
