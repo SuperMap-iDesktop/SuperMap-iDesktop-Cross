@@ -53,6 +53,14 @@ public class Outputs {
 		addData(new OutputData(this.process, name, type));
 	}
 
+	public void addData(String name, String text, Type type) {
+		if (StringUtilities.isNullOrEmpty(name)) {
+			return;
+		}
+
+		addData(new OutputData(this.process, name, text, type));
+	}
+
 	public OutputData[] getDatas() {
 		ArrayList<OutputData> result = new ArrayList<>();
 

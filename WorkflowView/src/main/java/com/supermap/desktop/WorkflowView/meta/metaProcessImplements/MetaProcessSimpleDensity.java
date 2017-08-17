@@ -52,7 +52,7 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 
 		//流程图中不支持在地图中绘制范围，范围表示与iServer的表示相同
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
-		parameterIndex.setDefaultWarningValue("col7");
+		parameterIndex.setToolTip(ProcessProperties.getString("String_WeightIndexTip"));
 		parameterMeshSize.setDefaultWarningValue("50");
 		parameterMeshSizeUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),

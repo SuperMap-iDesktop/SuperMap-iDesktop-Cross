@@ -60,6 +60,14 @@ public class Inputs {
 		addData(new InputData(name, type));
 	}
 
+	public void addData(String name, String text, Type type) {
+		if (StringUtilities.isNullOrEmpty(name)) {
+			return;
+		}
+
+		addData(new InputData(name, text, type));
+	}
+
 	public void addData(InputData data) {
 		if (data == null) {
 			return;

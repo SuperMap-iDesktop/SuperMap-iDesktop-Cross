@@ -1,6 +1,5 @@
 package com.supermap.desktop.WorkflowView.graphics.graphs;
 
-import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.WorkflowView.graphics.GraphCanvas;
 import com.supermap.desktop.WorkflowView.graphics.events.GraphBoundsChangedListener;
 import com.supermap.desktop.WorkflowView.graphics.graphs.decorators.IDecorator;
@@ -55,10 +54,6 @@ public interface IGraph {
 	void addGraphBoundsChangedListener(GraphBoundsChangedListener listener);
 
 	void removeGraghBoundsChangedListener(GraphBoundsChangedListener listener);
-
-	String toXml();
-
-	IGraph formXml(JSONObject xml);
 
 	void paint(Graphics g);
 }

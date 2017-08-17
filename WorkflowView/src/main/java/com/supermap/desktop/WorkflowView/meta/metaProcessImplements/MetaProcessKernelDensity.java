@@ -52,7 +52,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 				new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1"));
 
 		//流程图中不支持在地图中绘制范围，范围表示与iServer的表示相同
-		parameterIndex.setDefaultWarningValue("col7");
+		parameterIndex.setToolTip(ProcessProperties.getString("String_WeightIndexTip"));
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
 		parameterMeshSize.setDefaultWarningValue("50");
 		parameterMeshSizeUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
