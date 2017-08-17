@@ -42,10 +42,10 @@ public class ParameterDatasetChooseTablePanel extends SwingPanel {
 	private void init() {
 		initComponents();
 		initLayout();
-		registEvents();
+		registerEvents();
 	}
 
-	private void registEvents() {
+	private void registerEvents() {
 		datasetChooseTable.addFieldConstraintChangedListener(new FieldConstraintChangedListener() {
 			@Override
 			public void fieldConstraintChanged(FieldConstraintChangedEvent event) {

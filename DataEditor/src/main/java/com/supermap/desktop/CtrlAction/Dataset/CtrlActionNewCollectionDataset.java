@@ -20,7 +20,9 @@ public class CtrlActionNewCollectionDataset extends CtrlAction {
 	@Override
 	protected void run() {
 		//0表示创建的是矢量数据集集合
-		new JDialogCreateCollectionDataset(0).showDialog();
+		JDialogCreateCollectionDataset collectionDataset = new JDialogCreateCollectionDataset(0);
+		collectionDataset.isSetDatasetCollectionCount(false);
+		collectionDataset.showDialog();
 	}
 
 	@Override

@@ -1,29 +1,16 @@
 package com.supermap.desktop.ui.controls.CollectionDataset;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasource;
-import com.supermap.data.Datasources;
-import com.supermap.data.EngineType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.CharsetComboBox;
-import com.supermap.desktop.ui.controls.DatasourceComboBox;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
-import com.supermap.desktop.utilities.CharsetUtilities;
-import com.supermap.desktop.utilities.CoreResources;
-import com.supermap.desktop.utilities.DatasetTypeUtilities;
-import com.supermap.desktop.utilities.DatasourceUtilities;
-import com.supermap.desktop.utilities.TableUtilities;
+import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
+import com.supermap.desktop.utilities.*;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -40,12 +27,12 @@ import java.util.ArrayList;
 public class JDialogCreateCollectionDataset extends SmDialog {
 	private JTable tableDatasetDisplay;
 	private JLabel labelDatasource;
-	private DatasourceComboBox datasourceComboBox;
+	protected DatasourceComboBox datasourceComboBox;
 	private JLabel labelDatasetName;
-	private JTextField textFieldDatasetName;
+	protected JTextField textFieldDatasetName;
 	//新建数据集集合控件
 	private JLabel labelCharset;
-	private CharsetComboBox charsetComboBox;
+	protected CharsetComboBox charsetComboBox;
 	//新建影像集合控件
 
 	private JToolBar toolBar;
@@ -63,8 +50,8 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	private JPanel panelTableInfo;
 	private JPanel panelBasicInfo;
 	private JScrollPane scrollPane;
-	private JCheckBox checkBoxCloseDialog;
-	private CollectionDatasetTableModel tableModel;
+	protected JCheckBox checkBoxCloseDialog;
+	protected CollectionDatasetTableModel tableModel;
 	//修改数据集集合时用到
 	private DatasetVector datasetVector;
 	//存在的数据集集合
@@ -179,39 +166,42 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	}
 
 	private void createDatasetCollection() {
-		final Datasource datasource = datasourceComboBox.getSelectedDatasource();
-		try {
-			DatasetVectorInfo info = new DatasetVectorInfo();
-			String datasetName = datasource.getDatasets().getAvailableDatasetName(textFieldDatasetName.getText());
-			info.setName(datasetName);
-			info.setType(DatasetType.VECTORCOLLECTION);
-			DatasetVector vector = datasource.getDatasets().create(info);
-			vector.setCharset(CharsetUtilities.valueOf(charsetComboBox.getSelectedItem().toString()));
-			ArrayList<DatasetInfo> datasetInfos = tableModel.getDatasetInfos();
-			for (int i = 0; i < datasetInfos.size(); i++) {
-				if ((vector.GetSubCollectionDatasetType() == DatasetType.UNKNOWN) || (vector.GetSubCollectionDatasetType() == datasetInfos.get(i).getDataset().getType())) {
-					boolean result = vector.addCollectionDataset((DatasetVector) datasetInfos.get(i).getDataset());
-					if (result) {
-						Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddSuccess"), vector.getName(), datasetInfos.get(i).getName()));
-					} else {
-						Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddFailed"), vector.getName(), datasetInfos.get(i).getName()));
-					}
-				}
-			}
-
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-		} finally {
-			if (checkBoxCloseDialog.isSelected()) {
-				JDialogCreateCollectionDataset.this.dispose();
-			}
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
-				}
-			});
-		}
+		FormProgressTotal formProgress = new FormProgressTotal();
+		formProgress.setTitle(ControlsProperties.getString("String_CreateCollectionDataset"));
+		formProgress.doWork(new CreateCollectionCallable(JDialogCreateCollectionDataset.this));
+//		final Datasource datasource = datasourceComboBox.getSelectedDatasource();
+//		try {
+//			DatasetVectorInfo info = new DatasetVectorInfo();
+//			String datasetName = datasource.getDatasets().getAvailableDatasetName(textFieldDatasetName.getText());
+//			info.setName(datasetName);
+//			info.setType(DatasetType.VECTORCOLLECTION);
+//			DatasetVector vector = datasource.getDatasets().create(info);
+//			vector.setCharset(CharsetUtilities.valueOf(charsetComboBox.getSelectedItem().toString()));
+//			ArrayList<DatasetInfo> datasetInfos = tableModel.getDatasetInfos();
+//			for (int i = 0; i < datasetInfos.size(); i++) {
+//				if ((vector.GetSubCollectionDatasetType() == DatasetType.UNKNOWN) || (vector.GetSubCollectionDatasetType() == datasetInfos.get(i).getDataset().getType())) {
+//					boolean result = vector.addCollectionDataset((DatasetVector) datasetInfos.get(i).getDataset());
+//					if (result) {
+//						Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddSuccess"), vector.getName(), datasetInfos.get(i).getName()));
+//					} else {
+//						Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddFailed"), vector.getName(), datasetInfos.get(i).getName()));
+//					}
+//				}
+//			}
+//
+//		} catch (Exception e) {
+//			Application.getActiveApplication().getOutput().output(e);
+//		} finally {
+//			if (checkBoxCloseDialog.isSelected()) {
+//				JDialogCreateCollectionDataset.this.dispose();
+//			}
+//			SwingUtilities.invokeLater(new Runnable() {
+//				@Override
+//				public void run() {
+//					UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+//				}
+//			});
+//		}
 	}
 
 	private ActionListener cancelListener = new ActionListener() {
@@ -440,7 +430,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		datasetChooser = new DatasetChooser(JDialogCreateCollectionDataset.this) {
 			@Override
 			protected boolean isSupportDatasource(Datasource datasource) {
-				return EngineType.POSTGRESQL.equals(datasource.getEngineType()) || EngineType.ORACLEPLUS.equals(datasource.getEngineType());
+				return !EngineType.UDB.equals(datasource.getEngineType());
 			}
 		};
 		if (null == selectedDatasetVectors || selectedDatasetVectors.length == 0) {
@@ -490,7 +480,6 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	public void init(DatasetVector[] datasetVectors) {
 		initComponents();
 		initResources();
-		initLayout();
 		registEvents();
 		this.setSize(new Dimension(800, 450));
 		this.setLocationRelativeTo(null);
@@ -649,8 +638,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		initPanelBasicInfoLayout();
 		if (isSetDatasetCollectionCount) {
 			this.getContentPane().setLayout(new GridBagLayout());
-			this.getContentPane().add(this.panelTableInfo, new GridBagConstraintsHelper(0, 0, 7, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0.7, 1).setInsets(10, 10, 5, 0));
-			this.getContentPane().add(this.panelBasicInfo, new GridBagConstraintsHelper(7, 0, 3, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0.3, 1).setInsets(10));
+			this.getContentPane().add(this.panelTableInfo, new GridBagConstraintsHelper(0, 0, 10, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(10, 10, 5, 0));
 			this.getContentPane().add(this.buttonOK, new GridBagConstraintsHelper(8, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(1, 0).setInsets(0, 10, 10, 10));
 			this.getContentPane().add(this.buttonCancel, new GridBagConstraintsHelper(9, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(0, 0).setInsets(0, 0, 10, 10));
 		} else {
@@ -718,10 +706,9 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	public void isSetDatasetCollectionCount(boolean setDatasetCollectionCount) {
 		isSetDatasetCollectionCount = setDatasetCollectionCount;
 		if (isSetDatasetCollectionCount) {
-			this.panelBasicInfo.setVisible(false);
-			this.setButtonState();
 			this.setTitle(ControlsProperties.getString("String_ManageCollectionDataset"));
 		}
+		this.initLayout();
 	}
 
 	public void setDatasetVector(DatasetVector datasetVector) {

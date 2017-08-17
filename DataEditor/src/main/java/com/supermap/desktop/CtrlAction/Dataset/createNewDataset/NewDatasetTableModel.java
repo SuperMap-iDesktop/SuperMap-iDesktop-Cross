@@ -61,7 +61,12 @@ public class NewDatasetTableModel extends DefaultTableModel {
 
 
 	public NewDatasetBean getDatasetBean(int num) {
-		return datasetBeans.get(num);
+
+		if (num > datasetBeans.size() - 1) {
+			return null;
+		} else {
+			return datasetBeans.get(num);
+		}
 	}
 
 	private ArrayList<NewDatasetBean> datasetBeans;

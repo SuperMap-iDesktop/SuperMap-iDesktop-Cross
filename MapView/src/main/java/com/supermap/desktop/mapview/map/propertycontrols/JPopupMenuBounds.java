@@ -13,7 +13,6 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -87,8 +86,6 @@ public class JPopupMenuBounds extends JPopupMenu {
 	public static final String VIEW_BOUNDS_LOCKED = "ViewBoundsLocked";
 	public static final String CUSTOM_BOUNDS = "CustomBounds";
 	public static final int SEGMENTCOUNT = 50;
-
-	private int step = 1;
 
 	private transient TrackedListener trackedListener = new TrackedListener() {
 
@@ -413,11 +410,6 @@ public class JPopupMenuBounds extends JPopupMenu {
 					}
 					//设置完之后，show出主窗体
 					if (dialog != null) {
-						if (SystemPropertyUtilities.isLinux()) {
-							// 不设linux上会乱跑
-							dialog.setLocation(dialog.getLocation().x, dialog.getLocation().y + step);
-							step = -step;
-						}
 						dialog.setVisible(true);
 					}
 				}

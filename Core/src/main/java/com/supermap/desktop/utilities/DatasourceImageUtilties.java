@@ -41,6 +41,11 @@ public class DatasourceImageUtilties {
 		datasourceImage.put(EngineType.OPENSTREETMAPS, fileParentPath + "Datasource_OSM.png");
 		datasourceImage.put(EngineType.MEMORY, fileParentPath + "Image_Memory.png");
 		datasourceImage.put(EngineType.DATASERVER, fileParentPath + "Datasource_BigDataStore.png");
+		datasourceImage.put(EngineType.MYSQLPlus, fileParentPath + "Image_MySQLPlus.png");
+		datasourceImage.put(EngineType.BEYONDB, fileParentPath + "Image_BeyonDB.png");
+		datasourceImage.put(EngineType.HIGHGODB, fileParentPath + "Image_HiGoDB.png");
+		datasourceImage.put(EngineType.KDB, fileParentPath + "Image_kdb.png");
+		datasourceImage.put(EngineType.SDE, fileParentPath + "Image_ArcSDE.png");
 		datasourceImage.put(null, fileParentPath + "Image_Datasources_Normal.png");
 	}
 
