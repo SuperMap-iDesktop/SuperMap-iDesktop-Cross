@@ -52,15 +52,12 @@ public class MetaProcessNeighbourStatistics extends MetaProcess {
 		sourceCombine.addParameters(sourceDatasource, sourceDataset);
 		ParameterCombine settingCombine = new ParameterCombine();
 		settingCombine.setDescribe(ProcessProperties.getString("String_setParameter"));
-		settingCombine.addParameters(comboBoxStatisticMode, checkBoxIgnore);
-		ParameterCombine shapeCombine = new ParameterCombine();
-		shapeCombine.setDescribe(ProcessProperties.getString("String_setParameter"));
-		shapeCombine.addParameters(shapeType);
+		settingCombine.addParameters(comboBoxStatisticMode, shapeType, checkBoxIgnore);
 		ParameterCombine resultCombine = new ParameterCombine();
 		resultCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		resultCombine.addParameters(resultDataset);
 
-		parameters.setParameters(sourceCombine, settingCombine,shapeCombine, resultCombine);
+		parameters.setParameters(sourceCombine, settingCombine, resultCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultCombine);
 	}
