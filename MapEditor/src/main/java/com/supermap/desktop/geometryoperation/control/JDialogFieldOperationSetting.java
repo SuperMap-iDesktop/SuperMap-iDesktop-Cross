@@ -128,8 +128,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		Object result = null;
 
 		// 字符串型直接做连接
-        if (FieldTypeUtilities.isTextField(fieldType)) {
-            recordset.moveFirst();
+		if (FieldTypeUtilities.isTextField(fieldType)) {
+			recordset.moveFirst();
 			while (!recordset.isEOF()) {
 				Object value = recordset.getObject(fieldName);
 
@@ -426,21 +426,21 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			}
 
 			switch (operationType) {
-			case OperationType.NULL:
-				this.radioButtonNull.setSelected(true);
-				break;
-			case OperationType.AVG:
-				this.radioButtonAVG.setSelected(true);
-				break;
-			case OperationType.SUM:
-				this.radioButtonSum.setSelected(true);
-				break;
-			case OperationType.GEOMETRY:
-				this.radioButtonGeometry.setSelected(true);
-				break;
-			default:
-				// 默认 NONE，就什么都不选
-				break;
+				case OperationType.NULL:
+					this.radioButtonNull.setSelected(true);
+					break;
+				case OperationType.AVG:
+					this.radioButtonAVG.setSelected(true);
+					break;
+				case OperationType.SUM:
+					this.radioButtonSum.setSelected(true);
+					break;
+				case OperationType.GEOMETRY:
+					this.radioButtonGeometry.setSelected(true);
+					break;
+				default:
+					// 默认 NONE，就什么都不选
+					break;
 			}
 		}
 		setControlsEnabled(fieldOperations);
@@ -761,8 +761,15 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 			if (e.getStateChange() == ItemEvent.SELECTED && this.selectedOperations != null) {
 				GeometryOperationData data = (GeometryOperationData) this.comboBoxGeometry.getSelectedItem();
 
-				// 设置附加数据
-				updateSelectedOperationsData(data);
+				// 设置附加数据，统一修改所有的当前操作是 保留对象 的附加数据
+				FieldOperationTableModel model = (FieldOperationTableModel) this.table.getModel();
+				for (int i = 0; i < this.table.getRowCount(); i++) {
+					FieldOperation op = model.getFieldOperation(i);
+
+					if (op.getOperationData() instanceof GeometryOperationData) {
+						model.changeOperationData(i, data);
+					}
+				}
 
 				// 地图上高亮显示
 				highlightGeometry(data.getID());
@@ -778,10 +785,14 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	 * @param operationData
 	 */
 	private void updateSelectedOperationsData(IOperationData operationData) {
+		updateSelectedOperationsData(operationData, this.selectedOperations);
+	}
+
+	private void updateSelectedOperationsData(IOperationData operationData, int[] rows) {
 		FieldOperationTableModel model = (FieldOperationTableModel) this.table.getModel();
 
-		for (int i = 0; i < this.selectedOperations.length; i++) {
-			model.changeOperationData(this.selectedOperations[i], operationData);
+		for (int i = 0; i < rows.length; i++) {
+			model.changeOperationData(rows[i], operationData);
 		}
 	}
 
@@ -1053,7 +1064,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 	}
 
 	private class DefaultOperationData implements IOperationData {
-		private int operationType = OperationType.NONE;;
+		private int operationType = OperationType.NONE;
+		;
 		private String description;
 
 		public DefaultOperationData(int operationType, String description) {
