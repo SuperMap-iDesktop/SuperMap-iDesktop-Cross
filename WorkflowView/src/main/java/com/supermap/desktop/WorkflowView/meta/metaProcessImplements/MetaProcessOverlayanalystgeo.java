@@ -15,13 +15,7 @@ import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
-import com.supermap.desktop.process.parameter.ipls.ParameterBigDatasourceDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterIServerLogin;
-import com.supermap.desktop.process.parameter.ipls.ParameterInputDataType;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.properties.CommonProperties;
@@ -102,6 +96,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 	@Override
 	public boolean execute() {
+		boolean isSuccess;
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
@@ -109,7 +104,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 			parameterInputDataType.initSourceInput(input);
 			Dataset overlayDataset = parameterOverlayDataset.getSelectedDataset();
 			CommonSettingCombine datasetOverlay = new CommonSettingCombine("datasetOverlay", overlayDataset.getName());
-			CommonSettingCombine mode = new CommonSettingCombine("mode", (String)parameterOverlayTypeComboBox.getSelectedData());
+			CommonSettingCombine mode = new CommonSettingCombine("mode", (String) parameterOverlayTypeComboBox.getSelectedData());
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
 			analyst.add(datasetOverlay, mode);
 
@@ -149,9 +144,11 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 					}
 				}, DefaultOpenServerMap.INSTANCE);
-				messageBus.run();
+				isSuccess = messageBus.run();
+			} else {
+				fireRunning(new RunningEvent(this, 100, "Failed"));
+				isSuccess = false;
 			}
-			fireRunning(new RunningEvent(this, 100, "finished"));
 			parameters.getOutputs().getData("OverlayResult").setValue("");// TODO: 2017/6/26 也许没结果,but
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -159,7 +156,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 		} finally {
 			CursorUtilities.setDefaultCursor();
 		}
-		return true;
+		return isSuccess;
 	}
 
 	@Override

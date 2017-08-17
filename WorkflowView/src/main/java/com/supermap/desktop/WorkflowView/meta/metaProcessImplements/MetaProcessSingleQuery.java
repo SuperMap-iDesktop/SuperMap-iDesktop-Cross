@@ -15,13 +15,7 @@ import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
-import com.supermap.desktop.process.parameter.ipls.ParameterBigDatasourceDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterIServerLogin;
-import com.supermap.desktop.process.parameter.ipls.ParameterInputDataType;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.properties.CommonProperties;
@@ -106,6 +100,7 @@ public class MetaProcessSingleQuery extends MetaProcess {
 
 	@Override
 	public boolean execute() {
+		boolean isSuccess;
 		try {
 			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
@@ -152,9 +147,11 @@ public class MetaProcessSingleQuery extends MetaProcess {
 
 					}
 				}, DefaultOpenServerMap.INSTANCE);
-				messageBus.run();
+				isSuccess = messageBus.run();
+			} else {
+				fireRunning(new RunningEvent(this, 100, "Failed"));
+				isSuccess = false;
 			}
-			fireRunning(new RunningEvent(this, 100, "finished"));
 			parameters.getOutputs().getData("QueryResult").setValue("");
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -162,7 +159,7 @@ public class MetaProcessSingleQuery extends MetaProcess {
 		} finally {
 			CursorUtilities.setDefaultCursor();
 		}
-		return true;
+		return isSuccess;
 	}
 
 	@Override

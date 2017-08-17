@@ -1,6 +1,5 @@
 package com.supermap.desktop.WorkflowView.graphics.graphs;
 
-import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.WorkflowView.graphics.GraphCanvas;
 import com.supermap.desktop.WorkflowView.graphics.connection.IConnectable;
 
@@ -40,18 +39,6 @@ public class EllipseGraph extends AbstractGraph implements IConnectable {
 	protected void onPaint(Graphics g) {
 		g.setColor(new Color(254, 244, 236));
 		((Graphics2D) g).fill(this.shape);
-	}
-
-	@Override
-	protected void toXmlHook(JSONObject jsonObject) {
-		jsonObject.put("shape", getShape().getX() + "," + getShape().getY() + "," + getShape().getWidth() + "," + getShape().getHeight());
-	}
-
-	@Override
-	protected void formXmlHook(JSONObject xml) {
-		String shape = (String) xml.get("shape");
-		String[] split = shape.split(",");
-		this.shape = new Ellipse2D.Double(Double.valueOf(split[0]), Double.valueOf(split[1]), Double.valueOf(split[2]), Double.valueOf(split[3]));
 	}
 
 	@Override

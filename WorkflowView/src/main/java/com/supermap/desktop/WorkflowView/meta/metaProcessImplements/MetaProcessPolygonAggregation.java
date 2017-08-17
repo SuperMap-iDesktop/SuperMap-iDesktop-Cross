@@ -53,8 +53,6 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 		parameterSingleDataset.setDescribe(ProcessProperties.getString("String_AggregateDataset"));
 		parameterStaticModel.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
 		parameterWeightIndex.setToolTip(ProcessProperties.getString("String_WeightIndexTip"));
-		parameterStaticModel.setDefaultWarningValue("max");
-		parameterWeightIndex.setDefaultWarningValue("col7");
 	}
 
 	private void initComponentLayout() {
@@ -103,6 +101,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 
 	@Override
 	public boolean execute() {
+		boolean isSuccess;
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
@@ -153,9 +152,11 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 
 					}
 				}, DefaultOpenServerMap.INSTANCE);
-				messageBus.run();
+				isSuccess = messageBus.run();
+			} else {
+				fireRunning(new RunningEvent(this, 100, "Failed"));
+				isSuccess = false;
 			}
-			fireRunning(new RunningEvent(this, 100, "finished"));
 			parameters.getOutputs().getData("PolygonAggregationResult").setValue("");// TODO: 2017/6/26 也许没结果,but
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -163,7 +164,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 		} finally {
 			CursorUtilities.setDefaultCursor();
 		}
-		return true;
+		return isSuccess;
 	}
 
 	@Override

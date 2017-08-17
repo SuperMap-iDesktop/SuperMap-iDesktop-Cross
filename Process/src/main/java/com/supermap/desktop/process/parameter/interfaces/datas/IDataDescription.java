@@ -8,6 +8,8 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 public interface IDataDescription {
 	String getName();
 
+	String getText();
+
 	String getTips();
 
 	Type getType();

@@ -29,7 +29,10 @@ import static com.supermap.desktop.controls.ControlDefaultValues.*;
  * Created by yuanR on 2017/8/15 0015.
  * 新建影像数据-数据集范围
  */
-public class DatasetBoundsPanel extends JPanel {
+public class PanelDatasetBounds extends JPanel {
+
+	private static final long serialVersionUID = 1L;
+
 	private JLabel labelCurrentViewLeft;
 
 	public WaringTextField getTextFieldCurrentViewLeft() {
@@ -84,6 +87,9 @@ public class DatasetBoundsPanel extends JPanel {
 	private double valueTop = 0.0;
 	private double valueRight = 0.0;
 	private double valueBottom = 0.0;
+
+	private static final int DEFULT_RECTANGLE_VALUE = 200;
+
 
 	/**
 	 * 按钮事件枢纽站
@@ -193,7 +199,6 @@ public class DatasetBoundsPanel extends JPanel {
 					Double.MAX_VALUE,
 					WaringTextField.FLOAT_TYPE,
 					"15");
-
 		}
 	}
 
@@ -260,7 +265,7 @@ public class DatasetBoundsPanel extends JPanel {
 				String temp = textFieldCurrentViewRight.getTextField().getText();
 				temp = DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
 				textFieldCurrentViewRight.getTextField().setText(temp);
-			} else if (!textFieldCurrentViewLeft.getTextField().getText().isEmpty() && e.getSource().equals(textFieldCurrentViewTop.getTextField())) {
+			} else if (!textFieldCurrentViewTop.getTextField().getText().isEmpty() && e.getSource().equals(textFieldCurrentViewTop.getTextField())) {
 				String temp = textFieldCurrentViewTop.getTextField().getText();
 				temp = DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
 				textFieldCurrentViewTop.getTextField().setText(temp);
@@ -412,6 +417,10 @@ public class DatasetBoundsPanel extends JPanel {
 			this.rangeRectangle.setBottom(valueBottom);
 			return this.rangeRectangle;
 		}
+		// 当无法构成矩形时，给于默认值矩形
+//		Rectangle2D rectangle2D = new Rectangle2D(-DEFULT_RECTANGLE_VALUE, -DEFULT_RECTANGLE_VALUE,
+//				DEFULT_RECTANGLE_VALUE, DEFULT_RECTANGLE_VALUE);
+//		return rectangle2D;
 		return null;
 	}
 
@@ -442,11 +451,10 @@ public class DatasetBoundsPanel extends JPanel {
 	}
 
 
-	public DatasetBoundsPanel() {
+	public PanelDatasetBounds() {
 		initComponents();
 		initLayout();
 		registerEvent();
-		initStates();
 	}
 
 	private void initComponents() {
@@ -473,7 +481,6 @@ public class DatasetBoundsPanel extends JPanel {
 
 	private void initLayout() {
 		this.setBorder(BorderFactory.createTitledBorder(DataEditorProperties.getString("String_NewDatasetBounds")));
-//		JPanel mainPanel = new JPanel();
 		this.setLayout(new GridBagLayout());
 		this.add(this.labelCurrentViewLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10).setWeight(0, 0));
 		this.add(this.textFieldCurrentViewLeft, new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(3, 0));
@@ -488,15 +495,18 @@ public class DatasetBoundsPanel extends JPanel {
 		this.add(this.textFieldCurrentViewBottom, new GridBagConstraintsHelper(1, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
 		this.add(this.pasteButton, new GridBagConstraintsHelper(4, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(0, 0));
 
-//		this.setLayout(new BorderLayout());
-//		this.add(main   Panel);
 	}
 
-	private void initStates() {
-		textFieldCurrentViewLeft.setText("-200");
-		textFieldCurrentViewTop.setText("200");
-		textFieldCurrentViewRight.setText("200");
-		textFieldCurrentViewBottom.setText("-200");
+	/**
+	 * 根据矩形框初始化值
+	 *
+	 * @param rectangle
+	 */
+	public void initStates(Rectangle2D rectangle) {
+		textFieldCurrentViewLeft.setText(String.valueOf(rectangle.getLeft()));
+		textFieldCurrentViewTop.setText(String.valueOf(rectangle.getTop()));
+		textFieldCurrentViewRight.setText(String.valueOf(rectangle.getRight()));
+		textFieldCurrentViewBottom.setText(String.valueOf(rectangle.getBottom()));
 		// 判断是否有数据集打开
 		currentViewBoundsButton.setEnabled(false);
 		mapViewBoundsButton.setEnabled(false);
