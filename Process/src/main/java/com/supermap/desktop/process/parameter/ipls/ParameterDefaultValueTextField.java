@@ -1,39 +1,38 @@
 package com.supermap.desktop.process.parameter.ipls;
 
-import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import java.beans.PropertyChangeEvent;
 
 /**
- * @author XiaJT
+ * Created by xie on 2017/8/17.
  */
-public class ParameterTextField extends AbstractParameter implements ISelectionParameter {
+public class ParameterDefaultValueTextField extends AbstractParameter implements ISelectionParameter {
 	private String describe;
 	private String unit;
 	private Boolean isSetUnit = false;
 	private String toolTip;
+	private String defaultWarningValue;
 
 	@ParameterField(name = PROPERTY_VALE)
 	private String value = "";
 
-	protected ISmTextFieldLegit smTextFieldLegit;
-
-	public ParameterTextField() {
+	public ParameterDefaultValueTextField() {
 		this("");
 	}
 
-	public ParameterTextField(String describe) {
+	public ParameterDefaultValueTextField(String describe) {
 		this.describe = describe;
 	}
 
 
 	@Override
 	public String getType() {
-		return ParameterType.TEXTFIELD;
+		return ParameterType.DEFAULTVALUETEXTFIELD;
 	}
 
 	@Override
@@ -45,7 +44,7 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 
 	@Override
 	public Object getSelectedItem() {
-		return value;
+		return StringUtilities.isNullOrEmpty(value) ? defaultWarningValue : value;
 	}
 
 	public String getDescribe() {
@@ -53,17 +52,9 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 	}
 
 
-	public ParameterTextField setDescribe(String describe) {
+	public ParameterDefaultValueTextField setDescribe(String describe) {
 		this.describe = describe;
 		return this;
-	}
-
-	public ISmTextFieldLegit getSmTextFieldLegit() {
-		return smTextFieldLegit;
-	}
-
-	public void setSmTextFieldLegit(ISmTextFieldLegit smTextFieldLegit) {
-		this.smTextFieldLegit = smTextFieldLegit;
 	}
 
 	@Override
@@ -107,5 +98,21 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 
 	public void setToolTip(String toolTip) {
 		this.toolTip = toolTip;
+	}
+
+	public Boolean getSetUnit() {
+		return isSetUnit;
+	}
+
+	public void setSetUnit(Boolean setUnit) {
+		isSetUnit = setUnit;
+	}
+
+	public String getDefaultWarningValue() {
+		return defaultWarningValue;
+	}
+
+	public void setDefaultWarningValue(String defaultWarningValue) {
+		this.defaultWarningValue = defaultWarningValue;
 	}
 }

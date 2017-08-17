@@ -57,7 +57,6 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
 		//流程图中不支持在地图中绘制范围，范围表示与iServer的表示相同
 		parameterBounds.setSelectedItem("-74.050,40.650,-73.850,40.850");
-		parameterIndex.setSelectedItem("col7");
 		parameterMeshSize.setSelectedItem("50");
 		parameterMeshSizeUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),
