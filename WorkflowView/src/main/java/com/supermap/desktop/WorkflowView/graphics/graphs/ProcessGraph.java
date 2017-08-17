@@ -1,10 +1,6 @@
 package com.supermap.desktop.WorkflowView.graphics.graphs;
 
-import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.WorkflowView.graphics.GraphCanvas;
-import com.supermap.desktop.WorkflowView.meta.MetaKeys;
-import com.supermap.desktop.WorkflowView.meta.WorkflowParser;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.EmptyMetaProcess;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.enums.RunningStatus;
@@ -13,7 +9,6 @@ import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.events.StatusChangeEvent;
 import com.supermap.desktop.process.events.StatusChangeListener;
 import com.supermap.desktop.utilities.DoubleUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
 import sun.swing.SwingUtilities2;
 
 import javax.swing.*;
@@ -115,26 +110,4 @@ public class ProcessGraph extends RectangleGraph {
 //		location = new Point(getLocation().x + getWidth() - fontWidth - 4, getLocation().y + fontHeight + 4 - fontDescent);
 //		g.drawString(progress, location.x, location.y);
 	}
-
-	@Override
-	protected void toXmlHook(JSONObject jsonObject) {
-		super.toXmlHook(jsonObject);
-		jsonObject.put("process", process.getKey());
-		if (process instanceof EmptyMetaProcess) {
-			jsonObject.put("title", process.getTitle());
-		}
-	}
-
-	@Override
-	protected void formXmlHook(JSONObject xml) {
-		super.formXmlHook(xml);
-		String key = (String) xml.get("process");
-		if (key.equals(MetaKeys.EMPTY) && !StringUtilities.isNullOrEmpty((String) xml.get("title"))) {
-			process = new EmptyMetaProcess((String) xml.get("title"));
-		} else {
-			process = WorkflowParser.getMetaProcess(key);
-		}
-	}
-
-
 }

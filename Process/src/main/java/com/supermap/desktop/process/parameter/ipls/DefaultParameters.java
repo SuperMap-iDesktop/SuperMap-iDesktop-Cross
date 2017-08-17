@@ -165,6 +165,18 @@ public class DefaultParameters implements IParameters {
 	}
 
 	@Override
+	public void addInputParameters(String name, String text, Type type, IParameter... parameters) {
+		this.process.getInputs().addData(name, text, type);
+		this.process.getInputs().getData(name).addParameters(parameters);
+		inputParametersManager.add(name, parameters);
+	}
+
+	@Override
+	public void addOutputParameters(String name, String text, Type type, IParameter... parameters) {
+		this.process.getOutputs().addData(name, text, type);
+	}
+
+	@Override
 	public void replace(ArrayList<IParameter> sources, IParameter... results) {
 		int firstIndex = Integer.MAX_VALUE;
 		for (IParameter source : sources) {

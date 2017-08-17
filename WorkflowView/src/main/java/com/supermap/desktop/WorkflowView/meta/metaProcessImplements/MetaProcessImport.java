@@ -241,7 +241,7 @@ public class MetaProcessImport extends MetaProcess {
 			types = DatasetTypes.REGION;
 		}
 
-		this.getParameters().addOutputParameters(OUTPUT_DATA, types, parameterCreator.getParameterCombineResultSet());
+		this.getParameters().addOutputParameters(OUTPUT_DATA, "Import", types, parameterCreator.getParameterCombineResultSet());
 	}
 
 	public void setImportSetting(ImportSetting importSetting) {
