@@ -15,16 +15,7 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
-import com.supermap.desktop.process.parameter.ipls.ParameterBigDatasourceDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterIServerLogin;
-import com.supermap.desktop.process.parameter.ipls.ParameterInputDataType;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSwitch;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.properties.CommonProperties;
@@ -44,14 +35,14 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	ParameterInputDataType parameterInputDataType = new ParameterInputDataType();
 	private ParameterComboBox parameterSummaryType = new ParameterComboBox(ProcessProperties.getString("String_summaryType"));
 	private ParameterComboBox parameterMeshType = new ParameterComboBox(ProcessProperties.getString("String_MeshType"));
-	private ParameterTextField parameterBounds = new ParameterTextField(ProcessProperties.getString("String_AnalystBounds"));
+	private ParameterDefaultValueTextField parameterBounds = new ParameterDefaultValueTextField(ProcessProperties.getString("String_AnalystBounds"));
 	private ParameterCheckBox parameterStandardFields = new ParameterCheckBox(ProcessProperties.getString("String_standardSummaryFields"));
 	private ParameterCheckBox parameterWeightedFields = new ParameterCheckBox(ProcessProperties.getString("String_weightedSummaryFields"));
-	private ParameterTextField parameterStatisticMode = new ParameterTextField(ProcessProperties.getString("String_StaticModel"));
+	private ParameterDefaultValueTextField parameterStatisticMode = new ParameterDefaultValueTextField(ProcessProperties.getString("String_StaticModel"));
 	private ParameterTextField parameterFeildName = new ParameterTextField(ProcessProperties.getString("String_FeildName"));
-	private ParameterTextField parameterStatisticMode1 = new ParameterTextField(ProcessProperties.getString("String_StaticModel"));
+	private ParameterDefaultValueTextField parameterStatisticMode1 = new ParameterDefaultValueTextField(ProcessProperties.getString("String_StaticModel"));
 	private ParameterTextField parameterFeildName1 = new ParameterTextField(ProcessProperties.getString("String_FeildName"));
-	private ParameterTextField parameterMeshSize = new ParameterTextField(ProcessProperties.getString("String_MeshSize"));
+	private ParameterDefaultValueTextField parameterMeshSize = new ParameterDefaultValueTextField(ProcessProperties.getString("String_MeshSize"));
 	private ParameterComboBox parameterMeshSizeUnit = new ParameterComboBox(ProcessProperties.getString("String_MeshSizeUnit"));
 	private ParameterCheckBox parametersumShape = new ParameterCheckBox(ProcessProperties.getString("String_SumShape"));
 	private ParameterBigDatasourceDatasource parameterBigDatasourceDatasource = new ParameterBigDatasourceDatasource();
@@ -67,10 +58,10 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	private void initComponents() {
 		parameterSummaryType.setItems(new ParameterDataNode(ProcessProperties.getString("String_summaryMesh"), "SUMMARYMESH"), new ParameterDataNode(ProcessProperties.getString("String_summaryRegion"), "SUMMARYREGION"));
 		parameterMeshType.setItems(new ParameterDataNode(ProcessProperties.getString("String_QuadrilateralMesh"), "0"), new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1"));
-		parameterBounds.setSelectedItem("-74.050,40.650,-73.850,40.850");
-		parameterStatisticMode.setSelectedItem("max");
-		parameterStatisticMode1.setSelectedItem("max");
-		parameterMeshSize.setSelectedItem("100");
+		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
+		parameterStatisticMode.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
+		parameterStatisticMode1.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
+		parameterMeshSize.setDefaultWarningValue("100");
 		parameterMeshSizeUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Yard"), "Yard"),
@@ -168,6 +159,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 
 	@Override
 	public boolean execute() {
+		boolean isSuccess;
 		try {
 			if (parameterStandardFields.getSelectedItem().toString().equals("false") && parameterWeightedFields.getSelectedItem().toString().equals("false")) {
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SummaryRegionMessage"));
@@ -196,7 +188,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 					analyst.add(standardFields, standardStatisticModes);
 				}
 				if (parameterWeightedFields.getSelectedItem().toString().equals("true")) {
-					analyst.add(weightedFields,weightedStatisticModes);
+					analyst.add(weightedFields, weightedStatisticModes);
 				}
 			} else {
 				Dataset dataset = parameterSingleDataset.getSelectedDataset();
@@ -206,7 +198,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 					analyst.add(standardFields, standardStatisticModes);
 				}
 				if (parameterWeightedFields.getSelectedItem().toString().equals("true")) {
-					analyst.add(weightedFields,weightedStatisticModes);
+					analyst.add(weightedFields, weightedStatisticModes);
 				}
 			}
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
@@ -245,9 +237,11 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 
 					}
 				}, DefaultOpenServerMap.INSTANCE);
-				messageBus.run();
+				isSuccess = messageBus.run();
+			} else {
+				fireRunning(new RunningEvent(this, 100, "Failed"));
+				isSuccess = false;
 			}
-			fireRunning(new RunningEvent(this, 100, "finished"));
 			parameters.getOutputs().getData("OverlayResult").setValue("");
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -255,7 +249,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		} finally {
 			CursorUtilities.setDefaultCursor();
 		}
-		return true;
+		return isSuccess;
 	}
 
 	@Override

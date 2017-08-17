@@ -33,7 +33,6 @@ public class ParameterPassword extends AbstractParameter implements ISelectionPa
 
 	@Override
 	public Object getSelectedItem() {
-		fireUpdateValue(PROPERTY_VALE);
 		return value;
 	}
 

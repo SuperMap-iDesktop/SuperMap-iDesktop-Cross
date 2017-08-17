@@ -21,18 +21,18 @@ public class ParameterInputDataType extends ParameterCombine {
 	private ParameterHDFSPath parameterHDFSPath = new ParameterHDFSPath();
 
 	private ParameterTextField parameterDataSourceType = new ParameterTextField(ProcessProperties.getString("String_DataSourceType"));
-	private ParameterTextField parameterDataSourcePath = new ParameterTextField(ProcessProperties.getString("String_DataSourcePath"));
-	private ParameterTextField parameterDatasetName = new ParameterTextField(ProcessProperties.getString("String_DatasetName"));
+	private ParameterDefaultValueTextField parameterDataSourcePath = new ParameterDefaultValueTextField(ProcessProperties.getString("String_DataSourcePath"));
+	private ParameterDefaultValueTextField parameterDatasetName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_DatasetName"));
 	private ParameterComboBox parameterDatasetType = new ParameterComboBox(ProcessProperties.getString("String_DatasetType"));
-	private ParameterTextField parameterSpark = new ParameterTextField(ProcessProperties.getString("String_numSlices"));
+	private ParameterDefaultValueTextField parameterSpark = new ParameterDefaultValueTextField(ProcessProperties.getString("String_numSlices"));
 
 	private ParameterBigDatasourceDatasource parameterSourceDatasource = new ParameterBigDatasourceDatasource();
 	private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset();
 	private ParameterComboBox parameterDatasetType1 = new ParameterComboBox(ProcessProperties.getString("String_DatasetType"));
 	private ParameterTextField parameterEngineType = new ParameterTextField(ProcessProperties.getString("String_EngineType"));
-	private ParameterTextField parameterDataBaseName = new ParameterTextField(ProcessProperties.getString("String_DataBaseName"));
-	private ParameterTextField parameterTextFieldAddress = new ParameterTextField(CoreProperties.getString("String_Server"));
-	private ParameterTextField parameterTextFieldUserName = new ParameterTextField(ProcessProperties.getString("String_UserName"));
+	private ParameterDefaultValueTextField parameterDataBaseName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_DataBaseName"));
+	private ParameterDefaultValueTextField parameterTextFieldAddress = new ParameterDefaultValueTextField(CoreProperties.getString("String_Server"));
+	private ParameterDefaultValueTextField parameterTextFieldUserName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_UserName"));
 	private ParameterPassword parameterTextFieldPassword = new ParameterPassword(ProcessProperties.getString("String_PassWord"));
 
 	public ParameterInputDataType() {
@@ -52,9 +52,9 @@ public class ParameterInputDataType extends ParameterCombine {
 		//udb文件
 		parameterDataSourceType.setSelectedItem("UDB");
 		parameterDataSourceType.setEnabled(false);
-		parameterDataSourcePath.setSelectedItem("G:\\\\ProcessingData\\\\processing.udb");
-		parameterDatasetName.setSelectedItem("newyorkPoint_P");
-		parameterSpark.setSelectedItem("36");
+		parameterDataSourcePath.setDefaultWarningValue("G:\\\\ProcessingData\\\\processing.udb");
+		parameterDatasetName.setDefaultWarningValue("newyorkPoint_P");
+		parameterSpark.setDefaultWarningValue("36");
 		ParameterCombine parameterCombine1 = new ParameterCombine();
 		parameterCombine1.addParameters(parameterDataSourceType,
 				parameterDataSourcePath,
@@ -66,9 +66,9 @@ public class ParameterInputDataType extends ParameterCombine {
 		parameterSourceDataset.setDescribe(ProcessProperties.getString("String_DatasetName"));
 		parameterEngineType.setSelectedItem("POSTGRESQL");
 		parameterEngineType.setEnabled(false);
-		parameterTextFieldAddress.setSelectedItem("192.168.15.248");
-		parameterDataBaseName.setSelectedItem("supermap");
-		parameterTextFieldUserName.setSelectedItem("postgres");
+		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+		parameterDataBaseName.setDefaultWarningValue("supermap");
+		parameterTextFieldUserName.setDefaultWarningValue("postgres");
 		parameterTextFieldPassword.setSelectedItem("supermap");
 		ParameterCombine parameterCombine2 = new ParameterCombine();
 		parameterCombine2.addParameters(

@@ -5,8 +5,8 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
+import com.supermap.desktop.ui.controls.comboBox.ComboBoxCharset;
 import com.supermap.desktop.utilities.BlockSizeOptionUtilities;
-import com.supermap.desktop.utilities.CharsetUtilities;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
 import com.supermap.desktop.utilities.PixelFormatUtilities;
 
@@ -18,8 +18,9 @@ import java.util.ArrayList;
  * Created by yuanR on 2017/8/16 0016.
  * 新建数据集-属性面板
  */
-public class PropertyPanel extends JPanel {
+public class PanelDatasetNewProperty extends JPanel {
 
+	private static final long serialVersionUID = 1L;
 
 	private JLabel encodingTypeLabel;
 	private JLabel charestTypeLabel;
@@ -33,19 +34,17 @@ public class PropertyPanel extends JPanel {
 	private JLabel advancedSetLabel;
 
 
-	private JComboBox comboboxEncodingType;
-	private JComboBox comboboxCharest;
-	private JComboBox comboboxBlockSizeOption;
-	private JComboBox comboboxPixelFormat;
+	private JComboBox<String> comboboxEncodingType;
+	private ComboBoxCharset comboboxCharest;
+	private JComboBox<String> comboboxBlockSizeOption;
+	private JComboBox<String> comboboxPixelFormat;
 	private WaringTextField textFieldBandCount;
 	private JButton buttonAdvancedSet;
 
-	ArrayList<String> tempcharsharsetes;
-
+	//	ArrayList<String> tempcharsharsetes;
 	NewDatasetBean datasetBean;
 
-
-	public PropertyPanel() {
+	public PanelDatasetNewProperty() {
 		initComponents();
 		initLayout(DatasetType.POINT);
 //		initStates(this.datasetBean);
@@ -61,11 +60,16 @@ public class PropertyPanel extends JPanel {
 		this.bandCountLabel = new JLabel(ControlsProperties.getString("String_LabelBandsSize"));
 		this.advancedSetLabel = new JLabel(ControlsProperties.getString("String_AdvancedSetLabel"));
 
-		comboboxEncodingType = new JComboBox();
-		comboboxCharest = new JComboBox();
-		comboboxBlockSizeOption = new JComboBox();
-		comboboxPixelFormat = new JComboBox();
+		comboboxEncodingType = new JComboBox<>();
+		comboboxCharest = new ComboBoxCharset();
+		comboboxCharest.setSelectedItem(Charset.UTF8);
+		comboboxEncodingType.setEnabled(false);
+		comboboxCharest.setEnabled(false);
+
+		comboboxBlockSizeOption = new JComboBox<String>();
+		comboboxPixelFormat = new JComboBox<>();
 		textFieldBandCount = new WaringTextField();
+		textFieldBandCount.setInitInfo(1, 100, WaringTextField.INTEGER_TYPE, "0");
 
 		buttonAdvancedSet = new JButton();
 		buttonAdvancedSet.setText(ControlsProperties.getString("String_AdvancedSet"));
@@ -182,17 +186,14 @@ public class PropertyPanel extends JPanel {
 
 			if (this.datasetBean.getDatasetType().equals(DatasetType.IMAGE)) {
 				// 编码类型
-				comboboxEncodingType.removeAll();
+//				comboboxEncodingType.removeAllItems();
 				ArrayList<String> tempEncodeType = new ArrayList<>();
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.DCT));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.LZW));
 				comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempEncodeType.toArray(new String[tempEncodeType.size()])));
-
 				// 栅格分块
-				comboboxBlockSizeOption.removeAll();
-
-				this.comboboxBlockSizeOption = new JComboBox<>();
+//				comboboxBlockSizeOption.removeAllItems();
 				ArrayList<String> tempBlockSizeOptionType = new ArrayList<>();
 				tempBlockSizeOptionType.add(BlockSizeOptionUtilities.toString(BlockSizeOption.BS_64));
 				tempBlockSizeOptionType.add(BlockSizeOptionUtilities.toString(BlockSizeOption.BS_128));
@@ -203,7 +204,7 @@ public class PropertyPanel extends JPanel {
 				comboboxBlockSizeOption.setSelectedItem(BlockSizeOptionUtilities.toString(this.datasetBean.getGridImageExtraDatasetBean().getBlockSizeOption()));
 
 				// 像素格式
-				this.comboboxPixelFormat = new JComboBox<>();
+//				comboboxPixelFormat.removeAllItems();
 				ArrayList<String> tempImagePixelFormatType = new ArrayList<>();
 				tempImagePixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.UBIT1));
 				tempImagePixelFormatType.add(PixelFormatUtilities.toString(PixelFormat.UBIT4));
@@ -222,10 +223,9 @@ public class PropertyPanel extends JPanel {
 				comboboxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(this.datasetBean.getGridImageExtraDatasetBean().getPixelFormat()));
 				// 波段数
 				textFieldBandCount.setText(String.valueOf(this.datasetBean.getGridImageExtraDatasetBean().getBandCount()));
-				textFieldBandCount.setInitInfo(1, 100, WaringTextField.INTEGER_TYPE, "0");
 
 			} else if (this.datasetBean.getDatasetType().equals(DatasetType.GRID)) {
-				comboboxEncodingType.removeAll();
+//				comboboxEncodingType.removeAllItems();
 				ArrayList<String> tempEncodeType = new ArrayList<>();
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.DCT));
@@ -235,7 +235,7 @@ public class PropertyPanel extends JPanel {
 
 
 			} else if (DatasetType.LINE == datasetBean.getDatasetType() || DatasetType.REGION == datasetBean.getDatasetType()) {
-				comboboxEncodingType.removeAll();
+//				comboboxEncodingType.removeAllItems();
 				ArrayList<String> tempEncodeType = new ArrayList<>();
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.BYTE));
@@ -243,53 +243,19 @@ public class PropertyPanel extends JPanel {
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.INT24));
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.INT32));
 				comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempEncodeType.toArray(new String[tempEncodeType.size()])));
-
 				// 字符集
-				comboboxCharest.removeAll();
-				comboboxCharest.setModel(new DefaultComboBoxModel<>(tempcharsharsetes.toArray(new String[tempcharsharsetes.size()])));
+//				comboboxCharest.removeAllItems();
+//				comboboxCharest.setModel(new DefaultComboBoxModel<>(tempcharsharsetes.toArray(new String[tempcharsharsetes.size()])));
+
 			} else {
 				// 编码类型
-				comboboxEncodingType.removeAll();
 				ArrayList<String> tempEncodeType = new ArrayList<>();
 				tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
 				comboboxEncodingType.setModel(new DefaultComboBoxModel<>(tempEncodeType.toArray(new String[tempEncodeType.size()])));
-				// 字符集
-				comboboxCharest.removeAll();
-				tempcharsharsetes = new ArrayList<String>();
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.OEM));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.EASTEUROPE));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.THAI));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.RUSSIAN));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.BALTIC));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.ARABIC));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.HEBREW));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.VIETNAMESE));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.TURKISH));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.GREEK));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.CHINESEBIG5));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.JOHAB));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.HANGEUL));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.SHIFTJIS));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.MAC));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.SYMBOL));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.DEFAULT));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.ANSI));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.UTF8));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.UTF7));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.WINDOWS1252));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.KOREAN));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.UNICODE));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.CYRILLIC));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.XIA5));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.XIA5GERMAN));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.XIA5SWEDISH));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.XIA5NORWEGIAN));
-				tempcharsharsetes.add(CharsetUtilities.toString(Charset.GB18030));
-				comboboxCharest.setModel(new DefaultComboBoxModel<>(tempcharsharsetes.toArray(new String[tempcharsharsetes.size()])));
+
 			}
 			comboboxEncodingType.setSelectedItem(EncodeTypeUtilities.toString(this.datasetBean.getEncodeType()));
-			comboboxCharest.setSelectedItem(CharsetUtilities.toString(this.datasetBean.getCharset()));
-
+			comboboxCharest.setSelectedItem(this.datasetBean.getCharset());
 			initLayout(datasetBean.getDatasetType());
 		}
 	}
@@ -314,11 +280,10 @@ public class PropertyPanel extends JPanel {
 		buttonAdvancedSet.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JDialogNewImageDataset dialogNewGridDataset = new JDialogNewImageDataset(datasetBean);
+				JDialogDatasetImageAdvanceSet dialogNewGridDataset = new JDialogDatasetImageAdvanceSet(datasetBean);
 				dialogNewGridDataset.showDialog();
 			}
 		});
-
 	}
 
 	private ItemListener itemListener = new ItemListener() {
@@ -327,7 +292,7 @@ public class PropertyPanel extends JPanel {
 			if (e.getSource() == comboboxEncodingType) {
 				datasetBean.setEncodeType(EncodeTypeUtilities.valueOf((String) comboboxEncodingType.getSelectedItem()));
 			} else if (e.getSource() == comboboxCharest) {
-				datasetBean.setCharset(CharsetUtilities.valueOf((String) comboboxCharest.getSelectedItem()));
+				datasetBean.setCharset(comboboxCharest.getSelectedItem());
 			} else if (e.getSource() == comboboxBlockSizeOption) {
 				datasetBean.getGridImageExtraDatasetBean().setBlockSizeOption(BlockSizeOptionUtilities.valueOf((String) comboboxBlockSizeOption.getSelectedItem()));
 			} else if (e.getSource() == comboboxPixelFormat) {

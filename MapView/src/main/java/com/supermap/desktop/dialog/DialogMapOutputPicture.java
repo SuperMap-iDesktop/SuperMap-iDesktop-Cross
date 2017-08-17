@@ -45,7 +45,7 @@ import java.text.MessageFormat;
  * @author YuanR
  *         地图输出为图片窗体
  */
-public class DiglogMapOutputPicture extends SmDialog {
+public class DialogMapOutputPicture extends SmDialog {
 
 	private Map map;
 	private JPanel mainPanel;
@@ -106,7 +106,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	/**
 	 * 默认构造方法
 	 */
-	public DiglogMapOutputPicture() {
+	public DialogMapOutputPicture() {
 		super();
 		initComponents();
 		setComponentName();
@@ -881,7 +881,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 			//注销事件
 			removeEvents();
 			//关闭窗口
-			DiglogMapOutputPicture.this.dispose();
+			DialogMapOutputPicture.this.dispose();
 		}
 	};
 
@@ -947,7 +947,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 				CursorUtilities.setDefaultCursor(panelButton.getButtonOk());
 				CursorUtilities.setDefaultCursor(mainPanel);
 				//关闭窗口
-				DiglogMapOutputPicture.this.dispose();
+				DialogMapOutputPicture.this.dispose();
 			}
 
 			// 进度条实现
