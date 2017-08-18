@@ -26,6 +26,7 @@ import com.supermap.desktop.utilities.StringUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * Created by xie on 2017/3/10.
@@ -242,7 +243,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 		this.parameters.setParameters(sourceData, paramSet, resultData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
-				ProcessOutputResultProperties.getString("String_SurfaceAnalyst_ISOLineResult"),
+				MessageFormat.format(ProcessOutputResultProperties.getString("String_SurfaceAnalyst_IsoResult"), "Line"),
 				DatasetTypes.LINE, resultData);
 	}
 

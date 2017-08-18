@@ -119,7 +119,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		this.getParameters().addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, parameterCombineSource);
 		this.getParameters().addInputParameters(OVERLAY_DATA, DatasetTypes.VECTOR, parameterCombineResult);
 		this.getParameters().addOutputParameters(OUTPUT_DATA,
-				ProcessOutputResultProperties.getString("String_OverlayResult"),
+				MessageFormat.format(ProcessOutputResultProperties.getString("String_Result"), analystType.toString()),
 				DatasetTypes.VECTOR, parameterCombineResultSet);
 	}
 

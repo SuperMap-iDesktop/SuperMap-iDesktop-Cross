@@ -25,6 +25,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * Created by xie on 2017/2/16.
@@ -216,7 +217,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 				, modeSetCombine, otherParamCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
-				ProcessOutputResultProperties.getString("String_InterpolatorResult"),
+				MessageFormat.format(ProcessOutputResultProperties.getString("String_Result"), getTitle()),
 				DatasetTypes.GRID, targetCombine);
 	}
 
