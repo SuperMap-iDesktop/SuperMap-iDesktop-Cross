@@ -1,5 +1,6 @@
 package com.supermap.desktop.importUI;
 
+import com.supermap.data.*;
 import com.supermap.data.conversion.ImportSetting;
 import com.supermap.data.conversion.ImportSettingCSV;
 import com.supermap.desktop.baseUI.PanelTransform;
@@ -184,6 +185,10 @@ public class PanelTransformForMicrosoft extends PanelTransform {
 
 	@Override
 	public void initComponents() {
+		GeoCoordSys geoCoordSys = new GeoCoordSys(GeoCoordSysType.GCS_WGS_1984, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
+		PrjCoordSys prjCoordSys = new PrjCoordSys(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
+		prjCoordSys.setGeoCoordSys(geoCoordSys);
+		this.importSetting.setTargetPrjCoordSys(prjCoordSys);
 		this.checkBoxFirstRowAsField = new TristateCheckBox();
 		this.checkBoxFirstRowAsField.setSelected(false);
 		this.labelSeparator = new JLabel();
@@ -199,30 +204,30 @@ public class PanelTransformForMicrosoft extends PanelTransform {
 		group.add(this.radioButtonIndexWKT);
 		group.add(this.radioButtonIndex);
 		String[] indexX = new String[]{
-				"-73.988838",
-				"-73.949654",
-				"-73.997574",
-				"-73.986549",
-				"-73.957657",
-				"-73.978409",
-				"-73.96666",
-				"-73.975555",
-				"-73.966118",
-				"-73.998329",
-				"-74.001213"
+				"-74.006683",
+				"-73.959602",
+				"-73.993515",
+				"-73.973473",
+				"-73.858536",
+				"-73.98484",
+				"-73.925125",
+				"-73.982445",
+				"-74.003761",
+				"-74.001595",
+				"-73.967453"
 		};
 		String[] indexY = new String[]{
-				"40.723125",
-				"40.784626",
-				"40.713951",
-				"40.699253",
-				"40.717896",
-				"40.765896",
-				"40.804333",
-				"40.733112",
-				"40.768082",
-				"40.726372",
-				"40.731869"
+				"40.731781",
+				"40.779701",
+				"40.75901",
+				"40.752022",
+				"40.728283",
+				"40.741985",
+				"40.762154",
+				"40.775063",
+				"40.738258",
+				"40.746483",
+				"40.787766"
 		};
 		this.comboBoxWKT = new SteppedComboBox(indexX);
 		this.comboBoxX = new SteppedComboBox(indexX);
