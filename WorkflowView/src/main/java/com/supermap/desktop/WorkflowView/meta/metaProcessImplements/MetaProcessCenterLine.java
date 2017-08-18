@@ -4,6 +4,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.Generalization;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
@@ -70,7 +71,7 @@ public abstract class MetaProcessCenterLine extends MetaProcess {
 		} else if (getSonDatasetType() == DatasetType.REGION) {
 			this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.REGION, sourceData);
 		}
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, targetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA,ProcessOutputResultProperties.getString("String_Result_CenterLine"), DatasetTypes.LINE, targetData);
 	}
 
 	private void initParameterConstraint() {

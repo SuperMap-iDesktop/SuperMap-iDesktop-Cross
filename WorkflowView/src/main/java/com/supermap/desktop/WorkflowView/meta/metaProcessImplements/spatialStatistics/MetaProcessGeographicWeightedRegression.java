@@ -11,6 +11,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -129,7 +130,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 
 		parameters.setParameters(parameterCombineSourceDataset, parameterSetting, parameterResultSet);
 		parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.VECTOR, parameterCombineSourceDataset);
-		parameters.addOutputParameters(OUTPUT_DATASET, DatasetTypes.VECTOR, parameterSaveDataset);
+		parameters.addOutputParameters(OUTPUT_DATASET, ProcessOutputResultProperties.getString("String_Result_Analyst"), DatasetTypes.VECTOR, parameterSaveDataset);
 	}
 
 	private void initConstraints() {

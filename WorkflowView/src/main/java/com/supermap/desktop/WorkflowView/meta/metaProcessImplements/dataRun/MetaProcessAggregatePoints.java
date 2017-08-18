@@ -6,6 +6,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -97,7 +98,7 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 
 		parameters.setParameters(parameterCombineSourceData, parameterCombineSet, parameterCombineResultData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, parameterCombineSourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.REGION, parameterCombineResultData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_AggregatePoints"), DatasetTypes.REGION, parameterCombineResultData);
 	}
 
 	private void initParameterConstraint() {

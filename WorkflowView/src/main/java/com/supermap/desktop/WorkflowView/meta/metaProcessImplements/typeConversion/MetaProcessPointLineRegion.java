@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConvers
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
@@ -61,7 +62,13 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 
 		parameters.setParameters(inputCombine, outputCombine);
 		parameters.addInputParameters(INPUT_DATA, datasetTypeToTypes(inputType), inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, datasetTypeToTypes(outputType), outputCombine);
+		if (outputType.equals(DatasetType.REGION)) {
+			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Region_Dataset"), datasetTypeToTypes(outputType), outputCombine);
+		} else if (outputType.equals(DatasetType.LINE)) {
+			parameters.addOutputParameters(OUTPUT_DATA,ProcessOutputResultProperties.getString("String_Result_Line_Dataset"), datasetTypeToTypes(outputType), outputCombine);
+		} else if (outputType.equals(DatasetType.POINT)) {
+			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Point_Dataset"), datasetTypeToTypes(outputType), outputCombine);
+		}
 	}
 
 	private void initParameterConstraint() {
