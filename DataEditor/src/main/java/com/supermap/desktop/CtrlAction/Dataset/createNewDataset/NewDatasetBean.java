@@ -105,6 +105,8 @@ public class NewDatasetBean {
 		if (!StringUtilities.isNullOrEmpty(datasetName)) {
 			if (datasetType.equals(DatasetType.IMAGE)) {
 				if (gridImageExtraDatasetBean != null) {
+					// 对于datasetName做一下安全设置
+					datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
 					DatasetImageInfo info = new DatasetImageInfo(
 							datasetName,
 							gridImageExtraDatasetBean.getWidth(),
@@ -132,6 +134,8 @@ public class NewDatasetBean {
 
 			} else if (datasetType.equals(DatasetType.GRID)) {
 				if (gridImageExtraDatasetBean != null) {
+					// 对于datasetName做一下安全设置
+					datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
 					DatasetGridInfo info = new DatasetGridInfo(
 							datasetName,
 							gridImageExtraDatasetBean.getWidth(),
@@ -160,6 +164,8 @@ public class NewDatasetBean {
 				}
 
 			} else {
+				// 对于datasetName做一下安全设置
+				datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
 				DatasetVectorInfo info = new DatasetVectorInfo(datasetName, datasetType);
 				info.setEncodeType(encodeType);
 				Dataset dataset = null;

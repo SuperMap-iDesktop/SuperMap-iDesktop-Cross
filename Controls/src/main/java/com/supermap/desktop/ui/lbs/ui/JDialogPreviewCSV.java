@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.data.Enum;
 import com.supermap.data.FieldType;
+import com.supermap.data.GeoCoordSysType;
 import com.supermap.data.GeometryType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.lbs.HDFSDefine;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
+import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
@@ -48,6 +50,7 @@ import java.util.ArrayList;
  * @author XiaJT
  */
 public class JDialogPreviewCSV extends SmDialog {
+	private final HDFSTableModel hdfsModel;
 	private String webURL;
 	private HDFSDefine hdfsDefine;
 
@@ -68,6 +71,9 @@ public class JDialogPreviewCSV extends SmDialog {
 	private JLabel labelEncoding = new JLabel(CommonProperties.getString("String_Label_EncodeType"));
 	private JComboBox<String> comboBoxEncoding = new JComboBox<>();
 
+	private JLabel labelCoordSysType = new JLabel(ControlsProperties.getString("String_Message_CoordSysName"));
+	private JComboBox<GeoCoordSysType> comboBoxCoorSysType = new JComboBox<>();
+
 	private SmButton buttonOk = new SmButton(ControlsProperties.getString("String_Save"));
 	private SmButton buttonCancle = new SmButton(CommonProperties.getString(CommonProperties.Cancel));
 
@@ -81,7 +87,8 @@ public class JDialogPreviewCSV extends SmDialog {
 	private String defaultSeparator = ",";
 	private byte[] csvFileBytes;
 
-	public JDialogPreviewCSV(String webURL, HDFSDefine hdfsDefine) {
+	public JDialogPreviewCSV(String webURL, HDFSDefine hdfsDefine, HDFSTableModel model) {
+		hdfsModel = model;
 		this.webURL = webURL;
 		if (!webURL.endsWith("/")) {
 			this.webURL += "/";
@@ -140,6 +147,25 @@ public class JDialogPreviewCSV extends SmDialog {
 		for (String encoding : encodings) {
 			comboBoxEncoding.addItem(encoding);
 		}
+
+		Enum[] types = GeoCoordSysType.getEnums(GeoCoordSysType.class);
+		for (Enum type : types) {
+			comboBoxCoorSysType.addItem((GeoCoordSysType) type);
+		}
+		comboBoxCoorSysType.setRenderer(new ListCellRenderer<GeoCoordSysType>() {
+			@Override
+			public Component getListCellRendererComponent(JList<? extends GeoCoordSysType> list, GeoCoordSysType value, int index, boolean isSelected, boolean cellHasFocus) {
+				DataCell dataCell = new DataCell(value.name());
+				if (isSelected) {
+					dataCell.setBackground(list.getSelectionBackground());
+					dataCell.setForeground(list.getSelectionForeground());
+				} else {
+					dataCell.setBackground(list.getBackground());
+					dataCell.setForeground(list.getForeground());
+				}
+				return dataCell;
+			}
+		});
 	}
 
 	private void initLayout() {
@@ -156,15 +182,21 @@ public class JDialogPreviewCSV extends SmDialog {
 		comboBoxEncoding.setMinimumSize(preferredSize);
 		comboBoxEncoding.setPreferredSize(preferredSize);
 		comboBoxEncoding.setMaximumSize(preferredSize);
+
+		comboBoxCoorSysType.setMinimumSize(preferredSize);
+		comboBoxCoorSysType.setPreferredSize(preferredSize);
+		comboBoxCoorSysType.setMaximumSize(preferredSize);
 		this.add(labelGeometryType, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
 		this.add(comboBoxGeometryType, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 0, 10).setFill(GridBagConstraints.NONE));
-
 		this.add(labelStorageType, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 0, 0));
 		this.add(comboBoxStorageType, new GridBagConstraintsHelper(3, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 0, 10).setFill(GridBagConstraints.NONE));
 
-		this.add(checkBoxHasHeader, new GridBagConstraintsHelper(2, 2, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
-		this.add(labelEncoding, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
-		this.add(comboBoxEncoding, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10).setFill(GridBagConstraints.NONE));
+		this.add(labelEncoding, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		this.add(comboBoxEncoding, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 5).setFill(GridBagConstraints.NONE));
+		this.add(labelCoordSysType, new GridBagConstraintsHelper(2, 1, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 0));
+		this.add(comboBoxCoorSysType, new GridBagConstraintsHelper(3, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10).setFill(GridBagConstraints.NONE));
+
+		this.add(checkBoxHasHeader, new GridBagConstraintsHelper(0, 2, 4, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 10));
 
 		this.add(new JScrollPane(tableField), new GridBagConstraintsHelper(0, 3, 4, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 0).setFill(GridBagConstraints.BOTH).setIpad(0, 200));
 
@@ -209,9 +241,10 @@ public class JDialogPreviewCSV extends SmDialog {
 
 	private boolean updateMetaFile() {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("GeometryType", ((GeometryType) comboBoxGeometryType.getSelectedItem()).name());
+		jsonObject.put("GeometryType", ((GeometryType) comboBoxGeometryType.getSelectedItem()).name().substring(3));
 		jsonObject.put("StorageType", comboBoxStorageType.getSelectedItem());
-		jsonObject.put("HasHeader", String.valueOf(checkBoxHasHeader.isSelected()));
+		jsonObject.put("HasHeader", checkBoxHasHeader.isSelected());
+		jsonObject.put("PrjCoordsys", ((GeoCoordSysType) comboBoxCoorSysType.getSelectedItem()).value());
 		JSONArray array = new JSONArray();
 		for (int i = 0; i < tableModelField.getRowCount(); i++) {
 			JSONObject jsonObjectField = new JSONObject();
@@ -425,38 +458,49 @@ public class JDialogPreviewCSV extends SmDialog {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		try {
-			byte[] buff = new byte[BUFF_LENGTH];
-
-			URL urlMeta = new URL(getMetaUrl() + "?op=open&offset=" + 0 + "&length=" + hdfsDefine.getSize());
-			HttpURLConnection connectionMeta = (HttpURLConnection) urlMeta.openConnection();
-			setConnection(connectionMeta);
-
-			//获取文件输入流，读取文件内容
-			InputStream inputStreamMeta = connectionMeta.getInputStream();
-			while (inputStreamMeta == null) {
-				inputStreamMeta = connectionMeta.getInputStream();
-			}
-			int size = -1;
-
-			byte[] csvMetaByte = new byte[0];
-
-			while ((size = inputStreamMeta.read(buff)) > 0) {
-				// 写入文件内容，返回最后写入的长度
-				byte[] temp = new byte[csvMetaByte.length + buff.length];
-				System.arraycopy(csvMetaByte, 0, temp, 0, csvMetaByte.length);
-				System.arraycopy(buff, 0, temp, csvMetaByte.length, buff.length);
-				csvMetaByte = temp;
-
-				String csvFileString = new String(csvMetaByte, "UTF-8");
-				String[] split = csvFileString.split("\n");
-				if (split.length >= 2) {
-					metaFile = split[0].split("\r")[0];
-					break;
+			String metaFileName = getMetaFileName();
+			HDFSDefine hdfsMetaFile = null;
+			for (int i = 0; i < hdfsModel.getRowCount(); i++) {
+				if (((HDFSDefine) hdfsModel.getRowTagAt(i)).getName().equals(metaFileName)) {
+					hdfsMetaFile = (HDFSDefine) hdfsModel.getRowTagAt(i);
 				}
-				startPos += size;
 			}
-			inputStreamMeta.close();
-			connectionMeta.disconnect();
+			if (hdfsMetaFile != null) {
+				byte[] buff = new byte[BUFF_LENGTH];
+
+				URL urlMeta = new URL(getMetaUrl() + "?op=open&offset=" + 0 + "&length=" + hdfsMetaFile.getSize());
+				HttpURLConnection connectionMeta = (HttpURLConnection) urlMeta.openConnection();
+				setConnection(connectionMeta);
+
+				//获取文件输入流，读取文件内容
+				InputStream inputStreamMeta = connectionMeta.getInputStream();
+				while (inputStreamMeta == null) {
+					inputStreamMeta = connectionMeta.getInputStream();
+				}
+				int size = -1;
+
+				byte[] csvMetaByte = new byte[0];
+
+				while ((size = inputStreamMeta.read(buff)) > 0) {
+					// 写入文件内容，返回最后写入的长度
+					byte[] temp = new byte[csvMetaByte.length + buff.length];
+					System.arraycopy(csvMetaByte, 0, temp, 0, csvMetaByte.length);
+					System.arraycopy(buff, 0, temp, csvMetaByte.length, buff.length);
+					csvMetaByte = temp;
+
+					String csvFileString = new String(csvMetaByte, "UTF-8");
+					String[] split = csvFileString.split("\\}");
+					if (split.length >= 2) {
+						// TODO: 2017/8/18
+
+						metaFile = csvFileString;
+						break;
+					}
+					startPos += size;
+				}
+				inputStreamMeta.close();
+				connectionMeta.disconnect();
+			}
 		} catch (Exception e) {
 			// meta找不到就算了
 		}
@@ -500,6 +544,17 @@ public class JDialogPreviewCSV extends SmDialog {
 				if (!geometryType.startsWith("GEO")) {
 					geometryType = "GEO" + geometryType;
 				}
+				try {
+
+					Object prjCoordsys = jsonObject.get("PrjCoordsys");
+					if (null != prjCoordsys) {
+						Integer integer = Integer.valueOf(String.valueOf(prjCoordsys));
+						comboBoxCoorSysType.setSelectedItem(GeoCoordSysType.parse(GeoCoordSysType.class, integer));
+					}
+				} catch (Exception e) {
+					// hehe
+				}
+
 
 				comboBoxGeometryType.setSelectedItem(GeometryType.parse(GeometryType.class, geometryType));
 				comboBoxStorageType.setSelectedItem(storageType);
@@ -515,7 +570,7 @@ public class JDialogPreviewCSV extends SmDialog {
 						tableModelPreviewCSV.setColumnName(i, name);
 					}
 					for (int i = fieldInfos.size(); i < tableModelPreviewCSV.getMaxColumnCount(); i++) {
-						rowDatas.add(new RowData(tableModelPreviewCSV.getColumnName(i), FieldTypeUtilities.getFieldTypeName(FieldType.TEXT)));
+						rowDatas.add(new RowData(tableModelPreviewCSV.getColumnName(i), FieldTypeUtilities.getFieldTypeName(FieldType.WTEXT)));
 					}
 				}
 			}
@@ -524,7 +579,7 @@ public class JDialogPreviewCSV extends SmDialog {
 		if (!isMetaExists) {
 			int columnCount = tableModelPreviewCSV.getMaxColumnCount();
 			for (int i = 0; i < columnCount; i++) {
-				rowDatas.add(new RowData(tableModelPreviewCSV.getColumnName(i), FieldTypeUtilities.getFieldTypeName(FieldType.TEXT)));
+				rowDatas.add(new RowData(tableModelPreviewCSV.getColumnName(i), FieldTypeUtilities.getFieldTypeName(FieldType.WTEXT)));
 			}
 		}
 		tableModelField = new CSVFiledTableModel(rowDatas);
@@ -548,10 +603,11 @@ public class JDialogPreviewCSV extends SmDialog {
 		});
 
 		ArrayList<String> fieldTypes = new ArrayList<>();
-		Enum[] enums = FieldType.getEnums(FieldType.class);
-		for (Enum anEnum : enums) {
-			fieldTypes.add(FieldTypeUtilities.getFieldTypeName((FieldType) anEnum));
-		}
+		fieldTypes.add(FieldTypeUtilities.getFieldTypeName(FieldType.INT16));
+		fieldTypes.add(FieldTypeUtilities.getFieldTypeName(FieldType.DOUBLE));
+		fieldTypes.add(FieldTypeUtilities.getFieldTypeName(FieldType.DATETIME));
+		fieldTypes.add(FieldTypeUtilities.getFieldTypeName(FieldType.WTEXT));
+
 		JComboBox<String> comboBox = new JComboBox<>(fieldTypes.toArray(new String[fieldTypes.size()]));
 		tableField.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(comboBox));
 	}

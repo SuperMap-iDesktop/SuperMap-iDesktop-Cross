@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatist
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -62,7 +63,9 @@ public class MetaProcessAltitudeStatistics extends MetaProcess {
 		this.parameters.setParameters(pointData, gridData, targetData);
 		this.parameters.addInputParameters(INTPUT_DATA_POINT, DatasetTypes.POINT, pointData);
 		this.parameters.addInputParameters(INTPUT_DATA_GRID, DatasetTypes.GRID, gridData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.POINT3D, targetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_AltitudeStatisticResult"),
+				DatasetTypes.POINT3D, targetData);
 	}
 
 	private void initParametersState() {

@@ -1,17 +1,10 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
-import com.supermap.data.conversion.ExportSetting;
-import com.supermap.data.conversion.ExportSettingBMP;
-import com.supermap.data.conversion.ExportSettingGIF;
-import com.supermap.data.conversion.ExportSettingJPG;
-import com.supermap.data.conversion.ExportSettingPNG;
-import com.supermap.data.conversion.ExportSettingSIT;
-import com.supermap.data.conversion.ExportSettingTIF;
-import com.supermap.data.conversion.ExportSteppedEvent;
-import com.supermap.data.conversion.ExportSteppedListener;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessAbstractExport;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -48,6 +41,7 @@ public class MetaProcessExportGrid extends MetaProcessAbstractExport {
 	};
 
 	public MetaProcessExportGrid() {
+		this.OUTPUT_DATA_TYPE = ControlsProperties.getString("String_Grid");
 		initParameters();
 		registEvents();
 	}

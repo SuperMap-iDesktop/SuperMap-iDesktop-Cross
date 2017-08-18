@@ -6,6 +6,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -89,7 +90,9 @@ public class MetaProcessShortestPath extends MetaProcess {
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.SIMPLE_VECTOR_AND_GRID, sourceData);
 		this.parameters.addInputParameters(DISTANCE_DATA, DatasetTypes.GRID, distanceData);
 		this.parameters.addInputParameters(DIRECTION_DATA, DatasetTypes.GRID, directionData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, targetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_ShorestPathGridResult"),
+				DatasetTypes.GRID, targetData);
 	}
 
 	private void initParametersState() {

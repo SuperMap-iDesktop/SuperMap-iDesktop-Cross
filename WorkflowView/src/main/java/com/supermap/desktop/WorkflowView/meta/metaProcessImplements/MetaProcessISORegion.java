@@ -15,7 +15,11 @@ import com.supermap.desktop.properties.CommonProperties;
 public class MetaProcessISORegion extends MetaProcessISO {
 
 	public MetaProcessISORegion() {
-
+		OUTPUT_DATA_TYPE = "Region";
+		super.initParameters();
+		super.initParameterConstraint();
+		super.initParametersState();
+		super.initParametersListener();
 	}
 
 	@Override
@@ -29,7 +33,7 @@ public class MetaProcessISORegion extends MetaProcessISO {
 	}
 
 	@Override
-	protected DatasetVector subExecute(SurfaceExtractParameter surfaceExtractParameter, DatasetGrid src, Datasource resultDatasource, String datasetName) {
+	public DatasetVector subExecute(SurfaceExtractParameter surfaceExtractParameter, DatasetGrid src, Datasource resultDatasource, String datasetName) {
 		return SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, src, resultDatasource, datasetName, null);
 	}
 

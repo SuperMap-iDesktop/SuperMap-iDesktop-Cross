@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -90,7 +91,9 @@ public class MetaProcessProjection extends MetaProcess {
 
 		parameters.setParameters(parameterCombineSource, parameterCombineSetting, parameterCombineRotation, parameterOffset);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.DATASET, parameterCombineSource);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.DATASET, parameterDataset);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_TransParamsSettingResult"),
+				DatasetTypes.DATASET, parameterDataset);
 	}
 
 	private void initParameterState() {

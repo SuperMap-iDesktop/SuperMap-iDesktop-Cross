@@ -64,6 +64,13 @@ public class CtrlActionHeatMapProperty extends CtrlAction {
 //			System.out.println(maxColor);
 //			System.out.println(colorsComboBox.getSelectedItem().getCount());
 			LayerHeatmap layerHeatmap=((IFormMap) activeForm).getMapControl().getMap().getLayers().AddHeatmap(result.getDataset(), 20, maxColor, color);
+//			System.out.println(layerHeatmap.getIsUserDef());
+//			System.out.println(layerHeatmap.getInternalMaxValue());
+//			System.out.println(layerHeatmap.getInternalMinValue());
+//			System.out.println(layerHeatmap.getMaxValue());
+//			System.out.println(layerHeatmap.getMinValue());
+			//layerHeatmap.setIsUserDef(false);
+			//layerHeatmap.updateData();
 //			System.out.println("mincolor");
 //			System.out.println(color);
 //

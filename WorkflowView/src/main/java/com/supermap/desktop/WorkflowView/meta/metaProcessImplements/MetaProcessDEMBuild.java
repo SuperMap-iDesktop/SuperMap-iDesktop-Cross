@@ -6,6 +6,7 @@ import com.supermap.analyst.spatialanalyst.TerrainInterpolateType;
 import com.supermap.analyst.spatialanalyst.TerrainStatisticType;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -137,7 +138,9 @@ public class MetaProcessDEMBuild extends MetaProcess {
 		this.parameters.addInputParameters(LAKE_DATA, DatasetTypes.REGION, lakeData);
 		this.parameters.addInputParameters(CLIP_DATA, DatasetTypes.REGION, clipData);
 		this.parameters.addInputParameters(ERASE_DATA, DatasetTypes.REGION, eraseData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultData);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_DEMBuildResult"),
+				DatasetTypes.GRID, resultData);
 	}
 
 	private void initParametersState() {
