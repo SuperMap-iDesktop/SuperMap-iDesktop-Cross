@@ -51,7 +51,6 @@ public class ImportCallable extends UpdateProgressCallable {
 			for (int i = 0; i < fileInfos.size(); i++) {
 				DataImport dataImport = new DataImport();
 				importSetting = fileInfos.get(i).getImportSetting();
-				importSetting.setTargetPrjCoordSys(importSetting.getTargetDatasource().getPrjCoordSys());
 				String datasetName = importSetting.getTargetDatasetName();
 				Dataset dataset = DatasourceUtilities.getDataset(datasetName, importSetting.getTargetDatasource());
 				if (importSetting.getImportMode().equals(ImportMode.OVERWRITE) && dataset != null) {

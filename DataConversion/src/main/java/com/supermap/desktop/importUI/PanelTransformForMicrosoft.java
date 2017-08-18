@@ -1,5 +1,6 @@
 package com.supermap.desktop.importUI;
 
+import com.supermap.data.*;
 import com.supermap.data.conversion.ImportSetting;
 import com.supermap.data.conversion.ImportSettingCSV;
 import com.supermap.desktop.baseUI.PanelTransform;
@@ -184,6 +185,10 @@ public class PanelTransformForMicrosoft extends PanelTransform {
 
 	@Override
 	public void initComponents() {
+		GeoCoordSys geoCoordSys = new GeoCoordSys(GeoCoordSysType.GCS_WGS_1984, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
+		PrjCoordSys prjCoordSys = new PrjCoordSys(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
+		prjCoordSys.setGeoCoordSys(geoCoordSys);
+		this.importSetting.setTargetPrjCoordSys(prjCoordSys);
 		this.checkBoxFirstRowAsField = new TristateCheckBox();
 		this.checkBoxFirstRowAsField.setSelected(false);
 		this.labelSeparator = new JLabel();
