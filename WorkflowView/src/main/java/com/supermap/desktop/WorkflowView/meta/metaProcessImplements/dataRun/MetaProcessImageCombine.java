@@ -4,6 +4,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Toolkit;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -73,7 +74,7 @@ public class MetaProcessImageCombine extends MetaProcess {
 		this.parameters.addInputParameters(INTPUT_RED_DATA, DatasetTypes.IMAGE, redData);
 		this.parameters.addInputParameters(INTPUT_GREEN_DATA, DatasetTypes.IMAGE, greenData);
 		this.parameters.addInputParameters(INTPUT_BLUE_DATA, DatasetTypes.IMAGE, blueData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.IMAGE, targetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_ImageCombine"), DatasetTypes.IMAGE, targetData);
 	}
 
 	private void initParametersState() {

@@ -3,8 +3,12 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.DistanceAnalyst;
 import com.supermap.analyst.spatialanalyst.DistanceAnalystParameter;
 import com.supermap.analyst.spatialanalyst.DistanceAnalystResult;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -47,7 +51,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 	public MetaProcessCreateDistanceRaster() {
 		initParameters();
 		initParametersState();
-		initParameterConstrint();
+		initParameterConstraint();
 		registerListener();
 	}
 
@@ -71,7 +75,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 //		this.resultAllocationDataset = new ParameterSaveDataset();
 //		this.resultAllocationDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
 //		this.resultAllocationDataset.setDatasetDescribe(ProcessProperties.getString("String_Allocation_Dataset"));
-		this.resultDatasource=new ParameterDatasource();
+		this.resultDatasource = new ParameterDatasource();
 		this.resultDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		this.resultDistanceDataset = new ParameterTextField(ProcessProperties.getString("String_Distance_Dataset"));
 		this.resultDirectionDataset = new ParameterTextField(ProcessProperties.getString("String_Direction_Dataset"));
@@ -97,14 +101,20 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 //		targetDataAllocation.addParameters(this.resultAllocationDataset);
 		ParameterCombine resultData = new ParameterCombine();
 		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-		resultData.addParameters(this.resultDatasource, this.resultDistanceDataset, this.resultDirectionDataset,this.resultAllocationDataset);
+		resultData.addParameters(this.resultDatasource, this.resultDistanceDataset, this.resultDirectionDataset, this.resultAllocationDataset);
 
 		this.parameters.setParameters(sourceData, costData, parameterSetting, resultData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.SIMPLE_VECTOR_AND_GRID, sourceData);
 		this.parameters.addInputParameters(COST_DATA, DatasetTypes.GRID, costData);
-		this.parameters.addOutputParameters(OUTPUT_DATA_DISTANCE, DatasetTypes.GRID, this.resultDistanceDataset);
-		this.parameters.addOutputParameters(OUTPUT_DATA_DIRECTION, DatasetTypes.GRID, this.resultDirectionDataset);
-		this.parameters.addOutputParameters(OUTPUT_DATA_ALLOCATION, DatasetTypes.GRID, this.resultAllocationDataset);
+		this.parameters.addOutputParameters(OUTPUT_DATA_DISTANCE,
+				ProcessOutputResultProperties.getString("String_DistanceResult"),
+				DatasetTypes.GRID, this.resultDistanceDataset);
+		this.parameters.addOutputParameters(OUTPUT_DATA_DIRECTION,
+				ProcessOutputResultProperties.getString("String_DirectionResult"),
+				DatasetTypes.GRID, this.resultDirectionDataset);
+		this.parameters.addOutputParameters(OUTPUT_DATA_ALLOCATION,
+				ProcessOutputResultProperties.getString("String_AllocationResult"),
+				DatasetTypes.GRID, this.resultAllocationDataset);
 	}
 
 	private void initParametersState() {
@@ -154,7 +164,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 		}
 	}
 
-	private void initParameterConstrint() {
+	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(this.sourceDatasource, ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(this.sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);

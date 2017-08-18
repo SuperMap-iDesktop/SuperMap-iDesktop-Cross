@@ -8,7 +8,7 @@ import com.supermap.data.Rectangle2D;
  * Created by yuanR on 2017/8/15 0015.
  * 新建栅格/影像数据集额外的参数信息
  */
-public class GridImageExtraDatasetBean {
+public class DatasetGridImageExtraBean {
 	public void setBlockSizeOption(BlockSizeOption blockSizeOption) {
 		this.blockSizeOption = blockSizeOption;
 	}
@@ -108,7 +108,7 @@ public class GridImageExtraDatasetBean {
 	// 影像数据集的波段个数
 	private Integer bandCount;
 
-	public GridImageExtraDatasetBean() {
+	public DatasetGridImageExtraBean() {
 		this.blockSizeOption = BlockSizeOption.BS_64;
 		this.pixelFormatImage = PixelFormat.RGBA;
 		this.pixelFormatGrid = PixelFormat.DOUBLE;

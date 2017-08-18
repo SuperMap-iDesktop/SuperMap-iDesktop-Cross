@@ -35,7 +35,7 @@ public class CtrlActionPreviewCSV extends CtrlAction {
 			}
 		}
 		if (hdfsDefineResult != null) {
-			JDialogPreviewCSV jDialogPreviewCSV = new JDialogPreviewCSV(((IFormLBSControl) Application.getActiveApplication().getActiveForm()).getURL(), hdfsDefineResult);
+			JDialogPreviewCSV jDialogPreviewCSV = new JDialogPreviewCSV(((IFormLBSControl) Application.getActiveApplication().getActiveForm()).getURL(), hdfsDefineResult, (HDFSTableModel) ((IFormLBSControl) Application.getActiveApplication().getActiveForm()).getTable().getModel());
 			DialogResult dialogResult = jDialogPreviewCSV.showDialog();
 			if (dialogResult == DialogResult.OK) {
 				((IFormLBSControl) Application.getActiveApplication().getActiveForm()).refresh();

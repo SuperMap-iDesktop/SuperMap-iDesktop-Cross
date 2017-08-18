@@ -7,6 +7,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
@@ -54,7 +55,7 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 		targetData.addParameters(saveDataset);
 		this.parameters.setParameters(sourceData, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.REGION, sourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, targetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_CenterLine"), DatasetTypes.LINE, targetData);
 	}
 
 	private void initParameterConstraint() {

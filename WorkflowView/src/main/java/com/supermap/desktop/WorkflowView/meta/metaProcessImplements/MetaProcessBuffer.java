@@ -3,13 +3,9 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.BufferAnalyst;
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
 import com.supermap.analyst.spatialanalyst.BufferRadiusUnit;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasource;
-import com.supermap.data.FieldType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -21,17 +17,7 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterEnum;
-import com.supermap.desktop.process.parameter.ipls.ParameterFieldComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
-import com.supermap.desktop.process.parameter.ipls.ParameterRadioButton;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
@@ -152,7 +138,7 @@ public class MetaProcessBuffer extends MetaProcess {
 		);
 		parameterCombineSourceData.setRequisite(true);
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.SIMPLE_VECTOR, parameterCombineSourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATASET, DatasetTypes.REGION, parameterCombineResult);
+		this.parameters.addOutputParameters(OUTPUT_DATASET,  ProcessOutputResultProperties.getString("String_BufferResult"),DatasetTypes.REGION, parameterCombineResult);
 	}
 
 	private void setComponentEnable() {

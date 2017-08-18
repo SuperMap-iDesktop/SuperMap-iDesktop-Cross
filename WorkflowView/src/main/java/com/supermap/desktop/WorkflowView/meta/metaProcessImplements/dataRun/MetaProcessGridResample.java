@@ -4,6 +4,7 @@ import com.supermap.analyst.spatialanalyst.GeneralizeAnalyst;
 import com.supermap.analyst.spatialanalyst.ResampleMode;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -78,7 +79,7 @@ public class MetaProcessGridResample extends MetaProcess {
 
 		parameters.setParameters(sourceCombine, infoCombine, settingCombine, resultCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.ALL_RASTER, sourceCombine);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.ALL_RASTER, resultCombine);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Resample"), DatasetTypes.ALL_RASTER, resultCombine);
 	}
 
 	private void initParameterConstraint() {

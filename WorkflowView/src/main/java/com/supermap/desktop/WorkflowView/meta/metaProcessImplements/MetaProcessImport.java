@@ -3,6 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.data.*;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.*;
@@ -241,7 +242,9 @@ public class MetaProcessImport extends MetaProcess {
 			types = DatasetTypes.REGION;
 		}
 
-		this.getParameters().addOutputParameters(OUTPUT_DATA, "Import", types, parameterCreator.getParameterCombineResultSet());
+		this.getParameters().addOutputParameters(OUTPUT_DATA,
+				MessageFormat.format(ProcessOutputResultProperties.getString("String_InputResult"), importType),
+				types, parameterCreator.getParameterCombineResultSet());
 	}
 
 	public void setImportSetting(ImportSetting importSetting) {

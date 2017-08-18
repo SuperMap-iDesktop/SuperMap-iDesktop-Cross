@@ -3,6 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.lbs.Interface.IServerService;
@@ -79,7 +80,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 		parameters.addParameters(parameterIServerLogin, parameterInputDataType, parameterCombineOverlay, parameterCombineSetting);
 		parameters.addInputParameters("overlay", Type.UNKOWN, parameterCombineOverlay);// 缺少对应的类型
-		parameters.addOutputParameters("OverlayResult", BasicTypes.STRING, null);
+		parameters.addOutputParameters("OverlayResult", ProcessOutputResultProperties.getString("String_VectorAnalysisResult"), BasicTypes.STRING, null);
 	}
 
 	private void initComponentState() {

@@ -19,6 +19,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * Created by yuanR on 2017/8/17 0017.
@@ -36,8 +37,9 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
 
-	private NewDatasetBean newDatasetBean;
-	private GridImageExtraDatasetBean gridImageExtraDatasetBean;
+	ArrayList<NewDatasetBean> datasetBeans;
+	private NewDatasetBean datasetBeanFrist;
+	private DatasetGridImageExtraBean gridImageExtraDatasetBean;
 
 	private boolean isDatasetNameSuitable = true;
 	private boolean isWidthHeightSuitable = true;
@@ -84,9 +86,10 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 		setOKButtonEnabled(isDatasetNameSuitable, isWidthHeightSuitable, this.isMaxMinValueSuitable);
 	}
 
-	public JDialogDatasetGridAdvanceSet(NewDatasetBean newDatasetBean) {
-		this.newDatasetBean = newDatasetBean;
-		this.gridImageExtraDatasetBean = this.newDatasetBean.getGridImageExtraDatasetBean();
+	public JDialogDatasetGridAdvanceSet(ArrayList<NewDatasetBean> datasetBeans) {
+		this.datasetBeans = datasetBeans;
+		this.datasetBeanFrist = datasetBeans.get(0);
+		this.gridImageExtraDatasetBean = this.datasetBeanFrist.getGridImageExtraDatasetBean();
 		initComponents();
 		initLayout();
 		initStates();
@@ -98,7 +101,7 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 	}
 
 	private void initStates() {
-		panelBasicInfoSet.initStates(newDatasetBean);
+		panelBasicInfoSet.initStates(datasetBeanFrist);
 
 		double x = this.gridImageExtraDatasetBean.getRectangle().getWidth() / this.gridImageExtraDatasetBean.getWidth();
 		double y = this.gridImageExtraDatasetBean.getRectangle().getHeight() / this.gridImageExtraDatasetBean.getHeight();
@@ -242,18 +245,22 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 
 		Rectangle2D rectangle2D = panelDatasetBounds.getRangeBound();
 
-		newDatasetBean.setDatasource(datasource);
-		newDatasetBean.setDatasetName(name);
-		newDatasetBean.setDatasetType(DatasetType.GRID);
-		newDatasetBean.setEncodeType(encodeType);
-		newDatasetBean.getGridImageExtraDatasetBean().setBlockSizeOption(blockSizeOption);
-		newDatasetBean.getGridImageExtraDatasetBean().setPixelFormatGrid(pixelFormat);
-		newDatasetBean.getGridImageExtraDatasetBean().setHeight(height);
-		newDatasetBean.getGridImageExtraDatasetBean().setWidth(width);
-		newDatasetBean.getGridImageExtraDatasetBean().setMaxValue(maxValue);
-		newDatasetBean.getGridImageExtraDatasetBean().setMinValue(minValue);
-		newDatasetBean.getGridImageExtraDatasetBean().setNoValue(noValue);
-		newDatasetBean.getGridImageExtraDatasetBean().setRectangle(rectangle2D);
+
+		for (int i = 0; i < datasetBeans.size(); i++) {
+			datasetBeans.get(i).setDatasource(datasource);
+			datasetBeans.get(i).setDatasetName(name);
+			datasetBeans.get(i).setDatasetType(DatasetType.GRID);
+			datasetBeans.get(i).setEncodeType(encodeType);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setBlockSizeOption(blockSizeOption);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setPixelFormatGrid(pixelFormat);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setHeight(height);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setWidth(width);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setMaxValue(maxValue);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setMinValue(minValue);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setNoValue(noValue);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setRectangle(rectangle2D);
+		}
+
 
 		setDialogResult(DialogResult.OK);
 		this.dispose();
@@ -392,6 +399,4 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 			}
 		}
 	}
-
-
 }

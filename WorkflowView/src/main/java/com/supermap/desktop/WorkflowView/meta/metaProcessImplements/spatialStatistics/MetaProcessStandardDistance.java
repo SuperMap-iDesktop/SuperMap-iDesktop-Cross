@@ -3,6 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStat
 import com.supermap.analyst.spatialstatistics.SpatialMeasure;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 
@@ -16,7 +17,8 @@ public class MetaProcessStandardDistance extends MetaProcessSpatialMeasure {
 
 	protected void initHook() {
 		resultName = "result_standardDistance";
-		OUTPUT_DATASET = "STANDARD_DISTANCE";
+		OUTPUT_DATASET = "StandardDistanceResult";
+		outputName = ProcessOutputResultProperties.getString("String_Result_StandardDistance");
 	}
 
 	@Override
