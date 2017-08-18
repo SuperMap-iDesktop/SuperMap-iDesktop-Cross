@@ -4,6 +4,7 @@ import com.supermap.analyst.spatialanalyst.ConversionAnalyst;
 import com.supermap.analyst.spatialanalyst.ConversionAnalystParameter;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -18,7 +19,6 @@ import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.PixelFormatUtilities;
-import sun.font.TrueTypeFont;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -109,7 +109,9 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 //		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.LINE, sourceData);
 		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.SIMPLE_VECTOR, sourceData);
 		this.parameters.addInputParameters(BOUNDARY_DATA, DatasetTypes.REGION, boundaryData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultData);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_VectorToGridResult"),
+				DatasetTypes.GRID, resultData);
 
 	}
 

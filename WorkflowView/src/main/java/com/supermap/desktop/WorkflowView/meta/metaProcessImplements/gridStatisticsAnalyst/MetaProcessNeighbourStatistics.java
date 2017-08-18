@@ -1,9 +1,13 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst;
 
-import com.supermap.analyst.spatialanalyst.*;
+import com.supermap.analyst.spatialanalyst.GridStatisticsMode;
+import com.supermap.analyst.spatialanalyst.NeighbourStatisticsParameter;
+import com.supermap.analyst.spatialanalyst.NeighbourUnitType;
+import com.supermap.analyst.spatialanalyst.StatisticsAnalyst;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -59,7 +63,9 @@ public class MetaProcessNeighbourStatistics extends MetaProcess {
 
 		parameters.setParameters(sourceCombine, settingCombine, resultCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceCombine);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultCombine);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_NeighbourStatisticResult"),
+				DatasetTypes.GRID, resultCombine);
 	}
 
 	private void initParameterConstraint() {

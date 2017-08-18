@@ -7,13 +7,13 @@ import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.event.FormClosingEvent;
 import com.supermap.desktop.http.DeleteFile;
 import com.supermap.desktop.http.upload.LocalCreateFile;
+import com.supermap.desktop.lbs.HDFSDefine;
+import com.supermap.desktop.lbs.WebHDFS;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.lbs.HDFSDefine;
 import com.supermap.desktop.ui.lbs.ui.HDFSTableModel;
-import com.supermap.desktop.lbs.WebHDFS;
 import com.supermap.desktop.ui.lbs.ui.JPanelHDFSFiles;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -21,11 +21,7 @@ import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.text.MessageFormat;
 
@@ -68,6 +64,9 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 						createFile.renameFile(getURL(), oldName, dialog.getNewName(), define.isDir());
 					}
 				}
+			}
+			if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+				delete();
 			}
 		}
 	};

@@ -4,6 +4,7 @@ import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
 import com.supermap.analyst.spatialanalyst.OverlayAnalystParameter;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.WorkflowView.meta.loader.OverlayProcessLoader;
@@ -117,8 +118,9 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		parameters.setParameters(parameterCombineSource, parameterCombineResult, parameterCombineResultSet);
 		this.getParameters().addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, parameterCombineSource);
 		this.getParameters().addInputParameters(OVERLAY_DATA, DatasetTypes.VECTOR, parameterCombineResult);
-		this.getParameters().addOutputParameters(OUTPUT_DATA, DatasetTypes.VECTOR, parameterCombineResultSet);
-
+		this.getParameters().addOutputParameters(OUTPUT_DATA,
+				MessageFormat.format(ProcessOutputResultProperties.getString("String_Result"), analystType.toString()),
+				DatasetTypes.VECTOR, parameterCombineResultSet);
 	}
 
 	private void initParameterConstraint() {

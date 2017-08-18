@@ -6,6 +6,7 @@ import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetImage;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -24,7 +25,7 @@ import java.beans.PropertyChangeListener;
 /**
  * Created by lixiaoyao on 2017/7/11.
  */
-public class MetaProcessThinRaster extends MetaProcess{
+public class MetaProcessThinRaster extends MetaProcess {
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String OUTPUT_DATA = "ThinRasterResult";
 
@@ -76,7 +77,9 @@ public class MetaProcessThinRaster extends MetaProcess{
 //		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.ALL_RASTER, sourceData);
 //		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.ALL_RASTER, resultData);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_ThinRasterResult"),
+				DatasetTypes.ALL_RASTER, resultData);
 	}
 
 	private void initParameterConstraint() {
