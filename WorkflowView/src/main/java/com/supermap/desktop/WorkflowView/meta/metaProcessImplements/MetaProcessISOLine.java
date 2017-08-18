@@ -15,10 +15,16 @@ import com.supermap.desktop.properties.CommonProperties;
 public class MetaProcessISOLine extends MetaProcessISO {
 	@Override
 	protected void initHook() {
+
 		OUTPUT_DATA = "ISOLineResult";
 	}
 
 	public MetaProcessISOLine() {
+		OUTPUT_DATA_TYPE = "Line";
+		super.initParameters();
+		super.initParameterConstraint();
+		super.initParametersState();
+		super.initParametersListener();
 	}
 
 	@Override
@@ -36,7 +42,6 @@ public class MetaProcessISOLine extends MetaProcessISO {
 	public DatasetVector subExecute(SurfaceExtractParameter surfaceExtractParameter, DatasetGrid dataset, Datasource datasource, String datasetName) {
 		return SurfaceAnalyst.extractIsoline(surfaceExtractParameter, dataset, datasource, datasetName);
 	}
-
 
 	@Override
 	public String getKey() {

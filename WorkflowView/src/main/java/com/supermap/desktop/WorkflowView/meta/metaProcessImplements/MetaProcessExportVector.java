@@ -5,6 +5,7 @@ import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessAbstractExport;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -56,6 +57,7 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 	};
 
 	public MetaProcessExportVector() {
+		this.OUTPUT_DATA_TYPE = ControlsProperties.getString("String_Vector");
 		initParameters();
 		registEvents();
 	}

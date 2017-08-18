@@ -3,6 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.*;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.WorkflowView.meta.loader.InterpolatorProcessLoader;
@@ -214,7 +215,9 @@ public class MetaProcessInterpolator extends MetaProcess {
 //				, boundsCombine
 				, modeSetCombine, otherParamCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceCombine);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, targetCombine);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_InterpolatorResult"),
+				DatasetTypes.GRID, targetCombine);
 	}
 
 	private void initParameterStates() {

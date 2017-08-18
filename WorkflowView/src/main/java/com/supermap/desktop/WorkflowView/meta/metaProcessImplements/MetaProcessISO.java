@@ -5,6 +5,7 @@ import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
@@ -19,6 +20,7 @@ import com.supermap.desktop.utilities.DoubleUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * @author XiaJT
@@ -27,6 +29,7 @@ public abstract class MetaProcessISO extends MetaProcess {
 
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	protected static String OUTPUT_DATA = "ExtractResult";
+	protected static String OUTPUT_DATA_TYPE;
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset dataset;
@@ -45,13 +48,9 @@ public abstract class MetaProcessISO extends MetaProcess {
 
 
 	public MetaProcessISO() {
-		initParameters();
-		initParameterConstraint();
-		initParametersState();
-		initParametersListener();
 	}
 
-	private void initParameterConstraint() {
+	protected void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
@@ -59,7 +58,7 @@ public abstract class MetaProcessISO extends MetaProcess {
 		DatasourceConstraint.getInstance().constrained(saveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
-	private void initParametersState() {
+	protected void initParametersState() {
 		Dataset defaultDatasetGrid = DatasetUtilities.getDefaultDatasetGrid();
 		if (defaultDatasetGrid != null) {
 			sourceDatasource.setSelectedItem(defaultDatasetGrid.getDatasource());
@@ -87,7 +86,7 @@ public abstract class MetaProcessISO extends MetaProcess {
 
 	protected abstract String getDefaultResultName();
 
-	private void initParameters() {
+	protected void initParameters() {
 
 		this.sourceDatasource = new ParameterDatasourceConstrained();
 		this.dataset = new ParameterSingleDataset(DatasetType.GRID);
@@ -131,10 +130,12 @@ public abstract class MetaProcessISO extends MetaProcess {
 		paramSet.addParameters(datumValue, interval, resampleTolerance, smoothMethod, smoothNess);
 		this.parameters.setParameters(sourceData, paramSet, resultInfo, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, targetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				MessageFormat.format(ProcessOutputResultProperties.getString("String_SurfaceAnalyst_IsoResult"), OUTPUT_DATA_TYPE),
+				DatasetTypes.LINE_POLYGON_VECTOR, targetData);
 	}
 
-	private void initParametersListener() {
+	protected void initParametersListener() {
 		smoothMethod.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {

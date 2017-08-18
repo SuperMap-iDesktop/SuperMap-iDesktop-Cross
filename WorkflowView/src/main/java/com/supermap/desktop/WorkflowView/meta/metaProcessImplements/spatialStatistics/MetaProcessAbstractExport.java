@@ -4,6 +4,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.ExportSettingUtilities;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -33,6 +34,7 @@ import java.text.MessageFormat;
 public class MetaProcessAbstractExport extends MetaProcess {
 	protected final static String INPUT_DATA = "SourceDataset";
 	protected final static String OUTPUT_DATA = "ExportResult";
+	protected static String OUTPUT_DATA_TYPE;
 	//	protected ParameterDatasetChooser chooseDataset;
 	protected ParameterDatasource datasource;
 	protected ParameterSingleDataset dataset;
@@ -106,7 +108,9 @@ public class MetaProcessAbstractExport extends MetaProcess {
 		this.basicCombine.setDescribe(CommonProperties.getString("String_ResultSet"));
 		this.basicCombine.addParameters(this.supportType, this.targetName, this.exportPath, this.cover);
 		//输出为文件路径，没有控件能对应
-		this.parameters.addOutputParameters(OUTPUT_DATA, BasicTypes.STRING, null);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				MessageFormat.format(ProcessOutputResultProperties.getString("String_OutputResult"), OUTPUT_DATA_TYPE),
+				BasicTypes.STRING, null);
 	}
 
 	protected void resetDataset() {

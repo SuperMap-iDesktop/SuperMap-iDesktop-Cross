@@ -4,18 +4,9 @@ import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
 import com.supermap.analyst.spatialanalyst.TerrainInterpolateType;
-import com.supermap.data.CursorType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfos;
-import com.supermap.data.FieldType;
-import com.supermap.data.Recordset;
-import com.supermap.data.Rectangle2D;
-import com.supermap.data.StatisticMode;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -250,7 +241,9 @@ public class MetaProcessISOPoint extends MetaProcess {
 
 		this.parameters.setParameters(sourceData, paramSet, resultData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, sourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, resultData);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_SurfaceAnalyst_ISOLineResult"),
+				DatasetTypes.LINE, resultData);
 	}
 
 	private void initParametersListener() {

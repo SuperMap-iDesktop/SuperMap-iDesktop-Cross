@@ -6,6 +6,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -68,7 +69,9 @@ public class MetaProcessCommonStatistics extends MetaProcess {
 
 		parameters.setParameters(sourceCombine, settingCombine, resultCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceCombine);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultCombine);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_CommonStatisticResult"),
+				DatasetTypes.GRID, resultCombine);
 	}
 
 	private void initParameterConstraint() {
@@ -86,14 +89,14 @@ public class MetaProcessCommonStatistics extends MetaProcess {
 			tableCompareDataset.setDataset(datasetGrid);
 		}
 		resultDataset.setSelectedItem("result_commonStatistics");
-		comboBoxCompareType.setItems(new ParameterDataNode("<",StatisticsCompareType.LESS),
-				new ParameterDataNode("<=",StatisticsCompareType.LESS_OR_EQUAL),
-				new ParameterDataNode("==",StatisticsCompareType.EQUAL),
-				new ParameterDataNode(">=",StatisticsCompareType.GREATER_OR_EQUAL),
-				new ParameterDataNode(">",StatisticsCompareType.GREATER));
+		comboBoxCompareType.setItems(new ParameterDataNode("<", StatisticsCompareType.LESS),
+				new ParameterDataNode("<=", StatisticsCompareType.LESS_OR_EQUAL),
+				new ParameterDataNode("==", StatisticsCompareType.EQUAL),
+				new ParameterDataNode(">=", StatisticsCompareType.GREATER_OR_EQUAL),
+				new ParameterDataNode(">", StatisticsCompareType.GREATER));
 		radioButtonCompareObject.setItems(new ParameterDataNode[]{
-				new ParameterDataNode(ProcessProperties.getString("String_RadioButton_CommonStatisticType_Single"),0),
-				new ParameterDataNode(ProcessProperties.getString("String_RadioButton_DatasetGrid"),1)
+				new ParameterDataNode(ProcessProperties.getString("String_RadioButton_CommonStatisticType_Single"), 0),
+				new ParameterDataNode(ProcessProperties.getString("String_RadioButton_DatasetGrid"), 1)
 		});
 		radioButtonCompareObject.setSelectedItem(radioButtonCompareObject.getItemAt(0));
 		numberCompareValue.setSelectedItem(0);
@@ -147,7 +150,7 @@ public class MetaProcessCommonStatistics extends MetaProcess {
 				result = StatisticsAnalyst.commonStatistics(src, value, type, isIgnore, resultDataset.getResultDatasource(), datasetName);
 			} else {
 				ArrayList<Dataset> datasetArrayList = (ArrayList<Dataset>) tableCompareDataset.getSelectedItem();
-				DatasetGrid[] datasetGrids=new DatasetGrid[datasetArrayList.size()];
+				DatasetGrid[] datasetGrids = new DatasetGrid[datasetArrayList.size()];
 				for (int i = 0; i < datasetArrayList.size(); i++) {
 					datasetGrids[i] = (DatasetGrid) datasetArrayList.get(i);
 				}
@@ -155,10 +158,10 @@ public class MetaProcessCommonStatistics extends MetaProcess {
 			}
 			isSuccessful = result != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
-			fireRunning(new RunningEvent(this,100,"finished"));
+			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+		} finally {
 			StatisticsAnalyst.removeSteppedListener(steppedListener);
 		}
 		return isSuccessful;
