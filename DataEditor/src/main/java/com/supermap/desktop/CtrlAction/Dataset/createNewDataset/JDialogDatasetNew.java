@@ -47,7 +47,7 @@ public class JDialogDatasetNew extends SmDialog {
 	private SmButton buttonCancel;
 
 	private PanelDatasetNewProperty propertyPanel;
-
+	private PanelModel panelModel;
 	private DatasetTypeComboBox comboBoxDatasetType;
 
 	public JDialogDatasetNew() {
@@ -75,6 +75,7 @@ public class JDialogDatasetNew extends SmDialog {
 		buttonCancel = new SmButton();
 
 		propertyPanel = new PanelDatasetNewProperty();
+		panelModel = new PanelModel();
 
 		this.componentList.add(this.buttonOk);
 		this.componentList.add(this.buttonCancel);
@@ -150,9 +151,10 @@ public class JDialogDatasetNew extends SmDialog {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		panel.add(toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panel.add(new JScrollPane(table), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
-		panel.add(panelButton, new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 0, 0, 0));
-		panel.add(propertyPanel, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
+		panel.add(new JScrollPane(table), new GridBagConstraintsHelper(0, 1, 1, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
+		panel.add(panelModel, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
+		panel.add(propertyPanel, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
+		panel.add(panelButton, new GridBagConstraintsHelper(0, 3, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 0, 0, 0));
 
 		this.setLayout(new GridBagLayout());
 		this.add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10));
@@ -322,6 +324,7 @@ public class JDialogDatasetNew extends SmDialog {
 			newDatasetBeans.add((newDatasetTableModel.getDatasetBean(selectedRow[i])));
 		}
 		propertyPanel.initStates(newDatasetBeans);
+		panelModel.initStates(newDatasetBeans);
 	}
 
 	private void checkButtonState() {

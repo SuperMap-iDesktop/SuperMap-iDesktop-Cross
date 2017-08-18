@@ -21,6 +21,7 @@ public class NewDatasetBean {
 	private EncodeType encodeType;
 	private Charset charset;
 	private AddToWindowMode addToWindowMode;
+	private Dataset templateDataset;
 	private DatasetGridImageExtraBean gridImageExtraDatasetBean;
 
 	public NewDatasetBean() {
@@ -31,6 +32,7 @@ public class NewDatasetBean {
 		encodeType = EncodeType.NONE;
 		charset = Charset.UTF8;
 		addToWindowMode = AddToWindowMode.NONEWINDOW;
+		templateDataset = null;
 		gridImageExtraDatasetBean = null;
 	}
 
@@ -89,6 +91,14 @@ public class NewDatasetBean {
 
 	public void setCharset(Charset charset) {
 		this.charset = charset;
+	}
+
+	public Dataset getTemplateDataset() {
+		return templateDataset;
+	}
+
+	public void setTemplateDataset(Dataset templateDataset) {
+		this.templateDataset = templateDataset;
 	}
 
 	public DatasetGridImageExtraBean getGridImageExtraDatasetBean() {
