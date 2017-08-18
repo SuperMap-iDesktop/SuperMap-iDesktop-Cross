@@ -570,7 +570,7 @@ public class JDialogPreviewCSV extends SmDialog {
 						tableModelPreviewCSV.setColumnName(i, name);
 					}
 					for (int i = fieldInfos.size(); i < tableModelPreviewCSV.getMaxColumnCount(); i++) {
-						rowDatas.add(new RowData(tableModelPreviewCSV.getColumnName(i), FieldTypeUtilities.getFieldTypeName(FieldType.TEXT)));
+						rowDatas.add(new RowData(tableModelPreviewCSV.getColumnName(i), FieldTypeUtilities.getFieldTypeName(FieldType.WTEXT)));
 					}
 				}
 			}
@@ -579,7 +579,7 @@ public class JDialogPreviewCSV extends SmDialog {
 		if (!isMetaExists) {
 			int columnCount = tableModelPreviewCSV.getMaxColumnCount();
 			for (int i = 0; i < columnCount; i++) {
-				rowDatas.add(new RowData(tableModelPreviewCSV.getColumnName(i), FieldTypeUtilities.getFieldTypeName(FieldType.TEXT)));
+				rowDatas.add(new RowData(tableModelPreviewCSV.getColumnName(i), FieldTypeUtilities.getFieldTypeName(FieldType.WTEXT)));
 			}
 		}
 		tableModelField = new CSVFiledTableModel(rowDatas);
@@ -603,10 +603,11 @@ public class JDialogPreviewCSV extends SmDialog {
 		});
 
 		ArrayList<String> fieldTypes = new ArrayList<>();
-		Enum[] enums = FieldType.getEnums(FieldType.class);
-		for (Enum anEnum : enums) {
-			fieldTypes.add(FieldTypeUtilities.getFieldTypeName((FieldType) anEnum));
-		}
+		fieldTypes.add(FieldTypeUtilities.getFieldTypeName(FieldType.INT16));
+		fieldTypes.add(FieldTypeUtilities.getFieldTypeName(FieldType.DOUBLE));
+		fieldTypes.add(FieldTypeUtilities.getFieldTypeName(FieldType.DATETIME));
+		fieldTypes.add(FieldTypeUtilities.getFieldTypeName(FieldType.WTEXT));
+
 		JComboBox<String> comboBox = new JComboBox<>(fieldTypes.toArray(new String[fieldTypes.size()]));
 		tableField.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(comboBox));
 	}
