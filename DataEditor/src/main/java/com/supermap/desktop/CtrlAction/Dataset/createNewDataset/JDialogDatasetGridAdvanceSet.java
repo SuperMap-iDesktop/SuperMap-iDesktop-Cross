@@ -37,7 +37,7 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 	private SmButton buttonCancel;
 
 	private NewDatasetBean newDatasetBean;
-	private GridImageExtraDatasetBean gridImageExtraDatasetBean;
+	private DatasetGridImageExtraBean gridImageExtraDatasetBean;
 
 	private boolean isDatasetNameSuitable = true;
 	private boolean isWidthHeightSuitable = true;

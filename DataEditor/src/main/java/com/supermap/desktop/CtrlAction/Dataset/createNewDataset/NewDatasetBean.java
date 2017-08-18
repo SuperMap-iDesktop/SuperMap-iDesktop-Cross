@@ -12,7 +12,7 @@ import java.text.MessageFormat;
  * @author XiaJT
  * 新建数据集参数信息类
  * 增加栅格、影像数据集的参数信息模块-yuanR2017.8.15
- * GridImageExtraDatasetBean 作为补充
+ * DatasetGridImageExtraBean 作为补充
  */
 public class NewDatasetBean {
 	private Datasource datasource;
@@ -21,7 +21,7 @@ public class NewDatasetBean {
 	private EncodeType encodeType;
 	private Charset charset;
 	private AddToWindowMode addToWindowMode;
-	private GridImageExtraDatasetBean gridImageExtraDatasetBean;
+	private DatasetGridImageExtraBean gridImageExtraDatasetBean;
 
 	public NewDatasetBean() {
 		Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
@@ -91,9 +91,9 @@ public class NewDatasetBean {
 		this.charset = charset;
 	}
 
-	public GridImageExtraDatasetBean getGridImageExtraDatasetBean() {
+	public DatasetGridImageExtraBean getGridImageExtraDatasetBean() {
 		if (gridImageExtraDatasetBean == null) {
-			gridImageExtraDatasetBean = new GridImageExtraDatasetBean();
+			gridImageExtraDatasetBean = new DatasetGridImageExtraBean();
 		}
 		return gridImageExtraDatasetBean;
 	}
