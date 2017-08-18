@@ -19,6 +19,7 @@ import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -47,6 +48,10 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	private ParameterCheckBox parametersumShape = new ParameterCheckBox(ProcessProperties.getString("String_SumShape"));
 	private ParameterBigDatasourceDatasource parameterBigDatasourceDatasource = new ParameterBigDatasourceDatasource();
 	private ParameterSingleDataset parameterSingleDataset = new ParameterSingleDataset(DatasetType.LINE, DatasetType.REGION);
+	private ParameterDefaultValueTextField parameterDataBaseName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_DataBaseName"));
+	private ParameterDefaultValueTextField parameterTextFieldAddress = new ParameterDefaultValueTextField(CoreProperties.getString("String_Server"));
+	private ParameterDefaultValueTextField parameterTextFieldUserName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_UserName"));
+	private ParameterPassword parameterTextFieldPassword = new ParameterPassword(ProcessProperties.getString("String_PassWord"));
 
 	public MetaProcessSummaryRegion() {
 		initComponents();
@@ -55,7 +60,10 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		initConstraint();
 	}
 
-	private void initComponents() {
+	private void initComponents() {parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+		parameterDataBaseName.setDefaultWarningValue("supermap");
+		parameterTextFieldUserName.setDefaultWarningValue("postgres");
+		parameterTextFieldPassword.setSelectedItem("supermap");
 		parameterSummaryType.setItems(new ParameterDataNode(ProcessProperties.getString("String_summaryMesh"), "SUMMARYMESH"), new ParameterDataNode(ProcessProperties.getString("String_summaryRegion"), "SUMMARYREGION"));
 		parameterMeshType.setItems(new ParameterDataNode(ProcessProperties.getString("String_QuadrilateralMesh"), "0"), new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1"));
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
@@ -77,7 +85,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 
 	private void initComponentState() {
 		parameterInputDataType.setSupportDatasetType(DatasetType.LINE, DatasetType.REGION);
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.LINE, DatasetType.REGION);
 		if (defaultBigDataStoreDataset != null) {
 			parameterBigDatasourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterSingleDataset.setSelectedItem(defaultBigDataStoreDataset);
@@ -90,7 +98,13 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		final ParameterCombine parameterCombine = new ParameterCombine();
 		parameterCombine.addParameters(parameterMeshType, parameterBounds, parameterMeshSize, parameterMeshSizeUnit);
 		final ParameterCombine parameterCombine1 = new ParameterCombine();
-		parameterCombine1.addParameters(parameterBigDatasourceDatasource, parameterSingleDataset, parameterBounds);
+		parameterCombine1.addParameters(parameterTextFieldAddress,
+				parameterDataBaseName,
+				parameterTextFieldUserName,
+				parameterTextFieldPassword,
+				parameterBigDatasourceDatasource,
+				parameterSingleDataset,
+				parameterBounds);
 		final ParameterSwitch parameterSwitch = new ParameterSwitch();
 		parameterSwitch.add("0", parameterCombine);
 		parameterSwitch.add("1", parameterCombine1);
@@ -192,8 +206,9 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 				}
 			} else {
 				Dataset dataset = parameterSingleDataset.getSelectedDataset();
-				CommonSettingCombine regionDataset = new CommonSettingCombine("regionDataset", dataset.getName());
-				analyst.add(regionDataset, bounds, standardSummaryFields, weightedSummaryFields, sumShape);
+				String regionDatasourceStr = "{\\\"type\\\":\\\"pg\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + parameterTextFieldAddress.getSelectedItem() + "\\\",\\\"datasetNames\\\":[\\\"" + dataset.getName() + "\\\"],\\\"database\\\":\\\"" + parameterDataBaseName.getSelectedItem() + "\\\",\\\"user\\\":\\\"" + parameterTextFieldUserName.getSelectedItem() + "\\\",\\\"password\\\":\\\"" + parameterTextFieldPassword.getSelectedItem() + "\\\"}]}";
+				CommonSettingCombine regionDatasource = new CommonSettingCombine("regionDatasource", regionDatasourceStr);
+				analyst.add(regionDatasource, bounds, standardSummaryFields, weightedSummaryFields, sumShape);
 				if (parameterStandardFields.getSelectedItem().toString().equals("true")) {
 					analyst.add(standardFields, standardStatisticModes);
 				}
@@ -242,7 +257,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 				fireRunning(new RunningEvent(this, 100, "Failed"));
 				isSuccess = false;
 			}
-			parameters.getOutputs().getData("OverlayResult").setValue("");
+			parameters.getOutputs().getData("SummaryRegionResult").setValue("");
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 			return false;

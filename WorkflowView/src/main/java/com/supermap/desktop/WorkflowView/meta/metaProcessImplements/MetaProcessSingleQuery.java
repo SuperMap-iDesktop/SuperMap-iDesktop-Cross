@@ -35,6 +35,10 @@ public class MetaProcessSingleQuery extends MetaProcess {
 	private ParameterBigDatasourceDatasource parameterQueryDatasource;
 	private ParameterSingleDataset parameterQueryDataset;
 	private ParameterComboBox parameterQueryTypeComboBox;
+	private ParameterDefaultValueTextField parameterDataBaseName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_DataBaseName"));
+	private ParameterDefaultValueTextField parameterTextFieldAddress = new ParameterDefaultValueTextField(CoreProperties.getString("String_Server"));
+	private ParameterDefaultValueTextField parameterTextFieldUserName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_UserName"));
+	private ParameterPassword parameterTextFieldPassword = new ParameterPassword(ProcessProperties.getString("String_PassWord"));
 
 	public MetaProcessSingleQuery() {
 		initComponents();
@@ -44,6 +48,10 @@ public class MetaProcessSingleQuery extends MetaProcess {
 	}
 
 	private void initComponents() {
+		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+		parameterDataBaseName.setDefaultWarningValue("supermap");
+		parameterTextFieldUserName.setDefaultWarningValue("postgres");
+		parameterTextFieldPassword.setSelectedItem("supermap");
 		parameterQueryDatasource = new ParameterBigDatasourceDatasource();
 		parameterQueryDatasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
 		parameterQueryDataset = new ParameterSingleDataset();
@@ -62,7 +70,12 @@ public class MetaProcessSingleQuery extends MetaProcess {
 		);
 		ParameterCombine parameterCombineQuery = new ParameterCombine();
 		parameterCombineQuery.setDescribe(ProcessProperties.getString("String_QueryData"));
-		parameterCombineQuery.addParameters(parameterQueryDatasource, parameterQueryDataset);
+		parameterCombineQuery.addParameters(parameterTextFieldAddress,
+				parameterDataBaseName,
+				parameterTextFieldUserName,
+				parameterTextFieldPassword,
+				parameterQueryDatasource,
+				parameterQueryDataset);
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
 		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_AnalystSet"));
 		parameterCombineSetting.addParameters(parameterQueryTypeComboBox);
@@ -74,11 +87,10 @@ public class MetaProcessSingleQuery extends MetaProcess {
 
 	private void initComponentState() {
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 		if (defaultBigDataStoreDataset != null) {
 			parameterQueryDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterQueryDataset.setSelectedItem(defaultBigDataStoreDataset);
-
 		}
 	}
 
@@ -108,7 +120,8 @@ public class MetaProcessSingleQuery extends MetaProcess {
 			Dataset queryDataset = parameterQueryDataset.getSelectedDataset();
 			String queryType = (String) parameterQueryTypeComboBox.getSelectedData();
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
-			analyst.add(new CommonSettingCombine("datasetQuery", queryDataset.getName()));
+			String inputQuery = "{\\\"type\\\":\\\"pg\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + parameterTextFieldAddress.getSelectedItem() + "\\\",\\\"datasetNames\\\":[\\\"" + queryDataset.getName() + "\\\"],\\\"database\\\":\\\"" + parameterDataBaseName.getSelectedItem() + "\\\",\\\"user\\\":\\\"" + parameterTextFieldUserName.getSelectedItem() + "\\\",\\\"password\\\":\\\"" + parameterTextFieldPassword.getSelectedItem() + "\\\"}]}";
+			analyst.add(new CommonSettingCombine("inputQuery", inputQuery));
 			analyst.add(new CommonSettingCombine("mode", queryType));
 
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
