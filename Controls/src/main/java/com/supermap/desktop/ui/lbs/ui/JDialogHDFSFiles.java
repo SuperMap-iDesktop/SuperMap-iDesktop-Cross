@@ -146,7 +146,7 @@ public class JDialogHDFSFiles extends SmDialog {
 		this.panelHDFSFiles = new JPanelHDFSFiles();
 		this.buttonOK = ComponentFactory.createButtonOK();
 		this.buttonCancel = ComponentFactory.createButtonCancel();
-		menuPreviewCsv = new JMenuItem(ControlsProperties.getString("String_Preview"));
+		menuPreviewCsv = new JMenuItem(ControlsProperties.getString("String_Property"));
 		tablePopupMenu = new JPopupMenu();
 		tablePopupMenu.add(menuPreviewCsv);
 	}
