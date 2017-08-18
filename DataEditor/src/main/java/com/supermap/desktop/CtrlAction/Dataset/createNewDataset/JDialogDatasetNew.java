@@ -93,8 +93,8 @@ public class JDialogDatasetNew extends SmDialog {
 		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DatasetType).setCellRenderer(new TableDataCellRender());
 
 
-		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_EncodeType).setCellEditor(new EncodingTypeCellEditor());
-		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_Charset).setCellEditor(new CharsetTypeCellEditor());
+//		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_EncodeType).setCellEditor(new EncodingTypeCellEditor());
+//		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_Charset).setCellEditor(new CharsetTypeCellEditor());
 
 		int count = Application.getActiveApplication().getWorkspace().getDatasources().getCount();
 		String[] datasources = new String[count];
@@ -337,8 +337,8 @@ public class JDialogDatasetNew extends SmDialog {
 			int[] selectedRows = table.getSelectedRows();
 			Object dialogTargetDatasource = dialogSetAll.getTargetDatasource();
 			Object datasetType = dialogSetAll.getDatasetType();
-			Object encodingType = dialogSetAll.getEncodingType();
-			Object charset = dialogSetAll.getCharset();
+//			Object encodingType = dialogSetAll.getEncodingType();
+//			Object charset = dialogSetAll.getCharset();
 			Object addToMap = dialogSetAll.getAddtoMap();
 			for (int i : selectedRows) {
 				if (dialogTargetDatasource != null) {
@@ -347,12 +347,12 @@ public class JDialogDatasetNew extends SmDialog {
 				if (datasetType != null) {
 					newDatasetTableModel.setValueAt(datasetType, i, NewDatasetTableModel.COLUMN_INDEX_DatasetType);
 				}
-				if (encodingType != null) {
-					newDatasetTableModel.setValueAt(encodingType, i, NewDatasetTableModel.COLUMN_INDEX_EncodeType);
-				}
-				if (charset != null) {
-					newDatasetTableModel.setValueAt(charset, i, NewDatasetTableModel.COLUMN_INDEX_Charset);
-				}
+//				if (encodingType != null) {
+//					newDatasetTableModel.setValueAt(encodingType, i, NewDatasetTableModel.COLUMN_INDEX_EncodeType);
+//				}
+//				if (charset != null) {
+//					newDatasetTableModel.setValueAt(charset, i, NewDatasetTableModel.COLUMN_INDEX_Charset);
+//				}
 				if (addToMap != null) {
 					newDatasetTableModel.setValueAt(addToMap, i, NewDatasetTableModel.COLUMN_INDEX_WindowMode);
 				}
