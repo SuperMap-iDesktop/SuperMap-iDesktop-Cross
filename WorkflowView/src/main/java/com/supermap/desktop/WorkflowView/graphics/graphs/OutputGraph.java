@@ -1,6 +1,5 @@
 package com.supermap.desktop.WorkflowView.graphics.graphs;
 
-import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.WorkflowView.graphics.GraphCanvas;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -15,7 +14,6 @@ public class OutputGraph extends RectangleGraph {
 
 	private ProcessGraph processGraph;
 	private OutputData processData;
-	private String name;
 
 	private OutputGraph() {
 		super(null);
@@ -35,10 +33,6 @@ public class OutputGraph extends RectangleGraph {
 		return processData;
 	}
 
-	public String getTitle() {
-		return processData != null ? this.processData.getName() : name;
-	}
-
 	@Override
 	protected Color getBackColor() {
 		return new Color(123, 136, 189);
@@ -52,7 +46,7 @@ public class OutputGraph extends RectangleGraph {
 		g.setFont(font);
 		g.setColor(Color.WHITE);
 
-		String text = getTitle();
+		String text = this.processData.getText();
 		int fontHeight = getCanvas().getFontMetrics(font).getHeight();
 		int fontWidth = SwingUtilities2.stringWidth(getCanvas(), getCanvas().getFontMetrics(font), text);
 		int fontDescent = getCanvas().getFontMetrics(font).getDescent();
@@ -62,18 +56,6 @@ public class OutputGraph extends RectangleGraph {
 		double width = getWidth();
 		double height = getHeight();
 		g.drawString(text, DoubleUtilities.intValue(location.getX() + (width - fontWidth) / 2), DoubleUtilities.intValue(location.getY() + height / 2 + fontHeight / 2 - fontDescent));
-	}
-
-	@Override
-	protected void toXmlHook(JSONObject jsonObject) {
-		super.toXmlHook(jsonObject);
-		jsonObject.put("processDataName", processData.getName());
-	}
-
-	@Override
-	protected void formXmlHook(JSONObject xml) {
-		super.formXmlHook(xml);
-		name = ((String) xml.get("processDataName"));
 	}
 
 	public void setProcessGraph(ProcessGraph processGraph) {

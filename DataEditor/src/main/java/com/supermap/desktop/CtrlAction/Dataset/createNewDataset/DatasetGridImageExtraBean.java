@@ -8,13 +8,17 @@ import com.supermap.data.Rectangle2D;
  * Created by yuanR on 2017/8/15 0015.
  * 新建栅格/影像数据集额外的参数信息
  */
-public class GridImageExtraDatasetBean {
+public class DatasetGridImageExtraBean {
 	public void setBlockSizeOption(BlockSizeOption blockSizeOption) {
 		this.blockSizeOption = blockSizeOption;
 	}
 
-	public void setPixelFormat(PixelFormat pixelFormat) {
-		this.pixelFormat = pixelFormat;
+	public void setPixelFormatImage(PixelFormat pixelFormatImage) {
+		this.pixelFormatImage = pixelFormatImage;
+	}
+
+	public void setPixelFormatGrid(PixelFormat pixelFormatGrid) {
+		this.pixelFormatGrid = pixelFormatGrid;
 	}
 
 	public void setRectangle(Rectangle2D rectangle) {
@@ -49,8 +53,12 @@ public class GridImageExtraDatasetBean {
 		return blockSizeOption;
 	}
 
-	public PixelFormat getPixelFormat() {
-		return pixelFormat;
+	public PixelFormat getPixelFormatImage() {
+		return pixelFormatImage;
+	}
+
+	public PixelFormat getPixelFormatGrid() {
+		return pixelFormatGrid;
 	}
 
 	public Rectangle2D getRectangle() {
@@ -84,7 +92,8 @@ public class GridImageExtraDatasetBean {
 	// 栅格/影像分块的类型常量
 	private BlockSizeOption blockSizeOption;
 	// 栅格/影像存储的像素格式
-	private PixelFormat pixelFormat;
+	private PixelFormat pixelFormatImage;
+	private PixelFormat pixelFormatGrid;
 	// 栅格/影像地理范围
 	private Rectangle2D rectangle;
 	// 栅格/影像数据集的高宽
@@ -99,9 +108,10 @@ public class GridImageExtraDatasetBean {
 	// 影像数据集的波段个数
 	private Integer bandCount;
 
-	public GridImageExtraDatasetBean() {
+	public DatasetGridImageExtraBean() {
 		this.blockSizeOption = BlockSizeOption.BS_64;
-		this.pixelFormat = PixelFormat.RGBA;
+		this.pixelFormatImage = PixelFormat.RGBA;
+		this.pixelFormatGrid = PixelFormat.DOUBLE;
 		this.rectangle = new Rectangle2D(-200, -200, 200, 200);
 		this.height = 800;
 		this.width = 800;

@@ -44,7 +44,8 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			DatasetType.POINT3D,
 			DatasetType.LINE3D,
 			DatasetType.REGION3D,
-			DatasetType.IMAGE
+			DatasetType.IMAGE,
+			DatasetType.GRID
 	};
 
 	private final boolean[] isColumnEditable = new boolean[]{
@@ -241,6 +242,8 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			newDatasetName = "New_ImageCollection";
 		} else if (datasetType == DatasetType.IMAGE) {
 			newDatasetName = "New_Image";
+		} else if (datasetType == DatasetType.GRID) {
+			newDatasetName = "New_Grid";
 		}
 
 		return newDatasetName;

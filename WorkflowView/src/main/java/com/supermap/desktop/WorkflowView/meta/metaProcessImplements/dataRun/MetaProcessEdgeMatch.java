@@ -8,6 +8,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -105,7 +106,7 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 
 		parameters.setParameters(parameterCombineSourceData, parameterCombineTargetData, parameterCombineParameter, parameterCombineLinkData);
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.LINE, parameterCombineSourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, parameterCombineSourceData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_EdgeMatch"), DatasetTypes.LINE, parameterCombineSourceData);
 	}
 
 	private void initComponentState() {

@@ -1,6 +1,7 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion;
 
 import com.supermap.data.*;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.process.ProcessProperties;
@@ -23,6 +24,11 @@ public class MetaProcessLine3DTo2D extends MetaProcessPointLineRegion {
 	@Override
 	protected String getOutputName() {
 		return "result_line3DTo2D";
+	}
+
+	@Override
+	protected  String getOutputResultName(){
+		return ProcessOutputResultProperties.getString("String_3DLineResult");
 	}
 
 	@Override

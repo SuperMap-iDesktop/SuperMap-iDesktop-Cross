@@ -1,8 +1,5 @@
 package com.supermap.desktop.WorkflowView.graphics.graphs;
 
-import com.alibaba.fastjson.JSONObject;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.Plugin;
 import com.supermap.desktop.WorkflowView.graphics.GraphCanvas;
 import com.supermap.desktop.WorkflowView.graphics.GraphicsUtil;
 import com.supermap.desktop.WorkflowView.graphics.events.GraphBoundsChangedEvent;
@@ -12,7 +9,6 @@ import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.event.EventListenerList;
 import java.awt.*;
-import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -257,24 +253,6 @@ public abstract class AbstractGraph implements IGraph {
 		}
 	}
 
-	public final String toXml() {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("class", this.getClass().getName());
-		toXmlHook(jsonObject);
-		return jsonObject.toString();
-	}
-
-	protected void toXmlHook(JSONObject jsonObject) {
-
-	}
-
-
-	@Override
-	public final IGraph formXml(JSONObject xml) {
-		formXmlHook(xml);
-		return this;
-	}
-
 	@Override
 	public void paint(Graphics g) {
 		onPaint(g);
@@ -285,26 +263,4 @@ public abstract class AbstractGraph implements IGraph {
 	}
 
 	protected abstract void onPaint(Graphics g);
-
-	protected void formXmlHook(JSONObject xml) {
-
-	}
-
-	public static IGraph formXmlFile(String xml) {
-		IGraph result = null;
-		JSONObject jsonObject = JSONObject.parseObject(xml);
-		String clazzName = (String) jsonObject.get("class");
-		Plugin process = Application.getActiveApplication().getPluginManager().getBundle("SuperMap.Desktop.process");
-		try {
-			Class<?> aClass = process.getBundle().loadClass(clazzName);
-			Constructor<?> constructor = aClass.getDeclaredConstructor();
-			constructor.setAccessible(true);
-			result = ((IGraph) constructor.newInstance());
-			constructor.setAccessible(false);
-			result.formXml(jsonObject);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
 }

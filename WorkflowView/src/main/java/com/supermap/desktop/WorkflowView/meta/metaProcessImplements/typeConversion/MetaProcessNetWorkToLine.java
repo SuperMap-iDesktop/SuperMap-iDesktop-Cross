@@ -1,6 +1,9 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion;
 
-import com.supermap.data.*;
+import com.supermap.data.DatasetType;
+import com.supermap.data.GeoLine;
+import com.supermap.data.Recordset;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
@@ -27,6 +30,11 @@ public class MetaProcessNetWorkToLine extends MetaProcessPointLineRegion {
 	@Override
 	protected String getOutputName() {
 		return "result_networkToLine";
+	}
+
+	@Override
+	protected  String getOutputResultName(){
+		return ProcessOutputResultProperties.getString("String_NetworkToLineResult");
 	}
 
 	@Override

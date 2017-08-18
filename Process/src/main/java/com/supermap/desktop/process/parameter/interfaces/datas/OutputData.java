@@ -10,16 +10,22 @@ public class OutputData implements IDataDescription, IValueProvider {
 	private IProcess process;
 	private Object value;
 	private String name;
+	private String text;
 	private String tips;
 	private Type dataType;
 
 	public OutputData(IProcess process, String name, Type dataType) {
-		this(process, name, null, dataType);
+		this(process, name, name, dataType);
 	}
 
-	public OutputData(IProcess process, String name, String tips, Type dataType) {
+	public OutputData(IProcess process, String name, String text, Type dataType) {
+		this(process, name, text, null, dataType);
+	}
+
+	public OutputData(IProcess process, String name, String text, String tips, Type dataType) {
 		this.process = process;
 		this.name = name;
+		this.text = text;
 		this.tips = tips;
 		this.dataType = dataType;
 	}
@@ -40,6 +46,11 @@ public class OutputData implements IDataDescription, IValueProvider {
 	@Override
 	public String getName() {
 		return this.name;
+	}
+
+	@Override
+	public String getText() {
+		return this.text;
 	}
 
 	@Override

@@ -38,6 +38,10 @@ public interface IParameters {
 
 	void addOutputParameters(String name, Type type, IParameter... parameters);
 
+	void addInputParameters(String name, String text, Type type, IParameter... parameters);
+
+	void addOutputParameters(String name, String text, Type type, IParameter... parameters);
+
 	Inputs getInputs();
 
 	Outputs getOutputs();

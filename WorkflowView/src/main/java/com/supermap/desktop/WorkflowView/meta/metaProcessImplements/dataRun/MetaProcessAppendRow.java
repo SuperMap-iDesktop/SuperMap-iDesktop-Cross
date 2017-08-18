@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -58,7 +59,7 @@ public class MetaProcessAppendRow extends MetaProcess {
 		this.checkBox.setSelectedItem(true);
 		this.parameters.setParameters(this.targetData, chooseTable, checkBox);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, this.chooseTable);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.VECTOR, this.targetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Append"), DatasetTypes.VECTOR, this.targetData);
 
 	}
 

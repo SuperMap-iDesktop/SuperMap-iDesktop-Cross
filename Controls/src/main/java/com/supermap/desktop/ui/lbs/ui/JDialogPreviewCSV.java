@@ -33,9 +33,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -62,19 +65,21 @@ public class JDialogPreviewCSV extends SmDialog {
 
 	private JCheckBox checkBoxHasHeader = new JCheckBox();
 
-	private SmButton buttonOk = new SmButton(CommonProperties.getString(CommonProperties.OK));
+	private JLabel labelEncoding = new JLabel(CommonProperties.getString("String_Label_EncodeType"));
+	private JComboBox<String> comboBoxEncoding = new JComboBox<>();
+
+	private SmButton buttonOk = new SmButton(ControlsProperties.getString("String_Save"));
 	private SmButton buttonCancle = new SmButton(CommonProperties.getString(CommonProperties.Cancel));
 
 	private static final int BUFF_LENGTH = 1024 * 8;
 
 	private static final int DEFAULT_CSV_LENGTH = 10;
 
-	private String csvFile = null;
 	private String metaFile = null;
 
 	private boolean isMetaExists = false;
 	private String defaultSeparator = ",";
-	;
+	private byte[] csvFileBytes;
 
 	public JDialogPreviewCSV(String webURL, HDFSDefine hdfsDefine) {
 		this.webURL = webURL;
@@ -129,6 +134,12 @@ public class JDialogPreviewCSV extends SmDialog {
 		for (String storageType : storageTypes) {
 			comboBoxStorageType.addItem(storageType);
 		}
+		String[] encodings = {
+				"UTF-8", "GB2312", "Big5", "ANSI", "GBK", "GB18030", "UTF-16", "UTF-32"
+		};
+		for (String encoding : encodings) {
+			comboBoxEncoding.addItem(encoding);
+		}
 	}
 
 	private void initLayout() {
@@ -140,24 +151,31 @@ public class JDialogPreviewCSV extends SmDialog {
 		comboBoxStorageType.setMinimumSize(preferredSize);
 		comboBoxStorageType.setPreferredSize(preferredSize);
 		comboBoxStorageType.setMaximumSize(preferredSize);
+
+		comboBoxEncoding.setRenderer(new ListDataCellRender());
+		comboBoxEncoding.setMinimumSize(preferredSize);
+		comboBoxEncoding.setPreferredSize(preferredSize);
+		comboBoxEncoding.setMaximumSize(preferredSize);
 		this.add(labelGeometryType, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
 		this.add(comboBoxGeometryType, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 0, 10).setFill(GridBagConstraints.NONE));
 
-		this.add(labelStorageType, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
-		this.add(comboBoxStorageType, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10).setFill(GridBagConstraints.NONE));
+		this.add(labelStorageType, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 0, 0));
+		this.add(comboBoxStorageType, new GridBagConstraintsHelper(3, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 0, 10).setFill(GridBagConstraints.NONE));
 
-		this.add(checkBoxHasHeader, new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 10));
+		this.add(checkBoxHasHeader, new GridBagConstraintsHelper(2, 2, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+		this.add(labelEncoding, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		this.add(comboBoxEncoding, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10).setFill(GridBagConstraints.NONE));
 
-		this.add(new JScrollPane(tableField), new GridBagConstraintsHelper(0, 3, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 0).setFill(GridBagConstraints.BOTH).setIpad(0, 200));
+		this.add(new JScrollPane(tableField), new GridBagConstraintsHelper(0, 3, 4, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 0).setFill(GridBagConstraints.BOTH).setIpad(0, 200));
 
-		this.add(new JScrollPane(tablePreviewCSV), new GridBagConstraintsHelper(0, 4, 2, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 0).setFill(GridBagConstraints.BOTH));
+		this.add(new JScrollPane(tablePreviewCSV), new GridBagConstraintsHelper(0, 4, 4, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 0).setFill(GridBagConstraints.BOTH));
 
 		JPanel panelButton = new JPanel();
 		panelButton.setLayout(new GridBagLayout());
 		panelButton.add(buttonOk, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(1, 0));
 		panelButton.add(buttonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(0, 5, 0, 0));
 
-		this.add(panelButton, new GridBagConstraintsHelper(0, 5, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 10, 10));
+		this.add(panelButton, new GridBagConstraintsHelper(0, 5, 4, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 10, 10));
 
 	}
 
@@ -177,6 +195,14 @@ public class JDialogPreviewCSV extends SmDialog {
 			public void actionPerformed(ActionEvent e) {
 				dialogResult = DialogResult.CANCEL;
 				dispose();
+			}
+		});
+		comboBoxEncoding.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					updatePreviewData();
+				}
 			}
 		});
 	}
@@ -229,6 +255,38 @@ public class JDialogPreviewCSV extends SmDialog {
 			}
 		}
 		return false;
+	}
+
+	private void updatePreviewData() {
+		String csvFile = null;
+		try {
+			csvFile = new String(this.csvFileBytes, (String) comboBoxEncoding.getSelectedItem());
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		// TODO: 2017/8/17
+		if (csvFile != null) {
+			String[] split = csvFile.split("\n");
+			for (int i = 0; i < split.length - 1 && i <= DEFAULT_CSV_LENGTH; i++) {
+				String line = split[i];
+				line = line.split("\r")[0];
+				String[] columns = line.split(defaultSeparator);
+				String columnTmp = "";
+				int columnIndex = 0;
+				for (String column : columns) {
+					if (StringUtilities.isNullOrEmpty(columnTmp)) {
+						columnTmp = column;
+					} else {
+						columnTmp = columnTmp + defaultSeparator + column;
+					}
+					if (StringUtilities.isBracketComplete(columnTmp)) {
+						tableModelPreviewCSV.setValueAt(columnTmp, i, columnIndex);
+						columnIndex++;
+						columnTmp = "";
+					}
+				}
+			}
+		}
 	}
 
 	private boolean postMetaFile(String metaFile) {
@@ -328,10 +386,11 @@ public class JDialogPreviewCSV extends SmDialog {
 	}
 
 	private void initComponentState() {
+		String csvFile = "";
 		int startPos = 0;
 		try {
 			//region 获取Csv文件
-			byte[] csvFileBytes = new byte[0];
+			this.csvFileBytes = new byte[0];
 			URL url = new URL(this.webURL + hdfsDefine.getName() + "?op=open&offset=" + 0 + "&length=" + hdfsDefine.getSize());
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			setConnection(connection);
@@ -346,16 +405,15 @@ public class JDialogPreviewCSV extends SmDialog {
 
 			while ((size = inputStream.read(buff)) > 0) {
 				// 写入文件内容，返回最后写入的长度
-				byte[] temp = new byte[csvFileBytes.length + buff.length];
-				System.arraycopy(csvFileBytes, 0, temp, 0, csvFileBytes.length);
-				System.arraycopy(buff, 0, temp, csvFileBytes.length, buff.length);
-				csvFileBytes = temp;
+				byte[] temp = new byte[this.csvFileBytes.length + buff.length];
+				System.arraycopy(this.csvFileBytes, 0, temp, 0, this.csvFileBytes.length);
+				System.arraycopy(buff, 0, temp, this.csvFileBytes.length, buff.length);
+				this.csvFileBytes = temp;
 
 
-				String csvFileString = new String(csvFileBytes, "UTF-8");
-				String[] split = csvFileString.split("\n");
+				csvFile = new String(this.csvFileBytes, "UTF-8");
+				String[] split = csvFile.split("\n");
 				if (split.length >= DEFAULT_CSV_LENGTH) {
-					csvFile = csvFileString;
 					break;
 				}
 				startPos += size;
@@ -401,7 +459,6 @@ public class JDialogPreviewCSV extends SmDialog {
 			connectionMeta.disconnect();
 		} catch (Exception e) {
 			// meta找不到就算了
-//			Application.getActiveApplication().getOutput().output(e);
 		}
 
 
@@ -556,6 +613,14 @@ public class JDialogPreviewCSV extends SmDialog {
 		}
 
 		@Override
+		public void setValueAt(Object aValue, int row, int column) {
+			if (row < values.size()) {
+				values.get(row).setValueAt(column, (String) aValue);
+				fireTableCellUpdated(row, column);
+			}
+		}
+
+		@Override
 		public Object getValueAt(int row, int column) {
 			return values.get(row).getValueAt(column);
 		}
@@ -655,7 +720,9 @@ public class JDialogPreviewCSV extends SmDialog {
 		}
 
 		public void setValueAt(int index, String value) {
-			datas[index] = value;
+			if (index < datas.length) {
+				datas[index] = value;
+			}
 		}
 	}
 }

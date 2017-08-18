@@ -11,17 +11,23 @@ import java.util.Collections;
  */
 public class InputData implements IDataDescription, IValueProvider {
 	private String name;
+	private String text;
 	private String tips;
 	private Type dataType;
 	private IValueProvider valueProvider;
 	private ArrayList<IParameter> parameters = new ArrayList<>();
 
 	public InputData(String name, Type dataType) {
-		this(name, null, dataType);
+		this(name, name, dataType);
 	}
 
-	public InputData(String name, String tips, Type dataType) {
+	public InputData(String name, String text, Type dataType) {
+		this(name, text, null, dataType);
+	}
+
+	public InputData(String name, String text, String tips, Type dataType) {
 		this.name = name;
+		this.text = text;
 		this.tips = tips;
 		this.dataType = dataType;
 	}
@@ -47,6 +53,11 @@ public class InputData implements IDataDescription, IValueProvider {
 	@Override
 	public String getName() {
 		return this.name;
+	}
+
+	@Override
+	public String getText() {
+		return this.text;
 	}
 
 	@Override
