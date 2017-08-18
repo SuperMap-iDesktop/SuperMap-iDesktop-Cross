@@ -532,6 +532,7 @@ public class JDialogPreviewCSV extends SmDialog {
 
 		tableModelPreviewCSV = new PreviewCSVTableModel(csvDatas);
 		tablePreviewCSV.setModel(tableModelPreviewCSV);
+		tablePreviewCSV.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		ArrayList<RowData> rowDatas = new ArrayList<>();
 		if (this.metaFile != null) {
@@ -648,7 +649,7 @@ public class JDialogPreviewCSV extends SmDialog {
 			if (values.size() > 0) {
 				int maxColumnCount = getMaxColumnCount();
 				for (int i = 0; i < maxColumnCount; i++) {
-					columnNames.add("column_" + (i + 1));
+					columnNames.add(StringUtilities.isNullOrEmpty(values.get(0).getValueAt(i)) ? "column_" + (i + 1) : values.get(0).getValueAt(i));
 				}
 			}
 		}
