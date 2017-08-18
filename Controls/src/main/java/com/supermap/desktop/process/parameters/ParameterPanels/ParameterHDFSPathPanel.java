@@ -43,6 +43,7 @@ public class ParameterHDFSPathPanel extends SwingPanel {
 	private void initParameterInfo() {
 		this.labelFileInputPath = new JLabel();
 		this.textFieldFileInputPath = new JTextField();
+		textFieldFileInputPath.setEditable(false);
 		this.textFieldFileInputPath.setText((String) parameterHDFSPath.getSelectedItem());
 		textFieldFileInputPath.setPreferredSize(new Dimension(20, 23));
 		this.buttonInputBrowser = new JButton();
