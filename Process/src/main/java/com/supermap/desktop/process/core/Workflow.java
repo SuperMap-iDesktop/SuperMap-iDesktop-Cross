@@ -3,19 +3,7 @@ package com.supermap.desktop.process.core;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.events.MatrixNodeAddedEvent;
-import com.supermap.desktop.process.events.MatrixNodeAddedListener;
-import com.supermap.desktop.process.events.MatrixNodeAddingEvent;
-import com.supermap.desktop.process.events.MatrixNodeAddingListener;
-import com.supermap.desktop.process.events.MatrixNodeRemovedEvent;
-import com.supermap.desktop.process.events.MatrixNodeRemovedListener;
-import com.supermap.desktop.process.events.MatrixNodeRemovingEvent;
-import com.supermap.desktop.process.events.MatrixNodeRemovingListener;
-import com.supermap.desktop.process.events.RelationAddedListener;
-import com.supermap.desktop.process.events.RelationRemovedListener;
-import com.supermap.desktop.process.events.RelationRemovingListener;
-import com.supermap.desktop.process.events.WorkflowChangeEvent;
-import com.supermap.desktop.process.events.WorkflowChangeListener;
+import com.supermap.desktop.process.events.*;
 import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessLoader;
@@ -93,6 +81,7 @@ public class Workflow implements IWorkflow {
 
 		// 处理 workflow
 		Element workflowNode = doc.createElement("Workflow");
+		workflowNode.setAttribute("Name", this.name);
 		doc.appendChild(workflowNode);
 
 		// 处理 processes
@@ -132,6 +121,9 @@ public class Workflow implements IWorkflow {
 
 	public void serializeTo(Element workflowNode) {
 		Document doc = workflowNode.getOwnerDocument();
+
+		// 设置 workflow 的属性
+		workflowNode.setAttribute("Name", this.name);
 
 		// 处理 processes
 		Element processesNode = doc.createElement("Processes");
@@ -173,8 +165,12 @@ public class Workflow implements IWorkflow {
 
 	public void serializeFrom(Element workflowNode) {
 
+		// 处理 workflow 的属性
+		String workflowName = workflowNode.getAttribute("Name");
+		this.name = workflowName;
+
 		// 处理 process
-		Element processesNode = (Element) XmlUtilities.getChildElementNodeByName(workflowNode, "Processes");
+		Element processesNode = XmlUtilities.getChildElementNodeByName(workflowNode, "Processes");
 		Element[] processNodes = XmlUtilities.getChildElementNodesByName(processesNode, "Process");
 		for (int i = 0; i < processNodes.length; i++) {
 			Element processNode = processNodes[i];
@@ -195,7 +191,7 @@ public class Workflow implements IWorkflow {
 		}
 
 		// 处理 Relation
-		Element relationsNode = (Element) XmlUtilities.getChildElementNodeByName(workflowNode, "Relations");
+		Element relationsNode = XmlUtilities.getChildElementNodeByName(workflowNode, "Relations");
 		Element[] relationNodes = XmlUtilities.getChildElementNodesByName(relationsNode, "Relation");
 		for (int i = 0; i < relationNodes.length; i++) {
 			Element relationNode = relationNodes[i];
