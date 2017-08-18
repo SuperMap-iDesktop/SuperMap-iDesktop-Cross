@@ -37,6 +37,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -57,7 +58,18 @@ public class JDialogPreviewCSV extends SmDialog {
 	private SmSortTable tableField = new SmSortTable();
 	private CSVFiledTableModel tableModelField;
 
-	private SmSortTable tablePreviewCSV = new SmSortTable();
+	private SmSortTable tablePreviewCSV = new SmSortTable() {
+		@Override
+		public String getToolTipText(MouseEvent event) {
+			Point point = event.getPoint();
+			int row = tablePreviewCSV.rowAtPoint(point);
+			int column = tablePreviewCSV.columnAtPoint(point);
+			if (row != -1 && column != -1) {
+				return (String) tablePreviewCSV.getValueAt(row, column);
+			}
+			return super.getToolTipText(event);
+		}
+	};
 	private PreviewCSVTableModel tableModelPreviewCSV;
 
 	private JLabel labelGeometryType = new JLabel();
@@ -532,7 +544,13 @@ public class JDialogPreviewCSV extends SmDialog {
 
 		tableModelPreviewCSV = new PreviewCSVTableModel(csvDatas);
 		tablePreviewCSV.setModel(tableModelPreviewCSV);
+		tablePreviewCSV.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
+		int previewCSVColumnCount = tableModelPreviewCSV.getColumnCount();
+		int width = Math.max(750 / previewCSVColumnCount, 100);
+		for (int i = 0; i < previewCSVColumnCount; i++) {
+			tablePreviewCSV.getColumnModel().getColumn(i).setPreferredWidth(width);
+		}
 		ArrayList<RowData> rowDatas = new ArrayList<>();
 		if (this.metaFile != null) {
 			JSONObject jsonObject = JSONObject.parseObject(metaFile);
@@ -597,7 +615,14 @@ public class JDialogPreviewCSV extends SmDialog {
 			@Override
 			public boolean stopCellEditing() {
 				String text = ((JTextField) editorComponent).getText();
+				int[] columnWidths = new int[tableModelPreviewCSV.getColumnCount()];
+				for (int i = 0; i < tablePreviewCSV.getColumnCount(); i++) {
+					columnWidths[i] = tablePreviewCSV.getColumnModel().getColumn(i).getWidth();
+				}
 				tableModelPreviewCSV.setColumnName(row, text);
+				for (int i = 0; i < tablePreviewCSV.getColumnCount(); i++) {
+					tablePreviewCSV.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
+				}
 				return super.stopCellEditing();
 			}
 		});
@@ -648,7 +673,7 @@ public class JDialogPreviewCSV extends SmDialog {
 			if (values.size() > 0) {
 				int maxColumnCount = getMaxColumnCount();
 				for (int i = 0; i < maxColumnCount; i++) {
-					columnNames.add("column_" + (i + 1));
+					columnNames.add(StringUtilities.isNullOrEmpty(values.get(0).getValueAt(i)) ? "column_" + (i + 1) : values.get(0).getValueAt(i));
 				}
 			}
 		}
