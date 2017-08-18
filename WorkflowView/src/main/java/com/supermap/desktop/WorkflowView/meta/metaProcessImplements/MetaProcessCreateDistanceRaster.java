@@ -51,7 +51,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 	public MetaProcessCreateDistanceRaster() {
 		initParameters();
 		initParametersState();
-		initParameterConstrint();
+		initParameterConstraint();
 		registerListener();
 	}
 
@@ -164,7 +164,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 		}
 	}
 
-	private void initParameterConstrint() {
+	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(this.sourceDatasource, ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(this.sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);

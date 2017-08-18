@@ -5,6 +5,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.topology.TopologyProcessing;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
@@ -62,7 +63,7 @@ public class MetaProcessPickupBorder extends MetaProcess {
 		this.parameters.setParameters(sourceData, paramSet, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.REGION, sourceData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.LINE, sourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, targetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_PickupBorder"), DatasetTypes.LINE, targetData);
 	}
 
 	private void initParameterConstraint() {

@@ -151,15 +151,20 @@ public class JDialogPreviewCSV extends SmDialog {
 		comboBoxStorageType.setMinimumSize(preferredSize);
 		comboBoxStorageType.setPreferredSize(preferredSize);
 		comboBoxStorageType.setMaximumSize(preferredSize);
+
+		comboBoxEncoding.setRenderer(new ListDataCellRender());
+		comboBoxEncoding.setMinimumSize(preferredSize);
+		comboBoxEncoding.setPreferredSize(preferredSize);
+		comboBoxEncoding.setMaximumSize(preferredSize);
 		this.add(labelGeometryType, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
 		this.add(comboBoxGeometryType, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 0, 10).setFill(GridBagConstraints.NONE));
 
 		this.add(labelStorageType, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 0, 0));
 		this.add(comboBoxStorageType, new GridBagConstraintsHelper(3, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 0, 10).setFill(GridBagConstraints.NONE));
 
-		this.add(checkBoxHasHeader, new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 10));
-		this.add(labelEncoding, new GridBagConstraintsHelper(2, 2, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 0));
-		this.add(comboBoxEncoding, new GridBagConstraintsHelper(3, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10).setFill(GridBagConstraints.NONE));
+		this.add(checkBoxHasHeader, new GridBagConstraintsHelper(2, 2, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+		this.add(labelEncoding, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		this.add(comboBoxEncoding, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10).setFill(GridBagConstraints.NONE));
 
 		this.add(new JScrollPane(tableField), new GridBagConstraintsHelper(0, 3, 4, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 0).setFill(GridBagConstraints.BOTH).setIpad(0, 200));
 

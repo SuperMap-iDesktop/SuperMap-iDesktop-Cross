@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConvers
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
@@ -84,7 +85,13 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 		}
 		parameters.setParameters(inputCombine,settingCombine,outputCombine);
 		parameters.addInputParameters(INPUT_DATA, datasetTypeToTypes(inputType),inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, datasetTypeToTypes(outputType), outputCombine);
+		if (outputType.equals(DatasetType.REGION3D)) {
+			parameters.addOutputParameters(OUTPUT_DATA,ProcessOutputResultProperties.getString("String_Result_Region3D_Dataset"), datasetTypeToTypes(outputType), outputCombine);
+		} else if (outputType.equals(DatasetType.LINE3D)) {
+			parameters.addOutputParameters(OUTPUT_DATA,ProcessOutputResultProperties.getString("String_Result_Line3D_Dataset"), datasetTypeToTypes(outputType), outputCombine);
+		} else if (outputType.equals(DatasetType.POINT3D)) {
+			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Point3D_Dataset"), datasetTypeToTypes(outputType), outputCombine);
+		}
 	}
 
 	private void initParameterConstraint() {

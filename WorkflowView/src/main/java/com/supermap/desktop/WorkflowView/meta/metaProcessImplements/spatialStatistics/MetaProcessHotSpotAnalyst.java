@@ -4,6 +4,7 @@ import com.supermap.analyst.spatialstatistics.ClusteringDistributions;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
@@ -29,7 +30,7 @@ public class MetaProcessHotSpotAnalyst extends MetaProcessAnalyzingPatterns {
 		parameterCombine.setDescribe(CommonProperties.getString("String_ResultSet"));
 		DatasourceConstraint.getInstance().constrained(parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 		parameters.addParameters(parameterCombine);
-		parameters.addOutputParameters(OUTPUT_DATASET, DatasetTypes.VECTOR, parameterCombine);
+		parameters.addOutputParameters(OUTPUT_DATASET, ProcessOutputResultProperties.getString("String_Result_Analyst"), DatasetTypes.VECTOR, parameterCombine);
 	}
 
 	@Override

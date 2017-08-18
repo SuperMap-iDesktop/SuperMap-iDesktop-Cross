@@ -3,6 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -82,7 +83,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 				parameterInputDataType,
 				parameterCombineSetting
 		);
-		parameters.getOutputs().addData("PolygonAggregationResult", Type.UNKOWN);
+		parameters.getOutputs().addData("PolygonAggregationResult", ProcessOutputResultProperties.getString("String_PolygonAnalysisResult"), Type.UNKOWN);
 	}
 
 	private void initComponentState() {
