@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -39,10 +40,10 @@ public class MetaProcessAppendFields extends MetaProcess {
 
 	public MetaProcessAppendFields() {
 		initParameters();
-		initConstrant();
+		initConstraint();
 	}
 
-	private void initConstrant() {
+	private void initConstraint() {
 		EqualDatasourceConstraint sourceDatasourceConstraint = new EqualDatasourceConstraint();
 		sourceDatasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		sourceDatasourceConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
@@ -106,7 +107,7 @@ public class MetaProcessAppendFields extends MetaProcess {
 		}
 
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceDataCombine);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.VECTOR, targetDataCombine);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Append"), DatasetTypes.VECTOR, targetDataCombine);
 		this.parameters.setParameters(targetDataCombine, sourceDataCombine, multiFieldSet);
 	}
 

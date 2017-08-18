@@ -13,6 +13,7 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.layer.propertycontrols.LayerPropertyContainer;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerGridAggregation;
 import com.supermap.mapping.LayerHeatmap;
 
 
@@ -34,7 +35,7 @@ public class CtrlActionHeatMapProperty extends CtrlAction {
 				IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 				Layer layer = formMap.getActiveLayers()[0];
 				if (layer.getDataset() != null && layer.getDataset().getType() == DatasetType.POINT ) {
-					if (layer instanceof LayerHeatmap){
+					if (layer instanceof LayerHeatmap || layer instanceof LayerGridAggregation){
 
 					}else {
 						result = true;

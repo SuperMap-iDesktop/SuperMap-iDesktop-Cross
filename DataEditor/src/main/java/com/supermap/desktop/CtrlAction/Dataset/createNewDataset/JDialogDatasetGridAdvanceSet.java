@@ -21,17 +21,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by yuanR on 2017/8/15 0015.
- * 新建影像数据集高级设置面板
+ * Created by yuanR on 2017/8/17 0017.
+ * 新建栅格数据集高级设置面板
  */
-public class JDialogDatasetImageAdvanceSet extends SmDialog {
+public class JDialogDatasetGridAdvanceSet extends SmDialog {
 
 	private static final long serialVersionUID = 1L;
 
 	private PanelBasicInfoSet panelBasicInfoSet;
 	private PanelResolution panelResolution;
-	private PanelDatasetImageProperty panelDatasetImageProperty;
+	private PanelDatasetGridProperty panelDatasetGridProperty;
 	private PanelDatasetBounds panelDatasetBounds;
+
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
 
@@ -40,19 +41,18 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 
 	private boolean isDatasetNameSuitable = true;
 	private boolean isWidthHeightSuitable = true;
-	private boolean isBandCountSuitable = true;
+	private boolean isMaxMinValueSuitable = true;
 
 	/**
 	 * ok按钮是否可用
 	 *
 	 * @param isDatasetNameSuitable
 	 * @param isWidthHeightSuitable
-	 * @param isBandCountSuitable
+	 * @param isMaxMinValueSuitable
 	 */
-	public void setOKButtonEnabled(boolean isDatasetNameSuitable, boolean isWidthHeightSuitable, boolean isBandCountSuitable) {
-		buttonOk.setEnabled(isDatasetNameSuitable && isWidthHeightSuitable && isBandCountSuitable);
+	public void setOKButtonEnabled(boolean isDatasetNameSuitable, boolean isWidthHeightSuitable, boolean isMaxMinValueSuitable) {
+		buttonOk.setEnabled(isDatasetNameSuitable && isWidthHeightSuitable && isMaxMinValueSuitable);
 	}
-
 
 	/**
 	 * 设置数据集名称是否正确
@@ -61,17 +61,17 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 	 */
 	public void setDatasetNameSuitable(Boolean isDatasetNameSuitable) {
 		this.isDatasetNameSuitable = isDatasetNameSuitable;
-		setOKButtonEnabled(isDatasetNameSuitable, this.isWidthHeightSuitable, this.isBandCountSuitable);
+		setOKButtonEnabled(isDatasetNameSuitable, this.isWidthHeightSuitable, this.isMaxMinValueSuitable);
 	}
 
 	/**
-	 * 设置波段数是否正确
+	 * 设置最大最小值是否正确
 	 *
-	 * @param isBandCountSuitable
+	 * @param isMaxMinValueSuitable
 	 */
-	public void setBandCountSuitable(Boolean isBandCountSuitable) {
-		this.isBandCountSuitable = isBandCountSuitable;
-		setOKButtonEnabled(isDatasetNameSuitable, isWidthHeightSuitable, isBandCountSuitable);
+	public void setMaxMinValueSuitable(Boolean isMaxMinValueSuitable) {
+		this.isMaxMinValueSuitable = isMaxMinValueSuitable;
+		setOKButtonEnabled(isDatasetNameSuitable, isWidthHeightSuitable, isMaxMinValueSuitable);
 	}
 
 	/**
@@ -81,25 +81,23 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 	 */
 	public void setWidthHeightSuitable(Boolean isWidthHeightSuitable) {
 		this.isWidthHeightSuitable = isWidthHeightSuitable;
-		setOKButtonEnabled(isDatasetNameSuitable, isWidthHeightSuitable, this.isBandCountSuitable);
+		setOKButtonEnabled(isDatasetNameSuitable, isWidthHeightSuitable, this.isMaxMinValueSuitable);
 	}
 
-
-	public JDialogDatasetImageAdvanceSet(NewDatasetBean newDatasetBean) {
+	public JDialogDatasetGridAdvanceSet(NewDatasetBean newDatasetBean) {
 		this.newDatasetBean = newDatasetBean;
 		this.gridImageExtraDatasetBean = this.newDatasetBean.getGridImageExtraDatasetBean();
 		initComponents();
 		initLayout();
 		initStates();
 		registerEvent();
-		this.setTitle(DataEditorProperties.getString("String_NewDatasetImage"));
+		this.setTitle(DataEditorProperties.getString("String_NewDatasetGrid"));
 		this.setModal(true);
 		setSize(700, 400);
 		this.setLocationRelativeTo(null);
 	}
 
 	private void initStates() {
-
 		panelBasicInfoSet.initStates(newDatasetBean);
 
 		double x = this.gridImageExtraDatasetBean.getRectangle().getWidth() / this.gridImageExtraDatasetBean.getWidth();
@@ -108,18 +106,20 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 
 		panelDatasetBounds.initStates(this.gridImageExtraDatasetBean.getRectangle());
 
-		panelDatasetImageProperty.initStates(this.gridImageExtraDatasetBean.getBlockSizeOption(),
-				this.gridImageExtraDatasetBean.getPixelFormatImage(),
-				this.gridImageExtraDatasetBean.getBandCount());
+		panelDatasetGridProperty.initStates(
+				this.gridImageExtraDatasetBean.getBlockSizeOption(),
+				this.gridImageExtraDatasetBean.getPixelFormatGrid(),
+				this.gridImageExtraDatasetBean.getNoValue(),
+				this.gridImageExtraDatasetBean.getMaxValue(),
+				this.gridImageExtraDatasetBean.getMinValue());
 	}
-
 
 	private void initComponents() {
 
-		panelBasicInfoSet = new PanelBasicInfoSet(DatasetType.IMAGE);
+		panelBasicInfoSet = new PanelBasicInfoSet(DatasetType.GRID);
 		panelResolution = new PanelResolution();
 		panelResolution.setBorder(BorderFactory.createTitledBorder(DataEditorProperties.getString("String_NewDataset_RatioInfo")));
-		panelDatasetImageProperty = new PanelDatasetImageProperty();
+		panelDatasetGridProperty = new PanelDatasetGridProperty();
 		panelDatasetBounds = new PanelDatasetBounds();
 
 		// 按钮
@@ -139,17 +139,18 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 				.addGroup(groupLayout.createSequentialGroup()
 						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 								.addComponent(this.panelBasicInfoSet)
-								.addComponent(this.panelResolution))
+								.addComponent(this.panelDatasetGridProperty))
 						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(this.panelDatasetImageProperty)
-								.addComponent(this.panelDatasetBounds))));
+								.addComponent(this.panelDatasetBounds)
+								.addComponent(this.panelResolution))));
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(this.panelBasicInfoSet)
-						.addComponent(this.panelDatasetImageProperty))
-				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(this.panelResolution)
-						.addComponent(this.panelDatasetBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
+						.addComponent(this.panelDatasetBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(this.panelDatasetGridProperty)
+						.addComponent(this.panelResolution))
+		);
 		//@formatter:on
 
 		// 按钮面板
@@ -190,7 +191,8 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 
 		//  用于确定按钮是否可用的判断
 		this.panelBasicInfoSet.getDatasetNameTextField().getDocument().addDocumentListener(textFieldChangedListener);
-		this.panelDatasetImageProperty.getTextFieldImageDatasetbandCount().getTextField().getDocument().addDocumentListener(textFieldChangedListener);
+		this.panelDatasetGridProperty.getTextFieldMaxValue().getTextField().getDocument().addDocumentListener(textFieldChangedListener);
+		this.panelDatasetGridProperty.getTextFieldMinValue().getTextField().getDocument().addDocumentListener(textFieldChangedListener);
 		this.panelResolution.getTextFieldColumnCount().getDocument().addDocumentListener(textFieldChangedListener);
 		this.panelResolution.getTextFieldRowCount().getDocument().addDocumentListener(textFieldChangedListener);
 
@@ -232,24 +234,26 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 		int width = Integer.valueOf(panelResolution.getTextFieldColumnCount().getText());
 		int height = Integer.valueOf(panelResolution.getTextFieldRowCount().getText());
 
-		BlockSizeOption blockSizeOption = BlockSizeOptionUtilities.valueOf(((String) panelDatasetImageProperty.getComboboxBlockSizeOption().getSelectedItem()));
-		PixelFormat pixelFormat = PixelFormatUtilities.valueOf(((String) panelDatasetImageProperty.getComboboxPixelFormat().getSelectedItem()));
-		int bandCount = Integer.valueOf(panelDatasetImageProperty.getTextFieldImageDatasetbandCount().getTextField().getText());
+		BlockSizeOption blockSizeOption = BlockSizeOptionUtilities.valueOf(((String) panelDatasetGridProperty.getComboboxBlockSizeOption().getSelectedItem()));
+		PixelFormat pixelFormat = PixelFormatUtilities.valueOf(((String) panelDatasetGridProperty.getComboboxPixelFormat().getSelectedItem()));
+		double maxValue = Double.valueOf(panelDatasetGridProperty.getTextFieldMaxValue().getTextField().getText());
+		double minValue = Double.valueOf(panelDatasetGridProperty.getTextFieldMinValue().getTextField().getText());
+		double noValue = Double.valueOf(panelDatasetGridProperty.getTextFieldNoValue().getTextField().getText());
 
 		Rectangle2D rectangle2D = panelDatasetBounds.getRangeBound();
 
 		newDatasetBean.setDatasource(datasource);
 		newDatasetBean.setDatasetName(name);
-		newDatasetBean.setDatasetType(DatasetType.IMAGE);
+		newDatasetBean.setDatasetType(DatasetType.GRID);
 		newDatasetBean.setEncodeType(encodeType);
 		newDatasetBean.getGridImageExtraDatasetBean().setBlockSizeOption(blockSizeOption);
-		newDatasetBean.getGridImageExtraDatasetBean().setPixelFormatImage(pixelFormat);
+		newDatasetBean.getGridImageExtraDatasetBean().setPixelFormatGrid(pixelFormat);
 		newDatasetBean.getGridImageExtraDatasetBean().setHeight(height);
 		newDatasetBean.getGridImageExtraDatasetBean().setWidth(width);
-		newDatasetBean.getGridImageExtraDatasetBean().setBandCount(bandCount);
-		if (rectangle2D != null) {
-			newDatasetBean.getGridImageExtraDatasetBean().setRectangle(rectangle2D);
-		}
+		newDatasetBean.getGridImageExtraDatasetBean().setMaxValue(maxValue);
+		newDatasetBean.getGridImageExtraDatasetBean().setMinValue(minValue);
+		newDatasetBean.getGridImageExtraDatasetBean().setNoValue(noValue);
+		newDatasetBean.getGridImageExtraDatasetBean().setRectangle(rectangle2D);
 
 		setDialogResult(DialogResult.OK);
 		this.dispose();
@@ -260,9 +264,7 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 		this.dispose();
 	}
 
-
 	private DocumentListener textFieldChangedListener = new JTextFieldChangedListener();
-
 
 	/**
 	 * yuanR 2017.8.17
@@ -298,14 +300,18 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 				panelBasicInfoSet.getDatasetNameTextField().setForeground(Color.RED);
 			}
 
-			// 波段
-			if (isBandCountSuitable(panelDatasetImageProperty.getTextFieldImageDatasetbandCount().getTextField().getText())) {
-				setBandCountSuitable(true);
-				panelDatasetImageProperty.getTextFieldImageDatasetbandCount().getTextField().setForeground(Color.BLACK);
+			// 最大值/最小值
+			if (isMaxMinValueSuitable(panelDatasetGridProperty.getTextFieldMaxValue().getTextField().getText(),
+					panelDatasetGridProperty.getTextFieldMinValue().getTextField().getText())) {
+				setMaxMinValueSuitable(true);
+				panelDatasetGridProperty.getTextFieldMaxValue().getTextField().setForeground(Color.BLACK);
+				panelDatasetGridProperty.getTextFieldMinValue().getTextField().setForeground(Color.BLACK);
 			} else {
-				setBandCountSuitable(false);
-				panelDatasetImageProperty.getTextFieldImageDatasetbandCount().getTextField().setForeground(Color.RED);
+				setMaxMinValueSuitable(false);
+				panelDatasetGridProperty.getTextFieldMaxValue().getTextField().setForeground(Color.RED);
+				panelDatasetGridProperty.getTextFieldMinValue().getTextField().setForeground(Color.RED);
 			}
+
 
 			// 像素-行
 
@@ -328,15 +334,17 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 		}
 
 		/**
-		 * 判断波段值是否正确
+		 * 判断最大最小值是否正确
 		 *
-		 * @param value
+		 * @param maxValue
+		 * @param minValue
 		 * @return
 		 */
-		private boolean isBandCountSuitable(String value) {
-			if (!StringUtilities.isNullOrEmpty(value)) {
-				int bandCount = Integer.valueOf(value);
-				if (100 < bandCount || bandCount < 1) {
+		private boolean isMaxMinValueSuitable(String maxValue, String minValue) {
+			if (!StringUtilities.isNullOrEmpty(maxValue) && !StringUtilities.isNullOrEmpty(minValue)) {
+				double max = StringUtilities.getNumber(maxValue);
+				double min = StringUtilities.getNumber(minValue);
+				if (max <= min) {
 					return false;
 				} else {
 					return true;
@@ -384,4 +392,6 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 			}
 		}
 	}
+
+
 }

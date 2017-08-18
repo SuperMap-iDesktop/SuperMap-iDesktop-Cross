@@ -5,6 +5,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -23,8 +24,8 @@ import com.supermap.desktop.utilities.DatasetUtilities;
  * Created by Chen on 2017/7/3 0003.
  */
 public class MetaProcessThiessenPolygon extends MetaProcess {
-	private static final String INPUT_DATA = "input_data";
-	private static final String OUTPUT_DATA = "output_data";
+	private static final String INPUT_DATA = SOURCE_PANEL_DESCRIPTION;
+	private static final String OUTPUT_DATA = "ThiessenPolygonResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
@@ -54,7 +55,7 @@ public class MetaProcessThiessenPolygon extends MetaProcess {
 
 		parameters.setParameters(sourceData, resultData);
 		parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, sourceData);
-		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.REGION, resultData);
+		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_ThiessenPolygon"), DatasetTypes.REGION, resultData);
 	}
 
 	private void initParameterConstraint() {

@@ -10,6 +10,7 @@ import javax.swing.*;
  * 新建影像数据-分辨率面板
  */
 public class PanelResolution extends JPanel {
+
 	private JLabel resolutionXLabel;
 	private JLabel resolutionYLabel;
 	private JLabel rowCountLabel;
@@ -36,20 +37,6 @@ public class PanelResolution extends JPanel {
 
 	private JTextField textFieldRowCount;
 	private JTextField textFieldColumnCount;
-
-//	private FocusAdapter focusAdapter = new FocusAdapter() {
-//		@Override
-//		public void focusLost(FocusEvent e) {
-//			WaringTextField textField = (WaringTextField) e.getSource();
-//			String value = textField.getTextField().getText();
-//			if (StringUtilities.isNullOrEmpty(value)) {
-//				textField.getTextField().setText("0.5");
-//			}
-//			if (Double.valueOf(value) <= 0) {
-//				textField.getTextField().setText("0.5");
-//			}
-//		}
-//	};
 
 	public PanelResolution() {
 		initComponents();

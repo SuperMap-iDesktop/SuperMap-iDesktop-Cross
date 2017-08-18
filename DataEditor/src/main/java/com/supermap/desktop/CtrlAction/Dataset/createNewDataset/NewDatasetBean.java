@@ -12,7 +12,7 @@ import java.text.MessageFormat;
  * @author XiaJT
  * 新建数据集参数信息类
  * 增加栅格、影像数据集的参数信息模块-yuanR2017.8.15
- * GridImageExtraDatasetBean 作为补充，当
+ * DatasetGridImageExtraBean 作为补充
  */
 public class NewDatasetBean {
 	private Datasource datasource;
@@ -21,7 +21,7 @@ public class NewDatasetBean {
 	private EncodeType encodeType;
 	private Charset charset;
 	private AddToWindowMode addToWindowMode;
-	private GridImageExtraDatasetBean gridImageExtraDatasetBean;
+	private DatasetGridImageExtraBean gridImageExtraDatasetBean;
 
 	public NewDatasetBean() {
 		Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
@@ -58,7 +58,7 @@ public class NewDatasetBean {
 	public void setDatasetType(DatasetType datasetType) {
 		this.datasetType = datasetType;
 		if (encodeType != EncodeType.NONE && datasetType != DatasetType.LINE && datasetType != DatasetType.REGION
-				&& datasetType != DatasetType.IMAGE) {
+				&& datasetType != DatasetType.IMAGE && datasetType != DatasetType.GRID) {
 			encodeType = EncodeType.NONE;
 		}
 	}
@@ -76,7 +76,7 @@ public class NewDatasetBean {
 	}
 
 	public void setEncodeType(EncodeType encodeType) {
-		if (datasetType == DatasetType.LINE || datasetType == DatasetType.REGION || datasetType == DatasetType.IMAGE) {
+		if (datasetType == DatasetType.LINE || datasetType == DatasetType.REGION || datasetType == DatasetType.IMAGE || datasetType == DatasetType.GRID) {
 			this.encodeType = encodeType;
 		} else {
 			this.encodeType = EncodeType.NONE;
@@ -91,9 +91,9 @@ public class NewDatasetBean {
 		this.charset = charset;
 	}
 
-	public GridImageExtraDatasetBean getGridImageExtraDatasetBean() {
+	public DatasetGridImageExtraBean getGridImageExtraDatasetBean() {
 		if (gridImageExtraDatasetBean == null) {
-			gridImageExtraDatasetBean = new GridImageExtraDatasetBean();
+			gridImageExtraDatasetBean = new DatasetGridImageExtraBean();
 		}
 		return gridImageExtraDatasetBean;
 	}
@@ -109,7 +109,7 @@ public class NewDatasetBean {
 							datasetName,
 							gridImageExtraDatasetBean.getWidth(),
 							gridImageExtraDatasetBean.getHeight(),
-							gridImageExtraDatasetBean.getPixelFormat(),
+							gridImageExtraDatasetBean.getPixelFormatImage(),
 							encodeType,
 							gridImageExtraDatasetBean.getBlockSizeOption(),
 							gridImageExtraDatasetBean.getBandCount()
@@ -130,8 +130,34 @@ public class NewDatasetBean {
 					}
 				}
 
-
 			} else if (datasetType.equals(DatasetType.GRID)) {
+				if (gridImageExtraDatasetBean != null) {
+					DatasetGridInfo info = new DatasetGridInfo(
+							datasetName,
+							gridImageExtraDatasetBean.getWidth(),
+							gridImageExtraDatasetBean.getHeight(),
+							gridImageExtraDatasetBean.getPixelFormatGrid(),
+							encodeType,
+							gridImageExtraDatasetBean.getBlockSizeOption()
+					);
+					info.setBounds(gridImageExtraDatasetBean.getRectangle());
+					info.setMaxValue(gridImageExtraDatasetBean.getMaxValue());
+					info.setMinValue(gridImageExtraDatasetBean.getMinValue());
+					info.setNoValue(gridImageExtraDatasetBean.getNoValue());
+					DatasetGrid datasetGrid = datasource.getDatasets().create(info);
+					try {
+						datasetGrid = datasource.getDatasets().create(info);
+					} catch (Exception e) {
+						Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_CreateNewDT_Failed"), datasetName, datasource.getAlias()));
+					}
+
+					if (datasetGrid != null) {
+						result = true;
+						String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewDT_Success"), datasetName,
+								datasource.getAlias());
+						Application.getActiveApplication().getOutput().output(information);
+					}
+				}
 
 			} else {
 				DatasetVectorInfo info = new DatasetVectorInfo(datasetName, datasetType);

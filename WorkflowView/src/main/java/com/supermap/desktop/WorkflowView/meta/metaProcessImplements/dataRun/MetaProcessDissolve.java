@@ -9,6 +9,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -107,7 +108,7 @@ public class MetaProcessDissolve extends MetaProcess {
 
 		this.parameters.setParameters(sourceData, parameterSetting, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.LINE_POLYGON_VECTOR, sourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE_POLYGON_VECTOR, targetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Dissolve"), DatasetTypes.LINE_POLYGON_VECTOR, targetData);
 
 	}
 

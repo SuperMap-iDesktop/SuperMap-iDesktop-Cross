@@ -121,13 +121,10 @@ public class MetaProcessNeighbourStatistics extends MetaProcess {
 			boolean isIgnore = Boolean.parseBoolean(checkBoxIgnore.getSelectedItem().toString());
 			GridStatisticsMode mode = (GridStatisticsMode) comboBoxStatisticMode.getSelectedData();
 			String datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(resultDataset.getDatasetName());
-//			NeighbourUnitType unitType = (NeighbourUnitType) comboBoxUnitType.getSelectedData();
-
 			NeighbourStatisticsParameter neighbourStatisticsParameter = (NeighbourStatisticsParameter) shapeType.getSelectedItem();
 			neighbourStatisticsParameter.setSourceDataset(src);
 			neighbourStatisticsParameter.setIgnoreNoValue(isIgnore);
 			neighbourStatisticsParameter.setTargetDatasetName(datasetName);
-			neighbourStatisticsParameter.setUnitType(NeighbourUnitType.CELL);
 			neighbourStatisticsParameter.setTargetDatasource(resultDataset.getResultDatasource());
 			neighbourStatisticsParameter.setStatisticsMode(mode);
 

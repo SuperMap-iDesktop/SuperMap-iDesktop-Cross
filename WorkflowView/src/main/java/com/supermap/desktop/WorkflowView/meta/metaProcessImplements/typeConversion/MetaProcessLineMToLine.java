@@ -4,6 +4,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoLineM;
 import com.supermap.data.Recordset;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.process.ProcessProperties;
@@ -29,6 +30,11 @@ public class MetaProcessLineMToLine extends MetaProcessPointLineRegion {
 	@Override
 	protected String getOutputName() {
 		return "result_lineMToLine";
+	}
+
+	@Override
+	protected  String getOutputResultName(){
+		return ProcessOutputResultProperties.getString("String_LineMToLineResult");
 	}
 
 	@Override
