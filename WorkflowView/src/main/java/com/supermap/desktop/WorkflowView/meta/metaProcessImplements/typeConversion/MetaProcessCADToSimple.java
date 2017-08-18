@@ -64,7 +64,7 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 
 		parameters.setParameters(inputCombine, settingCombine, outputCombine);
 		parameters.addInputParameters(INPUT_DATA, DatasetTypes.CAD, inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA,  ProcessOutputResultProperties.getString("String_CADToSimpleResult"),DatasetTypes.VECTOR, outputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Simple_Dataset"), DatasetTypes.VECTOR, outputCombine);
 	}
 
 	private void registerListener() {

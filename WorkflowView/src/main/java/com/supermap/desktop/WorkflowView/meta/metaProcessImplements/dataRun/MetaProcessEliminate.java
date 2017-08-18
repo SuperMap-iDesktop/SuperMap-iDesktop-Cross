@@ -4,6 +4,7 @@ import com.supermap.analyst.spatialanalyst.EliminateMode;
 import com.supermap.analyst.spatialanalyst.Generalization;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -56,7 +57,7 @@ public class MetaProcessEliminate extends MetaProcess {
 
 		parameters.setParameters(sourceCombine, settingCombine);
 		parameters.addInputParameters(INPUT_DATA, DatasetTypes.REGION, sourceCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.REGION, sourceCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Eliminate"), DatasetTypes.REGION, sourceCombine);
 	}
 
 	private void initParameterConstraint() {

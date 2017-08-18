@@ -29,6 +29,8 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 	protected ParameterSingleDataset dataset;
 	protected SpatialMeasureMeasureParameter measureParameter = new SpatialMeasureMeasureParameter(getKey());
 
+	protected String outputName;
+
 	public MetaProcessSpatialMeasure() {
 		initHook();
 		initDatasetComboBox();
@@ -64,7 +66,7 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 
 		parameters.setParameters(parameterCombineSource, measureParameter, parameterCombineResult);
 		parameters.addInputParameters(INPUT_SOURCE_DATASET, getKey().equals(MetaKeys.LINEAR_DIRECTIONAL_MEAN) ? DatasetTypes.LINE : DatasetTypes.SIMPLE_VECTOR, parameterCombineSource);
-		parameters.addOutputParameters(OUTPUT_DATASET, DatasetTypes.VECTOR, parameterCombineResult);
+		parameters.addOutputParameters(OUTPUT_DATASET,outputName, DatasetTypes.VECTOR, parameterCombineResult);
 	}
 
 	private void initParameterConstraint() {

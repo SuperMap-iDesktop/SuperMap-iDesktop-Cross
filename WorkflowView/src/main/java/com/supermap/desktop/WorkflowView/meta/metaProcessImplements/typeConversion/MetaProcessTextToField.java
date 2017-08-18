@@ -54,7 +54,7 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 
 		parameters.setParameters(parameterCombineSourceData, parameterCombineSet);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.TEXT, parameterCombineSourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_TextToFieldResult"),DatasetTypes.TEXT, parameterCombineSourceData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Append"), DatasetTypes.TEXT, parameterCombineSourceData);
 	}
 
 	private void initParameterConstraint() {

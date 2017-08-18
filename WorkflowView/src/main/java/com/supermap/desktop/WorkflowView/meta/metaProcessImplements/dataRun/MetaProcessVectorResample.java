@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -84,21 +85,10 @@ public class MetaProcessVectorResample extends MetaProcess {
 		parameterCombineParameter.addParameters(parameterResampleType, parameterResampleTolerance, parameterisSaveSmallGeometry,
 				parameterisTopologyPreprocess, parameterVertexTolerance);
 
-		// 结果数据集
-//		resultDataset = new ParameterSaveDataset();
-//		ParameterCombine parameterCombineResultData = new ParameterCombine();
-//		parameterCombineResultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-//		parameterCombineResultData.addParameters(resultDataset);
 
-
-		parameters.setParameters(
-				parameterCombineSourceData,
-				parameterCombineParameter
-//				parameterCombineResultData
-		);
-
+		parameters.setParameters(parameterCombineSourceData,parameterCombineParameter);
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Resample"), DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
 	}
 
 	private void initComponentState() {

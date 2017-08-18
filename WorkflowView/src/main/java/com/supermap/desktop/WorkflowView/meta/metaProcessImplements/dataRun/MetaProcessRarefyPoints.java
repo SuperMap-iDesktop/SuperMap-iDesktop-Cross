@@ -5,6 +5,7 @@ import com.supermap.analyst.spatialanalyst.StatisticsField;
 import com.supermap.analyst.spatialanalyst.StatisticsFieldType;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -76,7 +77,7 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 
 		this.parameters.setParameters(sourceData, paramSet, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, sourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.POINT, targetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_RarefyPoints"), DatasetTypes.POINT, targetData);
 	}
 
 	private void initParameterConstraint() {

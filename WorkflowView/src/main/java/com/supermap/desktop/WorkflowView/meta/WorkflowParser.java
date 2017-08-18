@@ -7,10 +7,7 @@ import com.supermap.desktop.WorkflowView.meta.dataconversion.MetaProcessImportFa
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridDistance.MetaProcessSurfacePathLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.MetaProcessAltitudeStatistics;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.MetaProcessBasicStatistics;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.MetaProcessCommonStatistics;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.MetaProcessNeighbourStatistics;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.*;
 import com.supermap.desktop.process.ProcessProperties;
@@ -354,6 +351,8 @@ public class WorkflowParser {
 			result = new MetaProcessAltitudeStatistics();
 		} else if (MetaKeys.NEIGHBOUR_STATISTIC.equals(key)) {
 			result = new MetaProcessNeighbourStatistics();
+		} else if (MetaKeys.ZONAL_STATISTICS_ON_RASTER_VALUE.equals(key)) {
+			result = new MetaProcessZonalStatistics();
 		} else {
 			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
 		}

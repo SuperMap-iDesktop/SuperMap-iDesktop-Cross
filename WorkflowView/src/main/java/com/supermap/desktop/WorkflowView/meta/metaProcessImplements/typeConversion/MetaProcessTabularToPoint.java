@@ -65,7 +65,7 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
 
 		parameters.setParameters(inputCombine, settingCombine, outputCombine);
 		parameters.addInputParameters(INPUT_DATA, datasetTypes, inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_TabularToPointResult"),DatasetTypes.POINT, outputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Point_Dataset"), DatasetTypes.POINT, outputCombine);
 	}
 
 	private void initParameterConstraint() {

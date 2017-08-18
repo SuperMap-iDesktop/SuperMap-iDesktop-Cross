@@ -54,7 +54,7 @@ public class MetaProcessNetWorkToPoint2D extends MetaProcessTypeConversion {
 
 		parameters.setParameters(inputCombine, outputCombine);
 		parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_NetworkToPointResult"), DatasetTypes.TEXT, outputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Point_Dataset"), DatasetTypes.TEXT, outputCombine);
 	}
 
 	private void initParameterConstraint() {

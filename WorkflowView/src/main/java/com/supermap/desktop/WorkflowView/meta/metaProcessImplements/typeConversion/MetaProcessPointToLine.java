@@ -57,7 +57,7 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
 
 		parameters.setParameters(inputCombine, settingCombine, outputCombine);
 		parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_PointToLineResult"),DatasetTypes.LINE, outputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Line_Dataset"), DatasetTypes.LINE, outputCombine);
 	}
 
 	private void initParameterConstraint() {

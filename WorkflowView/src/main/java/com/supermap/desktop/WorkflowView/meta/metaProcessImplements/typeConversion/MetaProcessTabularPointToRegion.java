@@ -55,7 +55,7 @@ public class MetaProcessTabularPointToRegion extends MetaProcessTypeConversion {
 
 		parameters.setParameters(parameterCombineSourceData, parameterCombineTargetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, parameterCombineSourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_PointTabularResult"), DatasetTypes.REGION, parameterCombineTargetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Append"), DatasetTypes.REGION, parameterCombineTargetData);
 	}
 
 	private void initParameterConstraint() {
