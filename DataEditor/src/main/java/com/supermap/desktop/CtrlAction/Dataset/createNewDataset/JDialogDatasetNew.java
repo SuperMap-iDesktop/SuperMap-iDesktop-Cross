@@ -247,15 +247,50 @@ public class JDialogDatasetNew extends SmDialog {
 			public void valueChanged(ListSelectionEvent e) {
 				checkButtonState();
 				// 根据选择的行，设置其“设置”面板联动
-				if (table.getSelectedRow() != -1 && table.getSelectedRow() <= table.getRowCount() - 2) {
-					propertyPanel.setPanelEnable(true);
-					if (newDatasetTableModel.getDatasetBean(table.getSelectedRow()) != null) {
-						propertyPanel.initStates(newDatasetTableModel.getDatasetBean(table.getSelectedRow()));
-					}
-				}
+				int[] selectedRow = table.getSelectedRows();
+				if (selectedRow.length > 0) {
+					// 是否都为相同数据集
+					Boolean isSameDatasetType = true;
+					// 是否不含影像数据集
+					Boolean isNotImageDataset = true;
+					// 是否只有线面数据集
+					Boolean isOnlyLineRegionDataset = true;
+					// 是否选中最后一行
+					Boolean isSelectedLastRow = true;
+					DatasetType selectedDatasetType = newDatasetTableModel.getDatasetBean(selectedRow[0]).getDatasetType();
+					// 根据选中情况进行三态控制
+					for (int i = 0; i < selectedRow.length; i++) {
+						DatasetType datasetType = newDatasetTableModel.getDatasetBean(selectedRow[i]).getDatasetType();
+						if (!(datasetType.equals(selectedDatasetType))) {
+							isSameDatasetType = false;
+						}
+						if (selectedRow[i] > table.getRowCount() - 2) {
+							isSelectedLastRow = false;
+						}
+						if (datasetType.equals(DatasetType.GRID) || datasetType.equals(DatasetType.IMAGE)) {
+							isNotImageDataset = false;
+						}
 
-				if (table.getSelectedRow() == table.getRowCount() - 1) {
+						if (!(datasetType.equals(DatasetType.LINE) || datasetType.equals(DatasetType.REGION))) {
+							isOnlyLineRegionDataset = false;
+						}
+					}
 					propertyPanel.setPanelEnable(false);
+					if (isSameDatasetType && isSelectedLastRow) {
+						propertyPanel.setPanelEnable(true);
+						StartBatchSet(selectedRow);
+					} else if (isNotImageDataset && isOnlyLineRegionDataset && isSelectedLastRow) {
+						// 选中的项不包含栅格和影像数据集，此时字符集控件可用
+						propertyPanel.getComboboxEncodingType().setEnabled(true);
+						propertyPanel.getComboboxCharest().setEnabled(true);
+						StartBatchSet(selectedRow);
+					} else if (isNotImageDataset && isSelectedLastRow) {
+						// 选中的项不包含栅格和影像数据集，此时字符集控件可用
+						propertyPanel.getComboboxCharest().setEnabled(true);
+						StartBatchSet(selectedRow);
+					} else {
+						propertyPanel.setPanelEnable(false);
+					}
 				}
 			}
 		});
@@ -274,6 +309,19 @@ public class JDialogDatasetNew extends SmDialog {
 				}
 			}
 		});
+	}
+
+	/**
+	 * 进行批量设置
+	 *
+	 * @param selectedRow
+	 */
+	public void StartBatchSet(int[] selectedRow) {
+		ArrayList<NewDatasetBean> newDatasetBeans = new ArrayList();
+		for (int i = 0; i < selectedRow.length; i++) {
+			newDatasetBeans.add((newDatasetTableModel.getDatasetBean(selectedRow[i])));
+		}
+		propertyPanel.initStates(newDatasetBeans);
 	}
 
 	private void checkButtonState() {
