@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConvers
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 	private DatasetType inputType;
 	private DatasetType outputType;
+	private String outputResultName;
 
 	private ParameterFieldComboBox comboBoxZ;
 	private ParameterFieldComboBox comboBoxFrom;
@@ -31,12 +33,15 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 		if (inputType.equals(DatasetType.POINT)) {
 			outputType = DatasetType.POINT3D;
 			OUTPUT_DATA = "Point2Dto3DResult";
+			outputResultName= ProcessOutputResultProperties.getString("String_2DPointResult");
 		} else if (inputType.equals(DatasetType.LINE)) {
 			outputType = DatasetType.LINE3D;
 			OUTPUT_DATA = "Line2Dto3DResult";
+			outputResultName= ProcessOutputResultProperties.getString("String_2DLineResult");
 		} else if (inputType.equals(DatasetType.REGION)) {
 			outputType = DatasetType.REGION3D;
 			OUTPUT_DATA = "Region2Dto3DResult";
+			outputResultName= ProcessOutputResultProperties.getString("String_2DRegionResult");
 		}
 		initParameters();
 		initParameterConstraint();
@@ -84,7 +89,7 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 		}
 		parameters.setParameters(inputCombine,settingCombine,outputCombine);
 		parameters.addInputParameters(INPUT_DATA, datasetTypeToTypes(inputType),inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, datasetTypeToTypes(outputType), outputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, outputResultName,datasetTypeToTypes(outputType), outputCombine);
 	}
 
 	private void initParameterConstraint() {

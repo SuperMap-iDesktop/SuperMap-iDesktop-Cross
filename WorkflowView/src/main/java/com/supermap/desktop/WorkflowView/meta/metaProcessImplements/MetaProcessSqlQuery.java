@@ -1,12 +1,8 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -16,12 +12,7 @@ import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextArea;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -81,7 +72,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 
 		parameters.setParameters(parameterCombineSourceData, this.parameterResultFields, this.parameterAttributeFilter, parameterCombineResultData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, parameterCombineSourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.VECTOR, parameterCombineResultData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_SQLQueryResult"), DatasetTypes.VECTOR, parameterCombineResultData);
 	}
 
 	private void initParameterConstraint() {

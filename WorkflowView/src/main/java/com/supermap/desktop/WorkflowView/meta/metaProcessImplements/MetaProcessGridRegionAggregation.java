@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.lbs.Interface.IServerService;
@@ -69,7 +70,7 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 				parameterInputDataType,
 				parameterCombineSetting
 		);
-		parameters.getOutputs().addData("GridRegionAggregationResult", Type.UNKOWN);
+		parameters.getOutputs().addData("GridRegionAggregationResult", ProcessOutputResultProperties.getString("String_NetworkRegionAnalysisResult"), Type.UNKOWN);
 	}
 
 

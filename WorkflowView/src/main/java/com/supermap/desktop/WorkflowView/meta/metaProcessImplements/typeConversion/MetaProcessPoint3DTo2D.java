@@ -4,6 +4,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.GeoPoint;
 import com.supermap.data.GeoPoint3D;
 import com.supermap.data.Recordset;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.process.ProcessProperties;
@@ -26,6 +27,11 @@ public class MetaProcessPoint3DTo2D extends MetaProcessPointLineRegion {
 	@Override
 	protected String getOutputName() {
 		return "result_point3DTo2D";
+	}
+
+	@Override
+	protected  String getOutputResultName(){
+		return ProcessOutputResultProperties.getString("String_3DPointResult");
 	}
 
 	@Override

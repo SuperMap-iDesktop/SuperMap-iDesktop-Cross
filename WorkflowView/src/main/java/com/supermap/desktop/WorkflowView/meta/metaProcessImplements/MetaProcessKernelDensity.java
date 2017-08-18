@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.lbs.Interface.IServerService;
@@ -94,7 +95,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 				parameterInputDataType,
 				parameterCombineAlaysis
 		);
-		parameters.getOutputs().addData("KernelDensityResult", Type.UNKOWN);
+		parameters.getOutputs().addData("KernelDensityResult", ProcessOutputResultProperties.getString("String_KernelsDensityAnalysisResult"),Type.UNKOWN);
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConvers
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
@@ -44,7 +45,7 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 		parameters.setParameters(inputCombine, outputCombine);
 		parameters.addInputParameters(INPUT_DATA, new DatasetTypes("",
 				DatasetTypes.POINTEPS.getValue() | DatasetTypes.LINEEPS.getValue() | DatasetTypes.REGIONEPS.getValue()), inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.SIMPLE_VECTOR, outputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_EPSToSimpleResult"), DatasetTypes.SIMPLE_VECTOR, outputCombine);
 	}
 
 	private void initParameterState() {

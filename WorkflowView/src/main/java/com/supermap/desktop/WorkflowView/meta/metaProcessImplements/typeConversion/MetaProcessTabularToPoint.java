@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConvers
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
@@ -64,7 +65,7 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
 
 		parameters.setParameters(inputCombine, settingCombine, outputCombine);
 		parameters.addInputParameters(INPUT_DATA, datasetTypes, inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.POINT, outputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_TabularToPointResult"),DatasetTypes.POINT, outputCombine);
 	}
 
 	private void initParameterConstraint() {

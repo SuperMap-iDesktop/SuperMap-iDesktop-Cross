@@ -1,18 +1,13 @@
 package com.supermap.desktop.mapview.layer.propertymodel;
 
-import com.supermap.data.ColorSpaceType;
+import com.supermap.data.Colors;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfos;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerHeatmap;
-import com.supermap.mapping.LayerSettingGrid;
-import com.supermap.mapping.LayerSettingImage;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by lixiaoyao on 2017/7/18.
@@ -41,10 +36,15 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 	private Integer minColorTransparence = 0;
 	private Double fuzzyDegree = 0.0;
 	private Double intensity = 0.0;
+	private Double systemMaxValue = Double.MIN_VALUE;
+	private Double systemMinValue = Double.MIN_VALUE;
+	private Double customMaxValue = 0.0;
+	private Double customMinValue = 0.0;
 	private Double maxValue = 0.0;
 	private Double minValue = 0.0;
 	private Boolean isSystemOrCustom = true;
 	private FieldInfos fieldInfos = null;
+	private Colors colors=null;
 
 	public LayerHeatmapPropertyModel() {
 		// do nothing
@@ -61,6 +61,14 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 
 	public void setKernelRadius(Integer kernelRadius) {
 		this.kernelRadius = kernelRadius;
+	}
+
+	public Colors getColors() {
+		return this.colors;
+	}
+
+	public void setColors(Colors colors) {
+		this.colors = colors;
 	}
 
 	public Color getMaxColor() {
@@ -133,6 +141,7 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 		if (layerHeatmapPropertyModel != null) {
 			this.kernelRadius = layerHeatmapPropertyModel.getKernelRadius();
 			this.weightField = layerHeatmapPropertyModel.getWeightField();
+			this.colors=layerHeatmapPropertyModel.getColors();
 			this.maxColor = layerHeatmapPropertyModel.getMaxColor();
 			this.maxColorTransparence = layerHeatmapPropertyModel.getMaxColorTransparence();
 			this.minColor = layerHeatmapPropertyModel.getMinColor();
@@ -148,10 +157,11 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 		LayerHeatmapPropertyModel layerHeatmapPropertyModel = (LayerHeatmapPropertyModel) model;
 
 		return layerHeatmapPropertyModel != null && this.kernelRadius == layerHeatmapPropertyModel.getKernelRadius()
-				&& this.fuzzyDegree == layerHeatmapPropertyModel.getFuzzyDegree() && this.intensity == layerHeatmapPropertyModel.getIntensity();
+				&& this.fuzzyDegree == layerHeatmapPropertyModel.getFuzzyDegree() && this.intensity == layerHeatmapPropertyModel.getIntensity()
+				&& this.weightField.equals(layerHeatmapPropertyModel.getWeightField()) && this.colors.equals(layerHeatmapPropertyModel.getColors());
 	}
 
-	//todo 设置权重字段有问题，等组件修改后再改回来
+
 	@Override
 	protected void apply(Layer layer) {
 		if (layer != null && layer instanceof LayerHeatmap) {
@@ -161,7 +171,7 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 				layerHeatmap.setKernelRadius(this.kernelRadius);
 			}
 
-			if (this.propertyEnabled.get(WEIGHT_FIELD) && this.weightField != null && !StringUtilities.isNullOrEmpty(this.weightField)) {
+			if (this.propertyEnabled.get(WEIGHT_FIELD) && this.weightField != null) {
 				layerHeatmap.setWeightField(this.weightField);
 			}
 
@@ -180,7 +190,7 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 			if (this.propertyEnabled.get(INTENSITY) && this.intensity != null) {
 				layerHeatmap.setIntensity(this.intensity);
 			}
-			layerHeatmap.updateData();
+			//layerHeatmap.updateData();
 		}
 	}
 
@@ -194,40 +204,30 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 					break;
 				}
 
-				//if (layer instanceof LayerHeatmap) {
+				if (layer instanceof LayerHeatmap) {
 					LayerHeatmap layerHeatmap = (LayerHeatmap) layer;
 					this.kernelRadius = ComplexPropertyUtilties.union(this.kernelRadius, layerHeatmap.getKernelRadius());
-//					String text=layerHeatmap.getWeightField();
-//					System.out.println(text);
-//					if (layerHeatmap.getWeightField().isEmpty()){
-//						System.out.println("是空的");
-//					}
-//					if (layerHeatmap.getWeightField()==null){
-//						System.out.println("是null");
-//					}else if (layerHeatmap.getWeightField().equals("")){
-//						System.out.println("非空");
-//					}else if (layerHeatmap.getWeightField().equals(" ")){
-//						System.out.println("空格");
-//					}else{
-//						System.out.println("字段名");
-//						System.out.println(layerHeatmap.getWeightField());
-//					}
-					//System.out.println(layerHeatmap.getWeightField());
 					this.weightField = ComplexPropertyUtilties.union(this.weightField, layerHeatmap.getWeightField());
 					this.maxColor = ComplexPropertyUtilties.union(this.maxColor, layerHeatmap.getMaxColor());
-					this.maxColorTransparence = ComplexPropertyUtilties.union(this.maxColorTransparence, this.maxColor.getAlpha() / 255 * 100);
+					this.maxColorTransparence = ComplexPropertyUtilties.union(this.maxColorTransparence, (1-this.maxColor.getAlpha() / 255) * 100);
 					this.minColor = ComplexPropertyUtilties.union(this.minColor, layerHeatmap.getMinColor());
-					this.minColorTransparence = ComplexPropertyUtilties.union(this.minColorTransparence, this.minColor.getAlpha() / 255 * 100);
+					this.minColorTransparence = ComplexPropertyUtilties.union(this.minColorTransparence, (1-this.minColor.getAlpha() / 255) * 100);
 					this.fuzzyDegree = ComplexPropertyUtilties.union(this.fuzzyDegree, layerHeatmap.getFuzzyDegree());
 					this.intensity = ComplexPropertyUtilties.union(this.intensity, layerHeatmap.getIntensity());
-					this.maxValue = ComplexPropertyUtilties.union(this.maxValue, layerHeatmap.getMaxValue());
-					this.minValue = ComplexPropertyUtilties.union(this.minValue, layerHeatmap.getMinValue());
+					this.customMaxValue = ComplexPropertyUtilties.union(this.customMaxValue, layerHeatmap.getMaxValue());
+					this.customMinValue = ComplexPropertyUtilties.union(this.customMinValue, layerHeatmap.getMinValue());
 					DatasetVector datasetVector = (DatasetVector) layer.getDataset();
 					this.fieldInfos = datasetVector.getFieldInfos();
-				//}
+
+					if (Double.compare(this.systemMaxValue,Double.MIN_VALUE)==0 && Double.compare(this.systemMinValue,Double.MIN_VALUE)==0){
+						this.systemMaxValue=this.customMaxValue;
+						this.systemMinValue=this.customMinValue;
+					}
+				}
 			}
 		}
 	}
+
 
 	private void resetProperties() {
 		this.kernelRadius = 0;
@@ -238,23 +238,28 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 		this.minColorTransparence = 0;
 		this.fuzzyDegree = 0.0;
 		this.intensity = 0.0;
-		this.maxValue = 0.0;
-		this.minValue = 0.0;
+		this.customMaxValue = 0.0;
+		this.customMinValue = 0.0;
 		this.fieldInfos = null;
 
 		if (getLayers() != null && getLayers().length > 0) {
 			this.kernelRadius = ((LayerHeatmap) getLayers()[0]).getKernelRadius();
 			this.weightField = ((LayerHeatmap) getLayers()[0]).getWeightField();
 			this.maxColor = ((LayerHeatmap) getLayers()[0]).getMaxColor();
-			this.maxColorTransparence = this.maxColor.getAlpha() / 255 * 100;
+			this.maxColorTransparence = (1-this.maxColor.getAlpha() / 255 )* 100;
 			this.minColor = ((LayerHeatmap) getLayers()[0]).getMinColor();
-			this.minColorTransparence = this.minColor.getAlpha() / 255 * 100;
+			this.minColorTransparence = (1-this.minColor.getAlpha() / 255) * 100;
 			this.fuzzyDegree = ((LayerHeatmap) getLayers()[0]).getFuzzyDegree();
-			this.intensity = ((LayerHeatmap) getLayers()[0]).getIntensity();
-			this.maxValue = ((LayerHeatmap) getLayers()[0]).getMaxValue();
-			this.minValue = ((LayerHeatmap) getLayers()[0]).getMinValue();
+			this.intensity =  ((LayerHeatmap) getLayers()[0]).getIntensity();
+			this.customMaxValue = ((LayerHeatmap) getLayers()[0]).getMaxValue();
+			this.customMinValue = ((LayerHeatmap) getLayers()[0]).getMinValue();
 			DatasetVector datasetVector = (DatasetVector) getLayers()[0].getDataset();
 			this.fieldInfos = datasetVector.getFieldInfos();
+		}
+
+		if (Double.compare(this.systemMaxValue,Double.MIN_VALUE)==0 && Double.compare(this.systemMinValue,Double.MIN_VALUE)==0){
+			this.systemMaxValue=this.customMaxValue;
+			this.systemMinValue=this.customMinValue;
 		}
 	}
 

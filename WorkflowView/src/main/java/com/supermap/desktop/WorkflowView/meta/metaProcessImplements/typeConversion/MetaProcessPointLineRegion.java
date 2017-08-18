@@ -40,6 +40,8 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 
 	protected abstract String getOutputName();
 
+	protected abstract String getOutputResultName();
+
 	private void initParameters() {
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(inputType);
@@ -61,7 +63,7 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 
 		parameters.setParameters(inputCombine, outputCombine);
 		parameters.addInputParameters(INPUT_DATA, datasetTypeToTypes(inputType), inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, datasetTypeToTypes(outputType), outputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, getOutputResultName(),datasetTypeToTypes(outputType), outputCombine);
 	}
 
 	private void initParameterConstraint() {
