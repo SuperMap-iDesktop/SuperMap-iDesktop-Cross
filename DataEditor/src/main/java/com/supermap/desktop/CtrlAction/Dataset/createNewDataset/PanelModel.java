@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * Created by yuanR on 2017/8/18 0018.
  * 数据集模版面板
  */
-public class PanelModel extends JPanel {
+public class PanelModel extends PanelDatasetNewProperty {
 
 	private static final long serialVersionUID = 1L;
 
@@ -33,9 +33,6 @@ public class PanelModel extends JPanel {
 	ArrayList<NewDatasetBean> datasetBeans;
 	NewDatasetBean datasetBeanFrist;
 
-	public DatasetComboBox getDatasetComboBox() {
-		return datasetComboBox;
-	}
 
 	private ActionListener actionListener = new ActionListener() {
 		@Override
@@ -58,9 +55,12 @@ public class PanelModel extends JPanel {
 			datasetComboBox.setEnabled(true);
 			datasourceComboBox.setEnabled(true);
 			datasetComboBox.setDatasets(datasourceComboBox.getSelectedDatasource().getDatasets());
+			// 此时属性面板不可用-yuanR存疑:为什么无法生效？？？
+			super.setPanelEnable(false);
 		} else {
 			datasetComboBox.setEnabled(false);
 			datasourceComboBox.setEnabled(false);
+			super.setPanelEnable(true);
 		}
 	}
 
@@ -93,7 +93,7 @@ public class PanelModel extends JPanel {
 		this.datasetLabel = new JLabel();
 		this.datasourceComboBox = new DatasourceComboBox();
 		this.datasetComboBox = new DatasetComboBox();
-		setPanelEnabled(false);
+		setModelPanelEnabled(false);
 	}
 
 	private void initLayout() {
@@ -208,7 +208,7 @@ public class PanelModel extends JPanel {
 
 	}
 
-	public void setPanelEnabled(Boolean panelEnabled) {
+	public void setModelPanelEnabled(Boolean panelEnabled) {
 		this.useModelRadioButton.setEnabled(panelEnabled);
 		this.noUseModelRadioButton.setEnabled(panelEnabled);
 		this.datasetComboBox.setEnabled(panelEnabled);

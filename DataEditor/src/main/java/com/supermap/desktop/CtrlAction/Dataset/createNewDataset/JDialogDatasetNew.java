@@ -349,7 +349,7 @@ public class JDialogDatasetNew extends SmDialog {
 					isNotImageDataset = false;
 				}
 			}
-			panelModel.setPanelEnabled(false);
+			panelModel.setModelPanelEnabled(false);
 			if (isAllImageDataset && isSelectedLastRow) {
 				// 设置数据集下拉列表类型
 				panelModel.setDatasetSupportedDatasetTypes(new DatasetType[]{DatasetType.IMAGE});
@@ -368,7 +368,7 @@ public class JDialogDatasetNew extends SmDialog {
 				panelModel.setRadioButtonEnabled(true);
 				startModelBatchSet(selectedRow);
 			} else {
-				panelModel.setPanelEnabled(false);
+				panelModel.setModelPanelEnabled(false);
 			}
 		}
 	}

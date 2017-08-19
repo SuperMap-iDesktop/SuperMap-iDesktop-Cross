@@ -109,6 +109,13 @@ public class NewDatasetBean {
 	}
 
 
+	/**
+	 * 新建数据集
+	 * 增加新建影像和栅格数据集
+	 * 支持模版创建数据集-yuanR2017.8.19
+	 *
+	 * @return
+	 */
 	public boolean createDataset() {
 		boolean result = false;
 		// 创建dataset时根据不同的数据类型进行创建
