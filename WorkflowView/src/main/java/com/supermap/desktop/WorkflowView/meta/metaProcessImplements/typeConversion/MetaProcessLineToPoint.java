@@ -1,10 +1,11 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion;
 
 import com.supermap.data.*;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
+import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 
 import java.util.Map;
 
@@ -21,6 +22,11 @@ public class MetaProcessLineToPoint extends MetaProcessPointLineRegion {
     @Override
     protected String getOutputName() {
         return "result_lineToPoint";
+    }
+
+    @Override
+    protected  String getOutputResultName(){
+        return ProcessOutputResultProperties.getString("String_LineToPointResult");
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.lbs.Interface.IServerService;
@@ -82,7 +83,7 @@ public class MetaProcessSingleQuery extends MetaProcess {
 
 		parameters.addParameters(parameterIServerLogin, parameterInputDataType, parameterCombineQuery, parameterCombineSetting);
 		parameters.addInputParameters("Query", Type.UNKOWN, parameterCombineQuery);// 缺少对应的类型
-		parameters.addOutputParameters("QueryResult", BasicTypes.STRING, null);
+		parameters.addOutputParameters("QueryResult", ProcessOutputResultProperties.getString("String_SingleDogQueryResult"), BasicTypes.STRING, null);
 	}
 
 	private void initComponentState() {

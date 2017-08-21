@@ -41,6 +41,8 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 
 	protected abstract String getOutputName();
 
+	protected abstract String getOutputResultName();
+
 	private void initParameters() {
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(inputType);

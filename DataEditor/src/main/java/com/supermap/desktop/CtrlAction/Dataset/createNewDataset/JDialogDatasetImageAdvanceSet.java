@@ -19,6 +19,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * Created by yuanR on 2017/8/15 0015.
@@ -35,7 +36,9 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
 
-	private NewDatasetBean newDatasetBean;
+	ArrayList<NewDatasetBean> datasetBeans;
+	private NewDatasetBean datasetBeanFrist;
+
 	private DatasetGridImageExtraBean gridImageExtraDatasetBean;
 
 	private boolean isDatasetNameSuitable = true;
@@ -85,9 +88,10 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 	}
 
 
-	public JDialogDatasetImageAdvanceSet(NewDatasetBean newDatasetBean) {
-		this.newDatasetBean = newDatasetBean;
-		this.gridImageExtraDatasetBean = this.newDatasetBean.getGridImageExtraDatasetBean();
+	public JDialogDatasetImageAdvanceSet(ArrayList<NewDatasetBean> datasetBeans) {
+		this.datasetBeans = datasetBeans;
+		this.datasetBeanFrist = datasetBeans.get(0);
+		this.gridImageExtraDatasetBean = this.datasetBeanFrist.getGridImageExtraDatasetBean();
 		initComponents();
 		initLayout();
 		initStates();
@@ -100,7 +104,7 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 
 	private void initStates() {
 
-		panelBasicInfoSet.initStates(newDatasetBean);
+		panelBasicInfoSet.initStates(this.datasetBeanFrist);
 
 		double x = this.gridImageExtraDatasetBean.getRectangle().getWidth() / this.gridImageExtraDatasetBean.getWidth();
 		double y = this.gridImageExtraDatasetBean.getRectangle().getHeight() / this.gridImageExtraDatasetBean.getHeight();
@@ -237,19 +241,19 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 		int bandCount = Integer.valueOf(panelDatasetImageProperty.getTextFieldImageDatasetbandCount().getTextField().getText());
 
 		Rectangle2D rectangle2D = panelDatasetBounds.getRangeBound();
-
-		newDatasetBean.setDatasource(datasource);
-		newDatasetBean.setDatasetName(name);
-		newDatasetBean.setDatasetType(DatasetType.IMAGE);
-		newDatasetBean.setEncodeType(encodeType);
-		newDatasetBean.getGridImageExtraDatasetBean().setBlockSizeOption(blockSizeOption);
-		newDatasetBean.getGridImageExtraDatasetBean().setPixelFormatImage(pixelFormat);
-		newDatasetBean.getGridImageExtraDatasetBean().setHeight(height);
-		newDatasetBean.getGridImageExtraDatasetBean().setWidth(width);
-		newDatasetBean.getGridImageExtraDatasetBean().setBandCount(bandCount);
-		if (rectangle2D != null) {
-			newDatasetBean.getGridImageExtraDatasetBean().setRectangle(rectangle2D);
+		for (int i = 0; i < datasetBeans.size(); i++) {
+			datasetBeans.get(i).setDatasource(datasource);
+			datasetBeans.get(i).setDatasetName(name);
+			datasetBeans.get(i).setDatasetType(DatasetType.IMAGE);
+			datasetBeans.get(i).setEncodeType(encodeType);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setBlockSizeOption(blockSizeOption);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setPixelFormatImage(pixelFormat);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setHeight(height);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setWidth(width);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setBandCount(bandCount);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setRectangle(rectangle2D);
 		}
+
 
 		setDialogResult(DialogResult.OK);
 		this.dispose();

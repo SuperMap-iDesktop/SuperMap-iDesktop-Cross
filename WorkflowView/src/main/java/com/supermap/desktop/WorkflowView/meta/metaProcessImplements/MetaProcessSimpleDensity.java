@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.lbs.Interface.IServerService;
@@ -93,7 +94,7 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 				parameterInputDataType,
 				parameterCombineAlaysis
 		);
-		parameters.getOutputs().addData("SimpleDensityResult", Type.UNKOWN);
+		parameters.getOutputs().addData("SimpleDensityResult", ProcessOutputResultProperties.getString("String_SimpleDensityAnalysisResult"), Type.UNKOWN);
 	}
 
 	@Override

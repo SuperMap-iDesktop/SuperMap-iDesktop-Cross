@@ -3,6 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -156,7 +157,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterCombineSetting.addParameters(parameterSummaryType, parameterSwitch, parameterStandardFields, switchStandardFields,
 				parameterWeightedFields, switchWeightedFields, parametersumShape);
 		parameters.addParameters(parameterIServerLogin, parameterInputDataType, parameterCombineSetting);
-		parameters.getOutputs().addData("SummaryRegionResult", Type.UNKOWN);
+		parameters.getOutputs().addData("SummaryRegionResult", ProcessOutputResultProperties.getString("String_BoundsAnalysisResult"),Type.UNKOWN);
 	}
 
 	private void initConstraint() {

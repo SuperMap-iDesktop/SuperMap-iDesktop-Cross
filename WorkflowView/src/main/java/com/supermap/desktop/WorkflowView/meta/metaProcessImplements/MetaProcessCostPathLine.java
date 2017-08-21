@@ -6,6 +6,7 @@ import com.supermap.analyst.spatialanalyst.PathLineResult;
 import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -76,7 +77,9 @@ public class MetaProcessCostPathLine extends MetaProcess {
 
 		parameters.setParameters(costCombine, settingCombine, outputCombine);
 		parameters.addInputParameters(COST_DATA, DatasetTypes.GRID, costCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, outputCombine);
+		parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_ShorestPathLineResult"),
+				DatasetTypes.LINE, outputCombine);
 	}
 
 	private void initParameterConstraint() {

@@ -10,8 +10,6 @@ import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DataCell;
-import com.supermap.desktop.utilities.CharsetUtilities;
-import com.supermap.desktop.utilities.EncodeTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Map;
 
@@ -22,6 +20,7 @@ import java.util.List;
 
 /**
  * @author XiaJT
+ * 去除编码类型和字符集列-yuanR 2017.8.18
  */
 public class NewDatasetTableModel extends DefaultTableModel {
 
@@ -30,8 +29,8 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			CommonProperties.getString("String_ColumnHeader_TargetDatasource"),
 			DataEditorProperties.getString("String_CreateType"),
 			DataEditorProperties.getString("String_ColumnTitle_DtName"),
-			CommonProperties.getString("String_ColumnHeader_EncodeType"),
-			DataEditorProperties.getString("String_Charset"),
+//			CommonProperties.getString("String_ColumnHeader_EncodeType"),
+//			DataEditorProperties.getString("String_Charset"),
 			DataEditorProperties.getString("String_DataGridViewComboBoxColumn_Name")
 	};
 	private final DatasetType[] supportDatasetTypes = new DatasetType[]{
@@ -56,9 +55,9 @@ public class NewDatasetTableModel extends DefaultTableModel {
 	public static final int COLUMN_INDEX_TARGET_DATASOURCE = 1;
 	public static final int COLUMN_INDEX_DatasetType = 2;
 	public static final int COLUMN_INDEX_DatasetName = 3;
-	public static final int COLUMN_INDEX_EncodeType = 4;
-	public static final int COLUMN_INDEX_Charset = 5;
-	public static final int COLUMN_INDEX_WindowMode = 6;
+	//	public static final int COLUMN_INDEX_EncodeType = 4;
+//	public static final int COLUMN_INDEX_Charset = 5;
+	public static final int COLUMN_INDEX_WindowMode = 4;
 
 
 	public NewDatasetBean getDatasetBean(int num) {
@@ -87,10 +86,10 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			return DatasetType.class;
 		} else if (columnIndex == COLUMN_INDEX_DatasetName) {
 			return String.class;
-		} else if (columnIndex == COLUMN_INDEX_EncodeType) {
-			return String.class;
-		} else if (columnIndex == COLUMN_INDEX_Charset) {
-			return String.class;
+//		} else if (columnIndex == COLUMN_INDEX_EncodeType) {
+//			return String.class;
+//		} else if (columnIndex == COLUMN_INDEX_Charset) {
+//			return String.class;
 		} else if (columnIndex == COLUMN_INDEX_WindowMode) {
 			return String.class;
 		}
@@ -107,10 +106,10 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			return datasetBeans.get(row).getDatasetType();
 		} else if (column == COLUMN_INDEX_DatasetName) {
 			return datasetBeans.get(row).getDatasetName();
-		} else if (column == COLUMN_INDEX_EncodeType) {
-			return EncodeTypeUtilities.toString(datasetBeans.get(row).getEncodeType());
-		} else if (column == COLUMN_INDEX_Charset) {
-			return CharsetUtilities.toString(datasetBeans.get(row).getCharset());
+//		} else if (column == COLUMN_INDEX_EncodeType) {
+//			return EncodeTypeUtilities.toString(datasetBeans.get(row).getEncodeType());
+//		} else if (column == COLUMN_INDEX_Charset) {
+//			return CharsetUtilities.toString(datasetBeans.get(row).getCharset());
 		} else if (column == COLUMN_INDEX_WindowMode) {
 			return AddToWindowMode.toString(datasetBeans.get(row).getAddToWindowMode());
 		}
@@ -135,10 +134,10 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			checkCurrentName(row);
 		} else if (column == COLUMN_INDEX_DatasetName) {
 			setDatasetName(row, (String) aValue);
-		} else if (column == COLUMN_INDEX_EncodeType) {
-			datasetBeans.get(row).setEncodeType(EncodeTypeUtilities.valueOf((String) aValue));
-		} else if (column == COLUMN_INDEX_Charset) {
-			datasetBeans.get(row).setCharset(CharsetUtilities.valueOf((String) aValue));
+//		} else if (column == COLUMN_INDEX_EncodeType) {
+//			datasetBeans.get(row).setEncodeType(EncodeTypeUtilities.valueOf((String) aValue));
+//		} else if (column == COLUMN_INDEX_Charset) {
+//			datasetBeans.get(row).setCharset(CharsetUtilities.valueOf((String) aValue));
 		} else if (column == COLUMN_INDEX_WindowMode) {
 			datasetBeans.get(row).setAddToWindowMode(AddToWindowMode.getWindowMode((String) aValue));
 		}

@@ -2,8 +2,12 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.analyst.spatialanalyst.TerrainBuilder;
 import com.supermap.analyst.spatialanalyst.TerrainBuilderParameter;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -105,7 +109,9 @@ public class MetaProcessDEMLake extends MetaProcess {
 		this.parameters.setParameters(DEMDataCombine, lakeDataCombine, parameterSetting);
 		this.parameters.addInputParameters(DEM_DATA, DatasetTypes.GRID, DEMDataCombine);
 		this.parameters.addInputParameters(LAKE_DATA, DatasetTypes.REGION, lakeDataCombine);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, DEMDataCombine);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_DEMLakeResult"),
+				DatasetTypes.GRID, DEMDataCombine);
 
 		fieldOrValue.addPropertyListener(new PropertyChangeListener() {
 			@Override

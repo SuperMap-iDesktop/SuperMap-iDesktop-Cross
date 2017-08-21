@@ -4,6 +4,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.PrjCoordSys;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -72,7 +73,9 @@ public class MetaProcessSetProjection extends MetaProcess {
 		parameterCombineCoordInfo.addParameters(coordSysName, coordUnit, textAreaCoordInfo, new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterButton));
 		this.parameters.setParameters(parameterCombineSourceData, parameterCombineCoordInfo);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.DATASET, parameterCombineSourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.DATASET, parameterSingleDataset);
+		this.parameters.addOutputParameters(OUTPUT_DATA,
+				ProcessOutputResultProperties.getString("String_ResetProjectionResult"),
+				DatasetTypes.DATASET, parameterSingleDataset);
 		//Add Constraint
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
