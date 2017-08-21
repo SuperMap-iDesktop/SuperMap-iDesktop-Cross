@@ -98,7 +98,7 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 		registerEvent();
 		this.setTitle(DataEditorProperties.getString("String_NewDatasetImage"));
 		this.setModal(true);
-		setSize(700, 400);
+		setSize(700, 410);
 		this.setLocationRelativeTo(null);
 	}
 
@@ -139,21 +139,22 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 		groupLayout.setAutoCreateGaps(true);
 		centerPanel.setLayout(groupLayout);
 		//@formatter:off
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
-				.addGroup(groupLayout.createSequentialGroup()
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(this.panelBasicInfoSet)
-								.addComponent(this.panelResolution))
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(this.panelDatasetImageProperty)
-								.addComponent(this.panelDatasetBounds))));
+		groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.panelBasicInfoSet)
+						.addComponent(this.panelResolution))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.panelDatasetImageProperty)
+						.addComponent(this.panelDatasetBounds))
+		);
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.panelBasicInfoSet)
 						.addComponent(this.panelDatasetImageProperty))
-				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.panelResolution)
-						.addComponent(this.panelDatasetBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
+						.addComponent(this.panelDatasetBounds))
+		);
 		//@formatter:on
 
 		// 按钮面板

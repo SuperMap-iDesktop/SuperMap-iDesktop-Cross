@@ -96,7 +96,7 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 		registerEvent();
 		this.setTitle(DataEditorProperties.getString("String_NewDatasetGrid"));
 		this.setModal(true);
-		setSize(700, 400);
+		setSize(750, 460);
 		this.setLocationRelativeTo(null);
 	}
 
@@ -138,19 +138,19 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 		groupLayout.setAutoCreateGaps(true);
 		centerPanel.setLayout(groupLayout);
 		//@formatter:off
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
-				.addGroup(groupLayout.createSequentialGroup()
+		groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
 						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 								.addComponent(this.panelBasicInfoSet)
 								.addComponent(this.panelDatasetGridProperty))
 						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 								.addComponent(this.panelDatasetBounds)
-								.addComponent(this.panelResolution))));
+								.addComponent(this.panelResolution))
+		);
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.panelBasicInfoSet)
-						.addComponent(this.panelDatasetBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(this.panelDatasetBounds))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.panelDatasetGridProperty)
 						.addComponent(this.panelResolution))
 		);

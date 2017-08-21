@@ -61,7 +61,7 @@ public class JDialogDatasetNew extends SmDialog {
 
 	private void initComponents() {
 		this.setModal(true);
-		setSize(700, 420);
+		setSize(750, 450);
 		this.setLocationRelativeTo(null);
 		toolBar = new JToolBar();
 		toolBar.setFloatable(false);
