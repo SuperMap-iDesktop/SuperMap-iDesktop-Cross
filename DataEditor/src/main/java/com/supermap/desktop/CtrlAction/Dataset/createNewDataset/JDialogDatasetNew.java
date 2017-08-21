@@ -76,7 +76,7 @@ public class JDialogDatasetNew extends SmDialog {
 		buttonCancel = new SmButton();
 
 		propertyPanel = new PanelDatasetNewProperty();
-		panelModel = new PanelModel();
+		panelModel = new PanelModel(propertyPanel);
 
 		this.componentList.add(this.buttonOk);
 		this.componentList.add(this.buttonCancel);
