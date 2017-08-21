@@ -90,10 +90,8 @@ public class JDialogDatasetNew extends SmDialog {
 		this.newDatasetTableModel = new NewDatasetTableModel();
 		this.table.setModel(newDatasetTableModel);
 
-
 		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_TARGET_DATASOURCE).setCellRenderer(new TableDataCellRender());
 		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DatasetType).setCellRenderer(new TableDataCellRender());
-
 
 //		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_EncodeType).setCellEditor(new EncodingTypeCellEditor());
 //		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_Charset).setCellEditor(new CharsetTypeCellEditor());
