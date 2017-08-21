@@ -116,27 +116,27 @@ public class MetaProcessAppendFields extends MetaProcess {
 	public boolean execute() {
 		boolean result = false;
 		fireRunning(new RunningEvent(this, 0, "start"));
-		DatasetVector datasetVector = (DatasetVector) targetDataset.getSelectedDataset();
-		String sourceLinked = targetLinkedField.getFieldName();
-		String targetLineed = sourceLinkedField.getFieldName();
-		DatasetVector targetDatasetVector = (DatasetVector) sourceDataset.getSelectedDataset();
+		DatasetVector targetDatasetVector = (DatasetVector) targetDataset.getSelectedDataset();
+		String sourceLinked = sourceLinkedField.getFieldName();
+		String targetLinked = targetLinkedField.getFieldName();
+		DatasetVector sourceDatasetVector = (DatasetVector) sourceDataset.getSelectedDataset();
 		if (null != multiFieldSet.getDatasetFieldInfo()) {
 			String[] sourceFields = multiFieldSet.getDatasetFieldInfo().getSourceFields();
 			String[] targetFields = multiFieldSet.getDatasetFieldInfo().getTargetFields();
-			datasetVector.addSteppedListener(this.steppedListener);
-			result = datasetVector.appendFields(targetDatasetVector, sourceLinked, targetLineed, sourceFields, targetFields);
+			targetDatasetVector.addSteppedListener(this.steppedListener);
+			result = targetDatasetVector.appendFields(sourceDatasetVector, sourceLinked, targetLinked, sourceFields, targetFields);
 			if (result) {
 				fireRunning(new RunningEvent(this, 100, "success"));
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsSuccess"), targetDatasetVector.getName(), datasetVector.getName()));
-				TabularUtilities.refreshTabularDatas(datasetVector);
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsSuccess"), sourceDatasetVector.getName(), targetDatasetVector.getName()));
+				TabularUtilities.refreshTabularDatas(targetDatasetVector);
 			} else {
 				fireRunning(new RunningEvent(this, 100, "failed"));
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsFailed"), targetDatasetVector.getName(), datasetVector.getName()));
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsFailed"), sourceDatasetVector.getName(), targetDatasetVector.getName()));
 			}
 		} else {
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_AppendFieldsIsNull"));
 		}
-		targetDatasetVector.removeSteppedListener(this.steppedListener);
+		sourceDatasetVector.removeSteppedListener(this.steppedListener);
 		return result;
 	}
 

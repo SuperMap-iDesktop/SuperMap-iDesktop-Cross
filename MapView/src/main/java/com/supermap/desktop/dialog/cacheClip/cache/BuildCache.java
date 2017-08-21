@@ -113,7 +113,7 @@ public class BuildCache {
 						MapCacheBuilder builder = new MapCacheBuilder();
 						builder.fromConfigFile(sciName);
 						builder.setMap(map);
-						builder.setMultiProcessing(builder.getStorageType() == StorageType.MongoDB);
+						builder.setMultiProcessing(true);
 						builder.setOutputFolder(new File(cachePath).getParent());
 						builder.setCacheName(builder.getCacheName());
 						builder.resumable(false);
