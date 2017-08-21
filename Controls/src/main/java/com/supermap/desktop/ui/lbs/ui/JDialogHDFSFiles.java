@@ -84,7 +84,6 @@ public class JDialogHDFSFiles extends SmDialog {
 				}
 				WebHDFS.resultURL = url + name;
 				if (name.toLowerCase().endsWith("csv")) {
-					UICommonToolkit.showMessageDialog(ControlsProperties.getString("String_MetaFileDontExist"));
 					String metaFileName = name.substring(0, name.length() - 3) + "meta";
 					boolean isMetaFileExist = false;
 					for (int i = 0; i < table.getModel().getRowCount(); i++) {
@@ -94,6 +93,7 @@ public class JDialogHDFSFiles extends SmDialog {
 						}
 					}
 					if (!isMetaFileExist) {
+						UICommonToolkit.showMessageDialog(ControlsProperties.getString("String_MetaFileDontExist"));
 						HDFSDefine hdfsDefine = (HDFSDefine) ((HDFSTableModel) table.getModel()).getRowTagAt(panelHDFSFiles.getSelectRow());
 						DialogResult dialogResult = new JDialogPreviewCSV(panelHDFSFiles.getURL(), hdfsDefine, ((HDFSTableModel) table.getModel())).showDialog();
 						if (dialogResult == DialogResult.OK) {
@@ -146,7 +146,7 @@ public class JDialogHDFSFiles extends SmDialog {
 		this.panelHDFSFiles = new JPanelHDFSFiles();
 		this.buttonOK = ComponentFactory.createButtonOK();
 		this.buttonCancel = ComponentFactory.createButtonCancel();
-		menuPreviewCsv = new JMenuItem(ControlsProperties.getString("String_Preview"));
+		menuPreviewCsv = new JMenuItem(ControlsProperties.getString("String_Property"));
 		tablePopupMenu = new JPopupMenu();
 		tablePopupMenu.add(menuPreviewCsv);
 	}

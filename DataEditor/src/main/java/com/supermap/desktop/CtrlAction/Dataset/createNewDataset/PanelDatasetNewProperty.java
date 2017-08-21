@@ -197,6 +197,11 @@ public class PanelDatasetNewProperty extends JPanel {
 		}
 	}
 
+	/**
+	 * 根据JTable选择情况，初始化属性面板
+	 *
+	 * @param datasetBeans
+	 */
 	public void initStates(ArrayList<NewDatasetBean> datasetBeans) {
 		this.datasetBeans = datasetBeans;
 		// 以排头对象的属性值进行面板的初始值设置
@@ -361,7 +366,7 @@ public class PanelDatasetNewProperty extends JPanel {
 		}
 	}
 
-	public void setPanelEnable(Boolean enable) {
+	protected void setPanelEnable(Boolean enable) {
 		comboboxEncodingType.setEnabled(enable);
 		comboboxCharest.setEnabled(enable);
 		comboboxBlockSizeOption.setEnabled(enable);

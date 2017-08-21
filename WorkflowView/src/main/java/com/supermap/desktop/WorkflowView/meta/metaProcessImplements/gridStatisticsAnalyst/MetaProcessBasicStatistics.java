@@ -16,6 +16,9 @@ import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 /**
  * Created By Chens on 2017/8/15 0015
  */
@@ -29,11 +32,24 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 	private ParameterTextField textFieldAvg;
 	private ParameterTextField textFieldStd;
 	private ParameterTextField textFieldVar;
+	private ParameterCheckBox checkBoxShow;
+	private ParameterNumber numberGroupCount;
+	private ParameterHistogram histogram;
 
 	public MetaProcessBasicStatistics() {
 		initParameters();
 		initParameterState();
 		initParameterConstraint();
+		initListener();
+	}
+
+	private void initListener() {
+		checkBoxShow.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				numberGroupCount.setEnabled(Boolean.parseBoolean(checkBoxShow.getSelectedItem().toString()));
+			}
+		});
 	}
 
 	private void initParameters() {
@@ -44,13 +60,16 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 		textFieldAvg = new ParameterTextField(ProcessProperties.getString("String_Label_Mean"));
 		textFieldStd = new ParameterTextField(ProcessProperties.getString("String_Label_StandardDeviation"));
 		textFieldVar = new ParameterTextField(ProcessProperties.getString("String_Label_Variance"));
+		checkBoxShow = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_ShowHistogram"));
+		numberGroupCount = new ParameterNumber(ProcessProperties.getString("String_Label_GroupCount"));
+		histogram = new ParameterHistogram();
 
 		ParameterCombine sourceCombine = new ParameterCombine();
 		sourceCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
 		sourceCombine.addParameters(sourceDatasource, sourceDataset);
 		ParameterCombine resultCombine = new ParameterCombine();
 		resultCombine.setDescribe(ProcessProperties.getString("String_GroupBox_StatisticsResult"));
-		resultCombine.addParameters(textFieldMax,textFieldMin,textFieldAvg,textFieldStd,textFieldVar);
+		resultCombine.addParameters(textFieldMax, textFieldMin, textFieldAvg, textFieldStd, textFieldVar, checkBoxShow, numberGroupCount, histogram);
 
 		parameters.setParameters(sourceCombine, resultCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceCombine);
@@ -72,6 +91,10 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 		textFieldAvg.setEnabled(false);
 		textFieldStd.setEnabled(false);
 		textFieldVar.setEnabled(false);
+		numberGroupCount.setSelectedItem(5);
+		numberGroupCount.setMinValue(1);
+		numberGroupCount.setMaxBit(-1);
+		numberGroupCount.setEnabled(false);
 	}
 
 	private void initParameterConstraint() {
@@ -115,6 +138,10 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 			double std = basicStatisticsAnalystResult.getStandardDeviation();
 			textFieldStd.setSelectedItem(std);
 			textFieldVar.setSelectedItem(Math.pow(std, 2));
+			if (Boolean.valueOf(checkBoxShow.getSelectedItem().toString())) {
+				int groupCount = Integer.parseInt(numberGroupCount.getSelectedItem().toString());
+				histogram.setSelectedItem(StatisticsAnalyst.createHistogram(src,groupCount));
+			}
 			fireRunning(new RunningEvent(this,100,"finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
