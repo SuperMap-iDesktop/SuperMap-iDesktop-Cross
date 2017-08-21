@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * Created by yuanR on 2017/8/15 0015.
  * 新建栅格/影像数据集-基本信息面板
  */
-public class PanelBasicInfoSet extends JPanel {
+public class PanelBasicPropertySet extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -47,7 +47,7 @@ public class PanelBasicInfoSet extends JPanel {
 		return datasourceComboBox;
 	}
 
-	public PanelBasicInfoSet(DatasetType inputDatasetType) {
+	public PanelBasicPropertySet(DatasetType inputDatasetType) {
 		this.inputDatasetType = inputDatasetType;
 		initComponents();
 		initLayout();

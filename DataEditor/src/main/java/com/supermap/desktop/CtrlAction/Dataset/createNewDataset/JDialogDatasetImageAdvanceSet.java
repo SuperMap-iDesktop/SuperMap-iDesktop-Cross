@@ -29,7 +29,7 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private PanelBasicInfoSet panelBasicInfoSet;
+	private PanelBasicPropertySet panelBasicInfoSet;
 	private PanelResolution panelResolution;
 	private PanelDatasetImageProperty panelDatasetImageProperty;
 	private PanelDatasetBounds panelDatasetBounds;
@@ -120,7 +120,7 @@ public class JDialogDatasetImageAdvanceSet extends SmDialog {
 
 	private void initComponents() {
 
-		panelBasicInfoSet = new PanelBasicInfoSet(DatasetType.IMAGE);
+		panelBasicInfoSet = new PanelBasicPropertySet(DatasetType.IMAGE);
 		panelResolution = new PanelResolution();
 		panelResolution.setBorder(BorderFactory.createTitledBorder(DataEditorProperties.getString("String_NewDataset_RatioInfo")));
 		panelDatasetImageProperty = new PanelDatasetImageProperty();

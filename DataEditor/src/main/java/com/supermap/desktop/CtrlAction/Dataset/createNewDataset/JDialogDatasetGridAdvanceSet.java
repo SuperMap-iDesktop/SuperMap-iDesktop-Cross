@@ -29,7 +29,7 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private PanelBasicInfoSet panelBasicInfoSet;
+	private PanelBasicPropertySet panelBasicInfoSet;
 	private PanelResolution panelResolution;
 	private PanelDatasetGridProperty panelDatasetGridProperty;
 	private PanelDatasetBounds panelDatasetBounds;
@@ -119,7 +119,7 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 
 	private void initComponents() {
 
-		panelBasicInfoSet = new PanelBasicInfoSet(DatasetType.GRID);
+		panelBasicInfoSet = new PanelBasicPropertySet(DatasetType.GRID);
 		panelResolution = new PanelResolution();
 		panelResolution.setBorder(BorderFactory.createTitledBorder(DataEditorProperties.getString("String_NewDataset_RatioInfo")));
 		panelDatasetGridProperty = new PanelDatasetGridProperty();
