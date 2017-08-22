@@ -48,4 +48,5 @@ public class ParameterType {
 	public static final String SQL_EXPRESSION="SQLExpression";
 	public static final String MULTIFIELDSET="MultiFieldSet";
 	public static final String SHAPE_TYPE="ShapeType";
+	public static final String HISTOGRAM ="Histogram";
 }

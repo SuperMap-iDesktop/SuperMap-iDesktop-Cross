@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * Created by yuanR on 2017/8/15 0015.
  * 新建栅格/影像数据集-基本信息面板
  */
-public class PanelBasicInfoSet extends JPanel {
+public class PanelBasicPropertySet extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -47,7 +47,7 @@ public class PanelBasicInfoSet extends JPanel {
 		return datasourceComboBox;
 	}
 
-	public PanelBasicInfoSet(DatasetType inputDatasetType) {
+	public PanelBasicPropertySet(DatasetType inputDatasetType) {
 		this.inputDatasetType = inputDatasetType;
 		initComponents();
 		initLayout();
@@ -123,35 +123,34 @@ public class PanelBasicInfoSet extends JPanel {
 
 	private void initLayout() {
 		this.setBorder(BorderFactory.createTitledBorder(DataEditorProperties.getString("String_NewDatasetBase")));
-
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);
 		this.setLayout(groupLayout);
 		//@formatter:off
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
-				.addGroup(groupLayout.createSequentialGroup()
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(this.datasetNameLabel)
-								.addComponent(this.targetDatasourceLabel)
-								.addComponent(this.encodeTypeLabel))
-						.addGroup(groupLayout.createParallelGroup()
-								.addComponent(this.datasetNameTextField, 150, 150, Short.MAX_VALUE)
-								.addComponent(this.datasourceComboBox, 150, 150, Short.MAX_VALUE)
-								.addComponent(this.comboboxEncodingType, 150, 150, Short.MAX_VALUE))));
+		groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(this.datasetNameLabel)
+						.addComponent(this.targetDatasourceLabel)
+						.addComponent(this.encodeTypeLabel))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(this.datasetNameTextField, 150, 150, Short.MAX_VALUE)
+						.addComponent(this.datasourceComboBox, 150, 150, Short.MAX_VALUE)
+						.addComponent(this.comboboxEncodingType, 150, 150, Short.MAX_VALUE))
+		);
 
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addGroup(groupLayout.createSequentialGroup()
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(this.datasetNameLabel)
-								.addComponent(this.datasetNameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(this.targetDatasourceLabel)
-								.addComponent(this.datasourceComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-								.addComponent(this.encodeTypeLabel)
-								.addComponent(this.comboboxEncodingType, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				));
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.datasetNameLabel)
+						.addComponent(this.datasetNameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.targetDatasourceLabel)
+						.addComponent(this.datasourceComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.encodeTypeLabel)
+						.addComponent(this.comboboxEncodingType, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGap(20, 20, Short.MAX_VALUE)
+		);
 		//@formatter:on
 	}
 }

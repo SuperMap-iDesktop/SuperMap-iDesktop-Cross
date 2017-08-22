@@ -18,10 +18,11 @@ import java.util.ArrayList;
  * Created by yuanR on 2017/8/18 0018.
  * 数据集模版面板
  */
-public class PanelModel extends PanelDatasetNewProperty {
+public class PanelModel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
+	private PanelDatasetNewProperty panelProperty;
 	private JRadioButton useModelRadioButton;
 	private JRadioButton noUseModelRadioButton;
 	private JLabel datasourceLabel;
@@ -55,12 +56,11 @@ public class PanelModel extends PanelDatasetNewProperty {
 			datasetComboBox.setEnabled(true);
 			datasourceComboBox.setEnabled(true);
 			datasetComboBox.setDatasets(datasourceComboBox.getSelectedDatasource().getDatasets());
-			// 此时属性面板不可用-yuanR存疑:为什么无法生效？？？
-			super.setPanelEnable(false);
+			this.panelProperty.setPanelEnable(false);
 		} else {
 			datasetComboBox.setEnabled(false);
 			datasourceComboBox.setEnabled(false);
-			super.setPanelEnable(true);
+			this.panelProperty.setPanelEnable(true);
 		}
 	}
 
@@ -77,7 +77,8 @@ public class PanelModel extends PanelDatasetNewProperty {
 		}
 	};
 
-	public PanelModel() {
+	public PanelModel(PanelDatasetNewProperty panelProperty) {
+		this.panelProperty = panelProperty;
 		initComponents();
 		initLayout();
 		initResource();

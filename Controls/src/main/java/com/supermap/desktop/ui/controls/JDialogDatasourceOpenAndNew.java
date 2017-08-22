@@ -233,7 +233,6 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 			listModel.addElement(beyonDBDataCell);
 			listModel.addElement(highgoDBDataCell);
 			listModel.addElement(kDBDataCell);
-			listModel.addElement(arcSDE);
 		}
 		return listModel;
 	}
@@ -393,9 +392,6 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 					break;
 				case 10://KDB
 					engineType = EngineType.KDB;
-					break;
-				case 11://SDE
-					engineType = EngineType.SDE;
 					break;
 				default:
 					break;
