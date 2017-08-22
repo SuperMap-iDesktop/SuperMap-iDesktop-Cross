@@ -16,6 +16,7 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameters.ParameterPanels.MultiBufferRadioList.ParameterMultiBufferRadioList;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
@@ -41,8 +42,8 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 	private ParameterRadioButton radioButtonFlatOrRound;
 	private ParameterComboBox comboBoxBufferLeftOrRight;
 	// 缓冲半径列表
+	private ParameterMultiBufferRadioList parameterMultiBufferRadioList;
 	private ParameterEnum parameterRadiusUnit;
-
 	// 参数设置
 	private ParameterCheckBox parameterUnionBuffer;
 	private ParameterCheckBox parameterRingBuffer;
@@ -96,12 +97,12 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 		parameterCombineBufferType.setDescribe(ProcessProperties.getString("String_Title_BufferType"));
 
 		// 半径列表
-		// TODO 缓冲半径列表jtable
+		parameterMultiBufferRadioList = new ParameterMultiBufferRadioList();
 		parameterRadiusUnit = new ParameterEnum(new EnumParser(BufferRadiusUnit.class, values, parameterDataNodes)).setDescribe(ProcessProperties.getString("Label_BufferRadius"));
 
 		ParameterCombine parameterCombineRadioList = new ParameterCombine();
 		parameterCombineRadioList.setDescribe(ProcessProperties.getString("String_Title_BufferRadioList"));
-		parameterCombineRadioList.addParameters(parameterRadiusUnit);
+		parameterCombineRadioList.addParameters(parameterMultiBufferRadioList, parameterRadiusUnit);
 
 		// 参数
 		parameterUnionBuffer = new ParameterCheckBox(ProcessProperties.getString("String_UnionBufferItem"));
