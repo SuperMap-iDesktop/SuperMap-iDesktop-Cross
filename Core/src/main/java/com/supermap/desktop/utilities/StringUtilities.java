@@ -2,7 +2,6 @@ package com.supermap.desktop.utilities;
 
 import com.supermap.desktop.Application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -294,46 +293,5 @@ public class StringUtilities {
 		int result = len1 - len2;
 		return result > 0 ? ++result : --result;
 	}
-
-	private static final BracketData[] BRACKET_DATAS = new BracketData[]{
-			new BracketData('\"', '\"'),
-			new BracketData('\'', '\''),
-			new BracketData('{', '}'),
-			new BracketData('(', ')'),
-			new BracketData('{', '}'),
-			new BracketData('[', ']'),
-			new BracketData('<', '>')
-	};
-
-
-	public static boolean isBracketComplete(String columnTmp) {
-		ArrayList<BracketData> bracketDatas = new ArrayList<>();
-		char[] chars = columnTmp.toCharArray();
-		boolean isContinue = true;
-		for (char currentString : chars) {
-			for (int i = bracketDatas.size() - 1; i >= 0; i--) {
-				if (bracketDatas.get(i).isComplete(currentString)) {
-					for (int j = bracketDatas.size() - 1; j >= i; j--) {
-						bracketDatas.remove(j);
-					}
-					isContinue = false;
-					break;
-				}
-			}
-			if (isContinue) {
-				for (BracketData bracketData : BRACKET_DATAS) {
-					if (bracketData.isStart(currentString)) {
-						bracketDatas.add(bracketData.clone());
-						break;
-					}
-				}
-			}
-
-		}
-
-		return bracketDatas.size() == 0;
-	}
-
-
 
 }
