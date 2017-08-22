@@ -424,7 +424,7 @@ public class WorkflowParser {
 			result = new MetaProcessCreateDistanceRaster();
 		} else if (MetaKeys.GRID_RESAMPLE.equals(key)) {
 			result = new MetaProcessGridResample();
-		} else if (MetaKeys.BASEIC_STATISTIC.equals(key)) {
+		} else if (MetaKeys.BASIC_STATISTIC.equals(key)) {
 			result = new MetaProcessBasicStatistics();
 		} else if (MetaKeys.COMMON_STATISTIC.equals(key)) {
 			result = new MetaProcessCommonStatistics();
