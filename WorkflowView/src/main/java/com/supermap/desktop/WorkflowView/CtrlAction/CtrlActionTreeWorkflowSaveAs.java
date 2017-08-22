@@ -19,8 +19,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 /**
  * @author XiaJT
  */
-public class CtrlActionTreeWorkFlowSaveAs extends CtrlAction {
-	public CtrlActionTreeWorkFlowSaveAs(IBaseItem caller, IForm formClass) {
+public class CtrlActionTreeWorkflowSaveAs extends CtrlAction {
+	public CtrlActionTreeWorkflowSaveAs(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 

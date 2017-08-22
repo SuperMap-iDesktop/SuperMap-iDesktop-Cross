@@ -173,7 +173,6 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	public boolean save() {
 		boolean result = false;
 		int index = -1;
-//		ArrayList<IWorkflow> workflows = Application.getActiveApplication().getWorkflows();
 		ArrayList<IDataEntry<String>> workflows = Application.getActiveApplication().getWorkflowEntries();
 		for (int i = 0; i < workflows.size(); i++) {
 			IDataEntry<String> entry = workflows.get(i);
@@ -187,7 +186,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		if (index == -1) {
 			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 			SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
-			dialogSaveAs.setDescription(WorkflowViewProperties.getString("String_NewWorkFlowName"));
+			dialogSaveAs.setDescription(WorkflowViewProperties.getString("String_NewWorkflowName"));
 			dialogSaveAs.setCurrentFormName(getText());
 			dialogSaveAs.setTitle(WorkflowViewProperties.getString("String_SaveWorkflow"));
 
@@ -216,7 +215,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	public boolean saveAs(boolean isNewWindow) {
 		boolean result = false;
 		SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
-		dialogSaveAs.setDescription(WorkflowViewProperties.getString("String_NewWorkFlowName"));
+		dialogSaveAs.setDescription(WorkflowViewProperties.getString("String_NewWorkflowName"));
 		dialogSaveAs.setCurrentFormName(getText());
 		for (IDataEntry<String> workflow : Application.getActiveApplication().getWorkflowEntries()) {
 			dialogSaveAs.addExistNames(workflow.getKey());

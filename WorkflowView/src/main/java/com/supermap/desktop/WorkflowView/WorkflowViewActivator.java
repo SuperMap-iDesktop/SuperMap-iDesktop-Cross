@@ -56,12 +56,12 @@ public class WorkflowViewActivator implements BundleActivator {
 	private void newWindowEvent(NewWindowEvent evt) {
 		WindowType type = evt.getNewWindowType();
 		if (type == WindowType.WORKFLOW) {
-			IFormWorkflow formProcess = showProcess(evt.getNewWindowName());
+			IFormWorkflow formProcess = showWorkflow(evt.getNewWindowName());
 			evt.setNewWindow(formProcess);
 		}
 	}
 
-	private IFormWorkflow showProcess(String newWindowName) {
+	private IFormWorkflow showWorkflow(String newWindowName) {
 		FormWorkflow formWorkflow = null;
 
 		try {

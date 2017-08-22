@@ -450,10 +450,10 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 					JPopupMenu jPopupMenu_layout = getWorkspaceManager().getLayoutPopupMenu();
 					jPopupMenu_layout.show(jTable, e.getX(), e.getY());
 				} else if (selectedTreeNodeData.getType() == NodeDataType.WORKFLOWS) {
-					JPopupMenu jPopupMenu_layout = getWorkspaceManager().getWorkFlowsPopupMenu();
+					JPopupMenu jPopupMenu_layout = getWorkspaceManager().getWorkflowsPopupMenu();
 					jPopupMenu_layout.show(jTable, e.getX(), e.getY());
 				} else if (selectedTreeNodeData.getType() == NodeDataType.WORKFLOW) {
-					JPopupMenu jPopupMenu_layout = getWorkspaceManager().getWorkFlowPopupMenu();
+					JPopupMenu jPopupMenu_layout = getWorkspaceManager().getWorkflowPopupMenu();
 					jPopupMenu_layout.show(jTable, e.getX(), e.getY());
 				}
 			}

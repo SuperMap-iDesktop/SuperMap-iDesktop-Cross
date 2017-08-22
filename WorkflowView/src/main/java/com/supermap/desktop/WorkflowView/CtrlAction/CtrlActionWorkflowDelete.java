@@ -17,8 +17,8 @@ import java.util.ArrayList;
 /**
  * @author XiaJT
  */
-public class CtrlActionProcessDelete extends CtrlAction {
-	public CtrlActionProcessDelete(IBaseItem caller, IForm formClass) {
+public class CtrlActionWorkflowDelete extends CtrlAction {
+	public CtrlActionWorkflowDelete(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 
