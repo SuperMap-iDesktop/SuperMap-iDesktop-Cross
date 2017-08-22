@@ -2,9 +2,9 @@ package com.supermap.desktop.WorkflowView.CtrlAction;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
+import com.supermap.desktop.Interface.IDataEntry;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.WorkflowView.FormWorkflow;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.process.ProcessProperties;
@@ -41,9 +41,9 @@ public class CtrlActionImportWorkflow extends CtrlAction {
 				Document document = XmlUtilities.getDocument(filePath);
 
 				ArrayList<String> names = new ArrayList<>();
-				ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
-				for (IWorkflow workFlow : workFlows) {
-					names.add(workFlow.getName());
+				ArrayList<IDataEntry<String>> workflows = Application.getActiveApplication().getWorkflowEntries();
+				for (IDataEntry<String> workflow : workflows) {
+					names.add(workflow.getKey());
 				}
 
 				IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();

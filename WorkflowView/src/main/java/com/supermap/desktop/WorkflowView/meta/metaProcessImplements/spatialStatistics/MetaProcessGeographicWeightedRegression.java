@@ -94,6 +94,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 
 		final ParameterSwitch parameterSwitchParent = new ParameterSwitch();
 		parameterSwitchParent.add("0", parameterSwitch);
+		parameterSwitchParent.switchParameter((IParameter) null);
 		parameterBandWidthType.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -156,7 +157,6 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 		parameterDistanceTolerance.setSelectedItem("");
 		parameterNeighbors.setSelectedItem("2");
 		parameterSaveDataset.setDatasetName("result_geoWeightedRegression");
-		parameterBandWidthType.setSelectedItem(parameterBandWidthType.getItemAt(1));
 	}
 
 	@Override

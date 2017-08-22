@@ -171,10 +171,11 @@ public class MetaProcessKernelDensity extends MetaProcess {
 				isSuccess = false;
 			}
 			parameters.getOutputs().getData("KernelDensityResult").setValue("");// // TODO: 2017/5/26
-			CursorUtilities.setDefaultCursor();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 			return false;
+		}finally {
+			CursorUtilities.setDefaultCursor();
 		}
 		return isSuccess;
 	}

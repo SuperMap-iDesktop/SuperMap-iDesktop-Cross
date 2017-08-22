@@ -3,24 +3,25 @@ package com.supermap.desktop.WorkflowView.CtrlAction;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormWorkflow;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.ui.UICommonToolkit;
 
 /**
  * @author XiaJT
  */
-public class CtrlActionProcessSaveAs extends CtrlAction {
-	public CtrlActionProcessSaveAs(IBaseItem caller, IForm formClass) {
+public class CtrlActionWorkflowSave extends CtrlAction {
+	public CtrlActionWorkflowSave(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 
 	@Override
 	public void run() {
-		Application.getActiveApplication().getActiveForm().saveAs(false);
+		Application.getActiveApplication().getActiveForm().save();
 	}
 
 	@Override
 	public boolean enable() {
-		return UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getSelectionCount() == 1;
+		IForm activeForm = Application.getActiveApplication().getActiveForm();
+		return activeForm instanceof IFormWorkflow;
 	}
 }
