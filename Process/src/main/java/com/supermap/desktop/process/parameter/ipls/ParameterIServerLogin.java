@@ -26,7 +26,7 @@ public class ParameterIServerLogin extends ParameterCombine {
 		this.setDescribe(ProcessProperties.getString("String_loginInfo"));
 	}
 
-	public IServerService login() {
+	public synchronized IServerService login() {
 		String username = (String) parameterTextFieldUserName.getSelectedItem();
 		String password = (String) parameterTextFieldPassword.getSelectedItem();
 		IServerService service = new IServerServiceImpl();
