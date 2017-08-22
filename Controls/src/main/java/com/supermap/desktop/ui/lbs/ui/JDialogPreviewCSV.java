@@ -250,6 +250,19 @@ public class JDialogPreviewCSV extends SmDialog {
 				}
 			}
 		});
+		comboBoxGeometryType.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					if (comboBoxGeometryType.getSelectedItem() == GeometryType.GEOPOINT) {
+						comboBoxStorageType.setEnabled(true);
+					} else {
+						comboBoxStorageType.setEnabled(false);
+						comboBoxStorageType.setSelectedIndex(0);
+					}
+				}
+			}
+		});
 	}
 
 	private boolean updateMetaFile() {
