@@ -6,6 +6,7 @@ package com.supermap.desktop.WorkflowView.meta;
 public class MetaKeys {
 	public static final String SPATIAL_INDEX = "SpatialIndex";
 	public static final String BUFFER = "Buffer";
+	public static final String MULTIBUFFER = "MultiBuffer";
 	public static final String IMPORT = "Import";
 	public static final String PROJECTION = "Projection";
 	public static final String SET_PROJECTION = "SetProjection";
