@@ -5,7 +5,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.MetaProcessImportFactory;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.EmptyMetaProcess;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessBuffer;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.bufferAnalyst.MetaProcessBuffer;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessComputeDistance;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessCostPathLine;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessCreateDistanceRaster;
