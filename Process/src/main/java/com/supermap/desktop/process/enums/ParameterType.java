@@ -49,4 +49,5 @@ public class ParameterType {
 	public static final String MULTIFIELDSET="MultiFieldSet";
 	public static final String SHAPE_TYPE="ShapeType";
 	public static final String HISTOGRAM ="Histogram";
+	public static final String COMMON_STATISTIC ="CommonStatistic";
 }

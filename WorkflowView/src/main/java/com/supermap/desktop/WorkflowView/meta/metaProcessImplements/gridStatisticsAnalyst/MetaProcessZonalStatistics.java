@@ -6,6 +6,7 @@ import com.supermap.analyst.spatialanalyst.ZonalStatisticsAnalystParameter;
 import com.supermap.analyst.spatialanalyst.ZonalStatisticsAnalystResult;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -77,9 +78,9 @@ public class MetaProcessZonalStatistics extends MetaProcess {
 		resultCombine.addParameters(resultDatasource, resultDatasetGrid, resultTable);
 		parameters.setParameters(valueCombine, zonalCombine, settingCombine, resultCombine);
 		this.parameters.addInputParameters(VALUE_DATA, DatasetTypes.GRID, valueCombine);
-		this.parameters.addInputParameters(ZONAL_DATA, new DatasetTypes("",DatasetTypes.GRID.getValue()|DatasetTypes.REGION.getValue()), zonalCombine);
-		this.parameters.addOutputParameters(OUTPUT_DATA_GRID, DatasetTypes.GRID, resultDatasetGrid);
-		this.parameters.addOutputParameters(OUTPUT_DATA_TABLE, DatasetTypes.TABULAR, resultTable);
+		this.parameters.addInputParameters(ZONAL_DATA, new DatasetTypes("", DatasetTypes.GRID.getValue() | DatasetTypes.REGION.getValue()), zonalCombine);
+		this.parameters.addOutputParameters(OUTPUT_DATA_GRID, ProcessOutputResultProperties.getString("String_Result_ZonalGrid"), DatasetTypes.GRID, resultDatasetGrid);
+		this.parameters.addOutputParameters(OUTPUT_DATA_TABLE, ProcessOutputResultProperties.getString("String_Result_ZonalTable"), DatasetTypes.TABULAR, resultTable);
 	}
 
 	private void initParameterConstraint() {
