@@ -17,6 +17,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.BracketMatchUtilties;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilities.GeometryTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -249,6 +250,19 @@ public class JDialogPreviewCSV extends SmDialog {
 				}
 			}
 		});
+		comboBoxGeometryType.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					if (comboBoxGeometryType.getSelectedItem() == GeometryType.GEOPOINT) {
+						comboBoxStorageType.setEnabled(true);
+					} else {
+						comboBoxStorageType.setEnabled(false);
+						comboBoxStorageType.setSelectedIndex(0);
+					}
+				}
+			}
+		});
 	}
 
 	private boolean updateMetaFile() {
@@ -316,19 +330,22 @@ public class JDialogPreviewCSV extends SmDialog {
 				String line = split[i];
 				line = line.split("\r")[0];
 				String[] columns = line.split(defaultSeparator);
-				String columnTmp = "";
+				BracketMatchUtilties bracketMatchUtilties = new BracketMatchUtilties("");
 				int columnIndex = 0;
 				for (String column : columns) {
-					if (StringUtilities.isNullOrEmpty(columnTmp)) {
-						columnTmp = column;
+					if (bracketMatchUtilties.isMatch()) {
+						bracketMatchUtilties = new BracketMatchUtilties(column);
 					} else {
-						columnTmp = columnTmp + defaultSeparator + column;
+						bracketMatchUtilties.appendString(defaultSeparator + column);
 					}
-					if (StringUtilities.isBracketComplete(columnTmp)) {
-						tableModelPreviewCSV.setValueAt(columnTmp, i, columnIndex);
+					if (bracketMatchUtilties.isMatch()) {
+						tableModelPreviewCSV.setValueAt(bracketMatchUtilties.getMatchString(), i, columnIndex);
+						bracketMatchUtilties.clear();
 						columnIndex++;
-						columnTmp = "";
 					}
+				}
+				if (!StringUtilities.isNullOrEmpty(bracketMatchUtilties.getMatchString())) {
+					tableModelPreviewCSV.setValueAt(bracketMatchUtilties.getMatchString(), i, columnIndex);
 				}
 			}
 		}
@@ -519,6 +536,7 @@ public class JDialogPreviewCSV extends SmDialog {
 
 
 		ArrayList<RowData> csvDatas = new ArrayList<>();
+
 		String[] split = csvFile.split("\n");
 		ArrayList<String> modelColumns = new ArrayList<>();
 		for (int i = 0; i < split.length - 1 && i <= DEFAULT_CSV_LENGTH; i++) {
@@ -526,17 +544,20 @@ public class JDialogPreviewCSV extends SmDialog {
 			String line = split[i];
 			line = line.split("\r")[0];
 			String[] columns = line.split(defaultSeparator);
-			String columnTmp = "";
+			BracketMatchUtilties bracketMatchUtilties = new BracketMatchUtilties("");
 			for (String column : columns) {
-				if (StringUtilities.isNullOrEmpty(columnTmp)) {
-					columnTmp = column;
+				if (bracketMatchUtilties.isMatch()) {
+					bracketMatchUtilties = new BracketMatchUtilties(column);
 				} else {
-					columnTmp = columnTmp + defaultSeparator + column;
+					bracketMatchUtilties.appendString(defaultSeparator + column);
 				}
-				if (StringUtilities.isBracketComplete(columnTmp)) {
-					modelColumns.add(columnTmp);
-					columnTmp = "";
+				if (bracketMatchUtilties.isMatch()) {
+					modelColumns.add(bracketMatchUtilties.getMatchString());
+					bracketMatchUtilties.clear();
 				}
+			}
+			if (!StringUtilities.isNullOrEmpty(bracketMatchUtilties.getMatchString())) {
+				modelColumns.add(bracketMatchUtilties.getMatchString());
 			}
 			csvDatas.add(new RowData(modelColumns.toArray(new String[modelColumns.size()])));
 		}

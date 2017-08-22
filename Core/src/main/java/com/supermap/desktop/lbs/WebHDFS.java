@@ -16,10 +16,10 @@ public class WebHDFS {
 //	public static String outputURL = "http://192.168.14.1:50070/webhdfs/v1/output/";
 //	public static String defaultURL = "http://192.168.14.1:50070/webhdfs/v1/";
     public static String webURL = "http://192.168.12.201:50070/webhdfs/v1/data/";
-    public static String url = "http://localhost:50070/webhdfs/v1/data/";
-    public static String defaultURL = "http://192.168.12.201:50070/webhdfs/v1/";
-    public static String outputURL = "http://192.168.12.201:50070/webhdfs/v1/data/";
-    public static String webFile = "newyork_taxi_2013-01_147k.csv";
+	public static String url = "http://localhost:50070/webhdfs/v1/data/";
+	public static String defaultURL = "http://192.168.12.201:50070/webhdfs/v1/";
+	public static String outputURL = "http://192.168.12.201:50070/webhdfs/v1/data/";
+	public static String webFile = "newyork_taxi_2013-01_147k.csv";
     public static String resultURL ="";
 
     public HDFSDefine getHDFSDefine(String permission, String owner, String group, String size, String replication, String blockSize, String name, Boolean isDir) {
