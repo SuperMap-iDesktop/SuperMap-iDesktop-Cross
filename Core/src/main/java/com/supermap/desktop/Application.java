@@ -4,11 +4,9 @@ import com.supermap.data.*;
 import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.implement.Output;
-import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import javax.swing.event.EventListenerList;
 import java.util.*;
@@ -17,6 +15,9 @@ import java.util.*;
  * 应用程序类，实现启动主窗口、插件管理和代码段编译执行等功能。
  */
 public class Application {
+	private final static String NODE_ROOT_NAME = "Desktop";
+	private final static String NODE_CROSS_NAME = "Cross";
+	private final static String NODE_WORKFLOWS_NAME = "Workflows";
 
 	private IFormMain formMain = null;
 	private ISplashForm formSplash = null;
@@ -26,7 +27,7 @@ public class Application {
 	private PluginManager pluginManager = null;
 	private ArrayList<Datasource> activeDatasources = new ArrayList<Datasource>();
 	private ArrayList<Dataset> activeDatasets = new ArrayList<Dataset>();
-	private ArrayList<IWorkflow> workflows = new ArrayList<>();
+	private ArrayList<IDataEntry<String>> workflowEntries = new ArrayList<>();
 
 	private EventListenerList eventListenerList = new EventListenerList();
 	private ArrayList<FormLoadedListener> formLoadedListeners = new ArrayList<>();
@@ -241,8 +242,8 @@ public class Application {
 			workspace.addClosingListener(new WorkspaceClosingListener() {
 				@Override
 				public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
-					for (int i = workflows.size() - 1; i >= 0; i--) {
-						removeWorkflowFromTree(workflows.get(i));
+					for (int i = workflowEntries.size() - 1; i >= 0; i--) {
+						removeWorkflowFromTree(workflowEntries.get(i).getKey());
 					}
 				}
 			});
@@ -301,119 +302,148 @@ public class Application {
 		}
 	}
 
-	public ArrayList<IWorkflow> getWorkflows() {
-		return workflows;
+	public ArrayList<IDataEntry<String>> getWorkflowEntries() {
+		return this.workflowEntries;
+	}
+
+	public IDataEntry<String> getWorkflowEntry(String workflowName) {
+		for (int i = 0; i < this.workflowEntries.size(); i++) {
+			if (this.workflowEntries.get(i).getKey().equals(workflowName)) {
+				return this.workflowEntries.get(i);
+			}
+		}
+		return null;
+	}
+
+	private String[] getWorkflowNames() {
+		String[] names = new String[this.workflowEntries.size()];
+
+		for (int i = 0; i < this.workflowEntries.size(); i++) {
+			names[i] = this.workflowEntries.get(i).getKey();
+		}
+		return names;
 	}
 
 	public void resetWorkflows() {
-		String desktopInfo = workspace.getDesktopInfo();
-
-		Document document = null;
-		try {
-			if (!StringUtilities.isNullOrEmpty(desktopInfo)) {
-				document = XmlUtilities.stringToDocument(desktopInfo);
-			}
-		} catch (Exception e) {
-			// ignore
+		Document desktopInfoDoc = getDesktopInfoDoc(this.workspace);
+		Element workflowsNode = XmlUtilities.findElementNodeByName(desktopInfoDoc, "Workflows");
+		Element[] workflowEntries = XmlUtilities.getChildElementNodesByName(workflowsNode, "WorkflowEntry");
+		for (Element element : workflowEntries) {
+			String workflowName = element.getAttribute("Name");
+			this.workflowEntries.add(new StringEntry(workflowName, XmlUtilities.nodeToString(element)));
 		}
-		if (StringUtilities.isNullOrEmpty(desktopInfo) || document == null) {
-			String s = initWorkflowXml();
-
-			workspace.setDesktopInfo(s);
-			return;
-		} else {
-			Node root = document.getChildNodes().item(0);
-			Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
-			Element[] workFlow = XmlUtilities.getChildElementNodesByName(workFlows, "WorkFlow");
-			for (Element element : workFlow) {
-				this.workflows.add(fireWorkFlowInitListener(element));
-			}
-		}
-		fireWorkflowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.RE_BUILD, workflows.toArray(new IWorkflow[workflows.size()])));
+		fireWorkflowsChanged(new WorkflowsChangedEvent(WorkflowsChangedEvent.RE_BUILD, getWorkflowNames()));
 	}
 
-	private IWorkflow fireWorkFlowInitListener(Element element) {
+	private IWorkflow fireWorkflowInitListener(Element element) {
 		return workflowInitListener.init(element);
 	}
 
-	public void addWorkflow(IWorkflow workFlow) {
-		addWorkflowInWorkspace(workFlow);
-		addWorkflowInTree(workFlow);
+	public void addWorkflow(String workflowName, String workflowEntry) {
+		this.workflowEntries.add(new StringEntry(workflowName, workflowEntry));
+		addWorkflowInWorkspace(workflowEntry);
+		addWorkflowInTree(workflowName);
 	}
 
-	private void addWorkflowInWorkspace(IWorkflow workFlow) {
-		Workspace workspace = Application.getActiveApplication().getWorkspace();
-		String desktopInfo = workspace.getDesktopInfo();
+	private void addWorkflowInWorkspace(String workflowEntry) {
+		Document desktopInfoDoc = getDesktopInfoDoc(this.workspace);
+		Element workflowsNode = XmlUtilities.findElementNodeByName(desktopInfoDoc, "Workflows");
 
-
-		if (StringUtilities.isNullOrEmpty(desktopInfo)) {
-			desktopInfo = initWorkflowXml();
-			workspace.setDesktopInfo(desktopInfo);
+		Document tempDoc = XmlUtilities.stringToDocument(workflowEntry);
+		Element tempWorkflowEntryNode = XmlUtilities.getChildElementNodeByName(tempDoc, "WorkflowEntry");
+		if (tempWorkflowEntryNode == null) {
+			return;
 		}
-		Document document = XmlUtilities.stringToDocument(desktopInfo);
-		Node root = document.getChildNodes().item(0);
-		Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
-		if (workFlows == null) {
-			workFlows = document.createElement("WorkFlows");
-			root.appendChild(workFlows);
+
+		Element workflowEntryNode = (Element) desktopInfoDoc.importNode(tempWorkflowEntryNode, true);
+		workflowsNode.appendChild(workflowEntryNode);
+		this.workspace.setDesktopInfo(XmlUtilities.nodeToString(desktopInfoDoc));
+	}
+
+	private Document getDesktopInfoDoc(Workspace workspace) {
+		if (workspace == null) {
+			throw new NullPointerException();
 		}
-		Element workFlowNode = document.createElement("WorkFlow");
-		workFlowNode.setAttribute("name", workFlow.getName());
-		workFlowNode.setAttribute("value", workFlow.serializeTo());
-		workFlows.appendChild(workFlowNode);
-		String s = XmlUtilities.nodeToString(document, "UTF-8");
 
-		workspace.setDesktopInfo(s);
+		boolean needInit = false;
+		Document document = XmlUtilities.stringToDocument(workspace.getDesktopInfo());
+		if (document == null) {
+			document = XmlUtilities.getEmptyDocument();
+			needInit = true;
+		}
+
+		Element desktopNode = XmlUtilities.getChildElementNodeByName(document, NODE_ROOT_NAME);
+		if (desktopNode == null) {
+			desktopNode = document.createElement(NODE_ROOT_NAME);
+			document.appendChild(desktopNode);
+			needInit = true;
+		}
+
+		Element crossNode = XmlUtilities.getChildElementNodeByName(desktopNode, NODE_CROSS_NAME);
+		if (crossNode == null) {
+			crossNode = document.createElement(NODE_CROSS_NAME);
+			desktopNode.appendChild(crossNode);
+			needInit = true;
+		}
+
+		Element workflowsNode = XmlUtilities.getChildElementNodeByName(crossNode, NODE_WORKFLOWS_NAME);
+		if (workflowsNode == null) {
+			workflowsNode = document.createElement(NODE_WORKFLOWS_NAME);
+			crossNode.appendChild(workflowsNode);
+			needInit = true;
+		}
+
+		if (needInit) {
+			workspace.setDesktopInfo(XmlUtilities.nodeToString(document));
+		}
+		return document;
 	}
 
-	private String initWorkflowXml() {
-		String description;
-		Document document = XmlUtilities.getEmptyDocument();
-		Element root = XmlUtilities.createRoot(document, "root");
-		Element workFlows = document.createElement("WorkFlows");
-		root.appendChild(workFlows);
-		description = XmlUtilities.nodeToString(document, "UTF-8");
-		return description;
+
+	private void addWorkflowInTree(String workflowName) {
+		fireWorkflowsChanged(new WorkflowsChangedEvent(WorkflowsChangedEvent.ADD, workflowName));
 	}
 
-	private void addWorkflowInTree(IWorkflow workFlow) {
-		this.workflows.add(workFlow);
-		fireWorkflowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.ADD, workFlow));
+	public void addWorkflow(int index, String workflowName, String workflowEntry) {
+		this.workflowEntries.add(index, new StringEntry(workflowName, workflowEntry));
+		fireWorkflowsChanged(new WorkflowsChangedEvent(WorkflowsChangedEvent.ADD, workflowName));
 	}
 
-	public void addWorkflow(int index, IWorkflow workFlow) {
-		workflows.add(index, workFlow);
-		fireWorkflowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.ADD, workFlow));
+	public void removeWorkflow(String workflowName) {
+		removeWorkflowFromWorkspace(workflowName);
+		removeWorkflowFromTree(workflowName);
 	}
 
-	public void removeWorkflow(IWorkflow workFlow) {
-		removeWorkflowFromWorkspace(workFlow);
-		removeWorkflowFromTree(workFlow);
+	private void removeWorkflowFromTree(String workflowName) {
+		removeWorkflowEntry(workflowName);
+		fireWorkflowsChanged(new WorkflowsChangedEvent(WorkflowsChangedEvent.DELETE, workflowName));
 	}
 
-	private void removeWorkflowFromTree(IWorkflow workFlow) {
-		this.workflows.remove(workFlow);
-		fireWorkflowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.DELETE, workFlow));
-	}
-
-	private void removeWorkflowFromWorkspace(IWorkflow workFlow) {
-		Workspace workspace = Application.getActiveApplication().getWorkspace();
-		String desktopInfo = workspace.getDesktopInfo();
-		Document document = XmlUtilities.stringToDocument(desktopInfo);
-		Node root = document.getChildNodes().item(0);
-		Node workflows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
-		Element[] workFlowsArray = XmlUtilities.getChildElementNodesByName(workflows, "WorkFlow");
-		for (Element element : workFlowsArray) {
-			if (element.getAttribute("name").equals(workFlow.getName())) {
-				workflows.removeChild(element);
+	private void removeWorkflowEntry(String name) {
+		for (int i = 0; i < this.workflowEntries.size(); i++) {
+			IDataEntry dataEntry = this.workflowEntries.get(i);
+			if (dataEntry.getKey().equals(name)) {
+				this.workflowEntries.remove(i);
 				break;
 			}
 		}
-		String s = XmlUtilities.nodeToString(document, "UTF-8");
+	}
+
+	private void removeWorkflowFromWorkspace(String workflowName) {
+		Document desktopInfoDoc = getDesktopInfoDoc(this.workspace);
+		Element workflowsNode = XmlUtilities.findElementNodeByName(desktopInfoDoc, "Workflows");
+		Element[] workFlowsArray = XmlUtilities.getChildElementNodesByName(workflowsNode, "WorkflowEntry");
+		for (Element element : workFlowsArray) {
+			if (element.getAttribute("name").equals(workflowName)) {
+				workflowsNode.removeChild(element);
+				break;
+			}
+		}
+		String s = XmlUtilities.nodeToString(desktopInfoDoc);
 		workspace.setDesktopInfo(s);
 	}
 
-	private void fireWorkflowsChanged(WorkFlowsChangedEvent workflowsChangedEvent) {
+	private void fireWorkflowsChanged(WorkflowsChangedEvent workflowsChangedEvent) {
 		for (WorkflowsChangedListener workFlowsChangedListener : workflowsChangedListeners) {
 			workFlowsChangedListener.workFlowsChanged(workflowsChangedEvent);
 		}

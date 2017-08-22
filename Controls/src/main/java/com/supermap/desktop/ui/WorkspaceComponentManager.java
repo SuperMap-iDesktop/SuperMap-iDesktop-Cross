@@ -5,7 +5,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.*;
-import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
@@ -623,7 +622,7 @@ public class WorkspaceComponentManager extends JComponent {
 							UICommonToolkit.getLayersManager().setScene(null);
 						}
 					}
-				} else if (selectedNodeData.getType() == NodeDataType.WORK_FLOW) {
+				} else if (selectedNodeData.getType() == NodeDataType.WORKFLOW) {
 					String name = ((IWorkflow) ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData()).getName();
 					IFormWorkflow iFormProcess = (IFormWorkflow) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.WORKFLOW, name);
 				} else if (selectedNodeData.getType() == NodeDataType.SYMBOL_MARKER_LIBRARY) {
@@ -678,10 +677,10 @@ public class WorkspaceComponentManager extends JComponent {
 				} else if (type == NodeDataType.SCENE_NAME) {
 					popupMenu = this.scenePopupMenu;
 					break;
-				} else if (type == NodeDataType.WORK_FLOWS) {
+				} else if (type == NodeDataType.WORKFLOWS) {
 					popupMenu = this.workFlowsPopupMenu;
 					break;
-				} else if (type == NodeDataType.WORK_FLOW) {
+				} else if (type == NodeDataType.WORKFLOW) {
 					popupMenu = this.workFlowPopupMenu;
 					break;
 				} else if (type == NodeDataType.RESOURCES) {

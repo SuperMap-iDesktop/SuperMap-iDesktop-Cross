@@ -306,6 +306,29 @@ public class XmlUtilities {
 		return elements.toArray(new Element[elements.size()]);
 	}
 
+	public static Element findElementNodeByName(Node node, String name) {
+		if (node == null) {
+			return null;
+		}
+		NodeList nodeList = node.getChildNodes();
+		if (nodeList == null || nodeList.getLength() == 0) {
+			return null;
+		}
+
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node item = nodeList.item(i);
+			if (item != null && (node.getNodeType() == Node.ELEMENT_NODE || node.getNodeType() == Node.DOCUMENT_NODE) && name.equalsIgnoreCase(item.getNodeName())) {
+				return (Element) item;
+			} else {
+				Element element = findElementNodeByName(item, name);
+				if (element != null) {
+					return element;
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * 获取指定节点下所有子节点
 	 *

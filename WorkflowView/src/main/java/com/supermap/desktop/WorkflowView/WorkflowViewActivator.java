@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.Interface.IDataEntry;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormWorkflow;
 import com.supermap.desktop.Interface.IWorkflow;
@@ -75,10 +76,11 @@ public class WorkflowViewActivator implements BundleActivator {
 			}
 
 			CursorUtilities.setWaitCursor();
-			ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
-			for (IWorkflow workFlow : workFlows) {
-				if (workFlow.getName().equals(newWindowName)) {
-					formWorkflow = new FormWorkflow(workFlow);
+			ArrayList<IDataEntry<String>> workflows = Application.getActiveApplication().getWorkflowEntries();
+			for (IDataEntry<String> workflow : workflows) {
+				if (workflow.getKey().equals(newWindowName)) {
+					formWorkflow = FormWorkflow.serializeFrom(workflow.getValue());
+					formWorkflow.setText(workflow.getKey());
 					break;
 				}
 			}

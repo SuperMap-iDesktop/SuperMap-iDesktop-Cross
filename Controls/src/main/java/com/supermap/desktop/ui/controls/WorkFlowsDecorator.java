@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
  */
 public class WorkFlowsDecorator implements TreeNodeDecorator {
 	public void decorate(JLabel label, TreeNodeData data) {
-		if (data.getType().equals(NodeDataType.WORK_FLOWS)) {
+		if (data.getType().equals(NodeDataType.WORKFLOWS)) {
 			label.setText(ControlsProperties.getString("String_WorkFlows"));
 			ImageIcon icon = (ImageIcon) label.getIcon();
 			BufferedImage bufferedImage = new BufferedImage(IMAGEICON_WIDTH, IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
