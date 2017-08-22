@@ -473,7 +473,7 @@ public class JDialogPreviewCSV extends SmDialog {
 			String metaFileName = getMetaFileName();
 			HDFSDefine hdfsMetaFile = null;
 			for (int i = 0; i < hdfsModel.getRowCount(); i++) {
-				if (((HDFSDefine) hdfsModel.getRowTagAt(i)).getName().equals(metaFileName)) {
+				if (((HDFSDefine) hdfsModel.getRowTagAt(i)).getName().toLowerCase().equals(metaFileName)) {
 					hdfsMetaFile = (HDFSDefine) hdfsModel.getRowTagAt(i);
 				}
 			}
@@ -500,14 +500,14 @@ public class JDialogPreviewCSV extends SmDialog {
 					System.arraycopy(buff, 0, temp, csvMetaByte.length, buff.length);
 					csvMetaByte = temp;
 
-					String csvFileString = new String(csvMetaByte, "UTF-8");
-					String[] split = csvFileString.split("\\}");
-					if (split.length >= 2) {
-						// TODO: 2017/8/18
-
-						metaFile = csvFileString;
-						break;
-					}
+					metaFile = new String(csvMetaByte, "UTF-8");
+//					String[] split = csvFileString.split("\\}");
+//					if (split.length >= 2) {
+//						// TODO: 2017/8/18
+//
+//						metaFile = csvFileString;
+//						break;
+//					}
 					startPos += size;
 				}
 				inputStreamMeta.close();
@@ -547,7 +547,7 @@ public class JDialogPreviewCSV extends SmDialog {
 		tablePreviewCSV.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		int previewCSVColumnCount = tableModelPreviewCSV.getColumnCount();
-		int width = Math.max(750 / previewCSVColumnCount, 100);
+		int width = Math.max(750 / (previewCSVColumnCount <= 0 ? 1 : previewCSVColumnCount), 100);
 		for (int i = 0; i < previewCSVColumnCount; i++) {
 			tablePreviewCSV.getColumnModel().getColumn(i).setPreferredWidth(width);
 		}
@@ -638,7 +638,7 @@ public class JDialogPreviewCSV extends SmDialog {
 	}
 
 	private String getMetaFileName() {
-		return hdfsDefine.getName().substring(0, hdfsDefine.getName().length() - 4) + ".meta";
+		return hdfsDefine.getName().substring(0, hdfsDefine.getName().length() - 4).toLowerCase() + ".meta";
 	}
 
 	private String getMetaUrl() {
@@ -673,7 +673,8 @@ public class JDialogPreviewCSV extends SmDialog {
 			if (values.size() > 0) {
 				int maxColumnCount = getMaxColumnCount();
 				for (int i = 0; i < maxColumnCount; i++) {
-					columnNames.add(StringUtilities.isNullOrEmpty(values.get(0).getValueAt(i)) ? "column_" + (i + 1) : values.get(0).getValueAt(i));
+					String str = values.get(0).getValueAt(i);
+					columnNames.add(StringUtilities.isNullOrEmpty(str) || str.length() > 20 ? "column_" + (i + 1) : values.get(0).getValueAt(i));
 				}
 			}
 		}
