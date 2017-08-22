@@ -181,22 +181,22 @@ public class PanelDatasetGridProperty extends JPanel {
 		groupLayout.setAutoCreateGaps(true);
 		this.setLayout(groupLayout);
 		//@formatter:off
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
-				.addGroup(groupLayout.createSequentialGroup()
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(this.blockSizeOptionLabel)
-								.addComponent(this.pixelFormatLabel)
-								.addComponent(this.noValueLabel)
-								.addComponent(this.maxValueLabel)
-								.addComponent(this.minValueLabel))
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addGroup(groupLayout.createSequentialGroup()
-										.addGap(16).addComponent(this.comboboxBlockSizeOption, 150, 150, Short.MAX_VALUE))
-								.addGroup(groupLayout.createSequentialGroup()
-										.addGap(16).addComponent(this.comboboxPixelFormat, 150, 150, Short.MAX_VALUE))
-								.addComponent(this.textFieldNoValue, 150, 150, Short.MAX_VALUE)
-								.addComponent(this.textFieldMaxValue, 150, 150, Short.MAX_VALUE)
-								.addComponent(this.textFieldMinValue, 150, 150, Short.MAX_VALUE))));
+		groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(this.blockSizeOptionLabel)
+						.addComponent(this.pixelFormatLabel)
+						.addComponent(this.noValueLabel)
+						.addComponent(this.maxValueLabel)
+						.addComponent(this.minValueLabel))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addGroup(groupLayout.createSequentialGroup()
+								.addGap(16).addComponent(this.comboboxBlockSizeOption, 150, 150, Short.MAX_VALUE))
+						.addGroup(groupLayout.createSequentialGroup()
+								.addGap(16).addComponent(this.comboboxPixelFormat, 150, 150, Short.MAX_VALUE))
+						.addComponent(this.textFieldNoValue, 150, 150, Short.MAX_VALUE)
+						.addComponent(this.textFieldMaxValue, 150, 150, Short.MAX_VALUE)
+						.addComponent(this.textFieldMinValue, 150, 150, Short.MAX_VALUE))
+		);
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.blockSizeOptionLabel)
@@ -212,7 +212,9 @@ public class PanelDatasetGridProperty extends JPanel {
 						.addComponent(this.textFieldMaxValue, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.minValueLabel)
-						.addComponent(this.textFieldMinValue, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
+						.addComponent(this.textFieldMinValue, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGap(20, 20, Short.MAX_VALUE));
+
 		//@formatter:on
 
 	}

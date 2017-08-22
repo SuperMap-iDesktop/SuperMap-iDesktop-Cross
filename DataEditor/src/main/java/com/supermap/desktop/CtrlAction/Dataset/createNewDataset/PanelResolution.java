@@ -64,20 +64,20 @@ public class PanelResolution extends JPanel {
 		groupLayout.setAutoCreateGaps(true);
 		this.setLayout(groupLayout);
 		//@formatter:off
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
-				.addGroup(groupLayout.createSequentialGroup()
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(this.resolutionXLabel)
-								.addComponent(this.resolutionYLabel)
-								.addComponent(this.rowCountLabel)
-								.addComponent(this.columnCountLabel))
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(this.textFieldResolutionX, 150, 150, Short.MAX_VALUE)
-								.addComponent(this.textFieldResolutionY, 150, 150, Short.MAX_VALUE)
-								.addGroup(groupLayout.createSequentialGroup()
-										.addGap(16).addComponent(this.textFieldRowCount, 150, 150, Short.MAX_VALUE))
-								.addGroup(groupLayout.createSequentialGroup()
-										.addGap(16).addComponent(this.textFieldColumnCount, 150, 150, Short.MAX_VALUE)))));
+		groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(this.resolutionXLabel)
+						.addComponent(this.resolutionYLabel)
+						.addComponent(this.rowCountLabel)
+						.addComponent(this.columnCountLabel))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(this.textFieldResolutionX, 150, 150, Short.MAX_VALUE)
+						.addComponent(this.textFieldResolutionY, 150, 150, Short.MAX_VALUE)
+						.addGroup(groupLayout.createSequentialGroup()
+								.addGap(16).addComponent(this.textFieldRowCount, 150, 150, Short.MAX_VALUE))
+						.addGroup(groupLayout.createSequentialGroup()
+								.addGap(16).addComponent(this.textFieldColumnCount, 150, 150, Short.MAX_VALUE)))
+		);
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.resolutionXLabel)
@@ -90,7 +90,10 @@ public class PanelResolution extends JPanel {
 						.addComponent(this.textFieldRowCount, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.columnCountLabel)
-						.addComponent(this.textFieldColumnCount, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
+						.addComponent(this.textFieldColumnCount, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGap(20, 20, Short.MAX_VALUE));
+
+
 		//@formatter:on
 
 	}

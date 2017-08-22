@@ -90,15 +90,6 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 		ParameterCombine parameterSetting = new ParameterCombine();
 		parameterSetting.setDescribe(ProcessProperties.getString("String_setParameter"));
 		parameterSetting.addParameters(this.parameterNumberMaxDistance, this.parameterNumberResolvingPower);
-//		ParameterCombine targetDataDistance = new ParameterCombine();
-//		targetDataDistance.setDescribe(ProcessProperties.getString("String_Distance_Data"));
-//		targetDataDistance.addParameters(this.resultDistanceDataset);
-//		ParameterCombine targetDataDirection = new ParameterCombine();
-//		targetDataDirection.setDescribe(ProcessProperties.getString("String_Direction_Data"));
-//		targetDataDirection.addParameters(this.resultDirectionDataset);
-//		ParameterCombine targetDataAllocation = new ParameterCombine();
-//		targetDataAllocation.setDescribe(ProcessProperties.getString("String_Allocation_Data"));
-//		targetDataAllocation.addParameters(this.resultAllocationDataset);
 		ParameterCombine resultData = new ParameterCombine();
 		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		resultData.addParameters(this.resultDatasource, this.resultDistanceDataset, this.resultDirectionDataset, this.resultAllocationDataset);
@@ -133,27 +124,10 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 			this.costDatasource.setSelectedItem(dataset.getDatasource());
 			this.costDataset.setDatasource(dataset.getDatasource());
 			this.resultDatasource.setSelectedItem(dataset.getDatasource());
-			//this.resultDistanceDataset.setResultDatasource(dataset.getDatasource());
 			this.resultDistanceDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_Distance"));
-			//this.resultDirectionDataset.setResultDatasource(dataset.getDatasource());
 			this.resultDirectionDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_Direction"));
-			//this.resultAllocationDataset.setResultDatasource(dataset.getDatasource());
 			this.resultAllocationDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_Allocation"));
 
-//			double maxEdge;
-//			if (dataset.getType() != DatasetType.GRID) {
-//				Rectangle2D bounds = dataset.getBounds();
-//				maxEdge = bounds.getHeight();
-//				if (bounds.getWidth() > bounds.getHeight()) {
-//					maxEdge = bounds.getWidth();
-//				}
-//			} else {
-//				DatasetGrid datasetGrid = (DatasetGrid) dataset;
-//				maxEdge = datasetGrid.getWidth();
-//				if (datasetGrid.getHeight() > datasetGrid.getWidth()) {
-//					maxEdge = datasetGrid.getHeight();
-//				}
-//			}
 			Rectangle2D bounds = dataset.getBounds();
 			double maxEdge = bounds.getHeight();
 			if (bounds.getWidth() > bounds.getHeight()) {
@@ -173,10 +147,6 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 		directionConstraint.constrained(this.costDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		directionConstraint.constrained(this.costDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
-//		EqualDatasourceConstraint equalResultConstraint=new EqualDatasourceConstraint();
-//		equalResultConstraint.constrained(this.resultDistanceDataset,ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
-//		equalResultConstraint.constrained(this.resultDirectionDataset,ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
-//		equalResultConstraint.constrained(this.resultAllocationDataset,ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(this.resultDistanceDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(this.resultDirectionDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(this.resultAllocationDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
@@ -187,21 +157,6 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof Dataset) {
-//					Dataset dataset = (Dataset) evt.getNewValue();
-//					double maxEdge;
-//					if (dataset.getType() != DatasetType.GRID) {
-//						Rectangle2D bounds = dataset.getBounds();
-//						maxEdge = bounds.getHeight();
-//						if (bounds.getWidth() > bounds.getHeight()) {
-//							maxEdge = bounds.getWidth();
-//						}
-//					} else {
-//						DatasetGrid datasetGrid = (DatasetGrid) dataset;
-//						maxEdge = datasetGrid.getWidth();
-//						if (datasetGrid.getHeight() > datasetGrid.getWidth()) {
-//							maxEdge = datasetGrid.getHeight();
-//						}
-//					}
 					Rectangle2D bounds = ((Dataset) evt.getNewValue()).getBounds();
 					double maxEdge = bounds.getHeight();
 					if (bounds.getWidth() > bounds.getHeight()) {

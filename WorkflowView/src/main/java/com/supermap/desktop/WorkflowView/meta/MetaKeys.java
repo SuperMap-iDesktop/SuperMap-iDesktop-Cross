@@ -6,6 +6,7 @@ package com.supermap.desktop.WorkflowView.meta;
 public class MetaKeys {
 	public static final String SPATIAL_INDEX = "SpatialIndex";
 	public static final String BUFFER = "Buffer";
+	public static final String MULTIBUFFER = "MultiBuffer";
 	public static final String IMPORT = "Import";
 	public static final String PROJECTION = "Projection";
 	public static final String SET_PROJECTION = "SetProjection";
@@ -43,7 +44,7 @@ public class MetaKeys {
 	public static final String ELIMINATE = "Eliminate";
 
 	//栅格统计
-	public static final String BASEIC_STATISTIC = "BasicStatistics";
+	public static final String BASIC_STATISTIC = "BasicStatistics";
 	public static final String COMMON_STATISTIC = "CommonStatistics";
 	public static final String NEIGHBOUR_STATISTIC = "NeighbourStatistics";
 	public static final String ZONAL_STATISTICS_ON_RASTER_VALUE = "ZonalStatisticsOnRasterValue";
