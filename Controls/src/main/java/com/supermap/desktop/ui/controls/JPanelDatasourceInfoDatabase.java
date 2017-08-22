@@ -16,17 +16,7 @@ import com.supermap.desktop.utilities.StringUtilities;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -91,7 +81,7 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 	private JMenuItem saveDCFItem;
 	private WarningOrHelpProvider warningForDatasourceAlias;
 	private String plusSign = ControlsProperties.getString("String_PlusSign");
-	private String nullStr = "null";
+	private String nullStr = "";
 
 	private FocusListener serverNameChangeListener = new FocusListener() {
 		@Override
@@ -400,10 +390,10 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 		String regexPlusSign = "\\+";
 		String server = connectionInfo.getServer();
 		if (!StringUtilities.isNullOrEmpty(server) && server.contains(plusSign)) {
-			if (server.split(regexPlusSign).length == 1 && server.startsWith(plusSign)) {
+			if (server.split(regexPlusSign).length == 1 && server.endsWith(plusSign)) {
 				((JTextField) jComboBoxServer.getEditor().getEditorComponent()).setText(server.split(regexPlusSign)[0]);
-			} else if (server.split(regexPlusSign).length == 1 && server.endsWith(plusSign)) {
-				jTextFieldServerMongo.setText(server.split(regexPlusSign)[1]);
+			} else if (server.split(regexPlusSign).length == 1 && server.startsWith(plusSign)) {
+				jTextFieldServerMongo.setText(server.split(regexPlusSign)[0]);
 			} else if (server.split(regexPlusSign).length == 2) {
 				String mysqlServer = server.split(regexPlusSign)[0];
 				String mongoServer = server.split(regexPlusSign)[1];
@@ -413,10 +403,10 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 		}
 		String dataBase = connectionInfo.getDatabase();
 		if (!StringUtilities.isNullOrEmpty(dataBase) && dataBase.contains(plusSign)) {
-			if (dataBase.split(regexPlusSign).length == 1 && dataBase.startsWith(plusSign)) {
+			if (dataBase.split(regexPlusSign).length == 1 && dataBase.endsWith(plusSign)) {
 				jTextFieldDatabaseName.setText(dataBase.split(regexPlusSign)[0]);
-			} else if (dataBase.split(regexPlusSign).length == 1 && dataBase.endsWith(plusSign)) {
-				jTextFieldDatabaseNameMongo.setText(dataBase.split(regexPlusSign)[1]);
+			} else if (dataBase.split(regexPlusSign).length == 1 && dataBase.startsWith(plusSign)) {
+				jTextFieldDatabaseNameMongo.setText(dataBase.split(regexPlusSign)[0]);
 			} else if (dataBase.split(regexPlusSign).length == 2) {
 				String mysqlDatabase = dataBase.split(regexPlusSign)[0];
 				String mongoDatabase = dataBase.split(regexPlusSign)[1];
@@ -426,10 +416,10 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 		}
 		String user = connectionInfo.getUser();
 		if (!StringUtilities.isNullOrEmpty(user) && user.contains(plusSign)) {
-			if (user.split(regexPlusSign).length == 1 && user.startsWith(plusSign)) {
+			if (user.split(regexPlusSign).length == 1 && user.endsWith(plusSign)) {
 				jTextFieldUser.setText(user.split(regexPlusSign)[0]);
-			} else if (user.split(regexPlusSign).length == 1 && user.endsWith(plusSign)) {
-				jTextFieldUserMongo.setText(user.split(regexPlusSign)[1]);
+			} else if (user.split(regexPlusSign).length == 1 && user.startsWith(plusSign)) {
+				jTextFieldUserMongo.setText(user.split(regexPlusSign)[0]);
 			} else if (user.split(regexPlusSign).length == 2) {
 				String mysqlUser = user.split(regexPlusSign)[0];
 				String mongoUser = user.split(regexPlusSign)[1];
@@ -439,10 +429,10 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 		}
 		String password = connectionInfo.getPassword();
 		if (!StringUtilities.isNullOrEmpty(password) && password.contains(plusSign)) {
-			if (password.split(regexPlusSign).length == 1 && password.startsWith(plusSign)) {
+			if (password.split(regexPlusSign).length == 1 && password.endsWith(plusSign)) {
 				jPasswordField.setText(password.split(regexPlusSign)[0]);
-			} else if (password.split(regexPlusSign).length == 1 && password.endsWith(plusSign)) {
-				jPasswordFieldMongo.setText(password.split(regexPlusSign)[1]);
+			} else if (password.split(regexPlusSign).length == 1 && password.startsWith(plusSign)) {
+				jPasswordFieldMongo.setText(password.split(regexPlusSign)[0]);
 			} else if (password.split(regexPlusSign).length == 2) {
 				String mysqlPassword = password.split(regexPlusSign)[0];
 				String mongoPassword = password.split(regexPlusSign)[1];

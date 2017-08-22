@@ -20,6 +20,7 @@ import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.TabularUtilities;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2017/8/5.
@@ -63,6 +64,7 @@ public class MetaProcessAppendFields extends MetaProcess {
 		EqualDatasetConstraint datasetConstraint3 = new EqualDatasetConstraint();
 		datasetConstraint3.constrained(targetDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
 		datasetConstraint3.constrained(targetLinkedField, ParameterFieldComboBox.DATASET_FIELD_NAME);
+
 	}
 
 	private void initParameters() {
@@ -73,10 +75,12 @@ public class MetaProcessAppendFields extends MetaProcess {
 			}
 		};
 		Datasource datasource = DatasourceUtilities.getDefaultResultDatasource();
-		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetTypeUtilities.getDatasetTypeVector());
+		DatasetType[] vectorTypes = DatasetTypeUtilities.getDatasetTypeVector();
+		Dataset dataset = DatasetUtilities.getDefaultDataset(vectorTypes);
 
 		this.targetDatasource = new ParameterDatasource();
 		this.targetDatasource.setReadOnlyNeeded(false);
+		this.targetDatasource.setSelectedItem(datasource);
 		this.targetDataset = new ParameterSingleDataset();
 		this.targetDataset.setDatasource(datasource);
 		this.targetDataset.setDatasetTypes(DatasetTypeUtilities.getDatasetTypeVector());
@@ -88,6 +92,7 @@ public class MetaProcessAppendFields extends MetaProcess {
 		this.targetDataCombine.addParameters(targetDatasource, targetDataset, targetLinkedField);
 
 		this.sourceDatasource = new ParameterDatasource();
+		this.sourceDatasource.setSelectedItem(datasource);
 		this.sourceDataset = new ParameterSingleDataset();
 		this.sourceDataset.setDatasource(datasource);
 		this.sourceDataset.setDatasetTypes(DatasetTypeUtilities.getDatasetTypeVector());
@@ -98,14 +103,28 @@ public class MetaProcessAppendFields extends MetaProcess {
 		this.sourceDataCombine.setDescribe(INPUT_DATA);
 		this.sourceDataCombine.addParameters(sourceDatasource, sourceDataset, sourceLinkedField);
 		this.multiFieldSet = new ParameterMultiFieldSet();
-		if (null != dataset) {
-			this.sourceDataset.setSelectedItem(dataset);
-			this.targetDataset.setSelectedItem(dataset);
-			this.sourceLinkedField.setFieldName((DatasetVector) dataset);
-			this.targetLinkedField.setFieldName((DatasetVector) dataset);
-			this.multiFieldSet.setDataset((DatasetVector) dataset);
-		}
 
+		ArrayList<Dataset> datasetArray = new ArrayList<>();
+		Datasets datasets = null;
+		if (null != dataset && (null != dataset.getDatasource() && dataset.getDatasource().equals(datasource))) {
+			datasets = dataset.getDatasource().getDatasets();
+		} else if (null == dataset || (null != dataset.getDatasource() && !dataset.getDatasource().equals(datasource))) {
+			datasets = datasource.getDatasets();
+		}
+		for (int i = 0, size = datasets.getCount(); i < size; i++) {
+			for (int j = 0, length = vectorTypes.length; j < length; j++) {
+				if (datasets.get(i).getType().equals(vectorTypes[j])) {
+					datasetArray.add(datasets.get(i));
+				}
+			}
+		}
+		if (datasetArray.size()>1) {
+			this.sourceDataset.setSelectedItem(datasetArray.get(1));
+			this.targetDataset.setSelectedItem(datasetArray.get(0));
+			this.sourceLinkedField.setFieldName((DatasetVector) datasetArray.get(1));
+			this.targetLinkedField.setFieldName((DatasetVector) datasetArray.get(0));
+			this.multiFieldSet.setDataset((DatasetVector) datasetArray.get(1));
+		}
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceDataCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Append"), DatasetTypes.VECTOR, targetDataCombine);
 		this.parameters.setParameters(targetDataCombine, sourceDataCombine, multiFieldSet);
