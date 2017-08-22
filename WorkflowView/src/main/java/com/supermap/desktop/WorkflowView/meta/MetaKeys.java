@@ -44,7 +44,7 @@ public class MetaKeys {
 	public static final String ELIMINATE = "Eliminate";
 
 	//栅格统计
-	public static final String BASEIC_STATISTIC = "BasicStatistics";
+	public static final String BASIC_STATISTIC = "BasicStatistics";
 	public static final String COMMON_STATISTIC = "CommonStatistics";
 	public static final String NEIGHBOUR_STATISTIC = "NeighbourStatistics";
 	public static final String ZONAL_STATISTICS_ON_RASTER_VALUE = "ZonalStatisticsOnRasterValue";

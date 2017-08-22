@@ -35,16 +35,13 @@ public class MetaProcessCommonStatistics extends MetaProcess {
 	private ParameterSingleDataset sourceDataset;
 	private ParameterSaveDataset resultDataset;
 	private ParameterComboBox comboBoxCompareType;
-	private ParameterRadioButton radioButtonCompareObject;
-	private ParameterNumber numberCompareValue;
-	private ParameterDatasetChooseTable tableCompareDataset;
 	private ParameterCheckBox checkBoxIgnore;
+	private ParameterCommonStatisticCombine commonStatisticCombine;
 
 	public MetaProcessCommonStatistics() {
 		initParameters();
 		initParameterConstraint();
 		initParametersState();
-		registerListener();
 	}
 
 	private void initParameters() {
@@ -52,17 +49,15 @@ public class MetaProcessCommonStatistics extends MetaProcess {
 		sourceDataset = new ParameterSingleDataset(DatasetType.GRID);
 		resultDataset = new ParameterSaveDataset();
 		comboBoxCompareType = new ParameterComboBox(ProcessProperties.getString("String_CompareType"));
-		radioButtonCompareObject = new ParameterRadioButton();
-		numberCompareValue = new ParameterNumber(ProcessProperties.getString("String_Label_CommonStatisticType_Single"));
 		checkBoxIgnore = new ParameterCheckBox(ProcessProperties.getString("String_IgnoreNoValue"));
-		tableCompareDataset = new ParameterDatasetChooseTable();
+		commonStatisticCombine = new ParameterCommonStatisticCombine();
 
 		ParameterCombine sourceCombine = new ParameterCombine();
 		sourceCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
 		sourceCombine.addParameters(sourceDatasource, sourceDataset);
 		ParameterCombine settingCombine = new ParameterCombine();
 		settingCombine.setDescribe(ProcessProperties.getString("String_setParameter"));
-		settingCombine.addParameters(comboBoxCompareType, radioButtonCompareObject, numberCompareValue, tableCompareDataset, checkBoxIgnore);
+		settingCombine.addParameters(comboBoxCompareType, commonStatisticCombine, checkBoxIgnore);
 		ParameterCombine resultCombine = new ParameterCombine();
 		resultCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		resultCombine.addParameters(resultDataset);
@@ -86,7 +81,7 @@ public class MetaProcessCommonStatistics extends MetaProcess {
 		if (datasetGrid != null) {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
-			tableCompareDataset.setDataset(datasetGrid);
+			commonStatisticCombine.setDataset(datasetGrid);
 		}
 		resultDataset.setSelectedItem("result_commonStatistics");
 		comboBoxCompareType.setItems(new ParameterDataNode("<", StatisticsCompareType.LESS),
@@ -94,23 +89,6 @@ public class MetaProcessCommonStatistics extends MetaProcess {
 				new ParameterDataNode("==", StatisticsCompareType.EQUAL),
 				new ParameterDataNode(">=", StatisticsCompareType.GREATER_OR_EQUAL),
 				new ParameterDataNode(">", StatisticsCompareType.GREATER));
-		radioButtonCompareObject.setItems(new ParameterDataNode[]{
-				new ParameterDataNode(ProcessProperties.getString("String_RadioButton_CommonStatisticType_Single"), 0),
-				new ParameterDataNode(ProcessProperties.getString("String_RadioButton_DatasetGrid"), 1)
-		});
-		radioButtonCompareObject.setSelectedItem(radioButtonCompareObject.getItemAt(0));
-		numberCompareValue.setSelectedItem(0);
-		tableCompareDataset.setEnabled(false);
-	}
-
-	private void registerListener() {
-		radioButtonCompareObject.addPropertyListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				numberCompareValue.setEnabled(radioButtonCompareObject.getSelectedItem().equals(radioButtonCompareObject.getItemAt(0)));
-				tableCompareDataset.setEnabled(radioButtonCompareObject.getSelectedItem().equals(radioButtonCompareObject.getItemAt(1)));
-			}
-		});
 	}
 
 	@Override
@@ -145,11 +123,11 @@ public class MetaProcessCommonStatistics extends MetaProcess {
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 			StatisticsAnalyst.addSteppedListener(steppedListener);
 			DatasetGrid result = null;
-			if (radioButtonCompareObject.getSelectedItem().equals(radioButtonCompareObject.getItemAt(0))) {
-				double value = Double.parseDouble(numberCompareValue.getSelectedItem().toString());
-				result = StatisticsAnalyst.commonStatistics(src, value, type, isIgnore, resultDataset.getResultDatasource(), datasetName);
+			if (commonStatisticCombine.isValueChosen()) {
+				double value = commonStatisticCombine.getValue();
+				StatisticsAnalyst.commonStatistics(src, value, type, isIgnore, resultDataset.getResultDatasource(), datasetName);
 			} else {
-				ArrayList<Dataset> datasetArrayList = (ArrayList<Dataset>) tableCompareDataset.getSelectedItem();
+				ArrayList<Dataset> datasetArrayList = commonStatisticCombine.getDatasets();
 				DatasetGrid[] datasetGrids = new DatasetGrid[datasetArrayList.size()];
 				for (int i = 0; i < datasetArrayList.size(); i++) {
 					datasetGrids[i] = (DatasetGrid) datasetArrayList.get(i);

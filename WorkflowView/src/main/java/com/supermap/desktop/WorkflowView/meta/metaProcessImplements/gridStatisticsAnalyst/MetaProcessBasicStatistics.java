@@ -110,7 +110,7 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.BASEIC_STATISTIC;
+		return MetaKeys.BASIC_STATISTIC;
 	}
 
 	@Override
