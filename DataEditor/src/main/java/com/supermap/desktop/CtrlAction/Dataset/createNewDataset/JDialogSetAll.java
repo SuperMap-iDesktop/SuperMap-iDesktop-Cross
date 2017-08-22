@@ -6,11 +6,13 @@ import com.supermap.desktop.CtrlAction.Dataset.AddToWindowMode;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DatasetTypeComboBox;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ public class JDialogSetAll extends SmDialog {
 
 	public JDialogSetAll() {
 		this.setTitle(DataEditorProperties.getString("String_FormSetDatasetInfos"));
-		this.setSize(300, 200);
+		this.setSize(300, 165);
 		this.setLocationRelativeTo(null);
 		this.initComponent();
 		this.initializeResource();
@@ -137,39 +139,39 @@ public class JDialogSetAll extends SmDialog {
 
 	private void addComponentToPanel() {
 		// 中央面板
+
+		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
+		groupLayout.setAutoCreateGaps(true);
+		groupLayout.setAutoCreateContainerGaps(true);
+		this.getContentPane().setLayout(groupLayout);
 		// @formatter:off
-		JPanel centerPanel = new JPanel();
-		centerPanel.setLayout(new GridBagLayout());
-
-		centerPanel.add(checkBoxTargetDatasource, new GridBagConstraintsHelper(0, 0).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setIpad(0, 0));
-		centerPanel.add(comboboxTargetDatasource, new GridBagConstraintsHelper(1, 0).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 0));
-
-		centerPanel.add(checkBoxDatasetType, new GridBagConstraintsHelper(0, 1).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setIpad(0, 0));
-		centerPanel.add(comboboxDatasetType, new GridBagConstraintsHelper(1, 1).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 0));
-
-		centerPanel.add(checkBoxAddToNewMap, new GridBagConstraintsHelper(0, 2).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setIpad(0, 0));
-		centerPanel.add(comboboxAddToNewMap, new GridBagConstraintsHelper(1, 2).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 0));
-//
-//		centerPanel.add(checkBoxEncodingType, new GridBagConstraintsHelper(0, 2).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
-//		centerPanel.add(comboboxEncodingType, new GridBagConstraintsHelper(1, 2).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
-//
-//		centerPanel.add(checkBoxCharest, new GridBagConstraintsHelper(0, 3).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
-//		centerPanel.add(comboboxCharest, new GridBagConstraintsHelper(1, 3).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
-
-//		centerPanel.add(checkBoxAddToNewMap, new GridBagConstraintsHelper(0, 4).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setIpad(0, 10));
-//		centerPanel.add(comboboxAddToNewMap, new GridBagConstraintsHelper(1, 4).setInsets(2).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setIpad(0, 10));
-
-
-		// 按钮面板
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridBagLayout());
-
-		buttonPanel.add(buttonOk, new GridBagConstraintsHelper(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(5).setWeight(1, 1));
-		buttonPanel.add(buttonCancel, new GridBagConstraintsHelper(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(5, 0, 5, 5).setWeight(0, 1));
-
-		this.setLayout(new GridBagLayout());
-		this.add(centerPanel, new GridBagConstraintsHelper(0, 0).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setInsets(5));
-		this.add(buttonPanel, new GridBagConstraintsHelper(0, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setInsets(5));
+		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
+				.addGroup(groupLayout.createSequentialGroup()
+						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								.addComponent(checkBoxTargetDatasource)
+								.addComponent(checkBoxDatasetType)
+								.addComponent(checkBoxAddToNewMap))
+						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								.addComponent(comboboxTargetDatasource)
+								.addComponent(comboboxDatasetType)
+								.addComponent(comboboxAddToNewMap)))
+				.addGroup(groupLayout.createSequentialGroup()
+						.addGap(5, 5, Short.MAX_VALUE)
+						.addComponent(buttonOk)
+						.addComponent(buttonCancel)));
+		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(checkBoxTargetDatasource)
+						.addComponent(comboboxTargetDatasource, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(checkBoxDatasetType)
+						.addComponent(comboboxDatasetType, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(checkBoxAddToNewMap)
+						.addComponent(comboboxAddToNewMap, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(buttonOk)
+						.addComponent(buttonCancel)));
 		// @formatter:on
 	}
 

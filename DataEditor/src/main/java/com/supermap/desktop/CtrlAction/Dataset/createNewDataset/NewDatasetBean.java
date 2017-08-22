@@ -220,99 +220,113 @@ public class NewDatasetBean {
 	 */
 	public boolean createDatasetWithModel() {
 		boolean result = false;
-		if (datasetType.equals(DatasetType.GRID)) {
-			datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
-			DatasetGridInfo info = new DatasetGridInfo(
-					datasetName,
-					((DatasetGrid) templateDataset).getWidth(),
-					((DatasetGrid) templateDataset).getHeight(),
-					((DatasetGrid) templateDataset).getPixelFormat(),
-					((DatasetGrid) templateDataset).getEncodeType(),
-					((DatasetGrid) templateDataset).getBlockSizeOption()
-			);
-			info.setBounds(((DatasetGrid) templateDataset).getBounds());
-			info.setMaxValue(((DatasetGrid) templateDataset).getMaxValue());
-			info.setMinValue(((DatasetGrid) templateDataset).getMinValue());
-			info.setNoValue(((DatasetGrid) templateDataset).getNoValue());
-			DatasetGrid datasetGrid = datasource.getDatasets().create(info);
-
-			try {
-				datasetGrid = datasource.getDatasets().create(info);
-				datasetGrid.setPrjCoordSys(((DatasetGrid) templateDataset).getPrjCoordSys());
-				datasetGrid.setColorTable(((DatasetGrid) templateDataset).getColorTable());
-			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Failed"), datasetName, datasource.getAlias()));
-			}
-			if (datasetGrid != null) {
-				result = true;
-				String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Success"), datasetName,
-						datasource.getAlias());
-				Application.getActiveApplication().getOutput().output(information);
-			}
-
-		} else if (datasetType.equals(DatasetType.IMAGE)) {
-			// 对于datasetName做一下安全设置
-			datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
-			DatasetImageInfo info = new DatasetImageInfo(
-					datasetName,
-					((DatasetImage) templateDataset).getWidth(),
-					((DatasetImage) templateDataset).getHeight(),
-					((DatasetImage) templateDataset).getPixelFormat(0),
-					((DatasetImage) templateDataset).getEncodeType(),
-					((DatasetImage) templateDataset).getBlockSizeOption(),
-					((DatasetImage) templateDataset).getBandCount()
-
-			);
-			info.setBounds(((DatasetImage) templateDataset).getBounds());
-			DatasetImage datasetImage = datasource.getDatasets().create(info);
-			try {
-				datasetImage = datasource.getDatasets().create(info);
-				datasetImage.setPrjCoordSys(((DatasetImage) templateDataset).getPrjCoordSys());
-			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Failed"), datasetName, datasource.getAlias()));
-			}
-
-			if (datasetImage != null) {
-				result = true;
-				String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Success"), datasetName,
-						datasource.getAlias());
-				Application.getActiveApplication().getOutput().output(information);
-			}
-		} else {
-			// 对于datasetName做一下安全设置
-			datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
-			DatasetVectorInfo info = new DatasetVectorInfo(datasetName, datasetType);
-			info.setEncodeType(templateDataset.getEncodeType());
-			info.setBounds(templateDataset.getBounds());
-			info.setFileCache(((DatasetVector) templateDataset).isFileCache());
-			Dataset dataset = null;
-			try {
-				dataset = datasource.getDatasets().create(info);
-				// 根据模版数据集追加属性字段
-				FieldInfos templateFieldInfos = ((DatasetVector) templateDataset).getFieldInfos();
-				FieldInfos resultFieldInfos = ((DatasetVector) dataset).getFieldInfos();
-				for (int i = 0; i < templateFieldInfos.getCount(); i++) {
-					FieldInfo newFieldInfo = new FieldInfo();
-					// 非系统字段时，进行追加
-					if (!(templateFieldInfos.get(i)).isSystemField()) {
-						String name = templateFieldInfos.get(i).getName();
-						if (!name.equalsIgnoreCase("smuserid")) {
-							newFieldInfo.setName(templateFieldInfos.get(i).getName());
-							resultFieldInfos.add(newFieldInfo);
-						}
-
-					}
-				}
-			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Failed"), datasetName, datasource.getAlias()));
-			}
-			if (dataset != null) {
-				result = true;
-				String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Success"), datasetName,
-						datasource.getAlias());
-				Application.getActiveApplication().getOutput().output(information);
-			}
+		datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
+		Dataset resultDataset = null;
+		try {
+			// 根据模板创建数据集
+			resultDataset = datasource.getDatasets().createFromTemplate(datasetName, templateDataset);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Failed"), datasetName, datasource.getAlias()));
 		}
+		if (resultDataset != null) {
+			result = true;
+			String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Success"), datasetName,
+					datasource.getAlias());
+			Application.getActiveApplication().getOutput().output(information);
+		}
+//		if (datasetType.equals(DatasetType.GRID)) {
+//			datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
+//			DatasetGridInfo info = new DatasetGridInfo(
+//					datasetName,
+//					((DatasetGrid) templateDataset).getWidth(),
+//					((DatasetGrid) templateDataset).getHeight(),
+//					((DatasetGrid) templateDataset).getPixelFormat(),
+//					((DatasetGrid) templateDataset).getEncodeType(),
+//					((DatasetGrid) templateDataset).getBlockSizeOption()
+//			);
+//			info.setBounds(((DatasetGrid) templateDataset).getBounds());
+//			info.setMaxValue(((DatasetGrid) templateDataset).getMaxValue());
+//			info.setMinValue(((DatasetGrid) templateDataset).getMinValue());
+//			info.setNoValue(((DatasetGrid) templateDataset).getNoValue());
+//			DatasetGrid datasetGrid = datasource.getDatasets().create(info);
+//
+//			try {
+//				datasetGrid = datasource.getDatasets().create(info);
+//				datasetGrid.setPrjCoordSys(((DatasetGrid) templateDataset).getPrjCoordSys());
+//				datasetGrid.setColorTable(((DatasetGrid) templateDataset).getColorTable());
+//			} catch (Exception e) {
+//				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Failed"), datasetName, datasource.getAlias()));
+//			}
+//			if (datasetGrid != null) {
+//				result = true;
+//				String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Success"), datasetName,
+//						datasource.getAlias());
+//				Application.getActiveApplication().getOutput().output(information);
+//			}
+//
+//		} else if (datasetType.equals(DatasetType.IMAGE)) {
+//			// 对于datasetName做一下安全设置
+//			datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
+//			DatasetImageInfo info = new DatasetImageInfo(
+//					datasetName,
+//					((DatasetImage) templateDataset).getWidth(),
+//					((DatasetImage) templateDataset).getHeight(),
+//					((DatasetImage) templateDataset).getPixelFormat(0),
+//					((DatasetImage) templateDataset).getEncodeType(),
+//					((DatasetImage) templateDataset).getBlockSizeOption(),
+//					((DatasetImage) templateDataset).getBandCount()
+//
+//			);
+//			info.setBounds(((DatasetImage) templateDataset).getBounds());
+//			DatasetImage datasetImage = datasource.getDatasets().create(info);
+//			try {
+//				datasetImage = datasource.getDatasets().create(info);
+//				datasetImage.setPrjCoordSys(((DatasetImage) templateDataset).getPrjCoordSys());
+//			} catch (Exception e) {
+//				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Failed"), datasetName, datasource.getAlias()));
+//			}
+//
+//			if (datasetImage != null) {
+//				result = true;
+//				String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Success"), datasetName,
+//						datasource.getAlias());
+//				Application.getActiveApplication().getOutput().output(information);
+//			}
+//		} else {
+//			// 对于datasetName做一下安全设置
+//			datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
+//			DatasetVectorInfo info = new DatasetVectorInfo(datasetName, datasetType);
+//			info.setEncodeType(templateDataset.getEncodeType());
+//			info.setBounds(templateDataset.getBounds());
+//			info.setFileCache(((DatasetVector) templateDataset).isFileCache());
+//			Dataset dataset = null;
+//			try {
+//				dataset = datasource.getDatasets().create(info);
+//				// 根据模版数据集追加属性字段
+//				FieldInfos templateFieldInfos = ((DatasetVector) templateDataset).getFieldInfos();
+//				FieldInfos resultFieldInfos = ((DatasetVector) dataset).getFieldInfos();
+//				for (int i = 0; i < templateFieldInfos.getCount(); i++) {
+//					FieldInfo newFieldInfo = new FieldInfo();
+//					// 非系统字段时，进行追加
+//					if (!(templateFieldInfos.get(i)).isSystemField()) {
+//						String name = templateFieldInfos.get(i).getName();
+//						if (!name.equalsIgnoreCase("smuserid")) {
+//							newFieldInfo.setName(templateFieldInfos.get(i).getName());
+//							resultFieldInfos.add(newFieldInfo);
+//						}
+//
+//					}
+//				}
+//			} catch (Exception e) {
+//				Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Failed"), datasetName, datasource.getAlias()));
+//			}
+//			if (dataset != null) {
+//				result = true;
+//				String information = MessageFormat.format(DataEditorProperties.getString("String_CreateNewModelDT_Success"), datasetName,
+//						datasource.getAlias());
+//				Application.getActiveApplication().getOutput().output(information);
+//			}
+//		}
 		return result;
 	}
 }

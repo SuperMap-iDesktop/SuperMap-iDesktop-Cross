@@ -98,18 +98,18 @@ public class PanelDatasetImageProperty extends JPanel {
 		groupLayout.setAutoCreateGaps(true);
 		this.setLayout(groupLayout);
 		//@formatter:off
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
-				.addGroup(groupLayout.createSequentialGroup()
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(this.blockSizeOptionLabel)
-								.addComponent(this.pixelFormatLabel)
-								.addComponent(this.bandCountLabel))
-						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addGroup(groupLayout.createSequentialGroup()
-										.addGap(16).addComponent(this.comboboxBlockSizeOption, 150, 150, Short.MAX_VALUE))
-								.addGroup(groupLayout.createSequentialGroup()
-										.addGap(16).addComponent(this.comboboxPixelFormat, 150, 150, Short.MAX_VALUE))
-								.addComponent(this.textFieldImageDatasetbandCount, 150, 150, Short.MAX_VALUE))));
+		groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(this.blockSizeOptionLabel)
+						.addComponent(this.pixelFormatLabel)
+						.addComponent(this.bandCountLabel))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addGroup(groupLayout.createSequentialGroup()
+								.addGap(16).addComponent(this.comboboxBlockSizeOption, 150, 150, Short.MAX_VALUE))
+						.addGroup(groupLayout.createSequentialGroup()
+								.addGap(16).addComponent(this.comboboxPixelFormat, 150, 150, Short.MAX_VALUE))
+						.addComponent(this.textFieldImageDatasetbandCount, 150, 150, Short.MAX_VALUE))
+		);
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.blockSizeOptionLabel)
@@ -119,7 +119,9 @@ public class PanelDatasetImageProperty extends JPanel {
 						.addComponent(this.comboboxPixelFormat, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.bandCountLabel)
-						.addComponent(this.textFieldImageDatasetbandCount, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
+						.addComponent(this.textFieldImageDatasetbandCount, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGap(20, 20, Short.MAX_VALUE));
+
 		//@formatter:on
 
 	}
