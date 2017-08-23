@@ -926,7 +926,7 @@ public class FirstStepPane extends JPanel implements IState {
 
 	private void initGlobalValue() {
 		this.scientificNotation.setGroupingUsed(false);
-		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip || cmdType == DialogMapCacheClipBuilder.ResumeProcessClip) {
+		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip || cmdType == DialogMapCacheClipBuilder.ResumeProcessClip || cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
 			this.originMapCacheScale = this.mapCacheBuilder.getOutputScales();
 		} else {
 			this.originMapCacheScale = this.mapCacheBuilder.getDefultOutputScales();
