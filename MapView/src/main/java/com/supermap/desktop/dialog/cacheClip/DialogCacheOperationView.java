@@ -140,7 +140,7 @@ public class DialogCacheOperationView extends SmDialog {
 	private void mulitCacheExecuteMission() {
 		DialogCacheOperationView.this.dispose();
 		Map map = getMap();
-		if (CacheUtilities.voladateDatasource()) {
+		if (CacheUtilities.voladateDatasource(false)) {
 			DialogCacheOperationView.this.dispose();
 			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheExecute"));
 			String[] params = {"Multi", "null", "null", map.getName(), "null"};
@@ -159,7 +159,7 @@ public class DialogCacheOperationView extends SmDialog {
 				if (!CacheUtilities.dynamicEffectClosed(map)) {
 					return;
 				}
-				if (CacheUtilities.voladateDatasource()) {
+				if (CacheUtilities.voladateDatasource(true)) {
 					MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 					Map newMap = new Map(Application.getActiveApplication().getWorkspace());
 					newMap.fromXML(map.toXML());
