@@ -169,18 +169,18 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 				System.out.println(statisticsFields[i].getMode());
 			}
 
-			boolean isRandomSaveRerefyPoints =false;
-			if (this.checkBoxRandomSaveRerefyPoints.getSelectedItem().equals("true")){
-				isRandomSaveRerefyPoints =true;
+			boolean isRandomSaveRerefyPoints = false;
+			if (this.checkBoxRandomSaveRerefyPoints.getSelectedItem().equals("true")) {
+				isRandomSaveRerefyPoints = true;
 			}
-			boolean isSaveOriginField =false;
-			if (this.checkBoxSaveOriginField.getSelectedItem().equals("true")){
-				isSaveOriginField =true;
+			boolean isSaveOriginField = false;
+			if (this.checkBoxSaveOriginField.getSelectedItem().equals("true")) {
+				isSaveOriginField = true;
 			}
 
-			Dataset result=ProximityAnalyst.summaryPoints(src,Double.valueOf(this.parameterNumberRadius.getSelectedItem().toString()),
+			Dataset result = ProximityAnalyst.summaryPoints(src, Double.valueOf(this.parameterNumberRadius.getSelectedItem().toString()),
 					this.dataset.getSelectedDataset().getPrjCoordSys().getCoordUnit(),
-					statisticsFields, this.saveDataset.getResultDatasource(), datasetName,isRandomSaveRerefyPoints,isSaveOriginField);
+					statisticsFields, this.saveDataset.getResultDatasource(), datasetName, isRandomSaveRerefyPoints, isSaveOriginField);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
 			fireRunning(new RunningEvent(MetaProcessRarefyPoints.this, 100, "finished"));
