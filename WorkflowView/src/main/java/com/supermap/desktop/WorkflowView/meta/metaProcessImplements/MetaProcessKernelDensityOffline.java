@@ -92,6 +92,7 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 		numberRight.setSelectedItem(0);
 		numberTop.setSelectedItem(0);
 		numberBottom.setSelectedItem(0);
+		numberRadius.setSelectedItem(0);
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT,DatasetType.LINE);
 		if (dataset != null) {
 			sourceDatasource.setSelectedItem(dataset.getDatasource());
@@ -99,7 +100,6 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 			comboBoxField.setFieldName((DatasetVector) dataset);
 			updateBound(dataset);
 		}
-		numberRadius.setSelectedItem(12);
 		comboBoxField.setFieldType(fieldType);
 		resultDataset.setSelectedItem("result_kernelDensity");
 		numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem().toString()));
@@ -153,6 +153,11 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 		Double y = rectangle2D.getHeight() / 500;
 		Double cellSize = x > y ? y : x;
 		numberCellSize.setSelectedItem(cellSize);
+		if (dataset.getType().equals(DatasetType.POINT)) {
+
+		} else {
+			numberRadius.setSelectedItem(rectangle2D.getWidth()/30);
+		}
 	}
 
 	@Override
@@ -163,6 +168,7 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
+		DensityAnalystParameter densityAnalystParameter = new DensityAnalystParameter();
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			DatasetVector src = null;
@@ -172,7 +178,6 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 				src = (DatasetVector) sourceDataset.getSelectedItem();
 			}
 			DensityAnalyst.addSteppedListener(steppedListener);
-			DensityAnalystParameter densityAnalystParameter = new DensityAnalystParameter();
 			double top = Double.parseDouble(numberTop.getSelectedItem().toString());
 			double bottom = Double.parseDouble(numberBottom.getSelectedItem().toString());
 			double right = Double.parseDouble(numberRight.getSelectedItem().toString());
@@ -188,6 +193,7 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
+			densityAnalystParameter.dispose();
 			DensityAnalyst.removeSteppedListener(steppedListener);
 		}
 		return isSuccessful;
