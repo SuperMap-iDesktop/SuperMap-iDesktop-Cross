@@ -154,7 +154,7 @@ public class MetaProcessBuffer extends MetaProcess {
 				radioButtonNumOrField.getSelectedItem().equals(radioButtonNumOrField.getItemAt(0)) &&
 				(!Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) ||
 						(Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) &&
-								Boolean.valueOf(checkBoxBufferRight.getSelectedItem().toString())))
+		Boolean.valueOf(checkBoxBufferRight.getSelectedItem().toString())))
 		);
 		comboBoxFieldLeft.setEnabled((!checkBoxBufferType.isEnabled() ||
 						!Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) ||

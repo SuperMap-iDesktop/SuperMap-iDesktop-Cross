@@ -3,7 +3,6 @@ package com.supermap.desktop.process.parameters.ParameterPanels;
 import com.supermap.analyst.spatialanalyst.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
@@ -45,7 +44,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 
 	private boolean isSelectingItem = false;
 	ParameterShapeType parameterShapeType;
-	NeighbourStatisticsParameter neighbourStatisticsParameter;
+	NeighbourShape neighbourShape;
 
 	static final String RECTANGLE = ProcessProperties.getString("String_Rectangle");
 	static final String CIRCLE = ProcessProperties.getString("String_Circle");
@@ -57,7 +56,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 	public ParameterShapeTypePanel(IParameter parameterShapeType) {
 		super(parameterShapeType);
 		this.parameterShapeType = (ParameterShapeType) parameterShapeType;
-		this.neighbourStatisticsParameter = (NeighbourStatisticsParameter) ((ParameterShapeType) parameterShapeType).getSelectedItem();
+		this.neighbourShape = (NeighbourShape) ((ParameterShapeType) parameterShapeType).getSelectedItem();
 		initComponent();
 		initResources();
 		initLayout();
@@ -137,8 +136,8 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 					} else if (comboBoxShapeType.getSelectedItem().equals(WEDGE)) {
 						setComponentVisible(new JComponent[]{labelRadius,labelStartAngle,labelEndAngle,textFieldRadius,textFieldStartAngle,textFieldEndAngle});
 					}
-					resetNeighbourStatisticsParameter();
-					parameterShapeType.setSelectedItem(neighbourStatisticsParameter);
+					resetNeighbourShape();
+					parameterShapeType.setSelectedItem(neighbourShape);
 					isSelectingItem = false;
 				}
 			}
@@ -162,7 +161,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			private void change() {
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldWidth.getText())) {
 					isSelectingItem = true;
-					resetNeighbourStatisticsParameter();
+					resetNeighbourShape();
 					isSelectingItem = false;
 				}
 			}
@@ -186,7 +185,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			private void change() {
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldHeight.getText())) {
 					isSelectingItem = true;
-					resetNeighbourStatisticsParameter();
+					resetNeighbourShape();
 					isSelectingItem = false;
 				}
 			}
@@ -210,7 +209,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			private void change() {
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldRadius.getText())) {
 					isSelectingItem = true;
-					resetNeighbourStatisticsParameter();
+					resetNeighbourShape();
 					isSelectingItem = false;
 				}
 			}
@@ -234,7 +233,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			private void change() {
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldInnerRadius.getText())) {
 					isSelectingItem = true;
-					resetNeighbourStatisticsParameter();
+					resetNeighbourShape();
 					isSelectingItem = false;
 				}
 			}
@@ -258,7 +257,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			private void change() {
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldOuterRadius.getText())) {
 					isSelectingItem = true;
-					resetNeighbourStatisticsParameter();
+					resetNeighbourShape();
 					isSelectingItem = false;
 				}
 			}
@@ -282,7 +281,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			private void change() {
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldStartAngle.getText())) {
 					isSelectingItem = true;
-					resetNeighbourStatisticsParameter();
+					resetNeighbourShape();
 					isSelectingItem = false;
 				}
 			}
@@ -306,7 +305,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			private void change() {
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldEndAngle.getText())) {
 					isSelectingItem = true;
-					resetNeighbourStatisticsParameter();
+					resetNeighbourShape();
 					isSelectingItem = false;
 				}
 			}
@@ -316,7 +315,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			public void itemStateChanged(ItemEvent e) {
 				if (!isSelectingItem && e.getStateChange() == ItemEvent.SELECTED) {
 					isSelectingItem = true;
-					resetNeighbourStatisticsParameter();
+					resetNeighbourShape();
 					isSelectingItem = false;
 				}
 			}
@@ -337,7 +336,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 		textFieldOuterRadius.setText("3");
 		textFieldStartAngle.setText("0");
 		textFieldEndAngle.setText("360");
-		resetNeighbourStatisticsParameter();
+		resetNeighbourShape();
 	}
 
 	private void setComponentVisible(JComponent[] components) {
@@ -360,29 +359,29 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 		}
 	}
 
-	private void resetNeighbourStatisticsParameter() {
+	private void resetNeighbourShape() {
 		if (comboBoxShapeType.getSelectedItem().equals(RECTANGLE)) {
-			neighbourStatisticsParameter = new NeighbourStatisticsRectangleParameter();
-			((NeighbourStatisticsRectangleParameter)neighbourStatisticsParameter).setWidth(Double.valueOf(textFieldWidth.getText().toString()));
-			((NeighbourStatisticsRectangleParameter)neighbourStatisticsParameter).setHeight(Double.valueOf(textFieldHeight.getText().toString()));
+			neighbourShape = new NeighbourShapeRectangle();
+			((NeighbourShapeRectangle) neighbourShape).setWidth(Double.valueOf(textFieldWidth.getText().toString()));
+			((NeighbourShapeRectangle) neighbourShape).setHeight(Double.valueOf(textFieldHeight.getText().toString()));
 		} else if (comboBoxShapeType.getSelectedItem().equals(CIRCLE)) {
-			neighbourStatisticsParameter = new NeighbourStatisticsCircleParameter();
-			((NeighbourStatisticsCircleParameter)neighbourStatisticsParameter).setRadius(Double.valueOf(textFieldRadius.getText().toString()));
+			neighbourShape = new NeighbourShapeCircle();
+			((NeighbourShapeCircle) neighbourShape).setRadius(Double.valueOf(textFieldRadius.getText().toString()));
 		} else if (comboBoxShapeType.getSelectedItem().equals(ANNULUS)) {
-			neighbourStatisticsParameter = new NeighbourStatisticsAnnulusParameter();
-			((NeighbourStatisticsAnnulusParameter)neighbourStatisticsParameter).setInnerRadius(Double.valueOf(textFieldInnerRadius.getText().toString()));
-			((NeighbourStatisticsAnnulusParameter)neighbourStatisticsParameter).setOuterRadius(Double.valueOf(textFieldOuterRadius.getText().toString()));
+			neighbourShape = new NeighbourShapeAnnulus();
+			((NeighbourShapeAnnulus) neighbourShape).setInnerRadius(Double.valueOf(textFieldInnerRadius.getText().toString()));
+			((NeighbourShapeAnnulus) neighbourShape).setOuterRadius(Double.valueOf(textFieldOuterRadius.getText().toString()));
 		} else if (comboBoxShapeType.getSelectedItem().equals(WEDGE)) {
-			neighbourStatisticsParameter = new NeighbourStatisticsWedgeParameter();
-			((NeighbourStatisticsWedgeParameter)neighbourStatisticsParameter).setRadius(Double.valueOf(textFieldRadius.getText().toString()));
-			((NeighbourStatisticsWedgeParameter)neighbourStatisticsParameter).setStartAngle(Double.valueOf(textFieldStartAngle.getText().toString()));
-			((NeighbourStatisticsWedgeParameter)neighbourStatisticsParameter).setEndAngle(Double.valueOf(textFieldEndAngle.getText().toString()));
+			neighbourShape = new NeighbourShapeWedge();
+			((NeighbourShapeWedge) neighbourShape).setRadius(Double.valueOf(textFieldRadius.getText().toString()));
+			((NeighbourShapeWedge) neighbourShape).setStartAngle(Double.valueOf(textFieldStartAngle.getText().toString()));
+			((NeighbourShapeWedge) neighbourShape).setEndAngle(Double.valueOf(textFieldEndAngle.getText().toString()));
 		}
 		if (comboBoxUnitType.getSelectedItem().equals(UNIT_TYPE_CELL)) {
-			neighbourStatisticsParameter.setUnitType(NeighbourUnitType.CELL);
+			neighbourShape.setUnitType(NeighbourUnitType.CELL);
 		} else {
-			neighbourStatisticsParameter.setUnitType(NeighbourUnitType.MAP);
+			neighbourShape.setUnitType(NeighbourUnitType.MAP);
 		}
-		parameterShapeType.setSelectedItem(neighbourStatisticsParameter);
+		parameterShapeType.setSelectedItem(neighbourShape);
 	}
 }

@@ -1,9 +1,6 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst;
 
-import com.supermap.analyst.spatialanalyst.GridStatisticsMode;
-import com.supermap.analyst.spatialanalyst.NeighbourStatisticsParameter;
-import com.supermap.analyst.spatialanalyst.NeighbourUnitType;
-import com.supermap.analyst.spatialanalyst.StatisticsAnalyst;
+import com.supermap.analyst.spatialanalyst.*;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
@@ -127,7 +124,30 @@ public class MetaProcessNeighbourStatistics extends MetaProcess {
 			boolean isIgnore = Boolean.parseBoolean(checkBoxIgnore.getSelectedItem().toString());
 			GridStatisticsMode mode = (GridStatisticsMode) comboBoxStatisticMode.getSelectedData();
 			String datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(resultDataset.getDatasetName());
-			NeighbourStatisticsParameter neighbourStatisticsParameter = (NeighbourStatisticsParameter) shapeType.getSelectedItem();
+			NeighbourStatisticsParameter neighbourStatisticsParameter = new NeighbourStatisticsWedgeParameter();
+			NeighbourShape neighbourShape = (NeighbourShape) shapeType.getSelectedItem();
+			if (neighbourShape.getShapeType().equals(NeighbourShapeType.RECTANGLE)) {
+				NeighbourStatisticsRectangleParameter neighbourStatisticsRectangleParameter = new NeighbourStatisticsRectangleParameter();
+				neighbourStatisticsRectangleParameter.setHeight(((NeighbourShapeRectangle)neighbourShape).getHeight());
+				neighbourStatisticsRectangleParameter.setWidth(((NeighbourShapeRectangle)neighbourShape).getWidth());
+				neighbourStatisticsParameter = neighbourStatisticsRectangleParameter;
+			} else if (neighbourShape.getShapeType().equals(NeighbourShapeType.CIRCLE)) {
+				NeighbourStatisticsCircleParameter neighbourStatisticsCircleParameter = new NeighbourStatisticsCircleParameter();
+				neighbourStatisticsCircleParameter.setRadius(((NeighbourShapeCircle)neighbourShape).getRadius());
+				neighbourStatisticsParameter = neighbourStatisticsCircleParameter;
+			} else if (neighbourShape.getShapeType().equals(NeighbourShapeType.ANNULUS)) {
+				NeighbourStatisticsAnnulusParameter neighbourStatisticsAnnulusParameter = new NeighbourStatisticsAnnulusParameter();
+				neighbourStatisticsAnnulusParameter.setInnerRadius(((NeighbourShapeAnnulus) neighbourShape).getInnerRadius());
+				neighbourStatisticsAnnulusParameter.setOuterRadius(((NeighbourShapeAnnulus) neighbourShape).getOuterRadius());
+				neighbourStatisticsParameter = neighbourStatisticsAnnulusParameter;
+			} else if (neighbourShape.getShapeType().equals(NeighbourShapeType.WEDGE)) {
+				NeighbourStatisticsWedgeParameter neighbourStatisticsWedgeParameter = new NeighbourStatisticsWedgeParameter();
+				neighbourStatisticsWedgeParameter.setRadius(((NeighbourShapeWedge)neighbourShape).getRadius());
+				neighbourStatisticsWedgeParameter.setStartAngle(((NeighbourShapeWedge)neighbourShape).getStartAngle());
+				neighbourStatisticsWedgeParameter.setEndAngle(((NeighbourShapeWedge)neighbourShape).getEndAngle());
+				neighbourStatisticsParameter = neighbourStatisticsWedgeParameter;
+			}
+			neighbourStatisticsParameter.setUnitType(neighbourShape.getUnitType());
 			neighbourStatisticsParameter.setSourceDataset(src);
 			neighbourStatisticsParameter.setIgnoreNoValue(isIgnore);
 			neighbourStatisticsParameter.setTargetDatasetName(datasetName);
