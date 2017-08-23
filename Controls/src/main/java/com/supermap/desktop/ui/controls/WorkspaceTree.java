@@ -20,7 +20,6 @@ import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IDataEntry;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
-import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.*;
 import com.supermap.desktop.enums.WindowType;
@@ -192,7 +191,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	private transient WorkspaceTreeDatasetCollectionOrderChangedListener datasetCollectionOrderChangedListener = null;
 
-	private transient WorkflowsChangedListener workFlowsChangedListener = null;
+	private transient WorkflowsChangedListener workflowsChangedListener = null;
 	private EngineType[] UN_SUPPORT_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST, EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS,
 			EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS};
 
@@ -898,18 +897,18 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		datasetCollectionRefreshListener = new WorkspaceTreeDatasetCollectionRefreshListener();
 
 		datasetCollectionOrderChangedListener = new WorkspaceTreeDatasetCollectionOrderChangedListener();
-		workFlowsChangedListener = new WorkflowsChangedListener() {
+		workflowsChangedListener = new WorkflowsChangedListener() {
 			@Override
 			public void workFlowsChanged(WorkflowsChangedEvent workflowChangedEvent) {
-				String[] workflows = workflowChangedEvent.getWorkflowNames();
+				IDataEntry<String>[] workflows = workflowChangedEvent.getWorkflowEntries();
 				if (workflowChangedEvent.getType() == WorkflowsChangedEvent.ADD) {
-					for (String workflow : workflows) {
+					for (IDataEntry<String> workflow : workflows) {
 						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workflow, NodeDataType.WORKFLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
 					}
 				} else if (workflowChangedEvent.getType() == WorkflowsChangedEvent.DELETE) {
 					for (int i = treeNodeWorkFlow.getChildCount() - 1; i >= 0; i--) {
 						DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeNodeWorkFlow.getChildAt(i);
-						String workflow = (String) ((TreeNodeData) node.getUserObject()).getData();
+						IDataEntry<String> workflow = (IDataEntry<String>) ((TreeNodeData) node.getUserObject()).getData();
 						if (ArrayUtilities.isArrayContains(workflows, workflow)) {
 							treeModelTemp.removeNodeFromParent(node);
 						}
@@ -918,7 +917,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					for (int i = treeNodeWorkFlow.getChildCount() - 1; i >= 0; i--) {
 						treeModelTemp.removeNodeFromParent((MutableTreeNode) treeNodeWorkFlow.getChildAt(i));
 					}
-					for (String workflow : workflows) {
+					for (IDataEntry<String> workflow : workflows) {
 						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workflow, NodeDataType.WORKFLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
 					}
 				}
@@ -940,7 +939,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	}
 
 	private void addWorkFlowChangedListener() {
-		Application.getActiveApplication().addWorkflowsChangedListener(workFlowsChangedListener);
+		Application.getActiveApplication().addWorkflowsChangedListener(workflowsChangedListener);
 	}
 
 	private void addUpdataToolBarsListener() {
@@ -957,11 +956,11 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		removeLayoutsListener();
 		removeScenesListener();
 		removeUpdataToolBarsListener();
-		removeWorkFlowChangedListener();
+		removeWorkflowChangedListener();
 	}
 
-	private void removeWorkFlowChangedListener() {
-		Application.getActiveApplication().removeWorkflowsChangedListener(workFlowsChangedListener);
+	private void removeWorkflowChangedListener() {
+		Application.getActiveApplication().removeWorkflowsChangedListener(workflowsChangedListener);
 	}
 
 	private void removeUpdataToolBarsListener() {
@@ -1446,7 +1445,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		ArrayList<IDataEntry<String>> workflows = Application.getActiveApplication().getWorkflowEntries();
 		for (int i = 0; i < workflows.size(); i++) {
 			IDataEntry<String> workflow = workflows.get(i);
-			TreeNodeData treeNodeData = new TreeNodeData(workflow.getKey(), NodeDataType.WORKFLOW);
+			TreeNodeData treeNodeData = new TreeNodeData(workflow, NodeDataType.WORKFLOW);
 			treeNodeWorkFlow.add(new DefaultMutableTreeNode(treeNodeData));
 		}
 		TreePath treePathWorkFlow = new TreePath(treeNodeWorkFlow.getPath());
@@ -1528,15 +1527,6 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(message)) {
 						DatasetUtilities.deleteDataset(datasets);
 					}
-				} else if (data instanceof IWorkflow) {
-					ArrayList<String> workflows = new ArrayList<>();
-					for (TreePath treePath : WorkspaceTree.this.getSelectionPaths()) {
-						DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
-						TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
-						String workflow = (String) selectedNodeData.getData();
-						workflows.add(workflow);
-					}
-					WorkflowUtilities.deleteWorkflowEntry(workflows);
 				} else {
 					NodeDataType type = currentNodeData.getType();
 					if (type.equals(NodeDataType.LAYOUT_NAME)) {
@@ -1563,6 +1553,15 @@ public class WorkspaceTree extends JTree implements IDisposable {
 							sceneNames.add(selectedNodeData.getData().toString());
 						}
 						SceneUIUtilities.deleteScenes(sceneNames.toArray(new String[sceneNames.size()]));
+					} else if (type.equals(NodeDataType.WORKFLOW)) {
+						ArrayList<String> workflows = new ArrayList<>();
+						for (TreePath treePath : WorkspaceTree.this.getSelectionPaths()) {
+							DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+							TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
+							String workflow = (String) selectedNodeData.getData();
+							workflows.add(workflow);
+						}
+						WorkflowUtilities.deleteWorkflowEntry(workflows);
 					}
 				}
 				ToolbarUIUtilities.updataToolbarsState();

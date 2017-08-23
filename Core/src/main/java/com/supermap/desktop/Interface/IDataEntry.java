@@ -6,5 +6,9 @@ package com.supermap.desktop.Interface;
 public interface IDataEntry<T> {
 	String getKey();
 
+	void setKey(String key);
+
 	T getValue();
+
+	void setValue(T value);
 }

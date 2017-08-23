@@ -7,8 +7,6 @@ import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormWorkflow;
 import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.WorkflowView.graphics.ScrollGraphCanvas;
-import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovingEvent;
-import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.WorkflowView.graphics.events.GraphSelectChangedListener;
 import com.supermap.desktop.WorkflowView.graphics.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.WorkflowView.graphics.graphs.ProcessGraph;
@@ -20,7 +18,9 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.*;
+import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.process.events.*;
 import com.supermap.desktop.process.tasks.TasksManager;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -96,12 +96,32 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			}
 		});
 
-		this.canvas.getGraphStorage().addGraphRemovingListener(new GraphRemovingListener() {
+		this.workflow.addWorkflowChangeListener(new WorkflowChangeListener() {
 			@Override
-			public void graphRemoving(GraphRemovingEvent e) {
+			public void workflowChange(WorkflowChangeEvent e) {
+				if (e.getType() == WorkflowChangeEvent.ADDED
+						|| e.getType() == WorkflowChangeEvent.ADDING
+						|| e.getType() == WorkflowChangeEvent.REMOVED
+						|| e.getType() == WorkflowChangeEvent.REMOVING) {
+					isNeedSave = true;
+				}
+			}
+		});
+
+		this.workflow.addRelationAddedListener(new RelationAddedListener<IProcess>() {
+			@Override
+			public void relationAdded(RelationAddedEvent<IProcess> e) {
 				isNeedSave = true;
 			}
 		});
+
+		this.workflow.addRelationRemovedListener(new RelationRemovedListener<IProcess>() {
+			@Override
+			public void relationRemoved(RelationRemovedEvent<IProcess> e) {
+				isNeedSave = true;
+			}
+		});
+
 		this.canvas.getActionsManager().addCanvasActionProcessListener(new CanvasActionProcessListener() {
 			@Override
 			public void canvasActionProcess(CanvasActionProcessEvent e) {
@@ -226,7 +246,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 				dialogSaveAs.addExistNames(formManager.get(i).getText());
 			}
 		}
-		dialogSaveAs.setTitle(WorkflowViewProperties.getString("Sting_SaveAsWorkFlow"));
+		dialogSaveAs.setTitle(WorkflowViewProperties.getString("Sting_SaveAsWorkflow"));
 		if (dialogSaveAs.showDialog() == DialogResult.OK) {
 			this.setText(dialogSaveAs.getCurrentFormName());
 			Application.getActiveApplication().addWorkflow(getText(), serializeTo());

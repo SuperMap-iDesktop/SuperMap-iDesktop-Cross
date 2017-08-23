@@ -15,7 +15,7 @@ import java.awt.*;
 @ParameterPanelDescribe(parameterPanelType = ParameterType.MULTI_BUFFER_RADIOLIST)
 public class ParameterMultiBufferRadioListPanel extends PanelMultiBufferRadioList implements IParameterPanel {
 
-	private ParameterMultiBufferRadioList parameterMultiBufferRadioList = null;
+	private ParameterMultiBufferRadioList parameterMultiBufferRadioList;
 
 	public ParameterMultiBufferRadioListPanel(IParameter parameterMultiBufferRadioList) {
 		super();
@@ -30,7 +30,7 @@ public class ParameterMultiBufferRadioListPanel extends PanelMultiBufferRadioLis
 			@Override
 			public void tableChanged(TableModelEvent e) {
 				if (e.getType() == TableModelEvent.UPDATE) {
-					parameterMultiBufferRadioList.setRadioList(radioList);
+					parameterMultiBufferRadioList.setRadioList(radioLists);
 				}
 			}
 		});
@@ -40,5 +40,4 @@ public class ParameterMultiBufferRadioListPanel extends PanelMultiBufferRadioLis
 	public Object getPanel() {
 		return this;
 	}
-
 }

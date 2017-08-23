@@ -1,14 +1,18 @@
 package com.supermap.desktop.process.parameters.ParameterPanels.MultiBufferRadioList;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.dialog.BatchAddDailog;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,19 +20,12 @@ import java.util.ArrayList;
 
 /**
  * Created by yuanR on 2017/8/22 0022.
+ * 多重缓冲区半径列表面板
  */
 public class PanelMultiBufferRadioList extends JPanel {
-	public JToolBar getToolBar() {
-		return toolBar;
-	}
 
-	public JTable getTableRadioList() {
-		return tableRadioList;
-	}
+	private static final long serialVersionUID = 1L;
 
-	/**
-	 *
-	 */
 	private JToolBar toolBar;
 	private SmButton buttonBatchAddRadio;
 	private SmButton buttonInsert;
@@ -41,7 +38,7 @@ public class PanelMultiBufferRadioList extends JPanel {
 	protected JTable tableRadioList;
 	private MultiBufferRadioListTableModel multiBufferRadioListTableModel;
 
-	protected Double[] radioList;
+	protected ArrayList<Double> radioLists = new ArrayList<>();
 
 	public PanelMultiBufferRadioList() {
 		initComponents();
@@ -74,10 +71,18 @@ public class PanelMultiBufferRadioList extends JPanel {
 		buttonMoveDown.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/moveDown.png"));
 
 		tableRadioList = new JTable();
-		ArrayList arrayList = new ArrayList();
-		arrayList.add(10.0);
-		multiBufferRadioListTableModel = new MultiBufferRadioListTableModel(arrayList);
+		multiBufferRadioListTableModel = new MultiBufferRadioListTableModel(radioLists);
 		tableRadioList.setModel(multiBufferRadioListTableModel);
+
+		// 设置列不可移动
+		tableRadioList.getTableHeader().setReorderingAllowed(false);
+		tableRadioList.setRowHeight(23);
+		// 设置列宽
+		TableColumn indexColumn = tableRadioList.getColumnModel().getColumn(MultiBufferRadioListTableModel.COLUMN_INDEX_INDEX);
+		indexColumn.setMinWidth(80);
+		indexColumn.setPreferredWidth(80);
+		indexColumn.setMaxWidth(150);
+
 	}
 
 	private void initLayout() {
@@ -93,8 +98,8 @@ public class PanelMultiBufferRadioList extends JPanel {
 		toolBar.add(buttonMoveDown);
 
 		this.setLayout(new GridBagLayout());
-		this.add(toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 10));
-		this.add(new JScrollPane(tableRadioList), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+		this.add(toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(new JScrollPane(tableRadioList), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 0, 0, 0));
 	}
 
 	private void initResources() {
@@ -108,16 +113,38 @@ public class PanelMultiBufferRadioList extends JPanel {
 	}
 
 	private void registerEvent() {
+
+		buttonBatchAddRadio.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				BatchAddDailog batchAddColorTableDailog = new BatchAddDailog(10, 30, 3, (JFrame) Application.getActiveApplication().getMainFrame(), true);
+				DialogResult result = batchAddColorTableDailog.showDialog();
+				if (result == DialogResult.OK && batchAddColorTableDailog.getResultKeys() != null) {
+					double[] doubles = batchAddColorTableDailog.getResultKeys();
+					for (int i = 0; i < doubles.length; i++) {
+						radioLists.add(doubles[i]);
+					}
+					multiBufferRadioListTableModel.setRadioValues(radioLists);
+				}
+			}
+		});
+
 		buttonInsert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// 插入操作其实就是，先新建一条数据，然后将选中行下的所有行整体向下移动一行
 				int[] selectedRows = tableRadioList.getSelectedRows();
+				radioLists.add(10.0);
 				if (selectedRows.length > 0) {
-					multiBufferRadioListTableModel.insertRow(selectedRows[0], 10.0);
+					int selectedFristRow = selectedRows[0];
+					tableRadioList.addRowSelectionInterval(selectedFristRow, tableRadioList.getRowCount() - 2);
+					selectedRows = tableRadioList.getSelectedRows();
+					multiBufferRadioListTableModel.moveDown(selectedRows);
+					tableRadioList.addRowSelectionInterval(selectedRows[0] + 1, selectedRows[0] + 1);
 				} else {
-					ArrayList<Double> newRadioList = new ArrayList<>();
-					newRadioList.add(10.0);
-					multiBufferRadioListTableModel.setRadioValues(newRadioList);
+					// 当jtable为空时,添加一条数据，并高亮显示
+					multiBufferRadioListTableModel.setRadioValues(radioLists);
+					tableRadioList.addRowSelectionInterval(tableRadioList.getRowCount() - 1, tableRadioList.getRowCount() - 1);
 				}
 			}
 		});
@@ -143,11 +170,33 @@ public class PanelMultiBufferRadioList extends JPanel {
 			}
 		});
 
-		buttonMoveUp.addActionListener(new ActionListener() {
+		buttonDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int[] selectedRows = tableRadioList.getSelectedRows();
 				if (selectedRows.length > 0) {
+					// 多选删除时，从后往前删除
+					for (int i = selectedRows.length - 1; i > -1; i--) {
+						multiBufferRadioListTableModel.removeRow(selectedRows[i]);
+					}
+					int selectedLastRow = selectedRows[selectedRows.length - 1];
+					if (selectedLastRow <= tableRadioList.getRowCount() - 1) {
+						tableRadioList.addRowSelectionInterval(selectedLastRow, selectedLastRow);
+					} else {
+						if (tableRadioList.getRowCount() != 0) {
+							tableRadioList.addRowSelectionInterval(tableRadioList.getRowCount() - 1, tableRadioList.getRowCount() - 1);
+						}
+					}
+				}
+			}
+		});
+
+		buttonMoveUp.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int[] selectedRows = tableRadioList.getSelectedRows();
+
+				if (selectedRows.length > 0 && selectedRows[0] > 0) {
 					multiBufferRadioListTableModel.moveUp(selectedRows);
 					tableRadioList.clearSelection();
 					for (int selectedRow : selectedRows) {
@@ -164,7 +213,7 @@ public class PanelMultiBufferRadioList extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int[] selectedRows = tableRadioList.getSelectedRows();
-				if (selectedRows.length > 0) {
+				if (selectedRows.length > 0 && selectedRows[selectedRows.length - 1] < tableRadioList.getRowCount() - 1) {
 					multiBufferRadioListTableModel.moveDown(selectedRows);
 					tableRadioList.clearSelection();
 					for (int selectedRow : selectedRows) {
@@ -177,5 +226,4 @@ public class PanelMultiBufferRadioList extends JPanel {
 			}
 		});
 	}
-
 }

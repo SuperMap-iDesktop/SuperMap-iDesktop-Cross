@@ -623,8 +623,8 @@ public class WorkspaceComponentManager extends JComponent {
 						}
 					}
 				} else if (selectedNodeData.getType() == NodeDataType.WORKFLOW) {
-					String name = ((IWorkflow) ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData()).getName();
-					IFormWorkflow iFormProcess = (IFormWorkflow) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.WORKFLOW, name);
+					IDataEntry<String> workflowEntry = (IDataEntry<String>) ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData();
+					CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.WORKFLOW, workflowEntry.getKey());
 				} else if (selectedNodeData.getType() == NodeDataType.SYMBOL_MARKER_LIBRARY) {
 					SymbolDialogFactory.getSymbolDialog(SymbolType.MARKER).showDialog(new GeoStyle());
 				} else if (selectedNodeData.getType() == NodeDataType.SYMBOL_LINE_LIBRARY) {

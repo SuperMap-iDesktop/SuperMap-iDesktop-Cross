@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.CtrlAction;
 
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
+import com.supermap.desktop.Interface.IDataEntry;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.CtrlAction;
@@ -20,8 +21,8 @@ public class CtrlActionOpenWorkflow extends CtrlAction {
 
 	@Override
 	public void run() {
-		String name = (String) ((TreeNodeData) ((DefaultMutableTreeNode) UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getLastSelectedPathComponent()).getUserObject()).getData();
-		CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.WORKFLOW, name);
+		IDataEntry<String> workflowEntry = (IDataEntry<String>) ((TreeNodeData) ((DefaultMutableTreeNode) UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getLastSelectedPathComponent()).getUserObject()).getData();
+		CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.WORKFLOW, workflowEntry.getKey());
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import com.supermap.data.*;
 import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.implement.Output;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -243,7 +244,7 @@ public class Application {
 				@Override
 				public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
 					for (int i = workflowEntries.size() - 1; i >= 0; i--) {
-						removeWorkflowFromTree(workflowEntries.get(i).getKey());
+						removeWorkflowFromTree(workflowEntries.get(i));
 					}
 				}
 			});
@@ -332,24 +333,25 @@ public class Application {
 			String workflowName = element.getAttribute("Name");
 			this.workflowEntries.add(new StringEntry(workflowName, XmlUtilities.nodeToString(element)));
 		}
-		fireWorkflowsChanged(new WorkflowsChangedEvent(WorkflowsChangedEvent.RE_BUILD, getWorkflowNames()));
+		fireWorkflowsChanged(new WorkflowsChangedEvent(WorkflowsChangedEvent.RE_BUILD, this.workflowEntries.toArray(new IDataEntry[this.workflowEntries.size()])));
 	}
 
 	private IWorkflow fireWorkflowInitListener(Element element) {
 		return workflowInitListener.init(element);
 	}
 
-	public void addWorkflow(String workflowName, String workflowEntry) {
-		this.workflowEntries.add(new StringEntry(workflowName, workflowEntry));
+	public void addWorkflow(String workflowName, String workflowValue) {
+		IDataEntry<String> workflowEntry = new StringEntry(workflowName, workflowValue);
+		this.workflowEntries.add(workflowEntry);
 		addWorkflowInWorkspace(workflowEntry);
-		addWorkflowInTree(workflowName);
+		addWorkflowInTree(workflowEntry);
 	}
 
-	private void addWorkflowInWorkspace(String workflowEntry) {
+	private void addWorkflowInWorkspace(IDataEntry<String> workflowEntry) {
 		Document desktopInfoDoc = getDesktopInfoDoc(this.workspace);
 		Element workflowsNode = XmlUtilities.findElementNodeByName(desktopInfoDoc, "Workflows");
 
-		Document tempDoc = XmlUtilities.stringToDocument(workflowEntry);
+		Document tempDoc = XmlUtilities.stringToDocument(workflowEntry.getValue());
 		Element tempWorkflowEntryNode = XmlUtilities.getChildElementNodeByName(tempDoc, "WorkflowEntry");
 		if (tempWorkflowEntryNode == null) {
 			return;
@@ -400,40 +402,86 @@ public class Application {
 	}
 
 
-	private void addWorkflowInTree(String workflowName) {
-		fireWorkflowsChanged(new WorkflowsChangedEvent(WorkflowsChangedEvent.ADD, workflowName));
+	private void addWorkflowInTree(IDataEntry<String> workflowEntry) {
+		fireWorkflowsChanged(new WorkflowsChangedEvent(WorkflowsChangedEvent.ADD, workflowEntry));
 	}
 
-	public void addWorkflow(int index, String workflowName, String workflowEntry) {
-		this.workflowEntries.add(index, new StringEntry(workflowName, workflowEntry));
-		fireWorkflowsChanged(new WorkflowsChangedEvent(WorkflowsChangedEvent.ADD, workflowName));
+	public void addWorkflow(int index, String workflowName, String workflowValue) {
+		IDataEntry<String> workflowEntry = new StringEntry(workflowName, workflowValue);
+		this.workflowEntries.add(index, workflowEntry);
+		fireWorkflowsChanged(new WorkflowsChangedEvent(WorkflowsChangedEvent.ADD, workflowEntry));
 	}
 
 	public void removeWorkflow(String workflowName) {
-		removeWorkflowFromWorkspace(workflowName);
-		removeWorkflowFromTree(workflowName);
+		IDataEntry<String> workflowEntry = getWorkflowEntry(workflowName);
+
+		if (workflowEntry != null) {
+			removeWorkflowFromWorkspace(workflowName);
+			removeWorkflowFromTree(workflowEntry);
+		}
 	}
 
-	private void removeWorkflowFromTree(String workflowName) {
-		removeWorkflowEntry(workflowName);
-		fireWorkflowsChanged(new WorkflowsChangedEvent(WorkflowsChangedEvent.DELETE, workflowName));
+	private void removeWorkflowFromTree(IDataEntry<String> workflowEntry) {
+//		removeWorkflowEntry(workflowEntry);
+		this.workflowEntries.remove(workflowEntry);
+		fireWorkflowsChanged(new WorkflowsChangedEvent(WorkflowsChangedEvent.DELETE, workflowEntry));
 	}
 
-	private void removeWorkflowEntry(String name) {
-		for (int i = 0; i < this.workflowEntries.size(); i++) {
-			IDataEntry dataEntry = this.workflowEntries.get(i);
-			if (dataEntry.getKey().equals(name)) {
-				this.workflowEntries.remove(i);
+//	private void removeWorkflowEntry(String name) {
+//		for (int i = 0; i < this.workflowEntries.size(); i++) {
+//			IDataEntry dataEntry = this.workflowEntries.get(i);
+//			if (dataEntry.getKey().equals(name)) {
+//				this.workflowEntries.remove(i);
+//				break;
+//			}
+//		}
+//	}
+
+	public void modifyWorkflowName(String oldName, String newName) {
+		if (StringUtilities.isNullOrEmpty(oldName) || StringUtilities.isNullOrEmpty(newName)) {
+			return;
+		}
+
+		if (StringUtilities.stringEquals(oldName, newName, false)) {
+			return;
+		}
+
+		IDataEntry<String> workflowEntry = getWorkflowEntry(oldName);
+		if (workflowEntry == null) {
+			return;
+		}
+
+		// 修改内存对象的 name
+		workflowEntry.setKey(newName);
+
+		// 修改保存到工作空间的字符串
+		Document desktopInfoDoc = getDesktopInfoDoc(this.workspace);
+		Element workflowEntryNode = null;
+
+		Element workflowsNode = XmlUtilities.findElementNodeByName(desktopInfoDoc, "Workflows");
+		Element[] workflowsArray = XmlUtilities.getChildElementNodesByName(workflowsNode, "WorkflowEntry");
+		for (Element element : workflowsArray) {
+			if (element.getAttribute("Name").equals(oldName)) {
+				workflowEntryNode = element;
 				break;
 			}
+		}
+
+		if (workflowEntryNode != null) {
+			workflowEntryNode.setAttribute("Name", newName);
+			Element workflowNode = XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Workflow");
+			workflowNode.setAttribute("Name", newName);
+
+			workflowEntry.setValue(XmlUtilities.nodeToString(workflowEntryNode));
+			this.workspace.setDesktopInfo(XmlUtilities.nodeToString(desktopInfoDoc));
 		}
 	}
 
 	private void removeWorkflowFromWorkspace(String workflowName) {
 		Document desktopInfoDoc = getDesktopInfoDoc(this.workspace);
 		Element workflowsNode = XmlUtilities.findElementNodeByName(desktopInfoDoc, "Workflows");
-		Element[] workFlowsArray = XmlUtilities.getChildElementNodesByName(workflowsNode, "WorkflowEntry");
-		for (Element element : workFlowsArray) {
+		Element[] workflowsArray = XmlUtilities.getChildElementNodesByName(workflowsNode, "WorkflowEntry");
+		for (Element element : workflowsArray) {
 			if (element.getAttribute("name").equals(workflowName)) {
 				workflowsNode.removeChild(element);
 				break;
