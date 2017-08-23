@@ -278,8 +278,8 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 						radioListResult, radiusUnit, semicircleLineSegment,
 						isUnion, isAttributeRetained, isRing);
 			}
-			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(resultDataset);
 			fireRunning(new RunningEvent(this, 100, "finished"));
+			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(resultDataset);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 			// 如果失败了，删除新建的数据集

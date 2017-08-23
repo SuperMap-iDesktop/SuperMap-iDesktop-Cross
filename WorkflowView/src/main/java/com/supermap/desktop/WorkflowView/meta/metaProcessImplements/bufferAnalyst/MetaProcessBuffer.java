@@ -142,8 +142,9 @@ public class MetaProcessBuffer extends MetaProcess {
 	}
 
 	private void setComponentEnable() {
-		checkBoxBufferLeft.setEnabled(checkBoxBufferType.isEnabled() && Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()));
-		checkBoxBufferRight.setEnabled(checkBoxBufferType.isEnabled() && Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()));
+		checkBoxBufferLeft.setEnabled(dataset.getSelectedDataset() != null && checkBoxBufferType.isEnabled() && Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()));
+		checkBoxBufferRight.setEnabled(dataset.getSelectedDataset() != null && checkBoxBufferType.isEnabled() && Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()));
+		radioButtonNumOrField.setEnabled(dataset.getSelectedDataset() != null);
 		parameterTextFieldLeftRadius.setEnabled((!checkBoxBufferType.isEnabled() ||
 						!Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) ||
 						(Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) &&
@@ -154,7 +155,7 @@ public class MetaProcessBuffer extends MetaProcess {
 				radioButtonNumOrField.getSelectedItem().equals(radioButtonNumOrField.getItemAt(0)) &&
 				(!Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) ||
 						(Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) &&
-		Boolean.valueOf(checkBoxBufferRight.getSelectedItem().toString())))
+								Boolean.valueOf(checkBoxBufferRight.getSelectedItem().toString())))
 		);
 		comboBoxFieldLeft.setEnabled((!checkBoxBufferType.isEnabled() ||
 						!Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) ||
@@ -193,6 +194,11 @@ public class MetaProcessBuffer extends MetaProcess {
 			comboBoxFieldRight.setFieldName((DatasetVector) datasetVector);
 			checkBoxBufferType.setEnabled(dataset.getSelectedDataset().getType().equals(DatasetType.LINE));
 			setComponentEnable();
+		} else {
+			checkBoxBufferType.setEnabled(false);
+			checkBoxBufferLeft.setEnabled(false);
+			checkBoxBufferRight.setEnabled(false);
+			radioButtonNumOrField.setEnabled(false);
 		}
 		parameterSaveDataset.setDatasetName("result_buffer");
 		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};

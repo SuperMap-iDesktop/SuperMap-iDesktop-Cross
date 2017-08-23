@@ -1,7 +1,10 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 
+import com.supermap.analyst.spatialanalyst.ProximityAnalyst;
+import com.supermap.analyst.spatialanalyst.StatisticsField;
 import com.supermap.analyst.spatialanalyst.StatisticsFieldType;
 import com.supermap.data.*;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -9,6 +12,7 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -145,47 +149,47 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
-//		try {
-//			fireRunning(new RunningEvent(MetaProcessRarefyPoints.this, 0, "start"));
-//
-//			String datasetName = saveDataset.getDatasetName();
-//			datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
-//			DatasetVector src = null;
-//			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
-//				src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
-//			} else {
-//				src = (DatasetVector) dataset.getSelectedItem();
-//			}
-//
-//			ProximityAnalyst.addSteppedListener(steppedListener);
-//			StatisticsField[] statisticsFields = statisticsFieldGroupForRarefyPoints.getSelectedStatisticsFields();
-//			for (int i = 0; i < statisticsFields.length; i++) {
-//				System.out.println(statisticsFields[i].getSourceField());
-//				System.out.println(statisticsFields[i].getResultField());
-//				System.out.println(statisticsFields[i].getMode());
-//			}
-//
-//			boolean isRandomSaveRerefyPoints = false;
-//			if (this.checkBoxRandomSaveRerefyPoints.getSelectedItem().equals("true")) {
-//				isRandomSaveRerefyPoints = true;
-//			}
-//			boolean isSaveOriginField = false;
-//			if (this.checkBoxSaveOriginField.getSelectedItem().equals("true")) {
-//				isSaveOriginField = true;
-//			}
-//
+		try {
+			fireRunning(new RunningEvent(MetaProcessRarefyPoints.this, 0, "start"));
+
+			String datasetName = saveDataset.getDatasetName();
+			datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
+			DatasetVector src = null;
+			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
+				src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+			} else {
+				src = (DatasetVector) dataset.getSelectedItem();
+			}
+
+			ProximityAnalyst.addSteppedListener(steppedListener);
+			StatisticsField[] statisticsFields = statisticsFieldGroupForRarefyPoints.getSelectedStatisticsFields();
+			for (int i = 0; i < statisticsFields.length; i++) {
+				System.out.println(statisticsFields[i].getSourceField());
+				System.out.println(statisticsFields[i].getResultField());
+				System.out.println(statisticsFields[i].getMode());
+			}
+
+			boolean isRandomSaveRerefyPoints = false;
+			if (this.checkBoxRandomSaveRerefyPoints.getSelectedItem().equals("true")) {
+				isRandomSaveRerefyPoints = true;
+			}
+			boolean isSaveOriginField = false;
+			if (this.checkBoxSaveOriginField.getSelectedItem().equals("true")) {
+				isSaveOriginField = true;
+			}
+
 //			Dataset result = ProximityAnalyst.summaryPoints(src, Double.valueOf(this.parameterNumberRadius.getSelectedItem().toString()),
 //					this.dataset.getSelectedDataset().getPrjCoordSys().getCoordUnit(),
 //					statisticsFields, this.saveDataset.getResultDatasource(), datasetName, isRandomSaveRerefyPoints, isSaveOriginField);
 //			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 //			isSuccessful = result != null;
-//			fireRunning(new RunningEvent(MetaProcessRarefyPoints.this, 100, "finished"));
-//
-//		} catch (Exception e) {
-//			Application.getActiveApplication().getOutput().output(e);
-//		} finally {
-//			ProximityAnalyst.removeSteppedListener(steppedListener);
-//		}
+			fireRunning(new RunningEvent(MetaProcessRarefyPoints.this, 100, "finished"));
+
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			ProximityAnalyst.removeSteppedListener(steppedListener);
+		}
 		return isSuccessful;
 	}
 
