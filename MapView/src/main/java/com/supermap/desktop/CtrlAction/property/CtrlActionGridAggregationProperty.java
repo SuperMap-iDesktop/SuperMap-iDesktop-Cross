@@ -13,6 +13,9 @@ import com.supermap.desktop.mapview.layer.propertycontrols.LayerPropertyContaine
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGridAggregation;
+import com.supermap.mapping.LayerHeatmap;
+
+import javax.swing.*;
 
 /**
  * Created by lixiaoyao on 2017/7/18.
@@ -32,10 +35,10 @@ public class CtrlActionGridAggregationProperty extends CtrlAction {
 			if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 				IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 				Layer layer = formMap.getActiveLayers()[0];
-				if (layer.getDataset() != null && layer.getDataset().getType() == DatasetType.POINT ) {
-					if (layer instanceof LayerGridAggregation){
+				if (layer.getDataset() != null && layer.getDataset().getType() == DatasetType.POINT) {
+					if (layer instanceof LayerGridAggregation || layer instanceof LayerHeatmap) {
 
-					}else {
+					} else {
 						result = true;
 					}
 				}
@@ -57,61 +60,37 @@ public class CtrlActionGridAggregationProperty extends CtrlAction {
 			}
 			ColorsComboBox colorsComboBox = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Map_GridAggregation"));
 
-			java.awt.Color color= java.awt.Color.WHITE;
-			java.awt.Color maxColor=colorsComboBox.getSelectedItem().get(0);
+			java.awt.Color color = java.awt.Color.WHITE;
+			java.awt.Color maxColor = colorsComboBox.getSelectedItem().get(0);
 //			System.out.println("maxcolor");
 //			System.out.println(maxColor);
 
 //			System.out.println(colorsComboBox.getSelectedItem().getCount());
-			LayerGridAggregation layerGridAggregation=((IFormMap) activeForm).getMapControl().getMap().getLayers().AddGridAggregation(result.getDataset(), maxColor, color);
-
-//			System.out.println("mincolor");
-//			System.out.println(color);
-//
-//			System.out.println("test 组件");
-//			System.out.println(layerGridAggregation.getMaxColor());
-//			maxColor=new java.awt.Color(123,4,45);
-//			layerGridAggregation.setMaxColor(maxColor);
+			LayerGridAggregation layerGridAggregation = ((IFormMap) activeForm).getMapControl().getMap().getLayers().AddGridAggregation(result.getDataset(), maxColor, color);
+//			GeoStyle lineStyle=new GeoStyle();
+//			lineStyle.setLineColor(Color.WHITE);
+//			lineStyle.setLineWidth(0);
+//			layerGridAggregation.setGridLineStyle(lineStyle);
 //			layerGridAggregation.updateData();
-//			System.out.println("直接设置测试");
-//			System.out.println(layerGridAggregation.getMaxColor());
-//			System.out.println(layerGridAggregation.getMaxColor().getRed());
-//			System.out.println(layerGridAggregation.getMaxColor().getGreen());
-//			System.out.println(layerGridAggregation.getMaxColor().getBlue());
-//
-//
-//			System.out.println("test 空字符串的权重字段");
-//			String text=layerGridAggregation.getWeightField();
-//			if (text.isEmpty()){
-//				System.out.println("空字符串");
-//			}else{
-//				System.out.println("非空");
+//			if (layerGridAggregation.getGridLineStyle()==null){
+//				System.out.println("lineStyle is null");
 //			}
-//			try {
-//				layerGridAggregation.setWeightField(text);
-//				layerGridAggregation.updateData();
-//			}catch (Exception e){
-//				System.out.println("11111111111111111111111111111");
-//				System.out.println(e);
-//				System.out.println("11111111111111111111111111111");
+
+//			TextStyle textStyle=new TextStyle();
+//			textStyle.setBackColor(Color.BLACK);
+//			layerGridAggregation.setGridLabelStyle(textStyle);
+//			layerGridAggregation.updateData();
+//			if (layerGridAggregation.getGridLabelStyle()==null){
+//				System.out.println("textStyle is null");
 //			}
-//
-//			System.out.println("test height:输出height默认值");
-//			System.out.println(layerGridAggregation.getGridHeight());
-//			layerGridAggregation.setGridHeight(12);
-//			layerGridAggregation.updateData();
-//			System.out.println("height设置为12后的结果");
-//			System.out.println(layerGridAggregation.getGridHeight());
-//
-//			System.out.println("test width:输出width默认值");
-//			System.out.println(layerGridAggregation.getGridwidth());
-//			layerGridAggregation.setGridWidth(12);
-//			layerGridAggregation.updateData();
-//			System.out.println("width设置为12后的结果");
-//			System.out.println(layerGridAggregation.getGridwidth());
 
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+				}
+			});
 
-			UICommonToolkit.getLayersManager().getLayersTree().reload();
 			if (layerGridAggregation != null) {
 				final int selectRow = ((IFormMap) activeForm).getMapControl().getMap().getLayers().indexOf(layerGridAggregation.getName());
 				UICommonToolkit.getLayersManager().getLayersTree().setSelectionInterval(selectRow, selectRow);
