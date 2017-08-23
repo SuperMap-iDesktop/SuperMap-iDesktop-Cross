@@ -162,7 +162,8 @@ public class NextStepPane extends JPanel implements IState {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				boolean isGridTileType = comboBoxTileType.getSelectedIndex() == 1 ? true : false;
 				if (true != isGridTileType) {
-					mapCacheBuilder.setTileFormat(TileFormat.BIL);
+					//没有暂时不处理,原本应该为PDF矢量瓦片类型,只是为了界面展示
+					mapCacheBuilder.setTileFormat(TileFormat.JPG);
 				}
 				comboBoxImageType.setEnabled(isGridTileType);
 				comboBoxPixel.setEnabled(isGridTileType);
