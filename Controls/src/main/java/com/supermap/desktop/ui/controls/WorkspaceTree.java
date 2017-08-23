@@ -20,7 +20,6 @@ import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IDataEntry;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
-import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.*;
 import com.supermap.desktop.enums.WindowType;
@@ -192,7 +191,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	private transient WorkspaceTreeDatasetCollectionOrderChangedListener datasetCollectionOrderChangedListener = null;
 
-	private transient WorkflowsChangedListener workFlowsChangedListener = null;
+	private transient WorkflowsChangedListener workflowsChangedListener = null;
 	private EngineType[] UN_SUPPORT_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST, EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS,
 			EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS};
 
@@ -898,7 +897,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		datasetCollectionRefreshListener = new WorkspaceTreeDatasetCollectionRefreshListener();
 
 		datasetCollectionOrderChangedListener = new WorkspaceTreeDatasetCollectionOrderChangedListener();
-		workFlowsChangedListener = new WorkflowsChangedListener() {
+		workflowsChangedListener = new WorkflowsChangedListener() {
 			@Override
 			public void workFlowsChanged(WorkflowsChangedEvent workflowChangedEvent) {
 				String[] workflows = workflowChangedEvent.getWorkflowNames();
@@ -940,7 +939,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	}
 
 	private void addWorkFlowChangedListener() {
-		Application.getActiveApplication().addWorkflowsChangedListener(workFlowsChangedListener);
+		Application.getActiveApplication().addWorkflowsChangedListener(workflowsChangedListener);
 	}
 
 	private void addUpdataToolBarsListener() {
@@ -957,11 +956,11 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		removeLayoutsListener();
 		removeScenesListener();
 		removeUpdataToolBarsListener();
-		removeWorkFlowChangedListener();
+		removeWorkflowChangedListener();
 	}
 
-	private void removeWorkFlowChangedListener() {
-		Application.getActiveApplication().removeWorkflowsChangedListener(workFlowsChangedListener);
+	private void removeWorkflowChangedListener() {
+		Application.getActiveApplication().removeWorkflowsChangedListener(workflowsChangedListener);
 	}
 
 	private void removeUpdataToolBarsListener() {
@@ -1528,15 +1527,6 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(message)) {
 						DatasetUtilities.deleteDataset(datasets);
 					}
-				} else if (data instanceof IWorkflow) {
-					ArrayList<String> workflows = new ArrayList<>();
-					for (TreePath treePath : WorkspaceTree.this.getSelectionPaths()) {
-						DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
-						TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
-						String workflow = (String) selectedNodeData.getData();
-						workflows.add(workflow);
-					}
-					WorkflowUtilities.deleteWorkflowEntry(workflows);
 				} else {
 					NodeDataType type = currentNodeData.getType();
 					if (type.equals(NodeDataType.LAYOUT_NAME)) {
@@ -1563,6 +1553,15 @@ public class WorkspaceTree extends JTree implements IDisposable {
 							sceneNames.add(selectedNodeData.getData().toString());
 						}
 						SceneUIUtilities.deleteScenes(sceneNames.toArray(new String[sceneNames.size()]));
+					} else if (type.equals(NodeDataType.WORKFLOW)) {
+						ArrayList<String> workflows = new ArrayList<>();
+						for (TreePath treePath : WorkspaceTree.this.getSelectionPaths()) {
+							DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+							TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
+							String workflow = (String) selectedNodeData.getData();
+							workflows.add(workflow);
+						}
+						WorkflowUtilities.deleteWorkflowEntry(workflows);
 					}
 				}
 				ToolbarUIUtilities.updataToolbarsState();
