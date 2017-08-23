@@ -112,6 +112,7 @@ public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
 			recordsetResult.getBatch().update();
 			recordsetInput.close();
 			recordsetInput.dispose();
+			isSuccessful = resultDataset != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
 			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
