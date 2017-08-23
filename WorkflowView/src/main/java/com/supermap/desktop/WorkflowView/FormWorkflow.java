@@ -180,6 +180,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 		// 解析 UIConfig
 		formWorkflow = new FormWorkflow(workflow);
+		formWorkflow.setText(name);
 		Element uiConfigNode = XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Locations");
 		WorkflowUIConfig uiConfig = WorkflowUIConfig.serializeFrom(uiConfigNode);
 
