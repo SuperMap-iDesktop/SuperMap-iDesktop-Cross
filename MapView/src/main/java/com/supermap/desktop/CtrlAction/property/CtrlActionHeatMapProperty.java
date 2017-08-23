@@ -16,6 +16,8 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGridAggregation;
 import com.supermap.mapping.LayerHeatmap;
 
+import javax.swing.*;
+
 
 /**
  * Created by lixiaoyao on 2017/7/18.
@@ -34,10 +36,10 @@ public class CtrlActionHeatMapProperty extends CtrlAction {
 			if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 				IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 				Layer layer = formMap.getActiveLayers()[0];
-				if (layer.getDataset() != null && layer.getDataset().getType() == DatasetType.POINT ) {
-					if (layer instanceof LayerHeatmap || layer instanceof LayerGridAggregation){
+				if (layer.getDataset() != null && layer.getDataset().getType() == DatasetType.POINT) {
+					if (layer instanceof LayerHeatmap || layer instanceof LayerGridAggregation) {
 
-					}else {
+					} else {
 						result = true;
 					}
 				}
@@ -58,77 +60,22 @@ public class CtrlActionHeatMapProperty extends CtrlAction {
 			}
 			ColorsComboBox colorsComboBox = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Map_GridAggregation"));
 
-			java.awt.Color color= java.awt.Color.WHITE;
-			java.awt.Color maxColor=colorsComboBox.getSelectedItem().get(0);
-//			System.out.println("maxcolor");
-//			System.out.println(maxColor);
-//			System.out.println(colorsComboBox.getSelectedItem().getCount());
-			LayerHeatmap layerHeatmap=((IFormMap) activeForm).getMapControl().getMap().getLayers().AddHeatmap(result.getDataset(), 20, maxColor, color);
+			java.awt.Color color = java.awt.Color.WHITE;
+			java.awt.Color maxColor = colorsComboBox.getSelectedItem().get(0);
+			LayerHeatmap layerHeatmap = ((IFormMap) activeForm).getMapControl().getMap().getLayers().AddHeatmap(result.getDataset(), 20, maxColor, color);
+
 //			System.out.println(layerHeatmap.getIsUserDef());
 //			System.out.println(layerHeatmap.getInternalMaxValue());
 //			System.out.println(layerHeatmap.getInternalMinValue());
 //			System.out.println(layerHeatmap.getMaxValue());
 //			System.out.println(layerHeatmap.getMinValue());
-			//layerHeatmap.setIsUserDef(false);
-			//layerHeatmap.updateData();
-//			System.out.println("mincolor");
-//			System.out.println(color);
-//
-//			System.out.println("test 组件");
-//			System.out.println(layerHeatmap.getMaxColor());
-//			maxColor=new java.awt.Color(123,4,45);
-//			layerHeatmap.setMaxColor(maxColor);
-//			layerHeatmap.updateData();
-//			System.out.println("直接设置测试");
-//			System.out.println(layerHeatmap.getMaxColor());
-//			System.out.println(layerHeatmap.getMaxColor().getRed());
-//			System.out.println(layerHeatmap.getMaxColor().getGreen());
-//			System.out.println(layerHeatmap.getMaxColor().getBlue());
-//			System.out.println("test 空字符串的权重字段");
-//			String text=layerHeatmap.getWeightField();
-//			if (text.isEmpty()){
-//				System.out.println("空字符串");
-//			}else{
-//				System.out.println("非空");
-//			}
-//			try {
-//				layerHeatmap.setWeightField(text);
-//				layerHeatmap.updateData();
-//			}catch (Exception e){
-//				System.out.println("11111111111111111111111111111");
-//				System.out.println(e);
-//				System.out.println("11111111111111111111111111111");
-//			}
-//			System.out.println("test FuzzyDegree");
-//			System.out.println(layerHeatmap.getFuzzyDegree());
-//			layerHeatmap.setFuzzyDegree(0.5);
-//			layerHeatmap.updateData();
-//			System.out.println("FuzzyDegree设置为0.5后的结果");
-//			System.out.println(layerHeatmap.getFuzzyDegree());
-//
-//			System.out.println("test Intensity");
-//			System.out.println(layerHeatmap.getIntensity());
-//			layerHeatmap.setIntensity(0.9);
-//			layerHeatmap.updateData();
-//			System.out.println("Intensity设置为0.9后的结果");
-//			System.out.println(layerHeatmap.getIntensity());
-//
-//			System.out.println("test maxValue");
-//			System.out.println(layerHeatmap.getMaxValue());
-//			layerHeatmap.setMaxValue(5);
-//			layerHeatmap.updateData();
-//			System.out.println("最大值设置为5后的结果");
-//			System.out.println(layerHeatmap.getMaxValue());
-//
-//			System.out.println("test minValue");
-//			System.out.println(layerHeatmap.getMinValue());
-//			layerHeatmap.setMinValue(2);
-//			layerHeatmap.updateData();
-//			System.out.println("最小值设置为2后的结果");
-//			System.out.println(layerHeatmap.getMinValue());
 
-
-			UICommonToolkit.getLayersManager().getLayersTree().reload();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					UICommonToolkit.getLayersManager().getLayersTree().updateUI();
+				}
+			});
 			if (layerHeatmap != null) {
 				final int selectRow = ((IFormMap) activeForm).getMapControl().getMap().getLayers().indexOf(layerHeatmap.getName());
 				UICommonToolkit.getLayersManager().getLayersTree().setSelectionInterval(selectRow, selectRow);
@@ -136,7 +83,6 @@ public class CtrlActionHeatMapProperty extends CtrlAction {
 
 			IDockbar dockbarPropertyContainer = Application.getActiveApplication().getMainFrame().getDockbarManager()
 					.get(Class.forName(LAYER_PRPERTY_CONTROL_CLASS));
-
 			if (dockbarPropertyContainer != null) {
 				LayerPropertyContainer container = (LayerPropertyContainer) dockbarPropertyContainer.getInnerComponent();
 				if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {

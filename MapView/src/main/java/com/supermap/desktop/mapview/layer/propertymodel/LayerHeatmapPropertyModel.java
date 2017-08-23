@@ -270,7 +270,6 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 	private void initializeProperties(Layer[] layers, IFormMap formMap) {
 		resetProperties();
 		initializeEnabledMap();
-
 		if (layers != null && formMap != null && formMap.getMapControl() != null && formMap.getMapControl().getMap() != null && layers.length > 0) {
 			for (Layer layer : layers) {
 				if (layer == null || layer.isDisposed()) {
@@ -350,6 +349,5 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 		this.propertyEnabled.put(FUZZY_DEGREE, true);
 		this.propertyEnabled.put(INTENSITY, true);
 		this.propertyEnabled.put(IS_SYSTEM_OR_CUSTOM, true);
-//		this.propertyEnabled.put(MAX_VALUE, true);
 	}
 }
