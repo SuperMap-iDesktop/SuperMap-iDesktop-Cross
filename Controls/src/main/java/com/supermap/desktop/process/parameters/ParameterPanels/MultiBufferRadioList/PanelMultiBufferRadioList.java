@@ -20,19 +20,12 @@ import java.util.ArrayList;
 
 /**
  * Created by yuanR on 2017/8/22 0022.
+ * 多重缓冲区半径列表面板
  */
 public class PanelMultiBufferRadioList extends JPanel {
-	public JToolBar getToolBar() {
-		return toolBar;
-	}
 
-	public JTable getTableRadioList() {
-		return tableRadioList;
-	}
+	private static final long serialVersionUID = 1L;
 
-	/**
-	 *
-	 */
 	private JToolBar toolBar;
 	private SmButton buttonBatchAddRadio;
 	private SmButton buttonInsert;
@@ -83,6 +76,7 @@ public class PanelMultiBufferRadioList extends JPanel {
 
 		// 设置列不可移动
 		tableRadioList.getTableHeader().setReorderingAllowed(false);
+		tableRadioList.setRowHeight(23);
 		// 设置列宽
 		TableColumn indexColumn = tableRadioList.getColumnModel().getColumn(MultiBufferRadioListTableModel.COLUMN_INDEX_INDEX);
 		indexColumn.setMinWidth(80);
