@@ -900,15 +900,15 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		workflowsChangedListener = new WorkflowsChangedListener() {
 			@Override
 			public void workFlowsChanged(WorkflowsChangedEvent workflowChangedEvent) {
-				String[] workflows = workflowChangedEvent.getWorkflowNames();
+				IDataEntry<String>[] workflows = workflowChangedEvent.getWorkflowEntries();
 				if (workflowChangedEvent.getType() == WorkflowsChangedEvent.ADD) {
-					for (String workflow : workflows) {
+					for (IDataEntry<String> workflow : workflows) {
 						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workflow, NodeDataType.WORKFLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
 					}
 				} else if (workflowChangedEvent.getType() == WorkflowsChangedEvent.DELETE) {
 					for (int i = treeNodeWorkFlow.getChildCount() - 1; i >= 0; i--) {
 						DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeNodeWorkFlow.getChildAt(i);
-						String workflow = (String) ((TreeNodeData) node.getUserObject()).getData();
+						IDataEntry<String> workflow = (IDataEntry<String>) ((TreeNodeData) node.getUserObject()).getData();
 						if (ArrayUtilities.isArrayContains(workflows, workflow)) {
 							treeModelTemp.removeNodeFromParent(node);
 						}
@@ -917,7 +917,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					for (int i = treeNodeWorkFlow.getChildCount() - 1; i >= 0; i--) {
 						treeModelTemp.removeNodeFromParent((MutableTreeNode) treeNodeWorkFlow.getChildAt(i));
 					}
-					for (String workflow : workflows) {
+					for (IDataEntry<String> workflow : workflows) {
 						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workflow, NodeDataType.WORKFLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
 					}
 				}
@@ -1445,7 +1445,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		ArrayList<IDataEntry<String>> workflows = Application.getActiveApplication().getWorkflowEntries();
 		for (int i = 0; i < workflows.size(); i++) {
 			IDataEntry<String> workflow = workflows.get(i);
-			TreeNodeData treeNodeData = new TreeNodeData(workflow.getKey(), NodeDataType.WORKFLOW);
+			TreeNodeData treeNodeData = new TreeNodeData(workflow, NodeDataType.WORKFLOW);
 			treeNodeWorkFlow.add(new DefaultMutableTreeNode(treeNodeData));
 		}
 		TreePath treePathWorkFlow = new TreePath(treeNodeWorkFlow.getPath());
