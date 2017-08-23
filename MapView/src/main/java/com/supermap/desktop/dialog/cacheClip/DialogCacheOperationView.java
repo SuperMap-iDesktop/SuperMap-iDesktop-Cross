@@ -250,8 +250,8 @@ public class DialogCacheOperationView extends SmDialog {
 			}
 			DialogCacheOperationView.this.dispose();
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
-			mapCacheBuilder.fromConfigFile(file.getPath());
 			mapCacheBuilder.setMap(getMap());
+			mapCacheBuilder.fromConfigFile(file.getPath());
 			DialogMapCacheClipBuilder mapCacheClipBuilder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.ResumeProcessClip, mapCacheBuilder);
 			mapCacheClipBuilder.setComponentsEnabled(false);
 			mapCacheClipBuilder.buttonOk.setEnabled(true);
@@ -270,8 +270,8 @@ public class DialogCacheOperationView extends SmDialog {
 		if (sciFile.exists()) {
 			DialogCacheOperationView.this.dispose();
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
-			mapCacheBuilder.fromConfigFile(sciFile.getPath());
 			mapCacheBuilder.setMap(getMap());
+			mapCacheBuilder.fromConfigFile(sciFile.getPath());
 			DialogMapCacheClipBuilder builder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.SingleUpdateProcessClip, mapCacheBuilder);
 			builder.firstStepPane.textFieldCacheName.setText(mapCacheBuilder.getCacheName());
 			builder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());
