@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.Interface.IDataEntry;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormWorkflow;
 import com.supermap.desktop.Interface.IWorkflow;
@@ -55,12 +56,12 @@ public class WorkflowViewActivator implements BundleActivator {
 	private void newWindowEvent(NewWindowEvent evt) {
 		WindowType type = evt.getNewWindowType();
 		if (type == WindowType.WORKFLOW) {
-			IFormWorkflow formProcess = showProcess(evt.getNewWindowName());
+			IFormWorkflow formProcess = showWorkflow(evt.getNewWindowName());
 			evt.setNewWindow(formProcess);
 		}
 	}
 
-	private IFormWorkflow showProcess(String newWindowName) {
+	private IFormWorkflow showWorkflow(String newWindowName) {
 		FormWorkflow formWorkflow = null;
 
 		try {
@@ -75,10 +76,11 @@ public class WorkflowViewActivator implements BundleActivator {
 			}
 
 			CursorUtilities.setWaitCursor();
-			ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
-			for (IWorkflow workFlow : workFlows) {
-				if (workFlow.getName().equals(newWindowName)) {
-					formWorkflow = new FormWorkflow(workFlow);
+			ArrayList<IDataEntry<String>> workflows = Application.getActiveApplication().getWorkflowEntries();
+			for (IDataEntry<String> workflow : workflows) {
+				if (workflow.getKey().equals(newWindowName)) {
+					formWorkflow = FormWorkflow.serializeFrom(workflow.getValue());
+					formWorkflow.setText(workflow.getKey());
 					break;
 				}
 			}

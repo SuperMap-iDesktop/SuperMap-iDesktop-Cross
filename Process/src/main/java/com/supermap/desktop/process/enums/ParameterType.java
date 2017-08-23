@@ -8,7 +8,7 @@ public class ParameterType {
 	public static final String BUTTON = "Button";
 	public static final String ENUM = "Enum";
 	public static final String TEXTFIELD = "TextField";
-	public static final String DEFAULTVALUETEXTFIELD="DefaultValueTextField";
+	public static final String DEFAULTVALUETEXTFIELD = "DefaultValueTextField";
 	public static final String DOUBLE = "Double";
 	public static final String INT = "Int";
 	public static final String RADIO_BUTTON = "RadioButton";
@@ -27,7 +27,9 @@ public class ParameterType {
 	public static final String COMBINE = "Combine";
 	public static final String COLOR = "Color";
 	public static final String SIMPLE_STATISTICS_FIELD = "SimpleStatisticsField";
+	public static final String MULTI_BUFFER_RADIOLIST = " MultiBufferRadioList";
 	public static final String STATISTICS_FIELD_FOR_RAREFY_POINTS = "StatisticsFieldForRarefyPoints";
+
 
 	public static final String HDFS_PATH = "HDFSPath";
 
@@ -43,10 +45,11 @@ public class ParameterType {
 	public static final String PASSWORD = "password";
 	public static final String NUMBER = "number";
 	public static final String FIELD_GROUP = "fieldGroup";
-	public static final String DATASET_CHOOSER="DatasetChooser";
-	public static final String DATASET_CHOOSE_TABLE="DatasetChooseTable";
-	public static final String SQL_EXPRESSION="SQLExpression";
-	public static final String MULTIFIELDSET="MultiFieldSet";
-	public static final String SHAPE_TYPE="ShapeType";
-	public static final String HISTOGRAM ="Histogram";
+	public static final String DATASET_CHOOSER = "DatasetChooser";
+	public static final String DATASET_CHOOSE_TABLE = "DatasetChooseTable";
+	public static final String SQL_EXPRESSION = "SQLExpression";
+	public static final String MULTIFIELDSET = "MultiFieldSet";
+	public static final String SHAPE_TYPE = "ShapeType";
+	public static final String HISTOGRAM = "Histogram";
+	public static final String COMMON_STATISTIC = "CommonStatistic";
 }

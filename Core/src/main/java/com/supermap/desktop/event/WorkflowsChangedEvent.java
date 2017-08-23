@@ -1,12 +1,12 @@
 package com.supermap.desktop.event;
 
-import com.supermap.desktop.Interface.IWorkflow;
+import com.supermap.desktop.Interface.IDataEntry;
 
 /**
  * @author XiaJT
  */
-public class WorkFlowsChangedEvent {
-	private IWorkflow[] workFlows;
+public class WorkflowsChangedEvent {
+	private IDataEntry<String>[] workflowEntries;
 	private int type;
 
 	public static final int ADD = 1;
@@ -14,17 +14,13 @@ public class WorkFlowsChangedEvent {
 	public static final int MODIFIED = 3;
 	public static final int RE_BUILD = 4;
 
-	public WorkFlowsChangedEvent(int type, IWorkflow... workFlows) {
-		this.workFlows = workFlows;
+	public WorkflowsChangedEvent(int type, IDataEntry<String>... workflowEntries) {
+		this.workflowEntries = workflowEntries;
 		this.type = type;
 	}
 
-	public IWorkflow[] getWorkFlows() {
-		return workFlows;
-	}
-
-	public void setWorkFlows(IWorkflow[] workFlows) {
-		this.workFlows = workFlows;
+	public IDataEntry<String>[] getWorkflowEntries() {
+		return this.workflowEntries;
 	}
 
 	public int getType() {

@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.ipls;
 
+import com.supermap.analyst.spatialanalyst.NeighbourShape;
 import com.supermap.analyst.spatialanalyst.NeighbourShapeType;
 import com.supermap.analyst.spatialanalyst.NeighbourStatisticsParameter;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
@@ -14,13 +15,13 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterShapeType extends AbstractParameter implements ISelectionParameter {
 	@ParameterField(name = "value")
-	private NeighbourStatisticsParameter selectedItem;
+	private NeighbourShape selectedItem;
 
 	@Override
 	public void setSelectedItem(Object item) {
-		if (item instanceof NeighbourStatisticsParameter) {
-			NeighbourStatisticsParameter oldValue = selectedItem;
-			selectedItem = (NeighbourStatisticsParameter) item;
+		if (item instanceof NeighbourShape) {
+			NeighbourShape oldValue = selectedItem;
+			selectedItem = (NeighbourShape) item;
 			firePropertyChangeListener(new PropertyChangeEvent(ParameterShapeType.this, "value", oldValue, selectedItem));
 		}
 	}

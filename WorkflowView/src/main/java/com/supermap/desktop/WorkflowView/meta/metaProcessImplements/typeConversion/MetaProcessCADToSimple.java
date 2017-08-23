@@ -124,7 +124,7 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 				try {
 					geometry = recordsetInput.getGeometry();
 					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-					isSuccessful = convert(recordsetResult, geometry, value);
+					isSuccessful = isSuccessful||convert(recordsetResult, geometry, value);
 				} finally {
 					if (geometry != null) {
 						geometry.dispose();

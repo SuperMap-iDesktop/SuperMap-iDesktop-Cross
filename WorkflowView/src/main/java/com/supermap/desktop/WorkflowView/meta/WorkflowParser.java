@@ -4,38 +4,8 @@ import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.MetaProcessImportFactory;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.EmptyMetaProcess;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessBuffer;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessComputeDistance;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessCostPathLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessCreateDistanceRaster;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessDEMBuild;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessDEMLake;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessExportGrid;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessExportVector;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessFieldIndex;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridRegionAggregation;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessHeatMap;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessISOLine;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessISOPoint;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessISORegion;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessInterpolator;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessKernelDensity;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessOverlayanalystgeo;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessPolygonAggregation;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessProjection;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessRasterToVector;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessSetProjection;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessShortestPath;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessSimpleDensity;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessSingleQuery;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessSpatialIndex;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessSqlQuery;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessSummaryRegion;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessThiessenPolygon;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessThinRaster;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessVectorToRaster;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.*;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.bufferAnalyst.MetaProcessBuffer;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessAggregatePoints;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessAppendFields;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.MetaProcessAppendRow;
@@ -424,7 +394,7 @@ public class WorkflowParser {
 			result = new MetaProcessCreateDistanceRaster();
 		} else if (MetaKeys.GRID_RESAMPLE.equals(key)) {
 			result = new MetaProcessGridResample();
-		} else if (MetaKeys.BASEIC_STATISTIC.equals(key)) {
+		} else if (MetaKeys.BASIC_STATISTIC.equals(key)) {
 			result = new MetaProcessBasicStatistics();
 		} else if (MetaKeys.COMMON_STATISTIC.equals(key)) {
 			result = new MetaProcessCommonStatistics();
@@ -434,6 +404,10 @@ public class WorkflowParser {
 			result = new MetaProcessNeighbourStatistics();
 		} else if (MetaKeys.ZONAL_STATISTICS_ON_RASTER_VALUE.equals(key)) {
 			result = new MetaProcessZonalStatistics();
+		} else if (MetaKeys.SIMPLE_DENSITY_OFFLINE.equals(key)) {
+			result = new MetaProcessSimpleDensityOffline();
+		} else if (MetaKeys.KERNEL_DENSITY_OFFLINE.equals(key)) {
+			result = new MetaProcessKernelDensityOffline();
 		} else {
 			String name = key;
 			try {

@@ -1,4 +1,4 @@
-package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
+package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.bufferAnalyst;
 
 import com.supermap.analyst.spatialanalyst.BufferAnalyst;
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
@@ -138,7 +138,7 @@ public class MetaProcessBuffer extends MetaProcess {
 		);
 		parameterCombineSourceData.setRequisite(true);
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.SIMPLE_VECTOR, parameterCombineSourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATASET,  ProcessOutputResultProperties.getString("String_BufferResult"),DatasetTypes.REGION, parameterCombineResult);
+		this.parameters.addOutputParameters(OUTPUT_DATASET, ProcessOutputResultProperties.getString("String_BufferResult"), DatasetTypes.REGION, parameterCombineResult);
 	}
 
 	private void setComponentEnable() {
@@ -154,7 +154,7 @@ public class MetaProcessBuffer extends MetaProcess {
 				radioButtonNumOrField.getSelectedItem().equals(radioButtonNumOrField.getItemAt(0)) &&
 				(!Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) ||
 						(Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) &&
-								Boolean.valueOf(checkBoxBufferRight.getSelectedItem().toString())))
+		Boolean.valueOf(checkBoxBufferRight.getSelectedItem().toString())))
 		);
 		comboBoxFieldLeft.setEnabled((!checkBoxBufferType.isEnabled() ||
 						!Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) ||
@@ -251,7 +251,7 @@ public class MetaProcessBuffer extends MetaProcess {
 
 	@Override
 	public String getTitle() {
-		return ProcessProperties.getString("String_BufferAnalyse");
+		return ProcessProperties.getString("String_BufferAnalyst");
 	}
 
 	@Override
@@ -329,8 +329,8 @@ public class MetaProcessBuffer extends MetaProcess {
 		return MetaKeys.BUFFER;
 	}
 
-	public static void main(String[] args) {
-		new MetaProcessBuffer();
-	}
+//	public static void main(String[] args) {
+//		new MetaProcessBuffer();
+//	}
 
 }

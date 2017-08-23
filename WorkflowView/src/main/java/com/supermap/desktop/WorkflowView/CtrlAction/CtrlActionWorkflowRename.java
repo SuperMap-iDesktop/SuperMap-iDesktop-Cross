@@ -11,8 +11,8 @@ import javax.swing.tree.TreePath;
 /**
  * @author XiaJT
  */
-public class CtrlActionProcessRename extends CtrlAction {
-	public CtrlActionProcessRename(IBaseItem caller, IForm formClass) {
+public class CtrlActionWorkflowRename extends CtrlAction {
+	public CtrlActionWorkflowRename(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 

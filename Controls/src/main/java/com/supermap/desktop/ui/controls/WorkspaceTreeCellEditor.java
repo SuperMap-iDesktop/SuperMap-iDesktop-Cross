@@ -216,20 +216,19 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 							Application.getActiveApplication().getOutput().output(message);
 						}
 
-					} else if (type == NodeDataType.WORK_FLOW) {
-						IWorkflow currentWorkFlow = (IWorkflow) data;
-						String currentWorkFlowName = currentWorkFlow.getName();
-						if (currentWorkFlowName.equals(stringTextField)) {
+					} else if (type == NodeDataType.WORKFLOW) {
+						IDataEntry<String> currentWorkflowEntry = (IDataEntry<String>) data;
+						if (currentWorkflowEntry.getKey().equals(stringTextField)) {
 							// 点错了
-						} else if (!WorkFlowUtilities.isWorkFlowNameExist(stringTextField)) {
+						} else if (!WorkflowUtilities.isWorkflowNameExist(stringTextField)) {
 							IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 							for (int i = 0; i < formManager.getCount(); i++) {
-								if (formManager.get(i).getWindowType() == WindowType.WORKFLOW && formManager.get(i).getText().equals(currentWorkFlowName)) {
+								if (formManager.get(i).getWindowType() == WindowType.WORKFLOW && formManager.get(i).getText().equals(currentWorkflowEntry.getKey())) {
 									formManager.get(i).setText(stringTextField);
 								}
 							}
-							currentWorkFlow.setName(stringTextField);
-							String message = MessageFormat.format(ControlsProperties.getString("String_RenameWorkFLowSuccess"), currentWorkFlowName, stringTextField);
+							Application.getActiveApplication().modifyWorkflowName(currentWorkflowEntry.getKey(), stringTextField);
+							String message = MessageFormat.format(ControlsProperties.getString("String_RenameWorkFLowSuccess"), currentWorkflowEntry.getKey(), stringTextField);
 							Application.getActiveApplication().getOutput().output(message);
 						} else {
 							String message = MessageFormat.format(ControlsProperties.getString("String_RenameWorkFLowFailed"), stringTextField);

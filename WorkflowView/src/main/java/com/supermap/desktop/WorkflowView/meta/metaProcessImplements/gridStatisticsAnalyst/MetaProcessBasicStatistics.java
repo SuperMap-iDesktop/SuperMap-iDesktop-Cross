@@ -5,12 +5,15 @@ import com.supermap.analyst.spatialanalyst.StatisticsAnalyst;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.parameter.definedClass.StatisticsCollection;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.CommonTypes;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
@@ -24,6 +27,7 @@ import java.beans.PropertyChangeListener;
  */
 public class MetaProcessBasicStatistics extends MetaProcess {
 	private final static String INPUT_DATA = SOURCE_PANEL_DESCRIPTION;
+	private final static String OUTPUT_DATA = "BasicStatisticResult";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
@@ -73,6 +77,7 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 
 		parameters.setParameters(sourceCombine, resultCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceCombine);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_BasicStatisticResult"), CommonTypes.STATISTICS, resultCombine);
 	}
 
 	private void initParameterState() {
@@ -110,7 +115,7 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.BASEIC_STATISTIC;
+		return MetaKeys.BASIC_STATISTIC;
 	}
 
 	@Override
@@ -132,16 +137,23 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 			}
 			BasicStatisticsAnalystResult basicStatisticsAnalystResult = StatisticsAnalyst.basicStatistics(src);
 			isSuccessful = basicStatisticsAnalystResult != null;
-			textFieldMax.setSelectedItem(basicStatisticsAnalystResult.getMax());
-			textFieldMin.setSelectedItem(basicStatisticsAnalystResult.getMin());
-			textFieldAvg.setSelectedItem(basicStatisticsAnalystResult.getMean());
+			double max = basicStatisticsAnalystResult.getMax();
+			double min = basicStatisticsAnalystResult.getMin();
+			double mean = basicStatisticsAnalystResult.getMean();
 			double std = basicStatisticsAnalystResult.getStandardDeviation();
+			double var = Math.pow(std, 2);
+			textFieldMax.setSelectedItem(max);
+			textFieldMin.setSelectedItem(min);
+			textFieldAvg.setSelectedItem(mean);
 			textFieldStd.setSelectedItem(std);
-			textFieldVar.setSelectedItem(Math.pow(std, 2));
+			textFieldVar.setSelectedItem(var);
+			StatisticsCollection statisticsCollection = new StatisticsCollection(max, min, mean, std, var);
 			if (Boolean.valueOf(checkBoxShow.getSelectedItem().toString())) {
 				int groupCount = Integer.parseInt(numberGroupCount.getSelectedItem().toString());
 				histogram.setSelectedItem(StatisticsAnalyst.createHistogram(src,groupCount));
 			}
+			isSuccessful = statisticsCollection != null;
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(statisticsCollection);
 			fireRunning(new RunningEvent(this,100,"finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
