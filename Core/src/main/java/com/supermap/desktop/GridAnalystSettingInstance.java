@@ -14,6 +14,6 @@ public class GridAnalystSettingInstance {
 
 	private GridAnalystSettingInstance() {
 		GridAnalystSetting gridAnalystSetting = new GridAnalystSetting();
-//		gridAnalystSetting.
+
 	}
 }
