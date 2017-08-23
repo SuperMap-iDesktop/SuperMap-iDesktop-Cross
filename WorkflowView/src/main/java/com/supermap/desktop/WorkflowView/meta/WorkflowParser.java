@@ -6,6 +6,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.MetaProcessImportFactory;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.bufferAnalyst.MetaProcessBuffer;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.bufferAnalyst.MetaProcessMultiBuffer;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun.*;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridDistance.MetaProcessSurfacePathLine;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.*;
@@ -155,6 +156,8 @@ public class WorkflowParser {
 		}
 		if (MetaKeys.BUFFER.equals(key)) {
 			result = new MetaProcessBuffer();
+		} else if (MetaKeys.MULTIBUFFER.equals(key)) {
+			result = new MetaProcessMultiBuffer();
 		} else if (MetaKeys.HEAT_MAP.equals(key)) {
 			result = new MetaProcessHeatMap();
 		} else if (MetaKeys.SIMPLE_DENSITY.equals(key)) {
