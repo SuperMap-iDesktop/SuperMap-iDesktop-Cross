@@ -101,11 +101,11 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 			DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
 			datasetVectorInfo.setName(outputData.getResultDatasource().getDatasets().getAvailableDatasetName(outputData.getDatasetName()));
 			if (src.getType().equals(DatasetType.POINTEPS)) {
-				datasetVectorInfo.setType(DatasetType.POINTEPS);
+				datasetVectorInfo.setType(DatasetType.POINT);
 			} else if (src.getType().equals(DatasetType.LINEEPS)) {
-				datasetVectorInfo.setType(DatasetType.LINEEPS);
+				datasetVectorInfo.setType(DatasetType.LINE);
 			} else if (src.getType().equals(DatasetType.REGIONEPS)) {
-				datasetVectorInfo.setType(DatasetType.REGIONEPS);
+				datasetVectorInfo.setType(DatasetType.REGION);
 			}
 			DatasetVector resultDataset = outputData.getResultDatasource().getDatasets().create(datasetVectorInfo);
 
@@ -129,7 +129,7 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 				try {
 					geometry = recordsetInput.getGeometry();
 					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-					isSuccessful = convert(recordsetResult, geometry, value);
+					convert(recordsetResult, geometry, value);
 				} finally {
 					if (geometry != null) {
 						geometry.dispose();
@@ -140,6 +140,7 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 			recordsetResult.getBatch().update();
 			recordsetInput.close();
 			recordsetInput.dispose();
+			isSuccessful = recordsetResult != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
 			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
