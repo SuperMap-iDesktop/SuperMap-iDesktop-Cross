@@ -9,8 +9,8 @@ import com.supermap.desktop.implement.CtrlAction;
 /**
  * @author XiaJT
  */
-public class CtrlActionSave extends CtrlAction {
-	public CtrlActionSave(IBaseItem caller, IForm formClass) {
+public class CtrlActionWorkflowSave extends CtrlAction {
+	public CtrlActionWorkflowSave(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 

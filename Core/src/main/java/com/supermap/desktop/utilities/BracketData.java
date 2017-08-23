@@ -9,8 +9,8 @@ import com.supermap.desktop.Interface.ICloneable;
  */
 class BracketData implements ICloneable {
 
-	private char left;
-	private char right;
+	char left;
+	char right;
 
 	BracketData(char left, char right) {
 		this.left = left;

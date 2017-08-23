@@ -2,12 +2,11 @@ package com.supermap.desktop.WorkflowView;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.Interface.IDataEntry;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormWorkflow;
 import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.WorkflowView.graphics.ScrollGraphCanvas;
-import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovingEvent;
-import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.WorkflowView.graphics.events.GraphSelectChangedListener;
 import com.supermap.desktop.WorkflowView.graphics.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.WorkflowView.graphics.graphs.ProcessGraph;
@@ -18,15 +17,10 @@ import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.Selection;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.FormActivatedListener;
-import com.supermap.desktop.event.FormClosedEvent;
-import com.supermap.desktop.event.FormClosedListener;
-import com.supermap.desktop.event.FormClosingEvent;
-import com.supermap.desktop.event.FormClosingListener;
-import com.supermap.desktop.event.FormDeactivatedListener;
-import com.supermap.desktop.event.FormShownEvent;
-import com.supermap.desktop.event.FormShownListener;
+import com.supermap.desktop.event.*;
+import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.process.events.*;
 import com.supermap.desktop.process.tasks.TasksManager;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -102,12 +96,32 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			}
 		});
 
-		this.canvas.getGraphStorage().addGraphRemovingListener(new GraphRemovingListener() {
+		this.workflow.addWorkflowChangeListener(new WorkflowChangeListener() {
 			@Override
-			public void graphRemoving(GraphRemovingEvent e) {
+			public void workflowChange(WorkflowChangeEvent e) {
+				if (e.getType() == WorkflowChangeEvent.ADDED
+						|| e.getType() == WorkflowChangeEvent.ADDING
+						|| e.getType() == WorkflowChangeEvent.REMOVED
+						|| e.getType() == WorkflowChangeEvent.REMOVING) {
+					isNeedSave = true;
+				}
+			}
+		});
+
+		this.workflow.addRelationAddedListener(new RelationAddedListener<IProcess>() {
+			@Override
+			public void relationAdded(RelationAddedEvent<IProcess> e) {
 				isNeedSave = true;
 			}
 		});
+
+		this.workflow.addRelationRemovedListener(new RelationRemovedListener<IProcess>() {
+			@Override
+			public void relationRemoved(RelationRemovedEvent<IProcess> e) {
+				isNeedSave = true;
+			}
+		});
+
 		this.canvas.getActionsManager().addCanvasActionProcessListener(new CanvasActionProcessListener() {
 			@Override
 			public void canvasActionProcess(CanvasActionProcessEvent e) {
@@ -156,17 +170,17 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	public static FormWorkflow serializeFrom(String description) {
 		FormWorkflow formWorkflow = null;
 		Document doc = XmlUtilities.stringToDocument(description);
-		Element workflowEntryNode = (Element) XmlUtilities.getChildElementNodeByName(doc, "WorkflowEntry");
+		Element workflowEntryNode = XmlUtilities.getChildElementNodeByName(doc, "WorkflowEntry");
 		String name = workflowEntryNode.getAttribute("Name");
 
 		// 处理 Workflow
 		Workflow workflow = new Workflow(name);
-		Element workflowNode = (Element) XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Workflow");
+		Element workflowNode = XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Workflow");
 		workflow.serializeFrom(workflowNode);
 
 		// 解析 UIConfig
 		formWorkflow = new FormWorkflow(workflow);
-		Element uiConfigNode = (Element) XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Locations");
+		Element uiConfigNode = XmlUtilities.getChildElementNodeByName(workflowEntryNode, "Locations");
 		WorkflowUIConfig uiConfig = WorkflowUIConfig.serializeFrom(uiConfigNode);
 
 		if (uiConfig != null) {
@@ -179,11 +193,12 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	public boolean save() {
 		boolean result = false;
 		int index = -1;
-		ArrayList<IWorkflow> workflows = Application.getActiveApplication().getWorkflows();
-		for (IWorkflow workFlow : workflows) {
-			if (workFlow.getName().equals(this.getText())) {
-				index = workflows.indexOf(workFlow);
-				Application.getActiveApplication().removeWorkflow(workFlow);
+		ArrayList<IDataEntry<String>> workflows = Application.getActiveApplication().getWorkflowEntries();
+		for (int i = 0; i < workflows.size(); i++) {
+			IDataEntry<String> entry = workflows.get(i);
+			if (entry.getKey().equals(getText())) {
+				index = i;
+				Application.getActiveApplication().removeWorkflow(entry.getKey());
 				break;
 			}
 		}
@@ -191,12 +206,12 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		if (index == -1) {
 			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 			SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
-			dialogSaveAs.setDescription(WorkflowViewProperties.getString("String_NewWorkFlowName"));
+			dialogSaveAs.setDescription(WorkflowViewProperties.getString("String_NewWorkflowName"));
 			dialogSaveAs.setCurrentFormName(getText());
 			dialogSaveAs.setTitle(WorkflowViewProperties.getString("String_SaveWorkflow"));
 
-			for (IWorkflow workFlow : Application.getActiveApplication().getWorkflows()) {
-				dialogSaveAs.addExistNames(workFlow.getName());
+			for (int i = 0; i < Application.getActiveApplication().getWorkflowEntries().size(); i++) {
+				dialogSaveAs.addExistNames(Application.getActiveApplication().getWorkflowEntries().get(i).getKey());
 			}
 
 			for (int i = 0; i < formManager.getCount(); i++) {
@@ -206,11 +221,11 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			}
 			if (dialogSaveAs.showDialog() == DialogResult.OK) {
 				this.setText(dialogSaveAs.getCurrentFormName());
-				Application.getActiveApplication().addWorkflow(getWorkflow());
+				Application.getActiveApplication().addWorkflow(getText(), serializeTo());
 				result = true;
 			}
 		} else {
-			Application.getActiveApplication().addWorkflow(index, getWorkflow());
+			Application.getActiveApplication().addWorkflow(index, getText(), serializeTo());
 			result = true;
 		}
 		isNeedSave = !result;
@@ -220,10 +235,10 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	public boolean saveAs(boolean isNewWindow) {
 		boolean result = false;
 		SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
-		dialogSaveAs.setDescription(WorkflowViewProperties.getString("String_NewWorkFlowName"));
+		dialogSaveAs.setDescription(WorkflowViewProperties.getString("String_NewWorkflowName"));
 		dialogSaveAs.setCurrentFormName(getText());
-		for (IWorkflow workFlow : Application.getActiveApplication().getWorkflows()) {
-			dialogSaveAs.addExistNames(workFlow.getName());
+		for (IDataEntry<String> workflow : Application.getActiveApplication().getWorkflowEntries()) {
+			dialogSaveAs.addExistNames(workflow.getKey());
 		}
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 		for (int i = 0; i < formManager.getCount(); i++) {
@@ -231,10 +246,10 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 				dialogSaveAs.addExistNames(formManager.get(i).getText());
 			}
 		}
-		dialogSaveAs.setTitle(WorkflowViewProperties.getString("Sting_SaveAsWorkFlow"));
+		dialogSaveAs.setTitle(WorkflowViewProperties.getString("Sting_SaveAsWorkflow"));
 		if (dialogSaveAs.showDialog() == DialogResult.OK) {
 			this.setText(dialogSaveAs.getCurrentFormName());
-			Application.getActiveApplication().addWorkflow(getWorkflow());
+			Application.getActiveApplication().addWorkflow(getText(), serializeTo());
 			result = true;
 		}
 		isNeedSave = !result;

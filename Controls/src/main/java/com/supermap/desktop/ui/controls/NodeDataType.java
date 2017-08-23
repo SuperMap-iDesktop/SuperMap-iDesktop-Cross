@@ -56,9 +56,9 @@ public class NodeDataType extends Enum {
 
     public static final NodeDataType DATASET_RELATION_SHIP = new NodeDataType(1021, 1021);
 
-	public static final NodeDataType WORK_FLOWS = new NodeDataType(1022, 1022);
+	public static final NodeDataType WORKFLOWS = new NodeDataType(1022, 1022);
 
-	public static final NodeDataType WORK_FLOW = new NodeDataType(1023, 1023);
+	public static final NodeDataType WORKFLOW = new NodeDataType(1023, 1023);
 
     public static final NodeDataType DATASET_VECTOR_ITEM = new NodeDataType(1024, 1024);
 

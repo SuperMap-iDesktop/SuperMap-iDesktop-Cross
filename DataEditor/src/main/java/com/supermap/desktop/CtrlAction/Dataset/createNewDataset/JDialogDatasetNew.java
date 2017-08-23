@@ -13,7 +13,10 @@ import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.ComboBoxCellEditor;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.CharsetUtilities;
+import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.EncodeTypeUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -22,8 +25,6 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 /**
@@ -47,7 +48,7 @@ public class JDialogDatasetNew extends SmDialog {
 	private SmButton buttonCancel;
 
 	private PanelDatasetNewProperty propertyPanel;
-
+	private PanelModel panelModel;
 	private DatasetTypeComboBox comboBoxDatasetType;
 
 	public JDialogDatasetNew() {
@@ -60,7 +61,7 @@ public class JDialogDatasetNew extends SmDialog {
 
 	private void initComponents() {
 		this.setModal(true);
-		setSize(700, 420);
+		setSize(750, 450);
 		this.setLocationRelativeTo(null);
 		toolBar = new JToolBar();
 		toolBar.setFloatable(false);
@@ -75,6 +76,7 @@ public class JDialogDatasetNew extends SmDialog {
 		buttonCancel = new SmButton();
 
 		propertyPanel = new PanelDatasetNewProperty();
+		panelModel = new PanelModel(propertyPanel);
 
 		this.componentList.add(this.buttonOk);
 		this.componentList.add(this.buttonCancel);
@@ -88,13 +90,11 @@ public class JDialogDatasetNew extends SmDialog {
 		this.newDatasetTableModel = new NewDatasetTableModel();
 		this.table.setModel(newDatasetTableModel);
 
-
 		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_TARGET_DATASOURCE).setCellRenderer(new TableDataCellRender());
-		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DatasetType).setCellRenderer(new TableDataCellRender());
+		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DATASET_TYPE).setCellRenderer(new TableDataCellRender());
 
-
-		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_EncodeType).setCellEditor(new EncodingTypeCellEditor());
-		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_Charset).setCellEditor(new CharsetTypeCellEditor());
+//		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_EncodeType).setCellEditor(new EncodingTypeCellEditor());
+//		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_Charset).setCellEditor(new CharsetTypeCellEditor());
 
 		int count = Application.getActiveApplication().getWorkspace().getDatasources().getCount();
 		String[] datasources = new String[count];
@@ -125,7 +125,7 @@ public class JDialogDatasetNew extends SmDialog {
 
 		DefaultCellEditor datasetTypeCellEditor = new DefaultCellEditor(comboBoxDatasetType);
 		datasetTypeCellEditor.setClickCountToStart(2);
-		TableColumn datasetTypeColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DatasetType);
+		TableColumn datasetTypeColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DATASET_TYPE);
 		datasetTypeColumn.setCellEditor(datasetTypeCellEditor);
 		datasetTypeColumn.setPreferredWidth(100);
 //		datasetTypeColumn.setCellRenderer(renderer);
@@ -139,7 +139,7 @@ public class JDialogDatasetNew extends SmDialog {
 
 		ComboBoxCellEditor addToCellEditor = new ComboBoxCellEditor();
 		addToCellEditor.getComboBox().setModel(new DefaultComboBoxModel<Object>(addTos.toArray(new String[addTos.size()])));
-		TableColumn addToColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_WindowMode);
+		TableColumn addToColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_WINDOWMODE);
 		addToCellEditor.setClickCountToStart(2);
 		addToColumn.setCellEditor(addToCellEditor);
 	}
@@ -150,9 +150,10 @@ public class JDialogDatasetNew extends SmDialog {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		panel.add(toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST));
-		panel.add(new JScrollPane(table), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
-		panel.add(panelButton, new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 0, 0, 0));
-		panel.add(propertyPanel, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
+		panel.add(new JScrollPane(table), new GridBagConstraintsHelper(0, 1, 1, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
+		panel.add(panelModel, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
+		panel.add(propertyPanel, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER));
+		panel.add(panelButton, new GridBagConstraintsHelper(0, 3, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 0, 0, 0));
 
 		this.setLayout(new GridBagLayout());
 		this.add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10));
@@ -247,33 +248,161 @@ public class JDialogDatasetNew extends SmDialog {
 			public void valueChanged(ListSelectionEvent e) {
 				checkButtonState();
 				// 根据选择的行，设置其“设置”面板联动
-				if (table.getSelectedRow() != -1 && table.getSelectedRow() <= table.getRowCount() - 2) {
-					propertyPanel.setPanelEnable(true);
-					if (newDatasetTableModel.getDatasetBean(table.getSelectedRow()) != null) {
-						propertyPanel.initStates(newDatasetTableModel.getDatasetBean(table.getSelectedRow()));
-					}
-				}
-
-				if (table.getSelectedRow() == table.getRowCount() - 1) {
-					propertyPanel.setPanelEnable(false);
-				}
+				int[] selectedRow = table.getSelectedRows();
+				resetPropertyPanel(selectedRow);
+				resetModelPanel(selectedRow);
 			}
 		});
 
+//		// 给comboBoxDatasetType添加监听-yuanR2017.8.16
+//		this.comboBoxDatasetType.addItemListener(new ItemListener() {
+//			@Override
+//			public void itemStateChanged(ItemEvent e) {
+//				DatasetTypeComboBox datasetTypeComboBox = (DatasetTypeComboBox) e.getSource();
+//				// 当选择了影像数据集类型，弹出设置面板
+//				if (datasetTypeComboBox.getSelectedDatasetTypeName().contains(DatasetTypeUtilities.toString(DatasetType.IMAGE))) {
+//					// 给新建影像数据集面板属性设置类，并打开面板
+////					JDialogNewImageDataset dialogNewGridDataset = new JDialogNewImageDataset(newDatasetTableModel.getDatasetBean(table.getSelectedRow()));
+////					dialogNewGridDataset.showDialog();
+//				}
+//			}
+//		});
+	}
 
-		// 给comboBoxDatasetType添加监听-yuanR2017.8.16
-		this.comboBoxDatasetType.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				DatasetTypeComboBox datasetTypeComboBox = (DatasetTypeComboBox) e.getSource();
-				// 当选择了影像数据集类型，弹出设置面板
-				if (datasetTypeComboBox.getSelectedDatasetTypeName().contains(DatasetTypeUtilities.toString(DatasetType.IMAGE))) {
-					// 给新建影像数据集面板属性设置类，并打开面板
-//					JDialogNewImageDataset dialogNewGridDataset = new JDialogNewImageDataset(newDatasetTableModel.getDatasetBean(table.getSelectedRow()));
-//					dialogNewGridDataset.showDialog();
+	/**
+	 * 重设属性面板
+	 */
+	private void resetPropertyPanel(int[] selectedRow) {
+		if (selectedRow.length > 0) {
+			// 是否都为相同数据集
+			Boolean isSameDatasetType = true;
+			// 是否不含影像数据集
+			Boolean isNotImageDataset = true;
+			// 是否只有线面数据集
+			Boolean isOnlyLineRegionDataset = true;
+			// 是否选中最后一行
+			Boolean isSelectedLastRow = true;
+			DatasetType selectedDatasetType = newDatasetTableModel.getDatasetBean(selectedRow[0]).getDatasetType();
+			// 根据选中情况进行三态控制
+			for (int i = 0; i < selectedRow.length; i++) {
+				DatasetType datasetType = newDatasetTableModel.getDatasetBean(selectedRow[i]).getDatasetType();
+				if (!(datasetType.equals(selectedDatasetType))) {
+					isSameDatasetType = false;
+				}
+				if (selectedRow[i] > table.getRowCount() - 2) {
+					isSelectedLastRow = false;
+				}
+				if (datasetType.equals(DatasetType.GRID) || datasetType.equals(DatasetType.IMAGE)) {
+					isNotImageDataset = false;
+				}
+				if (!(datasetType.equals(DatasetType.LINE) || datasetType.equals(DatasetType.REGION))) {
+					isOnlyLineRegionDataset = false;
 				}
 			}
-		});
+			propertyPanel.setPanelEnable(false);
+			if (isSameDatasetType && isSelectedLastRow) {
+				propertyPanel.setPanelEnable(true);
+				startPropertyBatchSet(selectedRow);
+			} else if (isNotImageDataset && isOnlyLineRegionDataset && isSelectedLastRow) {
+				// 选中的项不包含栅格和影像数据集，此时字符集控件可用
+				propertyPanel.getComboboxEncodingType().setEnabled(true);
+				propertyPanel.getComboboxCharest().setEnabled(true);
+				startPropertyBatchSet(selectedRow);
+			} else if (isNotImageDataset && isSelectedLastRow) {
+				// 选中的项不包含栅格和影像数据集，此时字符集控件可用
+				propertyPanel.getComboboxCharest().setEnabled(true);
+				startPropertyBatchSet(selectedRow);
+			} else {
+				propertyPanel.setPanelEnable(false);
+			}
+		}
+	}
+
+	/**
+	 * 重设模版面板
+	 */
+	private void resetModelPanel(int[] selectedRow) {
+		if (selectedRow.length > 0) {
+			// 是否不含影像/栅格数据集
+			Boolean isNotImageDataset = true;
+			// 是否全为影像数据集
+			Boolean isAllImageDataset = true;
+			// 是否全为栅格数据集
+			Boolean isAllGridDataset = true;
+			// 是否选中最后一行
+			Boolean isSelectedLastRow = true;
+			// 根据选中情况进行三态控制
+			for (int i = 0; i < selectedRow.length; i++) {
+				DatasetType datasetType = newDatasetTableModel.getDatasetBean(selectedRow[i]).getDatasetType();
+				if (!datasetType.equals(DatasetType.GRID)) {
+					isAllGridDataset = false;
+				}
+				if (!datasetType.equals(DatasetType.IMAGE)) {
+					isAllImageDataset = false;
+				}
+				if (selectedRow[i] > table.getRowCount() - 2) {
+					isSelectedLastRow = false;
+				}
+				if (datasetType.equals(DatasetType.GRID) || datasetType.equals(DatasetType.IMAGE)) {
+					isNotImageDataset = false;
+				}
+			}
+			panelModel.setModelPanelEnabled(false);
+			if (isAllImageDataset && isSelectedLastRow) {
+				// 设置数据集下拉列表类型
+				panelModel.setDatasetSupportedDatasetTypes(new DatasetType[]{DatasetType.IMAGE});
+				panelModel.setRadioButtonEnabled(true);
+				startModelBatchSet(selectedRow);
+			} else if (isNotImageDataset && isSelectedLastRow) {
+				// 设置数据集下拉列表类型
+				// todo 类型待补充
+				panelModel.setDatasetSupportedDatasetTypes(new DatasetType[]{DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT,
+						DatasetType.CAD, DatasetType.TABULAR, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D});
+				panelModel.setRadioButtonEnabled(true);
+				startModelBatchSet(selectedRow);
+			} else if (isAllGridDataset && isSelectedLastRow) {
+				// 设置数据集下拉列表类型
+				panelModel.setDatasetSupportedDatasetTypes(new DatasetType[]{DatasetType.GRID});
+				panelModel.setRadioButtonEnabled(true);
+				startModelBatchSet(selectedRow);
+			} else {
+				panelModel.setModelPanelEnabled(false);
+			}
+		}
+	}
+
+	/**
+	 * 开始属性面板的批量设置
+	 *
+	 * @param selectedRow
+	 */
+	public void startPropertyBatchSet(int[] selectedRow) {
+		ArrayList<NewDatasetBean> newDatasetBeans = new ArrayList();
+		for (int i = 0; i < selectedRow.length; i++) {
+			newDatasetBeans.add((newDatasetTableModel.getDatasetBean(selectedRow[i])));
+		}
+		propertyPanel.initStates(newDatasetBeans);
+	}
+
+	/**
+	 * 开始模版面板的批量设置
+	 *
+	 * @param selectedRow
+	 */
+	public void startModelBatchSet(int[] selectedRow) {
+		Boolean isSameModelState = true;
+		Boolean modelState;
+		ArrayList<NewDatasetBean> newDatasetBeans = new ArrayList();
+		// 获得第一个数据是否含有模版，true为含有模版
+		modelState = Boolean.valueOf(newDatasetTableModel.getDatasetBean(selectedRow[0]).getTemplateDataset() != null);
+		for (int i = 0; i < selectedRow.length; i++) {
+			newDatasetBeans.add((newDatasetTableModel.getDatasetBean(selectedRow[i])));
+			// 判断后续数据含有模版情况是否与第一个相同
+			if (modelState != Boolean.valueOf(newDatasetTableModel.getDatasetBean(selectedRow[i]).getTemplateDataset() != null)) {
+				isSameModelState = false;
+			}
+		}
+		panelModel.initStates(newDatasetBeans, isSameModelState);
 	}
 
 	private void checkButtonState() {
@@ -289,24 +418,24 @@ public class JDialogDatasetNew extends SmDialog {
 			int[] selectedRows = table.getSelectedRows();
 			Object dialogTargetDatasource = dialogSetAll.getTargetDatasource();
 			Object datasetType = dialogSetAll.getDatasetType();
-			Object encodingType = dialogSetAll.getEncodingType();
-			Object charset = dialogSetAll.getCharset();
+//			Object encodingType = dialogSetAll.getEncodingType();
+//			Object charset = dialogSetAll.getCharset();
 			Object addToMap = dialogSetAll.getAddtoMap();
 			for (int i : selectedRows) {
 				if (dialogTargetDatasource != null) {
 					newDatasetTableModel.setValueAt(dialogTargetDatasource, i, NewDatasetTableModel.COLUMN_INDEX_TARGET_DATASOURCE);
 				}
 				if (datasetType != null) {
-					newDatasetTableModel.setValueAt(datasetType, i, NewDatasetTableModel.COLUMN_INDEX_DatasetType);
+					newDatasetTableModel.setValueAt(datasetType, i, NewDatasetTableModel.COLUMN_INDEX_DATASET_TYPE);
 				}
-				if (encodingType != null) {
-					newDatasetTableModel.setValueAt(encodingType, i, NewDatasetTableModel.COLUMN_INDEX_EncodeType);
-				}
-				if (charset != null) {
-					newDatasetTableModel.setValueAt(charset, i, NewDatasetTableModel.COLUMN_INDEX_Charset);
-				}
+//				if (encodingType != null) {
+//					newDatasetTableModel.setValueAt(encodingType, i, NewDatasetTableModel.COLUMN_INDEX_EncodeType);
+//				}
+//				if (charset != null) {
+//					newDatasetTableModel.setValueAt(charset, i, NewDatasetTableModel.COLUMN_INDEX_Charset);
+//				}
 				if (addToMap != null) {
-					newDatasetTableModel.setValueAt(addToMap, i, NewDatasetTableModel.COLUMN_INDEX_WindowMode);
+					newDatasetTableModel.setValueAt(addToMap, i, NewDatasetTableModel.COLUMN_INDEX_WINDOWMODE);
 				}
 			}
 		}
@@ -319,7 +448,7 @@ public class JDialogDatasetNew extends SmDialog {
 	private void initComponentStates() {
 		checkboxAutoClose.setSelected(true);
 		newDatasetTableModel.addEmptyRow();
-		newDatasetTableModel.setValueAt("", 0, NewDatasetTableModel.COLUMN_INDEX_DatasetName);
+		newDatasetTableModel.setValueAt("", 0, NewDatasetTableModel.COLUMN_INDEX_DATASET_NAME);
 	}
 
 	public class CharsetTypeCellEditor extends DefaultCellEditor {
@@ -389,7 +518,7 @@ public class JDialogDatasetNew extends SmDialog {
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 			comboboxEncodingType.removeAll();
 
-			Object datasetType = table.getValueAt(row, NewDatasetTableModel.COLUMN_INDEX_DatasetType);
+			Object datasetType = table.getValueAt(row, NewDatasetTableModel.COLUMN_INDEX_DATASET_TYPE);
 			ArrayList<String> tempEncodeType = new ArrayList<>();
 			tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
 			if (DatasetType.LINE == datasetType || DatasetType.REGION == datasetType) {

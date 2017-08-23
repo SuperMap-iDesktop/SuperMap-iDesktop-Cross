@@ -5,7 +5,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.*;
-import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
@@ -47,8 +46,8 @@ public class WorkspaceComponentManager extends JComponent {
 	private static final int DATASET_TYPE_IMAGECOLLECTIONITEM = 32;
 	private static final int DATASET_TYPE_GRIDCOLLECTIONITEM = 64;
 	private static final int DATASET_TYPE_TOPOLOGY = 128;
-	private JPopupMenu workFlowsPopupMenu;
-	private JPopupMenu workFlowPopupMenu;
+	private JPopupMenu workflowsPopupMenu;
+	private JPopupMenu workflowPopupMenu;
 
 	public WorkspaceComponentManager() {
 
@@ -348,12 +347,12 @@ public class WorkspaceComponentManager extends JComponent {
 
 	private JPopupMenu datasetImageCollectionItemPopupMenu = null;
 
-	public JPopupMenu getWorkFlowsPopupMenu() {
-		return workFlowsPopupMenu;
+	public JPopupMenu getWorkflowsPopupMenu() {
+		return workflowsPopupMenu;
 	}
 
-	public JPopupMenu getWorkFlowPopupMenu() {
-		return workFlowPopupMenu;
+	public JPopupMenu getWorkflowPopupMenu() {
+		return workflowPopupMenu;
 	}
 
 	/**
@@ -396,8 +395,8 @@ public class WorkspaceComponentManager extends JComponent {
 				this.symbolLinePopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuSymbolLine");
 				this.symbolFillPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuSymbolFill");
 				this.datasetGroupPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetGroup");
-				this.workFlowPopupMenu = (JPopupMenu) manager.get("Supermap.Desktop.UI.WorkspaceControlManager.ContextMenuWorkFlow");
-				this.workFlowsPopupMenu = (JPopupMenu) manager.get("Supermap.Desktop.UI.WorkspaceControlManager.ContextMenuWorkFlows");
+				this.workflowPopupMenu = (JPopupMenu) manager.get("Supermap.Desktop.UI.WorkspaceControlManager.ContextMenuWorkflow");
+				this.workflowsPopupMenu = (JPopupMenu) manager.get("Supermap.Desktop.UI.WorkspaceControlManager.ContextMenuWorkflows");
 
 				this.isContextMenuBuilded = true;
 			}
@@ -623,9 +622,9 @@ public class WorkspaceComponentManager extends JComponent {
 							UICommonToolkit.getLayersManager().setScene(null);
 						}
 					}
-				} else if (selectedNodeData.getType() == NodeDataType.WORK_FLOW) {
-					String name = ((IWorkflow) ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData()).getName();
-					IFormWorkflow iFormProcess = (IFormWorkflow) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.WORKFLOW, name);
+				} else if (selectedNodeData.getType() == NodeDataType.WORKFLOW) {
+					String name = (String) ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData();
+					CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.WORKFLOW, name);
 				} else if (selectedNodeData.getType() == NodeDataType.SYMBOL_MARKER_LIBRARY) {
 					SymbolDialogFactory.getSymbolDialog(SymbolType.MARKER).showDialog(new GeoStyle());
 				} else if (selectedNodeData.getType() == NodeDataType.SYMBOL_LINE_LIBRARY) {
@@ -678,11 +677,11 @@ public class WorkspaceComponentManager extends JComponent {
 				} else if (type == NodeDataType.SCENE_NAME) {
 					popupMenu = this.scenePopupMenu;
 					break;
-				} else if (type == NodeDataType.WORK_FLOWS) {
-					popupMenu = this.workFlowsPopupMenu;
+				} else if (type == NodeDataType.WORKFLOWS) {
+					popupMenu = this.workflowsPopupMenu;
 					break;
-				} else if (type == NodeDataType.WORK_FLOW) {
-					popupMenu = this.workFlowPopupMenu;
+				} else if (type == NodeDataType.WORKFLOW) {
+					popupMenu = this.workflowPopupMenu;
 					break;
 				} else if (type == NodeDataType.RESOURCES) {
 					popupMenu = this.resourcesPopupMenu;

@@ -13,142 +13,32 @@ package com.supermap.desktop.ui.controls;
  * @version 6.0
  */
 
-import com.supermap.data.CollectionDatasetInfo;
-import com.supermap.data.CursorType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetCollectionChangeOrderEvent;
-import com.supermap.data.DatasetCollectionChangeOrderListener;
-import com.supermap.data.DatasetCollectionEvent;
-import com.supermap.data.DatasetCollectionListener;
-import com.supermap.data.DatasetCollectionRemoveAllEvent;
-import com.supermap.data.DatasetCollectionRemoveAllListener;
-import com.supermap.data.DatasetCollectionRenameEvent;
-import com.supermap.data.DatasetCollectionRenameListener;
-import com.supermap.data.DatasetCollectionRequireRefreshEvent;
-import com.supermap.data.DatasetCollectionRequireRefreshListener;
-import com.supermap.data.DatasetCreatedEvent;
-import com.supermap.data.DatasetCreatedListener;
-import com.supermap.data.DatasetDeletedAllEvent;
-import com.supermap.data.DatasetDeletedAllListener;
-import com.supermap.data.DatasetDeletedEvent;
-import com.supermap.data.DatasetDeletedListener;
-import com.supermap.data.DatasetDeletingEvent;
-import com.supermap.data.DatasetDeletingListener;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetGridCollection;
-import com.supermap.data.DatasetImage;
-import com.supermap.data.DatasetImageCollection;
-import com.supermap.data.DatasetRenamedEvent;
-import com.supermap.data.DatasetRenamedListener;
-import com.supermap.data.DatasetTopology;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVolume;
-import com.supermap.data.Datasets;
-import com.supermap.data.Datasource;
-import com.supermap.data.DatasourceAliasModifiedEvent;
-import com.supermap.data.DatasourceAliasModifiedListener;
-import com.supermap.data.DatasourceClosedEvent;
-import com.supermap.data.DatasourceClosedListener;
-import com.supermap.data.DatasourceConnectionInfo;
-import com.supermap.data.DatasourceCreatedEvent;
-import com.supermap.data.DatasourceCreatedListener;
-import com.supermap.data.DatasourceOpenedEvent;
-import com.supermap.data.DatasourceOpenedListener;
-import com.supermap.data.Datasources;
-import com.supermap.data.EngineType;
-import com.supermap.data.IDisposable;
-import com.supermap.data.LayoutAddedEvent;
-import com.supermap.data.LayoutAddedListener;
-import com.supermap.data.LayoutClearedEvent;
-import com.supermap.data.LayoutClearedListener;
-import com.supermap.data.LayoutRemovedEvent;
-import com.supermap.data.LayoutRemovedListener;
-import com.supermap.data.LayoutRenamedEvent;
-import com.supermap.data.LayoutRenamedListener;
-import com.supermap.data.Layouts;
-import com.supermap.data.MapAddedEvent;
-import com.supermap.data.MapAddedListener;
-import com.supermap.data.MapClearedEvent;
-import com.supermap.data.MapClearedListener;
-import com.supermap.data.MapRemovedEvent;
-import com.supermap.data.MapRemovedListener;
-import com.supermap.data.MapRenamedEvent;
-import com.supermap.data.MapRenamedListener;
-import com.supermap.data.Maps;
-import com.supermap.data.Recordset;
-import com.supermap.data.Resources;
-import com.supermap.data.SceneAddedEvent;
-import com.supermap.data.SceneAddedListener;
-import com.supermap.data.SceneClearedEvent;
-import com.supermap.data.SceneClearedListener;
-import com.supermap.data.SceneRemovedEvent;
-import com.supermap.data.SceneRemovedListener;
-import com.supermap.data.SceneRenamedEvent;
-import com.supermap.data.SceneRenamedListener;
-import com.supermap.data.Scenes;
-import com.supermap.data.SymbolFillLibrary;
-import com.supermap.data.SymbolLineLibrary;
-import com.supermap.data.SymbolMarkerLibrary;
-import com.supermap.data.TopologyDatasetRelationItems;
-import com.supermap.data.Workspace;
-import com.supermap.data.WorkspaceClosedEvent;
-import com.supermap.data.WorkspaceClosedListener;
-import com.supermap.data.WorkspaceConnectionInfo;
-import com.supermap.data.WorkspaceCreatedEvent;
-import com.supermap.data.WorkspaceCreatedListener;
-import com.supermap.data.WorkspaceOpenedEvent;
-import com.supermap.data.WorkspaceOpenedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.Interface.IDataEntry;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
-import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilities.DatasourceOpenFileUtilties;
-import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
-import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
-import com.supermap.desktop.controls.utilities.SceneUIUtilities;
-import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
+import com.supermap.desktop.controls.utilities.*;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.WorkFlowsChangedEvent;
+import com.supermap.desktop.event.WorkflowsChangedEvent;
 import com.supermap.desktop.event.WorkflowsChangedListener;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilities.ArrayUtilities;
-import com.supermap.desktop.utilities.DatasetUtilities;
-import com.supermap.desktop.utilities.DatasourceUtilities;
-import com.supermap.desktop.utilities.LayoutUtilities;
-import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.WorkFlowUtilities;
-import com.supermap.desktop.utilities.WorkspaceUtilities;
+import com.supermap.desktop.utilities.*;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceContext;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DragSourceListener;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -301,7 +191,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	private transient WorkspaceTreeDatasetCollectionOrderChangedListener datasetCollectionOrderChangedListener = null;
 
-	private transient WorkflowsChangedListener workFlowsChangedListener = null;
+	private transient WorkflowsChangedListener workflowsChangedListener = null;
 	private EngineType[] UN_SUPPORT_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST, EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS,
 			EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS};
 
@@ -891,13 +781,13 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		addScene();
 
 		// 添加工作流节点
-//		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
-//		TreeNodeData WorkFlowNode = new TreeNodeData(workFlows, NodeDataType.WORK_FLOWS);
-//		treeNodeWorkFlow = new DefaultMutableTreeNode(WorkFlowNode);
-//		if (isWorkFlowNodeVisible) {
-//			treeNodeWorkspace.add(treeNodeWorkFlow);
-//		}
-//		addWorkFlow();
+		ArrayList<IDataEntry<String>> workflows = Application.getActiveApplication().getWorkflowEntries();
+		TreeNodeData WorkFlowNode = new TreeNodeData(workflows, NodeDataType.WORKFLOWS);
+		treeNodeWorkFlow = new DefaultMutableTreeNode(WorkFlowNode);
+		if (isWorkFlowNodeVisible) {
+			treeNodeWorkspace.add(treeNodeWorkFlow);
+		}
+		addWorkflow();
 
 		// 添加资源库节点
 		TreeNodeData resourcesNodeData = new TreeNodeData(resources, NodeDataType.RESOURCES);
@@ -1007,28 +897,28 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		datasetCollectionRefreshListener = new WorkspaceTreeDatasetCollectionRefreshListener();
 
 		datasetCollectionOrderChangedListener = new WorkspaceTreeDatasetCollectionOrderChangedListener();
-		workFlowsChangedListener = new WorkflowsChangedListener() {
+		workflowsChangedListener = new WorkflowsChangedListener() {
 			@Override
-			public void workFlowsChanged(WorkFlowsChangedEvent workFlowChangedEvent) {
-				IWorkflow[] workFlows = workFlowChangedEvent.getWorkFlows();
-				if (workFlowChangedEvent.getType() == WorkFlowsChangedEvent.ADD) {
-					for (IWorkflow workFlow : workFlows) {
-						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workFlow, NodeDataType.WORK_FLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
+			public void workFlowsChanged(WorkflowsChangedEvent workflowChangedEvent) {
+				String[] workflows = workflowChangedEvent.getWorkflowNames();
+				if (workflowChangedEvent.getType() == WorkflowsChangedEvent.ADD) {
+					for (String workflow : workflows) {
+						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workflow, NodeDataType.WORKFLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
 					}
-				} else if (workFlowChangedEvent.getType() == WorkFlowsChangedEvent.DELETE) {
+				} else if (workflowChangedEvent.getType() == WorkflowsChangedEvent.DELETE) {
 					for (int i = treeNodeWorkFlow.getChildCount() - 1; i >= 0; i--) {
 						DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeNodeWorkFlow.getChildAt(i);
-						IWorkflow workFlow = (IWorkflow) ((TreeNodeData) node.getUserObject()).getData();
-						if (ArrayUtilities.isArrayContains(workFlows, workFlow)) {
+						String workflow = (String) ((TreeNodeData) node.getUserObject()).getData();
+						if (ArrayUtilities.isArrayContains(workflows, workflow)) {
 							treeModelTemp.removeNodeFromParent(node);
 						}
 					}
-				} else if (workFlowChangedEvent.getType() == WorkFlowsChangedEvent.RE_BUILD) {
+				} else if (workflowChangedEvent.getType() == WorkflowsChangedEvent.RE_BUILD) {
 					for (int i = treeNodeWorkFlow.getChildCount() - 1; i >= 0; i--) {
 						treeModelTemp.removeNodeFromParent((MutableTreeNode) treeNodeWorkFlow.getChildAt(i));
 					}
-					for (IWorkflow workFlow : workFlows) {
-						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workFlow, NodeDataType.WORK_FLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
+					for (String workflow : workflows) {
+						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workflow, NodeDataType.WORKFLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
 					}
 				}
 			}
@@ -1049,7 +939,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	}
 
 	private void addWorkFlowChangedListener() {
-		Application.getActiveApplication().addWorkflowsChangedListener(workFlowsChangedListener);
+		Application.getActiveApplication().addWorkflowsChangedListener(workflowsChangedListener);
 	}
 
 	private void addUpdataToolBarsListener() {
@@ -1066,11 +956,11 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		removeLayoutsListener();
 		removeScenesListener();
 		removeUpdataToolBarsListener();
-		removeWorkFlowChangedListener();
+		removeWorkflowChangedListener();
 	}
 
-	private void removeWorkFlowChangedListener() {
-		Application.getActiveApplication().removeWorkflowsChangedListener(workFlowsChangedListener);
+	private void removeWorkflowChangedListener() {
+		Application.getActiveApplication().removeWorkflowsChangedListener(workflowsChangedListener);
 	}
 
 	private void removeUpdataToolBarsListener() {
@@ -1551,10 +1441,11 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		this.expandPath(treePathScenes);
 	}
 
-	private void addWorkFlow() {
-		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkflows();
-		for (IWorkflow workFlow : workFlows) {
-			TreeNodeData treeNodeData = new TreeNodeData(workFlow, NodeDataType.WORK_FLOW);
+	private void addWorkflow() {
+		ArrayList<IDataEntry<String>> workflows = Application.getActiveApplication().getWorkflowEntries();
+		for (int i = 0; i < workflows.size(); i++) {
+			IDataEntry<String> workflow = workflows.get(i);
+			TreeNodeData treeNodeData = new TreeNodeData(workflow.getKey(), NodeDataType.WORKFLOW);
 			treeNodeWorkFlow.add(new DefaultMutableTreeNode(treeNodeData));
 		}
 		TreePath treePathWorkFlow = new TreePath(treeNodeWorkFlow.getPath());
@@ -1636,15 +1527,6 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(message)) {
 						DatasetUtilities.deleteDataset(datasets);
 					}
-				} else if (data instanceof IWorkflow) {
-					ArrayList<IWorkflow> workflows = new ArrayList<>();
-					for (TreePath treePath : WorkspaceTree.this.getSelectionPaths()) {
-						DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
-						TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
-						IWorkflow workflow = (IWorkflow) selectedNodeData.getData();
-						workflows.add(workflow);
-					}
-					WorkFlowUtilities.deleteProcess(workflows);
 				} else {
 					NodeDataType type = currentNodeData.getType();
 					if (type.equals(NodeDataType.LAYOUT_NAME)) {
@@ -1671,6 +1553,15 @@ public class WorkspaceTree extends JTree implements IDisposable {
 							sceneNames.add(selectedNodeData.getData().toString());
 						}
 						SceneUIUtilities.deleteScenes(sceneNames.toArray(new String[sceneNames.size()]));
+					} else if (type.equals(NodeDataType.WORKFLOW)) {
+						ArrayList<String> workflows = new ArrayList<>();
+						for (TreePath treePath : WorkspaceTree.this.getSelectionPaths()) {
+							DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+							TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
+							String workflow = (String) selectedNodeData.getData();
+							workflows.add(workflow);
+						}
+						WorkflowUtilities.deleteWorkflowEntry(workflows);
 					}
 				}
 				ToolbarUIUtilities.updataToolbarsState();

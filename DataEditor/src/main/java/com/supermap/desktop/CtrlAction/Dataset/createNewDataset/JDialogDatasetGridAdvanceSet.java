@@ -19,6 +19,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * Created by yuanR on 2017/8/17 0017.
@@ -28,7 +29,7 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private PanelBasicInfoSet panelBasicInfoSet;
+	private PanelBasicPropertySet panelBasicInfoSet;
 	private PanelResolution panelResolution;
 	private PanelDatasetGridProperty panelDatasetGridProperty;
 	private PanelDatasetBounds panelDatasetBounds;
@@ -36,7 +37,8 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
 
-	private NewDatasetBean newDatasetBean;
+	ArrayList<NewDatasetBean> datasetBeans;
+	private NewDatasetBean datasetBeanFrist;
 	private DatasetGridImageExtraBean gridImageExtraDatasetBean;
 
 	private boolean isDatasetNameSuitable = true;
@@ -84,21 +86,22 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 		setOKButtonEnabled(isDatasetNameSuitable, isWidthHeightSuitable, this.isMaxMinValueSuitable);
 	}
 
-	public JDialogDatasetGridAdvanceSet(NewDatasetBean newDatasetBean) {
-		this.newDatasetBean = newDatasetBean;
-		this.gridImageExtraDatasetBean = this.newDatasetBean.getGridImageExtraDatasetBean();
+	public JDialogDatasetGridAdvanceSet(ArrayList<NewDatasetBean> datasetBeans) {
+		this.datasetBeans = datasetBeans;
+		this.datasetBeanFrist = datasetBeans.get(0);
+		this.gridImageExtraDatasetBean = this.datasetBeanFrist.getGridImageExtraDatasetBean();
 		initComponents();
 		initLayout();
 		initStates();
 		registerEvent();
 		this.setTitle(DataEditorProperties.getString("String_NewDatasetGrid"));
 		this.setModal(true);
-		setSize(700, 400);
+		setSize(750, 460);
 		this.setLocationRelativeTo(null);
 	}
 
 	private void initStates() {
-		panelBasicInfoSet.initStates(newDatasetBean);
+		panelBasicInfoSet.initStates(datasetBeanFrist);
 
 		double x = this.gridImageExtraDatasetBean.getRectangle().getWidth() / this.gridImageExtraDatasetBean.getWidth();
 		double y = this.gridImageExtraDatasetBean.getRectangle().getHeight() / this.gridImageExtraDatasetBean.getHeight();
@@ -116,7 +119,7 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 
 	private void initComponents() {
 
-		panelBasicInfoSet = new PanelBasicInfoSet(DatasetType.GRID);
+		panelBasicInfoSet = new PanelBasicPropertySet(DatasetType.GRID);
 		panelResolution = new PanelResolution();
 		panelResolution.setBorder(BorderFactory.createTitledBorder(DataEditorProperties.getString("String_NewDataset_RatioInfo")));
 		panelDatasetGridProperty = new PanelDatasetGridProperty();
@@ -135,19 +138,19 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 		groupLayout.setAutoCreateGaps(true);
 		centerPanel.setLayout(groupLayout);
 		//@formatter:off
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
-				.addGroup(groupLayout.createSequentialGroup()
+		groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
 						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 								.addComponent(this.panelBasicInfoSet)
 								.addComponent(this.panelDatasetGridProperty))
 						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 								.addComponent(this.panelDatasetBounds)
-								.addComponent(this.panelResolution))));
+								.addComponent(this.panelResolution))
+		);
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.panelBasicInfoSet)
-						.addComponent(this.panelDatasetBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(this.panelDatasetBounds))
+				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.panelDatasetGridProperty)
 						.addComponent(this.panelResolution))
 		);
@@ -242,18 +245,22 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 
 		Rectangle2D rectangle2D = panelDatasetBounds.getRangeBound();
 
-		newDatasetBean.setDatasource(datasource);
-		newDatasetBean.setDatasetName(name);
-		newDatasetBean.setDatasetType(DatasetType.GRID);
-		newDatasetBean.setEncodeType(encodeType);
-		newDatasetBean.getGridImageExtraDatasetBean().setBlockSizeOption(blockSizeOption);
-		newDatasetBean.getGridImageExtraDatasetBean().setPixelFormatGrid(pixelFormat);
-		newDatasetBean.getGridImageExtraDatasetBean().setHeight(height);
-		newDatasetBean.getGridImageExtraDatasetBean().setWidth(width);
-		newDatasetBean.getGridImageExtraDatasetBean().setMaxValue(maxValue);
-		newDatasetBean.getGridImageExtraDatasetBean().setMinValue(minValue);
-		newDatasetBean.getGridImageExtraDatasetBean().setNoValue(noValue);
-		newDatasetBean.getGridImageExtraDatasetBean().setRectangle(rectangle2D);
+
+		for (int i = 0; i < datasetBeans.size(); i++) {
+			datasetBeans.get(i).setDatasource(datasource);
+			datasetBeans.get(i).setDatasetName(name);
+			datasetBeans.get(i).setDatasetType(DatasetType.GRID);
+			datasetBeans.get(i).setEncodeType(encodeType);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setBlockSizeOption(blockSizeOption);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setPixelFormatGrid(pixelFormat);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setHeight(height);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setWidth(width);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setMaxValue(maxValue);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setMinValue(minValue);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setNoValue(noValue);
+			datasetBeans.get(i).getGridImageExtraDatasetBean().setRectangle(rectangle2D);
+		}
+
 
 		setDialogResult(DialogResult.OK);
 		this.dispose();
@@ -392,6 +399,4 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 			}
 		}
 	}
-
-
 }

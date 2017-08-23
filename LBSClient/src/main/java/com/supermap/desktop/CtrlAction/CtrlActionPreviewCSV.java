@@ -27,7 +27,7 @@ public class CtrlActionPreviewCSV extends CtrlAction {
 				int[] selectRows = control.getSelectRows();
 				for (int selectRow : selectRows) {
 					HDFSDefine hdfsDefine = (HDFSDefine) ((HDFSTableModel) control.getTable().getModel()).getRowTagAt(selectRow);
-					if (hdfsDefine.getName().endsWith(".csv")) {
+					if (hdfsDefine.getName().toLowerCase().endsWith(".csv")) {
 						hdfsDefineResult = hdfsDefine;
 						break;
 					}

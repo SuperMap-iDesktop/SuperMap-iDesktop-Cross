@@ -4,13 +4,12 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.ui.UICommonToolkit;
 
 /**
  * @author XiaJT
  */
-public class CtrlActionProcessSaveAs extends CtrlAction {
-	public CtrlActionProcessSaveAs(IBaseItem caller, IForm formClass) {
+public class CtrlActionWorkflowSaveAs extends CtrlAction {
+	public CtrlActionWorkflowSaveAs(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 
@@ -21,6 +20,6 @@ public class CtrlActionProcessSaveAs extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		return UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getSelectionCount() == 1;
+		return true;
 	}
 }

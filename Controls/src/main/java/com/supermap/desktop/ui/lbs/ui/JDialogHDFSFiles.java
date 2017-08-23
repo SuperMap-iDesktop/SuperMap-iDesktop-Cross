@@ -6,6 +6,7 @@ import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.lbs.HDFSDefine;
 import com.supermap.desktop.lbs.WebHDFS;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -50,7 +51,7 @@ public class JDialogHDFSFiles extends SmDialog {
 			tableMouseClicked(e);
 			if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
 				HDFSDefine hdfsDefine = (HDFSDefine) ((HDFSTableModel) table.getModel()).getRowTagAt(panelHDFSFiles.getSelectRow());
-				menuPreviewCsv.setEnabled(hdfsDefine.getName().endsWith(".csv"));
+				menuPreviewCsv.setEnabled(hdfsDefine.getName().toLowerCase().endsWith(".csv"));
 				tablePopupMenu.show(table, e.getX(), e.getY());
 			}
 			SwingUtilities.invokeLater(new Runnable() {
@@ -82,7 +83,28 @@ public class JDialogHDFSFiles extends SmDialog {
 					url += "/";
 				}
 				WebHDFS.resultURL = url + name;
-				dialogResult = DialogResult.OK;
+				if (name.toLowerCase().endsWith("csv")) {
+					String metaFileName = name.substring(0, name.length() - 3) + "meta";
+					boolean isMetaFileExist = false;
+					for (int i = 0; i < table.getModel().getRowCount(); i++) {
+						String currentName = ((HDFSDefine) ((HDFSTableModel) table.getModel()).getRowTagAt(i)).getName();
+						if (currentName.equalsIgnoreCase(metaFileName)) {
+							isMetaFileExist = true;
+							break;
+						}
+					}
+					if (!isMetaFileExist) {
+						UICommonToolkit.showMessageDialog(ControlsProperties.getString("String_MetaFileDontExist"));
+						HDFSDefine hdfsDefine = (HDFSDefine) ((HDFSTableModel) table.getModel()).getRowTagAt(panelHDFSFiles.getSelectRow());
+						DialogResult dialogResult = new JDialogPreviewCSV(panelHDFSFiles.getURL(), hdfsDefine, ((HDFSTableModel) table.getModel())).showDialog();
+						if (dialogResult == DialogResult.OK) {
+							panelHDFSFiles.refresh();
+						} else {
+							return;
+						}
+					}
+				}
+				JDialogHDFSFiles.this.dialogResult = DialogResult.OK;
 				removeAndDispose();
 			}
 		}
@@ -125,7 +147,7 @@ public class JDialogHDFSFiles extends SmDialog {
 		this.panelHDFSFiles = new JPanelHDFSFiles();
 		this.buttonOK = ComponentFactory.createButtonOK();
 		this.buttonCancel = ComponentFactory.createButtonCancel();
-		menuPreviewCsv = new JMenuItem(ControlsProperties.getString("String_Preview"));
+		menuPreviewCsv = new JMenuItem(ControlsProperties.getString("String_Property"));
 		tablePopupMenu = new JPopupMenu();
 		tablePopupMenu.add(menuPreviewCsv);
 	}
