@@ -1,8 +1,11 @@
 package com.supermap.desktop.process.parameters.ParameterPanels.MultiBufferRadioList;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.dialog.BatchAddDailog;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CoreResources;
@@ -101,8 +104,8 @@ public class PanelMultiBufferRadioList extends JPanel {
 		toolBar.add(buttonMoveDown);
 
 		this.setLayout(new GridBagLayout());
-		this.add(toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 10));
-		this.add(new JScrollPane(tableRadioList), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+		this.add(toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(new JScrollPane(tableRadioList), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 0, 0, 0));
 	}
 
 	private void initResources() {
@@ -120,9 +123,17 @@ public class PanelMultiBufferRadioList extends JPanel {
 		buttonBatchAddRadio.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				BatchAddDailog batchAddColorTableDailog = new BatchAddDailog(10, 30, 3, (JFrame) Application.getActiveApplication().getMainFrame(), true);
+				DialogResult result = batchAddColorTableDailog.showDialog();
+				if (result == DialogResult.OK && batchAddColorTableDailog.getResultKeys() != null) {
+					double[] doubles = batchAddColorTableDailog.getResultKeys();
+					for (int i = 0; i < doubles.length; i++) {
+						radioLists.add(doubles[i]);
+					}
+					multiBufferRadioListTableModel.setRadioValues(radioLists);
+				}
 			}
 		});
-
 
 		buttonInsert.addActionListener(new ActionListener() {
 			@Override

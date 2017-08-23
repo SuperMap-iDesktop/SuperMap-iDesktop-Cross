@@ -92,7 +92,6 @@ public class MultiBufferRadioListTableModel extends DefaultTableModel {
 		fireTableRowsDeleted(row, row);
 	}
 
-
 	public void setRadioValues(ArrayList<Double> radioValues) {
 		this.radioValues = radioValues;
 		fireTableDataChanged();

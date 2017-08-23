@@ -23,6 +23,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 /**
  * Created by yuanR on 2017/8/22 0022.
@@ -86,7 +87,7 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 		// 类型-只对线数据集有效
 		radioButtonFlatOrRound = new ParameterRadioButton();
 		ParameterDataNode round = new ParameterDataNode(ProcessProperties.getString("String_CheckBox_BufferRound"), BUFFERTYPE_ROUND);
-		ParameterDataNode flat = new ParameterDataNode(ProcessProperties.getString("String_CheckBox_BufferFlat"), BUFFERTYPE_ROUND);
+		ParameterDataNode flat = new ParameterDataNode(ProcessProperties.getString("String_CheckBox_BufferFlat"), BUFFERTYPE_FLAT);
 		radioButtonFlatOrRound.setItems(new ParameterDataNode[]{round, flat});
 		comboBoxBufferLeftOrRight = new ParameterComboBox(ProcessProperties.getString("Label_LineBufferDirection"));
 		comboBoxBufferLeftOrRight.addItem(new ParameterDataNode(ProcessProperties.getString("String_CheckBox_Left"), true));
@@ -220,6 +221,8 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
+		Datasource resultDatasource = null;
+		String resultName = null;
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 
@@ -232,12 +235,20 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 				sourceDatasetVector = (DatasetVector) dataset.getSelectedItem();
 			}
 			// 线缓冲类型
-			int bufferType = (Integer) radioButtonFlatOrRound.getSelectedItem();
+			int bufferType = (Integer) ((ParameterDataNode) radioButtonFlatOrRound.getSelectedItem()).getData();
+			boolean isLeft = false;
 			if (bufferType == BUFFERTYPE_FLAT) {
-				boolean isLeft = "true".equalsIgnoreCase((String) comboBoxBufferLeftOrRight.getSelectedItem());
+				isLeft = (Boolean) ((ParameterDataNode) comboBoxBufferLeftOrRight.getSelectedItem()).getData();
 			}
 			//缓冲半径列表
-			Double[] doubles = new Double[5];
+			ArrayList<Double> radioLists = parameterMultiBufferRadioList.getRadioLists();
+			double[] radioListResult = null;
+			if (radioLists != null && radioLists.size() > 0) {
+				radioListResult = new double[radioLists.size()];
+				for (int i = 0; i < radioLists.size(); i++) {
+					radioListResult[i] = radioLists.get(i);
+				}
+			}
 			BufferRadiusUnit radiusUnit = (BufferRadiusUnit) parameterRadiusUnit.getSelectedData();
 			// 参数面板属性
 			boolean isUnion = "true".equalsIgnoreCase((String) parameterUnionBuffer.getSelectedItem());
@@ -245,26 +256,36 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 			boolean isAttributeRetained = "true".equalsIgnoreCase((String) parameterRetainAttribute.getSelectedItem());
 			int semicircleLineSegment = Integer.valueOf(((String) parameterTextFieldSemicircleLineSegment.getSelectedItem()));
 			// 结果面板属性
-			Datasource resultDatasource = parameterSaveDataset.getResultDatasource();
-			String resultName = parameterSaveDataset.getDatasetName();
+			resultDatasource = parameterSaveDataset.getResultDatasource();
+			resultName = resultDatasource.getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName());
 
 			// 创建一个新的数据集用于接受多重缓冲分析结果
 			DatasetVectorInfo vectorInfo = new DatasetVectorInfo();
-			vectorInfo.setName(resultDatasource.getDatasets().getAvailableDatasetName(resultName));
+			vectorInfo.setName(resultName);
 			vectorInfo.setType(DatasetType.REGION);
 			DatasetVector resultDataset = resultDatasource.getDatasets().create(vectorInfo);
 			resultDataset.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
 
 			BufferAnalyst.addSteppedListener(this.steppedListener);
 			if (sourceDatasetVector.getType().equals(DatasetType.LINE) && bufferType == BUFFERTYPE_FLAT) {
-//				isSuccessful = BufferAnalyst.createLineOneSideMultiBuffer();
+				isSuccessful = BufferAnalyst.createLineOneSideMultiBuffer(
+						sourceDatasetVector, resultDataset,
+						radioListResult, radiusUnit, semicircleLineSegment,
+						isLeft, isUnion, isAttributeRetained, isRing);
 			} else {
-//				isSuccessful = BufferAnalyst.createMultiBuffer();
+				isSuccessful = BufferAnalyst.createMultiBuffer(
+						sourceDatasetVector, resultDataset,
+						radioListResult, radiusUnit, semicircleLineSegment,
+						isUnion, isAttributeRetained, isRing);
 			}
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(resultDataset);
 			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
+			// 如果失败了，删除新建的数据集
+			if (resultDatasource != null && resultName != null) {
+				resultDatasource.getDatasets().delete(resultName);
+			}
 		} finally {
 			BufferAnalyst.removeSteppedListener(this.steppedListener);
 		}
