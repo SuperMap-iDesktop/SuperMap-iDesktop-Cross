@@ -163,6 +163,7 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
+		DensityAnalystParameter densityAnalystParameter = new DensityAnalystParameter();
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			DatasetVector src = null;
@@ -172,7 +173,6 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 				src = (DatasetVector) sourceDataset.getSelectedItem();
 			}
 			DensityAnalyst.addSteppedListener(steppedListener);
-			DensityAnalystParameter densityAnalystParameter = new DensityAnalystParameter();
 			double top = Double.parseDouble(numberTop.getSelectedItem().toString());
 			double bottom = Double.parseDouble(numberBottom.getSelectedItem().toString());
 			double right = Double.parseDouble(numberRight.getSelectedItem().toString());
@@ -189,6 +189,7 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			DensityAnalyst.removeSteppedListener(steppedListener);
+			densityAnalystParameter.dispose();
 		}
 		return isSuccessful;
 	}
