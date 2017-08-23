@@ -490,7 +490,7 @@ public class JDialogPreviewCSV extends SmDialog {
 			String metaFileName = getMetaFileName();
 			HDFSDefine hdfsMetaFile = null;
 			for (int i = 0; i < hdfsModel.getRowCount(); i++) {
-				if (((HDFSDefine) hdfsModel.getRowTagAt(i)).getName().toLowerCase().equals(metaFileName)) {
+				if (((HDFSDefine) hdfsModel.getRowTagAt(i)).getName().equalsIgnoreCase(metaFileName)) {
 					hdfsMetaFile = (HDFSDefine) hdfsModel.getRowTagAt(i);
 				}
 			}
@@ -659,7 +659,7 @@ public class JDialogPreviewCSV extends SmDialog {
 	}
 
 	private String getMetaFileName() {
-		return hdfsDefine.getName().substring(0, hdfsDefine.getName().length() - 4).toLowerCase() + ".meta";
+		return hdfsDefine.getName().substring(0, hdfsDefine.getName().length() - 4) + ".meta";
 	}
 
 	private String getMetaUrl() {

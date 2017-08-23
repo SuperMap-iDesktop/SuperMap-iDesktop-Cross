@@ -91,7 +91,7 @@ public class JDialogDatasetNew extends SmDialog {
 		this.table.setModel(newDatasetTableModel);
 
 		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_TARGET_DATASOURCE).setCellRenderer(new TableDataCellRender());
-		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DatasetType).setCellRenderer(new TableDataCellRender());
+		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DATASET_TYPE).setCellRenderer(new TableDataCellRender());
 
 //		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_EncodeType).setCellEditor(new EncodingTypeCellEditor());
 //		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_Charset).setCellEditor(new CharsetTypeCellEditor());
@@ -125,7 +125,7 @@ public class JDialogDatasetNew extends SmDialog {
 
 		DefaultCellEditor datasetTypeCellEditor = new DefaultCellEditor(comboBoxDatasetType);
 		datasetTypeCellEditor.setClickCountToStart(2);
-		TableColumn datasetTypeColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DatasetType);
+		TableColumn datasetTypeColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DATASET_TYPE);
 		datasetTypeColumn.setCellEditor(datasetTypeCellEditor);
 		datasetTypeColumn.setPreferredWidth(100);
 //		datasetTypeColumn.setCellRenderer(renderer);
@@ -139,7 +139,7 @@ public class JDialogDatasetNew extends SmDialog {
 
 		ComboBoxCellEditor addToCellEditor = new ComboBoxCellEditor();
 		addToCellEditor.getComboBox().setModel(new DefaultComboBoxModel<Object>(addTos.toArray(new String[addTos.size()])));
-		TableColumn addToColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_WindowMode);
+		TableColumn addToColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_WINDOWMODE);
 		addToCellEditor.setClickCountToStart(2);
 		addToColumn.setCellEditor(addToCellEditor);
 	}
@@ -426,7 +426,7 @@ public class JDialogDatasetNew extends SmDialog {
 					newDatasetTableModel.setValueAt(dialogTargetDatasource, i, NewDatasetTableModel.COLUMN_INDEX_TARGET_DATASOURCE);
 				}
 				if (datasetType != null) {
-					newDatasetTableModel.setValueAt(datasetType, i, NewDatasetTableModel.COLUMN_INDEX_DatasetType);
+					newDatasetTableModel.setValueAt(datasetType, i, NewDatasetTableModel.COLUMN_INDEX_DATASET_TYPE);
 				}
 //				if (encodingType != null) {
 //					newDatasetTableModel.setValueAt(encodingType, i, NewDatasetTableModel.COLUMN_INDEX_EncodeType);
@@ -435,7 +435,7 @@ public class JDialogDatasetNew extends SmDialog {
 //					newDatasetTableModel.setValueAt(charset, i, NewDatasetTableModel.COLUMN_INDEX_Charset);
 //				}
 				if (addToMap != null) {
-					newDatasetTableModel.setValueAt(addToMap, i, NewDatasetTableModel.COLUMN_INDEX_WindowMode);
+					newDatasetTableModel.setValueAt(addToMap, i, NewDatasetTableModel.COLUMN_INDEX_WINDOWMODE);
 				}
 			}
 		}
@@ -448,7 +448,7 @@ public class JDialogDatasetNew extends SmDialog {
 	private void initComponentStates() {
 		checkboxAutoClose.setSelected(true);
 		newDatasetTableModel.addEmptyRow();
-		newDatasetTableModel.setValueAt("", 0, NewDatasetTableModel.COLUMN_INDEX_DatasetName);
+		newDatasetTableModel.setValueAt("", 0, NewDatasetTableModel.COLUMN_INDEX_DATASET_NAME);
 	}
 
 	public class CharsetTypeCellEditor extends DefaultCellEditor {
@@ -518,7 +518,7 @@ public class JDialogDatasetNew extends SmDialog {
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 			comboboxEncodingType.removeAll();
 
-			Object datasetType = table.getValueAt(row, NewDatasetTableModel.COLUMN_INDEX_DatasetType);
+			Object datasetType = table.getValueAt(row, NewDatasetTableModel.COLUMN_INDEX_DATASET_TYPE);
 			ArrayList<String> tempEncodeType = new ArrayList<>();
 			tempEncodeType.add(EncodeTypeUtilities.toString(EncodeType.NONE));
 			if (DatasetType.LINE == datasetType || DatasetType.REGION == datasetType) {

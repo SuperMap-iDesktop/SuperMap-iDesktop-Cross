@@ -53,11 +53,11 @@ public class NewDatasetTableModel extends DefaultTableModel {
 
 	public static final int COLUMN_INDEX_INDEX = 0;
 	public static final int COLUMN_INDEX_TARGET_DATASOURCE = 1;
-	public static final int COLUMN_INDEX_DatasetType = 2;
-	public static final int COLUMN_INDEX_DatasetName = 3;
+	public static final int COLUMN_INDEX_DATASET_TYPE = 2;
+	public static final int COLUMN_INDEX_DATASET_NAME = 3;
 	//	public static final int COLUMN_INDEX_EncodeType = 4;
 //	public static final int COLUMN_INDEX_Charset = 5;
-	public static final int COLUMN_INDEX_WindowMode = 4;
+	public static final int COLUMN_INDEX_WINDOWMODE = 4;
 
 
 	public NewDatasetBean getDatasetBean(int num) {
@@ -82,15 +82,15 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			return String.class;
 		} else if (columnIndex == COLUMN_INDEX_TARGET_DATASOURCE) {
 			return Datasource.class;
-		} else if (columnIndex == COLUMN_INDEX_DatasetType) {
+		} else if (columnIndex == COLUMN_INDEX_DATASET_TYPE) {
 			return DatasetType.class;
-		} else if (columnIndex == COLUMN_INDEX_DatasetName) {
+		} else if (columnIndex == COLUMN_INDEX_DATASET_NAME) {
 			return String.class;
 //		} else if (columnIndex == COLUMN_INDEX_EncodeType) {
 //			return String.class;
 //		} else if (columnIndex == COLUMN_INDEX_Charset) {
 //			return String.class;
-		} else if (columnIndex == COLUMN_INDEX_WindowMode) {
+		} else if (columnIndex == COLUMN_INDEX_WINDOWMODE) {
 			return String.class;
 		}
 		return String.class;
@@ -102,15 +102,15 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			return row + 1;
 		} else if (column == COLUMN_INDEX_TARGET_DATASOURCE) {
 			return datasetBeans.get(row).getDatasource();
-		} else if (column == COLUMN_INDEX_DatasetType) {
+		} else if (column == COLUMN_INDEX_DATASET_TYPE) {
 			return datasetBeans.get(row).getDatasetType();
-		} else if (column == COLUMN_INDEX_DatasetName) {
+		} else if (column == COLUMN_INDEX_DATASET_NAME) {
 			return datasetBeans.get(row).getDatasetName();
 //		} else if (column == COLUMN_INDEX_EncodeType) {
 //			return EncodeTypeUtilities.toString(datasetBeans.get(row).getEncodeType());
 //		} else if (column == COLUMN_INDEX_Charset) {
 //			return CharsetUtilities.toString(datasetBeans.get(row).getCharset());
-		} else if (column == COLUMN_INDEX_WindowMode) {
+		} else if (column == COLUMN_INDEX_WINDOWMODE) {
 			return AddToWindowMode.toString(datasetBeans.get(row).getAddToWindowMode());
 		}
 		throw new UnsupportedOperationException("column out of index");
@@ -129,16 +129,16 @@ public class NewDatasetTableModel extends DefaultTableModel {
 			datasetBeans.get(row).setDatasource((Datasource) aValue);
 //			datasetBeans.get(row).setDatasource((Datasource) ((DataCell) aValue).getData());
 			checkCurrentName(row);
-		} else if (column == COLUMN_INDEX_DatasetType) {
+		} else if (column == COLUMN_INDEX_DATASET_TYPE) {
 			datasetBeans.get(row).setDatasetType(((DatasetType) ((DataCell) aValue).getData()));
 			checkCurrentName(row);
-		} else if (column == COLUMN_INDEX_DatasetName) {
+		} else if (column == COLUMN_INDEX_DATASET_NAME) {
 			setDatasetName(row, (String) aValue);
 //		} else if (column == COLUMN_INDEX_EncodeType) {
 //			datasetBeans.get(row).setEncodeType(EncodeTypeUtilities.valueOf((String) aValue));
 //		} else if (column == COLUMN_INDEX_Charset) {
 //			datasetBeans.get(row).setCharset(CharsetUtilities.valueOf((String) aValue));
-		} else if (column == COLUMN_INDEX_WindowMode) {
+		} else if (column == COLUMN_INDEX_WINDOWMODE) {
 			datasetBeans.get(row).setAddToWindowMode(AddToWindowMode.getWindowMode((String) aValue));
 		}
 		fireTableDataChanged();
@@ -147,9 +147,9 @@ public class NewDatasetTableModel extends DefaultTableModel {
 	private void checkCurrentName(int row) {
 		String datasetName = datasetBeans.get(row).getDatasetName();
 		if (StringUtilities.isNullOrEmpty(datasetName) || isDefaultDatasetName(datasetName)) {
-			setValueAt("", row, COLUMN_INDEX_DatasetName);
+			setValueAt("", row, COLUMN_INDEX_DATASET_NAME);
 		} else {
-			setValueAt(datasetName, row, COLUMN_INDEX_DatasetName);
+			setValueAt(datasetName, row, COLUMN_INDEX_DATASET_NAME);
 		}
 	}
 

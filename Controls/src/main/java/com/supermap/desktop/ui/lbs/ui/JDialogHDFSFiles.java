@@ -87,7 +87,8 @@ public class JDialogHDFSFiles extends SmDialog {
 					String metaFileName = name.substring(0, name.length() - 3) + "meta";
 					boolean isMetaFileExist = false;
 					for (int i = 0; i < table.getModel().getRowCount(); i++) {
-						if (((HDFSDefine) ((HDFSTableModel) table.getModel()).getRowTagAt(i)).getName().equals(metaFileName)) {
+						String currentName = ((HDFSDefine) ((HDFSTableModel) table.getModel()).getRowTagAt(i)).getName();
+						if (currentName.equalsIgnoreCase(metaFileName)) {
 							isMetaFileExist = true;
 							break;
 						}
