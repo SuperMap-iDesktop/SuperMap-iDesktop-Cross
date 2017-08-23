@@ -551,7 +551,10 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			if (this.mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
 				this.mapCacheBuilder.setIndexBounds(nextStepPane.indexRangeBounds);
 			}
-			this.mapCacheBuilder.setImageCompress(Integer.valueOf(nextStepPane.smSpinnerImageCompressionRatio.getValue().toString()));
+			if (nextStepPane.smSpinnerImageCompressionRatio.isEnabled()) {
+				//modify
+				this.mapCacheBuilder.setImageCompress(Integer.valueOf(nextStepPane.smSpinnerImageCompressionRatio.getValue().toString()));
+			}
 			this.mapCacheBuilder.setTransparent(nextStepPane.checkBoxBackgroundTransparency.isSelected());
 			if (firstStepPane.checkBoxFilterSelectionObjectInLayer.isEnabled() && firstStepPane.checkBoxFilterSelectionObjectInLayer.isSelected()) {
 				Layers layers = this.mapCacheBuilder.getMap().getLayers();

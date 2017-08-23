@@ -6,16 +6,12 @@ import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapTilingMode;
 import com.supermap.data.processing.TileFormat;
 import com.supermap.data.processing.TileSize;
-import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.map.propertycontrols.PanelGroupBoxViewBounds;
 import com.supermap.desktop.mapview.map.propertycontrols.SelectObjectListener;
 import com.supermap.desktop.ui.SMSpinner;
-import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.JFileChooserControl;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
-import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -57,6 +53,10 @@ public class NextStepPane extends JPanel implements IState {
 	private WaringTextField indexRangeWaringTextFieldTop;
 	private WaringTextField indexRangeWaringTextFieldRight;
 	private WaringTextField indexRangeWaringTextFieldBottom;
+	//新增瓦片类型
+	private JLabel labelTileType;
+	public JComboBox comboBoxTileType;
+
 	private JLabel labelImageType;
 	private JLabel labelPixel;
 	private JLabel labelImageCompressionRatio;
@@ -68,10 +68,10 @@ public class NextStepPane extends JPanel implements IState {
 
 	private JLabel labelTaskStorePath;
 	private WarningOrHelpProvider helpForTaskStorePath;
-//	public JFileChooserControl fileChooserControlTaskPath;
+	//	public JFileChooserControl fileChooserControlTaskPath;
 	protected JCheckBox checkBoxClipOnThisComputer;
 	private JCheckBox checkBoxMultiProcessClip;
-//	private JPanel panelMultiProcess;
+	//	private JPanel panelMultiProcess;
 	private DialogMapCacheClipBuilder parent;
 
 	private SelectObjectListener selectObjectListener = new SelectObjectListener() {
@@ -156,6 +156,21 @@ public class NextStepPane extends JPanel implements IState {
 			validateIndexRangeBounds();
 		}
 	};
+	private ItemListener comboBoxTileTypeListener = new ItemListener() {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				boolean isGridTileType = comboBoxTileType.getSelectedIndex() == 1 ? true : false;
+				if (true != isGridTileType) {
+					mapCacheBuilder.setTileFormat(TileFormat.BIL);
+				}
+				comboBoxImageType.setEnabled(isGridTileType);
+				comboBoxPixel.setEnabled(isGridTileType);
+				smSpinnerImageCompressionRatio.setEnabled(isGridTileType);
+				checkBoxBackgroundTransparency.setEnabled(isGridTileType && checkBoxBackgroundTransparency.isEnabled());
+			}
+		}
+	};
 
 	private boolean isRightRangeBounds() {
 		boolean result = true;
@@ -178,7 +193,7 @@ public class NextStepPane extends JPanel implements IState {
 	private void init() {
 		initComponents();
 		initResources();
-		initPanelImageState();
+		initComboboxState();
 		initLayout();
 		registEvents();
 		if (this.cmdType == DialogMapCacheClipBuilder.ResumeProcessClip
@@ -190,9 +205,10 @@ public class NextStepPane extends JPanel implements IState {
 	private ItemListener comboboxImageTypeListener = new ItemListener() {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
+			boolean isGridTileType = comboBoxTileType.getSelectedIndex() == 1 ? true : false;
 			if (e.getItem().toString().equals("PNG") || e.getItem().toString().equals("DXTZ") || e.getItem().toString().equals("PNG8") || e.getItem().toString().equals("GIF")) {
-				checkBoxBackgroundTransparency.setSelected(false);
-				checkBoxBackgroundTransparency.setEnabled(true);
+				checkBoxBackgroundTransparency.setSelected(false && isGridTileType);
+				checkBoxBackgroundTransparency.setEnabled(true && isGridTileType);
 				if (e.getItem().toString().equals("PNG")) {
 					mapCacheBuilder.setTileFormat(TileFormat.PNG);
 				} else if (e.getItem().toString().equals("DXTZ")) {
@@ -203,12 +219,12 @@ public class NextStepPane extends JPanel implements IState {
 					mapCacheBuilder.setTileFormat(TileFormat.GIF);
 				}
 			} else if (e.getItem().toString().equals("JPG")) {
-				checkBoxBackgroundTransparency.setSelected(false);
-				checkBoxBackgroundTransparency.setEnabled(false);
+				checkBoxBackgroundTransparency.setSelected(false && isGridTileType);
+				checkBoxBackgroundTransparency.setEnabled(false && isGridTileType);
 				mapCacheBuilder.setTileFormat(TileFormat.JPG);
 			} else if (e.getItem().toString().equals("JPG_PNG")) {
-				checkBoxBackgroundTransparency.setSelected(true);
-				checkBoxBackgroundTransparency.setEnabled(false);
+				checkBoxBackgroundTransparency.setSelected(true && isGridTileType);
+				checkBoxBackgroundTransparency.setEnabled(false && isGridTileType);
 				mapCacheBuilder.setTileFormat(TileFormat.JPG_PNG);
 			}
 		}
@@ -235,6 +251,7 @@ public class NextStepPane extends JPanel implements IState {
 	};
 
 	public void removeEvents() {
+		this.comboBoxTileType.removeItemListener(this.comboBoxTileTypeListener);
 		this.comboBoxImageType.removeItemListener(this.comboboxImageTypeListener);
 		this.comboBoxPixel.removeItemListener(this.comboboxImagePixelListener);
 		this.panelCacheRange.removeSelectObjectListener(this.selectObjectListener);
@@ -250,6 +267,7 @@ public class NextStepPane extends JPanel implements IState {
 
 	private void registEvents() {
 		removeEvents();
+		this.comboBoxTileType.addItemListener(this.comboBoxTileTypeListener);
 		this.comboBoxImageType.addItemListener(this.comboboxImageTypeListener);
 		this.comboBoxPixel.addItemListener(this.comboboxImagePixelListener);
 		this.panelCacheRange.addSelectObjectLitener(this.selectObjectListener);
@@ -267,15 +285,17 @@ public class NextStepPane extends JPanel implements IState {
 		JPanel panelImageParam = new JPanel();
 		panelImageParam.setBorder(BorderFactory.createTitledBorder(MapViewProperties.getString("MapCache_ImageParameter")));
 		panelImageParam.setLayout(new GridBagLayout());
-		panelImageParam.add(this.labelImageType, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
-		panelImageParam.add(this.comboBoxImageType, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
-		panelImageParam.add(this.labelPixel, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-		panelImageParam.add(this.comboBoxPixel, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
-		panelImageParam.add(this.labelImageCompressionRatio, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-		panelImageParam.add(this.smSpinnerImageCompressionRatio, new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
-		panelImageParam.add(this.checkBoxBackgroundTransparency, new GridBagConstraintsHelper(0, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-		panelImageParam.add(this.checkBoxFullFillCacheImage, new GridBagConstraintsHelper(0, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 10, 5, 10));
-		panelImageParam.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		panelImageParam.add(this.labelTileType, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
+		panelImageParam.add(this.comboBoxTileType, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
+		panelImageParam.add(this.labelImageType, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
+		panelImageParam.add(this.comboBoxImageType, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
+		panelImageParam.add(this.labelPixel, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
+		panelImageParam.add(this.comboBoxPixel, new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+		panelImageParam.add(this.labelImageCompressionRatio, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
+		panelImageParam.add(this.smSpinnerImageCompressionRatio, new GridBagConstraintsHelper(1, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+		panelImageParam.add(this.checkBoxBackgroundTransparency, new GridBagConstraintsHelper(0, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
+		panelImageParam.add(this.checkBoxFullFillCacheImage, new GridBagConstraintsHelper(0, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 10, 5, 10));
+		panelImageParam.add(new JPanel(), new GridBagConstraintsHelper(0, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 //		if (cmdType != DialogMapCacheClipBuilder.SingleProcessClip && cmdType != DialogMapCacheClipBuilder.ResumeProcessClip
 //				&& cmdType != DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
 //			JPanel innerPanel = new JPanel();
@@ -296,7 +316,10 @@ public class NextStepPane extends JPanel implements IState {
 		this.panelCacheRange.setPreferredSize(new Dimension(400, 300));
 	}
 
-	private void initPanelImageState() {
+	private void initComboboxState() {
+		this.comboBoxTileType.addItem(MapViewProperties.getString("MapCache_VectorTile"));
+		this.comboBoxTileType.addItem(MapViewProperties.getString("MapCache_GridTile"));
+		this.comboBoxTileType.setSelectedIndex(1);
 		this.comboBoxImageType.addItem("PNG");
 		this.comboBoxImageType.addItem("DXTZ");
 		this.comboBoxImageType.addItem("GIF");
@@ -345,6 +368,7 @@ public class NextStepPane extends JPanel implements IState {
 	}
 
 	private void initResources() {
+		this.labelTileType.setText(MapViewProperties.getString("MapCache_TileType"));
 		this.labelImageType.setText(MapViewProperties.getString("MapCache_ImageType"));
 		this.labelPixel.setText(MapViewProperties.getString("MapCache_Pixel"));
 		this.labelImageCompressionRatio.setText(MapViewProperties.getString("MapCache_ImageCompressionRation"));
@@ -358,7 +382,6 @@ public class NextStepPane extends JPanel implements IState {
 
 	private void initComponents() {
 		this.enabledListeners = new Vector<>();
-//		this.panelMultiProcess = new JPanel();
 		Map activeMap = this.mapCacheBuilder.getMap();
 		if (null == activeMap) {
 			activeMap = MapUtilities.getActiveMap();
@@ -375,6 +398,9 @@ public class NextStepPane extends JPanel implements IState {
 			validIndexRangeBounds = true;
 			this.panelIndexRange.setAsRectangleBounds(indexRangeBounds);
 		}
+
+		this.labelTileType = new JLabel();
+		this.comboBoxTileType = new JComboBox();
 		this.labelImageType = new JLabel();
 		this.labelPixel = new JLabel();
 		this.labelImageCompressionRatio = new JLabel();
@@ -385,16 +411,6 @@ public class NextStepPane extends JPanel implements IState {
 		this.checkBoxBackgroundTransparency = new JCheckBox();
 		this.labelTaskStorePath = new JLabel();
 		this.helpForTaskStorePath = new WarningOrHelpProvider(MapViewProperties.getString("String_HelpForTaskStorePath"), false);
-//		this.fileChooserControlTaskPath = new JFileChooserControl();
-//		String moduleName = "ChooseCacheTaskDirectories";
-//		if (!SmFileChoose.isModuleExist(moduleName)) {
-//			SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
-//					moduleName, "GetDirectories");
-//		}
-//
-//		SmFileChoose fileChoose = new SmFileChoose(moduleName);
-//		this.fileChooserControlTaskPath.setFileChooser(fileChoose);
-//		this.fileChooserControlTaskPath.setPath(fileChoose.getModuleLastPath());
 		this.checkBoxClipOnThisComputer = new JCheckBox();
 		this.checkBoxMultiProcessClip = new JCheckBox();
 		this.checkBoxMultiProcessClip.setSelected(true);

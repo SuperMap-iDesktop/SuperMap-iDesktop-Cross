@@ -204,7 +204,7 @@ public class DialogCacheCheck extends JFrame {
 		panelContent.add(this.checkBoxCacheBuild, new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 0, 10));
 		panelContent.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 
-		this.add(panelButton, new GridBagConstraintsHelper(0, 6, 3, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+		panelContent.add(panelButton, new GridBagConstraintsHelper(0, 6, 3, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 	}
 
 	private boolean validateValue(String sciPath, String processCount) {
