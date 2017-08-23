@@ -2,6 +2,7 @@ package com.supermap.desktop.process.parameters.ParameterPanels.MultiBufferRadio
 
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
@@ -23,11 +24,13 @@ public class MultiBufferRadioListTableModel extends DefaultTableModel {
 	public static final int COLUMN_INDEX_INDEX = 0;
 	public static final int COLUMN_INDEX_BUFFER_RADIO = 1;
 
-	private ArrayList<Double> radioValues;
+	private ArrayList<Double> radioValues = new ArrayList<>();
 
 	public MultiBufferRadioListTableModel(ArrayList<Double> radioValues) {
 		super();
-		this.radioValues = radioValues;
+		if (radioValues != null) {
+			this.radioValues = radioValues;
+		}
 	}
 
 	@Override
@@ -35,7 +38,7 @@ public class MultiBufferRadioListTableModel extends DefaultTableModel {
 		if (columnIndex == COLUMN_INDEX_INDEX) {
 			return String.class;
 		} else if (columnIndex == COLUMN_INDEX_BUFFER_RADIO) {
-			return Double.class;
+			return String.class;
 		}
 		return String.class;
 	}
@@ -60,7 +63,7 @@ public class MultiBufferRadioListTableModel extends DefaultTableModel {
 		if (column == COLUMN_INDEX_INDEX) {
 			throw new UnsupportedOperationException("index can't change");
 		} else if (column == COLUMN_INDEX_BUFFER_RADIO) {
-			radioValues.set(row, (Double) aValue);
+			radioValues.set(row, StringUtilities.getNumber((String) aValue));
 		}
 		fireTableDataChanged();
 	}
@@ -79,22 +82,16 @@ public class MultiBufferRadioListTableModel extends DefaultTableModel {
 	}
 
 	@Override
-	public void removeRow(int row) {
-		if (row != this.getRowCount() - 1) {
-			this.radioValues.remove(row);
-			fireTableRowsDeleted(row, row);
-		}
-	}
-
-	public void insertRow(int row, double rowData) {
-		this.radioValues.add(row, rowData);
-		fireTableRowsUpdated(row, row);
+	public int getColumnCount() {
+		return columnNames.length;
 	}
 
 	@Override
-	public void moveRow(int start, int end, int to) {
-
+	public void removeRow(int row) {
+		this.radioValues.remove(row);
+		fireTableRowsDeleted(row, row);
 	}
+
 
 	public void setRadioValues(ArrayList<Double> radioValues) {
 		this.radioValues = radioValues;
