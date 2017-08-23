@@ -2,7 +2,6 @@ package com.supermap.desktop.dialog.cacheClip;
 
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
@@ -252,7 +251,7 @@ public class DialogCacheOperationView extends SmDialog {
 			DialogCacheOperationView.this.dispose();
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 			mapCacheBuilder.fromConfigFile(file.getPath());
-			mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
+			mapCacheBuilder.setMap(getMap());
 			DialogMapCacheClipBuilder mapCacheClipBuilder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.ResumeProcessClip, mapCacheBuilder);
 			mapCacheClipBuilder.setComponentsEnabled(false);
 			mapCacheClipBuilder.buttonOk.setEnabled(true);
@@ -272,6 +271,7 @@ public class DialogCacheOperationView extends SmDialog {
 			DialogCacheOperationView.this.dispose();
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 			mapCacheBuilder.fromConfigFile(sciFile.getPath());
+			mapCacheBuilder.setMap(getMap());
 			DialogMapCacheClipBuilder builder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.SingleUpdateProcessClip, mapCacheBuilder);
 			builder.firstStepPane.textFieldCacheName.setText(mapCacheBuilder.getCacheName());
 			builder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());

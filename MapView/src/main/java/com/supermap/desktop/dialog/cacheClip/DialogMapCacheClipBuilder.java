@@ -460,7 +460,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 						if (null != this.mapCacheBuilder.getMap()) {
 							mapName = this.mapCacheBuilder.getMap().getName();
 						}
-						String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi",
+						String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi", "null",
 								Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), mapName, cachePath};
 						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 					}
