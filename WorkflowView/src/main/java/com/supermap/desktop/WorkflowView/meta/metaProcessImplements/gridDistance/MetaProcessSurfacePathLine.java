@@ -63,6 +63,9 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 
 	private ParameterSaveDataset resultDataset;
 
+	/**
+	 * 复制和粘贴的监听响应事件
+	 */
 	public ActionListener actionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {

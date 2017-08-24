@@ -1,18 +1,25 @@
 package com.supermap.desktop.CtrlAction.Map.MapCatch;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
+import com.supermap.data.GeoPoint;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.mapview.map.propertycontrols.MapActionSelectTargetInfoPanel;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.*;
 
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -26,8 +33,9 @@ public class CtrlActionMapCatchAsRectangle extends CtrlAction {
 		super(caller, formClass);
 	}
 
-	private transient GeoRegion geoRegion;
-	private static final int SEGMENTCOUNT = 50;
+	private MapActionSelectTargetInfoPanel panelSelectTargetInfo;
+
+	private transient ArrayList<GeoPoint> geoPoints = new ArrayList<>();
 
 	@Override
 	public void run() {
@@ -72,20 +80,45 @@ public class CtrlActionMapCatchAsRectangle extends CtrlAction {
 	private void setAction() {
 		final MapControl activeMapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
 		activeMapControl.setTrackMode(TrackMode.TRACK);
-		activeMapControl.setAction(Action.CREATERECTANGLE);
+		activeMapControl.setAction(Action.CREATEPOINT);
+
+		activeMapControl.setLayout(null);
 		activeMapControl.addMouseListener(controlMouseListener);
+		activeMapControl.addMouseMotionListener(mouseMotionListener);
 		activeMapControl.addTrackedListener(trackedListener);
+
+		panelSelectTargetInfo = new MapActionSelectTargetInfoPanel(MapViewProperties.getString("String_SelectTwoPoints"));
+		activeMapControl.add(panelSelectTargetInfo);
+
 	}
+
+	private transient MouseMotionListener mouseMotionListener = new MouseAdapter() {
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			Point point = e.getPoint();
+			panelSelectTargetInfo.setLocation(point.x + 15, point.y + 20);
+			panelSelectTargetInfo.setVisible(true);
+			panelSelectTargetInfo.updateUI();
+		}
+	};
 
 	private transient MouseListener controlMouseListener = new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON3) {
+				panelSelectTargetInfo.setVisible(false);
 				MapControl control = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
-				control.removeMouseListener(this);
+				control.removeMouseListener(controlMouseListener);
+				control.removeMouseMotionListener(mouseMotionListener);
+				control.removeTrackedListener(trackedListener);
 				exitEdit();
+				if (geoPoints.size() >= 2) {
+					DialogMapBoundsCatch dialogMapBoundsCatch = new DialogMapBoundsCatch(geoPoints);
+					dialogMapBoundsCatch.showDialog();
+				}
 			}
 		}
+
 	};
 
 	private transient TrackedListener trackedListener = new TrackedListener() {
@@ -98,19 +131,13 @@ public class CtrlActionMapCatchAsRectangle extends CtrlAction {
 
 	private void abstractTracked(TrackedEvent arg0) {
 		if (arg0.getGeometry() != null) {
-			if (arg0.getGeometry() instanceof GeoRegion) {
-				geoRegion = (GeoRegion) arg0.getGeometry().clone();
-			} else if (arg0.getGeometry() instanceof GeoPie) {
-				geoRegion = ((GeoPie) arg0.getGeometry()).convertToRegion(SEGMENTCOUNT).clone();
+			if (arg0.getGeometry() instanceof GeoPoint) {
+				// 当链表中的值大于两个时，清空链表
+				if (geoPoints.size() >= 2) {
+					geoPoints.clear();
+				}
+				geoPoints.add((GeoPoint) arg0.getGeometry().clone());
 			}
-			// 当获得GeoRegion后，弹出地图范围捕捉窗体
-			DialogMapBoundsCatch dialogMapBoundsCatch = new DialogMapBoundsCatch(geoRegion);
-			dialogMapBoundsCatch.showDialog();
-
-			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().removeTrackedListener(trackedListener);
-			exitEdit();
-		} else {
-			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().addMouseListener(controlMouseListener);
 		}
 	}
 

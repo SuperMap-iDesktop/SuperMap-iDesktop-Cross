@@ -1,6 +1,6 @@
 package com.supermap.desktop.CtrlAction.Map.MapCatch;
 
-import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoPoint;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -17,6 +17,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 /**
  * Created by yuanR on 2017/8/24 0024.
@@ -26,11 +27,12 @@ public class DialogMapBoundsCatch extends SmDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	public GeoRegion getGeoRegion() {
-		return geoRegion;
+
+	public ArrayList<GeoPoint> getGeoPoints() {
+		return geoPoints;
 	}
 
-	private GeoRegion geoRegion;
+	private ArrayList<GeoPoint> geoPoints;
 
 	private JLabel labelSourcePointX;
 	public JTextField textFieldSourcePointX;
@@ -125,12 +127,12 @@ public class DialogMapBoundsCatch extends SmDialog {
 		}
 	};
 
-	public DialogMapBoundsCatch(GeoRegion geoRegion) {
+	public DialogMapBoundsCatch(ArrayList<GeoPoint> geoPoints) {
 		super();
-		this.geoRegion = geoRegion;
+		this.geoPoints = geoPoints;
 		initComponents();
 		initLayout();
-		initStates(this.geoRegion);
+		initStates(this.geoPoints);
 		registerEvent();
 		this.setTitle(MapViewProperties.getString("String_GroupBox_MapBounds"));
 		this.setSize(new Dimension(400, 180));
@@ -251,15 +253,15 @@ public class DialogMapBoundsCatch extends SmDialog {
 						.addComponent(this.labelTargetPointX)
 						.addComponent(this.labelTargetPointY))
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(this.textFieldSourcePointX,  DEFAULT_TEXTFILED_WIDTH,DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE)
-						.addComponent(this.textFieldSourcePointY,DEFAULT_TEXTFILED_WIDTH,DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE)
-						.addComponent(this.textFieldTargetPointX,DEFAULT_TEXTFILED_WIDTH,DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE)
-						.addComponent(this.textFieldTargetPointY,DEFAULT_TEXTFILED_WIDTH,DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE))
+						.addComponent(this.textFieldSourcePointX, DEFAULT_TEXTFILED_WIDTH, DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.textFieldSourcePointY, DEFAULT_TEXTFILED_WIDTH, DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.textFieldTargetPointX, DEFAULT_TEXTFILED_WIDTH, DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.textFieldTargetPointY, DEFAULT_TEXTFILED_WIDTH, DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE))
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(this.copyButton,DEFAULT_BUTTON_WIDTH,DEFAULT_BUTTON_WIDTH,DEFAULT_BUTTON_WIDTH)
-						.addComponent(this.pasteButton,DEFAULT_BUTTON_WIDTH,DEFAULT_BUTTON_WIDTH,DEFAULT_BUTTON_WIDTH)
-						.addComponent(this.panelButton.getButtonOk(),DEFAULT_BUTTON_WIDTH,DEFAULT_BUTTON_WIDTH,DEFAULT_BUTTON_WIDTH)
-						.addComponent(this.panelButton.getButtonCancel(),DEFAULT_BUTTON_WIDTH,DEFAULT_BUTTON_WIDTH,DEFAULT_BUTTON_WIDTH))
+						.addComponent(this.copyButton, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH)
+						.addComponent(this.pasteButton, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH)
+						.addComponent(this.panelButton.getButtonOk(), DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH)
+						.addComponent(this.panelButton.getButtonCancel(), DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH))
 		);
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -284,16 +286,15 @@ public class DialogMapBoundsCatch extends SmDialog {
 	}
 
 	/**
-	 * 根据矩形框初始化值
-	 *
-	 * @param geoRegion
+	 * @param geoPoints
 	 */
-	public void initStates(GeoRegion geoRegion) {
-		textFieldSourcePointX.setText(String.valueOf(geoRegion.getBounds().getLeft()));
-		textFieldSourcePointY.setText(String.valueOf(geoRegion.getBounds().getTop()));
-		textFieldTargetPointX.setText(String.valueOf(geoRegion.getBounds().getRight()));
-		textFieldTargetPointY.setText(String.valueOf(geoRegion.getBounds().getBottom()));
-
+	public void initStates(ArrayList<GeoPoint> geoPoints) {
+		if (geoPoints.size() >= 2) {
+			textFieldSourcePointX.setText(String.valueOf(geoPoints.get(0).getX()));
+			textFieldSourcePointY.setText(String.valueOf(geoPoints.get(0).getY()));
+			textFieldTargetPointX.setText(String.valueOf(geoPoints.get(1).getX()));
+			textFieldTargetPointY.setText(String.valueOf(geoPoints.get(1).getY()));
+		}
 	}
 
 	private void registerEvent() {

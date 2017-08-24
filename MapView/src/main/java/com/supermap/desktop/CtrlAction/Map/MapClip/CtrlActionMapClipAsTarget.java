@@ -6,16 +6,13 @@ import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.core.recordset.RecordsetSet;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
-import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.map.propertycontrols.MapActionSelectTargetInfoPanel;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
-import com.supermap.mapping.Layers;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
 import com.supermap.ui.TrackMode;
@@ -29,15 +26,15 @@ import java.util.HashMap;
 
 /**
  * @author YuanR
- *         2017.3.21
- *         根据选中的对象进行地图裁剪
+ * 2017.3.21
+ * 根据选中的对象进行地图裁剪
  */
 public class CtrlActionMapClipAsTarget extends CtrlAction {
 	public CtrlActionMapClipAsTarget(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 
-	private MapActionSelectTargetInfoPanel panelSelectTargetInfo = new MapActionSelectTargetInfoPanel();
+	private MapActionSelectTargetInfoPanel panelSelectTargetInfo = new MapActionSelectTargetInfoPanel("");
 	private transient GeoRegion geoRegion;
 	private static final int SEGMENTCOUNT = 50;
 
@@ -175,7 +172,7 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 				if (geometry instanceof GeoPie) { // 扇面几何对象类
 					// 将扇面几何对象转换为面几何对象
 					//参数为：等分扇面几何对象对应的椭圆弧的段数
-					geoRegionTemp =((GeoPie) geometry).convertToRegion(SEGMENTCOUNT);
+					geoRegionTemp = ((GeoPie) geometry).convertToRegion(SEGMENTCOUNT);
 				} else if (geometry instanceof GeoRegion) { // 面几何对象类
 					geoRegionTemp = (GeoRegion) geometry;
 				} else if (geometry instanceof GeoEllipse) { // 椭圆几何对象类
@@ -207,28 +204,28 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 			recordset.dispose();
 		}
 		if (isChanged) {
-			geoRegion =geoClipRegion;
+			geoRegion = geoClipRegion;
 			// 当获得GeoRegion后，弹出地图裁剪对话框
 			Layer layer = layers.get(layerChangeID);
 			Recordset recordset = layer.getSelection().toRecordset();
 			if (!isMutiObjectClip || selectedGeoregions.size() <= 1) {  //选择的对象如果跨图层或者选择对象的个数小于1，则不支持多对象拆分裁剪操作
-				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion,recordset);
+				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion, recordset);
 				dialogMapClip.showDialog();
 			} else {
 				FieldInfos fieldInfos = recordset.getFieldInfos();
-				int t=0;
+				int t = 0;
 				for (int i = 0; i < fieldInfos.getCount(); i++) {
 					if (fieldInfos.get(i).getType() != FieldType.DATETIME && fieldInfos.get(i).getType() != FieldType.LONGBINARY) {
-						t=t+1;
+						t = t + 1;
 					}
 				}
 				String fieldCaptions[][] = new String[t][2];
-				t=0;
+				t = 0;
 				for (int i = 0; i < fieldInfos.getCount(); i++) {
 					if (fieldInfos.get(i).getType() != FieldType.DATETIME && fieldInfos.get(i).getType() != FieldType.LONGBINARY) {
 						fieldCaptions[t][0] = fieldInfos.get(i).getCaption();
-						fieldCaptions[t][1]=fieldInfos.get(i).getName();
-						t=t+1;
+						fieldCaptions[t][1] = fieldInfos.get(i).getName();
+						t = t + 1;
 					}
 				}
 				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion, true, fieldCaptions, recordset, selectedGeoregions);
