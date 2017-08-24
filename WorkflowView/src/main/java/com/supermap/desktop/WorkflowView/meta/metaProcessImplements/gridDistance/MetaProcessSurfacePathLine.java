@@ -330,7 +330,10 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 	 * 复制参数
 	 */
 	private void copyParameter() {
-		if (this.parameterSourcePointX.getSelectedItem() != null && this.parameterSourcePointY.getSelectedItem() != null && this.parameterTargetPointX.getSelectedItem() != null && this.parameterTargetPointY.getSelectedItem() != null) {
+		if ((!StringUtilities.isNullOrEmpty((String) this.parameterSourcePointX.getSelectedItem()))
+				&& (!StringUtilities.isNullOrEmpty((String) this.parameterSourcePointY.getSelectedItem()))
+				&& (!StringUtilities.isNullOrEmpty((String) this.parameterTargetPointX.getSelectedItem()))
+				&& (!StringUtilities.isNullOrEmpty((String) this.parameterTargetPointY.getSelectedItem()))) {
 			String clipBoardTextSourcePointX = ControlsProperties.getString("String_SourcePointX") + (String) this.parameterSourcePointX.getSelectedItem();
 			String clipBoardTextSourcePointY = ControlsProperties.getString("String_SourcePointY") + (String) this.parameterSourcePointY.getSelectedItem();
 			String clipBoardTextTargetPointX = ControlsProperties.getString("String_TargetPointX") + (String) this.parameterTargetPointX.getSelectedItem();
