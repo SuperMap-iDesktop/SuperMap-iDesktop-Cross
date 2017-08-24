@@ -45,6 +45,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.MULTI_LEVEL_GRID), SpatialIndexType.MULTI_LEVEL_GRID),
 				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.TILE), SpatialIndexType.TILE),
 				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.QTREE), SpatialIndexType.QTREE),
+				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.PRIMARY),SpatialIndexType.PRIMARY)
 		};
 		datasource = new ParameterDatasourceConstrained() {
 			@Override

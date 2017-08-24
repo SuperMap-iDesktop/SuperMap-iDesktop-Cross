@@ -36,10 +36,13 @@ public class TwoToThreeDimensionProcessLoader extends AbstractProcessLoader {
 		switch (getProcessDescriptor().getKey()) {
 			case MetaKeys.CONVERSION_POINT2D_TO_3D:
 				type = DatasetType.POINT;
+				break;
 			case MetaKeys.CONVERSION_LINE2D_TO_3D:
 				type = DatasetType.LINE;
+				break;
 			case MetaKeys.CONVERSION_REGION2D_TO_3D:
 				type = DatasetType.REGION;
+				break;
 		}
 		return new MetaProcess2DTo3D(type);
 	}

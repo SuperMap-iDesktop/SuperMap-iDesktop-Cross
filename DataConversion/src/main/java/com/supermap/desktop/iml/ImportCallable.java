@@ -32,7 +32,7 @@ public class ImportCallable extends UpdateProgressCallable {
 	private JTable table;
 	private ImportSetting importSetting;
 	private DataImportDialog dataImportDialog;
-	private SpatialIndexType[] spatialIndexTypes = {SpatialIndexType.MULTI_LEVEL_GRID, SpatialIndexType.QTREE, SpatialIndexType.RTREE, SpatialIndexType.TILE};
+	private SpatialIndexType[] spatialIndexTypes = {SpatialIndexType.MULTI_LEVEL_GRID, SpatialIndexType.QTREE, SpatialIndexType.RTREE, SpatialIndexType.TILE,SpatialIndexType.PRIMARY};
 
 	public ImportCallable(List<ImportInfo> fileInfos, DataImportDialog dataImportDialog) {
 		this.fileInfos = (ArrayList<ImportInfo>) fileInfos;
