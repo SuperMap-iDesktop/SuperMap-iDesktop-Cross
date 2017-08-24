@@ -35,11 +35,12 @@ public class CtrlActionMapCatchAsRectangle extends CtrlAction {
 
 	private MapActionSelectTargetInfoPanel panelSelectTargetInfo;
 
-	private transient ArrayList<GeoPoint> geoPoints = new ArrayList<>();
+	private transient ArrayList<GeoPoint> geoPoints;
 
 	@Override
 	public void run() {
 		super.run();
+		geoPoints = new ArrayList<>();
 		setAction();
 	}
 
@@ -115,6 +116,8 @@ public class CtrlActionMapCatchAsRectangle extends CtrlAction {
 				if (geoPoints.size() >= 2) {
 					DialogMapBoundsCatch dialogMapBoundsCatch = new DialogMapBoundsCatch(geoPoints);
 					dialogMapBoundsCatch.showDialog();
+				} else {
+					Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_SelectTwoError"));
 				}
 			}
 		}
