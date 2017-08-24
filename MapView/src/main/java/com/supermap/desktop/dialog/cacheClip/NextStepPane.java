@@ -6,6 +6,7 @@ import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapTilingMode;
 import com.supermap.data.processing.TileFormat;
 import com.supermap.data.processing.TileSize;
+import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.map.propertycontrols.PanelGroupBoxViewBounds;
 import com.supermap.desktop.mapview.map.propertycontrols.SelectObjectListener;
@@ -385,7 +386,7 @@ public class NextStepPane extends JPanel implements IState {
 		this.enabledListeners = new Vector<>();
 		Map activeMap = this.mapCacheBuilder.getMap();
 		if (null == activeMap) {
-			activeMap = MapUtilities.getActiveMap();
+			activeMap = MapUtilities.getActiveMap() == null ? CacheUtilities.getWorkspaceSelectedMap() : MapUtilities.getActiveMap();
 		}
 		this.panelCacheRange = new PanelGroupBoxViewBounds(parent, MapViewProperties.getString("MapCache_CacheRange"), activeMap);
 		this.panelIndexRange = new PanelGroupBoxViewBounds(parent, MapViewProperties.getString("MapCache_IndexRange"), activeMap);

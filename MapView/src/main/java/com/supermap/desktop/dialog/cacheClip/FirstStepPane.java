@@ -14,6 +14,7 @@ import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.dialog.SmOptionPane;
+import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxItem;
@@ -104,7 +105,7 @@ public class FirstStepPane extends JPanel implements IState {
 	private JLabel labelCacheName;
 	private JLabel labelCachePath;
 	private WarningOrHelpProvider warningProviderCacheNameIllegal;
-//	private WarningOrHelpProvider warningProviderCachePathIllegal;
+	//	private WarningOrHelpProvider warningProviderCachePathIllegal;
 	public JTextField textFieldCacheName;
 
 	private JLabel labelSaveType;
@@ -762,7 +763,7 @@ public class FirstStepPane extends JPanel implements IState {
 	};
 
 	private boolean enabled() {
-		return isRightCacheName()  && isAllRightSaveTypeSetting();
+		return isRightCacheName() && isAllRightSaveTypeSetting();
 	}
 
 	//Validate cache name is right
@@ -925,7 +926,7 @@ public class FirstStepPane extends JPanel implements IState {
 
 	private void initGlobalValue() {
 		this.scientificNotation.setGroupingUsed(false);
-		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip || cmdType == DialogMapCacheClipBuilder.ResumeProcessClip) {
+		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip || cmdType == DialogMapCacheClipBuilder.ResumeProcessClip || cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
 			this.originMapCacheScale = this.mapCacheBuilder.getOutputScales();
 		} else {
 			this.originMapCacheScale = this.mapCacheBuilder.getDefultOutputScales();
@@ -1138,6 +1139,8 @@ public class FirstStepPane extends JPanel implements IState {
 				this.currentMapCacheScale.add(this.originMapCacheScale[0]);
 			} else if (null != Application.getActiveApplication().getActiveForm()) {
 				this.currentMapCacheScale.add(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getScale());
+			} else if (null != CacheUtilities.getWorkspaceSelectedMap()) {
+				this.currentMapCacheScale.add(CacheUtilities.getWorkspaceSelectedMap().getScale());
 			}
 		} else {
 			double insertScale = 0;

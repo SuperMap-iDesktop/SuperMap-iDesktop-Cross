@@ -108,22 +108,24 @@ public class MetaProcessAppendFields extends MetaProcess {
 		Datasets datasets = null;
 		if (null != dataset && (null != dataset.getDatasource() && dataset.getDatasource().equals(datasource))) {
 			datasets = dataset.getDatasource().getDatasets();
-		} else if (null == dataset || (null != dataset.getDatasource() && !dataset.getDatasource().equals(datasource))) {
+		} else if ((null == dataset || (null != dataset.getDatasource() && !dataset.getDatasource().equals(datasource))) && null != datasource) {
 			datasets = datasource.getDatasets();
 		}
-		for (int i = 0, size = datasets.getCount(); i < size; i++) {
-			for (int j = 0, length = vectorTypes.length; j < length; j++) {
-				if (datasets.get(i).getType().equals(vectorTypes[j])) {
-					datasetArray.add(datasets.get(i));
+		if (null != datasets) {
+			for (int i = 0, size = datasets.getCount(); i < size; i++) {
+				for (int j = 0, length = vectorTypes.length; j < length; j++) {
+					if (datasets.get(i).getType().equals(vectorTypes[j])) {
+						datasetArray.add(datasets.get(i));
+					}
 				}
 			}
-		}
-		if (datasetArray.size()>1) {
-			this.sourceDataset.setSelectedItem(datasetArray.get(1));
-			this.targetDataset.setSelectedItem(datasetArray.get(0));
-			this.sourceLinkedField.setFieldName((DatasetVector) datasetArray.get(1));
-			this.targetLinkedField.setFieldName((DatasetVector) datasetArray.get(0));
-			this.multiFieldSet.setDataset((DatasetVector) datasetArray.get(1));
+			if (datasetArray.size() > 1) {
+				this.sourceDataset.setSelectedItem(datasetArray.get(1));
+				this.targetDataset.setSelectedItem(datasetArray.get(0));
+				this.sourceLinkedField.setFieldName((DatasetVector) datasetArray.get(1));
+				this.targetLinkedField.setFieldName((DatasetVector) datasetArray.get(0));
+				this.multiFieldSet.setDataset((DatasetVector) datasetArray.get(1));
+			}
 		}
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceDataCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Append"), DatasetTypes.VECTOR, targetDataCombine);

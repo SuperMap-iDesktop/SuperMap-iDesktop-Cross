@@ -1,8 +1,8 @@
 package com.supermap.desktop.WorkflowView.CtrlAction;
 
 import com.supermap.desktop.Interface.IBaseItem;
+import com.supermap.desktop.Interface.IDataEntry;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -19,20 +19,19 @@ import java.io.File;
 /**
  * @author XiaJT
  */
-public class CtrlActionProcessExportTree extends CtrlAction {
-	public CtrlActionProcessExportTree(IBaseItem caller, IForm formClass) {
+public class CtrlActionWorkflowExportTree extends CtrlAction {
+	public CtrlActionWorkflowExportTree(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 
 	@Override
 	public void run() {
-		IWorkflow workflow;
 		DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getLastSelectedPathComponent();
-		workflow = (IWorkflow) ((TreeNodeData) treeNode.getUserObject()).getData();
-		if (workflow == null) {
+		IDataEntry<String> workflowEntry = (IDataEntry<String>) ((TreeNodeData) treeNode.getUserObject()).getData();
+		if (workflowEntry == null) {
 			return;
 		}
-		String moduleName = "CtrlActionProcessExport";
+		String moduleName = "CtrlActionWorkflowExport";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			SmFileChoose.addNewNode(SmFileChoose.createFileFilter(ProcessProperties.getString("String_ProcessFile"), "xml"),
 					CommonProperties.getString("String_DefaultFilePath"), ProcessProperties.getString("String_ImportWorkFLowFile"),
@@ -43,7 +42,7 @@ public class CtrlActionProcessExportTree extends CtrlAction {
 		if (fileChoose.showDefaultDialog() == JFileChooser.APPROVE_OPTION) {
 			String filePath = fileChoose.getFilePath();
 			if (!StringUtilities.isNullOrEmpty(filePath)) {
-				FileUtilities.writeToFile(filePath, workflow.serializeTo());
+				FileUtilities.writeToFile(filePath, workflowEntry.getValue());
 			}
 		}
 	}

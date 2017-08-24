@@ -2,7 +2,6 @@ package com.supermap.desktop.dialog.cacheClip;
 
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
@@ -141,7 +140,7 @@ public class DialogCacheOperationView extends SmDialog {
 	private void mulitCacheExecuteMission() {
 		DialogCacheOperationView.this.dispose();
 		Map map = getMap();
-		if (CacheUtilities.voladateDatasource()) {
+		if (CacheUtilities.voladateDatasource(false)) {
 			DialogCacheOperationView.this.dispose();
 			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheExecute"));
 			String[] params = {"Multi", "null", "null", map.getName(), "null"};
@@ -160,7 +159,7 @@ public class DialogCacheOperationView extends SmDialog {
 				if (!CacheUtilities.dynamicEffectClosed(map)) {
 					return;
 				}
-				if (CacheUtilities.voladateDatasource()) {
+				if (CacheUtilities.voladateDatasource(true)) {
 					MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 					Map newMap = new Map(Application.getActiveApplication().getWorkspace());
 					newMap.fromXML(map.toXML());
@@ -251,8 +250,8 @@ public class DialogCacheOperationView extends SmDialog {
 			}
 			DialogCacheOperationView.this.dispose();
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
+//			mapCacheBuilder.setMap(getMap());
 			mapCacheBuilder.fromConfigFile(file.getPath());
-			mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
 			DialogMapCacheClipBuilder mapCacheClipBuilder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.ResumeProcessClip, mapCacheBuilder);
 			mapCacheClipBuilder.setComponentsEnabled(false);
 			mapCacheClipBuilder.buttonOk.setEnabled(true);
@@ -271,6 +270,7 @@ public class DialogCacheOperationView extends SmDialog {
 		if (sciFile.exists()) {
 			DialogCacheOperationView.this.dispose();
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
+//			mapCacheBuilder.setMap(getMap());
 			mapCacheBuilder.fromConfigFile(sciFile.getPath());
 			DialogMapCacheClipBuilder builder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.SingleUpdateProcessClip, mapCacheBuilder);
 			builder.firstStepPane.textFieldCacheName.setText(mapCacheBuilder.getCacheName());
