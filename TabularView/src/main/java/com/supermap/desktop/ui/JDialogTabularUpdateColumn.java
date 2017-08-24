@@ -1062,7 +1062,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 				Path path = Paths.get(fileChooser.getEditor().getText());
 				try {
 					value = Files.readAllBytes(path);
-					Files.deleteIfExists(path);
+					//modify 工作流功能测试缺陷2,缺陷41处理
+					//Files.deleteIfExists(path);
 				} catch (IOException e) {
 					value = null;
 				}

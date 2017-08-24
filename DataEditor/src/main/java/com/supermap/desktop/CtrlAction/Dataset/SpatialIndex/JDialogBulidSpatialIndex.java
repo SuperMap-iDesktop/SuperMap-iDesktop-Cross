@@ -77,6 +77,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 	private JTextArea textAreaNull;
 	private JTextArea textAreaRTree;
 	private JTextArea textAreaQuadTree;
+	private JTextArea textAreaPGISTTree;
 	private JPanelDynamicIndex panelDynamicIndex = new JPanelDynamicIndex();
 	private JPanelGraphIndex panelGraphIndex = new JPanelGraphIndex();
 
@@ -132,12 +133,15 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.textAreaRTree.setLineWrap(true);
 		this.textAreaQuadTree = new JTextArea();
 		this.textAreaQuadTree.setLineWrap(true);
+		this.textAreaPGISTTree = new JTextArea();
+		this.textAreaPGISTTree.setLineWrap(true);
 		this.panelDynamicIndex = new JPanelDynamicIndex();
 		this.panelGraphIndex = new JPanelGraphIndex();
 
 		this.textAreaNull.setEditable(false);
 		this.textAreaRTree.setEditable(false);
 		this.textAreaQuadTree.setEditable(false);
+		this.textAreaPGISTTree.setEditable(false);
 
 		// 按钮栏
 		this.panelButton = new JPanel();
@@ -478,8 +482,10 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		} else if (selectedItem.equals(SpatialIndexTypeUtilities.toString(SpatialIndexType.RTREE))) {
 			this.scrollPaneDescribe.setViewportView(this.textAreaRTree);
 		} else if (selectedItem.equals(SpatialIndexTypeUtilities.toString(SpatialIndexType.QTREE))) {
-			this.scrollPaneDescribe.setViewportView(this.textAreaRTree);
-		} else if (selectedItem.equals(SpatialIndexTypeUtilities.toString(SpatialIndexType.MULTI_LEVEL_GRID))) {
+			this.scrollPaneDescribe.setViewportView(this.textAreaQuadTree);
+		} else if(selectedItem.equals(SpatialIndexTypeUtilities.toString(SpatialIndexType.PRIMARY))){
+			this.scrollPaneDescribe.setViewportView(this.textAreaPGISTTree);
+		}else if (selectedItem.equals(SpatialIndexTypeUtilities.toString(SpatialIndexType.MULTI_LEVEL_GRID))) {
 			this.scrollPaneDescribe.setViewportView(this.panelDynamicIndex);
 			initPanelDynamic();
 		} else if (selectedItem.equals(SpatialIndexTypeUtilities.toString(SpatialIndexType.TILE))) {
@@ -581,6 +587,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.textAreaNull.setText("    " + CoreProperties.getString("String_NoneSpatialIndexDescrition"));
 		this.textAreaRTree.setText("    " + CoreProperties.getString("String_RtreeDescription"));
 		this.textAreaQuadTree.setText("    " + CoreProperties.getString("String_QtreeDescription"));
+		this.textAreaPGISTTree.setText("    " + CoreProperties.getString("String_PGISTtreeDescription"));
 		this.labelIndexType.setText(ControlsProperties.getString("String_LabelSpatialIndexType"));
 		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
