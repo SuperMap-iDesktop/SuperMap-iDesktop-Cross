@@ -51,8 +51,7 @@ public class DialogMapBoundsCatch extends SmDialog {
 	// 确定取消按钮
 	private PanelButton panelButton;
 
-	public static final int DEFAULT_BUTTON_WIDTH = 75;
-	public static final int DEFAULT_TEXTFILED_WIDTH = 75;
+	public static final int DEFAULT_WIDTH = 75;
 
 
 	/**
@@ -253,15 +252,15 @@ public class DialogMapBoundsCatch extends SmDialog {
 						.addComponent(this.labelTargetPointX)
 						.addComponent(this.labelTargetPointY))
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(this.textFieldSourcePointX, DEFAULT_TEXTFILED_WIDTH, DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE)
-						.addComponent(this.textFieldSourcePointY, DEFAULT_TEXTFILED_WIDTH, DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE)
-						.addComponent(this.textFieldTargetPointX, DEFAULT_TEXTFILED_WIDTH, DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE)
-						.addComponent(this.textFieldTargetPointY, DEFAULT_TEXTFILED_WIDTH, DEFAULT_TEXTFILED_WIDTH, Short.MAX_VALUE))
+						.addComponent(this.textFieldSourcePointX, DEFAULT_WIDTH, DEFAULT_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.textFieldSourcePointY, DEFAULT_WIDTH, DEFAULT_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.textFieldTargetPointX, DEFAULT_WIDTH, DEFAULT_WIDTH, Short.MAX_VALUE)
+						.addComponent(this.textFieldTargetPointY, DEFAULT_WIDTH, DEFAULT_WIDTH, Short.MAX_VALUE))
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(this.copyButton, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH)
-						.addComponent(this.pasteButton, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH)
-						.addComponent(this.panelButton.getButtonOk(), DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH)
-						.addComponent(this.panelButton.getButtonCancel(), DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_WIDTH))
+						.addComponent(this.copyButton, DEFAULT_WIDTH, DEFAULT_WIDTH, DEFAULT_WIDTH)
+						.addComponent(this.pasteButton, DEFAULT_WIDTH, DEFAULT_WIDTH, DEFAULT_WIDTH)
+						.addComponent(this.panelButton.getButtonOk(), DEFAULT_WIDTH, DEFAULT_WIDTH, DEFAULT_WIDTH)
+						.addComponent(this.panelButton.getButtonCancel(), DEFAULT_WIDTH, DEFAULT_WIDTH, DEFAULT_WIDTH))
 		);
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
