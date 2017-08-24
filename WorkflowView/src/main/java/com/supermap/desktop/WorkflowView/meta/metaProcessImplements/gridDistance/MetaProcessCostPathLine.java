@@ -1,4 +1,4 @@
-package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
+package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridDistance;
 
 import com.supermap.analyst.spatialanalyst.DistanceAnalyst;
 import com.supermap.analyst.spatialanalyst.DistanceAnalystParameter;
@@ -95,8 +95,8 @@ public class MetaProcessCostPathLine extends MetaProcess {
 		if (datasetGrid != null) {
 			costDatasources.setSelectedItem(datasetGrid.getDatasource());
 			costDataset.setSelectedItem(datasetGrid);
+			this.resultDataset.setSelectedItem(datasetGrid.getDatasource().getDatasets().getAvailableDatasetName("result_costPathLine"));
 		}
-		resultDataset.setDatasetName("result_costPathLine");
 		comboBoxSmoothMethod.setItems(new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_NONE"), SmoothMethod.NONE),
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_BSLine"), SmoothMethod.BSPLINE),
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_POLISH"), SmoothMethod.POLISH));
@@ -104,7 +104,7 @@ public class MetaProcessCostPathLine extends MetaProcess {
 //		numberOriginY.setSelectedItem(0.0);
 //		numberTargetX.setSelectedItem(0.0);
 //		numberTargetY.setSelectedItem(0.0);
- 		numberOriginX.setSelectedItem(115.92768708727253);
+		numberOriginX.setSelectedItem(115.92768708727253);
 		numberOriginY.setSelectedItem(40.003289848431905);
 		numberTargetX.setSelectedItem(116.5062230427751);
 		numberTargetY.setSelectedItem(40.37178408760552);
@@ -116,7 +116,7 @@ public class MetaProcessCostPathLine extends MetaProcess {
 		comboBoxSmoothMethod.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (comboBoxSmoothMethod.getSelectedData().equals(SmoothMethod.BSPLINE)||comboBoxSmoothMethod.getSelectedData().equals(SmoothMethod.POLISH)) {
+				if (comboBoxSmoothMethod.getSelectedData().equals(SmoothMethod.BSPLINE) || comboBoxSmoothMethod.getSelectedData().equals(SmoothMethod.POLISH)) {
 					numberSmoothDegree.setEnabled(true);
 					numberSmoothDegree.setMinValue(2);
 					numberSmoothDegree.setMaxValue(10);
@@ -190,7 +190,7 @@ public class MetaProcessCostPathLine extends MetaProcess {
 
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+		} finally {
 			DistanceAnalyst.removeSteppedListener(steppedListener);
 		}
 

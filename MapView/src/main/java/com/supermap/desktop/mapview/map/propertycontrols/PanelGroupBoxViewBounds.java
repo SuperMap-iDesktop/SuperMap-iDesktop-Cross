@@ -626,8 +626,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 			clipBoardBottom = (clipBoardBottom.replace(bottom, "")).replace(",", "");
 			clipBoardRight = (clipBoardRight.replace(right, "")).replace(",", "");
 			clipBoardTop = (clipBoardTop.replace(top, "")).replace(",", "");
-
-			if (DoubleUtilities.isDouble(clipBoardLeft) && DoubleUtilities.isDouble(clipBoardBottom) && DoubleUtilities.isDouble(clipBoardRight) && DoubleUtilities.isDouble(clipBoardTop)) {
+			if (StringUtilities.isNumber(clipBoardLeft) && StringUtilities.isNumber(clipBoardBottom) && StringUtilities.isNumber(clipBoardRight) && StringUtilities.isNumber(clipBoardTop)) {
 				// 获得系统粘贴板内的数字符合规范，设置为千分位，存入桌面
 				ControlDefaultValues.setCopyCurrentMapboundsLeft(DoubleUtilities.stringToValue(clipBoardLeft));
 				ControlDefaultValues.setCopyCurrentMapboundsBottom(DoubleUtilities.stringToValue(clipBoardBottom));

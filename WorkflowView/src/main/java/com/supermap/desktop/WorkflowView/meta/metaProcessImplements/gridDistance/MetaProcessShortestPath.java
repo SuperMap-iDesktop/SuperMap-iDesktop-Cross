@@ -1,4 +1,4 @@
-package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
+package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridDistance;
 
 import com.supermap.analyst.spatialanalyst.ComputeType;
 import com.supermap.analyst.spatialanalyst.DistanceAnalyst;
@@ -101,7 +101,7 @@ public class MetaProcessShortestPath extends MetaProcess {
 			this.sourceDatasource.setSelectedItem(dataset.getDatasource());
 			this.sourceDataset.setSelectedItem(dataset);
 			this.resultDataset.setResultDatasource(dataset.getDatasource());
-			this.resultDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_ShortestPath"));
+			this.resultDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_shortestPath"));
 			this.distanceDatasource.setSelectedItem(dataset.getDatasource());
 			this.directionDatasource.setSelectedItem(dataset.getDatasource());
 			this.distanceDataset.setDatasource(dataset.getDatasource());
