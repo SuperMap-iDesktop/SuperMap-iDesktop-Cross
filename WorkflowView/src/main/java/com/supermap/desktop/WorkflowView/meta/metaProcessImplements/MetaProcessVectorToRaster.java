@@ -105,8 +105,6 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		this.resultData.addParameters(this.resultDataset);
 
 		this.parameters.setParameters(this.sourceData, this.boundaryData, this.parameterSetting, this.resultData);
-//		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.POINT, sourceData);
-//		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.LINE, sourceData);
 		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.SIMPLE_VECTOR, sourceData);
 		this.parameters.addInputParameters(BOUNDARY_DATA, DatasetTypes.REGION, boundaryData);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
