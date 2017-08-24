@@ -13,10 +13,7 @@ import com.supermap.desktop.localUtilities.CommonUtilities;
 import com.supermap.desktop.localUtilities.FiletypeUtilities;
 import com.supermap.desktop.localUtilities.LocalFileUtilities;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.FileChooserControl;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
