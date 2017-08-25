@@ -79,6 +79,12 @@ sidebar:
     Measuregroup: 地图量算
     MapSetting_Basic: 地图属性-基本
     MapSetting_Range: 地图属性-范围
+    SpatialStatisticalAnalysis: 空间统计分析
+    SpatialStatisticalAnalysisSummary: 空间统计分析概述
+    BasicVocabulary: 基础词汇
+    MeasureGeographicDistributions: 度量地理分析
+    Clusters: 聚类分析
+    SpatialRelationshipModeling: 空间关系建模
     Scene: 三维场景
     SceneDia: 场景概述
     FAQAll: FAQ

@@ -59,6 +59,12 @@ docs:
     LayerSetting: /SuperMap-iDesktop-Cross/docs/Map/LayerSetting.html
     MapSetting_Basic: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Basic.html
     MapSetting_Range: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Range.html
+  SpatialStatisticalAnalysis:
+    SpatialStatisticalAnalysisSummary: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/SpatialStatisticalAnalysisSummary.html
+    BasicVocabulary: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/BasicVocabulary.html
+    MeasureGeographicDistributions: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/MeasureGeographicDistributions.html
+    Clusters: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/Clusters.html
+    SpatialRelationshipModeling: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/SpatialRelationshipModeling.html
   Scene:
     SceneDia: /SuperMap-iDesktop-Cross/docs/Scene/SceneDia.html
   FAQAll:
