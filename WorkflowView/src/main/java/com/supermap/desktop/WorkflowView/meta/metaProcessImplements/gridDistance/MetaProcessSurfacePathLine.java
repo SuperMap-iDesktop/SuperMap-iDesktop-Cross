@@ -174,7 +174,7 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 		this.parameters.setParameters(sourceData, parameterCombineSet, resultData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
-				ProcessOutputResultProperties.getString("String_ShorestPathLineResult"),
+				ProcessOutputResultProperties.getString("String_ShortestPathLineResult"),
 				DatasetTypes.LINE, resultData);
 
 	}

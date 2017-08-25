@@ -78,7 +78,7 @@ public class MetaProcessCostPathLine extends MetaProcess {
 		parameters.setParameters(costCombine, settingCombine, outputCombine);
 		parameters.addInputParameters(COST_DATA, DatasetTypes.GRID, costCombine);
 		parameters.addOutputParameters(OUTPUT_DATA,
-				ProcessOutputResultProperties.getString("String_ShorestPathLineResult"),
+				ProcessOutputResultProperties.getString("String_ShortestPathLineResult"),
 				DatasetTypes.LINE, outputCombine);
 	}
 

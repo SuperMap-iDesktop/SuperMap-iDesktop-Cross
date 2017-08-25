@@ -52,4 +52,5 @@ public class ParameterType {
 	public static final String SHAPE_TYPE = "ShapeType";
 	public static final String HISTOGRAM = "Histogram";
 	public static final String COMMON_STATISTIC = "CommonStatistic";
+	public static final String SAVE_DATASET_TABLE = "SaveDatasetTable";
 }

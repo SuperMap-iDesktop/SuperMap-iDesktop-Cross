@@ -91,7 +91,7 @@ public class MetaProcessShortestPath extends MetaProcess {
 		this.parameters.addInputParameters(DISTANCE_DATA, DatasetTypes.GRID, distanceData);
 		this.parameters.addInputParameters(DIRECTION_DATA, DatasetTypes.GRID, directionData);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
-				ProcessOutputResultProperties.getString("String_ShorestPathGridResult"),
+				ProcessOutputResultProperties.getString("String_ShortestPathGridResult"),
 				DatasetTypes.GRID, targetData);
 	}
 
