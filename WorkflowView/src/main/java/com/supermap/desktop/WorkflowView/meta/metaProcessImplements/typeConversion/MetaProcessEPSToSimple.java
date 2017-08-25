@@ -141,7 +141,11 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 			recordsetInput.close();
 			recordsetInput.dispose();
 			isSuccessful = recordsetResult != null;
-			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+			if (isSuccessful) {
+				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+			} else {
+				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
+			}
 			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

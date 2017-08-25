@@ -129,7 +129,11 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 				isSuccessful = isSuccessful && recordsetResult != null;
 				recordsetInput.close();
 				recordsetInput.dispose();
-				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+				if (isSuccessful) {
+					this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+				} else {
+					saveDatasetTable.getResultDatasource().getDatasets().delete(resultDataset.getName());
+				}
 			}
 			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
