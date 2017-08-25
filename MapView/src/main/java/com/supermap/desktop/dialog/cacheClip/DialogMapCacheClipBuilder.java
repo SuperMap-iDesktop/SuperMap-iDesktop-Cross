@@ -22,6 +22,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -34,7 +35,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -306,27 +310,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		boolean result;
 		try {
 			String outputPath = this.mapCacheBuilder.getOutputFolder();
-			File fileParent = new File(CacheUtilities.replacePath(outputPath, this.mapCacheBuilder.getCacheName()));
-			boolean hasLogFile = false;
-			if (fileParent.isDirectory()) {
-				String[] resumFile = fileParent.list(new FilenameFilter() {
-
-					public boolean accept(File dir, String name) {
-						return name.equalsIgnoreCase("resumable.log");
-					}
-				});
-				if (null != resumFile && resumFile.length > 0) {
-					hasLogFile = true;
-				}
+			Map map = this.currentMap;
+			if (null == map) {
+				map = MapUtilities.getActiveMap() == null ? CacheUtilities.getWorkspaceSelectedMap() : MapUtilities.getActiveMap();
 			}
-			if (!hasLogFile) {
-				SmOptionPane pane = new SmOptionPane();
-				pane.showConfirmDialog(MapViewProperties.getString("String_Error_LogNotExist"));
-				buttonOk.setEnabled(false);
-				return;
-			} else {
-				buttonOk.setEnabled(true);
-			}
+			this.mapCacheBuilder.setMap(map);
 			this.mapCacheBuilder.setOutputFolder(outputPath);
 			long startTime = System.currentTimeMillis();
 			if (this.checkBoxShowProcessBar.isSelected()) {
@@ -347,11 +335,12 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	}
 
 	private void printResultInfo(boolean result, long totalTime) {
+		Map map = MapUtilities.getActiveMap() == null ? CacheUtilities.getWorkspaceSelectedMap() : MapUtilities.getActiveMap();
 		if (result) {
-			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("MapCache_StartCreateSuccessed"), this.mapCacheBuilder.getMap().getName()));
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("MapCache_StartCreateSuccessed"), map.getName()));
 			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("MapCache_FloderIs"), this.mapCacheBuilder.getOutputFolder()));
 		} else {
-			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("MapCache_StartCreateFailed"), this.mapCacheBuilder.getMap().getName()));
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("MapCache_StartCreateFailed"), map.getName()));
 		}
 		long hour = 0;
 		long minutes = 0;
@@ -460,7 +449,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 						if (null != this.mapCacheBuilder.getMap()) {
 							mapName = this.mapCacheBuilder.getMap().getName();
 						}
-						String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi",
+						String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi", "null",
 								Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), mapName, cachePath};
 						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 					}
@@ -482,7 +471,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			return;
 		}
 		if (null == mapCacheBuilder.getMap()) {
-			mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
+			Map map = MapUtilities.getActiveMap();
+			if (null == map) {
+				map = CacheUtilities.getWorkspaceSelectedMap();
+			}
+			mapCacheBuilder.setMap(map);
 		}
 		setMapCacheBuilderValueBeforeRun();
 		boolean result;
@@ -551,7 +544,10 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			if (this.mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
 				this.mapCacheBuilder.setIndexBounds(nextStepPane.indexRangeBounds);
 			}
-			this.mapCacheBuilder.setImageCompress(Integer.valueOf(nextStepPane.smSpinnerImageCompressionRatio.getValue().toString()));
+			if (nextStepPane.smSpinnerImageCompressionRatio.isEnabled()) {
+				//modify
+				this.mapCacheBuilder.setImageCompress(Integer.valueOf(nextStepPane.smSpinnerImageCompressionRatio.getValue().toString()));
+			}
 			this.mapCacheBuilder.setTransparent(nextStepPane.checkBoxBackgroundTransparency.isSelected());
 			if (firstStepPane.checkBoxFilterSelectionObjectInLayer.isEnabled() && firstStepPane.checkBoxFilterSelectionObjectInLayer.isSelected()) {
 				Layers layers = this.mapCacheBuilder.getMap().getLayers();

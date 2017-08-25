@@ -59,7 +59,7 @@ public class Workflow implements IWorkflow {
 
 	@Override
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	@Override

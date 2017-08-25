@@ -1,4 +1,4 @@
-package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
+package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridDistance;
 
 import com.supermap.analyst.spatialanalyst.DistanceAnalyst;
 import com.supermap.analyst.spatialanalyst.DistanceAnalystParameter;

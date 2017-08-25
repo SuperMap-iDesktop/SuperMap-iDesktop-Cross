@@ -130,7 +130,7 @@ public class BatchAddDailog extends SmDialog {
         this.startValueText.setInitInfo(Short.MIN_VALUE, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "null");
         this.endValueText = new WaringTextField(String.valueOf(this.inputEndVale), true);
         this.endValueText.setInitInfo(Short.MIN_VALUE, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "null");
-        this.inputStepLength = (this.inputEndVale - this.inputStartValue) / this.inputSeriesNum;
+        this.inputStepLength = (this.inputEndVale - this.inputStartValue) / (this.inputSeriesNum-1);
         this.stepLengthText = new WaringTextField(String.valueOf(this.inputStepLength), true);
         this.stepLengthText.setInitInfo(Short.MIN_VALUE, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "null");
         this.seriesNumText = new WaringTextField(String.valueOf(this.inputSeriesNum), true);

@@ -18,7 +18,17 @@ public class StringEntry implements IDataEntry<String> {
 	}
 
 	@Override
+	public void setKey(String name) {
+		this.name = name;
+	}
+
+	@Override
 	public String getValue() {
 		return this.value;
+	}
+
+	@Override
+	public void setValue(String value) {
+		this.value = value;
 	}
 }

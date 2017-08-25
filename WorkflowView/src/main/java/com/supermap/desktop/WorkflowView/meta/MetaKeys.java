@@ -42,6 +42,8 @@ public class MetaKeys {
 	public static final String EMPTY = "Empty";
 	public static final String COST_PATH_LINE = "CostPathLine";
 	public static final String ELIMINATE = "Eliminate";
+	public static final String SIMPLE_DENSITY_OFFLINE = "SimpleDensityOffline";
+	public static final String KERNEL_DENSITY_OFFLINE = "KernelDensityOffline";
 
 	//栅格统计
 	public static final String GRID_ANALYST_SETTING = "GridAnalystSetting";

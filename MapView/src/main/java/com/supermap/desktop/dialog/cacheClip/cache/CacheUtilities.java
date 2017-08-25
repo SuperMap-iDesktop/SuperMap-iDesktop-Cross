@@ -89,7 +89,7 @@ public class CacheUtilities {
 		return result;
 	}
 
-	public static boolean voladateDatasource() {
+	public static boolean voladateDatasource(boolean modify) {
 		boolean result = true;
 		SmOptionPane optionPane = new SmOptionPane();
 		if (null != Application.getActiveApplication().getWorkspace().getDatasources()) {
@@ -102,7 +102,7 @@ public class CacheUtilities {
 				}
 			}
 		}
-		if (WorkspaceUtilities.isWorkspaceModified()) {
+		if (WorkspaceUtilities.isWorkspaceModified() && modify) {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_WorkSpaceNotSave"));
 			return false;
 		}

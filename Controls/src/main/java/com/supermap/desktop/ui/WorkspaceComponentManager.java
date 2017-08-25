@@ -40,6 +40,7 @@ public class WorkspaceComponentManager extends JComponent {
 
 	private static final int DATASET_TYPE_TABULAR = 1;
 	private static final int DATASET_TYPE_VECTOR = 2;
+	private static final int DATASET_TYPE_VECTORCOLLECTION = 3;
 	private static final int DATASET_TYPE_IMAGE = 4;
 	private static final int DATASET_TYPE_GRID = 8;
 	private static final int DATASET_TYPE_IMAGECOLLECTION = 16;
@@ -145,6 +146,26 @@ public class WorkspaceComponentManager extends JComponent {
 	 */
 	public JPopupMenu getDatasetPopupMenu() {
 		return this.datasetPopupMenu;
+	}
+
+
+	//矢量数据集集合类型
+	private JPopupMenu datasetVectorCollectionPopupMenu = null;
+
+	/**
+	 * 获取工作空间管理器中数据集集合结点的右键菜单。
+	 *
+	 * @return
+	 */
+	public JPopupMenu getDatasetVectorCollectionPopupMenu() {
+		return datasetVectorCollectionPopupMenu;
+	}
+
+	//矢量数据集集合子集节点的右键菜单
+	private JPopupMenu datasetVectorItemPopupMenu = null;
+
+	public JPopupMenu getDatasetVectorItemPopupMenu() {
+		return datasetVectorItemPopupMenu;
 	}
 
 	private JPopupMenu datasetVectorPopupMenu = null;
@@ -378,6 +399,10 @@ public class WorkspaceComponentManager extends JComponent {
 				this.datasourcePopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasource");
 				this.datasetPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDataset");
 				this.datasetVectorPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetVector");
+				//modify by xie 2017-08-22
+				this.datasetVectorCollectionPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetVectorCollection");
+				this.datasetVectorItemPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetVectorItem");
+
 				this.datasetTabularPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetTabular");
 				this.datasetImagePopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetImage");
 				this.datasetImageCollectionPopupMenu = (JPopupMenu) manager
@@ -623,8 +648,8 @@ public class WorkspaceComponentManager extends JComponent {
 						}
 					}
 				} else if (selectedNodeData.getType() == NodeDataType.WORKFLOW) {
-					String name = ((IWorkflow) ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData()).getName();
-					IFormWorkflow iFormProcess = (IFormWorkflow) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.WORKFLOW, name);
+					IDataEntry<String> workflowEntry = (IDataEntry<String>) ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData();
+					CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.WORKFLOW, workflowEntry.getKey());
 				} else if (selectedNodeData.getType() == NodeDataType.SYMBOL_MARKER_LIBRARY) {
 					SymbolDialogFactory.getSymbolDialog(SymbolType.MARKER).showDialog(new GeoStyle());
 				} else if (selectedNodeData.getType() == NodeDataType.SYMBOL_LINE_LIBRARY) {
@@ -695,10 +720,15 @@ public class WorkspaceComponentManager extends JComponent {
 				} else if (type == NodeDataType.SYMBOL_FILL_LIBRARY) {
 					popupMenu = this.symbolFillPopupMenu;
 					break;
+				} else if (type == NodeDataType.DATASET_VECTOR_ITEM) {
+					popupMenu = this.datasetVectorItemPopupMenu;
+					break;
 				} else if (type == NodeDataType.DATASET_VECTOR) {
 					Dataset dataset = (Dataset) nodeDatas.get(i).getData();
 					if (dataset.getType() == DatasetType.TABULAR) {
 						dataType |= DATASET_TYPE_TABULAR;
+					} else if (dataset.getType() == DatasetType.VECTORCOLLECTION) {
+						dataType |= DATASET_TYPE_VECTORCOLLECTION;
 					} else {
 						dataType |= DATASET_TYPE_VECTOR;
 					}
@@ -732,7 +762,9 @@ public class WorkspaceComponentManager extends JComponent {
 
 	private JPopupMenu getPopupMenuByDataType(int dataType) {
 		JPopupMenu popupMenu = null;
-		if (dataType == DATASET_TYPE_TABULAR) {
+		if (dataType == DATASET_TYPE_VECTORCOLLECTION) {
+			popupMenu = getDatasetVectorCollectionPopupMenu();
+		} else if (dataType == DATASET_TYPE_TABULAR) {
 			popupMenu = getDatasetTabularPopupMenu();
 		} else if (dataType == DATASET_TYPE_VECTOR) {
 			popupMenu = getDatasetVectorPopupMenu();

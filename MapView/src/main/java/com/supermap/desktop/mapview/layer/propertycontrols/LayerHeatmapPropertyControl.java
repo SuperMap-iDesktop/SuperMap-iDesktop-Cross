@@ -12,6 +12,9 @@ import com.supermap.desktop.ui.SMSpinner;
 import com.supermap.desktop.ui.controls.ComponentDropDown;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.mapping.LayerHeatmap;
+import com.supermap.mapping.MapDrawingEvent;
+import com.supermap.mapping.MapDrawingListener;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -290,7 +293,6 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 	@Override
 	protected void fillComponents() {
 		if (getLayerPropertyModel() != null) {
-			//unregisterEvents();
 			this.textFieldKernelRadius.setText(getLayerPropertyModel().getKernelRadius().toString());
 			this.componentDropDownMaxColor.setColor(getLayerPropertyModel().getMaxColor());
 			this.componentDropDownMinColor.setColor(getLayerPropertyModel().getMinColor());
@@ -303,7 +305,10 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 			this.waringTextFieldCustomMinValue.setText(getLayerPropertyModel().getCustomMinValue().toString());
 			this.waringTextFieldCustomMaxValue.setText(getLayerPropertyModel().getCustomMaxValue().toString());
 			fillWeightField(getLayerPropertyModel().getFieldInfos(), getLayerPropertyModel().getWeightField());
-			//registerEvents();
+			resetRadioButtonGroup();
+
+			this.getModifiedLayerPropertyModel().getFormMap().getMapControl().getMap().removeDrawingListener(this.mapDrawingListener);
+			this.getModifiedLayerPropertyModel().getFormMap().getMapControl().getMap().addDrawingListener(this.mapDrawingListener);
 		}
 	}
 
@@ -323,6 +328,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 		this.radioButtonCustomMaximum.addActionListener(this.selectedChangeListenerCustom);
 		this.waringTextFieldCustomMinValue.setSmTextFieldLegit(this.iSmCustomMinValueLegitKernelRadius);
 		this.waringTextFieldCustomMaxValue.setSmTextFieldLegit(this.iSmCustomMaxValueLegitKernelRadius);
+
 	}
 
 	@Override
@@ -339,6 +345,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 		this.radioButtonCurrentViewMaximum.removeActionListener(this.selectedChangeListenerCurrentView);
 		this.radioButtonSystemMaximum.removeActionListener(this.selectedChangeListenerSystem);
 		this.radioButtonCustomMaximum.removeActionListener(this.selectedChangeListenerCustom);
+		this.getModifiedLayerPropertyModel().getFormMap().getMapControl().getMap().removeDrawingListener(this.mapDrawingListener);
 	}
 
 	@Override
@@ -377,6 +384,18 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 			}
 		}
 		this.comboBoxWeightField.setSelectedItem(weightField);
+	}
+
+	private void resetRadioButtonGroup(){
+		if(getLayerPropertyModel().getIsUserDef()){
+			this.radioButtonCustomMaximum.setSelected(true);
+			this.waringTextFieldCustomMaxValue.setEnabled(true);
+			this.waringTextFieldCustomMinValue.setEnabled(true);
+		}else{
+			this.radioButtonSystemMaximum.setSelected(true);
+			this.waringTextFieldCustomMaxValue.setEnabled(false);
+			this.waringTextFieldCustomMinValue.setEnabled(false);
+		}
 	}
 
 	private ISmTextFieldLegit iSmTextFieldLegitKernelRadius = new ISmTextFieldLegit() {
@@ -519,6 +538,13 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 		}
 	};
 
+	private MapDrawingListener mapDrawingListener=new MapDrawingListener() {
+		@Override
+		public void mapDrawing(MapDrawingEvent mapDrawingEvent) {
+			resetModelAllMaxiumValue();
+		}
+	};
+
 	private void textfieldKernelRadiusChange() {
 		getModifiedLayerPropertyModel().setKernelRadius(Integer.valueOf(this.textFieldKernelRadius.getText()));
 		checkChanged();
@@ -539,7 +565,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 
 	private void maxColorChange() {
 		getModifiedLayerPropertyModel().setMaxColor(this.componentDropDownMaxColor.getColor());
-		int temp=(int)Math.round((1.0- this.componentDropDownMaxColor.getColor().getAlpha() / 255.0) * 100);
+		int temp = (int) Math.round((1.0 - this.componentDropDownMaxColor.getColor().getAlpha() / 255.0) * 100);
 		getModifiedLayerPropertyModel().setMaxColorTransparence(temp);
 		this.smSpinnerMaxColorTransparence.removeChangeListener(this.changeListenerMaxColorTransparence);
 		this.smSpinnerMaxColorTransparence.setValue(temp);
@@ -549,7 +575,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 
 	private void minColorChange() {
 		getModifiedLayerPropertyModel().setMinColor(this.componentDropDownMinColor.getColor());
-		int temp=(int)Math.round((1.0- this.componentDropDownMinColor.getColor().getAlpha() / 255.0) * 100);
+		int temp = (int) Math.round((1.0 - this.componentDropDownMinColor.getColor().getAlpha() / 255.0) * 100);
 		getModifiedLayerPropertyModel().setMinColorTransparence(temp);
 		this.smSpinnerMinColorTransparence.removeChangeListener(this.changeListenerMinColorTransparence);
 		this.smSpinnerMinColorTransparence.setValue(temp);
@@ -560,14 +586,14 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 	private void maxColorTransparenceChange() {
 		this.componentDropDownMaxColor.setColor(resetColor(this.componentDropDownMaxColor.getColor(), (int) this.smSpinnerMaxColorTransparence.getValue()));
 		getModifiedLayerPropertyModel().setMaxColor(this.componentDropDownMaxColor.getColor());
-		getModifiedLayerPropertyModel().setMaxColorTransparence((int)Math.round((1.0- this.componentDropDownMaxColor.getColor().getAlpha() / 255.0) * 100));
+		getModifiedLayerPropertyModel().setMaxColorTransparence((int) Math.round((1.0 - this.componentDropDownMaxColor.getColor().getAlpha() / 255.0) * 100));
 		checkChanged();
 	}
 
 	private void minColorTransparenceChange() {
 		this.componentDropDownMinColor.setColor(resetColor(this.componentDropDownMinColor.getColor(), (int) this.smSpinnerMinColorTransparence.getValue()));
 		getModifiedLayerPropertyModel().setMinColor(this.componentDropDownMinColor.getColor());
-		int temp=(int) Math.round((1.0- this.componentDropDownMinColor.getColor().getAlpha()/ 255.0) * 100);
+		int temp = (int) Math.round((1.0 - this.componentDropDownMinColor.getColor().getAlpha() / 255.0) * 100);
 		getModifiedLayerPropertyModel().setMinColorTransparence(temp);
 		checkChanged();
 	}
@@ -591,6 +617,8 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 		if (this.radioButtonCurrentViewMaximum.isSelected()) {
 			getModifiedLayerPropertyModel().setMaxValue(Double.valueOf(this.labelCurrentViewMaximumLeftCenter.getText()));
 			getModifiedLayerPropertyModel().setMaxValue(Double.valueOf(this.labelCurrentViewMaximumRightCenter.getText()));
+			this.waringTextFieldCustomMaxValue.setEnabled(this.radioButtonCustomMaximum.isSelected());
+			this.waringTextFieldCustomMinValue.setEnabled(this.radioButtonCustomMaximum.isSelected());
 			// 以及要设置图层当前是当前视图最值iscurrentView之类的
 		}
 	}
@@ -601,6 +629,8 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 //		getModifiedLayerPropertyModel().setMaxValue(Double.valueOf(this.labelSystemMaximumRightCenter.getText()));
 			// 以及要设置图层当前是当前视图最值 ,不确定系统值是只设置isUserDef为false，还是既需要设置isUserDef还需要设置最大最小值，
 			getModifiedLayerPropertyModel().setIsUserDef(false);
+			this.waringTextFieldCustomMaxValue.setEnabled(this.radioButtonCustomMaximum.isSelected());
+			this.waringTextFieldCustomMinValue.setEnabled(this.radioButtonCustomMaximum.isSelected());
 		}
 	}
 
@@ -609,13 +639,32 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 		this.waringTextFieldCustomMinValue.setEnabled(this.radioButtonCustomMaximum.isSelected());
 	}
 
-	private void minValueChange(){
+	private void minValueChange() {
 		getModifiedLayerPropertyModel().setMinValue(Double.valueOf(this.waringTextFieldCustomMinValue.getText()));
 		checkChanged();
 	}
 
-	private void maxValueChange(){
+	private void maxValueChange() {
 		getModifiedLayerPropertyModel().setMaxValue(Double.valueOf(this.waringTextFieldCustomMaxValue.getText()));
 		checkChanged();
+	}
+
+	private void resetModelAllMaxiumValue(){
+		if (getLayerPropertyModel().getFormMap()!=null && getLayerPropertyModel().getFormMap().getActiveLayers()!=null && getLayerPropertyModel().getFormMap().getActiveLayers().length>0&& getLayerPropertyModel().getFormMap().getActiveLayers()[0] instanceof LayerHeatmap) {
+			LayerHeatmap layerHeatmap = ((LayerHeatmap) getLayerPropertyModel().getFormMap().getActiveLayers()[0]);
+			if (Double.compare(this.getModifiedLayerPropertyModel().getCustomMaxValue(), this.getModifiedLayerPropertyModel().getSystemMaxValue()) == 0 &&
+					Double.compare(this.getModifiedLayerPropertyModel().getCustomMinValue(), this.getModifiedLayerPropertyModel().getSystemMinValue()) == 0) {
+				this.waringTextFieldCustomMinValue.setText(String.valueOf(layerHeatmap.getInternalMinValue()));
+				this.waringTextFieldCustomMaxValue.setText(String.valueOf(layerHeatmap.getInternalMaxValue()));
+			}
+			if (Double.compare(layerHeatmap.getInternalMaxValue(), this.getModifiedLayerPropertyModel().getSystemMaxValue()) != 0) {
+				this.getModifiedLayerPropertyModel().setSystemMaxValue(layerHeatmap.getInternalMaxValue());
+				this.labelSystemMaximumRightCenter.setText(String.valueOf(layerHeatmap.getInternalMaxValue()));
+			}
+			if (Double.compare(layerHeatmap.getInternalMinValue(), this.getModifiedLayerPropertyModel().getSystemMinValue()) != 0) {
+				this.getModifiedLayerPropertyModel().setSystemMinValue(layerHeatmap.getInternalMinValue());
+				this.labelSystemMaximumLeftCenter.setText(String.valueOf(layerHeatmap.getInternalMinValue()));
+			}
+		}
 	}
 }

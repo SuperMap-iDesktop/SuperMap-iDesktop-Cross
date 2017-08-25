@@ -5,14 +5,15 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
-import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameters.ParameterPanels.ParameterSaveDatasetTablePanel;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.RecordsetUtilities;
 
@@ -26,61 +27,51 @@ import java.util.Map;
  */
 public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 
-	private ParameterComboBox comboBoxType;
-
-	private ArrayList<DatasetType> datasetTypeArrayList = new ArrayList<>();
+	private ParameterSaveDatasetTable saveDatasetTable;
 
 	public MetaProcessCADToSimple() {
 		initParameters();
 		initParameterConstraint();
-		registerListener();
 	}
 
 	private void initParameters() {
 		OUTPUT_DATA = "CADToSimpleResult";
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(DatasetType.CAD);
-		outputData = new ParameterSaveDataset();
-		comboBoxType = new ParameterComboBox(ProcessProperties.getString("String_ComboBox_NumberType"));
+		saveDatasetTable = new ParameterSaveDatasetTable();
 
+		ArrayList<DatasetTypes> datasetTypes=new ArrayList<>();
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.CAD);
 		if (dataset != null) {
 			inputDatasource.setSelectedItem(dataset.getDatasource());
 			inputDataset.setSelectedItem(dataset);
+			saveDatasetTable.setDatasetVector((DatasetVector) dataset);
+			datasetTypes = initDatasetTypesByQuery((DatasetVector) dataset);
 		}
-		initDatasetTypesByQuery();
-		resetComboBoxItem();
-		outputData.setSelectedItem("result_CADToSimple");
 
 		ParameterCombine inputCombine = new ParameterCombine();
 		inputCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
 		inputCombine.addParameters(inputDatasource, inputDataset);
 		ParameterCombine outputCombine = new ParameterCombine();
 		outputCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-		outputCombine.addParameters(outputData);
-		ParameterCombine settingCombine = new ParameterCombine();
-		settingCombine.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		settingCombine.addParameters(comboBoxType);
+		outputCombine.addParameters(saveDatasetTable);
 
-		parameters.setParameters(inputCombine, settingCombine, outputCombine);
+		parameters.setParameters(inputCombine, outputCombine);
 		parameters.addInputParameters(INPUT_DATA, DatasetTypes.CAD, inputCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Simple_Dataset"), DatasetTypes.VECTOR, outputCombine);
-	}
-
-	private void registerListener() {
-		inputDataset.addPropertyListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				initDatasetTypesByQuery();
-				resetComboBoxItem();
-			}
-		});
+		for (int i = 0; i < datasetTypes.size(); i++) {
+			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Simple_Dataset"),
+					datasetTypes.get(i), outputCombine);
+		}
 	}
 
 	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(inputDatasource, ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(inputDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
+		equalDatasetConstraint.constrained(inputDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		equalDatasetConstraint.constrained(saveDatasetTable, ParameterSaveDatasetTable.FIELD_DATASET);
+		DatasourceConstraint.getInstance().constrained(saveDatasetTable, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	@Override
@@ -102,40 +93,48 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 			} else {
 				src = (DatasetVector) inputDataset.getSelectedDataset();
 			}
-			DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
-			datasetVectorInfo.setName(outputData.getResultDatasource().getDatasets().getAvailableDatasetName(outputData.getDatasetName()));
-			datasetVectorInfo.setType((DatasetType) comboBoxType.getSelectedData());
-			DatasetVector resultDataset = outputData.getResultDatasource().getDatasets().create(datasetVectorInfo);
-			resultDataset.setPrjCoordSys(src.getPrjCoordSys());
-			for (int i = 0; i < src.getFieldInfos().getCount(); i++) {
-				FieldInfo fieldInfo = src.getFieldInfos().get(i);
-				if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().equals("smuserid")) {
-					resultDataset.getFieldInfos().add(fieldInfo);
-				}
-			}
-			recordsetResult = resultDataset.getRecordset(false, CursorType.DYNAMIC);
-			recordsetResult.addSteppedListener(steppedListener);
-			recordsetResult.getBatch().setMaxRecordCount(2000);
-			recordsetResult.getBatch().begin();
-
-			Recordset recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
-			while (!recordsetInput.isEOF()) {
-				Geometry geometry = null;
-				try {
-					geometry = recordsetInput.getGeometry();
-					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-					isSuccessful = convert(recordsetResult, geometry, value);
-				} finally {
-					if (geometry != null) {
-						geometry.dispose();
+			DatasetVectorInfo[] datasetVectorInfos = new DatasetVectorInfo[saveDatasetTable.getCount()];
+			for (int i=0;i<datasetVectorInfos.length;i++) {
+				datasetVectorInfos[i]=new DatasetVectorInfo();
+				datasetVectorInfos[i].setName(saveDatasetTable.getResultDatasource().getDatasets().getAvailableDatasetName(saveDatasetTable.getDatasetNames()[i]));
+				datasetVectorInfos[i].setType(saveDatasetTable.getDatasetTypes()[i]);
+				DatasetVector resultDataset = saveDatasetTable.getResultDatasource().getDatasets().create(datasetVectorInfos[i]);
+				resultDataset.setPrjCoordSys(src.getPrjCoordSys());
+				for (int j = 0; j < src.getFieldInfos().getCount(); j++) {
+					FieldInfo fieldInfo = src.getFieldInfos().get(j);
+					if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().equals("smuserid")) {
+						resultDataset.getFieldInfos().add(fieldInfo);
 					}
 				}
-				recordsetInput.moveNext();
+				recordsetResult = resultDataset.getRecordset(false, CursorType.DYNAMIC);
+				recordsetResult.addSteppedListener(steppedListener);
+				recordsetResult.getBatch().setMaxRecordCount(2000);
+				recordsetResult.getBatch().begin();
+
+				Recordset recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
+				while (!recordsetInput.isEOF()) {
+					Geometry geometry = null;
+					try {
+						geometry = recordsetInput.getGeometry();
+						Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
+						convert(recordsetResult, geometry, value, resultDataset.getType());
+					} finally {
+						if (geometry != null) {
+							geometry.dispose();
+						}
+					}
+					recordsetInput.moveNext();
+				}
+				recordsetResult.getBatch().update();
+				isSuccessful = isSuccessful && recordsetResult != null;
+				recordsetInput.close();
+				recordsetInput.dispose();
+				if (isSuccessful) {
+					this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+				} else {
+					saveDatasetTable.getResultDatasource().getDatasets().delete(resultDataset.getName());
+				}
 			}
-			recordsetResult.getBatch().update();
-			recordsetInput.close();
-			recordsetInput.dispose();
-			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
 			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -160,72 +159,98 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 		return ProcessProperties.getString("String_Title_CADToSimple");
 	}
 
-	private void initDatasetTypesByQuery() {
+	private boolean convert(Recordset recordset, Geometry geometry, Map<String, Object> value,DatasetType datasetType) {
+		boolean isConvert = false;
+		GeometryType geometryType = geometry.getType();
+
+		if (((geometryType.equals(GeometryType.GEOLINEM) || geometryType.equals(GeometryType.GEOLINE)
+				|| geometryType.equals(GeometryType.GEOARC) || geometryType.equals(GeometryType.GEOBSPLINE)
+				|| geometryType.equals(GeometryType.GEOCARDINAL) || geometryType.equals(GeometryType.GEOCURVE)
+				|| geometryType.equals(GeometryType.GEOELLIPTICARC) || geometryType.equals(GeometryType.GEOLINE))
+				&& datasetType.equals(DatasetType.LINE))
+				|| ((geometryType.equals(GeometryType.GEOCIRCLE) || geometryType.equals(GeometryType.GEORECTANGLE)
+				|| geometryType.equals(GeometryType.GEOROUNDRECTANGLE) || geometryType.equals(GeometryType.GEOELLIPSE)
+				|| geometryType.equals(GeometryType.GEOPIE) || geometryType.equals(GeometryType.GEOCHORD)
+				|| geometryType.equals(GeometryType.GEOREGION)) && datasetType.equals(DatasetType.REGION))
+				|| (geometryType.equals(GeometryType.GEOPOINT) && datasetType.equals(DatasetType.POINT))
+				|| (geometryType.equals(GeometryType.GEOTEXT) && datasetType.equals(DatasetType.TEXT))
+				|| (geometryType.equals(GeometryType.GEOPOINT3D) && datasetType.equals(DatasetType.POINT3D))
+				|| (geometryType.equals(GeometryType.GEOLINE3D) && datasetType.equals(DatasetType.LINE3D))
+				|| (geometryType.equals(GeometryType.GEOREGION3D) && datasetType.equals(DatasetType.REGION3D))
+				|| (geometryType.equals(GeometryType.GEOMODEL) && datasetType.equals(DatasetType.MODEL))) {
+			recordset.addNew(geometry, value);
+			isConvert = true;
+		} else {
+			isConvert = false;
+		}
+		return isConvert;
+	}
+
+	private ArrayList<DatasetTypes> initDatasetTypesByQuery(DatasetVector datasetVector) {
 		ArrayList<GeometryType> geometryTypes = new ArrayList<>();
 		try {
-			DatasetVector datasetVector = (DatasetVector) inputDataset.getSelectedDataset();
-			if (datasetVector != null && datasetVector.getType().equals(DatasetType.CAD)) {
-				QueryParameter queryParameter = new QueryParameter();
-				queryParameter.setHasGeometry(false);
-				queryParameter.setCursorType(CursorType.STATIC);
-				queryParameter.setGroupBy(new String[]{"SmGeoType"});
-				Recordset recordsetGroup = datasetVector.query(queryParameter);
-				if (recordsetGroup != null && recordsetGroup.getRecordCount() > 0) {
-					recordsetGroup.moveFirst();
-					while (!recordsetGroup.isEOF()) {
-						if (geometryTypes.size() <= 7) {
-							short value = recordsetGroup.getInt16("SmGeoType");
-							GeometryType geometryType = GeometryType.newInstance(value);
-							if (geometryType != GeometryType.GEOCOMPOUND && !geometryTypes.contains(geometryType)) {
-								geometryTypes.add(geometryType);
-							}
-							recordsetGroup.moveNext();
-						} else {
-							break;
-						}
-					}
-					recordsetGroup.close();
-					recordsetGroup.dispose();
-					//查询复合对象进行遍历
+			QueryParameter queryParameter = new QueryParameter();
+			queryParameter.setHasGeometry(false);
+			queryParameter.setCursorType(CursorType.STATIC);
+			queryParameter.setGroupBy(new String[]{"SmGeoType"});
+			Recordset recordsetGroup = datasetVector.query(queryParameter);
+			if (recordsetGroup != null && recordsetGroup.getRecordCount() > 0) {
+				recordsetGroup.moveFirst();
+				while (!recordsetGroup.isEOF()) {
 					if (geometryTypes.size() <= 7) {
-						queryParameter.setHasGeometry(false);
-						queryParameter.setCursorType(CursorType.STATIC);
-						queryParameter.setAttributeFilter("SmGeoType='1000'");
-						queryParameter.setGroupBy(null);
-						queryParameter.setHasGeometry(true);
-						Recordset recordset = datasetVector.query(queryParameter);
-						recordset.moveFirst();
-						while (!recordset.isEOF()) {
-							Geometry geoItem = recordset.getGeometry();
-							if (geoItem != null) {
-								Geometry[] geometrys = null;
-								geometrys = ((GeoCompound) geoItem).divide(false);
-								if (geometryTypes.size() <= 7) {
-									for (int i = 0; i < geometrys.length; i++) {
-										if (!geometryTypes.contains(geometrys[i].getType())) {
-											geometryTypes.add(geometrys[i].getType());
-										}
-										geometrys[i].dispose();
+						short value = recordsetGroup.getInt16("SmGeoType");
+						GeometryType geometryType = GeometryType.newInstance(value);
+						if (geometryType != GeometryType.GEOCOMPOUND && !geometryTypes.contains(geometryType)) {
+							geometryTypes.add(geometryType);
+						}
+						recordsetGroup.moveNext();
+					} else {
+						break;
+					}
+				}
+				recordsetGroup.close();
+				recordsetGroup.dispose();
+				//查询复合对象进行遍历
+				if (geometryTypes.size() <= 7) {
+					queryParameter.setHasGeometry(false);
+					queryParameter.setCursorType(CursorType.STATIC);
+					queryParameter.setAttributeFilter("SmGeoType='1000'");
+					queryParameter.setGroupBy(null);
+					queryParameter.setHasGeometry(true);
+					Recordset recordset = datasetVector.query(queryParameter);
+					recordset.moveFirst();
+					while (!recordset.isEOF()) {
+						Geometry geoItem = recordset.getGeometry();
+						if (geoItem != null) {
+							Geometry[] geometrys = null;
+							geometrys = ((GeoCompound) geoItem).divide(false);
+							if (geometryTypes.size() <= 7) {
+								for (int i = 0; i < geometrys.length; i++) {
+									if (!geometryTypes.contains(geometrys[i].getType())) {
+										geometryTypes.add(geometrys[i].getType());
 									}
-									geoItem.dispose();
-									recordset.moveNext();
-								} else {
-									break;
+									geometrys[i].dispose();
 								}
+								geoItem.dispose();
+								recordset.moveNext();
+							} else {
+								break;
 							}
 						}
-						recordset.close();
-						recordset.dispose();
 					}
-					addDatasetType(datasetTypeArrayList, geometryTypes);
+					recordset.close();
+					recordset.dispose();
 				}
+				return addDatasetType(geometryTypes);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		}
+		return null;
 	}
 
-	private void addDatasetType(ArrayList<DatasetType> datasetTypes, ArrayList<GeometryType> geometryTypes) {
+	private ArrayList<DatasetTypes> addDatasetType(ArrayList<GeometryType> geometryTypes) {
+		ArrayList<DatasetTypes> datasetTypes = new ArrayList<>();
 		DatasetType datasetType = DatasetType.CAD;
 		for (GeometryType geometryType : geometryTypes) {
 			if (geometryType.equals(GeometryType.GEOLINEM) || geometryType.equals(GeometryType.GEOLINE)
@@ -252,45 +277,10 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 				datasetType = DatasetType.MODEL;
 			}
 
-			if (!datasetTypes.contains(datasetType)) {
-				datasetTypes.add(datasetType);
+			if (!datasetTypes.contains(datasetTypeToTypes(datasetType))) {
+				datasetTypes.add(datasetTypeToTypes(datasetType));
 			}
 		}
-	}
-
-	private void resetComboBoxItem() {
-		comboBoxType.removeAllItems();
-		for (DatasetType type : datasetTypeArrayList) {
-			comboBoxType.addItem(new ParameterDataNode(DatasetTypeUtilities.toString(type), type));
-		}
-		comboBoxType.setSelectedItem(comboBoxType.getItemIndex(0));
-	}
-
-	private boolean convert(Recordset recordset, Geometry geometry, Map<String, Object> value) {
-		boolean isConvert = false;
-		DatasetType datasetType = (DatasetType) comboBoxType.getSelectedData();
-		GeometryType geometryType = geometry.getType();
-
-		if (((geometryType.equals(GeometryType.GEOLINEM) || geometryType.equals(GeometryType.GEOLINE)
-				|| geometryType.equals(GeometryType.GEOARC) || geometryType.equals(GeometryType.GEOBSPLINE)
-				|| geometryType.equals(GeometryType.GEOCARDINAL) || geometryType.equals(GeometryType.GEOCURVE)
-				|| geometryType.equals(GeometryType.GEOELLIPTICARC) || geometryType.equals(GeometryType.GEOLINE))
-				&& datasetType.equals(DatasetType.LINE))
-				|| ((geometryType.equals(GeometryType.GEOCIRCLE) || geometryType.equals(GeometryType.GEORECTANGLE)
-				|| geometryType.equals(GeometryType.GEOROUNDRECTANGLE) || geometryType.equals(GeometryType.GEOELLIPSE)
-				|| geometryType.equals(GeometryType.GEOPIE) || geometryType.equals(GeometryType.GEOCHORD)
-				|| geometryType.equals(GeometryType.GEOREGION)) && datasetType.equals(DatasetType.REGION))
-				|| (geometryType.equals(GeometryType.GEOPOINT) && datasetType.equals(DatasetType.POINT))
-				|| (geometryType.equals(GeometryType.GEOTEXT) && datasetType.equals(DatasetType.TEXT))
-				|| (geometryType.equals(GeometryType.GEOPOINT3D) && datasetType.equals(DatasetType.POINT3D))
-				|| (geometryType.equals(GeometryType.GEOLINE3D) && datasetType.equals(DatasetType.LINE3D))
-				|| (geometryType.equals(GeometryType.GEOREGION3D) && datasetType.equals(DatasetType.REGION3D))
-				|| (geometryType.equals(GeometryType.GEOMODEL) && datasetType.equals(DatasetType.MODEL))) {
-			recordset.addNew(geometry, value);
-			isConvert = true;
-		} else {
-			isConvert = false;
-		}
-		return isConvert;
+		return datasetTypes;
 	}
 }

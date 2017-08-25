@@ -81,8 +81,9 @@ public class MetaProcessDEMLake extends MetaProcess {
 		if (datasetRegion != null) {
 			lakeDatasource.setSelectedItem(datasetRegion.getDatasource());
 			lakeDataset.setSelectedItem(datasetRegion);
-			heightFieldComboBox.setFieldName((DatasetVector) datasetRegion);
+			heightFieldComboBox.setDataset((DatasetVector) datasetRegion);
 		}
+		heightFieldComboBox.setShowNullValue(true);
 
 		heightValue = new ParameterNumber(ProcessProperties.getString("String_BuildLake_Elevation"));
 		heightValue.setSelectedItem(-9999);
@@ -148,7 +149,8 @@ public class MetaProcessDEMLake extends MetaProcess {
 
 			ParameterDataNode node = (ParameterDataNode) fieldOrValue.getSelectedItem();
 			if (fieldOrValue.getItemIndex(node) == 0) {
-				isSuccessful = TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), heightFieldComboBox.getSelectedItem().toString());
+				isSuccessful =(heightFieldComboBox.getSelectedItem()==null?TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), null):
+				 TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), heightFieldComboBox.getSelectedItem().toString()));
 			} else if (fieldOrValue.getItemIndex(node) == 1) {
 				isSuccessful = TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), Double.valueOf(heightValue.getSelectedItem().toString()));
 			}

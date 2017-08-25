@@ -213,7 +213,6 @@ public class MetaProcessInterpolator extends MetaProcess {
 		}
 
 		parameters.setParameters(sourceCombine, parameterField, targetCombine
-//				, boundsCombine
 				, modeSetCombine, otherParamCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA,

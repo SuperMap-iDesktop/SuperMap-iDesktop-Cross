@@ -1,6 +1,7 @@
 package com.supermap.desktop.WorkflowView.CtrlAction;
 
 import com.supermap.desktop.Interface.IBaseItem;
+import com.supermap.desktop.Interface.IDataEntry;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
@@ -29,8 +30,8 @@ public class CtrlActionWorkflowDelete extends CtrlAction {
 		for (TreePath treePath : workspaceTree.getSelectionPaths()) {
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
 			TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
-			String workflow = (String) selectedNodeData.getData();
-			workflows.add(workflow);
+			IDataEntry<String> workflowEntry = (IDataEntry<String>) selectedNodeData.getData();
+			workflows.add(workflowEntry.getKey());
 		}
 		WorkflowUtilities.deleteWorkflowEntry(workflows);
 		ToolbarUIUtilities.updataToolbarsState();
