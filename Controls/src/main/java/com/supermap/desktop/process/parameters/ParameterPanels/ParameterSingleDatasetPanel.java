@@ -12,6 +12,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.process.util.ParameterUtil;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
@@ -21,6 +22,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 import java.util.Objects;
 
 /**
@@ -96,7 +98,7 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 
 	private void initComponents() {
 		this.labelDataset = new JLabel();
-		this.labelDataset.setText(parameterSingleDataset.getDescribe());
+		this.labelDataset.setText(getDescribe());
 		this.datasetTypes = parameterSingleDataset.getDatasetTypes();
 		this.datasource = parameterSingleDataset.getDatasource();
 		if (this.datasource != null) {
@@ -270,4 +272,15 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 		datasetComboBox.setDatasets(null);
 	}
 
+	/**
+	 * @return
+	 */
+	private String getDescribe() {
+		String describe = parameterSingleDataset.getDescribe();
+		if (parameterSingleDataset.isRequisite()) {
+			return MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);
+		} else {
+			return describe;
+		}
+	}
 }

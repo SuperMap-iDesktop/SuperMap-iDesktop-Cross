@@ -201,4 +201,9 @@ public class MetaProcessProjection extends MetaProcess {
 	public String getTitle() {
 		return ProcessProperties.getString("String_Projection");
 	}
+
+	@Override
+	public boolean isChangeSourceData() {
+		return true;
+	}
 }

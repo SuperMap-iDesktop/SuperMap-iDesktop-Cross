@@ -211,15 +211,25 @@ public class DefaultParameters implements IParameters {
 
 	@Override
 	public boolean isReady() {
+		ArrayList<IParameter> parameters = getParameters();
+		ArrayList<IParameter> ignoreParameters = new ArrayList<>();
 		Inputs inputs = getInputs();
 		InputData[] datas = inputs.getDatas();
 		for (InputData data : datas) {
+			ArrayList<IParameter> bindParameter = data.getParameters();
+			ignoreParameters.addAll(bindParameter);
 			if (!data.isBinded()) {
-				ArrayList<IParameter> parameters = data.getParameters();
 				for (IParameter parameter : parameters) {
 					if (!isParameterReady(parameter, false)) {
 						return false;
 					}
+				}
+			}
+		}
+		for (IParameter parameter : parameters) {
+			if (!ignoreParameters.contains(parameter)) {
+				if (!isParameterReady(parameter, false)) {
+					return false;
 				}
 			}
 		}

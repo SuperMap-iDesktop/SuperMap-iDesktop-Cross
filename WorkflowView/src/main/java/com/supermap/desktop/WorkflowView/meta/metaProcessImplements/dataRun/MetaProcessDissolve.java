@@ -21,18 +21,7 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterFieldGroup;
-import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
-import com.supermap.desktop.process.parameter.ipls.ParameterSQLExpression;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSimpleStatisticsFieldGroup;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -74,6 +63,7 @@ public class MetaProcessDissolve extends MetaProcess {
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		this.sourceDataset = new ParameterSingleDataset(DatasetType.LINE, DatasetType.REGION);
 		this.sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
+		sourceDataset.setRequisite(true);
 		this.comboBoxDissolveMode = new ParameterComboBox();
 		this.comboBoxDissolveMode.setDescribe(ProcessProperties.getString("String_DissolveMode"));
 		this.numberDissolveTolerance = new ParameterNumber();
@@ -133,7 +123,6 @@ public class MetaProcessDissolve extends MetaProcess {
 		ParameterDataNode parameterDataNodeMultipart = new ParameterDataNode(ProcessProperties.getString("String_Dissolve_Mode_MultiPart"), DissolveType.MULTIPART);
 		this.comboBoxDissolveMode.setItems(parameterDataNodeOnlyMultipart, parameterDataNodeOnlySingle, parameterDataNodeMultipart);
 		this.comboBoxDissolveMode.setSelectedItem(parameterDataNodeOnlySingle);
-		this.comboBoxDissolveMode.setRequisite(true);
 		this.numberDissolveTolerance.setMinValue(0);
 		this.numberDissolveTolerance.setIsIncludeMin(true);
 		this.numberDissolveTolerance.setRequisite(true);
