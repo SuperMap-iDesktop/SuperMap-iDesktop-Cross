@@ -42,9 +42,7 @@ public class DefaultProcessLoader extends AbstractProcessLoader {
 
 		try {
 			process = (IProcess) classInstance.newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return process;

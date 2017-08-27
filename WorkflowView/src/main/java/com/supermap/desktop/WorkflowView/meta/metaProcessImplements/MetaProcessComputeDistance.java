@@ -134,14 +134,14 @@ public class MetaProcessComputeDistance extends MetaProcess {
 		if (datasetPoint != null) {
 			sourceDatasource.setSelectedItem(datasetPoint.getDatasource());
 			sourceDataset.setSelectedItem(datasetPoint);
-			expressionSource.setSelectDataset((Dataset) sourceDataset.getSelectedItem());
+			expressionSource.setSelectDataset(sourceDataset.getSelectedItem());
 		}
 
 		Dataset datasetRegion = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
 		if (datasetRegion != null) {
 			proximityDatasource.setSelectedItem(datasetRegion.getDatasource());
 			proximityDataset.setSelectedItem(datasetRegion);
-			expressionProximity.setSelectDataset((Dataset) proximityDataset.getSelectedItem());
+			expressionProximity.setSelectDataset(proximityDataset.getSelectedItem());
 		}
 		comboBoxComputeMethod.setItems(new ParameterDataNode(ProcessProperties.getString("String_Item_ClosestDistance"), MIN_DISTANCE),
 				new ParameterDataNode(ProcessProperties.getString("String_Item_DistanceInRange"), RANGE_DISTANCE));
@@ -196,7 +196,7 @@ public class MetaProcessComputeDistance extends MetaProcess {
 		textNumMin.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				textNumMax.setMinValue(Double.valueOf(textNumMin.getSelectedItem().toString()));
+				textNumMax.setMinValue(Double.valueOf(textNumMin.getSelectedItem()));
 			}
 		});
 	}
@@ -208,25 +208,25 @@ public class MetaProcessComputeDistance extends MetaProcess {
 			fireRunning(new RunningEvent(this, 0, "start"));
 
 			ProximityAnalyst.addSteppedListener(steppedListener);
-			DatasetVector src = null;
+			DatasetVector src;
 			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) getParameters().getInputs().getData(INPUT_DATA).getValue();
 			} else {
 				src = (DatasetVector) sourceDataset.getSelectedItem();
 			}
-			DatasetVector srcReference = null;
+			DatasetVector srcReference;
 			if (this.getParameters().getInputs().getData(PROXIMITY_DATA).getValue() != null) {
 				srcReference = (DatasetVector) getParameters().getInputs().getData(PROXIMITY_DATA).getValue();
 			} else {
 				srcReference = (DatasetVector) proximityDataset.getSelectedItem();
 			}
-			Recordset recordsetSource = null;
+			Recordset recordsetSource;
 			if (textAreaSourceSQL.getSelectedItem() != null) {
 				recordsetSource = src.query(textAreaSourceSQL.getSelectedItem().toString(), CursorType.STATIC);
 			} else {
 				recordsetSource = src.getRecordset(false, CursorType.STATIC);
 			}
-			Recordset recordsetReference = null;
+			Recordset recordsetReference;
 			if (textAreaProximitySQL.getSelectedItem() != null) {
 				recordsetReference = srcReference.query(textAreaProximitySQL.getSelectedItem().toString(), CursorType.STATIC);
 			} else {
@@ -236,8 +236,8 @@ public class MetaProcessComputeDistance extends MetaProcess {
 			String datasetName = resultDataset.getDatasetName();
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 
-			double min = textNumMin.isEnabled() ? (double) textNumMin.getSelectedItem() : 0;
-			double max = textNumMax.isEnabled() && (double) textNumMax.getSelectedItem() > (double) textNumMin.getSelectedItem() ? (double) textNumMax.getSelectedItem() : -1;
+			double min = textNumMin.isEnabled() ? Double.valueOf(textNumMin.getSelectedItem()) : 0;
+			double max = textNumMax.isEnabled() && Double.valueOf(textNumMax.getSelectedItem()) > Double.valueOf(textNumMin.getSelectedItem()) ? Double.valueOf(textNumMax.getSelectedItem()) : -1;
 
 			if (comboBoxComputeMethod.getSelectedData() == MIN_DISTANCE) {
 				isSuccessful = ProximityAnalyst.computeMinDistance(recordsetSource, recordsetReference, min, max, resultDataset.getResultDatasource(), datasetName);

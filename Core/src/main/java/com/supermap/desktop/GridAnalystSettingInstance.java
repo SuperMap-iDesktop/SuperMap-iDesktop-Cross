@@ -1,20 +1,7 @@
 package com.supermap.desktop;
 
-import com.supermap.analyst.spatialanalyst.BoundsType;
-import com.supermap.analyst.spatialanalyst.CalculationTerrain;
-import com.supermap.analyst.spatialanalyst.CellSizeType;
-import com.supermap.analyst.spatialanalyst.ConversionAnalyst;
-import com.supermap.analyst.spatialanalyst.DistanceAnalyst;
-import com.supermap.analyst.spatialanalyst.GridAnalystSetting;
-import com.supermap.analyst.spatialanalyst.MathAnalyst;
-import com.supermap.analyst.spatialanalyst.TerrainAnalystSetting;
-import com.supermap.data.CursorType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.GeoRegion;
-import com.supermap.data.Geometrist;
-import com.supermap.data.Geometry;
-import com.supermap.data.Recordset;
-import com.supermap.data.Rectangle2D;
+import com.supermap.analyst.spatialanalyst.*;
+import com.supermap.data.*;
 
 import javax.swing.event.EventListenerList;
 import java.beans.PropertyChangeEvent;
@@ -24,9 +11,8 @@ import java.beans.PropertyChangeListener;
  * @author XiaJT
  */
 public class GridAnalystSettingInstance {
-	private static GridAnalystSettingInstance ourInstance = new GridAnalystSettingInstance();
-	private GridAnalystSetting gridAnalystSetting = new GridAnalystSetting();
-	private TerrainAnalystSetting terrainAnalystSetting = new TerrainAnalystSetting();
+	private GridAnalystSetting gridAnalystSetting;
+	private TerrainAnalystSetting terrainAnalystSetting;
 
 	public static final String RESULT_BOUNDS = "resultBounds";
 	public static final String CLIP_BOUNDS = "clipBounds";
@@ -42,26 +28,86 @@ public class GridAnalystSettingInstance {
 
 	private EventListenerList eventListenerList = new EventListenerList();
 
-	private Object resultBounds = RESULT_BOUNDS_INTERSECTION;
+	private Object resultBounds = BoundsType.INTERSECTION;
 	private Object clipBounds = null;
-	private Object cellSize = CELL_SIZE_MIN;
-	private DatasetVector currentDataset = null;
+	private Object cellSize = CellSizeType.MIN;
+	private static DatasetVector currentDataset = null;
 
 	public static GridAnalystSettingInstance getInstance() {
-		return ourInstance;
+		GridAnalystSettingInstance gridAnalystSettingInstance = new GridAnalystSettingInstance();
+		return gridAnalystSettingInstance;
 	}
 
 	private boolean isChanged = false;
 
 	private GridAnalystSettingInstance() {
-
+		gridAnalystSetting = MathAnalyst.getAnalystSetting();
+		terrainAnalystSetting = CalculationTerrain.getAnalystSetting();
+		if (gridAnalystSetting == null) {
+			gridAnalystSetting = new GridAnalystSetting();
+		}
+		if (terrainAnalystSetting == null) {
+			terrainAnalystSetting = new TerrainAnalystSetting();
+		}
+		resultBounds = gridAnalystSetting.getBoundsType();
+		if (resultBounds == BoundsType.CUSTOM) {
+			resultBounds = gridAnalystSetting.getBounds();
+		}
+		clipBounds = gridAnalystSetting.getValidRegion();
+		if (clipBounds != null) {
+			clipBounds = currentDataset;
+		}
+		cellSize = gridAnalystSetting.getCellSizeType();
+		if (cellSize == CellSizeType.CUSTOM) {
+			cellSize = (Double) gridAnalystSetting.getCellSize();
+		}
 	}
 
 	public void run() {
 		if (isChanged) {
 			if (clipBounds != null && clipBounds instanceof DatasetVector && clipBounds != currentDataset) {
-				this.currentDataset = (DatasetVector) clipBounds;
+				currentDataset = (DatasetVector) clipBounds;
 				setSettingClipRegion();
+			}
+			if (resultBounds instanceof String) {
+				if (resultBounds.equals(RESULT_BOUNDS_CUSTOM)) {
+					gridAnalystSetting.setBoundsType(BoundsType.CUSTOM);
+					terrainAnalystSetting.setBoundsType(BoundsType.CUSTOM);
+				} else if (resultBounds.equals(RESULT_BOUNDS_INTERSECTION)) {
+					gridAnalystSetting.setBoundsType(BoundsType.INTERSECTION);
+					terrainAnalystSetting.setBoundsType(BoundsType.INTERSECTION);
+				} else if (resultBounds.equals(RESULT_BOUNDS_UNION)) {
+					gridAnalystSetting.setBoundsType(BoundsType.UNION);
+					terrainAnalystSetting.setBoundsType(BoundsType.UNION);
+				}
+			} else if (resultBounds instanceof Rectangle2D) {
+				gridAnalystSetting.setBoundsType(BoundsType.CUSTOM);
+				terrainAnalystSetting.setBoundsType(BoundsType.CUSTOM);
+				gridAnalystSetting.setBounds((Rectangle2D) resultBounds);
+				terrainAnalystSetting.setBounds((Rectangle2D) resultBounds);
+			} else if (resultBounds instanceof DatasetVector) {
+				gridAnalystSetting.setBoundsType(BoundsType.CUSTOM);
+				terrainAnalystSetting.setBoundsType(BoundsType.CUSTOM);
+				gridAnalystSetting.setBounds(((DatasetVector) resultBounds).getBounds());
+				terrainAnalystSetting.setBounds(((DatasetVector) resultBounds).getBounds());
+			}
+
+			if (cellSize instanceof String) {
+				if (cellSize.equals(CELL_SIZE_MAX)) {
+					gridAnalystSetting.setCellSizeType(CellSizeType.MAX);
+					terrainAnalystSetting.setCellSizeType(CellSizeType.MAX);
+				} else if (cellSize.equals(CELL_SIZE_MIN)) {
+					gridAnalystSetting.setCellSizeType(CellSizeType.MIN);
+					terrainAnalystSetting.setCellSizeType(CellSizeType.MIN);
+				} else if (cellSize.equals(CELL_SIZE_CUSTOM)) {
+					gridAnalystSetting.setCellSizeType(CellSizeType.CUSTOM);
+					terrainAnalystSetting.setCellSizeType(CellSizeType.CUSTOM);
+				}
+			} else if (cellSize instanceof Double) {
+				gridAnalystSetting.setCellSizeType(CellSizeType.CUSTOM);
+				terrainAnalystSetting.setCellSizeType(CellSizeType.CUSTOM);
+				gridAnalystSetting.setCellSize((Double) cellSize);
+				terrainAnalystSetting.setCellSize((Double) cellSize);
 			}
 			MathAnalyst.setAnalystSetting(gridAnalystSetting);
 			CalculationTerrain.setAnalystSetting(terrainAnalystSetting);
@@ -108,66 +154,28 @@ public class GridAnalystSettingInstance {
 	}
 
 	public void setResultBounds(Object resultBounds) {
-		if (resultBounds == null) {
+		if (resultBounds == null || resultBounds == this.resultBounds) {
 			return;
 		}
 		isChanged = true;
 		Object oldValue = this.resultBounds;
 		this.resultBounds = resultBounds;
-		if (resultBounds instanceof String) {
-			if (resultBounds.equals(RESULT_BOUNDS_CUSTOM)) {
-				gridAnalystSetting.setBoundsType(BoundsType.CUSTOM);
-				terrainAnalystSetting.setBoundsType(BoundsType.CUSTOM);
-			} else if (resultBounds.equals(RESULT_BOUNDS_INTERSECTION)) {
-				gridAnalystSetting.setBoundsType(BoundsType.INTERSECTION);
-				terrainAnalystSetting.setBoundsType(BoundsType.INTERSECTION);
-			} else if (resultBounds.equals(RESULT_BOUNDS_UNION)) {
-				gridAnalystSetting.setBoundsType(BoundsType.UNION);
-				terrainAnalystSetting.setBoundsType(BoundsType.UNION);
-			}
-		} else if (resultBounds instanceof Rectangle2D) {
-			gridAnalystSetting.setBoundsType(BoundsType.CUSTOM);
-			terrainAnalystSetting.setBoundsType(BoundsType.CUSTOM);
-			gridAnalystSetting.setBounds((Rectangle2D) resultBounds);
-			terrainAnalystSetting.setBounds((Rectangle2D) resultBounds);
-		} else if (resultBounds instanceof DatasetVector) {
-			gridAnalystSetting.setBoundsType(BoundsType.CUSTOM);
-			terrainAnalystSetting.setBoundsType(BoundsType.CUSTOM);
-			gridAnalystSetting.setBounds(((DatasetVector) resultBounds).getBounds());
-			terrainAnalystSetting.setBounds(((DatasetVector) resultBounds).getBounds());
-		}
 		firePropertyChangedListener(new PropertyChangeEvent(this, RESULT_BOUNDS, oldValue, this.resultBounds));
 	}
 
 	public void setCellSize(Object cellSize) {
-		if (cellSize == null) {
+		if (cellSize == null || cellSize == this.cellSize) {
 			return;
 		}
 		isChanged = true;
 		Object oldValue = this.cellSize;
 		this.cellSize = cellSize;
-		if (cellSize instanceof String) {
-			if (cellSize.equals(CELL_SIZE_MAX)) {
-				gridAnalystSetting.setCellSizeType(CellSizeType.MAX);
-				terrainAnalystSetting.setCellSizeType(CellSizeType.MAX);
-			} else if (cellSize.equals(CELL_SIZE_MIN)) {
-				gridAnalystSetting.setCellSizeType(CellSizeType.MIN);
-				terrainAnalystSetting.setCellSizeType(CellSizeType.MIN);
-			} else if (cellSize.equals(CELL_SIZE_CUSTOM)) {
-				gridAnalystSetting.setCellSizeType(CellSizeType.CUSTOM);
-				terrainAnalystSetting.setCellSizeType(CellSizeType.CUSTOM);
-			}
-		} else if (cellSize instanceof Double) {
-			gridAnalystSetting.setCellSizeType(CellSizeType.CUSTOM);
-			terrainAnalystSetting.setCellSizeType(CellSizeType.CUSTOM);
-			gridAnalystSetting.setCellSize((Double) cellSize);
-			terrainAnalystSetting.setCellSize((Double) cellSize);
-		}
+
 		firePropertyChangedListener(new PropertyChangeEvent(this, CELL_SIZE, oldValue, this.cellSize));
 	}
 
 	public void setClipBounds(Object clipBounds) {
-		if (clipBounds != null && !(clipBounds instanceof DatasetVector)) {
+		if ((clipBounds != null && !(clipBounds instanceof DatasetVector)) || clipBounds == this.clipBounds) {
 			return;
 		}
 		isChanged = true;
