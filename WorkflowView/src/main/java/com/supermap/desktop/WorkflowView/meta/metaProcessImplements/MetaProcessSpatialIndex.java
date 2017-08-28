@@ -184,4 +184,9 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 	public String getTitle() {
 		return ProcessProperties.getString("String_RebuildSpatialIndex");
 	}
+
+	@Override
+	public boolean isChangeSourceData() {
+		return true;
+	}
 }

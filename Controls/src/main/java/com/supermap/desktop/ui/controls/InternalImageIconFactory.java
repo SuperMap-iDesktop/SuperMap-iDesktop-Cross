@@ -293,6 +293,9 @@ public final class InternalImageIconFactory {
 
 	public final static ImageIcon THEME3D_RANGE = createIconFromFile("Image_Layer3DManager_VectorRanges.png");
 
+	public final static ImageIcon HEAT_MAP = createIconFromFile("Image_Layer_Heatmap.png");
+
+	public final static ImageIcon GRID_AGGREGATION = createIconFromFile("Image_Layer_GridAggregation.png");
 	// Define icon for WorkspaceTree Operation
 	public final static ImageIcon DATASOURCE_NODE_VISIBLE = createIconFromFile("Image_Datasources_Enable.png");
 

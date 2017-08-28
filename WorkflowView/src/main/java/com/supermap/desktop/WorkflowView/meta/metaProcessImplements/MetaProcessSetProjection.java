@@ -206,4 +206,11 @@ public class MetaProcessSetProjection extends MetaProcess {
 
 		return ret;
 	}
+
+	@Override
+	public boolean isChangeSourceData() {
+		return true;
+	}
+
+
 }

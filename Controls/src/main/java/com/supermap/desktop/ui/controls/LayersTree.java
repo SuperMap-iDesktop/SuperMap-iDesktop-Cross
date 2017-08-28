@@ -14,32 +14,7 @@ import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerAddedEvent;
-import com.supermap.mapping.LayerAddedListener;
-import com.supermap.mapping.LayerGroup;
-import com.supermap.mapping.LayerGroupAddedEvent;
-import com.supermap.mapping.LayerGroupAddedListener;
-import com.supermap.mapping.LayerGroupRemovedEvent;
-import com.supermap.mapping.LayerGroupRemovedListener;
-import com.supermap.mapping.LayerRemovedEvent;
-import com.supermap.mapping.LayerRemovedListener;
-import com.supermap.mapping.LayerSettingImage;
-import com.supermap.mapping.LayerSettingVector;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeGraph;
-import com.supermap.mapping.ThemeGraphItem;
-import com.supermap.mapping.ThemeGridRange;
-import com.supermap.mapping.ThemeGridRangeItem;
-import com.supermap.mapping.ThemeGridUnique;
-import com.supermap.mapping.ThemeGridUniqueItem;
-import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.ThemeLabelItem;
-import com.supermap.mapping.ThemeRange;
-import com.supermap.mapping.ThemeRangeItem;
-import com.supermap.mapping.ThemeUnique;
-import com.supermap.mapping.ThemeUniqueItem;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -50,16 +25,7 @@ import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceAdapter;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -222,7 +188,7 @@ public class LayersTree extends JTree {
 
 			int offset = x - this.getUI().getPathBounds(this, path).x;
 			/*
-             * 修改为使用Render来计算点击的Icon类型 modified by gouyu 2010-12-24
+	         * 修改为使用Render来计算点击的Icon类型 modified by gouyu 2010-12-24
 			 */
 			result = ((LayersTreeCellRenderer) this.getCellRenderer()).getHitTestIconType(node, offset);
 		}
@@ -410,7 +376,11 @@ public class LayersTree extends JTree {
 		Dataset dataset = layer.getDataset();
 
 		Theme theme = layer.getTheme();
-		if (theme == null) {
+		if (layer instanceof LayerHeatmap) {
+			result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.HEAT_MAP));
+		}else if (layer instanceof LayerGridAggregation) {
+			result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.GRID_AGGREGATION));
+		} else if (theme == null) {
 			if (dataset == null) {
 				// 分组图层节点的构建
 				if (layer instanceof LayerGroup) {

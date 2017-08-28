@@ -80,7 +80,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 	private static final String CLEAR = "Clear";
 
 	private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
-	private String currentActionCommand="";
+	private String currentActionCommand = "";
 
 	public static final String CLIP_REGION = "ClipRegion";
 	public static final String VIEW_BOUNDS_LOCKED = "ViewBoundsLocked";
@@ -191,7 +191,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 	private void initComponents() {
 		Dimension dimension = new Dimension(200, 20);
 
-		this.panelSelectTargetInfo = new MapActionSelectTargetInfoPanel();
+		this.panelSelectTargetInfo = new MapActionSelectTargetInfoPanel("");
 
 		this.menuItemSelectTarget = new JMenuItem("SelcetTarget");
 		this.menuItemSelectRectangle = new JMenuItem("SelectRectangle");
@@ -300,7 +300,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 			}
 		} else if (actionCommand.equals(JPopupMenuBounds.SELECT_TARGET)) {
 			// 当点击了“选择对象”PopupMenu，隐藏主窗体
-			this.currentActionCommand=JPopupMenuBounds.SELECT_TARGET;
+			this.currentActionCommand = JPopupMenuBounds.SELECT_TARGET;
 			if (this.dialog != null) {
 				this.dialog.setVisible(false);
 			}
@@ -493,7 +493,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 					continue;
 				}
 				Recordset recordset = layer.getSelection().toRecordset();
-				List<Geometry> selectedGeometry=new ArrayList<>();
+				List<Geometry> selectedGeometry = new ArrayList<>();
 				for (int k = 0; k < recordset.getRecordCount(); k++, recordset.moveNext()) {
 					Geometry geometry = recordset.getGeometry();
 					if (geometry != null) {
@@ -507,8 +507,8 @@ public class JPopupMenuBounds extends JPopupMenu {
 						selectedGeometry.add(geometry.clone());
 					}
 				}
-				if (selectedGeometry.size()>0 && this.currentActionCommand.equals(JPopupMenuBounds.SELECT_TARGET)) {
-					this.selectedGeometryAndLayer.put(layer,selectedGeometry);
+				if (selectedGeometry.size() > 0 && this.currentActionCommand.equals(JPopupMenuBounds.SELECT_TARGET)) {
+					this.selectedGeometryAndLayer.put(layer, selectedGeometry);
 				}
 			}
 			if (isChanged && rectangle2dResult != null && rectangle2dResult.getHeight() > 0 && rectangle2dResult.getWidth() > 0) {
@@ -561,7 +561,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 		return this.geoRegion;
 	}
 
-	public java.util.Map<Layer, List<Geometry>> getSelectedGeometryAndLayer(){
+	public java.util.Map<Layer, List<Geometry>> getSelectedGeometryAndLayer() {
 		return this.selectedGeometryAndLayer;
 	}
 

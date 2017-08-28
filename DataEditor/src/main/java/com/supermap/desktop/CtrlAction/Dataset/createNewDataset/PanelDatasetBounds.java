@@ -2,11 +2,11 @@ package com.supermap.desktop.CtrlAction.Dataset.createNewDataset;
 
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
+import com.supermap.desktop.utilities.ClipBoardUtilties;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -21,8 +21,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
-
-import static com.supermap.desktop.controls.ControlDefaultValues.*;
 
 /**
  * Created by yuanR on 2017/8/15 0015.
@@ -308,17 +306,11 @@ public class PanelDatasetBounds extends JPanel {
 	 * 复制参数
 	 */
 	private void copyParameter() {
-		ControlDefaultValues.setCopyCurrentMapboundsLeft(DoubleUtilities.stringToValue(this.textFieldCurrentViewLeft.getTextField().getText()));
-		ControlDefaultValues.setCopyCurrentMapboundsBottom(DoubleUtilities.stringToValue(this.textFieldCurrentViewBottom.getTextField().getText()));
-		ControlDefaultValues.setCopyCurrentMapboundsRight(DoubleUtilities.stringToValue(this.textFieldCurrentViewRight.getTextField().getText()));
-		ControlDefaultValues.setCopyCurrentMapboundsTop(DoubleUtilities.stringToValue(this.textFieldCurrentViewTop.getTextField().getText()));
-
-		String clipBoardTextLeft = ControlsProperties.getString("String_LabelLeft") + this.textFieldCurrentViewLeft.getTextField().getText().replace(",", "");
-		String clipBoardTextBottom = ControlsProperties.getString("String_LabelBottom") + this.textFieldCurrentViewBottom.getTextField().getText().replace(",", "");
-		String clipBoardTextRight = ControlsProperties.getString("String_LabelRight") + this.textFieldCurrentViewRight.getTextField().getText().replace(",", "");
-		String clipBoardTextTop = ControlsProperties.getString("String_LabelTop") + this.textFieldCurrentViewTop.getTextField().getText().replace(",", "");
-		// 调用windows复制功能，将值复制到剪贴板
-		setSysClipboardText(clipBoardTextLeft + "," + clipBoardTextBottom + "," + clipBoardTextRight + "," + clipBoardTextTop);
+		ClipBoardUtilties.setBounds(new Rectangle2D(
+				DoubleUtilities.stringToValue(this.textFieldCurrentViewLeft.getTextField().getText()),
+				DoubleUtilities.stringToValue(this.textFieldCurrentViewBottom.getTextField().getText()),
+				DoubleUtilities.stringToValue(this.textFieldCurrentViewRight.getTextField().getText()),
+				DoubleUtilities.stringToValue(this.textFieldCurrentViewTop.getTextField().getText())));
 		Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_MapBounds_Has_Been_Copied"));
 	}
 
@@ -362,41 +354,12 @@ public class PanelDatasetBounds extends JPanel {
 	 * 从系统粘贴板获得最新的文本，当文本内容符合范围条件时，才进行粘贴，当不符合时，不做任何操作
 	 */
 	private void pasteParameter() {
-		String clipBoard = getSysClipboardText();
-		// 判断剪切板中是否包含“左：”“下：”“右：”“上：”等“分隔符”
-		String left = ControlsProperties.getString("String_LabelLeft");
-		String bottom = ControlsProperties.getString("String_LabelBottom");
-		String right = ControlsProperties.getString("String_LabelRight");
-		String top = ControlsProperties.getString("String_LabelTop");
-
-		if (clipBoard.contains(left) && clipBoard.contains(bottom) && clipBoard.contains(right) && clipBoard.contains(top)) {
-			String clipBoardLeft = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_LabelLeft")), clipBoard.indexOf(ControlsProperties.getString("String_LabelBottom")));
-			String clipBoardBottom = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_LabelBottom")), clipBoard.indexOf(ControlsProperties.getString("String_LabelRight")));
-			String clipBoardRight = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_LabelRight")), clipBoard.indexOf(ControlsProperties.getString("String_LabelTop")));
-			String clipBoardTop = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_LabelTop")));
-
-			clipBoardLeft = (clipBoardLeft.replace(left, "")).replace(",", "");
-			clipBoardBottom = (clipBoardBottom.replace(bottom, "")).replace(",", "");
-			clipBoardRight = (clipBoardRight.replace(right, "")).replace(",", "");
-			clipBoardTop = (clipBoardTop.replace(top, "")).replace(",", "");
-
-			if (DoubleUtilities.isDouble(clipBoardLeft) && DoubleUtilities.isDouble(clipBoardBottom) && DoubleUtilities.isDouble(clipBoardRight) && DoubleUtilities.isDouble(clipBoardTop)) {
-				// 获得系统粘贴板内的数字符合规范，设置为千分位，存入桌面
-				ControlDefaultValues.setCopyCurrentMapboundsLeft(DoubleUtilities.stringToValue(clipBoardLeft));
-				ControlDefaultValues.setCopyCurrentMapboundsBottom(DoubleUtilities.stringToValue(clipBoardBottom));
-				ControlDefaultValues.setCopyCurrentMapboundsRight(DoubleUtilities.stringToValue(clipBoardRight));
-				ControlDefaultValues.setCopyCurrentMapboundsTop(DoubleUtilities.stringToValue(clipBoardTop));
-
-				String mapLeft = DoubleUtilities.getFormatString(getCopyCurrentMapboundsLeft());
-				String mapBottom = DoubleUtilities.getFormatString(getCopyCurrentMapboundsBottom());
-				String mapRight = DoubleUtilities.getFormatString(getCopyCurrentMapboundsRight());
-				String mapTop = DoubleUtilities.getFormatString(getCopyCurrentMapboundsTop());
-
-				this.textFieldCurrentViewLeft.getTextField().setText(mapLeft);
-				this.textFieldCurrentViewBottom.getTextField().setText(mapBottom);
-				this.textFieldCurrentViewRight.getTextField().setText(mapRight);
-				this.textFieldCurrentViewTop.getTextField().setText(mapTop);
-			}
+		Rectangle2D bounds = ClipBoardUtilties.getBounds();
+		if (bounds != null) {
+			this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(bounds.getLeft()));
+			this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(bounds.getBottom()));
+			this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(bounds.getRight()));
+			this.textFieldCurrentViewTop.getTextField().setText(DoubleUtilities.getFormatString(bounds.getTop()));
 		}
 	}
 

@@ -193,4 +193,14 @@ public class ParameterCombine extends AbstractParameter {
 			parameter.setRequisite(parameter.isRequisite() || isRequisite);
 		}
 	}
+
+	@Override
+	public boolean isReady() {
+		for (IParameter iParameter : parameterList) {
+			if (iParameter.isRequisite() && !iParameter.isReady()) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

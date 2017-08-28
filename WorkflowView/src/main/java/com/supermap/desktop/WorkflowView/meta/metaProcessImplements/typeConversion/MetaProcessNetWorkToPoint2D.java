@@ -109,8 +109,12 @@ public class MetaProcessNetWorkToPoint2D extends MetaProcessTypeConversion {
 			recordsetResult.getBatch().update();
 			recordsetInput.close();
 			recordsetInput.dispose();
-
-			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+			isSuccessful = recordsetResult != null;
+			if (isSuccessful) {
+				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+			} else {
+				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
+			}
 			fireRunning(new RunningEvent(MetaProcessNetWorkToPoint2D.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

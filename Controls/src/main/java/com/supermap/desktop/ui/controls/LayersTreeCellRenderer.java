@@ -122,12 +122,37 @@ public class LayersTreeCellRenderer implements TreeCellRenderer {
 		decoratorsMap = new HashMap<NodeDataType, ArrayList<ArrayList<TreeNodeDecorator>>>();
 
 		/*
+		 * HeatMap图层
+		 */
+		ArrayList<ArrayList<TreeNodeDecorator>> heatMapDecoratorLists = new ArrayList<>();
+		ArrayList<TreeNodeDecorator> heatMapDecoratorList = new ArrayList<>();
+		heatMapDecoratorList.add(new VisibleDecorator());
+		heatMapDecoratorLists.add(heatMapDecoratorList);
+		ArrayList<TreeNodeDecorator> treeNodeDecorators = new ArrayList<>();
+		treeNodeDecorators.add(new LayerHeatMapNodeDecorator());
+		heatMapDecoratorLists.add(treeNodeDecorators);
+		decoratorsMap.put(NodeDataType.HEAT_MAP, heatMapDecoratorLists);
+
+		/*
+		 * GridAggregation图层
+		 */
+		ArrayList<ArrayList<TreeNodeDecorator>> gridAggregationDecoratorLists = new ArrayList<>();
+		ArrayList<TreeNodeDecorator>gridAggregationDecoratorList = new ArrayList<>();
+		gridAggregationDecoratorList.add(new VisibleDecorator());
+		gridAggregationDecoratorLists.add(gridAggregationDecoratorList);
+		ArrayList<TreeNodeDecorator> treeNodeDecorators1 = new ArrayList<>();
+		treeNodeDecorators1.add(new LayerGridAggregationNodeDecorator());
+		gridAggregationDecoratorLists.add(treeNodeDecorators1);
+		decoratorsMap.put(NodeDataType.GRID_AGGREGATION, gridAggregationDecoratorLists);
+		/*
 		 * 普通图层
 		 */
 		ArrayList<ArrayList<TreeNodeDecorator>> vectorDecoratorList = prepareDecoratorListsForLayer();
 		ArrayList<TreeNodeDecorator> vectorList = new ArrayList<TreeNodeDecorator>();
 		vectorList.add(new LayerNodeDecorator());
 		vectorDecoratorList.add(vectorList);
+
+
 		decoratorsMap.put(NodeDataType.LAYER, vectorDecoratorList);
 
 

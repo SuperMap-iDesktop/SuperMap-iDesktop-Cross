@@ -5,6 +5,7 @@ import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
+import com.supermap.desktop.utilities.DoubleUtilities;
 
 import java.beans.PropertyChangeEvent;
 
@@ -39,12 +40,16 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 	@Override
 	public void setSelectedItem(Object value) {
 		Object oldValue = this.value;
-		this.value = String.valueOf(value);
-		firePropertyChangeListener(new PropertyChangeEvent(this, "value", oldValue, value));
+		if (value instanceof Double) {
+			value = DoubleUtilities.getFormatString(((Double) value));
+		} else {
+			this.value = String.valueOf(value);
+		}
+		firePropertyChangeListener(new PropertyChangeEvent(this, PROPERTY_VALE, oldValue, value));
 	}
 
 	@Override
-	public Object getSelectedItem() {
+	public String getSelectedItem() {
 		return value;
 	}
 

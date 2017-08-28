@@ -4,10 +4,6 @@ import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
-import com.supermap.desktop.geometry.Abstract.IGeometry;
-import com.supermap.desktop.geometry.Abstract.ILineFeature;
-import com.supermap.desktop.geometry.Abstract.IRegionFeature;
-import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
@@ -19,6 +15,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.RecordsetUtilities;
 
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 /**
@@ -27,6 +24,7 @@ import java.util.Map;
  */
 public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 	private ParameterFieldComboBox fieldComboBox;
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
 
 	public MetaProcessFieldToText() {
 		initParameters();
@@ -46,6 +44,7 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 			inputDataset.setSelectedItem(dataset);
 			fieldComboBox.setFieldName((DatasetVector) dataset);
 		}
+		fieldComboBox.setShowSystemField(true);
 		outputData.setSelectedItem("result_fieldToText");
 
 		ParameterCombine inputCombine = new ParameterCombine();
@@ -110,23 +109,44 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 			String fieldName = fieldComboBox.getFieldName();
 
 			Recordset recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
+
 			while (!recordsetInput.isEOF()) {
-				IGeometry geometry = null;
 				try {
-					geometry = DGeometryFactory.create(recordsetInput.getGeometry());
 					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-					isSuccessful = convert(recordsetResult, geometry, value, recordsetInput.getFieldValue(fieldName).toString());
-				} finally {
-					if (geometry != null) {
-						geometry.dispose();
+					GeoText geoText = new GeoText();
+					String textPartName="";
+					if (recordsetInput.getFieldInfos().get(fieldName).getType()==FieldType.DATETIME){
+						if (value.get(fieldName)!=null) {
+							textPartName = dateFormat.format(value.get(fieldName));
+						}
+					}else if (recordsetInput.getFieldInfos().get(fieldName).getType()==FieldType.LONGBINARY){
+						textPartName= "BinaryData";
 					}
+					else {
+						if (recordsetInput.getFieldValue(fieldName)!=null){
+							textPartName=recordsetInput.getFieldValue(fieldName).toString();
+						}
+					}
+					TextPart textPart = new TextPart(textPartName,recordsetInput.getGeometry().getInnerPoint());
+					geoText.addPart(textPart.clone());
+					textPart.dispose();
+					recordsetResult.addNew(geoText, value);
+					geoText.dispose();
+
+				} catch (Exception e){
+					Application.getActiveApplication().getOutput().output(e);
 				}
 				recordsetInput.moveNext();
 			}
 			recordsetResult.getBatch().update();
 			recordsetInput.close();
 			recordsetInput.dispose();
-			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+			isSuccessful = recordsetResult != null;
+			if (isSuccessful) {
+				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+			} else {
+				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
+			}
 			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -151,45 +171,4 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 		return ProcessProperties.getString("String_Title_FieldToText");
 	}
 
-	private boolean convert(Recordset recordset, IGeometry geometry, Map<String, Object> value, String fieldName) {
-		boolean isConvert = true;
-		if (geometry instanceof ILineFeature) {
-			GeoLine geoLine = ((ILineFeature) geometry).convertToLine(120);
-			for (int i = 0; i < geoLine.getPartCount(); i++) {
-				Point2Ds points = geoLine.getPart(i);
-				for (int j = 0; j < points.getCount(); j++) {
-					TextPart textPart = new TextPart(fieldName, points.getItem(j));
-					GeoText geoText = new GeoText(textPart);
-					recordset.addNew(geoText, value);
-					textPart.dispose();
-					geoText.dispose();
-				}
-			}
-			geoLine.dispose();
-		} else if (geometry instanceof IRegionFeature) {
-			GeoRegion geoRegion = ((IRegionFeature) geometry).convertToRegion(120);
-			for (int i = 0; i < geoRegion.getPartCount(); i++) {
-				Point2Ds points = geoRegion.getPart(i);
-				for (int j = 0; j < points.getCount(); j++) {
-					TextPart textPart = new TextPart(fieldName, points.getItem(j));
-					GeoText geoText = new GeoText(textPart);
-					recordset.addNew(geoText, value);
-					textPart.dispose();
-					geoText.dispose();
-				}
-			}
-			geoRegion.dispose();
-		} else if (geometry.getGeometry().getType().equals(GeometryType.GEOPOINT)) {
-			GeoPoint geoPoint = (GeoPoint) geometry.getGeometry();
-			TextPart textPart = new TextPart(fieldName, new Point2D(geoPoint.getX(), geoPoint.getY()));
-			GeoText geoText = new GeoText(textPart);
-			recordset.addNew(geoText, value);
-			textPart.dispose();
-			geoText.dispose();
-		} else {
-			isConvert = false;
-		}
-
-		return isConvert;
-	}
 }
