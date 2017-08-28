@@ -8,7 +8,8 @@ import com.supermap.data.Enum;
  * @author xuzw
  */
 public class NodeDataType extends Enum {
-    private NodeDataType(int value, int ugcValue) {
+
+	private NodeDataType(int value, int ugcValue) {
         super(value, ugcValue);
     }
 
@@ -127,4 +128,8 @@ public class NodeDataType extends Enum {
     public static final NodeDataType LAYER_GROUP = new NodeDataType(3020, 3020);
     public static final NodeDataType Layer3D_OSGBFile = new NodeDataType(3021, 3021);
     public static final NodeDataType LAYER_WMS = new NodeDataType(3022, 3022);
+
+    //add by liwenfa 2017-08-23
+    public static final NodeDataType HEAT_MAP = new NodeDataType(3023, 3023);
+    public static final NodeDataType GRID_AGGREGATION = new NodeDataType(3024, 3024);
 }

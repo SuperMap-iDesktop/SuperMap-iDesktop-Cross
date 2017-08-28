@@ -262,8 +262,7 @@ public class DialogCacheCheck extends JFrame {
 	}
 
 	private void buildCache() {
-		File cacheFile = new File(fileChooseCachePath.getPath());
-		String[] tempParams = {"Multi"};
+		String[] tempParams = {"Multi","zh-CN"};
 		CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 	}
 
