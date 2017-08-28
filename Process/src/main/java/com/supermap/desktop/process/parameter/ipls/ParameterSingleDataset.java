@@ -1,10 +1,6 @@
 package com.supermap.desktop.process.parameter.ipls;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
-import com.supermap.data.DatasourceClosingEvent;
-import com.supermap.data.DatasourceClosingListener;
+import com.supermap.data.*;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
@@ -49,7 +45,6 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 		if (item == null) {
 			oldValue = this.selectedItem;
 			this.selectedItem = null;
-			setDatasource(null);
 		} else if (item instanceof Dataset) {
 			oldValue = this.selectedItem;
 			this.selectedItem = (Dataset) item;
@@ -96,9 +91,10 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 					// 对象已被释放，无视之
 				}
 			}
-
-			firePropertyChangeListener(new PropertyChangeEvent(this, DATASOURCE_FIELD_NAME, this.datasource, datasource));
+			Datasource oldValue = this.datasource;
 			this.datasource = datasource;
+			firePropertyChangeListener(new PropertyChangeEvent(this, DATASOURCE_FIELD_NAME, oldValue, this.datasource));
+
 
 			if (this.datasource != null) {
 				this.datasource.getWorkspace().getDatasources().addClosingListener(this.datasourceClosingListener);

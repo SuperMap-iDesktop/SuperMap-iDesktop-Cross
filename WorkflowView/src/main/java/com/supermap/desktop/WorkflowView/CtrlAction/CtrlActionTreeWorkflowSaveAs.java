@@ -6,9 +6,9 @@ import com.supermap.desktop.Interface.IDataEntry;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.WorkflowView.FormWorkflow;
+import com.supermap.desktop.WorkflowView.WorkflowViewProperties;
 import com.supermap.desktop.dialog.SmDialogFormSaveAs;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.TreeNodeData;
@@ -27,11 +27,11 @@ public class CtrlActionTreeWorkflowSaveAs extends CtrlAction {
 	@Override
 	public void run() {
 		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
-		String workflowName = (String) ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData();
+		IDataEntry<String> workflowEntry = (IDataEntry<String>) ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData();
 
 		SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
-		dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkflowName"));
-		dialogSaveAs.setCurrentFormName(workflowName);
+		dialogSaveAs.setDescription(WorkflowViewProperties.getString("String_NewWorkflowName"));
+		dialogSaveAs.setCurrentFormName(workflowEntry.getKey());
 		for (IDataEntry entry : Application.getActiveApplication().getWorkflowEntries()) {
 			dialogSaveAs.addExistNames(entry.getKey());
 		}
@@ -42,19 +42,18 @@ public class CtrlActionTreeWorkflowSaveAs extends CtrlAction {
 			if (formManager.get(i) instanceof FormWorkflow) {
 				String title = formManager.get(i).getText();
 				dialogSaveAs.addExistNames(title);
-				if (title.equals(workflowName)) {
+				if (title.equals(workflowEntry.getKey())) {
 					currentForm = formManager.get(i);
 				}
 			}
 		}
-		dialogSaveAs.setTitle(ProcessProperties.getString("Sting_SaveAsWorkflow"));
+		dialogSaveAs.setTitle(WorkflowViewProperties.getString("Sting_SaveAsWorkflow"));
 		if (dialogSaveAs.showDialog() == DialogResult.OK) {
 			if (currentForm != null) {
 				currentForm.setText(dialogSaveAs.getCurrentFormName());
 			}
 
 			String newName = dialogSaveAs.getCurrentFormName();
-			IDataEntry<String> workflowEntry = Application.getActiveApplication().getWorkflowEntry(workflowName);
 			Application.getActiveApplication().addWorkflow(newName, workflowEntry.getValue());
 		}
 	}

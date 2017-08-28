@@ -24,4 +24,5 @@ public class SpatialIndexTypeProperties extends Properties {
 	public static final String QTree = "String_QTree";
 	public static final String RTree = "String_RTree";
 	public static final String Tile = "String_Tile";
+	public static final String Primary="String_Primary";
 }

@@ -141,7 +141,12 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 			recordsetResult.getBatch().update();
 			recordsetInput.close();
 			recordsetInput.dispose();
-			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+			isSuccessful = recordsetResult != null;
+			if (isSuccessful) {
+				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+			} else {
+				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
+			}
 			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

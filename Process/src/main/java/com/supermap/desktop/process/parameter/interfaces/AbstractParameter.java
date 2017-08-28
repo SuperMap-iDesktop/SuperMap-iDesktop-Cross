@@ -2,14 +2,7 @@ package com.supermap.desktop.process.parameter.interfaces;
 
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
-import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
-import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
-import com.supermap.desktop.process.parameter.events.PanelPropertyChangedListener;
-import com.supermap.desktop.process.parameter.events.ParameterUpdateValueEvent;
-import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
-import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
-import com.supermap.desktop.process.parameter.events.ParameterValueSelectedEvent;
-import com.supermap.desktop.process.parameter.events.UpdateValueListener;
+import com.supermap.desktop.process.parameter.events.*;
 import com.supermap.desktop.process.parameter.interfaces.datas.Irequisite;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -298,6 +291,12 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 			return true;
 		}
 		Object item = ((ISelectionParameter) this).getSelectedItem();
-		return item != null && (!(item instanceof String) || StringUtilities.isNullOrEmpty((String) item));
+		if (item == null) {
+			return false;
+		}
+		if (item instanceof String) {
+			return !StringUtilities.isNullOrEmpty((String) item);
+		}
+		return true;
 	}
 }

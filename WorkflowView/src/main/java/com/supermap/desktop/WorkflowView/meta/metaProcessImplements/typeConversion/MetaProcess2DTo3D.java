@@ -179,9 +179,9 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 					geometry = recordsetInput.getGeometry();
 					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
 					if (zCoordinate != null) {
-						isSuccessful = convert(recordsetResult, geometry, value,recordsetInput.getFieldValue(zCoordinate));
+						convert(recordsetResult, geometry, value,recordsetInput.getFieldValue(zCoordinate));
 					} else if (fromCoordinate != null && toCoordinate != null) {
-						isSuccessful = convert(recordsetResult, geometry, value, recordsetInput.getFieldValue(fromCoordinate), recordsetInput.getFieldValue(toCoordinate));
+						convert(recordsetResult, geometry, value, recordsetInput.getFieldValue(fromCoordinate), recordsetInput.getFieldValue(toCoordinate));
 					} else {
 						Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_NullCoordinate_Error"));
 						isSuccessful = false;
@@ -194,9 +194,14 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 				recordsetInput.moveNext();
 			}
 			recordsetResult.getBatch().update();
+			isSuccessful = recordsetResult != null;
 			recordsetInput.close();
 			recordsetInput.dispose();
-			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+			if (isSuccessful) {
+				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+			} else {
+				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
+			}
 			fireRunning(new RunningEvent(this,100,"finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

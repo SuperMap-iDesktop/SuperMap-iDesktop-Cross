@@ -26,7 +26,7 @@ public abstract class MetaProcess extends AbstractProcess {
 	protected static final String SETTING_PANEL_DESCRIPTION = CommonProperties.getString("String_FormEdgeCount_Text");
 	protected static final String RESULT_PANEL_DESCRIPTION = CommonProperties.getString("String_GroupBox_ResultData");
 
-	protected static FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE, FieldType.BYTE};
+	protected static FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
 	private final ParameterPropertyChangedListener parameterPropertyChangedListener;
 
 	protected IParameters parameters = new DefaultParameters(this);

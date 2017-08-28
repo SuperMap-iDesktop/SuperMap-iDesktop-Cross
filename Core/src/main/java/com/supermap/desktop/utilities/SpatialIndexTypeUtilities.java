@@ -6,11 +6,7 @@ import com.supermap.data.SpatialIndexType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.SpatialIndexTypeProperties;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SpatialIndexTypeUtilities {
 	private SpatialIndexTypeUtilities() {
@@ -22,7 +18,8 @@ public class SpatialIndexTypeUtilities {
 			SpatialIndexType.RTREE,
 			SpatialIndexType.QTREE,
 			SpatialIndexType.MULTI_LEVEL_GRID,
-			SpatialIndexType.TILE
+			SpatialIndexType.TILE,
+			SpatialIndexType.PRIMARY
 	};
 
 	public static String toString(SpatialIndexType data) {
@@ -39,6 +36,8 @@ public class SpatialIndexTypeUtilities {
 				result = SpatialIndexTypeProperties.getString(SpatialIndexTypeProperties.RTree);
 			} else if (data == SpatialIndexType.TILE) {
 				result = SpatialIndexTypeProperties.getString(SpatialIndexTypeProperties.Tile);
+			} else if (data == SpatialIndexType.PRIMARY) {
+				result = SpatialIndexTypeProperties.getString(SpatialIndexTypeProperties.Primary);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -60,6 +59,8 @@ public class SpatialIndexTypeUtilities {
 				result = SpatialIndexType.RTREE;
 			} else if (text.equalsIgnoreCase(SpatialIndexTypeProperties.getString(SpatialIndexTypeProperties.Tile))) {
 				result = SpatialIndexType.TILE;
+			} else if (text.equalsIgnoreCase(SpatialIndexTypeProperties.getString(SpatialIndexTypeProperties.Primary))) {
+				result = SpatialIndexType.PRIMARY;
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -69,7 +70,6 @@ public class SpatialIndexTypeUtilities {
 
 
 	/**
-	 *
 	 * @param dataset
 	 * @return
 	 */
@@ -122,7 +122,7 @@ public class SpatialIndexTypeUtilities {
 		hashMap.put(SpatialIndexTypeUtilities.toString(SpatialIndexType.QTREE), 0);
 		hashMap.put(SpatialIndexTypeUtilities.toString(SpatialIndexType.MULTI_LEVEL_GRID), 0);
 		hashMap.put(SpatialIndexTypeUtilities.toString(SpatialIndexType.TILE), 0);
-
+		hashMap.put(SpatialIndexTypeUtilities.toString(SpatialIndexType.PRIMARY), 0);
 		String[] supportSpatialIndexType;
 		for (Dataset dataset : datasets) {
 			supportSpatialIndexType = getSupportSpatialIndexTypeNames(dataset);

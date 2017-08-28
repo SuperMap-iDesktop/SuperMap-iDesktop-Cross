@@ -116,9 +116,9 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 
 	private void init() {
 		this.modelFieldNameCaptionType = new ModelFieldNameCaptionType(this.fieldTypes, this.isShowSystemField);
-		if (this.dataset==null){
+		if (this.dataset == null) {
 			this.modelFieldNameCaptionType.setDataset(null);
-		}else {
+		} else {
 			this.modelFieldNameCaptionType.setDataset((DatasetVector) this.dataset);
 		}
 		this.setModel(this.modelFieldNameCaptionType);
@@ -134,25 +134,6 @@ public class TableFieldNameCaptionType extends SmSortTable implements ITable {
 				return jLabel;
 			}
 		});
-//		removeListener();
-//		registerListener();
 	}
-
-//	private TableModelListener tableModelListener=new TableModelListener() {
-//		@Override
-//		public void tableChanged(TableModelEvent e) {
-//			if (e.getType() == TableModelEvent.UPDATE) {
-//				selectedFields=modelFieldNameCaptionType.getSelectedFields();
-//			}
-//		}
-//	};
-//
-//	private void registerListener(){
-//		this.modelFieldNameCaptionType.addTableModelListener(this.tableModelListener);
-//	}
-//
-//	private void removeListener(){
-//		this.modelFieldNameCaptionType.removeTableModelListener(this.tableModelListener);
-//	}
-
 }
+

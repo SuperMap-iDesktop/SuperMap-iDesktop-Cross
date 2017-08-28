@@ -46,6 +46,7 @@ public class MetaKeys {
 	public static final String KERNEL_DENSITY_OFFLINE = "KernelDensityOffline";
 
 	//栅格统计
+	public static final String GRID_ANALYST_SETTING = "GridAnalystSetting";
 	public static final String BASIC_STATISTIC = "BasicStatistics";
 	public static final String COMMON_STATISTIC = "CommonStatistics";
 	public static final String NEIGHBOUR_STATISTIC = "NeighbourStatistics";

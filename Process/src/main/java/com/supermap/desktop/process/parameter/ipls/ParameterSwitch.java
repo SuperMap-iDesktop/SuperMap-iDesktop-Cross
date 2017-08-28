@@ -96,8 +96,18 @@ public class ParameterSwitch extends AbstractParameter {
 		}
 	}
 
+	@Override
+	public boolean isReady() {
+		return currentParameter == null || currentParameter.isReady();
+	}
+
 	public IParameter getCurrentParameter() {
 		return currentParameter;
+	}
+
+	@Override
+	public boolean isRequisite() {
+		return currentParameter != null && currentParameter.isRequisite();
 	}
 
 	private class ParameterSwitchNode {

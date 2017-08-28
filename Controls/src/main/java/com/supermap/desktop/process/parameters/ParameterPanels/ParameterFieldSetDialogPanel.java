@@ -21,7 +21,6 @@ import java.awt.event.ActionListener;
 public class ParameterFieldSetDialogPanel extends SwingPanel {
 	private ParameterFieldSetDialog parameterFieldSetDialog;
 	private JButton button = new JButton();
-	private FieldsSetDialog fieldsSetDialog = new FieldsSetDialog();
 
 	public ParameterFieldSetDialogPanel(IParameter parameter) {
 		super(parameter);
@@ -37,10 +36,12 @@ public class ParameterFieldSetDialogPanel extends SwingPanel {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				FieldsSetDialog fieldsSetDialog = new FieldsSetDialog();
 				if (fieldsSetDialog.showDialog(parameterFieldSetDialog.getSourceDataset(), parameterFieldSetDialog.getResultDataset()) == DialogResult.OK) {
 					parameterFieldSetDialog.setSourceFieldNames(fieldsSetDialog.getSourceFields());
 					parameterFieldSetDialog.setResultFieldNames(fieldsSetDialog.getOverlayAnalystFields());
 				}
+				fieldsSetDialog = null;
 			}
 		});
 	}

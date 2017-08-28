@@ -24,7 +24,7 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 	 */
 	private String describe;
 
-	public static final String comboBoxValue = "comboBoxValue";
+	public static final String comboBoxValue = "value";
 	@ParameterField(name = comboBoxValue)
 	protected ParameterDataNode value;
 
@@ -92,7 +92,7 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 		if (value == null || value instanceof ParameterDataNode) {
 			ParameterDataNode oldValue = this.value;
 			this.value = (ParameterDataNode) value;
-			firePropertyChangeListener(new PropertyChangeEvent(this, "comboBoxValue", oldValue, value));
+			firePropertyChangeListener(new PropertyChangeEvent(this, comboBoxValue, oldValue, value));
 		}
 	}
 

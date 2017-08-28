@@ -123,7 +123,7 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 				try {
 					geometry = DGeometryFactory.create(recordsetInput.getGeometry());
 					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-					isSuccessful = convert(recordsetResult, geometry, value);
+					convert(recordsetResult, geometry, value);
 				} finally {
 					if (geometry != null) {
 						geometry.dispose();
@@ -132,9 +132,14 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 				recordsetInput.moveNext();
 			}
 			recordsetResult.getBatch().update();
+			isSuccessful = recordsetResult != null;
 			recordsetInput.close();
 			recordsetInput.dispose();
-			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+			if (isSuccessful) {
+				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+			} else {
+				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
+			}
 			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

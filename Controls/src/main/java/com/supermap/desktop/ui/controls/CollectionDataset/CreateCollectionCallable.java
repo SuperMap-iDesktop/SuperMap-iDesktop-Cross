@@ -53,7 +53,8 @@ public class CreateCollectionCallable extends UpdateProgressCallable {
 				}
 			}
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			//取消时异常
+//			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			if (parent.checkBoxCloseDialog.isSelected()) {
 				parent.dispose();
