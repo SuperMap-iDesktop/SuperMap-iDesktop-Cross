@@ -150,11 +150,11 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		try {
 			switch (type) {
 				case NEWDATABASE:
-					this.listDatasourceType.setModel(getListItemForOpenOrNew());
+					this.listDatasourceType.setModel(getListItemForOpenOrNew(false));
 					this.listDatasourceType.setCellRenderer(this.commonCellRender);
 					break;
 				case OPENDATABASE:
-					this.listDatasourceType.setModel(getListItemForOpenOrNew());
+					this.listDatasourceType.setModel(getListItemForOpenOrNew(true));
 					this.listDatasourceType.setCellRenderer(this.commonCellRender);
 					// 暂不支持ArcSDE数据源
 					break;
@@ -192,7 +192,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		return listModel;
 	}
 
-	private DefaultListModel<Object> getListItemForOpenOrNew() {
+	private DefaultListModel<Object> getListItemForOpenOrNew(boolean isOpen) {
 		DefaultListModel<Object> listModel = new DefaultListModel<Object>();
 		DataCell sqlDataCell = new DataCell(ControlsProperties.getString("String_SQL"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.SQLPLUS))));
 		DataCell oracleDataCell = new DataCell(ControlsProperties.getString("String_Oracle"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.ORACLEPLUS))));
@@ -204,7 +204,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		DataCell mySqlDataCell = new DataCell(ControlsProperties.getString("String_MySQL"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.MYSQL))));
 		DataCell mySqlPLUSDataCell = new DataCell(ControlsProperties.getString("String_MySQLPlus"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.MYSQLPlus))));
 		DataCell beyonDBDataCell = new DataCell(ControlsProperties.getString("String_BeyonDB"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.BEYONDB))));
-		DataCell highgoDBDataCell = new DataCell(ControlsProperties.getString("String_HiGoDB"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.HIGHGODB))));
+		DataCell highgoDBDataCell = new DataCell(ControlsProperties.getString("String_HighGoDB"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.HIGHGODB))));
 		DataCell kDBDataCell = new DataCell(ControlsProperties.getString("String_KDB"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.KDB))));
 		DataCell arcSDE = new DataCell(ControlsProperties.getString("String_SDE"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.SDE))));
 		if (SystemPropertyUtilities.isWindows()) {
@@ -220,7 +220,9 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 			listModel.addElement(beyonDBDataCell);
 			listModel.addElement(highgoDBDataCell);
 			listModel.addElement(kDBDataCell);
-			listModel.addElement(arcSDE);
+			if (isOpen) {
+				listModel.addElement(arcSDE);
+			}
 		} else {
 			listModel.addElement(oracleDataCell);
 			listModel.addElement(oracleSpatialDataCell);
