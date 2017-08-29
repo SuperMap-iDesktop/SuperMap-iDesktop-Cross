@@ -1,7 +1,5 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
-import com.supermap.desktop.Application;
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -31,8 +29,6 @@ public class ParameterFilePanel extends SwingPanel {
 	private ParameterFile parameterFile;
 
 	private JFileChooserControl fileChooserControl = new JFileChooserControl();
-	private SmFileChoose createFileChoose = null;
-	private SmFileChoose openFileChoose = null;
 	private boolean isSelectingFile = false;
 	private JLabel label = new JLabel();
 
@@ -44,35 +40,13 @@ public class ParameterFilePanel extends SwingPanel {
 		}
 		fileChooserControl.setEnabled(((ParameterFile) parameterFile).isEnabled());
 
-		String createName = this.parameterFile.getModuleName() + "CreateFile";
-		String openName = this.parameterFile.getModuleName() + "OpenFile";
-		try {
-			if (!SmFileChoose.isModuleExist(createName)) {
-				String fileFilters = SmFileChoose.bulidFileFilters(
-						SmFileChoose.createFileFilter(ProcessProperties.getString("String_SWMFilePath"), "swmb"));
-				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-						ProcessProperties.getString("String_SWMFile"), createName, "SaveOne");
-			}
-			if (!SmFileChoose.isModuleExist(openName)) {
-				String fileFilters = SmFileChoose.bulidFileFilters(
-						SmFileChoose.createFileFilter(ProcessProperties.getString("String_SWMFilePath"), "swmb"));
-				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-						ProcessProperties.getString("String_SWMFile"), openName, "OpenOne");
-			}
-
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+		SmFileChoose fileChoose = null;
+		if (!SmFileChoose.isModuleExist(this.parameterFile.getModuleName())) {
+			SmFileChoose.addNewNode(this.parameterFile.getFilters(), "", this.parameterFile.getTitle(), this.parameterFile.getModuleName(), this.parameterFile.getType());
 		}
 
-		createFileChoose = new SmFileChoose(createName);
-		openFileChoose = new SmFileChoose(openName);
-
-		if (this.parameterFile.getCreateNewFile()) {
-			fileChooserControl.setFileChooser(createFileChoose);
-		} else {
-			fileChooserControl.setFileChooser(openFileChoose);
-		}
-
+		fileChoose = new SmFileChoose(this.parameterFile.getModuleName());
+		fileChooserControl.setFileChooser(fileChoose);
 		label.setText(getDescribe());
 		label.setToolTipText(this.parameterFile.getDescribe());
 		initListener();
