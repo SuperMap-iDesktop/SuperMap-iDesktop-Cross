@@ -185,11 +185,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			this.buttonOk.setText(MapViewProperties.getString("String_BatchAddColorTableOKButton"));
 		} else if (this.cmdType == MultiProcessClip) {
 			this.setTitle(MessageFormat.format(MapViewProperties.getString("MapCache_Title_TaskBuilder"), mapName));
-			this.buttonOk.setText(MapViewProperties.getString("String_Title_Split"));
+			this.buttonOk.setText(ControlsProperties.getString("String_NextWay"));
 			this.checkBoxShowProcessBar.setVisible(false);
 		} else if (this.cmdType == MultiUpdateProcessClip) {
 			this.setTitle(MessageFormat.format(MapViewProperties.getString("MapCache_Title_TaskBuilder"), mapName));
-			this.buttonOk.setText(MapViewProperties.getString("String_Title_Split"));
+			this.buttonOk.setText(ControlsProperties.getString("String_NextWay"));
 			this.checkBoxShowProcessBar.setVisible(false);
 		}
 		this.checkBoxAutoClosed.setText(MapViewProperties.getString("MapCache_AutoCloseDailog"));
