@@ -1,13 +1,17 @@
 package com.supermap.desktop.process.parameter.ipls;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.DataMatch;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.IRelation;
 import com.supermap.desktop.process.core.Workflow;
-import com.supermap.desktop.process.events.*;
+import com.supermap.desktop.process.events.RelationAddedEvent;
+import com.supermap.desktop.process.events.RelationAddedListener;
+import com.supermap.desktop.process.events.RelationRemovingEvent;
+import com.supermap.desktop.process.events.RelationRemovingListener;
+import com.supermap.desktop.process.events.WorkflowChangeEvent;
+import com.supermap.desktop.process.events.WorkflowChangeListener;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IConGetter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -147,7 +151,7 @@ public class InputParametersManager {
 		this.paramsMap.put(name, parameterComboBox);
 
 		ParameterCombine combine = new ParameterCombine();
-		combine.setDescribe(ProcessProperties.getString("String_SourceDataset"));
+		combine.setDescribe(name);
 		combine.addParameters(parameterComboBox);
 		ArrayList<IParameter> sources = new ArrayList<>();
 		if (parameter.length == 1) {

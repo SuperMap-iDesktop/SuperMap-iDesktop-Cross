@@ -178,11 +178,11 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 				isSaveOriginField = true;
 			}
 
-//			Dataset result = ProximityAnalyst.summaryPoints(src, Double.valueOf(this.parameterNumberRadius.getSelectedItem().toString()),
-//					this.sourceDataset.getSelectedDataset().getPrjCoordSys().getCoordUnit(),
-//					statisticsFields, this.saveDataset.getResultDatasource(), datasetName, isRandomSaveRerefyPoints, isSaveOriginField);
-//			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
-//			isSuccessful = result != null;
+			Dataset result = ProximityAnalyst.summaryPoints(src, Double.valueOf(this.parameterNumberRadius.getSelectedItem().toString()),
+					this.dataset.getSelectedDataset().getPrjCoordSys().getCoordUnit(),
+					statisticsFields, this.saveDataset.getResultDatasource(), datasetName, isRandomSaveRerefyPoints, isSaveOriginField);
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
+			isSuccessful = result != null;
 			fireRunning(new RunningEvent(MetaProcessRarefyPoints.this, 100, "finished"));
 
 		} catch (Exception e) {

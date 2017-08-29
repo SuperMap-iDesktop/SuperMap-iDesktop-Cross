@@ -48,6 +48,7 @@ public class ParameterType {
 	public static final String DATASET_CHOOSER = "DatasetChooser";
 	public static final String DATASET_CHOOSE_TABLE = "DatasetChooseTable";
 	public static final String SQL_EXPRESSION = "SQLExpression";
+	public static final String RASTER_EXPRESSION = "RasterExpression";
 	public static final String MULTIFIELDSET = "MultiFieldSet";
 	public static final String SHAPE_TYPE = "ShapeType";
 	public static final String HISTOGRAM = "Histogram";
