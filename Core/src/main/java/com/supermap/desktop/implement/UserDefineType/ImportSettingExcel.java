@@ -22,7 +22,7 @@ public class ImportSettingExcel extends ImportSettingCSV {
 		UserDefineImportResult[] result = null;
 		try {
 			XlsUtilities.importSettingExcel = this;
-			XlsUtilities.importXlsFile(this.getTargetDatasource(), this.getSourceFilePath(), this.getFirstRowIsField());
+			result = XlsUtilities.importXlsFile(this.getTargetDatasource(), this.getSourceFilePath(), this.getFirstRowIsField());
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
