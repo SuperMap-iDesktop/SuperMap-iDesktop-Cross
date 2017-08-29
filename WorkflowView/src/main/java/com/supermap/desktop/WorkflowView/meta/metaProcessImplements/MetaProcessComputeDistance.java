@@ -152,7 +152,7 @@ public class MetaProcessComputeDistance extends MetaProcess {
 		textNumMax.setIsIncludeMin(false);
 		textNumMin.setSelectedItem(0);
 		textNumMin.setMinValue(0);
-		resultDataset.setDatasetName("result_computeDistance");
+		resultDataset.setSelectedItem("result_computeDistance");
 		expressionSource.setAnchor(GridBagConstraints.EAST);
 		expressionProximity.setAnchor(GridBagConstraints.EAST);
 	}

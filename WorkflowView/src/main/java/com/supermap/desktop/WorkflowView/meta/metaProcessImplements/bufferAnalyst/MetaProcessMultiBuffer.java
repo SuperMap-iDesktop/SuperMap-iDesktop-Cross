@@ -150,7 +150,7 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 			setBufferTypePanelEnabled(dataset.getSelectedDataset().getType().equals(DatasetType.LINE));
 		}
 
-		parameterSaveDataset.setDatasetName("result_multiBuffer");
+		parameterSaveDataset.setSelectedItem("result_multiBuffer");
 	}
 
 	private void initParameterConstraint() {

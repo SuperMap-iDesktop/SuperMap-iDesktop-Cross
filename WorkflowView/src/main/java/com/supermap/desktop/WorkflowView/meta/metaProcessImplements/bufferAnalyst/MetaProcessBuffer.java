@@ -200,7 +200,7 @@ public class MetaProcessBuffer extends MetaProcess {
 			checkBoxBufferRight.setEnabled(false);
 			radioButtonNumOrField.setEnabled(false);
 		}
-		parameterSaveDataset.setDatasetName("result_buffer");
+		parameterSaveDataset.setSelectedItem("result_buffer");
 		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
 		comboBoxFieldLeft.setFieldType(fieldType);
 		comboBoxFieldRight.setFieldType(fieldType);
