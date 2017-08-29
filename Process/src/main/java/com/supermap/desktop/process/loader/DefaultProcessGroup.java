@@ -98,7 +98,7 @@ public class DefaultProcessGroup implements IProcessGroup {
 			return;
 		}
 
-		String processKey = process.getProcessDescriptor().getKey();
+		String processKey = process.getKey();
 		if (StringUtilities.isNullOrEmpty(processKey)) {
 			return;
 		}
@@ -110,8 +110,8 @@ public class DefaultProcessGroup implements IProcessGroup {
 		int insertIndex = -1;
 		for (int i = 0; i < this.processes.size(); i++) {
 			IProcessLoader p = this.processes.get(i);
-			if (process.getProcessDescriptor().getIndex() < p.getProcessDescriptor().getIndex()) {
-				insertIndex = p.getProcessDescriptor().getIndex();
+			if (process.getIndex() < p.getIndex()) {
+				insertIndex = p.getIndex();
 				break;
 			}
 		}
