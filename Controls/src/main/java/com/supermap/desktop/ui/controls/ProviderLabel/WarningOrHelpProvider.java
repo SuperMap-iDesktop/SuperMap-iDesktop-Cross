@@ -11,10 +11,14 @@ import java.awt.*;
 public class WarningOrHelpProvider extends JLabel {
     private String tipText = "";
 
-    public WarningOrHelpProvider(String tipText, boolean isWaringOrHelp) {
-        this.tipText = tipText;
-        if (isWaringOrHelp) {
-            this.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/warning.png"));
+	public static final boolean WARING = true;
+	public static final boolean HELP = false;
+
+
+	public WarningOrHelpProvider(String tipText, boolean type) {
+		this.tipText = tipText;
+		if (type) {
+			this.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/warning.png"));
         } else {
             this.setIcon(ControlsResources.getIcon("/controlsresources/Icon_Help.png"));
         }

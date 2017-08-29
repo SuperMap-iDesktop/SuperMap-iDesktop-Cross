@@ -14,6 +14,7 @@ import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -82,6 +83,7 @@ public class JDialogPreviewCSV extends SmDialog {
 	private JCheckBox checkBoxHasHeader = new JCheckBox();
 
 	private JLabel labelEncoding = new JLabel(CommonProperties.getString("String_Label_EncodeType"));
+	private WarningOrHelpProvider warningOrHelpProvider = new WarningOrHelpProvider(ControlsProperties.getString("String_PreviewCsvOnly"), WarningOrHelpProvider.HELP);
 	private JComboBox<String> comboBoxEncoding = new JComboBox<>();
 
 	private JLabel labelCoordSysType = new JLabel(ControlsProperties.getString("String_Message_CoordSysName"));
@@ -155,7 +157,7 @@ public class JDialogPreviewCSV extends SmDialog {
 			comboBoxStorageType.addItem(storageType);
 		}
 		String[] encodings = {
-				"UTF-8", "GB2312", "Big5", "ANSI", "GBK", "GB18030", "UTF-16", "UTF-32"
+				"UTF-8", "GB2312", "Big5", "GBK", "GB18030", "UTF-16", "UTF-32"
 		};
 		for (String encoding : encodings) {
 			comboBoxEncoding.addItem(encoding);
@@ -200,12 +202,16 @@ public class JDialogPreviewCSV extends SmDialog {
 		comboBoxCoorSysType.setPreferredSize(preferredSize);
 		comboBoxCoorSysType.setMaximumSize(preferredSize);
 		this.add(labelGeometryType, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
-		this.add(comboBoxGeometryType, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 0, 10).setFill(GridBagConstraints.NONE));
+		this.add(comboBoxGeometryType, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 26, 0, 10).setFill(GridBagConstraints.NONE));
 		this.add(labelStorageType, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 0, 0));
 		this.add(comboBoxStorageType, new GridBagConstraintsHelper(3, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 0, 10).setFill(GridBagConstraints.NONE));
 
 		this.add(labelEncoding, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
-		this.add(comboBoxEncoding, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 5).setFill(GridBagConstraints.NONE));
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		panel.add(warningOrHelpProvider, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE));
+		panel.add(comboBoxEncoding, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
+		this.add(panel, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 5).setFill(GridBagConstraints.NONE));
 		this.add(labelCoordSysType, new GridBagConstraintsHelper(2, 1, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 0));
 		this.add(comboBoxCoorSysType, new GridBagConstraintsHelper(3, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10).setFill(GridBagConstraints.NONE));
 

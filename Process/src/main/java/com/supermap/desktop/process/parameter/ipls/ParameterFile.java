@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author XiaJT
+ * 增加是否创建新文件的参数，通过该参数设置SmFileChoose的类别-yuanR 2017.8.29
  */
 public class ParameterFile extends AbstractParameter implements ISelectionParameter {
 
@@ -25,6 +26,7 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
 	private String moduleName;
 	private String title;
 	private String moduleType;
+	private Boolean isCreateNewFile = false;
 
 	private int fileSelectionMode = 0;
 
@@ -146,6 +148,14 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
 
 	public int getFileSelectionMode() {
 		return fileSelectionMode;
+	}
+
+	public Boolean getCreateNewFile() {
+		return isCreateNewFile;
+	}
+
+	public void setCreateNewFile(Boolean createnNewFile) {
+		this.isCreateNewFile = createnNewFile;
 	}
 
 	@Override

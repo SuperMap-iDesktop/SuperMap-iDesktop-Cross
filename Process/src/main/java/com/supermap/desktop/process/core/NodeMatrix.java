@@ -1,7 +1,20 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.events.*;
+import com.supermap.desktop.process.events.MatrixNodeAddedEvent;
+import com.supermap.desktop.process.events.MatrixNodeAddedListener;
+import com.supermap.desktop.process.events.MatrixNodeAddingEvent;
+import com.supermap.desktop.process.events.MatrixNodeAddingListener;
+import com.supermap.desktop.process.events.MatrixNodeRemovedEvent;
+import com.supermap.desktop.process.events.MatrixNodeRemovedListener;
+import com.supermap.desktop.process.events.MatrixNodeRemovingEvent;
+import com.supermap.desktop.process.events.MatrixNodeRemovingListener;
+import com.supermap.desktop.process.events.RelationAddedEvent;
+import com.supermap.desktop.process.events.RelationAddedListener;
+import com.supermap.desktop.process.events.RelationRemovedEvent;
+import com.supermap.desktop.process.events.RelationRemovedListener;
+import com.supermap.desktop.process.events.RelationRemovingEvent;
+import com.supermap.desktop.process.events.RelationRemovingListener;
 
 import javax.swing.event.EventListenerList;
 import java.util.Map;
@@ -294,12 +307,12 @@ public class NodeMatrix<T extends Object> {
 	 * @param relation
 	 */
 	public synchronized void addRelation(IRelation<T> relation) {
-		validateNode(relation.getFrom());
-		validateNode(relation.getTo());
-
 		if (relation == null) {
 			throw new IllegalArgumentException("Relation can not be null.");
 		}
+
+		validateNode(relation.getFrom());
+		validateNode(relation.getTo());
 
 		try {
 			removeRelation(relation.getFrom(), relation.getTo());
