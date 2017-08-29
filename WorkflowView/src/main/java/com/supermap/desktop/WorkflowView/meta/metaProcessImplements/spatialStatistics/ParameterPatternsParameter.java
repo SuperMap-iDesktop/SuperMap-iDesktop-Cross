@@ -13,15 +13,8 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
-import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterFieldComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterFile;
-import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
-import com.supermap.desktop.process.parameter.ipls.ParameterSwitch;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.SmFileChoose;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -33,7 +26,6 @@ public class ParameterPatternsParameter extends ParameterCombine {
 
 	private String metaKeys;
 	private ParameterFieldComboBox parameterAssessmentFieldComboBox = new ParameterFieldComboBox();
-
 	private ParameterComboBox parameterComboBoxConceptModel = new ParameterComboBox();
 	private ParameterComboBox parameterDistanceMethod = new ParameterComboBox();
 	private ParameterNumber parameterTextFieldDistanceTolerance = new ParameterNumber();
@@ -100,13 +92,8 @@ public class ParameterPatternsParameter extends ParameterCombine {
 		});
 
 		String moduleName = "swmb";
-		if (!SmFileChoose.isModuleExist(moduleName)) {
-			String fileFilters = SmFileChoose.bulidFileFilters(
-					SmFileChoose.createFileFilter(ProcessProperties.getString("String_SWMFilePath"), "swmb"));
-			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-					ProcessProperties.getString("String_SWMFile"), moduleName, "OpenOne");
-		}
 		parameterFile.setModuleName(moduleName);
+		parameterFile.setCreateNewFile(false);
 		parameterTextFieldKNeighbors.setDescribe(ProcessProperties.getString("String_KNeighbors"));
 		parameterSelfWeightFieldComboBox.setDescribe(ProcessProperties.getString("String_SelfWeightField"));
 
@@ -234,4 +221,14 @@ public class ParameterPatternsParameter extends ParameterCombine {
 		}
 		return patternsParameter;
 	}
+
+	/**
+	 * 获得概念化模型参数，实现外部下拉列表项的设置-yuanR2017.8.29
+	 *
+	 * @return
+	 */
+	public ParameterComboBox getParameterComboBoxConceptModel() {
+		return parameterComboBoxConceptModel;
+	}
+
 }

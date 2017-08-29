@@ -1,9 +1,6 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion;
 
-import com.supermap.data.DatasetType;
-import com.supermap.data.GeoPoint;
-import com.supermap.data.GeoPoint3D;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
@@ -14,7 +11,7 @@ import java.util.Map;
 /**
  * Created By Chens on 2017/7/27 0027
  */
-public class MetaProcessPoint3DTo2D extends MetaProcessPointLineRegion {
+public class MetaProcessPoint3DTo2D extends MetaProcess3DTo2D {
 	public MetaProcessPoint3DTo2D() {
 		super(DatasetType.POINT3D, DatasetType.POINT);
 	}
@@ -35,19 +32,15 @@ public class MetaProcessPoint3DTo2D extends MetaProcessPointLineRegion {
 	}
 
 	@Override
-	protected boolean convert(Recordset recordset, IGeometry geometry, Map<String, Object> value) {
-		boolean isConverted = true;
-
+	protected void convert(DatasetVector resultDataset, FieldInfos fieldInfos, Map<String, Object> fieldValuesIgnoreCase, Recordset recordsetResult, IGeometry geometry) {
 		if (geometry.getGeometry() instanceof GeoPoint3D) {
 			GeoPoint3D geoPoint3D = (GeoPoint3D) geometry.getGeometry();
 			GeoPoint geoPoint = new GeoPoint(geoPoint3D.getX(), geoPoint3D.getY());
-			recordset.addNew(geoPoint, value);
+			Map<String, Object> value = mergePropertyData(resultDataset, fieldInfos, fieldValuesIgnoreCase, geoPoint3D.getZ());
+			recordsetResult.addNew(geoPoint, value);
 			geoPoint.dispose();
 			geoPoint3D.dispose();
-		} else {
-			isConverted = false;
 		}
-		return isConverted;
 	}
 
 	@Override

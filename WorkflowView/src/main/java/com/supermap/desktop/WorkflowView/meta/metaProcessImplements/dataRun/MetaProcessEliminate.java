@@ -153,14 +153,13 @@ public class MetaProcessEliminate extends MetaProcess {
 	private void resetNumTolerance(DatasetVector datasetVector) {
 		double tolerance = datasetVector.getTolerance().getNodeSnap();
 		if (tolerance == 0) {
-			numberTolerance.setSelectedItem(1);
-		} else {
-			DecimalFormat format = new DecimalFormat("#0.000000000000000");
-			String result = format.format(tolerance);
-			while (result.charAt(result.length() - 1) == '0') {
-				result = result.substring(0, result.length() - 1);
-			}
-			numberTolerance.setSelectedItem(result);
+			tolerance=0.00001;
 		}
+		DecimalFormat format = new DecimalFormat("#0.000000000000000");
+		String result = format.format(tolerance);
+		while (result.charAt(result.length() - 1) == '0') {
+			result = result.substring(0, result.length() - 1);
+		}
+		numberTolerance.setSelectedItem(result);
 	}
 }

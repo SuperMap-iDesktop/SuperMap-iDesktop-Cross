@@ -22,6 +22,7 @@ import com.supermap.desktop.utilities.ResampleModeUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
 
 /**
  * Created By Chens on 2017/8/14 0014
@@ -95,15 +96,7 @@ public class MetaProcessGridResample extends MetaProcess {
 			sourceDatasource.setSelectedItem(dataset.getDatasource());
 			sourceDataset.setSelectedItem(dataset);
 			this.resultDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_gridResample"));
-			Rectangle2D bounds = dataset.getBounds();
-			double cellSize = Math.sqrt(Math.pow(bounds.getHeight(), 2) + Math.pow(bounds.getWidth(), 2)) / 500;
-			textFieldSourceXPixel.setSelectedItem(cellSize);
-			textFieldSourceYPixel.setSelectedItem(cellSize);
-			textFieldSourceRow.setSelectedItem((int) (bounds.getHeight() / cellSize));
-			textFieldSourceColumn.setSelectedItem((int) (bounds.getWidth() / cellSize));
-			numberPixel.setSelectedItem(cellSize*2);
-			textFieldRow.setSelectedItem((int) (bounds.getHeight() / (2*cellSize)));
-			textFieldColumn.setSelectedItem((int) (bounds.getWidth() / (2*cellSize)));
+			updateCellSize(dataset);
 		}
 		comboBoxMethod.setItems(new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.BILINEAR),ResampleMode.BILINEAR),
 				new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.CUBIC),ResampleMode.CUBIC),
@@ -121,16 +114,7 @@ public class MetaProcessGridResample extends MetaProcess {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof Dataset) {
-					Dataset dataset = (Dataset) evt.getNewValue();
-					Rectangle2D bounds = dataset.getBounds();
-					double cellSize = Math.sqrt(Math.pow(bounds.getHeight(), 2) + Math.pow(bounds.getWidth(), 2)) / 500;
-					textFieldSourceXPixel.setSelectedItem(cellSize);
-					textFieldSourceYPixel.setSelectedItem(cellSize);
-					textFieldSourceRow.setSelectedItem((int) (bounds.getHeight() / cellSize));
-					textFieldSourceColumn.setSelectedItem((int) (bounds.getWidth() / cellSize));
-					numberPixel.setSelectedItem(cellSize*2);
-					textFieldRow.setSelectedItem((int) (bounds.getHeight() / (2*cellSize)));
-					textFieldColumn.setSelectedItem((int) (bounds.getWidth() / (2*cellSize)));
+					updateCellSize((Dataset) evt.getNewValue());
 				}
 			}
 		});
@@ -139,8 +123,8 @@ public class MetaProcessGridResample extends MetaProcess {
 			public void propertyChange(PropertyChangeEvent evt) {
 				double cellSize = Double.parseDouble(numberPixel.getSelectedItem().toString());
 				Rectangle2D bounds = sourceDataset.getSelectedDataset().getBounds();
-				textFieldRow.setSelectedItem((int) (bounds.getHeight() / cellSize));
-				textFieldColumn.setSelectedItem((int) (bounds.getWidth() / cellSize));
+				textFieldRow.setSelectedItem((int) (bounds.getHeight() / cellSize + 0.5));
+				textFieldColumn.setSelectedItem((int) (bounds.getWidth() / cellSize + 0.5));
 			}
 		});
 	}
@@ -185,5 +169,35 @@ public class MetaProcessGridResample extends MetaProcess {
 		}
 
 		return isSuccessful;
+	}
+
+	private void updateCellSize(Dataset dataset) {
+		Rectangle2D bounds = dataset.getBounds();
+		double cellSizeX;
+		double cellSizeY;
+		if (dataset.getType().equals(DatasetType.GRID)) {
+			cellSizeX = bounds.getWidth() / ((DatasetGrid) dataset).getWidth();
+			cellSizeY = bounds.getHeight() / ((DatasetGrid) dataset).getHeight();
+		} else {
+			cellSizeX = bounds.getWidth() / ((DatasetImage) dataset).getWidth();
+			cellSizeY = bounds.getHeight() / ((DatasetImage) dataset).getHeight();
+		}
+		textFieldSourceXPixel.setSelectedItem(convertToDecimal(cellSizeX));
+		textFieldSourceYPixel.setSelectedItem(convertToDecimal(cellSizeY));
+		double cellSize = 2 * (cellSizeX > cellSizeY ? cellSizeX : cellSizeY);
+		numberPixel.setSelectedItem(cellSize);
+		textFieldSourceRow.setSelectedItem((int) (bounds.getWidth() / cellSizeX + 0.5));
+		textFieldSourceColumn.setSelectedItem((int) (bounds.getHeight() / cellSizeY + 0.5));
+		textFieldRow.setSelectedItem((int) (bounds.getWidth() / cellSize + 0.5));
+		textFieldColumn.setSelectedItem((int) (bounds.getHeight() / cellSize + 0.5));
+	}
+
+	private String convertToDecimal(double num) {
+		DecimalFormat format = new DecimalFormat("#0.000000000000000");
+		String result = format.format(num);
+		while (result.charAt(result.length() - 1) == '0') {
+			result = result.substring(0, result.length() - 1);
+		}
+		return result;
 	}
 }
