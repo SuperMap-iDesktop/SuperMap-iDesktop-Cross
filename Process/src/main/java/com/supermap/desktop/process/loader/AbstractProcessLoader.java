@@ -12,7 +12,6 @@ public abstract class AbstractProcessLoader implements IProcessLoader {
 	public final static String PROPERTY_CLASS_NAME = "ClassName";
 	public final static String PROPERTY_KEY = "Key";
 	public final static String PROPERTY_TITLE = "Title";
-	public final static String PROPERTY_INDEX = "Index";
 
 	private Map<String, String> properties;
 	private int index;
