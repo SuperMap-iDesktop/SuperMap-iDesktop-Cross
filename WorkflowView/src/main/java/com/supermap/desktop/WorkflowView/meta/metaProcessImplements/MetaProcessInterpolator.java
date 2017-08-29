@@ -115,7 +115,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 		parameterField.addParameters(parameterInterpolatorFields, parameterScaling);
 
 		parameterResultDatasetName = new ParameterSaveDataset();
-		parameterResultDatasetName.setDatasetName("result_interpolator");
+		parameterResultDatasetName.setSelectedItem("result_interpolator");
 		parameterResultDatasetName.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
 		parameterResultDatasetName.setDatasetDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
 		parameterResulotion = new ParameterNumber(CommonProperties.getString("String_Resolution"));
