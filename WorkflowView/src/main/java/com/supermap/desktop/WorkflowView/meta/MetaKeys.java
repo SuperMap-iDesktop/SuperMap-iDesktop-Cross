@@ -56,7 +56,7 @@ public class MetaKeys {
 	// 距离栅格
 	public static final String SHORTEST_PATH = "ShortestPath";
 	public static final String SURFACE_PATH_LINE = "SurfacePathLine";
-	public static final String CREATE_DISTANCE_RASTER="CreateDistanceRaster";
+	public static final String CREATE_DISTANCE_RASTER = "CreateDistanceRaster";
 
 	// 水文分析
 	public static final String FillingPseudoDepressions = "FillingPseudoDepressions";
@@ -82,6 +82,7 @@ public class MetaKeys {
 	public static final String HIGH_OR_LOW_CLUSTERING = "HighOrLowClustering";
 	public static final String CLUSTER_OUTLIER_ANALYST = "ClusterOutlierAnalyst";
 	public static final String HOT_SPOT_ANALYST = "HotSpotAnalyst";
+	public static final String CREATE_SPATIAL_WEIGHT_MATRIX_FILE = "CreateSpatialWeightMatrixFile";
 	public static final String GEOGRAPHIC_WEIGHTED_REGRESSION = "GeographicWeightedRegression";
 	public static final String INCREMENTAL_AUTO_CORRELATION = "IncrementalAutoCorrelation";
 	public static final String AVERAGE_NEAREST_NEIGHBOR = "AverageNearestNeighbor";
@@ -97,9 +98,9 @@ public class MetaKeys {
 	public static final String REGION_TO_CENTERLINE = "RegionToCenterLine";
 	public static final String REGION_TRUNK_TO_CENTERLINE = "RegionTrunkToCenterLine";
 	public static final String RAREFY_POINTS = "RarefyPoints";
-	public static final String DISSOLVE="Dissolve";
-	public static final String GRID_RESAMPLE="GridResample";
-	public static final String IMAGE_COMBINE="ImageCombine";
+	public static final String DISSOLVE = "Dissolve";
+	public static final String GRID_RESAMPLE = "GridResample";
+	public static final String IMAGE_COMBINE = "ImageCombine";
 
 	//类型转换
 	public static final String CONVERSION_POINT_TO_LINE = "Conversion_PointToLine";
@@ -128,7 +129,7 @@ public class MetaKeys {
 
 
 	public static final String APPEND_FIELDS = "AppendFields";
-	public static final String APPEND_ROWS="AppendRows";
+	public static final String APPEND_ROWS = "AppendRows";
 
 	// 大数据
 	public static final String HEAT_MAP = "HeatMap";
@@ -138,7 +139,7 @@ public class MetaKeys {
 	public static final String POLYGON_AGGREGATION = "PolygonAggregation";
 	public static final String OVERLAYANALYSTGEO = "overlayanalystgeo";
 	public static final String SINGLE_QUERY = "SingleQuery";
-	public static final String SUMMARY_REGION="SummaryRegion";
+	public static final String SUMMARY_REGION = "SummaryRegion";
 
 	public static final String USER_DEFINE_PROJECTION = "UserDefineProjection";
 }

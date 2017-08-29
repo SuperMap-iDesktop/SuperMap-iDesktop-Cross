@@ -1,4 +1,4 @@
-package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
+package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridAnalyst.iso;
 
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
@@ -10,17 +10,12 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.properties.CommonProperties;
 
 /**
- * Created by xie on 2017/3/6.
+ * Created by xie on 2017/3/7.
  */
-public class MetaProcessISOLine extends MetaProcessISO {
-	@Override
-	protected void initHook() {
+public class MetaProcessISORegion extends MetaProcessISO {
 
-		OUTPUT_DATA = "ISOLineResult";
-	}
-
-	public MetaProcessISOLine() {
-		OUTPUT_DATA_TYPE = "Line";
+	public MetaProcessISORegion() {
+		OUTPUT_DATA_TYPE = "Region";
 		super.initParameters();
 		super.initParameterConstraint();
 		super.initParametersState();
@@ -29,23 +24,22 @@ public class MetaProcessISOLine extends MetaProcessISO {
 
 	@Override
 	protected String getDefaultResultName() {
-		return "result_ISOLine";
+		return "result_ISORegion";
 	}
-
 
 	@Override
 	public String getTitle() {
-		return CommonProperties.getString("String_SurfaceISOLine");
+		return CommonProperties.getString("String_SurfaceISORegion");
 	}
 
-
-	public DatasetVector subExecute(SurfaceExtractParameter surfaceExtractParameter, DatasetGrid dataset, Datasource datasource, String datasetName) {
-		return SurfaceAnalyst.extractIsoline(surfaceExtractParameter, dataset, datasource, datasetName);
+	@Override
+	public DatasetVector subExecute(SurfaceExtractParameter surfaceExtractParameter, DatasetGrid src, Datasource resultDatasource, String datasetName) {
+		return SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, src, resultDatasource, datasetName, null);
 	}
 
 	@Override
 	public String getKey() {
-		return MetaKeys.ISOLINE;
+		return MetaKeys.ISOREGION;
 	}
 
 	@Override
@@ -53,4 +47,8 @@ public class MetaProcessISOLine extends MetaProcessISO {
 		return parameters.getPanel();
 	}
 
+	@Override
+	protected void initHook() {
+		OUTPUT_DATA = "ISORegionResult";
+	}
 }
