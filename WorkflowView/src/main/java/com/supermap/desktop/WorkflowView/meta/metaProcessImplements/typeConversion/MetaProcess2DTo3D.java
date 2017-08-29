@@ -62,6 +62,9 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 		comboBoxZ.setFieldType(fieldType);
 		comboBoxFrom.setFieldType(fieldType);
 		comboBoxTo.setFieldType(fieldType);
+		comboBoxZ.setRequisite(true);
+		comboBoxFrom.setRequisite(true);
+		comboBoxTo.setRequisite(true);
 
 		ParameterCombine inputCombine = new ParameterCombine();
 		inputCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
@@ -178,13 +181,10 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 				try {
 					geometry = recordsetInput.getGeometry();
 					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-					if (zCoordinate != null) {
-						convert(recordsetResult, geometry, value,recordsetInput.getFieldValue(zCoordinate));
-					} else if (fromCoordinate != null && toCoordinate != null) {
+					if (outputType.equals(DatasetType.LINE3D)) {
 						convert(recordsetResult, geometry, value, recordsetInput.getFieldValue(fromCoordinate), recordsetInput.getFieldValue(toCoordinate));
 					} else {
-						Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_NullCoordinate_Error"));
-						isSuccessful = false;
+						convert(recordsetResult, geometry, value,recordsetInput.getFieldValue(zCoordinate));
 					}
 				}finally {
 					if (geometry != null) {

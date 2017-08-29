@@ -143,7 +143,7 @@ public class DialogCacheOperationView extends SmDialog {
 		if (CacheUtilities.voladateDatasource(false)) {
 			DialogCacheOperationView.this.dispose();
 			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheExecute"));
-			String[] params = {"Multi", "null", "null", map.getName(), "null"};
+			String[] params = {"Multi", "zh-CN", "null", map.getName(), "null"};
 			CacheUtilities.startProcess(params, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 //			new DialogCacheBuilder(DialogMapCacheClipBuilder.MultiProcessClip,"null").setVisible(true);
 		}
