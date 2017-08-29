@@ -127,12 +127,14 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 	private void initPanelSelectSearchData() {
 		//panelSelectSearchData.setBorder(BorderFactory.cr);
 		this.panelSelectSearchData.setLayout(new GridBagLayout());
-		this.panelSelectSearchData.add(scrollPaneWorkspaceTree,
+		this.panelSelectSearchData.add(this.scrollPaneWorkspaceTree,
 				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.SOUTH));
 	}
 
 	private void initPanelFunction(){
-
+		this.panelFunction.setLayout(new GridBagLayout());
+		this.panelFunction.add(this.jComboBoxBasicMathFunction,
+				new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.SOUTH));
 	}
 
 	private void intiPanelOperators(){
