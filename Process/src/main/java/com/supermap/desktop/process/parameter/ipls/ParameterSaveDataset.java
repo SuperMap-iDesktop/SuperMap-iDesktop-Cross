@@ -62,14 +62,14 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 
 	}
 
-    @Override
-    public String getDescribe() {
-        return CommonProperties.getString("String_TargetDataset");
-    }
+	@Override
+	public String getDescribe() {
+		return CommonProperties.getString("String_TargetDataset");
+	}
 
-    public Datasource getResultDatasource() {
-        return resultDatasource;
-    }
+	public Datasource getResultDatasource() {
+		return resultDatasource;
+	}
 
 	public void setResultDatasource(Datasource resultDatasource) {
 		this.resultDatasource = resultDatasource;

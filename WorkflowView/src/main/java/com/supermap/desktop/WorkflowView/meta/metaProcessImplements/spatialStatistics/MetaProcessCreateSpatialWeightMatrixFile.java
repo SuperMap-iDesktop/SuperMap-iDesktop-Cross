@@ -6,11 +6,13 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
 import com.supermap.desktop.process.parameter.ipls.ParameterFile;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 
 /**
  * Created by yuanR on 2017/8/29 0029.
@@ -34,10 +36,16 @@ public class MetaProcessCreateSpatialWeightMatrixFile extends MetaProcessAnalyzi
 //				new ParameterDataNode(ProcessProperties.getString("String_SPATIALWEIGHTMATRIXFILE"), ConceptualizationModel.SPATIALWEIGHTMATRIXFILE),
 				new ParameterDataNode(ProcessProperties.getString("String_ZONEOFINDIFFERENCE"), ConceptualizationModel.ZONEOFINDIFFERENCE));
 
-		parameterFile = new ParameterFile();
-		parameterFile.setCreateNewFile(true);
+
+		this.parameterFile = new ParameterFile(ProcessProperties.getString("String_Label_FilePath"));
+		String modelName = "CreateSWMBFile";
+		if (!SmFileChoose.isModuleExist(modelName)) {
+			String fileFilters = SmFileChoose.createFileFilter(ProcessProperties.getString("String_SWMFilePath"), "swmb");
+			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
+					ControlsProperties.getString("String_Save"), modelName, "SaveOne");
+		}
+		parameterFile.setModuleName(modelName);
 		parameterFile.setRequisite(true);
-		parameterFile.setDescribe(ProcessProperties.getString("String_Label_SWM"));
 
 		ParameterCombine parameterCombine = new ParameterCombine();
 		parameterCombine.addParameters(parameterFile);
