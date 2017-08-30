@@ -14,7 +14,7 @@ public class ParameterCheckBox extends AbstractParameter implements ISelectionPa
 
 	public static final String PARAMETER_CHECK_BOX_VALUE = "PARAMETER_CHECK_BOX_VALUE";
 	@ParameterField(name = PARAMETER_CHECK_BOX_VALUE)
-	private Object value = "false";
+	private String value = "false";
 	private String describe;
 
 	public ParameterCheckBox() {
@@ -33,12 +33,16 @@ public class ParameterCheckBox extends AbstractParameter implements ISelectionPa
 	@Override
 	public void setSelectedItem(Object value) {
 		Object oldValue = this.value;
-		this.value = String.valueOf(value);
+		if (value == null) {
+			this.value = null;
+		} else {
+			this.value = String.valueOf(value);
+		}
 		firePropertyChangeListener(new PropertyChangeEvent(this, PARAMETER_CHECK_BOX_VALUE, oldValue, value));
 	}
 
 	@Override
-	public Object getSelectedItem() {
+	public String getSelectedItem() {
 		return value;
 	}
 
