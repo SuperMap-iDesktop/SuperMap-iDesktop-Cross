@@ -155,7 +155,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 		searchMode.setSelectedItem(info);
 		ParameterCombine modeSetCombine = new ParameterCombine();
 		modeSetCombine.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_SearchModeSetting"));
-//			if(interpolationAlgorithmType == InterpolationAlgorithmType.RBF || interpolationAlgorithmType == InterpolationAlgorithmType.KRIGING){
+//			if(interpolationAlgorithmType == InterpolationAlgorithmType.RBF || interpolationAlgorithmType == INTERPOLATION_ALGORITHM_TYPE.KRIGING){
 //				modeSetCombine.addParameters(searchMode);
 //			}
 		modeSetCombine.addParameters(searchMode);

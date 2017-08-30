@@ -28,10 +28,6 @@ public class TwoToThreeDimensionProcessLoader extends AbstractProcessLoader {
 			return null;
 		}
 
-		if (!getProcessDescriptor().getKey().contains(TWO_TO_THREE_DIMENSION)) {
-			return null;
-		}
-
 		DatasetType type = null;
 		switch (getProcessDescriptor().getKey()) {
 			case MetaKeys.CONVERSION_POINT2D_TO_3D:
