@@ -69,10 +69,17 @@ public class MetaProcessCalculateHillShade extends MetaProcessCalTerrain {
 		parameterCombineSet.addParameters(parameterAzimuth, parameterAltitudeAngle, parameterComboBoxShadowType, parameterZFactor);
 
 		// 结果设置
-		parameterSaveDataset.setSelectedItem("result_calculateHillShade");
 		parameters.addParameters(parameterCombineSet, parameterCombineResultDataset);
 		parameters.addOutputParameters(OUTPUT_DATASET, ProcessOutputResultProperties.getString("String_CalculateHillShadeResult"), DatasetTypes.GRID, parameterCombineResultDataset);
 	}
+
+
+
+	@Override
+	protected String getDefaultResultName() {
+		return "result_calculateHillShade";
+	}
+
 
 	@Override
 	public String getTitle() {

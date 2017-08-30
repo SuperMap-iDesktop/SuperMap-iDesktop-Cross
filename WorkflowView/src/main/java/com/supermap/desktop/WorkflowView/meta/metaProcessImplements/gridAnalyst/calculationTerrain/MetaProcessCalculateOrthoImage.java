@@ -37,9 +37,13 @@ public class MetaProcessCalculateOrthoImage extends MetaProcessCalTerrain {
 		parameterCombineSet.addParameters(parameterColorNoColor);
 
 		// 结果设置
-		parameterSaveDataset.setSelectedItem("result_calculateHillShade");
 		parameters.addParameters(parameterCombineSet, parameterCombineResultDataset);
 		parameters.addOutputParameters(OUTPUT_DATASET, ProcessOutputResultProperties.getString("String_CalculateOrthoImageResult"), DatasetTypes.IMAGE, parameterCombineResultDataset);
+	}
+
+	@Override
+	protected String getDefaultResultName() {
+		return "result_calculateOrthoImage";
 	}
 
 	@Override
