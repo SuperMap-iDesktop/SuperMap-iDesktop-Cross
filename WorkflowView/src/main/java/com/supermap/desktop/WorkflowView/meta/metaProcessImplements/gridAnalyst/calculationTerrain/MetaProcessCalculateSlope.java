@@ -50,9 +50,13 @@ public class MetaProcessCalculateSlope extends MetaProcessCalTerrain {
 		parameterCombineSet.addParameters(parameterComboBoxSlopeType, parameterZFactor);
 
 		// 结果设置
-		parameterSaveDataset.setSelectedItem("result_calculateSlope");
 		parameters.addParameters(parameterCombineSet, parameterCombineResultDataset);
 		parameters.addOutputParameters(OUTPUT_DATASET, ProcessOutputResultProperties.getString("String_CalculateSlopeResult"), DatasetTypes.GRID, parameterCombineResultDataset);
+	}
+
+	@Override
+	protected String getDefaultResultName() {
+		return "result_calculateSlope";
 	}
 
 	@Override

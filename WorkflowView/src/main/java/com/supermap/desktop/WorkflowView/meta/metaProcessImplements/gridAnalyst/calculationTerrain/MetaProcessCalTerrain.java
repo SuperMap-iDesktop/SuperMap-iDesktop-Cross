@@ -65,6 +65,10 @@ public abstract class MetaProcessCalTerrain extends MetaProcess {
 		if (datasetGrid != null) {
 			datasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
+			parameterSaveDataset.setResultDatasource(datasetGrid.getDatasource());
+			parameterSaveDataset.setSelectedItem(datasetGrid.getDatasource().getDatasets().getAvailableDatasetName(getDefaultResultName()));
+		} else {
+			parameterSaveDataset.setSelectedItem(getDefaultResultName());
 		}
 	}
 
@@ -90,5 +94,6 @@ public abstract class MetaProcessCalTerrain extends MetaProcess {
 
 	protected abstract boolean doWork(DatasetGrid datasetGrid);
 
+	protected abstract String getDefaultResultName();
 
 }

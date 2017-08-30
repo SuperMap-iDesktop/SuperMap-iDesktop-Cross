@@ -22,9 +22,13 @@ public class MetaProcessCalculateAspect extends MetaProcessCalTerrain {
 		// 参数设置-坡向分析无参数设置
 
 		// 结果设置
-		parameterSaveDataset.setSelectedItem("result_calculateAspect");
 		parameters.addParameters(parameterCombineResultDataset);
 		parameters.addOutputParameters(OUTPUT_DATASET, ProcessOutputResultProperties.getString("String_CalculateAspectResult"), DatasetTypes.GRID, parameterCombineResultDataset);
+	}
+
+	@Override
+	protected String getDefaultResultName() {
+		return "result_calculateAspect";
 	}
 
 	@Override
