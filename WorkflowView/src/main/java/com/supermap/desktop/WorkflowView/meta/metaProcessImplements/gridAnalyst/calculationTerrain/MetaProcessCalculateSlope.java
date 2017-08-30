@@ -14,6 +14,7 @@ import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
 import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
 import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 /**
  * Created by yuanR on 2017/8/30 .
@@ -49,9 +50,13 @@ public class MetaProcessCalculateSlope extends MetaProcessCalTerrain {
 		parameterCombineSet.addParameters(parameterComboBoxSlopeType, parameterZFactor);
 
 		// 结果设置
-		parameterSaveDataset.setSelectedItem("result_calculateSlope");
 		parameters.addParameters(parameterCombineSet, parameterCombineResultDataset);
 		parameters.addOutputParameters(OUTPUT_DATASET, ProcessOutputResultProperties.getString("String_CalculateSlopeResult"), DatasetTypes.GRID, parameterCombineResultDataset);
+	}
+
+	@Override
+	protected String getDefaultResultName() {
+		return "result_calculateSlope";
 	}
 
 	@Override
@@ -70,9 +75,11 @@ public class MetaProcessCalculateSlope extends MetaProcessCalTerrain {
 		DatasetGrid datasetGridResult = null;
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
-			// 这个进度监听有问题，无法生效，先用fireRunning代替-yuanR存疑2017.8.29
+			// 这个进度监听有问题，无法生效，先用fireRunning代替-yuanR存疑2017.8.30
 //			CalculationTerrain.addSteppedListener(steppedListener);
-			datasetGridResult = CalculationTerrain.calculateAspect(datasetGrid, parameterSaveDataset.getResultDatasource(), parameterSaveDataset.getDatasetName());
+			Double zFactor = StringUtilities.getNumber(parameterZFactor.getSelectedItem());
+			datasetGridResult = CalculationTerrain.calculateSlope(datasetGrid, (SlopeType) parameterComboBoxSlopeType.getSelectedData(),
+					zFactor, parameterSaveDataset.getResultDatasource(), parameterSaveDataset.getDatasetName());
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(datasetGridResult);
 			isSuccessful = datasetGridResult != null;
 
