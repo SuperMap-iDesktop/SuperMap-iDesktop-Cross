@@ -37,7 +37,7 @@ public class ToolBoxMenu extends JMenu {
 
 		IProcessLoader[] childProcesses = group.getProcesses();
 		for (int i = 0; i < childProcesses.length; i++) {
-			JMenuItem item = new JMenuItem(childProcesses[i].getProcessDescriptor().getTitle());
+			JMenuItem item = new JMenuItem(childProcesses[i].getTitle());
 			item.addActionListener(new ProcessMenuItemActionListener(childProcesses[i]));
 			menu.add(item);
 		}

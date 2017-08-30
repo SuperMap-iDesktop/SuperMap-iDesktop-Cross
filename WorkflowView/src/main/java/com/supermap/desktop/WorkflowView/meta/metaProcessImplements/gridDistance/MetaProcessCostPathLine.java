@@ -101,7 +101,7 @@ public class MetaProcessCostPathLine extends MetaProcess {
 			costDataset.setSelectedItem(datasetGrid);
 			updateCoordinate(datasetGrid);
 		}
-		resultDataset.setDatasetName("result_costPathLine");
+		resultDataset.setSelectedItem("result_costPathLine");
 		comboBoxSmoothMethod.setItems(new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_NONE"), SmoothMethod.NONE),
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_BSLine"), SmoothMethod.BSPLINE),
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_POLISH"), SmoothMethod.POLISH));

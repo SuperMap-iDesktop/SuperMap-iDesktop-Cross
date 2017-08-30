@@ -4,8 +4,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.*;
-import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
-import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.readyChecker.ProcessChangeSourceDataChecker;
 import com.supermap.desktop.process.readyChecker.WorkflowProcessReadyChecker;
@@ -179,12 +177,10 @@ public class Workflow implements IWorkflow {
 			int serialID = Integer.valueOf(processNode.getAttribute("SerialID"));
 
 			String loaderClassName = processNode.getAttribute("LoaderClassName");
-			IProcessDescriptor descriptor = new DefaultProcessDescriptor();
 			Map<String, String> map = new ConcurrentHashMap<>();
 			map.put("ClassName", className);
 			map.put("Key", key);
-			descriptor.init(map);
-			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName, descriptor);
+			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName, map, "99");
 			IProcess process = loader.loadProcess();
 			process.setSerialID(serialID);
 			addProcess(process);

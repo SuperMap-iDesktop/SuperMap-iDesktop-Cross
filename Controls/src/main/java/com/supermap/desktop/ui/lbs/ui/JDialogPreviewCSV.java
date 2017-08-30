@@ -157,7 +157,7 @@ public class JDialogPreviewCSV extends SmDialog {
 			comboBoxStorageType.addItem(storageType);
 		}
 		String[] encodings = {
-				"UTF-8", "GB2312", "Big5", "ANSI", "GBK", "GB18030", "UTF-16", "UTF-32"
+				"UTF-8", "GB2312", "Big5", "GBK", "GB18030", "UTF-16", "UTF-32"
 		};
 		for (String encoding : encodings) {
 			comboBoxEncoding.addItem(encoding);

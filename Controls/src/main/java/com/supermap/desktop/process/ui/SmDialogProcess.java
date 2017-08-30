@@ -1,6 +1,9 @@
 package com.supermap.desktop.process.ui;
 
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.enums.RunningStatus;
+import com.supermap.desktop.process.events.StatusChangeEvent;
+import com.supermap.desktop.process.events.StatusChangeListener;
 import com.supermap.desktop.process.tasks.ProcessWorker;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
@@ -16,6 +19,15 @@ public class SmDialogProcess extends SmDialog {
 
 	public SmDialogProcess(IProcess metaProcess) {
 		this.metaProcess = metaProcess;
+		this.metaProcess.addStatusChangeListener(new StatusChangeListener() {
+			@Override
+			public void statusChange(StatusChangeEvent e) {
+				if (e.getStatus() == RunningStatus.COMPLETED) {
+					setVisible(false);
+				}
+			}
+		});
+
 		this.setTitle(metaProcess.getTitle());
 		JPanel panel = (JPanel) metaProcess.getComponent().getPanel();
 //		ProcessTask task = TaskUtil.getTask(metaProcess);

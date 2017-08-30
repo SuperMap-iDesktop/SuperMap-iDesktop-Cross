@@ -1,7 +1,11 @@
 package com.supermap.desktop.utilities;
 
 import com.supermap.data.*;
+import com.supermap.data.conversion.ImportSteppedEvent;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingExcel;
+import com.supermap.desktop.implement.UserDefineType.UserDefineImportResult;
+import com.supermap.desktop.properties.CommonProperties;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -11,26 +15,80 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * Created by xie on 2017/8/24.
  */
 public class XlsUtilities {
+	public static ImportSettingExcel importSettingExcel;
+
+	/**
+	 * 将xls数据放入二维集合中
+	 *
+	 * @param filePath
+	 * @return
+	 */
+	public static ArrayList<Vector<Vector>> getXLSInfo(String filePath) {
+		ArrayList<Vector<Vector>> result = new ArrayList<>();
+		try {
+			File xlsFile = new File(filePath);
+			if (!xlsFile.exists()) {
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_FileNotExistsError"), filePath));
+				return null;
+			}
+			FileInputStream stream = new FileInputStream(filePath);
+			HSSFWorkbook workbook = new HSSFWorkbook(stream);
+			HSSFSheet sheet;
+			HSSFRow row;
+			int rowCount;
+			int columnCount = 0;
+			Vector<Vector> vectors = new Vector<>();
+			Vector vector = new Vector();
+			int sheetCount = workbook.getNumberOfSheets();
+			for (int i = 0; i < sheetCount; i++) {
+				vectors.clear();
+				sheet = workbook.getSheetAt(i);
+				//获取总行数
+				rowCount = sheet.getPhysicalNumberOfRows();
+				//
+				if (rowCount > 0) {
+					//获取总列数
+					columnCount = sheet.getRow(0).getPhysicalNumberOfCells();
+				}
+				for (int j = 0; j < rowCount; j++) {
+					vector.clear();
+					row = sheet.getRow(j);
+					for (int k = 0; k < columnCount; k++) {
+						vector.add(row.getCell(k).getStringCellValue());
+					}
+					vectors.add(vector);
+				}
+				result.add(vectors);
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return result;
+	}
 
 	/**
 	 * @param datasource      目标数据源
 	 * @param filePath        文件目录
 	 * @param importFieldName 是否将首行导入为字段名称
 	 */
-	public static void importXlsFile(Datasource datasource, String filePath, boolean importFieldName) {
+	public static UserDefineImportResult[] importXlsFile(Datasource datasource, String filePath, boolean importFieldName) {
+		UserDefineImportResult[] importResults = null;
 		try {
 			File xlsFile = new File(filePath);
 			if (!xlsFile.exists()) {
-				return;
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_FileNotExistsError"), filePath));
+				return null;
 			}
 			String xlsName = xlsFile.getName();
 			xlsName = xlsName.substring(0, xlsName.indexOf("."));
@@ -38,75 +96,89 @@ public class XlsUtilities {
 			HSSFWorkbook workbook = new HSSFWorkbook(stream);
 			HSSFSheet sheet;
 			HSSFRow row;
-			HSSFCell cell;
 			DatasetVector dataset;
 			DatasetVectorInfo info;
 			FieldInfos fieldInfos;
 			FieldInfo fieldInfo = null;
-			String datasetName;
 			Recordset recordset;
-			int columnCount;
+			int columnCount = 0;
 			int rowCount;
-			HashMap map;
-			for (int i = 0, sheetSize = workbook.getNumberOfSheets(); i < sheetSize; i++) {
-				//有几个sheet新建几个数据集
-				sheet = workbook.getSheetAt(i);
-				info = new DatasetVectorInfo();
-				datasetName = datasource.getDatasets().getAvailableDatasetName(xlsName + "_" + sheet.getSheetName());
-				info.setName(datasetName);
-				info.setType(DatasetType.TABULAR);
-				dataset = datasource.getDatasets().create(info);
-				dataset.open();
-				fieldInfos = dataset.getFieldInfos();
-				//获取sheet的行数
-				rowCount = sheet.getPhysicalNumberOfRows();
-				columnCount = 0;
-				if (rowCount > 0) {
-					//获取sheet的列数
-					HSSFRow hssfRow = sheet.getRow(0);
-					columnCount = hssfRow.getPhysicalNumberOfCells();
+			ArrayList<String> fieldNames = new ArrayList<>();
+			int sheetSize = workbook.getNumberOfSheets();
+			importResults = new UserDefineImportResult[sheetSize];
+			for (int i = 0; i < sheetSize; i++) {
+				if (null != importSettingExcel) {
+					int totalPercent = i * 100 / sheetSize;
+					importSettingExcel.fireStepped(new ImportSteppedEvent(importSettingExcel, totalPercent, 0, importSettingExcel, sheetSize, false));
 				}
-				recordset = dataset.getRecordset(false, CursorType.DYNAMIC);
-				Recordset.BatchEditor editor = recordset.getBatch();
-				editor.begin();
-				if (importFieldName) {
+				sheet = workbook.getSheetAt(i);
+				//总行数
+				rowCount = sheet.getPhysicalNumberOfRows();
+				if (rowCount > 0) {
 					row = sheet.getRow(0);
+					//总列数
+					columnCount = row.getPhysicalNumberOfCells();
+				}
+				info = new DatasetVectorInfo();
+				Datasets datasets = datasource.getDatasets();
+				info.setName(datasets.getAvailableDatasetName(xlsName + "_" + sheet.getSheetName()));
+				info.setType(DatasetType.TABULAR);
+				dataset = datasets.create(info);
+				fieldInfos = dataset.getFieldInfos();
+				if (importFieldName) {
 					for (int j = 0; j < columnCount; j++) {
 						fieldInfo = new FieldInfo();
-						fieldInfo.setName("NewField" + "_" + row.getCell(j).getStringCellValue());
-						fieldInfo.setType(FieldType.CHAR);
-						//将字段添加到数据集中
+						fieldInfo.setType(FieldType.TEXT);
+						String name = "NewField" + "_" + sheet.getRow(0).getCell(j).getStringCellValue();
+						fieldInfo.setName(name);
 						fieldInfos.add(fieldInfo);
+						fieldNames.add(name);
 					}
 				} else {
 					for (int j = 0; j < columnCount; j++) {
 						fieldInfo = new FieldInfo();
-						fieldInfo.setName(j == 0 ? "NewField" : "NewField" + "_" + String.valueOf(j));
-						fieldInfo.setType(FieldType.CHAR);
-						//将字段添加到数据集中
+						fieldInfo.setType(FieldType.TEXT);
+						String name = j == 0 ? "NewField" : "NewField" + "_" + String.valueOf(j);
+						fieldInfo.setName(name);
 						fieldInfos.add(fieldInfo);
+						fieldNames.add(name);
 					}
 				}
+				recordset = dataset.getRecordset(false, CursorType.DYNAMIC);
+				Recordset.BatchEditor editor = recordset.getBatch();
+				editor.begin();
+				HashMap map = new HashMap();
 				int j = 0;
 				if (importFieldName) {
 					j = 1;
 				}
 				for (; j < rowCount; j++) {
 					row = sheet.getRow(j);
-					map = new HashMap();
+					map.clear();
 					for (int k = 0; k < columnCount; k++) {
-						map.put(fieldInfos.get(k).getName(), row.getCell(k).getStringCellValue());
+						map.put(fieldNames.get(k), row.getCell(k).getStringCellValue());
 					}
-					recordset.addNew(null, map);
+					boolean importResult = recordset.addNew(null, map);
+					if (importResult && null != importSettingExcel) {
+						int totalPercent = i * 100 / sheetSize;
+						importSettingExcel.fireStepped(new ImportSteppedEvent(importSettingExcel, totalPercent, 0, importSettingExcel, sheetSize, false));
+					}
+				}
+				if (rowCount == dataset.getRecordCount() && null != importSettingExcel) {
+					importSettingExcel.setTargetDatasetName(dataset.getName());
+					importResults[i] = new UserDefineImportResult(importSettingExcel, null);
+				} else {
+					importResults[i] = new UserDefineImportResult(null, importSettingExcel);
 				}
 				editor.update();
-				fieldInfo.dispose();
 				recordset.dispose();
+				fieldInfo.dispose();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			Application.getActiveApplication().getOutput().output(e);
 		}
+		return importResults;
 	}
 
 	/**
@@ -116,6 +188,7 @@ public class XlsUtilities {
 	 * @param filePath
 	 * @param exportFieldName
 	 */
+
 	public static void exportXlsFile(DatasetVector dataset, String filePath, boolean exportFieldName) {
 		exportXlsFile(dataset, filePath, exportFieldName, null);
 	}
@@ -128,7 +201,8 @@ public class XlsUtilities {
 	 * @param exportFieldName 是否导出字段名称
 	 * @param fieldNames      指定导出的字段集合，为空时全部导出
 	 */
-	public static void exportXlsFile(DatasetVector dataset, String filePath, boolean exportFieldName, String[] fieldNames) {
+	public static void exportXlsFile(DatasetVector dataset, String filePath, boolean exportFieldName, String[]
+			fieldNames) {
 		try {
 			HSSFWorkbook workbook = new HSSFWorkbook();//产生工作簿对象
 			HSSFSheet sheet = workbook.createSheet();//产生工作表对象
@@ -137,8 +211,6 @@ public class XlsUtilities {
 			DecimalFormat decimalFormat = new DecimalFormat("######0.00000000");
 			FieldInfos fieldInfos = dataset.getFieldInfos();
 			Recordset recordset = dataset.getRecordset(false, CursorType.STATIC);
-			Recordset.BatchEditor editor = recordset.getBatch();
-			editor.begin();
 			recordset.moveFirst();
 			int rowCount = 0;
 			if (true == exportFieldName) {
@@ -180,7 +252,6 @@ public class XlsUtilities {
 				recordset.moveNext();
 				rowCount++;
 			}
-			editor.update();
 			FileOutputStream fOut = new FileOutputStream(filePath);
 			workbook.write(fOut);
 			fOut.flush();
@@ -200,7 +271,8 @@ public class XlsUtilities {
 	 * @param cellValue
 	 * @param fieldType
 	 */
-	private static void setCellValue(HSSFSheet sheet, HSSFCell cell, DecimalFormat decimalFormat, int column, Object cellValue, FieldType fieldType) {
+	private static void setCellValue(HSSFSheet sheet, HSSFCell cell, DecimalFormat decimalFormat, int column, Object
+			cellValue, FieldType fieldType) {
 		if (null != cellValue) {
 			if (fieldType == FieldType.DATETIME) {
 				//此处处理为格式化的字符串类型
@@ -235,8 +307,12 @@ public class XlsUtilities {
 		connectionInfo.setServer("F:\\SampleData711\\Ci ty\\Jingjin.udb");
 		Datasource datasource = new Datasource(EngineType.UDB);
 		datasource.open(connectionInfo);
-//		Dataset dataset = datasource.getDatasets().get("Grids");
-//		exportXlsFile((DatasetVector) dataset, "test1.xls", true, new String[]{"SmID", "SmLength", "int64"});
-		importXlsFile(datasource, "test1.xls", true);
+		DatasetVector dataset = (DatasetVector) datasource.getDatasets().get("Grids");
+//		exportXlsFile(dataset, "test2.xls", true, null);
+		importXlsFile(datasource, "test2.xls", false);
+	}
+
+	public static void stepped(ImportSteppedEvent importSteppedEvent) {
+
 	}
 }

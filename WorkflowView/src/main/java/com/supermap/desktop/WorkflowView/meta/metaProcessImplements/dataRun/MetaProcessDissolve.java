@@ -111,7 +111,7 @@ public class MetaProcessDissolve extends MetaProcess {
 			this.resultDataset.setResultDatasource(dataset.getDatasource());
 			this.resultDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_Dissolve"));
 			this.numberDissolveTolerance.setUnit(dataset.getPrjCoordSys().getCoordUnit().toString());
-			//BigDecimal temp = new BigDecimal(Double.valueOf(DatasetUtilities.getDefaultTolerance((DatasetVector)dataset).getNodeSnap()));
+			//BigDecimal temp = new BigDecimal(Double.valueOf(DatasetUtilities.getDefaultTolerance((DatasetVector)sourceDataset).getNodeSnap()));
 			this.numberDissolveTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance((DatasetVector) dataset).getNodeSnap());
 			this.fieldsDissolve.setDataset((DatasetVector) dataset);
 			this.statisticsFieldGroup.setDataset((DatasetVector) dataset);

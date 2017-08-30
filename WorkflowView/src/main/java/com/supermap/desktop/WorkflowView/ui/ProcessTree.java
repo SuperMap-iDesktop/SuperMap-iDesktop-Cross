@@ -1,7 +1,6 @@
 package com.supermap.desktop.WorkflowView.ui;
 
 import com.supermap.desktop.controls.drop.DropAndDragHandler;
-import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
 import com.supermap.desktop.process.ProcessManager;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.IProcess;
@@ -47,7 +46,7 @@ public class ProcessTree extends JTree {
 		if (userObject instanceof IProcessGroup) {
 			return ((IProcessGroup) userObject).getTitle();
 		} else if (userObject instanceof IProcessLoader) {
-			return ((IProcessLoader) userObject).getProcessDescriptor().getTitle();
+			return ((IProcessLoader) userObject).getTitle();
 		}
 		return "Unknown";
 	}
@@ -110,7 +109,7 @@ public class ProcessTree extends JTree {
 			Object userObject = ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject();
 
 			if (userObject instanceof IProcessLoader) {
-				return ((IProcessLoader) userObject).getProcessDescriptor().getKey();
+				return ((IProcessLoader) userObject).getKey();
 			} else {
 				return "";
 			}

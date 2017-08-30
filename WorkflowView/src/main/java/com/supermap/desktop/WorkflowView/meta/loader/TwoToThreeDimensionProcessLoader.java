@@ -5,8 +5,9 @@ import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConversion.MetaProcess2DTo3D;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.loader.AbstractProcessLoader;
-import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.utilities.StringUtilities;
+
+import java.util.Map;
 
 /**
  * Created By Chens on 2017/8/12 0012
@@ -14,22 +15,26 @@ import com.supermap.desktop.utilities.StringUtilities;
 public class TwoToThreeDimensionProcessLoader extends AbstractProcessLoader {
 	private final static String TWO_TO_THREE_DIMENSION = "2DTo3D";
 
-	public TwoToThreeDimensionProcessLoader(IProcessDescriptor descriptor) {
-		super(descriptor);
+	public TwoToThreeDimensionProcessLoader(Map<String, String> properties, String index) {
+		super(properties, index);
 	}
 
 	@Override
 	public IProcess loadProcess() {
-		if (getProcessDescriptor() == null) {
+		if (getProperties() == null) {
 			return null;
 		}
 
-		if (StringUtilities.isNullOrEmpty(getProcessDescriptor().getClassName())) {
+		if (StringUtilities.isNullOrEmpty(getClassName())) {
+			return null;
+		}
+
+		if (!getKey().contains(TWO_TO_THREE_DIMENSION)) {
 			return null;
 		}
 
 		DatasetType type = null;
-		switch (getProcessDescriptor().getKey()) {
+		switch (getKey()) {
 			case MetaKeys.CONVERSION_POINT2D_TO_3D:
 				type = DatasetType.POINT;
 				break;

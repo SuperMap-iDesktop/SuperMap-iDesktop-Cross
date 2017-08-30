@@ -6,6 +6,7 @@ import com.supermap.analyst.spatialstatistics.OptimizedParameter;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
@@ -48,7 +49,7 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 	}
 
 	private void initParameters() {
-		parameterSaveDataset.setDatasetName("result_optimizedHotSpot");
+		parameterSaveDataset.setSelectedItem("result_optimizedHotSpot");
 
 		parameterComboBox.addItem(new ParameterDataNode("AggregationPolygons", AggregationMethod.AGGREGATIONPOLYGONS));
 		parameterComboBox.addItem(new ParameterDataNode("NetworkPolygons", AggregationMethod.NETWORKPOLYGONS));
@@ -83,7 +84,7 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 
 		parameters.setParameters(parameterCombineSource, parameterCombine, parameterCombineResult);
 		parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.VECTOR, parameterCombineSource);
-		parameters.addOutputParameters(OUTPUT_DATASET, DatasetTypes.VECTOR, parameterCombineResult);
+		parameters.addOutputParameters(OUTPUT_DATASET, ProcessOutputResultProperties.getString("String_OptimizedHotSpotAnalystResult"), DatasetTypes.VECTOR, parameterCombineResult);
 	}
 
 	private void initParameterState() {
