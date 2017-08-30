@@ -46,7 +46,8 @@ public class MetaKeys {
 	public static final String KERNEL_DENSITY_OFFLINE = "KernelDensityOffline";
 
 	// 表面分析-地形计算
-	public static final String CALCULATE_ASPECT = " CalculateAspect";
+	public static final String CALCULATE_ASPECT = "CalculateAspect";
+	public static final String CALCULATE_SLOPE = "CalculateSlope";
 
 	//栅格统计
 	public static final String GRID_ANALYST_SETTING = "GridAnalystSetting";
