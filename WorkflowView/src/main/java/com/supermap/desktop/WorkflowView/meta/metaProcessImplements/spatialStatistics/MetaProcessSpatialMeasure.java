@@ -59,7 +59,7 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 		parameterCombineSource.setDescribe(CommonProperties.getString("String_ColumnHeader_SourceData"));
 
 		parameterSaveDataset = new ParameterSaveDataset();
-		parameterSaveDataset.setDatasetName(resultName);
+		parameterSaveDataset.setSelectedItem(resultName);
 		ParameterCombine parameterCombineResult = new ParameterCombine();
 		parameterCombineResult.addParameters(parameterSaveDataset);
 		parameterCombineResult.setDescribe(CommonProperties.getString("String_ResultSet"));

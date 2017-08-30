@@ -15,6 +15,8 @@ import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListe
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -91,9 +93,15 @@ public class ParameterPatternsParameter extends ParameterCombine {
 			}
 		});
 
-		String moduleName = "swmb";
-		parameterFile.setModuleName(moduleName);
-		parameterFile.setCreateNewFile(false);
+		String modelName = "OpenSWMBFile";
+		if (!SmFileChoose.isModuleExist(modelName)) {
+			String fileFilters = SmFileChoose.createFileFilter(ProcessProperties.getString("String_SWMFilePath"), "swmb");
+			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
+					CoreProperties.getString("String_Open"), modelName, "OpenOne");
+		}
+		parameterFile.setModuleName(modelName);
+		parameterFile.setRequisite(true);
+
 		parameterTextFieldKNeighbors.setDescribe(ProcessProperties.getString("String_KNeighbors"));
 		parameterSelfWeightFieldComboBox.setDescribe(ProcessProperties.getString("String_SelfWeightField"));
 

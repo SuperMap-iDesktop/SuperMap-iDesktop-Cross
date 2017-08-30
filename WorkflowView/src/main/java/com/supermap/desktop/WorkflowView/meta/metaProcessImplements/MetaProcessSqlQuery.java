@@ -55,7 +55,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		parameterResultFields = new ParameterTextArea(CommonProperties.getString("String_QueryField"));
 		parameterAttributeFilter = new ParameterTextArea(CommonProperties.getString("String_QueryCondition"));
 		parameterSaveDataset = new ParameterSaveDataset();
-		parameterSaveDataset.setDatasetName("result_query");
+		parameterSaveDataset.setSelectedItem("result_query");
 		initParameterConstraint();
 
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();

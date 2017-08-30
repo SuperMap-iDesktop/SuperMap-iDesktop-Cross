@@ -70,7 +70,7 @@ public class MetaProcessThiessenPolygon extends MetaProcess {
 			sourceDatasource.setSelectedItem(datasetVector.getDatasource());
 			sourceDataset.setSelectedItem(datasetVector);
 		}
-		resultDataset.setDatasetName("result_thiessen");
+		resultDataset.setSelectedItem("result_thiessen");
 	}
 
 	@Override

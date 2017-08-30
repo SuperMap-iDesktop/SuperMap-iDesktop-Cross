@@ -2,14 +2,13 @@ package com.supermap.desktop.process.util;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.loader.DefaultProcessDescriptor;
 import com.supermap.desktop.process.loader.DefaultProcessLoader;
-import com.supermap.desktop.process.loader.IProcessDescriptor;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 /**
  * Created by highsad on 2017/7/27.
@@ -19,11 +18,11 @@ public class WorkflowUtil {
 		// 工具类，不提供构造函数
 	}
 
-	public static IProcessLoader newProcessLoader(String loaderClassName, IProcessDescriptor descriptor) {
+	public static IProcessLoader newProcessLoader(String loaderClassName, Map<String, String> properties, String index) {
 		IProcessLoader loader = null;
 
 		if (StringUtilities.isNullOrEmpty(loaderClassName)) {
-			return new DefaultProcessLoader(descriptor);
+			return new DefaultProcessLoader(properties, index);
 		}
 
 		Class classInstance = Application.getActiveApplication().getPluginManager().loadClass(loaderClassName);
@@ -37,8 +36,8 @@ public class WorkflowUtil {
 		}
 
 		try {
-			Constructor constructor = classInstance.getConstructor(IProcessDescriptor.class);
-			loader = (IProcessLoader) constructor.newInstance(descriptor);
+			Constructor constructor = classInstance.getConstructor(Map.class, String.class);
+			loader = (IProcessLoader) constructor.newInstance(properties, index);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -49,33 +48,6 @@ public class WorkflowUtil {
 			e.printStackTrace();
 		}
 		return loader;
-	}
-
-	public static IProcessDescriptor newProcessDescriptor(String processDescriptorClass) {
-		IProcessDescriptor descriptor = null;
-
-		if (StringUtilities.isNullOrEmpty(processDescriptorClass)) {
-			return new DefaultProcessDescriptor();
-		}
-
-		Class classInstance = Application.getActiveApplication().getPluginManager().loadClass(processDescriptorClass);
-
-		if (classInstance == null) {
-			return null;
-		}
-
-		if (!IProcessDescriptor.class.isAssignableFrom(classInstance)) {
-			return null;
-		}
-
-		try {
-			descriptor = (IProcessDescriptor) classInstance.newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return descriptor;
 	}
 
 	public static IProcess newProcess(String className) {

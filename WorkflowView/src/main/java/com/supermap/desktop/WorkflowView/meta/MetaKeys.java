@@ -45,6 +45,11 @@ public class MetaKeys {
 	public static final String SIMPLE_DENSITY_OFFLINE = "SimpleDensityOffline";
 	public static final String KERNEL_DENSITY_OFFLINE = "KernelDensityOffline";
 
+	// 表面分析-地形计算
+	public static final String CALCULATE_ASPECT = "CalculateAspect";
+	public static final String CALCULATE_SLOPE = "CalculateSlope";
+	public static final String CALCULATE_HILLSHADE = "CalculateHillShade";
+	public static final String CALCULATE_ORTHOIMAGE = "CalculateOrthoImage";
 	//栅格统计
 	public static final String GRID_ANALYST_SETTING = "GridAnalystSetting";
 	public static final String BASIC_STATISTIC = "BasicStatistics";
@@ -59,17 +64,17 @@ public class MetaKeys {
 	public static final String CREATE_DISTANCE_RASTER = "CreateDistanceRaster";
 
 	// 水文分析
-	public static final String FillingPseudoDepressions = "FillingPseudoDepressions";
-	public static final String CalculatedFlowDirection = "CalculatedFlowDirection";
-	public static final String ComputationalFlowLength = "ComputationalFlowLength";
-	public static final String CalculatedWaterFlow = "CalculatedWaterFlow";
-	public static final String CatchmentPointCalculation = "CatchmentPointCalculation";
-	public static final String WatershedSegmentation = "WatershedSegmentation";
-	public static final String WatershedBasin = "WatershedBasin";
-	public static final String ExtractingGridWaterSystem = "ExtractingGridWaterSystem";
-	public static final String RiverClassification = "RiverClassification";
-	public static final String DrainageVectorization = "DrainageVectorization";
-	public static final String ConnectedDrainage = "ConnectedDrainage";
+	public static final String FILL_SINK = "FillSink";
+	public static final String FLOW_DIRECTION = "FlowDirection";
+	public static final String FLOW_LENGTH = "FlowLength";
+	public static final String STREAM_GRID = "StreamGrid";
+	public static final String POUR_POINTS = "PourPoint";
+	public static final String WATERSHED = "Watershed";
+	public static final String BASIN = "Basin";
+	public static final String FLOW_ACCUMULATION = "FlowAccumulation";
+	public static final String STREAM_ORDER = "StreamOrder";
+	public static final String STREAM_TO_LINE = "StreamToLine";
+	public static final String STREAM_LINK = "StreamLink";
 
 	// 空间统计分析
 	public static final String CENTRAL_ELEMENT = "CentralElement";

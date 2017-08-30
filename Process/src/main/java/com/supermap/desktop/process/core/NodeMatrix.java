@@ -17,6 +17,7 @@ import com.supermap.desktop.process.events.RelationRemovingEvent;
 import com.supermap.desktop.process.events.RelationRemovingListener;
 
 import javax.swing.event.EventListenerList;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
@@ -30,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NodeMatrix<T extends Object> {
 
 	private Vector<T> nodes = new Vector();
-	private Vector<Map<T, IRelation<T>>> matrix = new Vector<>();
+	private Vector<Map<T, ArrayList<IRelation<T>>>> matrix = new Vector<>();
 	private EventListenerList listenerList = new EventListenerList();
 
 	public NodeMatrix() {
@@ -51,7 +52,7 @@ public class NodeMatrix<T extends Object> {
 
 			if (!addingEvent.isCancel()) {
 				this.nodes.add(node);
-				this.matrix.add(new ConcurrentHashMap<T, IRelation<T>>());
+				this.matrix.add(new ConcurrentHashMap<T, ArrayList<IRelation<T>>>());
 				fireMatrixNodeAdded(new MatrixNodeAddedEvent<T>(this, node));
 			}
 		}
@@ -75,20 +76,26 @@ public class NodeMatrix<T extends Object> {
 		}
 
 		for (int i = 0, size = this.matrix.size(); i < size; i++) {
-			Map<T, IRelation<T>> map = this.matrix.get(i);
+			Map<T, ArrayList<IRelation<T>>> map = this.matrix.get(i);
 
 			if (map.containsKey(node)) {
-				removeRelation(map.get(node));
+				ArrayList<IRelation<T>> relationCollection = map.get(node);
+				for (int j = relationCollection.size() - 1; j >= 0; j--) {
+					removeRelation(relationCollection.get(j));
+				}
 				map.remove(node);
 			}
 		}
 
 		// remove values
 		int index = this.nodes.indexOf(node);
-		Map<T, IRelation<T>> relations = this.matrix.get(index);
-		for (Map.Entry<T, IRelation<T>> entry :
+		Map<T, ArrayList<IRelation<T>>> relations = this.matrix.get(index);
+		for (Map.Entry<T, ArrayList<IRelation<T>>> entry :
 				relations.entrySet()) {
-			removeRelation(entry.getValue());
+			ArrayList<IRelation<T>> relationCollection = entry.getValue();
+			for (int j = relationCollection.size(); j > 0; j--) {
+				removeRelation(relationCollection.get(j));
+			}
 		}
 
 		// remove node
@@ -160,7 +167,7 @@ public class NodeMatrix<T extends Object> {
 		validateNode(toNode);
 
 		int fromIndex = this.nodes.indexOf(fromNode);
-		Map<T, IRelation<T>> map = this.matrix.get(fromIndex);
+		Map<T, ArrayList<IRelation<T>>> map = this.matrix.get(fromIndex);
 		return map.containsKey(toNode);
 	}
 
@@ -203,7 +210,7 @@ public class NodeMatrix<T extends Object> {
 		Vector<T> fromNodes = new Vector<>();
 
 		for (int i = 0, size = this.matrix.size(); i < size; i++) {
-			Map<T, IRelation<T>> map = this.matrix.get(i);
+			Map<T, ArrayList<IRelation<T>>> map = this.matrix.get(i);
 			if (map.containsKey(node)) {
 				fromNodes.add(this.nodes.get(i));
 			}
@@ -222,11 +229,8 @@ public class NodeMatrix<T extends Object> {
 
 		Vector<T> toNodes = new Vector<>();
 
-		Map<T, IRelation<T>> map = this.matrix.get(this.nodes.indexOf(node));
-		for (T key :
-				map.keySet()) {
-			toNodes.add(key);
-		}
+		Map<T, ArrayList<IRelation<T>>> map = this.matrix.get(this.nodes.indexOf(node));
+		toNodes.addAll(map.keySet());
 		return toNodes;
 	}
 
@@ -315,8 +319,14 @@ public class NodeMatrix<T extends Object> {
 		validateNode(relation.getTo());
 
 		try {
-			removeRelation(relation.getFrom(), relation.getTo());
-			this.matrix.get(this.nodes.indexOf(relation.getFrom())).put(relation.getTo(), relation);
+			ArrayList<IRelation<T>> relationCollection = this.matrix.get(this.nodes.indexOf(relation.getFrom())).get(relation.getTo());
+			if (relationCollection != null) {
+				relationCollection.add(relation);
+			} else {
+				ArrayList<IRelation<T>> iRelations = new ArrayList<>();
+				iRelations.add(relation);
+				this.matrix.get(this.nodes.indexOf(relation.getFrom())).put(relation.getTo(), iRelations);
+			}
 			fireRelationAdded(new RelationAddedEvent<T>(this, relation));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -333,12 +343,13 @@ public class NodeMatrix<T extends Object> {
 		validateNode(fromNode);
 		validateNode(toNode);
 
-		Map<T, IRelation<T>> relations = this.matrix.get(this.nodes.indexOf(fromNode));
+		Map<T, ArrayList<IRelation<T>>> relations = this.matrix.get(this.nodes.indexOf(fromNode));
 		if (relations.containsKey(toNode)) {
-			IRelation<T> relation = relations.get(toNode);
-
-			fireRelationRemoving(new RelationRemovingEvent<T>(this, relation));
-			clearRelation(relation);
+			ArrayList<IRelation<T>> currentRelations = relations.get(toNode);
+			for (IRelation<T> relation : currentRelations) {
+				fireRelationRemoving(new RelationRemovingEvent<T>(this, relation));
+				clearRelation(relation);
+			}
 			relations.remove(toNode);
 			fireRelationRemoved(new RelationRemovedEvent<T>(this, fromNode, toNode));
 		}
@@ -353,10 +364,14 @@ public class NodeMatrix<T extends Object> {
 			T from = relation.getFrom();
 			T to = relation.getTo();
 
-			Map<T, IRelation<T>> relaionts = this.matrix.get(this.nodes.indexOf(from));
+			Map<T, ArrayList<IRelation<T>>> relations = this.matrix.get(this.nodes.indexOf(from));
 			fireRelationRemoving(new RelationRemovingEvent<T>(this, relation));
 			clearRelation(relation);
-			relaionts.remove(to);
+			ArrayList<IRelation<T>> iRelations = relations.get(to);
+			iRelations.remove(relation);
+			if (iRelations.size() == 0) {
+				relations.remove(to);
+			}
 			fireRelationRemoved(new RelationRemovedEvent<T>(this, from, to));
 		}
 	}
@@ -373,45 +388,42 @@ public class NodeMatrix<T extends Object> {
 		T from = relation.getFrom();
 		T to = relation.getTo();
 
-		Map<T, IRelation<T>> relations = this.matrix.get(this.nodes.indexOf(from));
-		if (relations.get(to) != relation) {
-			return false;
-		}
-
-		return relations.containsValue(relation);
+		Map<T, ArrayList<IRelation<T>>> relations = this.matrix.get(this.nodes.indexOf(from));
+		return relations.get(to).contains(relation);
 	}
 
-	public synchronized IRelation<T> getRelation(T fromNode, T toNode) {
+	public synchronized ArrayList<IRelation<T>> getRelations(T fromNode, T toNode) {
 		validateNode(fromNode);
 		validateNode(toNode);
 
-		Map<T, IRelation<T>> map = this.matrix.get(this.nodes.indexOf(fromNode));
+		Map<T, ArrayList<IRelation<T>>> map = this.matrix.get(this.nodes.indexOf(fromNode));
 		return map.containsKey(toNode) ? map.get(toNode) : null;
 	}
 
 	public synchronized int getRelationCount() {
 		int count = 0;
 
-		for (int i = 0, size = this.matrix.size(); i < size; i++) {
-			count += this.matrix.get(i).size();
+		for (Map<T, ArrayList<IRelation<T>>> map : this.matrix) {
+			for (ArrayList<IRelation<T>> iRelations : map.values()) {
+				count += iRelations.size();
+			}
 		}
 		return count;
 	}
 
 	public synchronized Vector<T> getNodes() {
 		Vector<T> nodes = new Vector<>();
-
-		for (int i = 0, size = this.nodes.size(); i < size; i++) {
-			nodes.add(this.nodes.get(i));
-		}
+		nodes.addAll(this.nodes);
 		return nodes;
 	}
 
 	public synchronized Vector<IRelation<T>> getRelations() {
 		Vector<IRelation<T>> relations = new Vector<>();
 
-		for (int i = 0, size = this.matrix.size(); i < size; i++) {
-			relations.addAll(this.matrix.get(i).values());
+		for (Map<T, ArrayList<IRelation<T>>> tArrayListMap : this.matrix) {
+			for (ArrayList<IRelation<T>> iRelations : tArrayListMap.values()) {
+				relations.addAll(iRelations);
+			}
 		}
 		return relations;
 	}

@@ -12,30 +12,30 @@ import java.util.ArrayList;
 public class MetaProcessHydrologicalAnalysis extends MetaProcessGroup {
 
 	private ArrayList<MetaProcess> processes = new ArrayList<>();
-	private EmptyMetaProcess fillingPseudoDepressions = new EmptyMetaProcess(ProcessProperties.getString("String_FillingPseudoDepressions"));
-	private EmptyMetaProcess calculatedFlowDirection = new EmptyMetaProcess(ProcessProperties.getString("String_CalculatedFlowDirection"));
-	private EmptyMetaProcess computationalFlowLength = new EmptyMetaProcess(ProcessProperties.getString("String_ComputationalFlowLength"));
-	private EmptyMetaProcess calculatedWaterFlow = new EmptyMetaProcess(ProcessProperties.getString("String_CalculatedWaterFlow"));
-	private EmptyMetaProcess catchmentPointCalculation = new EmptyMetaProcess(ProcessProperties.getString("String_CatchmentPointCalculation"));
-	private EmptyMetaProcess watershedSegmentation = new EmptyMetaProcess(ProcessProperties.getString("String_WatershedSegmentation"));
-	private EmptyMetaProcess watershedBasin = new EmptyMetaProcess(ProcessProperties.getString("String_WatershedBasin"));
-	private EmptyMetaProcess stringExtractingGridWaterSystem = new EmptyMetaProcess(ProcessProperties.getString("String_ExtractingGridWaterSystem"));
-	private EmptyMetaProcess riverClassification = new EmptyMetaProcess(ProcessProperties.getString("String_RiverClassification"));
-	private EmptyMetaProcess drainageVectorization = new EmptyMetaProcess(ProcessProperties.getString("String_DrainageVectorization"));
-	private EmptyMetaProcess connectedDrainage = new EmptyMetaProcess(ProcessProperties.getString("String_ConnectedDrainage"));
+	private EmptyMetaProcess fillSink = new EmptyMetaProcess(ProcessProperties.getString("String_Title_FillSink"));
+	private EmptyMetaProcess flowDirection = new EmptyMetaProcess(ProcessProperties.getString("String_Title_FlowDirection"));
+	private EmptyMetaProcess flowLength = new EmptyMetaProcess(ProcessProperties.getString("String_Title_FlowLength"));
+	private EmptyMetaProcess flowAccumulation = new EmptyMetaProcess(ProcessProperties.getString("String_Title_FlowAccumulation"));
+	private EmptyMetaProcess pourPoints = new EmptyMetaProcess(ProcessProperties.getString("String_Title_PourPoints"));
+	private EmptyMetaProcess watershed = new EmptyMetaProcess(ProcessProperties.getString("String_Title_Watershed"));
+	private EmptyMetaProcess basin = new EmptyMetaProcess(ProcessProperties.getString("String_Title_Basin"));
+	private EmptyMetaProcess streamGrid = new EmptyMetaProcess(ProcessProperties.getString("String_Title_StreamGrid"));
+	private EmptyMetaProcess streamOrder = new EmptyMetaProcess(ProcessProperties.getString("String_Title_StreamOrder"));
+	private EmptyMetaProcess streamToLine = new EmptyMetaProcess(ProcessProperties.getString("String_Title_StreamToLine"));
+	private EmptyMetaProcess streamLink = new EmptyMetaProcess(ProcessProperties.getString("String_Title_StreamLink"));
 
 	public MetaProcessHydrologicalAnalysis() {
-		processes.add(fillingPseudoDepressions);
-		processes.add(calculatedFlowDirection);
-		processes.add(computationalFlowLength);
-		processes.add(calculatedWaterFlow);
-		processes.add(catchmentPointCalculation);
-		processes.add(watershedSegmentation);
-		processes.add(watershedBasin);
-		processes.add(stringExtractingGridWaterSystem);
-		processes.add(riverClassification);
-		processes.add(drainageVectorization);
-		processes.add(connectedDrainage);
+		processes.add(fillSink);
+		processes.add(flowDirection);
+		processes.add(flowLength);
+		processes.add(flowAccumulation);
+		processes.add(pourPoints);
+		processes.add(watershed);
+		processes.add(basin);
+		processes.add(streamGrid);
+		processes.add(streamOrder);
+		processes.add(streamToLine);
+		processes.add(streamLink);
 
 	}
 
@@ -52,21 +52,21 @@ public class MetaProcessHydrologicalAnalysis extends MetaProcessGroup {
 	@Override
 	public ArrayList<MetaProcess> getSubMetaProcess(MetaProcess process) {
 		ArrayList<MetaProcess> metaProcesses = new ArrayList<>();
-		if (process == fillingPseudoDepressions) {
-			metaProcesses.add(calculatedFlowDirection);
-		} else if (process == calculatedFlowDirection) {
-			metaProcesses.add(computationalFlowLength);
-			metaProcesses.add(calculatedWaterFlow);
-			metaProcesses.add(catchmentPointCalculation);
-			metaProcesses.add(watershedSegmentation);
-			metaProcesses.add(watershedBasin);
-		} else if (process == calculatedWaterFlow) {
-			metaProcesses.add(catchmentPointCalculation);
-			metaProcesses.add(stringExtractingGridWaterSystem);
-		} else if (process == stringExtractingGridWaterSystem) {
-			metaProcesses.add(riverClassification);
-			metaProcesses.add(drainageVectorization);
-			metaProcesses.add(connectedDrainage);
+		if (process == fillSink) {
+			metaProcesses.add(flowDirection);
+		} else if (process == flowDirection) {
+			metaProcesses.add(flowLength);
+			metaProcesses.add(flowAccumulation);
+			metaProcesses.add(pourPoints);
+			metaProcesses.add(watershed);
+			metaProcesses.add(basin);
+		} else if (process == flowAccumulation) {
+			metaProcesses.add(pourPoints);
+			metaProcesses.add(streamGrid);
+		} else if (process == streamGrid) {
+			metaProcesses.add(streamOrder);
+			metaProcesses.add(streamToLine);
+			metaProcesses.add(streamLink);
 		}
 		return metaProcesses;
 	}
