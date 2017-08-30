@@ -49,7 +49,7 @@ public class MetaKeys {
 	public static final String CALCULATE_ASPECT = "CalculateAspect";
 	public static final String CALCULATE_SLOPE = "CalculateSlope";
 	public static final String CALCULATE_HILLSHADE = "CalculateHillShade";
-
+	public static final String CALCULATE_ORTHOIMAGE = "CalculateOrthoImage";
 	//栅格统计
 	public static final String GRID_ANALYST_SETTING = "GridAnalystSetting";
 	public static final String BASIC_STATISTIC = "BasicStatistics";
