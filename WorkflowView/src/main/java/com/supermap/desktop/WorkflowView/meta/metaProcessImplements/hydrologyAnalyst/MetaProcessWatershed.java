@@ -13,6 +13,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -55,6 +56,7 @@ public class MetaProcessWatershed extends MetaProcessHydrology {
 		ParameterCombine emptyCombine = new ParameterCombine(ParameterCombine.HORIZONTAL);
 		emptyCombine.addParameters(new ParameterLabel(), new ParameterLabel(), buttonSQL);
 		settingCombine.addParameters(textAreaSQL, emptyCombine);
+		buttonSQL.setAnchor(GridBagConstraints.EAST);
 
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.GRID,DatasetType.POINT);
 		if (dataset != null) {
@@ -74,6 +76,8 @@ public class MetaProcessWatershed extends MetaProcessHydrology {
 					textAreaSQL.setEnabled(false);
 					buttonSQL.setEnabled(false);
 				} else {
+					textAreaSQL.setEnabled(true);
+					buttonSQL.setEnabled(true);
 					buttonSQL.setSelectDataset((Dataset) evt.getNewValue());
 				}
 			}
@@ -87,7 +91,7 @@ public class MetaProcessWatershed extends MetaProcessHydrology {
 			}
 		});
 
-		parameters.setParameters(sourceCombine, weightCombine, resultCombine);
+		parameters.setParameters(sourceCombine, weightCombine,settingCombine, resultCombine);
 		parameters.addInputParameters(POUR_POINTS_DATA, new DatasetTypes("",DatasetTypes.GRID.getValue()|DatasetTypes.POINT.getValue()), weightCombine);
 	}
 
