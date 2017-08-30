@@ -13,6 +13,7 @@ import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
 import com.supermap.desktop.process.parameter.ipls.ParameterFile;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
+import java.io.File;
 
 /**
  * Created by yuanR on 2017/8/29 0029.
@@ -45,6 +46,8 @@ public class MetaProcessCreateSpatialWeightMatrixFile extends MetaProcessAnalyzi
 					ControlsProperties.getString("String_Save"), modelName, "SaveOne");
 		}
 		parameterFile.setModuleName(modelName);
+		String defaultPath = System.getProperty("user.dir") + File.separator + "newFile.swmb";
+		parameterFile.setSelectedItem(defaultPath);
 		parameterFile.setRequisite(true);
 
 		ParameterCombine parameterCombine = new ParameterCombine();
