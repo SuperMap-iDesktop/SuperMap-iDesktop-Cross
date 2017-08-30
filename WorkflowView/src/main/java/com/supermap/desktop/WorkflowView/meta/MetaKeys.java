@@ -48,6 +48,7 @@ public class MetaKeys {
 	// 表面分析-地形计算
 	public static final String CALCULATE_ASPECT = "CalculateAspect";
 	public static final String CALCULATE_SLOPE = "CalculateSlope";
+	public static final String CALCULATE_HILLSHADE = "CalculateHillShade";
 
 	//栅格统计
 	public static final String GRID_ANALYST_SETTING = "GridAnalystSetting";
