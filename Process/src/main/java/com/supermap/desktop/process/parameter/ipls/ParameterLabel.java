@@ -33,8 +33,9 @@ public class ParameterLabel extends AbstractParameter implements ISelectionParam
 		return ParameterType.LABEL;
 	}
 
-	public void setDescribe(String describe) {
+	public ParameterLabel setDescribe(String describe) {
 		this.describe = describe;
+		return this;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
+import java.awt.*;
 import java.awt.event.ActionListener;
 
 /**
@@ -17,6 +18,8 @@ public class ParameterButton extends AbstractParameter implements ISelectionPara
 	private String describe;
 	private Object value;
 	private ActionListener actionListener;
+	// 给于button设置拉伸方式的方法
+	private Integer fill = GridBagConstraints.NONE;
 
 	public ParameterButton(String describe) {
 		this.describe = describe;
@@ -37,9 +40,25 @@ public class ParameterButton extends AbstractParameter implements ISelectionPara
 		return value;
 	}
 
+
 	public ParameterButton setDescribe(String describe) {
 		this.describe = describe;
 		return this;
+	}
+
+	/**
+	 * 拉伸方式
+	 *
+	 * @param fill
+	 * @return
+	 */
+	public ParameterButton setFill(int fill) {
+		this.fill = fill;
+		return this;
+	}
+
+	public Integer getFill() {
+		return fill;
 	}
 
 	@Override
