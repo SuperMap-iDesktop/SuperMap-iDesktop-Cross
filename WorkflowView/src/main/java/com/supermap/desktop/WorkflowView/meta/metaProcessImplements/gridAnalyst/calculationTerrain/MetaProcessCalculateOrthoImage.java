@@ -1,11 +1,12 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridAnalyst.calculationTerrain;
 
-import com.supermap.data.Colors;
+import com.supermap.analyst.spatialanalyst.CalculationTerrain;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetImage;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
+import com.supermap.desktop.controls.colorsTable.LayerGridParamColorTableDialog;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -14,10 +15,13 @@ import com.supermap.desktop.process.parameter.ipls.ParameterColor;
 import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
 import com.supermap.desktop.process.parameter.ipls.ParameterLabel;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.mapping.LayerSettingGrid;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * Created by yuanR on 2017/8/29 0029.
@@ -27,17 +31,18 @@ import java.awt.event.ActionListener;
 public class MetaProcessCalculateOrthoImage extends MetaProcessCalTerrain {
 	private final static String OUTPUT_DATASET = "CalculateHillShadeResult";
 
+
+	private ArrayList<DatasetGridBean> datasetGridBeans = new ArrayList<>();
 	private ParameterColor parameterColorNoColor;
 	private ParameterLabel parameterLabel;
 	private ParameterButton parameterColorsTable;
-	private Colors colors;
 
+	private int selectedDatasetGridBeanNum = -1;
+	private LayerSettingGrid layerSettingGrid;
 
 	@Override
 	protected void initHook() {
-
 		// 参数设置
-
 		parameterColorNoColor = new ParameterColor(ProcessProperties.getString("String_Label_NoColor_Color"));
 		parameterColorNoColor.setSelectedItem(Color.WHITE);
 		parameterColorNoColor.setRequisite(true);
@@ -47,11 +52,30 @@ public class MetaProcessCalculateOrthoImage extends MetaProcessCalTerrain {
 		parameterColorsTable.setActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("666");
-				DatasetGrid grid = (DatasetGrid) sourceDataset.getSelectedDataset();
-
-				grid.getColorTable();
-//				grid.setColorTable();
+				DatasetGrid datasetGrid = (DatasetGrid) sourceDataset.getSelectedDataset();
+				Boolean isExit = false;
+				for (int i = 0; i < datasetGridBeans.size(); i++) {
+					if (datasetGrid.equals(datasetGridBeans.get(i).getDatasetGrid())) {
+						isExit = true;
+						selectedDatasetGridBeanNum = i;
+						break;
+					}
+				}
+				if (!isExit) {
+					DatasetGridBean datasetGridBean = new DatasetGridBean(datasetGrid);
+					datasetGridBeans.add(datasetGridBean);
+					selectedDatasetGridBeanNum = datasetGridBeans.size() - 1;
+				}
+				if (selectedDatasetGridBeanNum != -1) {
+					LayerGridParamColorTableDialog layerGridParamColorTableDialog = new LayerGridParamColorTableDialog(
+							datasetGridBeans.get(selectedDatasetGridBeanNum).getLayerSettingGrid(),
+							datasetGridBeans.get(selectedDatasetGridBeanNum).getOriginKeys()
+					);
+					if (layerGridParamColorTableDialog.showDialog() == DialogResult.OK) {
+						datasetGridBeans.get(selectedDatasetGridBeanNum).setLayerSettingGrid(layerGridParamColorTableDialog.getCurrentLayerSettingGrid());
+						layerSettingGrid = layerGridParamColorTableDialog.getCurrentLayerSettingGrid();
+					}
+				}
 			}
 		});
 
@@ -66,6 +90,7 @@ public class MetaProcessCalculateOrthoImage extends MetaProcessCalTerrain {
 		// 结果设置
 		parameters.addParameters(parameterCombineSet, parameterCombineResultDataset);
 		parameters.addOutputParameters(OUTPUT_DATASET, ProcessOutputResultProperties.getString("String_CalculateOrthoImageResult"), DatasetTypes.IMAGE, parameterCombineResultDataset);
+
 	}
 
 	@Override
@@ -91,11 +116,11 @@ public class MetaProcessCalculateOrthoImage extends MetaProcessCalTerrain {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			// 这个进度监听有问题，无法生效，先用fireRunning代替-yuanR存疑2017.8.30
 //			CalculationTerrain.addSteppedListener(steppedListener);
-//			datasetImageResult = CalculationTerrain.calculateOrthoImage(datasetGrid,
-//
-//					(Color) parameterColorNoColor.getSelectedItem(),
-//					parameterSaveDataset.getResultDatasource(),
-//					parameterSaveDataset.getDatasetName());
+			datasetImageResult = CalculationTerrain.calculateOrthoImage(datasetGrid,
+					layerSettingGrid.getColorDictionary(),
+					(Color) parameterColorNoColor.getSelectedItem(),
+					parameterSaveDataset.getResultDatasource(),
+					parameterSaveDataset.getDatasetName());
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(datasetImageResult);
 			isSuccessful = datasetImageResult != null;
 

@@ -85,5 +85,6 @@ UserConferenceDemo/target/
 /Configuration/UserConfig.config
 /Configuration/Products.xml
 /Configuration/URL.config
+/Configuration/SnapSetting.xml
 /log
 /Templates/Projection/Projection.xml

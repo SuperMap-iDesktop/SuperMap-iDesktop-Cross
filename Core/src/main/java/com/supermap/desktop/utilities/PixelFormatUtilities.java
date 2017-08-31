@@ -82,4 +82,42 @@ public class PixelFormatUtilities {
 		}
 		return result;
 	}
+
+	// 根据枚举值获取像素格式
+	public static PixelFormat valueOf(Integer pixelFormatValue) {
+		PixelFormat result = PixelFormat.BIT16;
+
+		try {
+			if (pixelFormatValue.equals(24)) {
+				result = PixelFormat.RGB;
+			} else if (pixelFormatValue.equals(32)) {
+				result = PixelFormat.RGBA;
+			} else if (pixelFormatValue.equals(6400)) {
+				result = PixelFormat.DOUBLE;
+			} else if (pixelFormatValue.equals(3200)) {
+				result = PixelFormat.SINGLE;
+			} else if (pixelFormatValue.equals(80)) {
+				result = PixelFormat.BIT8;
+			} else if (pixelFormatValue.equals(16)) {
+				result = PixelFormat.BIT16;
+			} else if (pixelFormatValue.equals(320)) {
+				result = PixelFormat.BIT32;
+			} else if (pixelFormatValue.equals(64)) {
+				result = PixelFormat.BIT64;
+			} else if (pixelFormatValue.equals(1)) {
+				result = PixelFormat.UBIT1;
+			} else if (pixelFormatValue.equals(4)) {
+				result = PixelFormat.UBIT4;
+			} else if (pixelFormatValue.equals(8)) {
+				result = PixelFormat.UBIT8;
+			} else if (pixelFormatValue.equals(160)) {
+				result = PixelFormat.UBIT16;
+			} else if (pixelFormatValue.equals(321)) {
+				result = PixelFormat.UBIT32;
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return result;
+	}
 }

@@ -38,12 +38,17 @@ public class MetaProcessRegionToPoint extends MetaProcessPointLineRegion {
 
             for (int i = 0; i < geoRegion.getPartCount(); i++) {
                 Point2Ds points = geoRegion.getPart(i);
-
+                double x = 0;
+                double y = 0;
                 for (int j = 0; j < points.getCount(); j++) {
-                    GeoPoint geoPoint = new GeoPoint(points.getItem(j));
-                    recordset.addNew(geoPoint, value);
-                    geoPoint.dispose();
+                    x += points.getItem(j).getX();
+                    y += points.getItem(j).getY();
                 }
+                x = x / points.getCount();
+                y = y / points.getCount();
+                GeoPoint geoPoint = new GeoPoint(x, y);
+                recordset.addNew(geoPoint, value);
+                geoPoint.dispose();
             }
             geoRegion.dispose();
         } else {

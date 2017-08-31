@@ -163,11 +163,6 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 
 			ProximityAnalyst.addSteppedListener(steppedListener);
 			StatisticsField[] statisticsFields = statisticsFieldGroupForRarefyPoints.getSelectedStatisticsFields();
-			for (int i = 0; i < statisticsFields.length; i++) {
-				System.out.println(statisticsFields[i].getSourceField());
-				System.out.println(statisticsFields[i].getResultField());
-				System.out.println(statisticsFields[i].getMode());
-			}
 
 			boolean isRandomSaveRerefyPoints = false;
 			if (this.checkBoxRandomSaveRerefyPoints.getSelectedItem().equals("true")) {

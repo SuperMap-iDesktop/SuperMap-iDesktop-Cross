@@ -6,6 +6,8 @@ import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -16,6 +18,8 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.TabularUtilities;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -33,6 +37,8 @@ public class MetaProcessAppendRow extends MetaProcess {
 
 	public MetaProcessAppendRow() {
 		initParameters();
+		initParameterConstraint();
+		registerListner();
 	}
 
 	private void initParameters() {
@@ -61,6 +67,32 @@ public class MetaProcessAppendRow extends MetaProcess {
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, this.chooseTable);
 		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Append"), DatasetTypes.VECTOR, this.targetData);
 
+	}
+
+	private void initParameterConstraint() {
+		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
+		equalDatasourceConstraint.constrained(this.datasource, ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+
+		EqualDatasetConstraint equalDataset = new EqualDatasetConstraint();
+		equalDataset.constrained(this.dataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		equalDataset.constrained(this.chooseTable, ParameterDatasetChooseTable.DATASET_FIELD_NAME);
+	}
+
+	private void registerListner() {
+		this.chooseTable.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				ArrayList<Dataset> datasets = (ArrayList<Dataset>) evt.getNewValue();
+				if (datasets == null || datasets.size() == 0) {
+					datasource.setEnabled(true);
+					dataset.setEnabled(true);
+				} else {
+					datasource.setEnabled(false);
+					dataset.setEnabled(false);
+				}
+			}
+		});
 	}
 
 	@Override

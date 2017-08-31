@@ -7,6 +7,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxTableModel;
+import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
@@ -84,9 +85,9 @@ public abstract class JPanelDatasetChoose extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			int[] selectedRows = tableDatasetDisplay.getSelectedRows();
 			for (int length = selectedRows.length, i = length - 1; i >= 0; i--) {
-				tableModel.removeRow(selectedRows[i]);
 				//删除数据集集合内的数据集
 				datasets.remove(selectedRows[i]);
+				tableModel.removeRow(selectedRows[i]);
 			}
 		}
 	};
@@ -200,6 +201,8 @@ public abstract class JPanelDatasetChoose extends JPanel {
 		this.tableDatasetDisplay.getTableHeader().setReorderingAllowed(false);
 		this.tableDatasetDisplay.setModel(this.tableModel);
 		this.tableDatasetDisplay.setRowHeight(23);
+		this.tableDatasetDisplay.getColumnModel().getColumn(1).setCellRenderer(new CommonListCellRenderer());
+		this.tableDatasetDisplay.getColumnModel().getColumn(2).setCellRenderer(new CommonListCellRenderer());
 		this.toolBar = new JToolBar();
 		this.scrollPane.setPreferredSize(new Dimension(300, 200));
 		initToolBar();
@@ -375,8 +378,8 @@ public abstract class JPanelDatasetChoose extends JPanel {
 				//添加行和数据集集合的添加顺序一致,保证两个集合内部的索引一致
 				Object[] row = transFormData(selectedDatasets.get(i));
 				if (null != row) {
-					tableModel.addRow(row);
 					datasets.add(selectedDatasets.get(i));
+					tableModel.addRow(row);
 				}
 			}
 			if (0 < tableDatasetDisplay.getRowCount()) {
