@@ -137,7 +137,6 @@ public class MetaProcessInterpolator extends MetaProcess {
 		parameterResultDatasetName.setDatasetDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
 		parameterResulotion = new ParameterNumber(CommonProperties.getString("String_Resolution"));
 		parameterResulotion.setMinValue(0);
-		parameterResulotion.setIsIncludeMin(false);
 		parameterPixelType = new ParameterComboBox().setDescribe(CommonProperties.getString("String_PixelType"));
 		ParameterDataNode selectedItem = new ParameterDataNode(PixelFormatProperties.getString("String_Bit32"), PixelFormat.BIT32);
 		parameterPixelType.setItems(
@@ -236,7 +235,6 @@ public class MetaProcessInterpolator extends MetaProcess {
 			parameterDataset.setSelectedItem(datasetVector);
 			parameterInterpolatorFields.setFieldName((DatasetVector) datasetVector);
 
-			FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
 			parameterInterpolatorFields.setFieldType(fieldType);
 
 			Rectangle2D bounds = datasetVector.getBounds();

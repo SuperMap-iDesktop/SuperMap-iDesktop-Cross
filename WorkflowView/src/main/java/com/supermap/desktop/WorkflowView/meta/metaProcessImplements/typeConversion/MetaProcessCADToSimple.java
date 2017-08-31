@@ -126,7 +126,7 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 					recordsetInput.moveNext();
 				}
 				recordsetResult.getBatch().update();
-				isSuccessful = isSuccessful && recordsetResult != null;
+				isSuccessful = recordsetResult != null;
 				recordsetInput.close();
 				recordsetInput.dispose();
 				if (isSuccessful) {
