@@ -178,8 +178,6 @@ public class MetaProcessBuffer extends MetaProcess {
 		parameterTextFieldSemicircleLineSegment.setSelectedItem("100");
 		parameterBufferRange.setRequisite(true);
 		parameterTextFieldLeftRadius.setRequisite(true);
-		parameterUnionBuffer.setRequisite(true);
-		parameterRetainAttribute.setRequisite(true);
 		parameterTextFieldSemicircleLineSegment.setRequisite(true);
 
 		checkBoxBufferType.setSelectedItem(false);

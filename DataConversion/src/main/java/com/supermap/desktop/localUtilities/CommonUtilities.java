@@ -97,7 +97,8 @@ public class CommonUtilities {
 		if (UserDefineFileType.GPX.toString().equals(fileType)) {
 			//GPX type reflect GPS
 			fileType = "GPS";
-		} else if (UserDefineFileType.EXCEL.toString().equals(fileType)) {
+		}
+		if (UserDefineFileType.EXCEL.toString().equals(fileType)) {
 			fileType = "Excel";
 		}
 		String tempFileType = "String_FileType" + fileType;

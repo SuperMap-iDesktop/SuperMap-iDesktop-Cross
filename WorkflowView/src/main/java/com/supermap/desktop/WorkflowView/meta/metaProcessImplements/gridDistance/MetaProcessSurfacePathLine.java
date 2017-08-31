@@ -131,6 +131,7 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 		parameterPathLineSmoothDegree.setSelectedItem("2");
 		parameterPathLineSmoothDegree.setMinValue(2);
 		parameterPathLineSmoothDegree.setMaxValue(10);
+		parameterPathLineSmoothDegree.setMaxBit(0);
 		parameterPathLineSmoothDegree.setIncludeMax(true);
 		parameterPathLineSmoothDegree.setIsIncludeMin(true);
 
@@ -164,8 +165,6 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 
 		// 结果设置
 		this.resultDataset = new ParameterSaveDataset();
-		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 
 		ParameterCombine resultData = new ParameterCombine();
 		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
@@ -185,9 +184,7 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
 			resultDataset.setResultDatasource(datasetGrid.getDatasource());
-			resultDataset.setSelectedItem(OUTPUT_DATA);
 			resultDataset.setSelectedItem(datasetGrid.getDatasource().getDatasets().getAvailableDatasetName("result_DEMPastLine"));
-
 		}
 		parameterPathLineSmoothDegree.setEnabled(false);
 	}
@@ -217,6 +214,7 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 		PathLineResult pathLineResult = null;
 		DatasetGrid datasetGrid = null;
 		Recordset resultRecordset = null;
+		String resultDatasetName = null;
 		try {
 
 			if (this.getParameters().getInputs().getData(INPUT_DATA) != null
@@ -247,8 +245,9 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 
 			if (pathLineResult != null) {
 				// 创建新的线数据集
+				resultDatasetName = this.resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(this.resultDataset.getDatasetName());
 				DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
-				datasetVectorInfo.setName(this.resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(this.resultDataset.getDatasetName()));
+				datasetVectorInfo.setName(resultDatasetName);
 				datasetVectorInfo.setType(DatasetType.LINE);
 				DatasetVector resultDataset = this.resultDataset.getResultDatasource().getDatasets().create(datasetVectorInfo);
 				resultDataset.setPrjCoordSys(datasetGrid.getPrjCoordSys());
@@ -264,8 +263,12 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 			}
 
 		} catch (Exception e) {
-
 			Application.getActiveApplication().getOutput().output(e);
+			// 当结果数据集不为空，并且tree中存在结果数据集时，进行删除操作
+			if (!StringUtilities.isNullOrEmpty(resultDatasetName) &&
+					!this.resultDataset.getResultDatasource().getDatasets().isAvailableDatasetName(resultDatasetName)) {
+				this.resultDataset.getResultDatasource().getDatasets().delete(resultDatasetName);
+			}
 		} finally {
 			resultRecordset.close();
 			resultRecordset.dispose();

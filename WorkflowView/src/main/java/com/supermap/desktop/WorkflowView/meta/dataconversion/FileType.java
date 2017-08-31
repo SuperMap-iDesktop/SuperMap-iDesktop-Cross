@@ -95,6 +95,8 @@ public class FileType {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "LIDAR", "txt"), "txt"));
 				} else if ("GPS".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, importType.toLowerCase()), "gpx"));
+				} else if ("EXCEL".equalsIgnoreCase(importType)) {
+					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), "Microsoft Excel", "xls", "xlsx"), "xls", "xlsx"));
 				} else if ("TIF".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), importType, "tif", "tiff"), "tif", "tiff"));
 				} else if ("JPG".equalsIgnoreCase(importType)) {

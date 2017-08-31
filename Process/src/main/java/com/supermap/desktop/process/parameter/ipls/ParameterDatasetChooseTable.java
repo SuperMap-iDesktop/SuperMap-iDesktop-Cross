@@ -43,4 +43,5 @@ public class ParameterDatasetChooseTable extends AbstractParameter implements IS
 	public String getType() {
 		return ParameterType.DATASET_CHOOSE_TABLE;
 	}
+
 }
