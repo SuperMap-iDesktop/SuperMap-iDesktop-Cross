@@ -1,4 +1,4 @@
-package com.supermap.desktop.mapview.layer.propertycontrols;
+package com.supermap.desktop.controls.colorsTable;
 
 import com.supermap.data.ColorDictionary;
 import com.supermap.desktop.Application;
