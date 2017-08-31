@@ -32,18 +32,6 @@ public class MetaProcessCalculateOrthoImage extends MetaProcessCalTerrain {
 	private ParameterButton parameterColorsTable;
 	private Colors colors;
 
-	private ActionListener actionListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-
-
-//			LayerGridParamColorTableDialog layerGridParamColorTableDialog = new LayerGridParamColorTableDialog();
-//			if (layerGridParamColorTableDialog.showDialog() == DialogResult.OK) {
-//				colors = layerGridParamColorTableDialog
-//			}
-
-		}
-	};
 
 	@Override
 	protected void initHook() {
@@ -56,7 +44,16 @@ public class MetaProcessCalculateOrthoImage extends MetaProcessCalTerrain {
 
 		parameterLabel = new ParameterLabel().setDescribe(ProcessProperties.getString("String_Label_ColorTable"));
 		parameterColorsTable = new ParameterButton(ProcessProperties.getString("String_SetColorTable")).setFill(GridBagConstraints.HORIZONTAL);
-		parameterColorsTable.setActionListener(actionListener);
+		parameterColorsTable.setActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("666");
+				DatasetGrid grid = (DatasetGrid) sourceDataset.getSelectedDataset();
+
+				grid.getColorTable();
+//				grid.setColorTable();
+			}
+		});
 
 		ParameterCombine parameterCombineColorsTable = new ParameterCombine(ParameterCombine.HORIZONTAL);
 		parameterCombineColorsTable.addParameters(new ParameterCombine(), parameterLabel, parameterColorsTable);

@@ -33,7 +33,7 @@ import java.beans.PropertyChangeListener;
 /**
  * Created by lixiaoyao on 2017/7/21.
  */
-public class LayerGridAggregationPropertyControl extends AbstractLayerPropertyControl {
+public class  LayerGridAggregationPropertyControl extends AbstractLayerPropertyControl {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel labelGridField;
