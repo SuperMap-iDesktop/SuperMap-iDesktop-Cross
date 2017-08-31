@@ -6,10 +6,11 @@ import com.supermap.desktop.Interface.IImportPanelFactory;
 import com.supermap.desktop.Interface.IImportSettingFactory;
 import com.supermap.desktop.Interface.IPanelImport;
 import com.supermap.desktop.Interface.IPanelModel;
-import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.*;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingExcel;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.localUtilities.CommonUtilities;
 import com.supermap.desktop.localUtilities.FiletypeUtilities;
 import com.supermap.desktop.localUtilities.LocalFileUtilities;
@@ -156,7 +157,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 		for (File file : files) {
 			ImportInfo importInfo = new ImportInfo();
 			String fileType = FileUtilities.getFileType(file.getPath());
-			if (!".xlsx".equalsIgnoreCase(fileType) && !StringUtilities.isNullOrEmpty(fileType)) {
+			if (!StringUtilities.isNullOrEmpty(fileType)) {
 				//导入信息参数设置
 				importInfo.setFileName(file.getName());
 				String filetype = FiletypeUtilities.getParseFile(fileType, fileFilter);
@@ -382,7 +383,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 		this.setFocusTraversalPolicy(this.policy);
 		this.getRootPane().setDefaultButton(this.buttonImport);
 		this.setLocationRelativeTo(null);
-		this.setSize(new Dimension(864, 486));
+		this.setSize(new Dimension(960, 540));
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(Math.abs(screenSize.width - 864) / 2, Math.abs(screenSize.height - 486) / 2);
 		setComponentName();
@@ -708,7 +709,9 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 	}
 
 	private void setImportTitle(ImportSetting importSetting) {
-		if (importSetting instanceof ImportSettingGPX) {
+		if (importSetting instanceof ImportSettingExcel) {
+			labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), "EXCEL"));
+		} else if (importSetting instanceof ImportSettingGPX) {
 			//If you want to replace your title for import file,change the message
 			labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), "GPS"));
 		} else {

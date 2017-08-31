@@ -560,6 +560,9 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 					}
 				}
 			}
+			if (exportSetting.getSourceData() instanceof DatasetVector) {
+				this.steppedComboBox.addItem(DataConversionProperties.getString("String_FileTypeExcel"));
+			}
 			Dimension d = this.steppedComboBox.getPreferredSize();
 			this.steppedComboBox.setPreferredSize(new Dimension(d.width, d.height));
 			this.steppedComboBox.setPopupWidth(d.width);

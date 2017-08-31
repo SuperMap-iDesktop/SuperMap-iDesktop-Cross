@@ -3,6 +3,7 @@ package com.supermap.desktop.iml;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IImportSettingFactory;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingExcel;
 import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.utilities.FileUtilities;
@@ -102,8 +103,7 @@ public class ImportSettingFactory implements IImportSettingFactory {
             importSetting = new ImportSettingE00();
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.XLSX_STRING) || fileType.equalsIgnoreCase(FileTypeLocale.XLS_STRING)) {
             // 暂时没有实现excel文件的导入类,用ImportSettingCSV实例化避免异常
-            importSetting = new ImportSettingCSV();
-            ((ImportSettingCSV) importSetting).setImportEmptyDataset(true);
+            importSetting = new ImportSettingExcel();
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.TDS_STRING)) {
             // 3ds数据的导入
             importSetting = new ImportSettingModel3DS();
