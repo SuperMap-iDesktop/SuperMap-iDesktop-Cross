@@ -2,7 +2,6 @@ package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
@@ -12,8 +11,6 @@ import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.parameter.ipls.ParameterCommonStatisticCombine;
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasetChooseTable;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.CollectionDataset.JPanelDatasetChoose;
-import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 
@@ -23,8 +20,6 @@ import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.MessageFormat;
-import java.util.ArrayList;
 
 /**
  * Created By Chens on 2017/8/21 0021
@@ -131,70 +126,70 @@ public class ParameterCommonStatisticCombinePanel extends SwingPanel {
 		});
 	}
 
-	class JPanelDatasetChooseForParameter extends JPanelDatasetChoose {
-		private final int COLUMN_INDEX = 0;
-		private final int COLUMN_DATASET = 1;
-		private final int COLUMN_DATASOURCE = 2;
-		private final int MAX_SIZE = 40;
-
-		public JPanelDatasetChooseForParameter(ArrayList<Dataset> datasets, String[] columnName, boolean[] enableColumn) {
-			super(datasets, columnName, enableColumn);
-			this.tableDatasetDisplay.getColumnModel().getColumn(COLUMN_INDEX).setMaxWidth(MAX_SIZE);
-		}
-
-		@Override
-		protected void exchangeItem(int sourceRow, int targetRow) {
-			Object targetDatasetCell = tableModel.getValueAt(targetRow, COLUMN_DATASET);
-			Object sourceDatasetCell = tableModel.getValueAt(sourceRow, COLUMN_DATASET);
-			Object targetDatasourceCell = tableModel.getValueAt(targetRow, COLUMN_DATASOURCE);
-			Object sourceDatasourceCell = tableModel.getValueAt(sourceRow, COLUMN_DATASOURCE);
-
-			tableModel.setValueAt(targetDatasetCell, sourceRow, COLUMN_DATASET);
-			tableModel.setValueAt(sourceDatasetCell, targetRow, COLUMN_DATASET);
-			tableModel.setValueAt(targetDatasourceCell, sourceRow, COLUMN_DATASOURCE);
-			tableModel.setValueAt(sourceDatasourceCell, targetRow, COLUMN_DATASOURCE);
-		}
-
-		@Override
-		protected Object[] transFormData(Dataset dataset) {
-			Object[] datasetInfo = null;
-			if (dataset.equals(getIllegalDataset())) {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendRowError"), dataset.getName()));
-			} else {
-				datasetInfo = new Object[3];
-				datasetInfo[COLUMN_INDEX] = tableModel.getRowCount() + 1;
-				datasetInfo[COLUMN_DATASET] = new DataCell(dataset);
-				DataCell cell = new DataCell();
-				cell.initDatasourceType(dataset.getDatasource());
-				datasetInfo[COLUMN_DATASOURCE] = cell;
-			}
-			return datasetInfo;
-		}
-
-		@Override
-		public void setSupportDatasetTypes(DatasetType[] supportDatasetTypes) {
-			this.supportDatasetTypes = supportDatasetTypes;
-		}
-
-		@Override
-		protected Object[][] getData(ArrayList<Dataset> datasets) {
-			if (null == datasets || (null != datasets && datasets.size() == 0)) {
-				return new Object[0][0];
-			}
-			int size = datasets.size();
-			Object[][] result = new Object[size][];
-			DataCell datasetCell;
-			DataCell datasourceCell;
-			for (int i = 0; i < size; i++) {
-				result[i][COLUMN_INDEX] = i + 1;
-				datasetCell = new DataCell();
-				datasetCell.initDatasetType(datasets.get(i));
-				result[i][COLUMN_DATASET] = datasetCell;
-				datasourceCell = new DataCell();
-				datasourceCell.initDatasourceType(datasets.get(i).getDatasource());
-				result[i][COLUMN_DATASOURCE] = datasourceCell;
-			}
-			return result;
-		}
-	}
+//	class JPanelDatasetChooseForParameter extends JPanelDatasetChoose {
+//		private final int COLUMN_INDEX = 0;
+//		private final int COLUMN_DATASET = 1;
+//		private final int COLUMN_DATASOURCE = 2;
+//		private final int MAX_SIZE = 40;
+//
+//		public JPanelDatasetChooseForParameter(ArrayList<Dataset> datasets, String[] columnName, boolean[] enableColumn) {
+//			super(datasets, columnName, enableColumn);
+//			this.tableDatasetDisplay.getColumnModel().getColumn(COLUMN_INDEX).setMaxWidth(MAX_SIZE);
+//		}
+//
+//		@Override
+//		protected void exchangeItem(int sourceRow, int targetRow) {
+//			Object targetDatasetCell = tableModel.getValueAt(targetRow, COLUMN_DATASET);
+//			Object sourceDatasetCell = tableModel.getValueAt(sourceRow, COLUMN_DATASET);
+//			Object targetDatasourceCell = tableModel.getValueAt(targetRow, COLUMN_DATASOURCE);
+//			Object sourceDatasourceCell = tableModel.getValueAt(sourceRow, COLUMN_DATASOURCE);
+//
+//			tableModel.setValueAt(targetDatasetCell, sourceRow, COLUMN_DATASET);
+//			tableModel.setValueAt(sourceDatasetCell, targetRow, COLUMN_DATASET);
+//			tableModel.setValueAt(targetDatasourceCell, sourceRow, COLUMN_DATASOURCE);
+//			tableModel.setValueAt(sourceDatasourceCell, targetRow, COLUMN_DATASOURCE);
+//		}
+//
+//		@Override
+//		protected Object[] transFormData(Dataset dataset) {
+//			Object[] datasetInfo = null;
+//			if (dataset.equals(getIllegalDataset())) {
+//				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendRowError"), dataset.getName()));
+//			} else {
+//				datasetInfo = new Object[3];
+//				datasetInfo[COLUMN_INDEX] = tableModel.getRowCount() + 1+" ";
+//				datasetInfo[COLUMN_DATASET] = new DataCell(dataset);
+//				DataCell cell = new DataCell();
+//				cell.initDatasourceType(dataset.getDatasource());
+//				datasetInfo[COLUMN_DATASOURCE] = cell;
+//			}
+//			return datasetInfo;
+//		}
+//
+//		@Override
+//		public void setSupportDatasetTypes(DatasetType[] supportDatasetTypes) {
+//			this.supportDatasetTypes = supportDatasetTypes;
+//		}
+//
+//		@Override
+//		protected Object[][] getData(ArrayList<Dataset> datasets) {
+//			if (null == datasets || (null != datasets && datasets.size() == 0)) {
+//				return new Object[0][0];
+//			}
+//			int size = datasets.size();
+//			Object[][] result = new Object[size][];
+//			DataCell datasetCell;
+//			DataCell datasourceCell;
+//			for (int i = 0; i < size; i++) {
+//				result[i][COLUMN_INDEX] = i + 1;
+//				datasetCell = new DataCell();
+//				datasetCell.initDatasetType(datasets.get(i));
+//				result[i][COLUMN_DATASET] = datasetCell;
+//				datasourceCell = new DataCell();
+//				datasourceCell.initDatasourceType(datasets.get(i).getDatasource());
+//				result[i][COLUMN_DATASOURCE] = datasourceCell;
+//			}
+//			return result;
+//		}
+//	}
 }

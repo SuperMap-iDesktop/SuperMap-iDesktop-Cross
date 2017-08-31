@@ -5,6 +5,7 @@ import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingExcel;
 import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.implement.UserDefineType.UserDefineImportResult;
 import com.supermap.desktop.importUI.DataImportDialog;
@@ -32,7 +33,7 @@ public class ImportCallable extends UpdateProgressCallable {
 	private JTable table;
 	private ImportSetting importSetting;
 	private DataImportDialog dataImportDialog;
-	private SpatialIndexType[] spatialIndexTypes = {SpatialIndexType.MULTI_LEVEL_GRID, SpatialIndexType.QTREE, SpatialIndexType.RTREE, SpatialIndexType.TILE,SpatialIndexType.PRIMARY};
+	private SpatialIndexType[] spatialIndexTypes = {SpatialIndexType.MULTI_LEVEL_GRID, SpatialIndexType.QTREE, SpatialIndexType.RTREE, SpatialIndexType.TILE, SpatialIndexType.PRIMARY};
 
 	public ImportCallable(List<ImportInfo> fileInfos, DataImportDialog dataImportDialog) {
 		this.fileInfos = (ArrayList<ImportInfo>) fileInfos;
@@ -111,6 +112,24 @@ public class ImportCallable extends UpdateProgressCallable {
 			time = endTime - startTime;
 			printMessage(result, time);
 			((ImportSettingGPX) importSetting).removeImportSteppedListener(percentProgress);
+		} else if (importSetting instanceof ImportSettingExcel) {
+			((ImportSettingExcel) importSetting).addImportSteppedListener(percentProgress);
+			startTime = System.currentTimeMillis(); // 获取开始时间
+			UserDefineImportResult[] result = ((ImportSettingExcel) importSetting).run();
+
+			endTime = System.currentTimeMillis(); // 获取结束时间
+			time = endTime - startTime;
+			if (null != result) {
+				for (UserDefineImportResult tempResult : result) {
+					if (null != tempResult.getSuccess()) {
+						map.put(tempResult.getSuccess().getTargetDatasource().getAlias(),
+								map.get(tempResult.getSuccess().getTargetDatasource().getAlias()) + 1);
+						printMessage(tempResult, time);
+					}
+				}
+			}
+			((ImportSettingExcel) importSetting).removeImportSteppedListener(percentProgress);
+
 		} else {
 			dataImport.getImportSettings().add(importSetting);
 			dataImport.addImportSteppedListener(percentProgress);
@@ -126,11 +145,17 @@ public class ImportCallable extends UpdateProgressCallable {
 			dataImport.removeImportSteppedListener(percentProgress);
 		}
 		// 更新行
-		((ImportTableModel) table.getModel()).updateRows(fileInfos);
-		if (null != percentProgress && percentProgress.isCancel()) {
+		((ImportTableModel) table.getModel()).
+
+				updateRows(fileInfos);
+		if (null != percentProgress && percentProgress.isCancel())
+
+		{
 			return;
 		}
-		if (!dataImportDialog.isVisible()) {
+		if (!dataImportDialog.isVisible())
+
+		{
 			importSetting.dispose();
 		}
 		dataImport.dispose();
@@ -166,6 +191,7 @@ public class ImportCallable extends UpdateProgressCallable {
 				this.isCancel = true;
 			}
 		}
+
 	}
 
 	private void printMessage(UserDefineImportResult result, long time) {

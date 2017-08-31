@@ -6,7 +6,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.mapview.layer.propertycontrols.LayerGridParamColorTableDialog;
+import com.supermap.desktop.controls.colorsTable.LayerGridParamColorTableDialog;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DataCell;

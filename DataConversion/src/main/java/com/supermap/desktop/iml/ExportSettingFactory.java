@@ -2,6 +2,7 @@ package com.supermap.desktop.iml;
 
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Interface.IExportSettingFactory;
+import com.supermap.desktop.implement.UserDefineType.ExportSettingExcel;
 import com.supermap.desktop.implement.UserDefineType.ExportSettingGPX;
 import com.supermap.desktop.implement.UserDefineType.UserDefineFileType;
 
@@ -51,6 +52,8 @@ public class ExportSettingFactory implements IExportSettingFactory {
 			result = new ExportSettingGeoJson();
 		} else if (fileType.equals(UserDefineFileType.GPX)) {
 			result = new ExportSettingGPX();
+		}else if(fileType.equals(UserDefineFileType.EXCEL)){
+			result = new ExportSettingExcel();
 		}
 		// 复制目标文件路径到新的exportsetting中
 		return result;

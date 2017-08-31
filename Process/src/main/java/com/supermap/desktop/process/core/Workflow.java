@@ -2,13 +2,13 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IWorkflow;
+import com.supermap.desktop.process.ProcessManager;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.*;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.readyChecker.ProcessChangeSourceDataChecker;
 import com.supermap.desktop.process.readyChecker.WorkflowProcessReadyChecker;
 import com.supermap.desktop.process.readyChecker.WorkflowRunnableChecker;
-import com.supermap.desktop.process.util.WorkflowUtil;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
@@ -17,9 +17,7 @@ import org.w3c.dom.Element;
 import javax.swing.event.EventListenerList;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by xie on 2017/3/18.
@@ -130,8 +128,6 @@ public class Workflow implements IWorkflow {
 			IProcess process = processes.get(i);
 			Element processNode = doc.createElement("Process");
 			processNode.setAttribute("Key", process.getKey());
-			processNode.setAttribute("ClassName", process.getClass().getName());
-			processNode.setAttribute("LoaderClassName", process.getLoader().getName());
 
 			// 一个工作流可能存在多个相同类型的 process，此时导出就需要有一个标记，用以在导入的时候匹配
 			processNode.setAttribute("SerialID", String.valueOf(process.getSerialID()));
@@ -172,15 +168,14 @@ public class Workflow implements IWorkflow {
 		Element[] processNodes = XmlUtilities.getChildElementNodesByName(processesNode, "Process");
 		for (int i = 0; i < processNodes.length; i++) {
 			Element processNode = processNodes[i];
-			String className = processNode.getAttribute("ClassName");
 			String key = processNode.getAttribute("Key");
 			int serialID = Integer.valueOf(processNode.getAttribute("SerialID"));
 
-			String loaderClassName = processNode.getAttribute("LoaderClassName");
-			Map<String, String> map = new ConcurrentHashMap<>();
-			map.put("ClassName", className);
-			map.put("Key", key);
-			IProcessLoader loader = WorkflowUtil.newProcessLoader(loaderClassName, map, "99");
+			IProcessLoader loader = ProcessManager.INSTANCE.findProcess(key);
+			if (loader == null) {
+				throw new IllegalArgumentException("The specified process with key \"" + key + "\" don't exist.");
+			}
+
 			IProcess process = loader.loadProcess();
 			process.setSerialID(serialID);
 			addProcess(process);

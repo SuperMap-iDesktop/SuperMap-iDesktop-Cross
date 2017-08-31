@@ -106,6 +106,7 @@ public class MetaKeys {
 	public static final String DISSOLVE = "Dissolve";
 	public static final String GRID_RESAMPLE = "GridResample";
 	public static final String IMAGE_COMBINE = "ImageCombine";
+	public static final String ALGEBRA_OPERATION="AlgebraOperation";
 
 	//类型转换
 	public static final String CONVERSION_POINT_TO_LINE = "Conversion_PointToLine";
