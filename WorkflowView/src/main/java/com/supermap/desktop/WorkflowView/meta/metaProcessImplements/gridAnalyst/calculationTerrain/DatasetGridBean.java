@@ -58,5 +58,7 @@ public class DatasetGridBean {
 		}
 		this.layerSettingGrid = new LayerSettingGrid();
 		this.layerSettingGrid.setColorDictionary(colorDictionary);
+		colorDictionary.clear();
+		colorDictionary.dispose();
 	}
 }
