@@ -54,7 +54,7 @@ public class TabularTableModel extends AbstractTableModel {
 		if (this.recordset == null) {
 			return null;
 		}
-		return fieldInfos.get(getFieldIndex(column)).getCaption();
+		return fieldInfos.get(getFieldIndex(column)).getName();
 	}
 
 	private int getFieldIndex(int column) {

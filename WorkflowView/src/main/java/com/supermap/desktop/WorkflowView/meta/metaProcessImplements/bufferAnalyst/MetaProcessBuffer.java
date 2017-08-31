@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.bufferAnaly
 
 import com.supermap.analyst.spatialanalyst.BufferAnalyst;
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
+import com.supermap.analyst.spatialanalyst.BufferEndType;
 import com.supermap.analyst.spatialanalyst.BufferRadiusUnit;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
@@ -307,6 +308,7 @@ public class MetaProcessBuffer extends MetaProcess {
 			result.setPrjCoordSys(datasetVector.getPrjCoordSys());
 
 			BufferAnalystParameter parameter = new BufferAnalystParameter();
+			parameter.setEndType(Boolean.valueOf(checkBoxBufferType.getSelectedItem().toString()) == true ? BufferEndType.FLAT : BufferEndType.ROUND);
 			parameter.setRadiusUnit(radiusUnit);
 			if (radiusLeft != null)
 				parameter.setLeftDistance(radiusLeft);
