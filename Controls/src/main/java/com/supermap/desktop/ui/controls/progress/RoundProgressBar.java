@@ -76,10 +76,10 @@ public class RoundProgressBar extends JPanel {
 //        graphics2d.drawArc(x, y, width, height, 0, 360);
 		graphics2d.drawRoundRect(x, y, getWidth() - 20, 8, 8, 8);
 		graphics2d.setColor(foregroundColor);
-//		if (progress > 0) {
-//			graphics2d.drawRoundRect(x, y, (int) ((getWidth() - 20) * ((progress + 0.0) / (getMaximumProgress() - getMinimumProgress()))), 8, 8, 8);
-//		}
-		paintProgress((Graphics2D) g);
+		if (progress > 0) {
+			graphics2d.drawRoundRect(x, y, (int) ((getWidth() - 20) * ((progress + 0.0) / (getMaximumProgress() - getMinimumProgress()))), 8, 8, 8);
+		}
+//		paintProgress((Graphics2D) g);
 		if (isDrawString()) {
 			graphics2d.setFont(new Font(ControlsProperties.getString("String_Boldface"), Font.BOLD, 10));
 			FontMetrics fontMetrics = graphics2d.getFontMetrics();
