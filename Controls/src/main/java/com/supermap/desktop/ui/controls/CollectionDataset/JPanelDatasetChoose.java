@@ -7,6 +7,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxTableModel;
+import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
@@ -200,6 +201,8 @@ public abstract class JPanelDatasetChoose extends JPanel {
 		this.tableDatasetDisplay.getTableHeader().setReorderingAllowed(false);
 		this.tableDatasetDisplay.setModel(this.tableModel);
 		this.tableDatasetDisplay.setRowHeight(23);
+		this.tableDatasetDisplay.getColumnModel().getColumn(1).setCellRenderer(new CommonListCellRenderer());
+		this.tableDatasetDisplay.getColumnModel().getColumn(2).setCellRenderer(new CommonListCellRenderer());
 		this.toolBar = new JToolBar();
 		this.scrollPane.setPreferredSize(new Dimension(300, 200));
 		initToolBar();
