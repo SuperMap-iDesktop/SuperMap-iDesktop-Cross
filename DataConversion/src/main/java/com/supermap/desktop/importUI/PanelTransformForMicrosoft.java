@@ -118,7 +118,8 @@ public class PanelTransformForMicrosoft extends PanelTransform {
 	};
 
 	private void setImportAsPointWKT() {
-		((ImportSettingCSV) importSetting).setIndexAsGeometry(Convert.toInteger(getComboBoxWKT().getSelectedItem()));
+		//todo 设置后有崩溃问题，暂时屏蔽
+		//((ImportSettingCSV) importSetting).setIndexAsGeometry(getComboBoxWKT().getSelectedIndex());
 	}
 
 	private ItemListener commonItemListener = new ItemListener() {
@@ -329,7 +330,7 @@ public class PanelTransformForMicrosoft extends PanelTransform {
 		CommonUtilities.setComboBoxTheme(this.comboBoxX);
 		CommonUtilities.setComboBoxTheme(this.comboBoxY);
 		CommonUtilities.setComboBoxTheme(this.comboBoxZ);
-		this.radioButtonIndexWKT.setSelected(true);
+		this.radioButtonIndex.setSelected(true);
         setFirstRowAsField();
         setSeparator();
         setIndexPanelEnabled();

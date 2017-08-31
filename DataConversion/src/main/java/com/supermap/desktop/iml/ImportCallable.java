@@ -148,9 +148,7 @@ public class ImportCallable extends UpdateProgressCallable {
 		((ImportTableModel) table.getModel()).
 
 				updateRows(fileInfos);
-		if (null != percentProgress && percentProgress.isCancel())
-
-		{
+		if (null != percentProgress && percentProgress.isCancel()) {
 			return;
 		}
 		if (!dataImportDialog.isVisible())

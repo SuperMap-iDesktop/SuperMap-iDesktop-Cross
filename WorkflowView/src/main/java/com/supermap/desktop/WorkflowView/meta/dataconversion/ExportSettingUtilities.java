@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.dataconversion;
 
 import com.supermap.data.conversion.*;
 import com.supermap.data.conversion.FileType;
+import com.supermap.desktop.implement.UserDefineType.ExportSettingExcel;
 import com.supermap.desktop.implement.UserDefineType.ExportSettingGPX;
 import com.supermap.desktop.implement.UserDefineType.UserDefineFileType;
 import com.supermap.desktop.process.ProcessProperties;
@@ -48,6 +49,8 @@ public class ExportSettingUtilities {
 			result = new ExportSettingGeoJson();
 		} else if (fileType.equals(UserDefineFileType.GPX)) {
 			result = new ExportSettingGPX();
+		}else if(fileType.equals(UserDefineFileType.EXCEL)){
+			result = new ExportSettingExcel();
 		}
 		// 复制目标文件路径到新的exportsetting中
 		return result;
@@ -61,9 +64,12 @@ public class ExportSettingUtilities {
 	 */
 	public static String getDatasetName(String fileType) {
 		String resultFileType = "";
-		if ("gpx".equals(fileType)){
+		if (UserDefineFileType.GPX.toString().equalsIgnoreCase(fileType)){
 			//GPX type reflect GPS
 			fileType = "GPS";
+		}
+		if (UserDefineFileType.EXCEL.toString().equalsIgnoreCase(fileType)){
+			fileType = "Excel";
 		}
 		String tempFileType = "String_FileType" + fileType;
 		if (tempFileType.contains(resultFileType)) {

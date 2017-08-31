@@ -5,6 +5,7 @@ import com.supermap.data.EncodeType;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingExcel;
 import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -359,11 +360,16 @@ public class ImportParameterCreator implements IParameterCreator {
 			setFirstRowIsField.methodName = "setFirstRowIsField";
 			setFirstRowIsField.parameter = new ParameterCheckBox(CommonProperties.getString("String_FirstRowisField"));
 
-			result.add(setSeparator);
-			result.add(setFirstRowIsField);
 			parameterCombineParamSet = new ParameterCombine();
 			parameterCombineParamSet.setDescribe(ProcessProperties.getString("String_ParamSet"));
-			parameterCombineParamSet.addParameters(setSeparator.parameter, setFirstRowIsField.parameter);
+			if (importSetting instanceof ImportSettingExcel) {
+				result.add(setFirstRowIsField);
+				parameterCombineParamSet.addParameters(setFirstRowIsField.parameter);
+			} else {
+				result.add(setSeparator);
+				result.add(setFirstRowIsField);
+				parameterCombineParamSet.addParameters(setSeparator.parameter, setFirstRowIsField.parameter);
+			}
 			return result;
 		}
 		if (importSetting instanceof ImportSettingModelOSG || importSetting instanceof ImportSettingModelX
@@ -612,14 +618,9 @@ public class ImportParameterCreator implements IParameterCreator {
 			resultInfo.clear();
 			resultInfo.add(targetDatasource);
 			resultInfo.add(targetDatasetName);
-			resultInfo.add(reflectInfoFieldIndex);
-			resultInfo.add(reflectInfoSpatialIndex);
 			parameterCombineResultSet = new ParameterCombine();
 			parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
-			parameterCombineResultSet.addParameters(
-					parameterCombineSaveResult,
-					parameterCombineDatasetIndex
-			);
+			parameterCombineResultSet.addParameters(parameterCombineSaveResult);
 		} else if (importSetting instanceof ImportSettingWOR) {
 			resultInfo.clear();
 			resultInfo.add(targetDatasource);
