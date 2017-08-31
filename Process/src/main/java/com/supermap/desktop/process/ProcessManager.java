@@ -1,16 +1,11 @@
 package com.supermap.desktop.process;
 
 import com.supermap.desktop.process.loader.DefaultProcessGroup;
-import com.supermap.desktop.process.loader.IProcessLoader;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/8/4.
  */
 public class ProcessManager extends DefaultProcessGroup {
-	private Map<String, IProcessLoader> loaderMap = new ConcurrentHashMap<>();
 
 	public final static ProcessManager INSTANCE = new ProcessManager("Manager", "ProcessManager");
 

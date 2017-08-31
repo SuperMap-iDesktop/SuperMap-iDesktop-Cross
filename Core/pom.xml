@@ -246,6 +246,7 @@
             <artifactId>poi-ooxml</artifactId>
             <version>3.11</version>
         </dependency>
+        <!--汉字与拼音转换类-->
         <dependency>
             <groupId>com.belerweb</groupId>
             <artifactId>pinyin4j</artifactId>

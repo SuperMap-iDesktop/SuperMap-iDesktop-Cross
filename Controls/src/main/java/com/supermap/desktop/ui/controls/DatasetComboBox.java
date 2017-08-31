@@ -229,7 +229,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
                             this.addItem(dataset);
                         }
                     }
-                    if (selectedDataset != null && JComboBoxUIUtilities.getItemIndex(this, selectedDataset)!=-1) {
+                    if (!isShowNullValue && selectedDataset != null && JComboBoxUIUtilities.getItemIndex(this, selectedDataset) != -1) {
                         this.isFireItemListener = false;
                         setSelectedDataset(selectedDataset);
                     } else {
