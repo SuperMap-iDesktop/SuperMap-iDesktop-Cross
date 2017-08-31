@@ -51,7 +51,8 @@ public class ParameterButtonPanel extends SwingPanel implements IParameterPanel 
 
 	private void initLayout() {
 		panel.setLayout(new GridBagLayout());
-		panel.add(jButton, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 0, 0));
+		// 拉升方式自行设定
+		panel.add(jButton, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(parameterButton.getFill()).setInsets(0, 0, 0, 5));
 		jButton.addActionListener(parameterButton.getActionListener());
 	}
 

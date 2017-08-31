@@ -24,7 +24,9 @@ public class FiletypeUtilities {
 	private static final Object[] vectorValue = {FileType.WOR, FileType.SCV, FileType.DXF, FileType.SHP,
 			FileType.E00, FileType.MIF, FileType.TAB, FileType.MAPGIS, FileType.ModelOSG, FileType.Model3DS,
 			FileType.ModelDXF, FileType.ModelX, FileType.KML, FileType.KMZ, FileType.DWG, FileType.VCT, FileType.DBF,
-			FileType.GJB5068, FileType.DGN, FileType.TEMSVector, FileType.CSV, FileType.TEMSBuildingVector, UserDefineFileType.GPX, FileType.GEOJSON};
+			FileType.GJB5068, FileType.DGN, FileType.TEMSVector, FileType.CSV, FileType.TEMSBuildingVector, UserDefineFileType.GPX, FileType.GEOJSON,
+			UserDefineFileType.EXCEL
+	};
 
 	/**
 	 * 根据文件路径，文件过滤项获取文件中文类型
@@ -193,6 +195,8 @@ public class FiletypeUtilities {
 			result = FileType.GEOJSON;
 		} else if (alias.equals(DataConversionProperties.getString("String_FileTypeGPS"))) {
 			result = UserDefineFileType.GPX;
+		}else if (alias.equals(DataConversionProperties.getString("String_FileTypeExcel"))) {
+			result = UserDefineFileType.EXCEL;
 		}
 
 		return result;

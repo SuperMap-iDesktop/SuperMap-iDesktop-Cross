@@ -12,7 +12,7 @@ import java.util.Vector;
  * Created by xie on 2017/8/29.
  */
 public class ImportSettingExcel extends ImportSettingCSV {
-	private Vector steppedListeners;
+	private Vector<ImportSteppedListener> steppedListeners;
 
 	public ImportSettingExcel() {
 
@@ -22,23 +22,27 @@ public class ImportSettingExcel extends ImportSettingCSV {
 		UserDefineImportResult[] result = null;
 		try {
 			XlsUtilities.importSettingExcel = this;
-			result = XlsUtilities.importXlsFile(this.getTargetDatasource(), this.getSourceFilePath(), this.getFirstRowIsField());
+			if (this.getSourceFilePath().endsWith("xls")) {
+				result = XlsUtilities.importXlsFile(this.getTargetDatasource(), this.getSourceFilePath(), this.getFirstRowIsField());
+			} else {
+				result = XlsUtilities.importXlsxFile(this.getTargetDatasource(), this.getSourceFilePath(), this.getFirstRowIsField());
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 		return result;
 	}
 
-	public void addSteppedListener(ImportSteppedListener listener) {
+	public void addImportSteppedListener(ImportSteppedListener listener) {
 		if (null == steppedListeners) {
 			steppedListeners = new Vector();
 		}
-		if (null != listener) {
-			steppedListeners.add(steppedListeners);
+		if (null != listener && !steppedListeners.contains(listener)) {
+			steppedListeners.add(listener);
 		}
 	}
 
-	public void removeSteppedListener(ImportSteppedListener listener) {
+	public void removeImportSteppedListener(ImportSteppedListener listener) {
 		if (null != listener && steppedListeners.contains(listener)) {
 			steppedListeners.remove(listener);
 		}
@@ -47,8 +51,8 @@ public class ImportSettingExcel extends ImportSettingCSV {
 	public void fireStepped(ImportSteppedEvent event) {
 		if (null != steppedListeners) {
 			Vector listeners = this.steppedListeners;
-			for (int i = 0, size = steppedListeners.size(); i < size; i++) {
-				((ImportSteppedListener) steppedListeners.get(i)).stepped(event);
+			for (int i = 0, size = listeners.size(); i < size; i++) {
+				((ImportSteppedListener) listeners.get(i)).stepped(event);
 			}
 		}
 	}

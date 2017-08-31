@@ -1,5 +1,6 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridAnalyst.calculationTerrain;
 
+import com.supermap.data.Colors;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetImage;
 import com.supermap.desktop.Application;
@@ -8,11 +9,15 @@ import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
+import com.supermap.desktop.process.parameter.ipls.ParameterButton;
 import com.supermap.desktop.process.parameter.ipls.ParameterColor;
 import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterLabel;
 import com.supermap.desktop.properties.CommonProperties;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Created by yuanR on 2017/8/29 0029.
@@ -23,18 +28,40 @@ public class MetaProcessCalculateOrthoImage extends MetaProcessCalTerrain {
 	private final static String OUTPUT_DATASET = "CalculateHillShadeResult";
 
 	private ParameterColor parameterColorNoColor;
+	private ParameterLabel parameterLabel;
+	private ParameterButton parameterColorsTable;
+	private Colors colors;
+
 
 	@Override
 	protected void initHook() {
 
 		// 参数设置
+
 		parameterColorNoColor = new ParameterColor(ProcessProperties.getString("String_Label_NoColor_Color"));
 		parameterColorNoColor.setSelectedItem(Color.WHITE);
 		parameterColorNoColor.setRequisite(true);
 
+		parameterLabel = new ParameterLabel().setDescribe(ProcessProperties.getString("String_Label_ColorTable"));
+		parameterColorsTable = new ParameterButton(ProcessProperties.getString("String_SetColorTable")).setFill(GridBagConstraints.HORIZONTAL);
+		parameterColorsTable.setActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("666");
+				DatasetGrid grid = (DatasetGrid) sourceDataset.getSelectedDataset();
+
+				grid.getColorTable();
+//				grid.setColorTable();
+			}
+		});
+
+		ParameterCombine parameterCombineColorsTable = new ParameterCombine(ParameterCombine.HORIZONTAL);
+		parameterCombineColorsTable.addParameters(new ParameterCombine(), parameterLabel, parameterColorsTable);
+		parameterCombineColorsTable.setWeightIndex(2);
+
 		ParameterCombine parameterCombineSet = new ParameterCombine();
 		parameterCombineSet.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		parameterCombineSet.addParameters(parameterColorNoColor);
+		parameterCombineSet.addParameters(parameterColorNoColor, parameterCombineColorsTable);
 
 		// 结果设置
 		parameters.addParameters(parameterCombineSet, parameterCombineResultDataset);

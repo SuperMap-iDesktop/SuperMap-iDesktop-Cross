@@ -6,6 +6,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.exportUI.DataExportDialog;
+import com.supermap.desktop.implement.UserDefineType.ExportSettingExcel;
 import com.supermap.desktop.implement.UserDefineType.ExportSettingGPX;
 import com.supermap.desktop.implement.UserDefineType.UserDefineExportResult;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
@@ -66,7 +67,7 @@ public class ExportCallable extends UpdateProgressCallable {
 					long startTime;
 					long endTime;
 					String time;
-					if (filePath.endsWith(".gpx")) {
+					if (tempExportSetting instanceof ExportSettingGPX) {
 						((ExportSettingGPX) tempExportSetting).addExportSteppedListener(progress);
 						startTime = System.currentTimeMillis();
 						UserDefineExportResult result = ((ExportSettingGPX) tempExportSetting).run();
@@ -76,7 +77,18 @@ public class ExportCallable extends UpdateProgressCallable {
 						if (null != progress && progress.isCancel()) {
 							break;
 						}
-						dataExport.removeExportSteppedListener(progress);
+						((ExportSettingGPX) tempExportSetting).removeExportSteppedListener(progress);
+					}else if(tempExportSetting instanceof ExportSettingExcel) {
+						((ExportSettingExcel) tempExportSetting).addExportSteppedListener(progress);
+						startTime = System.currentTimeMillis();
+						UserDefineExportResult result = ((ExportSettingExcel) tempExportSetting).run();
+						endTime = System.currentTimeMillis();
+						time = String.valueOf((endTime - startTime) / 1000.0);
+						printExportInfo(result, i, time);
+						if (null != progress && progress.isCancel()) {
+							break;
+						}
+						((ExportSettingExcel) tempExportSetting).removeExportSteppedListener(progress);
 					} else {
 						exportSettings.add(tempExportSetting);
 						dataExport.addExportSteppedListener(progress);
