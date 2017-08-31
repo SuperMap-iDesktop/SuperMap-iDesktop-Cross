@@ -105,8 +105,6 @@ public abstract class MetaProcess3DTo2D extends MetaProcessTypeConversion {
 		boolean isSuccessful = false;
 		Recordset recordsetResult = null;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
-
 			DatasetVector src = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -114,56 +112,60 @@ public abstract class MetaProcess3DTo2D extends MetaProcessTypeConversion {
 				src = (DatasetVector) inputDataset.getSelectedDataset();
 			}
 
-			DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
-			datasetVectorInfo.setName(outputData.getResultDatasource().getDatasets().getAvailableDatasetName(outputData.getDatasetName()));
-			datasetVectorInfo.setType(outputType);
-			DatasetVector resultDataset = outputData.getResultDatasource().getDatasets().create(datasetVectorInfo);
+			if (src.getFieldInfos() != null) {
+				fireRunning(new RunningEvent(this, 0, "start"));
 
-			resultDataset.setPrjCoordSys(src.getPrjCoordSys());
-			for (int i = 0; i < src.getFieldInfos().getCount(); i++) {
-				FieldInfo fieldInfo = src.getFieldInfos().get(i);
-				if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().equals("smuserid")) {
-					resultDataset.getFieldInfos().add(fieldInfo);
-				}
-			}
-			FieldInfo fieldInfoZValue = new FieldInfo();
-			fieldInfoZValue.setName("zValue");
-			fieldInfoZValue.setCaption("zValue");
-			fieldInfoZValue.setDefaultValue("0");
-			fieldInfoZValue.setType(FieldType.DOUBLE);
-			fieldInfoZValue.setRequired(true);
-			resultDataset.getFieldInfos().add(fieldInfoZValue);
-			fieldInfoZValue.dispose();
+				DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
+				datasetVectorInfo.setName(outputData.getResultDatasource().getDatasets().getAvailableDatasetName(outputData.getDatasetName()));
+				datasetVectorInfo.setType(outputType);
+				DatasetVector resultDataset = outputData.getResultDatasource().getDatasets().create(datasetVectorInfo);
 
-			recordsetResult = resultDataset.getRecordset(false, CursorType.DYNAMIC);
-			recordsetResult.addSteppedListener(steppedListener);
-
-			recordsetResult.getBatch().setMaxRecordCount(2000);
-			recordsetResult.getBatch().begin();
-
-			Recordset recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
-			while (!recordsetInput.isEOF()) {
-				IGeometry geometry = null;
-				try {
-					geometry = DGeometryFactory.create(recordsetInput.getGeometry());
-					convert(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput),recordsetResult, geometry);
-				} finally {
-					if (geometry != null) {
-						geometry.dispose();
+				resultDataset.setPrjCoordSys(src.getPrjCoordSys());
+				for (int i = 0; i < src.getFieldInfos().getCount(); i++) {
+					FieldInfo fieldInfo = src.getFieldInfos().get(i);
+					if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().equals("smuserid")) {
+						resultDataset.getFieldInfos().add(fieldInfo);
 					}
 				}
-				recordsetInput.moveNext();
+				FieldInfo fieldInfoZValue = new FieldInfo();
+				fieldInfoZValue.setName("zValue");
+				fieldInfoZValue.setCaption("zValue");
+				fieldInfoZValue.setDefaultValue("0");
+				fieldInfoZValue.setType(FieldType.DOUBLE);
+				fieldInfoZValue.setRequired(true);
+				resultDataset.getFieldInfos().add(fieldInfoZValue);
+				fieldInfoZValue.dispose();
+
+				recordsetResult = resultDataset.getRecordset(false, CursorType.DYNAMIC);
+				recordsetResult.addSteppedListener(steppedListener);
+
+				recordsetResult.getBatch().setMaxRecordCount(2000);
+				recordsetResult.getBatch().begin();
+
+				Recordset recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
+				while (!recordsetInput.isEOF()) {
+					IGeometry geometry = null;
+					try {
+						geometry = DGeometryFactory.create(recordsetInput.getGeometry());
+						convert(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput),recordsetResult, geometry);
+					} finally {
+						if (geometry != null) {
+							geometry.dispose();
+						}
+					}
+					recordsetInput.moveNext();
+				}
+				recordsetResult.getBatch().update();
+				isSuccessful = recordsetResult != null;
+				recordsetInput.close();
+				recordsetInput.dispose();
+				if (isSuccessful) {
+					this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
+				} else {
+					outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
+				}
+				fireRunning(new RunningEvent(this, 100, "finish"));
 			}
-			recordsetResult.getBatch().update();
-			isSuccessful = recordsetResult != null;
-			recordsetInput.close();
-			recordsetInput.dispose();
-			if (isSuccessful) {
-				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
-			} else {
-				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
-			}
-			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
