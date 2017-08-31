@@ -9,6 +9,7 @@ import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.*;
 import com.supermap.desktop.WorkflowView.meta.loader.ImportProcessLoader;
 import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingExcel;
 import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.implement.UserDefineType.UserDefineImportResult;
 import com.supermap.desktop.process.ProcessProperties;
@@ -307,6 +308,11 @@ public class MetaProcessImport extends MetaProcess {
 		long startTime = System.currentTimeMillis();
 		long endTime;
 		long time;
+		if(null==((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem()){
+			fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
+			return isSuccessful;
+		}
 		if (importSetting instanceof ImportSettingGPX) {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem().toString());
@@ -326,6 +332,33 @@ public class MetaProcessImport extends MetaProcess {
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
 			}
 			((ImportSettingGPX) importSetting).removeImportSteppedListener(this.importStepListener);
+		} else if (importSetting instanceof ImportSettingExcel) {
+			fireRunning(new RunningEvent(this, 0, "start"));
+			importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem().toString());
+			final Datasource datasource = ((ParameterDatasource) resultImportParameters.get(0).parameter).getSelectedItem();
+			importSetting.setTargetDatasource(datasource);
+			importSetting.setTargetDatasetName(((ParameterTextField) resultImportParameters.get(1).parameter).getSelectedItem().toString());
+			((ImportSettingExcel) importSetting).setFirstRowIsField(Boolean.valueOf(((ParameterCheckBox) paramParameters.get(0).parameter).getSelectedItem()));
+			((ImportSettingExcel) importSetting).addImportSteppedListener(this.importStepListener);
+			startTime = System.currentTimeMillis(); // 获取开始时间
+			UserDefineImportResult[] result = ((ImportSettingExcel) importSetting).run();
+			if (null != result) {
+				isSuccessful = true;
+				endTime = System.currentTimeMillis(); // 获取结束时间
+				time = endTime - startTime;
+				for (UserDefineImportResult tempResult : result) {
+					if (null != tempResult.getSuccess()) {
+						isSuccessful = true;
+						updateDatasource(tempResult.getSuccess());
+						printMessage(tempResult, time);
+					} else {
+						fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
+						Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
+					}
+				}
+			}
+			((ImportSettingExcel) importSetting).removeImportSteppedListener(importStepListener);
+
 		} else {
 			ImportSetting newImportSetting = new ImportSettingCreator().create(importType);
 			DataImport dataImport = ImportSettingSetter.setParameter(newImportSetting, sourceImportParameters, resultImportParameters, paramParameters);

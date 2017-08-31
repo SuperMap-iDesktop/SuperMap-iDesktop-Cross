@@ -208,7 +208,7 @@ public class XlsUtilities {
 					importResults = new UserDefineImportResult[sheetSize];
 					importSettingExcel.setTargetDatasetName(dataset.getName());
 					importResults[i] = new UserDefineImportResult(importSettingExcel, null);
-				} else {
+				} else if (resultCount != dataset.getRecordCount() && null != importSettingExcel) {
 					importResults = new UserDefineImportResult[sheetSize];
 					importResults[i] = new UserDefineImportResult(null, importSettingExcel);
 				}
@@ -314,7 +314,7 @@ public class XlsUtilities {
 					importResults = new UserDefineImportResult[sheetSize];
 					importSettingExcel.setTargetDatasetName(dataset.getName());
 					importResults[i] = new UserDefineImportResult(importSettingExcel, null);
-				} else {
+				} else if (resultCount != dataset.getRecordCount() && null != importSettingExcel) {
 					importResults = new UserDefineImportResult[sheetSize];
 					importResults[i] = new UserDefineImportResult(null, importSettingExcel);
 				}
