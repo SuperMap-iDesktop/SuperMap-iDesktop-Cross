@@ -18,9 +18,9 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilities.OverlayAnalystType;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.OverlayAnalystType;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerSettingVector;
@@ -285,6 +285,12 @@ public class OverlayAnalystDialog extends SmDialog {
 					}
 					// 删除叠加数据集中与源数据集选项中相同的数据集
 					comboboxOverlayAnalystDataset.removeDataset(selectedDataset);
+				} else {
+					//不相同时,重置叠加数据集选项,如果选中项为面数据集则从选项中移除
+					resetItemToComboBox(comboboxOverlayAnalystDataset, comboboxOverlayAnalystDatasource.getSelectedDatasource(), REGIONTYPE);
+					if (comboboxSourceDataset.getSelectedDataset().getType().equals(DatasetType.REGION)) {
+						comboboxOverlayAnalystDataset.removeDataset(comboboxSourceDataset.getSelectedDataset());
+					}
 				}
 			}
 		}

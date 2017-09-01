@@ -127,9 +127,15 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 
 	@Override
 	public void update(SingleProgress chunk) {
-		this.progressBar.setProgress(chunk.getPercent());
-		this.labelMessage.setText(chunk.getMessage());
-		this.labelRemaintime.setText(chunk.getRemainTime());
+		if (chunk.isIndeterminate()) {
+			this.progressBar.updateProgressIndeterminate();
+			this.labelMessage.setText(chunk.getMessage());
+		} else {
+			this.progressBar.stopUpdateProgressIndeterminate();
+			this.progressBar.setProgress(chunk.getPercent());
+			this.labelMessage.setText(chunk.getMessage());
+			this.labelRemaintime.setText(chunk.getRemainTime());
+		}
 	}
 
 	@Override

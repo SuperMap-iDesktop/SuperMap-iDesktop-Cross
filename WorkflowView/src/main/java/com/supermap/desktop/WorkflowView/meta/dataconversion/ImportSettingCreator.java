@@ -2,6 +2,7 @@ package com.supermap.desktop.WorkflowView.meta.dataconversion;
 
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.implement.UserDefineType.ImportSettingExcel;
 import com.supermap.desktop.implement.UserDefineType.ImportSettingGPX;
 
 /**
@@ -18,6 +19,9 @@ public class ImportSettingCreator implements IImportSettingCreator {
 			String type = o.toString();
 			if ("GPS".equalsIgnoreCase(type)) {
 				return new ImportSettingGPX();
+			}
+			if ("EXCEL".equalsIgnoreCase(type)) {
+				return new ImportSettingExcel();
 			}
 			if ("B".equalsIgnoreCase(type)) {
 				type = "TEMSClutter";
@@ -43,21 +47,26 @@ public class ImportSettingCreator implements IImportSettingCreator {
 				type = "GRD";
 			} else if ("GEOJSON".equalsIgnoreCase(type)) {
 				type = "GeoJson";
+			} else if ("SIMPLEJSON".equalsIgnoreCase(type)) {
+				// 增加SimpleJson类型-yuanR2017.9.1
+				type = "SimpleJson";
 			}
 			Class importClass = Class.forName(importSetting + type);
 			result = (ImportSetting) importClass.newInstance();
 			if (result instanceof ImportSettingWOR) {
 				((ImportSettingWOR) result).setTargetWorkspace(Application.getActiveApplication().getWorkspace());
-			}else if(result instanceof ImportSettingKML){
+			} else if (result instanceof ImportSettingKML) {
 				((ImportSettingKML) result).setImportEmptyDataset(true);
-			}else if(result instanceof ImportSettingKMZ){
+			} else if (result instanceof ImportSettingKMZ) {
 				((ImportSettingKMZ) result).setImportEmptyDataset(true);
-			}else if(result instanceof ImportSettingCSV){
+			} else if (result instanceof ImportSettingCSV) {
 				((ImportSettingCSV) result).setImportEmptyDataset(true);
-			}else if(result instanceof ImportSettingDGN){
+			} else if (result instanceof ImportSettingDGN) {
 				((ImportSettingDGN) result).setImportEmptyDataset(true);
-			}else if(result instanceof ImportSettingGeoJson){
+			} else if (result instanceof ImportSettingGeoJson) {
 				((ImportSettingGeoJson) result).setImportEmptyDataset(true);
+			} else if (result instanceof ImportSettingSimpleJson) {
+				((ImportSettingSimpleJson) result).setImportEmptyDataset(true);
 			}
 		} catch (ClassNotFoundException e) {
 			Application.getActiveApplication().getOutput().output(e);
