@@ -181,7 +181,6 @@ public class MetaProcessImport extends MetaProcess {
 
 	public void updateParameters() {
 		parameterResultDatasource = parameterCreator.getParameterResultDatasource();
-		parameterFileFolder = parameterCreator.getParameterFileFolder();
 		parameterFile = parameterCreator.getParameterFile();
 		datasetName = parameterCreator.getParameterDataset();
 		parameterCharset = parameterCreator.getParameterCharset();
@@ -196,11 +195,12 @@ public class MetaProcessImport extends MetaProcess {
 		}
 		addOutPutParameters();
 		parameterFile.addPropertyListener(this.fileListener);
-		parameterFileFolder.addPropertyListener(this.fileListener);
+
 		// 给文件选择类型单选框，增加监听-yuanR2017.9.1
 		if (importSetting instanceof ImportSettingSimpleJson) {
+			parameterFileFolder = parameterCreator.getParameterFileFolder();
+			parameterFileFolder.addPropertyListener(this.fileListener);
 			parameterRadioButtonFileSelectType = parameterCreator.getParameterRadioButtonFolderOrFile();
-
 			parameterRadioButtonFileSelectType.addPropertyListener(new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
@@ -402,6 +402,36 @@ public class MetaProcessImport extends MetaProcess {
 			}
 			((ImportSettingExcel) importSetting).removeImportSteppedListener(importStepListener);
 
+//		} else if (importSetting instanceof ImportSettingSimpleJson) {
+//			// SimpleJson有两种导入模式，因此单开一个else if-yuanR2017.9.1
+//			fireRunning(new RunningEvent(this, 0, "start"));
+//			if (parameterRadioButtonFileSelectType.getSelectedItem().equals(parameterRadioButtonFileSelectType.getItemAt(1))) {
+//				importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem().toString());
+//			} else {
+//				importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(1)).parameter).getSelectedItem().toString());
+//			}
+//			importSetting.setSourceFileCharset((Charset) ((ParameterCharset) sourceImportParameters.get(2).parameter).getSelectedItem());
+//			final Datasource datasource = ((ParameterDatasource) resultImportParameters.get(0).parameter).getSelectedItem();
+//			importSetting.setTargetDatasource(datasource);
+//			importSetting.setTargetDatasetName(((ParameterTextField) resultImportParameters.get(1).parameter).getSelectedItem().toString());
+//
+//			startTime = System.currentTimeMillis(); // 获取开始时间
+//			UserDefineImportResult[] result = ((ImportSettingExcel) importSetting).run();
+//			if (null != result) {
+//				isSuccessful = true;
+//				endTime = System.currentTimeMillis(); // 获取结束时间
+//				time = endTime - startTime;
+//				for (UserDefineImportResult tempResult : result) {
+//					if (null != tempResult.getSuccess()) {
+//						isSuccessful = true;
+//						updateDatasource(tempResult.getSuccess());
+//						printMessage(tempResult, time);
+//					} else {
+//						fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
+//						Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
+//					}
+//				}
+//			}
 		} else {
 			ImportSetting newImportSetting = new ImportSettingCreator().create(importType);
 			DataImport dataImport = ImportSettingSetter.setParameter(newImportSetting, sourceImportParameters, resultImportParameters, paramParameters);
