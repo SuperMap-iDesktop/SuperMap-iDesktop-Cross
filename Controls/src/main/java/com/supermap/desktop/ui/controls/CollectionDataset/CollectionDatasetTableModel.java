@@ -101,7 +101,7 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 	public List<DatasetInfo> getTagValueAt(int[] tag) {
 		ArrayList<DatasetInfo> result = new ArrayList<>();
 		for (int i = 0; i < tag.length; i++) {
-			result.add(datasetInfos.get(i));
+			result.add(datasetInfos.get(tag[i]));
 		}
 		return result;
 	}

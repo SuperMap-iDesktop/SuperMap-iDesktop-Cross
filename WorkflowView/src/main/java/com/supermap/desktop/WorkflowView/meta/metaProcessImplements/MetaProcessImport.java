@@ -398,7 +398,7 @@ public class MetaProcessImport extends MetaProcess {
 				endTime = System.currentTimeMillis(); // 获取结束时间
 				time = endTime - startTime;
 				for (UserDefineImportResult tempResult : result) {
-					if (null != tempResult.getSuccess()) {
+					if (null != tempResult && null != tempResult.getSuccess()) {
 						isSuccessful = true;
 						updateDatasource(tempResult.getSuccess());
 						printMessage(tempResult, time);

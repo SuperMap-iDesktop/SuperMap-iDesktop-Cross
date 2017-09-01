@@ -200,15 +200,17 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
         this.labelMaxRadius.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
         this.labelSearchCount.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
 	    panel.add(this.labelSearchModel, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
-	    panel.add(this.radioSearchModelCount, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1));
-	    panel.add(this.radioSearchModelRadius, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 1));
+        JPanel panelRadio = new JPanel();
+        panelRadio.add(radioSearchModelCount);
+        panelRadio.add(radioSearchModelRadius);
         if (parameterSearchMode.isQuadTree()) {
-            panel.add(radioSearchModelQuadTree,new GridBagConstraintsHelper(3,0,1,1).setWeight(0,1));
+            panelRadio.add(radioSearchModelQuadTree);
         }
+        panel.add(panelRadio, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setInsets(5, 5, 0, 0));
         panel.add(this.labelMaxRadius, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setInsets(5, 0, 0, 0));
-	    panel.add(this.textFieldMaxRadius, new GridBagConstraintsHelper(1, 1, 3, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setInsets(5, 5, 0, 0));
+	    panel.add(this.textFieldMaxRadius, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setInsets(5, 5, 0, 0));
 	    panel.add(this.labelSearchCount, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 1).setInsets(5, 0, 0, 0));
-	    panel.add(this.textFieldSearchCount, new GridBagConstraintsHelper(1, 2, 3, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setInsets(5, 5, 0, 0));
+	    panel.add(this.textFieldSearchCount, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setInsets(5, 5, 0, 0));
     }
 
     private void radioChange(SearchMode mode) {
