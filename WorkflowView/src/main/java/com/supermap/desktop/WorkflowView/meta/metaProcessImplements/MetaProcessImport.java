@@ -350,10 +350,18 @@ public class MetaProcessImport extends MetaProcess {
 		long startTime = System.currentTimeMillis();
 		long endTime;
 		long time;
-		if (null == ((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem()) {
-			fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
-			return isSuccessful;
+		if (importSetting instanceof ImportSettingSimpleJson) {
+			if (null == ((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem() || null == ((ParameterFile) (sourceImportParameters.get(1)).parameter).getSelectedItem()) {
+				fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
+				return isSuccessful;
+			}
+		} else {
+			if (null == ((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem()) {
+				fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
+				return isSuccessful;
+			}
 		}
 
 		if (importSetting instanceof ImportSettingGPX) {
@@ -405,33 +413,24 @@ public class MetaProcessImport extends MetaProcess {
 //		} else if (importSetting instanceof ImportSettingSimpleJson) {
 //			// SimpleJson有两种导入模式，因此单开一个else if-yuanR2017.9.1
 //			fireRunning(new RunningEvent(this, 0, "start"));
-//			if (parameterRadioButtonFileSelectType.getSelectedItem().equals(parameterRadioButtonFileSelectType.getItemAt(1))) {
-//				importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem().toString());
-//			} else {
+//			// 判断选择的导入模式：文件/文件夹
+//			if (parameterRadioButtonFileSelectType.getSelectedItem().equals(parameterRadioButtonFileSelectType.getItemAt(0))) {
 //				importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(1)).parameter).getSelectedItem().toString());
+//			} else {
+//				importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem().toString());
 //			}
-//			importSetting.setSourceFileCharset((Charset) ((ParameterCharset) sourceImportParameters.get(2).parameter).getSelectedItem());
+//			importSetting.setSourceFileCharset((Charset) ((ParameterCharset) sourceImportParameters.get(2).parameter).getSelectedData());
 //			final Datasource datasource = ((ParameterDatasource) resultImportParameters.get(0).parameter).getSelectedItem();
 //			importSetting.setTargetDatasource(datasource);
 //			importSetting.setTargetDatasetName(((ParameterTextField) resultImportParameters.get(1).parameter).getSelectedItem().toString());
-//
+//			importSetting.setImportMode((ImportMode) ((ParameterEnum) resultImportParameters.get(2).parameter).getSelectedData());
 //			startTime = System.currentTimeMillis(); // 获取开始时间
-//			UserDefineImportResult[] result = ((ImportSettingExcel) importSetting).run();
-//			if (null != result) {
-//				isSuccessful = true;
-//				endTime = System.currentTimeMillis(); // 获取结束时间
-//				time = endTime - startTime;
-//				for (UserDefineImportResult tempResult : result) {
-//					if (null != tempResult.getSuccess()) {
-//						isSuccessful = true;
-//						updateDatasource(tempResult.getSuccess());
-//						printMessage(tempResult, time);
-//					} else {
-//						fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
-//						Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
-//					}
-//				}
-//			}
+//			DataImport dataImport = new DataImport();
+//			dataImport.addImportSteppedListener(this.importStepListener);
+//			dataImport.getImportSettings().add(importSetting);
+//			ImportResult result = dataImport.run();
+//			isSuccessful = getCommonResult(isSuccessful, startTime, result);
+//			dataImport.removeImportSteppedListener(this.importStepListener);
 		} else {
 			ImportSetting newImportSetting = new ImportSettingCreator().create(importType);
 			DataImport dataImport = ImportSettingSetter.setParameter(newImportSetting, sourceImportParameters, resultImportParameters, paramParameters);
@@ -439,22 +438,29 @@ public class MetaProcessImport extends MetaProcess {
 				fireRunning(new RunningEvent(this, 0, "start"));
 				dataImport.addImportSteppedListener(this.importStepListener);
 				ImportResult result = dataImport.run();
-				ImportSetting[] succeedSettings = result.getSucceedSettings();
-				if (succeedSettings.length > 0) {
-					isSuccessful = true;
-					updateDatasource(succeedSettings[0]);
-					endTime = System.currentTimeMillis(); // 获取结束时间
-					time = endTime - startTime;
-					printMessage(result, time);
-				} else {
-					fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
-					Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
-				}
+				isSuccessful = getCommonResult(isSuccessful, startTime, result);
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			} finally {
 				dataImport.removeImportSteppedListener(this.importStepListener);
 			}
+		}
+		return isSuccessful;
+	}
+
+	private boolean getCommonResult(boolean isSuccessful, long startTime, ImportResult result) {
+		long endTime;
+		long time;
+		ImportSetting[] succeedSettings = result.getSucceedSettings();
+		if (succeedSettings.length > 0) {
+			isSuccessful = true;
+			updateDatasource(succeedSettings[0]);
+			endTime = System.currentTimeMillis(); // 获取结束时间
+			time = endTime - startTime;
+			printMessage(result, time);
+		} else {
+			fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
 		}
 		return isSuccessful;
 	}
