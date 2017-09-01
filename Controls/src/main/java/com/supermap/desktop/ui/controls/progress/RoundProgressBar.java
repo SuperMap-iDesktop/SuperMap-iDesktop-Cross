@@ -197,7 +197,7 @@ public class RoundProgressBar extends JPanel {
 
 		this.isIndeterminate = true;
 		this.updateIndeterminateTimer = new Timer();
-		this.updateIndeterminateTimer.schedule(this.updateIndeterminateTimerTask, 100, 20);
+		this.updateIndeterminateTimer.schedule(this.updateIndeterminateTimerTask, 100, 15);
 	}
 
 	public void stopUpdateProgressIndeterminate() {
