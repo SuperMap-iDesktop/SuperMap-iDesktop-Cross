@@ -47,6 +47,9 @@ public class ImportSettingCreator implements IImportSettingCreator {
 				type = "GRD";
 			} else if ("GEOJSON".equalsIgnoreCase(type)) {
 				type = "GeoJson";
+			} else if ("SIMPLEJSON".equalsIgnoreCase(type)) {
+				// 增加SimpleJson类型-yuanR2017.9.1
+				type = "SimpleJson";
 			}
 			Class importClass = Class.forName(importSetting + type);
 			result = (ImportSetting) importClass.newInstance();
@@ -62,6 +65,8 @@ public class ImportSettingCreator implements IImportSettingCreator {
 				((ImportSettingDGN) result).setImportEmptyDataset(true);
 			} else if (result instanceof ImportSettingGeoJson) {
 				((ImportSettingGeoJson) result).setImportEmptyDataset(true);
+			} else if (result instanceof ImportSettingSimpleJson) {
+				((ImportSettingSimpleJson) result).setImportEmptyDataset(true);
 			}
 		} catch (ClassNotFoundException e) {
 			Application.getActiveApplication().getOutput().output(e);

@@ -103,6 +103,10 @@ public class FileType {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), importType, "jpg", "jpeg"), "jpg", "jpeg"));
 				} else if ("JP2".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), importType, "jp2", "jpk"), "jp2", "jpk"));
+				} else if ("GEOJSON".equalsIgnoreCase(importType)) {
+					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, "json"), "json"));
+				} else if ("SIMPLEJSON".equalsIgnoreCase(importType)) {
+					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, "json"), "json"));
 				} else {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, importType.toLowerCase()), importType.toLowerCase()));
 				}
@@ -120,6 +124,26 @@ public class FileType {
 //					}
 //				}
 			}
+		}
+		return parameterFile;
+	}
+
+	/**
+	 * 创建打开文件夹，文件选择器-yuanR2017.9.1
+	 * 目前使用与SimpleJson类型的导入
+	 *
+	 * @param importType
+	 * @return
+	 */
+	public static ParameterFile createImportFolderChooser(String importType) {
+		ParameterFile parameterFile = new ParameterFile(ProcessProperties.getString("label_ChooseFile"));
+		if ("SIMPLEJSON".equalsIgnoreCase(importType)) {
+			if (!SmFileChoose.isModuleExist("DataImportFrame_ImportFolder")) {
+				SmFileChoose.addNewNode("", "", ProcessProperties.getString("String_ScanDir"),
+						"DataImportFrame_ImportFolder", "GetDirectories");
+			}
+			parameterFile.setModuleName("DataImportFrame_ImportFolder");
+			parameterFile.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		}
 		return parameterFile;
 	}

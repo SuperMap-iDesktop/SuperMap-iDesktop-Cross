@@ -64,7 +64,10 @@ public class MetaProcessImport extends MetaProcess {
 			}
 		}
 	};
+	// 针对SimpleJson，以文件夹和文件形式选择文件-yuanR2017.9.1
+	private ParameterRadioButton parameterRadioButtonFileSelectType;
 	private ParameterFile parameterFile;
+	private ParameterFile parameterFileFolder;
 	private ParameterCharset parameterCharset;
 	private ParameterFile parameterChooseFile;
 	private ParameterButton parameterButton;
@@ -77,7 +80,7 @@ public class MetaProcessImport extends MetaProcess {
 	private PropertyChangeListener fileListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (!isSelectingFile && evt.getNewValue() instanceof String) {
+			if (!isSelectingFile && evt.getNewValue() instanceof String && evt.getSource().equals(parameterFile)) {
 				try {
 					isSelectingFile = true;
 					String fileName = (String) evt.getNewValue();
@@ -99,6 +102,21 @@ public class MetaProcessImport extends MetaProcess {
 						}
 					}
 
+				} finally {
+					isSelectingFile = false;
+				}
+			} else if (!isSelectingFile && evt.getNewValue() instanceof String && evt.getSource().equals(parameterFileFolder)) {
+				try {
+					isSelectingFile = true;
+					String fileName = (String) evt.getNewValue();
+					//set dataset name
+					String fileAlis = fileName.substring(fileName.lastIndexOf(File.separator) + 1, fileName.length());
+					if (fileAlis != null) {
+						if (parameterResultDatasource != null && parameterResultDatasource.getSelectedItem() != null) {
+							fileAlis = parameterResultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(fileAlis);
+						}
+						datasetName.setSelectedItem(fileAlis);
+					}
 				} finally {
 					isSelectingFile = false;
 				}
@@ -177,6 +195,30 @@ public class MetaProcessImport extends MetaProcess {
 		}
 		addOutPutParameters();
 		parameterFile.addPropertyListener(this.fileListener);
+
+		// 给文件选择类型单选框，增加监听-yuanR2017.9.1
+		if (importSetting instanceof ImportSettingSimpleJson) {
+			parameterFileFolder = parameterCreator.getParameterFileFolder();
+			parameterFileFolder.addPropertyListener(this.fileListener);
+			parameterRadioButtonFileSelectType = parameterCreator.getParameterRadioButtonFolderOrFile();
+			parameterRadioButtonFileSelectType.addPropertyListener(new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					parameterFile.setEnabled(parameterRadioButtonFileSelectType.getSelectedItem().equals(parameterRadioButtonFileSelectType.getItemAt(1)));
+					parameterFileFolder.setEnabled(parameterRadioButtonFileSelectType.getSelectedItem().equals(parameterRadioButtonFileSelectType.getItemAt(0)));
+					if (!parameterFile.isEnabled) {
+						parameterFile.removePropertyListener(fileListener);
+						parameterFile.setSelectedItem("");
+						parameterFile.addPropertyListener(fileListener);
+					}
+					if (!parameterFileFolder.isEnabled) {
+						parameterFileFolder.removePropertyListener(fileListener);
+						parameterFileFolder.setSelectedItem("");
+						parameterFileFolder.addPropertyListener(fileListener);
+					}
+				}
+			});
+		}
 
 		if (importSetting instanceof ImportSettingModelOSG || importSetting instanceof ImportSettingModelX
 				|| importSetting instanceof ImportSettingModelDXF || importSetting instanceof ImportSettingModelFBX
@@ -313,6 +355,7 @@ public class MetaProcessImport extends MetaProcess {
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
 			return isSuccessful;
 		}
+
 		if (importSetting instanceof ImportSettingGPX) {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem().toString());
@@ -359,6 +402,36 @@ public class MetaProcessImport extends MetaProcess {
 			}
 			((ImportSettingExcel) importSetting).removeImportSteppedListener(importStepListener);
 
+//		} else if (importSetting instanceof ImportSettingSimpleJson) {
+//			// SimpleJson有两种导入模式，因此单开一个else if-yuanR2017.9.1
+//			fireRunning(new RunningEvent(this, 0, "start"));
+//			if (parameterRadioButtonFileSelectType.getSelectedItem().equals(parameterRadioButtonFileSelectType.getItemAt(1))) {
+//				importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem().toString());
+//			} else {
+//				importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(1)).parameter).getSelectedItem().toString());
+//			}
+//			importSetting.setSourceFileCharset((Charset) ((ParameterCharset) sourceImportParameters.get(2).parameter).getSelectedItem());
+//			final Datasource datasource = ((ParameterDatasource) resultImportParameters.get(0).parameter).getSelectedItem();
+//			importSetting.setTargetDatasource(datasource);
+//			importSetting.setTargetDatasetName(((ParameterTextField) resultImportParameters.get(1).parameter).getSelectedItem().toString());
+//
+//			startTime = System.currentTimeMillis(); // 获取开始时间
+//			UserDefineImportResult[] result = ((ImportSettingExcel) importSetting).run();
+//			if (null != result) {
+//				isSuccessful = true;
+//				endTime = System.currentTimeMillis(); // 获取结束时间
+//				time = endTime - startTime;
+//				for (UserDefineImportResult tempResult : result) {
+//					if (null != tempResult.getSuccess()) {
+//						isSuccessful = true;
+//						updateDatasource(tempResult.getSuccess());
+//						printMessage(tempResult, time);
+//					} else {
+//						fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
+//						Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
+//					}
+//				}
+//			}
 		} else {
 			ImportSetting newImportSetting = new ImportSettingCreator().create(importType);
 			DataImport dataImport = ImportSettingSetter.setParameter(newImportSetting, sourceImportParameters, resultImportParameters, paramParameters);

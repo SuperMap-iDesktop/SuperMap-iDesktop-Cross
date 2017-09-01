@@ -14,7 +14,6 @@ import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
-import com.supermap.data.FieldType;
 import com.supermap.data.PixelFormat;
 import com.supermap.data.Rectangle2D;
 import com.supermap.data.SteppedEvent;
@@ -64,7 +63,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 	private ParameterFieldComboBox parameterInterpolatorFields;
 	private ParameterNumber parameterScaling;
 	private ParameterSaveDataset parameterResultDatasetName;
-	private ParameterNumber parameterResulotion;
+	private ParameterNumber parameterResolution;
 	private ParameterComboBox parameterPixelType;
 	private ParameterNumber parameterRow;
 	private ParameterNumber parameterColumn;
@@ -81,7 +80,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 	private ParameterNumber parameterNugget;
 	private InterpolationAlgorithmType interpolationAlgorithmType;
 
-	private SteppedListener stepLitener = new SteppedListener() {
+	private SteppedListener stepListener = new SteppedListener() {
 		@Override
 		public void stepped(SteppedEvent steppedEvent) {
 			RunningEvent event = new RunningEvent(MetaProcessInterpolator.this, steppedEvent.getPercent(), steppedEvent.getMessage());
@@ -98,10 +97,16 @@ public class MetaProcessInterpolator extends MetaProcess {
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (parameterDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
 				Rectangle2D bounds = ((DatasetVector) evt.getNewValue()).getBounds();
-				double cellSize = Math.sqrt(Math.pow(bounds.getHeight(), 2) + Math.pow(bounds.getWidth(), 2)) / 500;
-				parameterResulotion.setSelectedItem(cellSize);
-				parameterRow.setSelectedItem((int) (bounds.getHeight() / cellSize));
-				parameterColumn.setSelectedItem((int) (bounds.getWidth() / cellSize));
+				double x = bounds.getWidth() / 500;
+				double y = bounds.getHeight() / 500;
+				double resolution = x > y ? y : x;
+				parameterResolution.setSelectedItem(""+resolution);
+				if (resolution != 0) {
+					int rows = (int) Math.abs(bounds.getHeight() / resolution);
+					int columns = (int) Math.abs(bounds.getWidth() / resolution);
+					parameterRow.setSelectedItem(rows);
+					parameterColumn.setSelectedItem(columns);
+				}
 			}
 		}
 	};
@@ -135,8 +140,8 @@ public class MetaProcessInterpolator extends MetaProcess {
 		parameterResultDatasetName.setSelectedItem("result_interpolator");
 		parameterResultDatasetName.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
 		parameterResultDatasetName.setDatasetDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
-		parameterResulotion = new ParameterNumber(CommonProperties.getString("String_Resolution"));
-		parameterResulotion.setMinValue(0);
+		parameterResolution = new ParameterNumber(CommonProperties.getString("String_Resolution"));
+		parameterResolution.setMinValue(0);
 		parameterPixelType = new ParameterComboBox().setDescribe(CommonProperties.getString("String_PixelType"));
 		ParameterDataNode selectedItem = new ParameterDataNode(PixelFormatProperties.getString("String_Bit32"), PixelFormat.BIT32);
 		parameterPixelType.setItems(
@@ -152,7 +157,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 		parameterRow.setEnabled(false);
 		ParameterCombine targetCombine = new ParameterCombine();
 		targetCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-		targetCombine.addParameters(parameterResultDatasetName, parameterResulotion, parameterPixelType, parameterRow, parameterColumn);
+		targetCombine.addParameters(parameterResultDatasetName, parameterResolution, parameterPixelType, parameterRow, parameterColumn);
 
 		searchMode = new ParameterSearchMode();
 		searchMode.setQuadTree(interpolationAlgorithmType.equals(InterpolationAlgorithmType.RBF) || interpolationAlgorithmType.equals(InterpolationAlgorithmType.KRIGING));
@@ -229,6 +234,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 	}
 
 	private void initParameterStates() {
+		parameterResolution.setSelectedItem(0);
 		Dataset datasetVector = DatasetUtilities.getDefaultDataset(DatasetType.POINT);
 		if (datasetVector != null) {
 			parameterDatasource.setSelectedItem(datasetVector.getDatasource());
@@ -238,10 +244,10 @@ public class MetaProcessInterpolator extends MetaProcess {
 			parameterInterpolatorFields.setFieldType(fieldType);
 
 			Rectangle2D bounds = datasetVector.getBounds();
-			Double x = bounds.getWidth() / 500;
-			Double y = bounds.getHeight() / 500;
-			Double resolution = x > y ? y : x;
-			parameterResulotion.setSelectedItem(resolution);
+			double x = bounds.getWidth() / 500;
+			double y = bounds.getHeight() / 500;
+			double resolution = x > y ? y : x;
+			parameterResolution.setSelectedItem(""+resolution);
 			if (resolution != 0) {
 				int rows = (int) Math.abs(bounds.getHeight() / resolution);
 				int columns = (int) Math.abs(bounds.getWidth() / resolution);
@@ -324,7 +330,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 				}
 				((InterpolationKrigingParameter) interpolationParameter).setNugget(Double.valueOf(parameterNugget.getSelectedItem().toString()));
 			}
-			Interpolator.addSteppedListener(this.stepLitener);
+			Interpolator.addSteppedListener(this.stepListener);
 			DatasetVector datasetVector = null;
 			if (this.parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				datasetVector = (DatasetVector) this.parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -344,7 +350,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			Interpolator.removeSteppedListener(this.stepLitener);
+			Interpolator.removeSteppedListener(this.stepListener);
 		}
 		return isSuccessful;
 	}
@@ -378,7 +384,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 		interpolationParameter.setExpectedCount(info.expectedCount);
 		interpolationParameter.setSearchMode(info.searchMode);
 		interpolationParameter.setSearchRadius(info.searchRadius);
-		interpolationParameter.setResolution(Double.valueOf(parameterResulotion.getSelectedItem().toString()));
+		interpolationParameter.setResolution(Double.valueOf(parameterResolution.getSelectedItem().toString()));
 		interpolationParameter.setBounds(bounds);
 	}
 

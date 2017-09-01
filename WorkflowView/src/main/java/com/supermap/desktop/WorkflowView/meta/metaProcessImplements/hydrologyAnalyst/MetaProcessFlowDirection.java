@@ -67,7 +67,8 @@ public class MetaProcessFlowDirection extends MetaProcess {
 		EqualDatasourceConstraint constraintSource = new EqualDatasourceConstraint();
 		constraintSource.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		constraintSource.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-		DatasourceConstraint.getInstance().constrained(resultDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(directionGrid, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(dropGrid, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void initParametersState() {

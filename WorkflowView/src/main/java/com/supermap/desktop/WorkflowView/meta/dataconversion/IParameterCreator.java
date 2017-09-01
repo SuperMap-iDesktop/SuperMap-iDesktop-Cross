@@ -40,6 +40,8 @@ public interface IParameterCreator<T> {
 
 	ParameterFile getParameterFile();
 
+	ParameterFile getParameterFileFolder();
+
 	ParameterTextField getParameterDataset();
 
 	ParameterCharset getParameterCharset();
@@ -51,6 +53,8 @@ public interface IParameterCreator<T> {
 	ParameterFile getParameterChooseFile();
 
 	ParameterRadioButton getParameterSetRadioButton();
+
+	ParameterRadioButton getParameterRadioButtonFolderOrFile();
 
 	ParameterDatasource getParameterResultDatasource();
 }
