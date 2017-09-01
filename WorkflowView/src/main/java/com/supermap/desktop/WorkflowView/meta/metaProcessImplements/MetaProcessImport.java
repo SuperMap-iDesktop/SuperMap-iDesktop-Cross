@@ -308,7 +308,7 @@ public class MetaProcessImport extends MetaProcess {
 		long startTime = System.currentTimeMillis();
 		long endTime;
 		long time;
-		if(null==((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem()){
+		if (null == ((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem()) {
 			fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
 			return isSuccessful;
@@ -347,7 +347,7 @@ public class MetaProcessImport extends MetaProcess {
 				endTime = System.currentTimeMillis(); // 获取结束时间
 				time = endTime - startTime;
 				for (UserDefineImportResult tempResult : result) {
-					if (null != tempResult.getSuccess()) {
+					if (null != tempResult && null != tempResult.getSuccess()) {
 						isSuccessful = true;
 						updateDatasource(tempResult.getSuccess());
 						printMessage(tempResult, time);

@@ -121,7 +121,7 @@ public class ImportCallable extends UpdateProgressCallable {
 			time = endTime - startTime;
 			if (null != result) {
 				for (UserDefineImportResult tempResult : result) {
-					if (null != tempResult.getSuccess()) {
+					if (null != tempResult && null != tempResult.getSuccess()) {
 						map.put(tempResult.getSuccess().getTargetDatasource().getAlias(),
 								map.get(tempResult.getSuccess().getTargetDatasource().getAlias()) + 1);
 						printMessage(tempResult, time);

@@ -525,9 +525,8 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 				}
 			}
 		}
-		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0, datasetVectors.toArray(new DatasetVector[datasetVectors.size()]));
+		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0, this.datasetVector, datasetVectors.toArray(new DatasetVector[datasetVectors.size()]));
 		createCollectionDataset.isSetDatasetCollectionCount(true);
-		createCollectionDataset.setDatasetVector(this.datasetVector);
 		createCollectionDataset.showDialog();
 	}
 }
