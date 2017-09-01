@@ -10,14 +10,18 @@ import java.util.EventObject;
 public class RunningEvent extends EventObject {
 
 	private IProcess process;
+	private boolean isIndeterminate = false;
 	private int progress;
 	private String message;
 	private int remainTime; // milliseconds
 	private int totalTime; // milliseconds
 	private boolean isCancel = false;
 
-	public RunningEvent(IProcess process) {
-		this(process, 0, "", 0, 0);
+	public RunningEvent(IProcess process, String message) {
+		super(process);
+		this.process = process;
+		this.message = message;
+		this.isIndeterminate = true;
 	}
 
 	public RunningEvent(IProcess process, int progress, String message) {
@@ -34,6 +38,7 @@ public class RunningEvent extends EventObject {
 		this.message = message;
 		this.remainTime = remainTime;
 		this.totalTime = totalTime;
+		this.isIndeterminate = false;
 	}
 
 	public IProcess getProcess() {
@@ -54,6 +59,15 @@ public class RunningEvent extends EventObject {
 
 	public int getTotalTime() {
 		return totalTime;
+	}
+
+	/**
+	 * 进度信息与进度值是否不确定
+	 *
+	 * @return
+	 */
+	public boolean isIndeterminate() {
+		return isIndeterminate;
 	}
 
 	public boolean isCancel() {

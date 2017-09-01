@@ -62,7 +62,11 @@ public class ProcessWorker {
 				if (worker.isCancelled()) {
 					e.setCancel(true);
 				} else {
-					worker.update(new SingleProgress(e.getProgress(), e.getMessage(), MessageFormat.format(CoreProperties.getString("String_RemainTime"), e.getRemainTime())));
+					if (e.isIndeterminate()) {
+						worker.update(new SingleProgress(e.getMessage()));
+					} else {
+						worker.update(new SingleProgress(e.getProgress(), e.getMessage(), MessageFormat.format(CoreProperties.getString("String_RemainTime"), e.getRemainTime())));
+					}
 				}
 			} catch (Exception e1) {
 				e.setCancel(true);
