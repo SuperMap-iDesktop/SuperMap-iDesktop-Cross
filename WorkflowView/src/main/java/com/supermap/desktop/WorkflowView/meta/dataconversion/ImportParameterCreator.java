@@ -33,6 +33,10 @@ public class ImportParameterCreator implements IParameterCreator {
 	private ParameterCombine parameterCombineResultSet;
 	private ParameterCombine parameterCombineParamSet;
 	private ParameterCombine parameterCombineModelSet;
+	// simpleJson有文件夹/文件两种导入模式
+	private ParameterRadioButton parameterRadioButtonFolderOrFile;
+	// simpleJson选择文件夹模式的ParameterFile
+	private ParameterFile parameterFileFolder;
 	private ParameterFile parameterFile;
 	private ParameterFile parameterChooseFile;
 	private ParameterButton parameterButton;
@@ -44,6 +48,14 @@ public class ImportParameterCreator implements IParameterCreator {
 	private ParameterEnum parameterEncodeType;
 	private ParameterEnum parameterImportMode;
 	private ParameterDatasetType parameterDatasetTypeEnum;
+
+	/**
+	 * 获得文件/文件夹单选框参数，外部添加监听
+	 * @return
+	 */
+	public ParameterRadioButton getParameterRadioButtonFolderOrFile() {
+		return parameterRadioButtonFolderOrFile;
+	}
 
 	@Override
 	public CopyOnWriteArrayList<ReflectInfo> create(Object importSetting) {
@@ -469,6 +481,8 @@ public class ImportParameterCreator implements IParameterCreator {
 		parameterFile = FileType.createImportFileChooser(importType);
 		parameterFile.setDescribe(ProcessProperties.getString("label_ChooseFile"));
 		reflectInfoFilePath.parameter = parameterFile;
+
+		// 字符集
 		ReflectInfo reflectInfoCharset = new ReflectInfo();
 		reflectInfoCharset.methodName = "setSourceFileCharset";
 		parameterCharset = new ParameterCharset();
@@ -489,12 +503,31 @@ public class ImportParameterCreator implements IParameterCreator {
 		sourceInfo.add(reflectInfoFilePath);
 		parameterCombineSourceInfoSet = new ParameterCombine();
 		parameterCombineSourceInfoSet.setDescribe(ProcessProperties.getString("String_ImportSettingPanel_SourceFileInfo"));
+		// 将文件类型选择单选组合框加入面板-yuanR2017.9.1
+		if (importSetting instanceof ImportSettingSimpleJson) {
+			// 文件/文件夹，单选框,默认选择文件-yuanR2017.9.1
+			parameterRadioButtonFolderOrFile = new ParameterRadioButton();
+			ParameterDataNode file = new ParameterDataNode(ProcessProperties.getString("String_Label_SelectFolder"), 0);
+			ParameterDataNode folder = new ParameterDataNode(ProcessProperties.getString("String_Label_SelectFile"), 1);
+			parameterRadioButtonFolderOrFile.setItems(new ParameterDataNode[]{file, folder});
+			parameterRadioButtonFolderOrFile.setSelectedItem(parameterRadioButtonFolderOrFile.getItemAt(1));
+
+			parameterCombineSourceInfoSet.addParameters(parameterRadioButtonFolderOrFile);
+			parameterFileFolder = FileType.createImportFolderChooser(importType);
+			parameterFileFolder.setDescribe(ProcessProperties.getString("label_ChooseFolder"));
+			parameterFileFolder.setEnabled(false);
+
+			ReflectInfo reflectInfoFolderPath = new ReflectInfo();
+			reflectInfoFolderPath.methodName = "setSourceFolderPath";
+			reflectInfoFolderPath.parameter = parameterFileFolder;
+			sourceInfo.add(reflectInfoFilePath);
+			parameterCombineSourceInfoSet.addParameters(parameterFileFolder);
+		}
 		parameterCombineSourceInfoSet.addParameters(parameterFile);
 		if (hasCharsetParameter) {
 			sourceInfo.add(reflectInfoCharset);
 			parameterCombineSourceInfoSet.addParameters(parameterCharset);
 		}
-
 		return sourceInfo;
 	}
 
@@ -773,6 +806,10 @@ public class ImportParameterCreator implements IParameterCreator {
 	@Override
 	public ParameterFile getParameterFile() {
 		return parameterFile;
+	}
+
+	public ParameterFile getParameterFileFolder() {
+		return parameterFileFolder;
 	}
 
 	public ParameterFile getParameterChooseFile() {
