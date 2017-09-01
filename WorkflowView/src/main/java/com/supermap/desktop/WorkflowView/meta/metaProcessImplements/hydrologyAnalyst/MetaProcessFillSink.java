@@ -29,6 +29,7 @@ public class MetaProcessFillSink extends MetaProcessHydrology {
 
 	@Override
 	protected void initField() {
+		INPUT_DATA = SOURCE_PANEL_DESCRIPTION;
 		OUTPUT_DATA = "FillSinkResult";
 	}
 
