@@ -234,7 +234,7 @@ public class BatchAddDailog extends SmDialog {
     private void startValurOrEndValueChange() {
         if (this.seriesNum.isSelected() && !this.endValueText.getText().isEmpty() && !this.seriesNumText.getText().isEmpty() && !this.startValueText.getText().isEmpty()) {
             Integer currentSeriesNum = Integer.valueOf(this.seriesNumText.getText());
-            double currentStepValue = (Double.valueOf(this.endValueText.getText()) - Double.valueOf(this.startValueText.getText())) / currentSeriesNum;
+            double currentStepValue = (Double.valueOf(this.endValueText.getText()) - Double.valueOf(this.startValueText.getText())) / (currentSeriesNum-1);
             this.inputStepLength = currentStepValue;
             this.stepLengthText.setText(String.valueOf(currentStepValue));
         } else if (!this.seriesNum.isSelected() && !this.endValueText.getText().isEmpty() && !this.stepLengthText.getText().isEmpty() && !this.startValueText.getText().isEmpty()) {
@@ -252,6 +252,9 @@ public class BatchAddDailog extends SmDialog {
             double start = Double.valueOf(this.startValueText.getText());
             double end = Double.valueOf(this.endValueText.getText());
             double step = Double.valueOf(this.stepLengthText.getText());
+            if (Double.compare(start,end)==1 && Double.compare(step,0)==1){
+                step=0-step;
+            }
             this.resultKeys = new double[currentSeriesNum];
             for (int i = 0; i < currentSeriesNum; i++) {
                 if (i + 1 == currentSeriesNum && !isNeedResetCalculEndValue) {
@@ -271,9 +274,13 @@ public class BatchAddDailog extends SmDialog {
         if (this.seriesNum.isSelected()) {
             this.seriesNumText.setEnable(true);
             this.stepLengthText.setEnable(false);
+            this.resetEndValue.setEnabled(false);
+            this.resetEndValue.setSelected(true);
         } else {
             this.seriesNumText.setEnable(false);
             this.stepLengthText.setEnable(true);
+            this.resetEndValue.setEnabled(true);
+            this.resetEndValue.setSelected(false);
         }
     }
 

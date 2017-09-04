@@ -108,6 +108,7 @@ public class MetaKeys {
 	public static final String IMAGE_COMBINE = "ImageCombine";
 	public static final String ALGEBRA_OPERATION="AlgebraOperation";
 	public static final String DATA_UPDATE="DataUpdate";
+	public static final String RASTER_RECLASS="RasterReclass";
 
 	//类型转换
 	public static final String CONVERSION_POINT_TO_LINE = "Conversion_PointToLine";

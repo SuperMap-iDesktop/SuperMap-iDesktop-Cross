@@ -62,7 +62,7 @@ public class MetaProcessDataUpdate extends MetaProcess {
 		this.parameters.setParameters(sourceData, setting);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.ALL_RASTER, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
-				ProcessOutputResultProperties.getString("Strin_DataUpdateResult"),
+				ProcessOutputResultProperties.getString("String_DataUpdateResult"),
 				DatasetTypes.ALL_RASTER, sourceDataset);
 	}
 
