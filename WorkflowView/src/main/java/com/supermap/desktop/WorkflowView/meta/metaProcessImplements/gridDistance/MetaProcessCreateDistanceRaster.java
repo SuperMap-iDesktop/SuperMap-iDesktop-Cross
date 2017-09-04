@@ -44,9 +44,6 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 	private ParameterTextField resultDistanceDataset;
 	private ParameterTextField resultDirectionDataset;
 	private ParameterTextField resultAllocationDataset;
-//	private ParameterSaveDataset resultDistanceDataset;
-//	private ParameterSaveDataset resultDirectionDataset;
-//	private ParameterSaveDataset resultAllocationDataset;
 
 	public MetaProcessCreateDistanceRaster() {
 		initParameters();
@@ -66,15 +63,6 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 		this.costDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 		this.parameterNumberMaxDistance = new ParameterNumber(ProcessProperties.getString("String_MaxDistance"));
 		this.parameterNumberResolvingPower = new ParameterNumber(ProcessProperties.getString("String_Resolution"));
-//		this.resultDistanceDataset = new ParameterSaveDataset();
-//		this.resultDistanceDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-//		this.resultDistanceDataset.setDatasetDescribe(ProcessProperties.getString("String_Distance_Dataset"));
-//		this.resultDirectionDataset = new ParameterSaveDataset();
-//		this.resultDirectionDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-//		this.resultDirectionDataset.setDatasetDescribe(ProcessProperties.getString("String_Direction_Dataset"));
-//		this.resultAllocationDataset = new ParameterSaveDataset();
-//		this.resultAllocationDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-//		this.resultAllocationDataset.setDatasetDescribe(ProcessProperties.getString("String_Allocation_Dataset"));
 		this.resultDatasource = new ParameterDatasource();
 		this.resultDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		this.resultDistanceDataset = new ParameterTextField(ProcessProperties.getString("String_Distance_Dataset"));

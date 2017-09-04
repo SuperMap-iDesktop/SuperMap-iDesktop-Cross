@@ -24,6 +24,8 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by yuanR on 2017/8/22 0022.
@@ -55,8 +57,8 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 
 	public MetaProcessMultiBuffer() {
 		initParameters();
-		initComponentState();
 		initParameterConstraint();
+		initComponentState();
 		registerListener();
 		initRequisite();
 	}
@@ -147,10 +149,10 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 		if (datasetVector != null) {
 			datasource.setSelectedItem(datasetVector.getDatasource());
 			dataset.setSelectedItem(datasetVector);
-			setBufferTypePanelEnabled(dataset.getSelectedDataset().getType().equals(DatasetType.LINE));
+			parameterSaveDataset.setSelectedItem(datasource.getSelectedItem().getDatasets().getAvailableDatasetName("result_multiBuffer"));
+		} else {
+			parameterSaveDataset.setSelectedItem("result_multiBuffer");
 		}
-
-		parameterSaveDataset.setSelectedItem("result_multiBuffer");
 	}
 
 	private void initParameterConstraint() {
@@ -238,17 +240,30 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 			int bufferType = (Integer) ((ParameterDataNode) radioButtonFlatOrRound.getSelectedItem()).getData();
 			boolean isLeft = false;
 			if (bufferType == BUFFERTYPE_FLAT) {
-				isLeft = (Boolean) ((ParameterDataNode) comboBoxBufferLeftOrRight.getSelectedItem()).getData();
+				isLeft = (Boolean) comboBoxBufferLeftOrRight.getSelectedData();
 			}
 			//缓冲半径列表
 			ArrayList<Double> radioLists = parameterMultiBufferRadioList.getRadioLists();
 			double[] radioListResult = null;
 			if (radioLists != null && radioLists.size() > 0) {
-				radioListResult = new double[radioLists.size()];
+				// 还有待优化-yuanR存疑2017.8.31
+				// 不支持负数，因此进行取绝对值处理-yuanR2017.8.31
 				for (int i = 0; i < radioLists.size(); i++) {
-					radioListResult[i] = radioLists.get(i);
+					radioLists.set(i, Math.abs(radioLists.get(i)));
+				}
+
+				// 去重
+				Set<Double> set = new HashSet<>();
+				for (int i = 0; i < radioLists.size(); i++) {
+					set.add(radioLists.get(i));
+				}
+				Double[] radioListDouble = (Double[]) set.toArray(new Double[set.size()]);
+				radioListResult = new double[radioListDouble.length];
+				for (int i = 0; i < radioListDouble.length; i++) {
+					radioListResult[i] = radioListDouble[i];
 				}
 			}
+
 			BufferRadiusUnit radiusUnit = (BufferRadiusUnit) parameterRadiusUnit.getSelectedData();
 			// 参数面板属性
 			boolean isUnion = "true".equalsIgnoreCase((String) parameterUnionBuffer.getSelectedItem());
@@ -260,13 +275,13 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 			resultName = resultDatasource.getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName());
 
 			// 创建一个新的数据集用于接受多重缓冲分析结果
+//			BufferAnalyst.addSteppedListener(this.steppedListener);
 			DatasetVectorInfo vectorInfo = new DatasetVectorInfo();
 			vectorInfo.setName(resultName);
 			vectorInfo.setType(DatasetType.REGION);
 			DatasetVector resultDataset = resultDatasource.getDatasets().create(vectorInfo);
 			resultDataset.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
 
-			BufferAnalyst.addSteppedListener(this.steppedListener);
 			if (sourceDatasetVector.getType().equals(DatasetType.LINE) && bufferType == BUFFERTYPE_FLAT) {
 				isSuccessful = BufferAnalyst.createLineOneSideMultiBuffer(
 						sourceDatasetVector, resultDataset,
@@ -287,7 +302,7 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 				resultDatasource.getDatasets().delete(resultName);
 			}
 		} finally {
-			BufferAnalyst.removeSteppedListener(this.steppedListener);
+//			BufferAnalyst.removeSteppedListener(this.steppedListener);
 		}
 		return isSuccessful;
 	}
@@ -296,5 +311,4 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 	public String getKey() {
 		return MetaKeys.MULTIBUFFER;
 	}
-
 }

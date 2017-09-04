@@ -1,5 +1,6 @@
 package com.supermap.desktop.framemenus;
 
+import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
@@ -10,9 +11,12 @@ import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.event.SaveWorkspaceEvent;
 import com.supermap.desktop.event.SaveWorkspaceListener;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
+
+import java.text.MessageFormat;
 
 public class CtrlActionWorkspaceSave extends CtrlAction {
 
@@ -100,7 +104,13 @@ public class CtrlActionWorkspaceSave extends CtrlAction {
 					if (Application.getActiveApplication().getMainFrame().getFormManager().getCount() > 0) {
 						CommonToolkit.FormWrap.saveAllOpenedWindows();
 					}
-					Application.getActiveApplication().getWorkspace().save();
+					Workspace currentWorkspace = Application.getActiveApplication().getWorkspace();
+					boolean saveResult = currentWorkspace.save();
+					if (saveResult) {
+						Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_WorkspaceSaveSuccess"),currentWorkspace.getCaption()));
+					} else {
+						Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_WorkspaceSaveFailed"),currentWorkspace.getCaption()));
+					}
 				}
 			}
 		} catch (Exception ex) {

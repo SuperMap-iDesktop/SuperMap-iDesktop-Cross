@@ -432,7 +432,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					if (!new File(sciPath).exists()) {
 						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_ErrorForMongoInfo"));
 					}
-				} else if (cmdType != MultiUpdateProcessClip) {
+				} else {
 					result = mapCacheBuilder.toConfigFile(sciPath);
 				}
 				if (result) {

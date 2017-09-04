@@ -121,7 +121,7 @@ public class ImportCallable extends UpdateProgressCallable {
 			time = endTime - startTime;
 			if (null != result) {
 				for (UserDefineImportResult tempResult : result) {
-					if (null != tempResult.getSuccess()) {
+					if (null != tempResult && null != tempResult.getSuccess()) {
 						map.put(tempResult.getSuccess().getTargetDatasource().getAlias(),
 								map.get(tempResult.getSuccess().getTargetDatasource().getAlias()) + 1);
 						printMessage(tempResult, time);
@@ -148,9 +148,7 @@ public class ImportCallable extends UpdateProgressCallable {
 		((ImportTableModel) table.getModel()).
 
 				updateRows(fileInfos);
-		if (null != percentProgress && percentProgress.isCancel())
-
-		{
+		if (null != percentProgress && percentProgress.isCancel()) {
 			return;
 		}
 		if (!dataImportDialog.isVisible())

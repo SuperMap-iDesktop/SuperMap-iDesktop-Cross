@@ -1,16 +1,20 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
 import com.supermap.data.Charset;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessAbstractExport;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.implement.UserDefineType.ExportSettingGPX;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
@@ -30,6 +34,8 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 	private ParameterCombine vectorCombine;
 	private ParameterCheckBox externalData;
 	private ParameterCheckBox externalRecord;
+	private ParameterCheckBox exportPointAsWKT;
+	private ParameterCheckBox exportFieldName;
 	private ParameterCharset charset;
 	private ParameterComboBox cadVersion;
 	private ParameterTextArea expression;
@@ -78,6 +84,10 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 		this.externalData.setEnabled(false);
 		this.externalRecord = new ParameterCheckBox(ProcessProperties.getString("String_ExportExternalRecord"));
 		this.externalRecord.setEnabled(false);
+		this.exportPointAsWKT = new ParameterCheckBox(CommonProperties.getString("String_ExportPointAsWKT"));
+		this.exportPointAsWKT.setEnabled(false);
+		this.exportFieldName = new ParameterCheckBox(CommonProperties.getString("String_ExportFieldName"));
+		this.exportFieldName.setEnabled(false);
 		this.charset = new ParameterCharset();
 		this.charset.setEnabled(false);
 		this.cadVersion = new ParameterComboBox(ProcessProperties.getString("String_CADVersion"));
@@ -95,7 +105,7 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 		ParameterCombine emptyCombine = new ParameterCombine(ParameterCombine.HORIZONTAL);
 		emptyCombine.addParameters(new ParameterLabel(), new ParameterLabel(), this.sqlExpression);
 
-		this.vectorCombine.addParameters(this.externalData, this.externalRecord, this.charset
+		this.vectorCombine.addParameters(this.externalData, this.externalRecord, this.exportPointAsWKT, this.exportFieldName, this.charset
 				, this.cadVersion, this.expression, emptyCombine);
 		this.parameters.setParameters(this.sourceInfo, this.basicCombine, this.vectorCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, this.sourceInfo);
@@ -107,6 +117,7 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 		if (null != this.selectDataset) {
 			this.sqlExpression.setSelectDataset(this.selectDataset);
 		}
+
 		initComponentsState(exportSetting);
 	}
 
@@ -119,6 +130,8 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 		this.externalData.setEnabled(false);
 		this.externalRecord.setEnabled(false);
 		this.cadVersion.setEnabled(false);
+		this.exportPointAsWKT.setEnabled(false);
+		this.exportFieldName.setEnabled(false);
 		if (newExportSetting instanceof ExportSettingDWG || newExportSetting instanceof ExportSettingDXF) {
 			this.externalData.setEnabled(true);
 			this.externalRecord.setEnabled(true);
@@ -133,7 +146,21 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 				this.cadVersion.setSelectedItem(((ExportSettingDXF) newExportSetting).getVersion());
 			}
 		}
-		if (null != newExportSetting) {
+		if (newExportSetting instanceof ExportSettingCSV) {
+			this.exportFieldName.setEnabled(true);
+			//默认设置为导出表头
+			this.exportFieldName.setSelectedItem(true);
+			if (((Dataset) newExportSetting.getSourceData()).getType().equals(DatasetType.POINT)) {
+				this.exportPointAsWKT.setEnabled(true);
+				this.exportPointAsWKT.setSelectedItem(String.valueOf(((ExportSettingCSV) newExportSetting).GetIsExportPointAsWKT()));
+			}
+		}
+
+		if (null != newExportSetting && newExportSetting instanceof ExportSettingGPX) {
+			this.charset.setEnabled(false);
+			this.expression.setEnabled(false);
+			this.sqlExpression.setEnabled(false);
+		} else if (null != newExportSetting && !(newExportSetting instanceof ExportSettingGPX)) {
 			this.charset.setEnabled(true);
 			this.charset.setSelectedItem(newExportSetting.getTargetFileCharset());
 			this.expression.setEnabled(true);
@@ -180,6 +207,12 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 			((ExportSettingDXF) exportSetting).setExportingExternalData(Boolean.valueOf(externalData.getSelectedItem().toString()));
 			((ExportSettingDXF) exportSetting).setExportingXRecord(Boolean.valueOf(externalRecord.getSelectedItem().toString()));
 			((ExportSettingDXF) exportSetting).setVersion((CADVersion) cadVersion.getSelectedData());
+		}
+		if (exportSetting instanceof ExportSettingCSV) {
+			((ExportSettingCSV) exportSetting).setIsExportFieldName(Boolean.valueOf(exportFieldName.getSelectedItem().toString()));
+			if (((Dataset) exportSetting.getSourceData()).getType().equals(DatasetType.POINT)) {
+				((ExportSettingCSV) exportSetting).setIsExportPointAsWKT(Boolean.valueOf(exportPointAsWKT.getSelectedItem().toString()));
+			}
 		}
 	}
 

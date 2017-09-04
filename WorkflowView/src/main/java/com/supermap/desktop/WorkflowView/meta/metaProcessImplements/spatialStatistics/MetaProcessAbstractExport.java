@@ -8,10 +8,7 @@ import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.ExportSettingUtilities;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.implement.UserDefineType.ExportSettingGPX;
-import com.supermap.desktop.implement.UserDefineType.GPXAnalytic;
-import com.supermap.desktop.implement.UserDefineType.UserDefineExportResult;
-import com.supermap.desktop.implement.UserDefineType.UserDefineFileType;
+import com.supermap.desktop.implement.UserDefineType.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -154,6 +151,9 @@ public class MetaProcessAbstractExport extends MetaProcess {
 				exportSetting = ExportSettingUtilities.createExportSetting(fileTypes[0]);
 			}
 		}
+		if (selectDataset instanceof DatasetVector) {
+			supportType.addItem(new ParameterDataNode(ExportSettingUtilities.getDatasetName(UserDefineFileType.EXCEL.toString()), UserDefineFileType.EXCEL));
+		}
 		exportSetting.setSourceData(selectDataset);
 		targetName.setSelectedItem(selectDataset.getName());
 
@@ -234,7 +234,13 @@ public class MetaProcessAbstractExport extends MetaProcess {
 			time = String.valueOf((System.currentTimeMillis() - startTime) / 1000.0);
 			printExportInfo(result, time);
 			((ExportSettingGPX) exportSetting).removeExportSteppedListener(exportListener);
-		} else {
+		} else if(exportSetting instanceof ExportSettingExcel) {
+			((ExportSettingExcel) exportSetting).addExportSteppedListener(exportListener);
+			UserDefineExportResult result = ((ExportSettingExcel) exportSetting).run();
+			time = String.valueOf((System.currentTimeMillis() - startTime) / 1000.0);
+			printExportInfo(result, time);
+			((ExportSettingExcel) exportSetting).removeExportSteppedListener(exportListener);
+		}else {
 			DataExport dataExport = new DataExport();
 			dataExport.getExportSettings().add(exportSetting);
 			try {

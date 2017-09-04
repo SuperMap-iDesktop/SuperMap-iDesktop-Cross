@@ -194,9 +194,11 @@ public class MetaProcessDEMBuild extends MetaProcess {
 			double height = sourceDataset.getSelectedItem().getBounds().getHeight() / 10;
 			double width = sourceDataset.getSelectedItem().getBounds().getWidth() / 10;
 			textNumResampleTolerance.setMaxValue(height > width ? width : height);
-			Rectangle2D bounds = datasetVector.getBounds();
-			double cellSize = Math.sqrt(Math.pow(bounds.getHeight(), 2) + Math.pow(bounds.getWidth(), 2)) / 500;
-			textFieldCellSize.setSelectedItem(cellSize);
+			Rectangle2D bounds = ((DatasetVector) sourceDataset.getSelectedItem()).getBounds();
+			double x = bounds.getWidth() / 500;
+			double y = bounds.getHeight() / 500;
+			double cellSize = x > y ? y : x;
+			textFieldCellSize.setSelectedItem(""+cellSize);
 			textFieldRowCount.setSelectedItem((int) (bounds.getHeight() / cellSize));
 			textFieldColumnCount.setSelectedItem((int) (bounds.getWidth() / cellSize));
 		}
@@ -274,7 +276,9 @@ public class MetaProcessDEMBuild extends MetaProcess {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
 					Rectangle2D bounds = ((DatasetVector) evt.getNewValue()).getBounds();
-					double cellSize = Math.sqrt(Math.pow(bounds.getHeight(), 2) + Math.pow(bounds.getWidth(), 2)) / 500;
+					double x = bounds.getWidth() / 500;
+					double y = bounds.getHeight() / 500;
+					double cellSize = x > y ? y : x;
 					textFieldCellSize.setSelectedItem(cellSize);
 					textFieldRowCount.setSelectedItem((int) (bounds.getHeight() / cellSize));
 					textFieldColumnCount.setSelectedItem((int) (bounds.getWidth() / cellSize));

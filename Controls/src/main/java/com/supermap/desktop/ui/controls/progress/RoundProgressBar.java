@@ -4,6 +4,8 @@ import com.supermap.desktop.controls.ControlsProperties;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by xie on 2017/3/30.
@@ -46,6 +48,32 @@ public class RoundProgressBar extends JPanel {
 	 */
 	private boolean isDrawString = false;
 
+	private boolean isIndeterminate = false;
+	private int percentLoc = 0;
+	private boolean isReversed = false;
+	private java.util.Timer updateIndeterminateTimer;
+	private TimerTask updateIndeterminateTimerTask = new TimerTask() {
+		@Override
+		public void run() {
+			if (isReversed) {
+				percentLoc--;
+			} else {
+				percentLoc++;
+			}
+
+			if ((percentLoc == 100 && !isReversed)
+					|| percentLoc == 0 && isReversed) {
+				isReversed = !isReversed;
+			}
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					repaint();
+				}
+			});
+		}
+	};
 
 	public RoundProgressBar() {
 		setMinimumProgress(0);
@@ -76,10 +104,14 @@ public class RoundProgressBar extends JPanel {
 //        graphics2d.drawArc(x, y, width, height, 0, 360);
 		graphics2d.drawRoundRect(x, y, getWidth() - 20, 8, 8, 8);
 		graphics2d.setColor(foregroundColor);
-		if (progress > 0) {
+
+		if (isIndeterminate) {
+			int progressWidth = getWidth() / 3;
+			g.drawRoundRect((int) (x + (getWidth() - progressWidth - 20) * ((percentLoc + 0.0) / 100)), y, progressWidth, 8, 8, 8);
+		} else if (progress > 0) {
 			graphics2d.drawRoundRect(x, y, (int) ((getWidth() - 20) * ((progress + 0.0) / (getMaximumProgress() - getMinimumProgress()))), 8, 8, 8);
 		}
-//		paintProgress((Graphics2D) g);
+
 		if (isDrawString()) {
 			graphics2d.setFont(new Font(ControlsProperties.getString("String_Boldface"), Font.BOLD, 10));
 			FontMetrics fontMetrics = graphics2d.getFontMetrics();
@@ -89,9 +121,6 @@ public class RoundProgressBar extends JPanel {
 			graphics2d.drawString(progress + "%", getWidth() / 2 - digitalWidth / 2, getHeight() / 2 + digitalAscent / 2);
 		}
 	}
-
-	private int percentLoc = 0;
-	private boolean isReversed = false;
 
 	private void paintProgress(Graphics2D g) {
 		int progressWidth = getWidth() / 4;
@@ -161,6 +190,26 @@ public class RoundProgressBar extends JPanel {
 		}
 	}
 
+	public void updateProgressIndeterminate() {
+		if (this.isIndeterminate) {
+			stopUpdateProgressIndeterminate();
+		}
+
+		this.isIndeterminate = true;
+		this.updateIndeterminateTimer = new Timer();
+		this.updateIndeterminateTimer.schedule(this.updateIndeterminateTimerTask, 100, 15);
+	}
+
+	public void stopUpdateProgressIndeterminate() {
+		if (this.updateIndeterminateTimer != null) {
+			this.updateIndeterminateTimer.cancel();
+			this.updateIndeterminateTimer = null;
+		}
+		this.percentLoc = 0;
+		this.isReversed = false;
+		this.isIndeterminate = false;
+	}
+
 	/**
 	 * @return backgroundColor
 	 */
@@ -169,7 +218,7 @@ public class RoundProgressBar extends JPanel {
 	}
 
 	/**
-	 * @param backgroundColor。
+	 * @param backgroundColor
 	 */
 	public void setBackgroundColor(Color backgroundColor) {
 		this.backgroundColor = backgroundColor;

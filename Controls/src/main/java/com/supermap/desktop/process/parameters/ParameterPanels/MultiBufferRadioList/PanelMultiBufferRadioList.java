@@ -12,6 +12,8 @@ import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -82,7 +84,7 @@ public class PanelMultiBufferRadioList extends JPanel {
 		indexColumn.setMinWidth(80);
 		indexColumn.setPreferredWidth(80);
 		indexColumn.setMaxWidth(150);
-
+		checkButtonStates();
 	}
 
 	private void initLayout() {
@@ -104,7 +106,7 @@ public class PanelMultiBufferRadioList extends JPanel {
 
 	private void initResources() {
 		buttonBatchAddRadio.setToolTipText(ControlsProperties.getString("String_AddRange"));
-		buttonInsert.setToolTipText(ControlsProperties.getString("String_Insert"));
+		buttonInsert.setToolTipText(ControlsProperties.getString("String_InsertDefaultValue"));
 		buttonSelectAll.setToolTipText(ControlsProperties.getString("String_SelectAll"));
 		buttonSelectInvert.setToolTipText(ControlsProperties.getString("String_SelectReverse"));
 		buttonDelete.setToolTipText(CommonProperties.getString("String_Delete"));
@@ -141,10 +143,14 @@ public class PanelMultiBufferRadioList extends JPanel {
 					selectedRows = tableRadioList.getSelectedRows();
 					multiBufferRadioListTableModel.moveDown(selectedRows);
 					tableRadioList.addRowSelectionInterval(selectedRows[0] + 1, selectedRows[0] + 1);
+					tableRadioList.scrollRectToVisible(tableRadioList.getCellRect(selectedRows[0] + 1, 0, true));
+
 				} else {
 					// 当jtable为空时,添加一条数据，并高亮显示
 					multiBufferRadioListTableModel.setRadioValues(radioLists);
 					tableRadioList.addRowSelectionInterval(tableRadioList.getRowCount() - 1, tableRadioList.getRowCount() - 1);
+					tableRadioList.scrollRectToVisible(tableRadioList.getCellRect(tableRadioList.getRowCount() - 1, 0, true));
+
 				}
 			}
 		});
@@ -152,10 +158,7 @@ public class PanelMultiBufferRadioList extends JPanel {
 		buttonSelectAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int[] selectedRows = tableRadioList.getSelectedRows();
-				if (selectedRows.length > 0) {
-					tableRadioList.selectAll();
-				}
+				tableRadioList.selectAll();
 			}
 		});
 
@@ -225,5 +228,25 @@ public class PanelMultiBufferRadioList extends JPanel {
 				}
 			}
 		});
+
+		tableRadioList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				checkButtonStates();
+			}
+		});
+	}
+
+	/**
+	 * 设置各按钮是否可用
+	 */
+	private void checkButtonStates() {
+		int rowCount = tableRadioList.getRowCount();
+		int selectedRowCount = tableRadioList.getSelectedRowCount();
+		buttonDelete.setEnabled(selectedRowCount > 0);
+		buttonSelectAll.setEnabled(rowCount > 0);
+		buttonSelectInvert.setEnabled(rowCount > 0);
+		buttonMoveUp.setEnabled(selectedRowCount > 0 && !tableRadioList.isRowSelected(0));
+		buttonMoveDown.setEnabled(selectedRowCount > 0 && !tableRadioList.isRowSelected(rowCount - 1));
 	}
 }

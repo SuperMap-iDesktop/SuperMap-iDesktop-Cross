@@ -118,7 +118,8 @@ public class PanelTransformForMicrosoft extends PanelTransform {
 	};
 
 	private void setImportAsPointWKT() {
-		((ImportSettingCSV) importSetting).setIndexAsGeometry(Convert.toInteger(getComboBoxWKT().getSelectedItem()));
+		//todo 设置后有崩溃问题，暂时屏蔽
+		//((ImportSettingCSV) importSetting).setIndexAsGeometry(1);
 	}
 
 	private ItemListener commonItemListener = new ItemListener() {
@@ -220,14 +221,19 @@ public class PanelTransformForMicrosoft extends PanelTransform {
 		group.add(this.radioButtonIndex);
 		this.scrollPanePreviewCSV = new JScrollPane();
 		this.tablePreviewCSV = new JTable();
-		if (this.importSetting instanceof ImportSettingCSV) {
+		String[] temp = new String[]{};
+		this.comboBoxWKT = new SteppedComboBox(temp);
+		this.comboBoxX = new SteppedComboBox(temp);
+		this.comboBoxY = new SteppedComboBox(temp);
+		this.comboBoxZ = new SteppedComboBox(temp);
+		temp = null;
+		if (!(this.importSetting instanceof ImportSettingExcel)) {
 			String[][] data = getData();
 			String[] tempValues = data[0];
 			for (int i = 0, tempLength = tempValues.length; i < tempLength; i++) {
 				tempValues[i] = tempValues[i].replace("\"", "");
 			}
 			String[] indexX = tempValues;
-			String[] indexY = indexX;
 			int length = getData().length;
 			String[][] tableValues = new String[length - 1][];
 			for (int i = 1; i < length; i++) {
@@ -241,21 +247,22 @@ public class PanelTransformForMicrosoft extends PanelTransform {
 			this.tablePreviewCSV.getTableHeader().setPreferredSize(
 					new Dimension(this.tablePreviewCSV.getTableHeader().getPreferredSize().width, 30));
 			this.scrollPanePreviewCSV.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-			this.comboBoxWKT = new SteppedComboBox(indexX);
-			this.comboBoxX = new SteppedComboBox(indexX);
-			this.comboBoxY = new SteppedComboBox(indexY);
-			String[] indexZ = new String[indexY.length + 1];
+			DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel(indexX);
+			this.comboBoxWKT.setModel(comboBoxModel);
+			this.comboBoxX.setModel(comboBoxModel);
+			this.comboBoxY.setModel(comboBoxModel);
+			String[] indexZ = new String[indexX.length + 1];
 			for (int i = 0, lengthZ = indexZ.length; i < lengthZ; i++) {
-				indexZ[i] = i == 0 ? "" : indexY[i - 1];
+				indexZ[i] = i == 0 ? "" : indexX[i - 1];
 			}
-			this.comboBoxZ = new SteppedComboBox(indexZ);
+			this.comboBoxZ.setModel(new DefaultComboBoxModel(indexZ));
 			setComboboxStepSize(comboBoxWKT, comboBoxX, comboBoxY, comboBoxZ);
 			data = null;
 			tempValues = null;
 			tableValues = null;
 			indexX = null;
-			indexY = null;
 			indexZ = null;
+			comboBoxModel = null;
 		}
 	}
 
@@ -329,7 +336,7 @@ public class PanelTransformForMicrosoft extends PanelTransform {
 		CommonUtilities.setComboBoxTheme(this.comboBoxX);
 		CommonUtilities.setComboBoxTheme(this.comboBoxY);
 		CommonUtilities.setComboBoxTheme(this.comboBoxZ);
-		this.radioButtonIndexWKT.setSelected(true);
+		this.radioButtonIndex.setSelected(true);
         setFirstRowAsField();
         setSeparator();
         setIndexPanelEnabled();

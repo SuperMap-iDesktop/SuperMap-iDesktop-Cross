@@ -173,7 +173,7 @@ public class TabularTableModel extends AbstractTableModel {
 		if (recordset == null || recordset.getDataset().isReadOnly() || recordset.isClosed()) {
 			return false;
 		}
-		if (fieldInfosDataset.get(getColumnName(column)) == null) {
+		if (fieldInfosDataset.get(column) == null) {
 			return false;
 		}
 		boolean flag = true;

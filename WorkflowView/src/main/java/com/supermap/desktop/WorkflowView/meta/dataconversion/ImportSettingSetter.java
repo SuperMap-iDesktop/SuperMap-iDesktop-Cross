@@ -40,6 +40,9 @@ public class ImportSettingSetter {
 			try {
 				if (sourceInfo.get(i).parameter instanceof ParameterFile) {
 					Method method = importSettingClass.getMethod(sourceInfo.get(i).methodName, String.class);
+					if (StringUtilities.isNullOrEmpty(((ParameterFile) sourceInfo.get(i).parameter).getSelectedItem().toString())) {
+						continue;
+					}
 					method.invoke(importSetting, ((ParameterFile) sourceInfo.get(i).parameter).getSelectedItem());
 				} else if (sourceInfo.get(i).parameter instanceof ParameterCharset) {
 					Method method = importSettingClass.getMethod(sourceInfo.get(i).methodName, Charset.class);
