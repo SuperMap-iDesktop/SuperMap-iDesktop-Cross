@@ -50,9 +50,12 @@ public class ExportSettingFactory implements IExportSettingFactory {
 			result = new ExportSettingCSV();
 		} else if (fileType.equals(FileType.GEOJSON)) {
 			result = new ExportSettingGeoJson();
+		} else if (fileType.equals(FileType.SimpleJson)) {
+			// 增加导出SimpleJson数据-yuanR2017.9.4
+			result = new ExportSettingSimpleJson();
 		} else if (fileType.equals(UserDefineFileType.GPX)) {
 			result = new ExportSettingGPX();
-		}else if(fileType.equals(UserDefineFileType.EXCEL)){
+		} else if (fileType.equals(UserDefineFileType.EXCEL)) {
 			result = new ExportSettingExcel();
 		}
 		// 复制目标文件路径到新的exportsetting中

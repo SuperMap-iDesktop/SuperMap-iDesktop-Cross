@@ -40,6 +40,7 @@ public class ImportSettingSetter {
 			try {
 				if (sourceInfo.get(i).parameter instanceof ParameterFile) {
 					Method method = importSettingClass.getMethod(sourceInfo.get(i).methodName, String.class);
+					// 防止地址值为空时的错误反射--yuanR2017.9.1
 					if (StringUtilities.isNullOrEmpty(((ParameterFile) sourceInfo.get(i).parameter).getSelectedItem().toString())) {
 						continue;
 					}

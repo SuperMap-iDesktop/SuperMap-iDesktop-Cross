@@ -47,9 +47,11 @@ public class ExportSettingUtilities {
 			result = new ExportSettingCSV();
 		} else if (fileType.equals(FileType.GEOJSON)) {
 			result = new ExportSettingGeoJson();
+		} else if (fileType.equals(FileType.SimpleJson)) {
+			result = new ExportSettingSimpleJson();
 		} else if (fileType.equals(UserDefineFileType.GPX)) {
 			result = new ExportSettingGPX();
-		}else if(fileType.equals(UserDefineFileType.EXCEL)){
+		} else if (fileType.equals(UserDefineFileType.EXCEL)) {
 			result = new ExportSettingExcel();
 		}
 		// 复制目标文件路径到新的exportsetting中
@@ -64,11 +66,11 @@ public class ExportSettingUtilities {
 	 */
 	public static String getDatasetName(String fileType) {
 		String resultFileType = "";
-		if (UserDefineFileType.GPX.toString().equalsIgnoreCase(fileType)){
+		if (UserDefineFileType.GPX.toString().equalsIgnoreCase(fileType)) {
 			//GPX type reflect GPS
 			fileType = "GPS";
 		}
-		if (UserDefineFileType.EXCEL.toString().equalsIgnoreCase(fileType)){
+		if (UserDefineFileType.EXCEL.toString().equalsIgnoreCase(fileType)) {
 			fileType = "Excel";
 		}
 		String tempFileType = "String_FileType" + fileType;
@@ -86,6 +88,4 @@ public class ExportSettingUtilities {
 		}
 		return resultFileType;
 	}
-
-
 }
