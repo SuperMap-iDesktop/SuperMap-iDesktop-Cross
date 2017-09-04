@@ -51,7 +51,7 @@ public class CreateCollectionCallable extends UpdateProgressCallable {
 			for (int i = 0; i < size; i++) {
 				if (null != vector && parent.hasDataset(vector, datasetInfos.get(i).getDataset())) {
 					//需不需要添加已经存在的数据集？
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_DatasetExistInCollection"), datasetInfos.get(i).getDataset().getName(), vector.getName()));
+//					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_DatasetExistInCollection"), datasetInfos.get(i).getDataset().getName(), vector.getName()));
 					continue;
 				}
 				if ((vector.GetSubCollectionDatasetType() == DatasetType.UNKNOWN) || (vector.GetSubCollectionDatasetType() == datasetInfos.get(i).getDataset().getType())) {

@@ -449,7 +449,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 			for (int i = 0; i < selectedDatasets.size(); i++) {
 				if (null != datasetVector && hasDataset(datasetVector, selectedDatasets.get(i))) {
 					//需不需要添加已经存在的数据集？
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_DatasetExistInCollection"), selectedDatasets.get(i).getName(), this.datasetVector.getName()));
+//					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_DatasetExistInCollection"), selectedDatasets.get(i).getName(), this.datasetVector.getName()));
 					continue;
 				}
 				DatasetInfo datasetInfo = new DatasetInfo();
