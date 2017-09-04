@@ -104,9 +104,9 @@ public class FileType {
 				} else if ("JP2".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), importType, "jp2", "jpk"), "jp2", "jpk"));
 				} else if ("GEOJSON".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, "json"), "json"));
+					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), importType, "geojson", "json"), "geojson", "json"));
 				} else if ("SIMPLEJSON".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, "json"), "json"));
+					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), importType, "simplejson", "json"), "simplejson", "json"));
 				} else {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, importType.toLowerCase()), importType.toLowerCase()));
 				}

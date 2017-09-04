@@ -195,7 +195,7 @@ public class FiletypeUtilities {
 			result = FileType.GEOJSON;
 		} else if (alias.equals(DataConversionProperties.getString("String_FileTypeGPS"))) {
 			result = UserDefineFileType.GPX;
-		}else if (alias.equals(DataConversionProperties.getString("String_FileTypeExcel"))) {
+		} else if (alias.equals(DataConversionProperties.getString("String_FileTypeExcel"))) {
 			result = UserDefineFileType.EXCEL;
 		}
 
