@@ -113,7 +113,15 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 		try {
 			if (!StringUtilities.isNullOrEmpty(stringTextField)) {
 				Object data = tempNodeData.getData();
-				if (data instanceof Datasource) {
+				if (data instanceof Workspace) {
+					Workspace workspace = (Workspace) data;
+					if (stringTextField.equals(workspace.getCaption())) {
+						//不用修改
+					} else {
+						Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_RenameWorkspaceSuccess"), workspace.getCaption(), stringTextField));
+						workspace.setCaption(stringTextField);
+					}
+				} else if (data instanceof Datasource) {
 					// 数据源重命名
 					Datasource datasource = (Datasource) data;
 					String message = null;

@@ -38,7 +38,7 @@ public class CreateCollectionCallable extends UpdateProgressCallable {
 				vector = parent.getDatasetVector();
 			} else {
 				vector = datasource.getDatasets().create(info);
-				vector.setCharset(CharsetUtilities.valueOf(parent.charsetComboBox.getSelectedItem().toString()));
+//				vector.setCharset(CharsetUtilities.valueOf(parent.charsetComboBox.getSelectedItem().toString()));
 				parent.setDatasetVector(vector);
 			}
 			ArrayList<DatasetInfo> datasetInfos = parent.tableModel.getDatasetInfos();
@@ -59,10 +59,10 @@ public class CreateCollectionCallable extends UpdateProgressCallable {
 					boolean result = vector.addCollectionDataset((DatasetVector) datasetInfos.get(i).getDataset());
 					String message = "";
 					if (result) {
-						parent.tableDatasetDisplay.setValueAt(CommonProperties.getString("String_Status_Exist"), i, 1);
+//						parent.tableDatasetDisplay.setValueAt(CommonProperties.getString("String_Status_Exist"), i, 1);
 						message = MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddSuccess"), vector.getName(), datasetInfos.get(i).getName());
 					} else {
-						parent.tableDatasetDisplay.setValueAt(CommonProperties.getString("String_AppendFailed"), i, 1);
+//						parent.tableDatasetDisplay.setValueAt(CommonProperties.getString("String_AppendFailed"), i, 1);
 						message = MessageFormat.format(ControlsProperties.getString("String_CollectionDatasetAddFailed"), vector.getName(), datasetInfos.get(i).getName());
 					}
 					parent.tableDatasetDisplay.repaint();
@@ -75,9 +75,6 @@ public class CreateCollectionCallable extends UpdateProgressCallable {
 			//取消时异常
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			if (parent.checkBoxCloseDialog.isSelected()) {
-				parent.dispose();
-			}
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
