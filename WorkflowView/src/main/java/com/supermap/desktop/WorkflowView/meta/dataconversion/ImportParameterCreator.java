@@ -51,6 +51,7 @@ public class ImportParameterCreator implements IParameterCreator {
 
 	/**
 	 * 获得文件/文件夹单选框参数，外部添加监听
+	 *
 	 * @return
 	 */
 	public ParameterRadioButton getParameterRadioButtonFolderOrFile() {
@@ -518,9 +519,9 @@ public class ImportParameterCreator implements IParameterCreator {
 			parameterFileFolder.setEnabled(false);
 
 			ReflectInfo reflectInfoFolderPath = new ReflectInfo();
-			reflectInfoFolderPath.methodName = "setSourceFolderPath";
+			reflectInfoFolderPath.methodName = "setSourceFilePath";
 			reflectInfoFolderPath.parameter = parameterFileFolder;
-			sourceInfo.add(reflectInfoFilePath);
+			sourceInfo.add(reflectInfoFolderPath);
 			parameterCombineSourceInfoSet.addParameters(parameterFileFolder);
 		}
 		parameterCombineSourceInfoSet.addParameters(parameterFile);

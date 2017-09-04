@@ -29,6 +29,7 @@ public class ParameterType {
 	public static final String SIMPLE_STATISTICS_FIELD = "SimpleStatisticsField";
 	public static final String MULTI_BUFFER_RADIOLIST = " MultiBufferRadioList";
 	public static final String STATISTICS_FIELD_FOR_RAREFY_POINTS = "StatisticsFieldForRarefyPoints";
+	public static final String RASTER_RECLASS="RasterReclass";
 
 
 	public static final String HDFS_PATH = "HDFSPath";

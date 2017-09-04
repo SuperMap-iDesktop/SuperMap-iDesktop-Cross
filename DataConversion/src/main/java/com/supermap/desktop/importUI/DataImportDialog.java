@@ -77,6 +77,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 	private static final int IMPORT_TEMSBUILDINGVECTORS = 1;
 	private static final int IMPORT_FILEGDBVECTORS = 2;
 	private static final int IMPORT_GJB = 3;
+	private static final int IMPORT_SIMPLEJSON = 4;
 
 	private ActionListener addFileListener = new ActionListener() {
 		@Override
@@ -160,7 +161,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 			if (!StringUtilities.isNullOrEmpty(fileType)) {
 				//导入信息参数设置
 				importInfo.setFileName(file.getName());
-				String filetype = FiletypeUtilities.getParseFile(fileType, fileFilter);
+				String filetype = FiletypeUtilities.getParseFile(file.getPath(), fileFilter);
 				importInfo.setFiletype(filetype);
 				importInfo.setState(DataConversionProperties.getString("string_change"));
 
@@ -762,6 +763,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 			listModel.addElement(DataConversionProperties.getString("String_ImportTEMSBuildingVectors"));
 			listModel.addElement(DataConversionProperties.getString("String_ImportFileGDBVectors"));
 			listModel.addElement(DataConversionProperties.getString("String_ImportGJB"));
+			listModel.addElement(DataConversionProperties.getString("String_ImportSimpleJson"));
 			list.setModel(listModel);
 			list.addListSelectionListener(new ListSelectionListener() {
 
@@ -827,6 +829,11 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 				result = new ImportSettingGJB();
 				((ImportSettingGJB) result).setImportEmptyDataset(true);
 				importInfo.setFiletype("GJB5068");
+				break;
+			case IMPORT_SIMPLEJSON:
+				result = new ImportSettingSimpleJson();
+				((ImportSettingSimpleJson) result).setImportEmptyDataset(true);
+				importInfo.setFiletype(DataConversionProperties.getString("String_ImportSimpleJson"));
 				break;
 			default:
 				break;
