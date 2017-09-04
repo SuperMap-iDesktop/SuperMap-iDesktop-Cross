@@ -28,7 +28,7 @@ public class FiletypeUtilities {
 			FileType.E00, FileType.MIF, FileType.TAB, FileType.MAPGIS, FileType.ModelOSG, FileType.Model3DS,
 			FileType.ModelDXF, FileType.ModelX, FileType.KML, FileType.KMZ, FileType.DWG, FileType.VCT, FileType.DBF,
 			FileType.GJB5068, FileType.DGN, FileType.TEMSVector, FileType.CSV, FileType.TEMSBuildingVector, UserDefineFileType.GPX, FileType.GEOJSON,
-			UserDefineFileType.EXCEL
+			FileType.SimpleJson, UserDefineFileType.EXCEL
 	};
 
 	/**
@@ -208,6 +208,8 @@ public class FiletypeUtilities {
 			result = FileType.TEMSVector;
 		} else if (alias.equals(DataConversionProperties.getString("String_FileTypeGEOJSON"))) {
 			result = FileType.GEOJSON;
+		} else if (alias.equals(DataConversionProperties.getString("String_FileTypeSimpleJson"))) {
+			result = FileType.SimpleJson;
 		} else if (alias.equals(DataConversionProperties.getString("String_FileTypeGPS"))) {
 			result = UserDefineFileType.GPX;
 		} else if (alias.equals(DataConversionProperties.getString("String_FileTypeExcel"))) {
