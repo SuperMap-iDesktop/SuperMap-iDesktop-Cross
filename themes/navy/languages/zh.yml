@@ -85,6 +85,7 @@ sidebar:
     MeasureGeographicDistributions: 度量地理分析
     Clusters: 聚类分析
     SpatialRelationshipModeling: 空间关系建模
+    AnalyzingPatterns: 分析模式
     Scene: 三维场景
     SceneDia: 场景概述
     FAQAll: FAQ

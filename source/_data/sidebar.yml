@@ -65,6 +65,7 @@ docs:
     MeasureGeographicDistributions: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/MeasureGeographicDistributions.html
     Clusters: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/Clusters.html
     SpatialRelationshipModeling: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/SpatialRelationshipModeling.html
+    AnalyzingPatterns: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/AnalyzingPatterns.html
   Scene:
     SceneDia: /SuperMap-iDesktop-Cross/docs/Scene/SceneDia.html
   FAQAll:
