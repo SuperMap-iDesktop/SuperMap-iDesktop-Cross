@@ -888,7 +888,8 @@ public class ImportParameterCreator implements IParameterCreator {
 				|| importSetting instanceof ImportSettingTEMSClutter || importSetting instanceof ImportSettingVCT
 				|| importSetting instanceof ImportSettingRAW || importSetting instanceof ImportSettingGJB
 				|| importSetting instanceof ImportSettingTEMSVector || importSetting instanceof ImportSettingTEMSBuildingVector
-				|| importSetting instanceof ImportSettingFileGDBVector || importSetting instanceof ImportSettingGeoJson) {
+				|| importSetting instanceof ImportSettingFileGDBVector || importSetting instanceof ImportSettingGeoJson
+				|| importSetting instanceof ImportSettingSimpleJson) {
 			parser.setEnumNames(new String[]{"NONE", "BYTE", "INT16", "INT24", "INT32"});
 			parser.setChName(new String[]{
 					EncodeTypeUtilities.toString(EncodeType.NONE),
