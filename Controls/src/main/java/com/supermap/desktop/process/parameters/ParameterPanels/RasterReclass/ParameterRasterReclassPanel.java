@@ -1,5 +1,7 @@
 package com.supermap.desktop.process.parameters.ParameterPanels.RasterReclass;
 
+import com.supermap.analyst.spatialanalyst.ReclassMappingTable;
+import com.supermap.analyst.spatialanalyst.ReclassPixelFormat;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -27,6 +29,7 @@ public class ParameterRasterReclassPanel extends SwingPanel{
 		initLayout();
 		initListener();
 		rasterReclassValuePanel.setDataset(parameterRasterReclass.getDataset());
+		rasterReclassValuePanel.initComponentsEnable();
 	}
 
 	private void initComponent(){
@@ -35,29 +38,37 @@ public class ParameterRasterReclassPanel extends SwingPanel{
 
 	private void initLayout(){
 		panel.setLayout(new GridBagLayout());
-		panel.add(rasterReclassValuePanel, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 0, 0, 0));
+		panel.add(rasterReclassValuePanel, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(0, 0, 0, 0));
 	}
 
 	private void initListener() {
 		parameterRasterReclass.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				System.out.println(1111);
 				if (evt.getPropertyName().equals(ParameterRasterReclass.FIELD_DATASET)) {
 					rasterReclassValuePanel.setDataset(parameterRasterReclass.getDataset());
 				}
-//				else if (evt.getPropertyName().equals(ParameterStatisticsFieldGroupForRarefyPoints.STATISTICS_FIELD_TYPE)){
-//					tableRarefyPoints.setAllStatisticsFieldType(parameterStatisticsFieldGroupForRarefyPoints.getStatisticsFieldType());
-//				}
 			}
 		});
+
+		rasterReclassValuePanel.addReclassValueChangeListener(this.reclassValueChange);
 	}
+
+	ReclassValueChange reclassValueChange=new ReclassValueChange() {
+		@Override
+		public void reclassMappingTableChange(ReclassMappingTable reclassMappingTable) {
+			parameterRasterReclass.setReclassMappingTable(reclassMappingTable);
+		}
+
+		@Override
+		public void reClassPixelFormat(ReclassPixelFormat reclassPixelFormat) {
+			parameterRasterReclass.setReclassPixelFormat(reclassPixelFormat);
+		}
+	};
 
 	@Override
 	public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
 		if (event.getFieldName().equals(ParameterRasterReclass.FIELD_DATASET)) {
-			System.out.println(parameterRasterReclass.getDataset().getName());
-
 			rasterReclassValuePanel.setDataset(parameterRasterReclass.getDataset());
 		}
 	}
