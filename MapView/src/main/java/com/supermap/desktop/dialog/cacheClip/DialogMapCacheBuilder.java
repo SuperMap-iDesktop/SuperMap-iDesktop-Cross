@@ -8,6 +8,7 @@ import com.supermap.data.processing.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.ScaleModel;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.mapview.MapCache.CacheProgressCallable;
@@ -1499,7 +1500,7 @@ public class DialogMapCacheBuilder extends SmDialog {
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci"));
 			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-					MapViewProperties.getString("String_OpenColorTable"), moduleName, "OpenMany");
+					ControlsProperties.getString("String_OpenColorTable"), moduleName, "OpenMany");
 		}
 		SmFileChoose smFileChoose = new SmFileChoose(moduleName);
 		int state = smFileChoose.showDefaultDialog();
