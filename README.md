@@ -1,7 +1,15 @@
 # 产品介绍 #
-        SuperMap iDesktop Cross 8C 是一款支持跨平台、全开源的桌面GIS应用与开发平台系统，可在Windows和Linux系统上运行，是国内首款可在Linux操作系统上运行的桌面GIS系统，实现了GIS数据在跨平台环境下的展示。SuperMap iDesktop Cross 8C是一款跨平台、全开源、可扩展的桌面GIS产品，也是超图新一代的开源GIS桌面产品。
-        SuperMap iDesktop Cross 8C是基于SuperMap iObjects Java 8C、Eclipse和OSGI等平台，通过Java语言开发的插件式、跨平台GIS 应用软件，提供了地图制图、数据管理、数据处理、数据分析等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。
-详情请访问 [Supermap 官网](http://www.supermap.com)
+ SuperMap iDesktop Cross 是一款支持跨平台、全开源的桌面GIS应用与开发平台系统，可在 Windows 和 Linux 系统上运行，是国内首款可在 Linux操作系统上运行的桌面GIS系统，实现了GIS数据在跨平台环境下的展示。SuperMap iDesktop Cross 是一款跨平台、全开源、可扩展的桌面GIS产品，也是超图新一代的开源GIS桌面产品。
+
+SuperMap iDesktop Cross 是基于SuperMap iObjects Java 8C、Eclipse和OSGI等平台，通过Java语言开发的插件式、跨平台GIS 应用软件，提供了地图制图、数据管理、数据处理、数据分析等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。
+
+更多详情请访问 [SuperMap 官方网站](http://www.supermap.com)
+
+# 源代码地址 #
+
+* [oschina](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)
+* [CSDN](https://code.csdn.net/SuperMapDesktop/supermap-idesktop-cross)
+* [GitHub](https://github.com/SuperMap-iDesktop/SuperMap-iDesktop-Cross)
 
 # 联机帮助 #
 SuperMap iDesktop Cross 的配套联机帮助采用基于 node.js 的静态网站工具 hexo 生成部署，并在 oschina 上托管联机帮助源代码，您可以基于该项目轻松扩展自己的联机帮助内容。同时同步推送至 Github pages 生成联机帮助项目主页，您可以在这里浏览查看最新的联机帮助内容。相关地址如下：
@@ -30,12 +38,6 @@ SuperMap iDesktop Cross 的配套联机帮助采用基于 node.js 的静态网�
 
 *  [Release版下载地址](http://support.supermap.com.cn/DownloadCenter/ProductPlatform.aspx)
 
-# 源代码地址 #
-
-* [OSChina地址](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)
-
-* [CSDN地址](https://code.csdn.net/SuperMapDesktop/supermap-idesktop-cross)
-
 # 目录结构 #
 * Assistant
     
@@ -44,10 +46,6 @@ SuperMap iDesktop Cross 的配套联机帮助采用基于 node.js 的静态网�
 * Configuration
     
     此文件夹用于存放桌面的一些启动参数。
-
-* ControlDisplay*
-    
-    可以在此插件内编写测试性代码，不需要时可删除。
 
 * Controls
     
@@ -102,8 +100,12 @@ SuperMap iDesktop Cross 的配套联机帮助采用基于 node.js 的静态网�
     地图浏览插件，如在地图上选择对象，漫游和刷新等。
 
 * NetServices
-    
+
     网络服务插件，如发布iServer服务。
+
+* Process
+
+	可视化建模核心类库，提供可视化建模使用和扩展的全部功能接口。
 
 * RealspaceEditor
     
@@ -133,17 +135,11 @@ SuperMap iDesktop Cross 的配套联机帮助采用基于 node.js 的静态网�
     
     此文件夹中存放了一些桌面用到的模板，如颜色方案，投影信息等。
     
-* TestSceneRefresh*
-    
-    可以在此插件内编写场景相关测试性代码，不需要时可删除。
-
-* UserPlugin_PathAnalyst*
-    
-    路径分析插件，用于路径分析，不需要可删除。
-    
 * WorkEnvironment
     
     用于存放桌面界面的布局，其中Default文件夹下存放的是windows平台用的布局环境，Linux文件夹下存放的是Linux平台使用的布局环境。
+
+* WorkflowView
 
 
 # 二次开发说明 #
