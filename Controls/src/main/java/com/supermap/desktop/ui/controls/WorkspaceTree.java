@@ -723,7 +723,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
 			TreeNodeData data = (TreeNodeData) currentNode.getUserObject();
 			Object userData = data.getData();
-			if (userData instanceof Workspace || userData instanceof Maps || userData instanceof Datasources || userData instanceof Layouts
+			//
+			if (userData instanceof Maps || userData instanceof Datasources || userData instanceof Layouts
 					|| userData instanceof Scenes || userData instanceof Resources || userData instanceof SymbolFillLibrary
 					|| userData instanceof SymbolLineLibrary || userData instanceof SymbolMarkerLibrary) {
 				return false;

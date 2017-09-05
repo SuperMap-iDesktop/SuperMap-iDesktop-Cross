@@ -710,7 +710,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
 				|| importSetting instanceof ImportSettingDWG || importSetting instanceof ImportSettingDXF
 				|| importSetting instanceof ImportSettingKML || importSetting instanceof ImportSettingKMZ
 				|| importSetting instanceof ImportSettingMAPGIS || importSetting instanceof ImportSettingDGN
-				|| importSetting instanceof ImportSettingGeoJson) {
+				|| importSetting instanceof ImportSettingGeoJson || importSetting instanceof ImportSettingSimpleJson) {
 			initComboboxEncodeType(false);
 			setDefaultImportSettingEncode();
 
@@ -724,9 +724,14 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
 			setDefaultLayout();
 			initTargetDatasetTypeForVector();
 			setFullsize();
-			if (importSetting instanceof ImportSettingGeoJson) {
+			if (importSetting instanceof ImportSettingGeoJson || importSetting instanceof ImportSettingSimpleJson) {
 				this.checkBoxFieldIndex.setVisible(false);
 				this.checkBoxSpatialIndex.setVisible(false);
+			}
+			// SimpleJson数据类型无法设置导入的数据集类型，数据集类型控件不做显示-yuanR2017.9.4
+			if (importSetting instanceof ImportSettingSimpleJson) {
+				this.labelDatasetType.setVisible(false);
+				this.comboBoxDatasetType.setVisible(false);
 			}
 		} else if (importSetting instanceof ImportSettingJPG || importSetting instanceof ImportSettingJP2 ||
 				importSetting instanceof ImportSettingPNG || importSetting instanceof ImportSettingBMP ||
