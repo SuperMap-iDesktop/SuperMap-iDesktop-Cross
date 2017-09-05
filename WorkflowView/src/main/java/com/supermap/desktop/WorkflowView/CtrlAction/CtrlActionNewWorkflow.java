@@ -36,7 +36,7 @@ public class CtrlActionNewWorkflow extends CtrlAction {
 				names.add(formManager.get(i).getText());
 			}
 		}
-		formWorkflow.setText(StringUtilities.getUniqueName(ControlsProperties.getString("String_WorkFlows"), names));
+		formWorkflow.setText(StringUtilities.getUniqueName(ControlsProperties.getString("String_Workflows"), names));
 		Application.getActiveApplication().getMainFrame().getFormManager().add(formWorkflow);
 	}
 
