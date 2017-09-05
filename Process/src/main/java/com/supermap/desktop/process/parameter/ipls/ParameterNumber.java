@@ -7,6 +7,8 @@ import com.supermap.desktop.utilities.StringUtilities;
 
 /**
  * @author XiaJT
+ * 增加“单位”属性
+ * 支持千分位的识别-yuanR2017.9.5
  */
 public class ParameterNumber extends ParameterTextField {
 
@@ -44,11 +46,20 @@ public class ParameterNumber extends ParameterTextField {
 					if (textFieldValue.lastIndexOf("-") > 0) {
 						return false;
 					}
-					for (int i = 0; i < textFieldValue.length(); i++) {
-						if (!(Character.isDigit(textFieldValue.charAt(i)) || textFieldValue.charAt(i) == '.' || textFieldValue.charAt(i) == '-')) {
+					// 判断用千分位表示的数字是否正确-yuanR2017.9.5
+					if (textFieldValue.contains(",")) {
+						String temp = DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(textFieldValue));
+						if (!temp.equals(textFieldValue)) {
 							return false;
 						}
 					}
+					for (int i = 0; i < textFieldValue.length(); i++) {
+						// 可识别千分位-yuanR2017.9.5
+						if (!(Character.isDigit(textFieldValue.charAt(i)) || textFieldValue.charAt(i) == ',' || textFieldValue.charAt(i) == '.' || textFieldValue.charAt(i) == '-')) {
+							return false;
+						}
+					}
+					textFieldValue = textFieldValue.replace(",", "");
 					Double aDouble = DoubleUtilities.stringToValue(textFieldValue);
 					if (isMinValueEnable && (aDouble < minValue || (!isIncludeMin && aDouble == minValue))) {
 						return false;
@@ -81,6 +92,17 @@ public class ParameterNumber extends ParameterTextField {
 				return backUpValue;
 			}
 		};
+	}
+
+	/**
+	 * 防止千分位的影响，做一下处理
+	 * yuanR
+	 *
+	 * @return
+	 */
+	@Override
+	public String getSelectedItem() {
+		return super.getSelectedItem().replace(",", "");
 	}
 
 
