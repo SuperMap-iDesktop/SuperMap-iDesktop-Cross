@@ -52,7 +52,9 @@ public class ParameterInputDataType extends ParameterCombine {
 		//udb文件
 		parameterDataSourceType.setSelectedItem("UDB");
 		parameterDataSourceType.setEnabled(false);
+		parameterDataSourcePath.setRequisite(true);
 		parameterDataSourcePath.setDefaultWarningValue("G:\\\\ProcessingData\\\\processing.udb");
+		parameterDatasetName.setRequisite(true);
 		parameterDatasetName.setDefaultWarningValue("newyorkPoint_P");
 		parameterSpark.setDefaultWarningValue("36");
 		ParameterCombine parameterCombine1 = new ParameterCombine();
@@ -62,13 +64,19 @@ public class ParameterInputDataType extends ParameterCombine {
 				parameterDatasetType,
 				parameterSpark);
 		//pg数据库
+		parameterSourceDatasource.setRequisite(true);
 		parameterSourceDatasource.setDescribe(ProcessProperties.getString("String_DataSourceName"));
+		parameterSourceDataset.setRequisite(true);
 		parameterSourceDataset.setDescribe(ProcessProperties.getString("String_DatasetName"));
 		parameterEngineType.setSelectedItem("POSTGRESQL");
 		parameterEngineType.setEnabled(false);
+		parameterTextFieldAddress.setRequisite(true);
 		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+		parameterDataBaseName.setRequisite(true);
 		parameterDataBaseName.setDefaultWarningValue("supermap");
+		parameterTextFieldUserName.setRequisite(true);
 		parameterTextFieldUserName.setDefaultWarningValue("postgres");
+		parameterTextFieldPassword.setRequisite(true);
 		parameterTextFieldPassword.setSelectedItem("supermap");
 		ParameterCombine parameterCombine2 = new ParameterCombine();
 		parameterCombine2.addParameters(

@@ -61,16 +61,24 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		initConstraint();
 	}
 
-	private void initComponents() {parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+	private void initComponents() {
+		parameterTextFieldAddress.setRequisite(true);
+		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+		parameterDataBaseName.setRequisite(true);
 		parameterDataBaseName.setDefaultWarningValue("supermap");
+		parameterTextFieldUserName.setRequisite(true);
 		parameterTextFieldUserName.setDefaultWarningValue("postgres");
+		parameterTextFieldPassword.setRequisite(true);
 		parameterTextFieldPassword.setSelectedItem("supermap");
+		parameterSummaryType.setRequisite(true);
 		parameterSummaryType.setItems(new ParameterDataNode(ProcessProperties.getString("String_summaryMesh"), "SUMMARYMESH"), new ParameterDataNode(ProcessProperties.getString("String_summaryRegion"), "SUMMARYREGION"));
+		parameterMeshType.setRequisite(true);
 		parameterMeshType.setItems(new ParameterDataNode(ProcessProperties.getString("String_QuadrilateralMesh"), "0"), new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1"));
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
 		parameterStatisticMode.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
 		parameterStatisticMode1.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
 		parameterMeshSize.setDefaultWarningValue("100");
+		parameterMeshSize.setRequisite(true);
 		parameterMeshSizeUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Yard"), "Yard"),
@@ -80,7 +88,9 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterStandardFields.setSelectedItem(false);
 		parameterWeightedFields.setSelectedItem(false);
 		parametersumShape.setSelectedItem(true);
+		parameterBigDatasourceDatasource.setRequisite(true);
 		parameterBigDatasourceDatasource.setDescribe(ControlsProperties.getString("String_Label_ResultDatasource"));
+		parameterSingleDataset.setRequisite(true);
 		parameterSingleDataset.setDescribe(ProcessProperties.getString("String_RegionDataset"));
 	}
 

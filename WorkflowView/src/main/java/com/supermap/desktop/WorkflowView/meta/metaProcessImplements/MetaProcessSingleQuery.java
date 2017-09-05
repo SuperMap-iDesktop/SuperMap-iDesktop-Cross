@@ -50,14 +50,21 @@ public class MetaProcessSingleQuery extends MetaProcess {
 
 	private void initComponents() {
 		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+		parameterTextFieldAddress.setRequisite(true);
 		parameterDataBaseName.setDefaultWarningValue("supermap");
+		parameterDataBaseName.setRequisite(true);
 		parameterTextFieldUserName.setDefaultWarningValue("postgres");
+		parameterTextFieldUserName.setRequisite(true);
 		parameterTextFieldPassword.setSelectedItem("supermap");
+		parameterTextFieldPassword.setRequisite(true);
 		parameterQueryDatasource = new ParameterBigDatasourceDatasource();
+		parameterQueryDatasource.setRequisite(true);
 		parameterQueryDatasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
 		parameterQueryDataset = new ParameterSingleDataset();
+		parameterQueryDataset.setRequisite(true);
 		parameterQueryDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 		parameterQueryTypeComboBox = new ParameterComboBox(CoreProperties.getString("String_AnalystType"));
+		parameterQueryTypeComboBox.setRequisite(true);
 		parameterQueryTypeComboBox.setItems(
 				new ParameterDataNode(CoreProperties.getString("String_SpatialQuery_ContainCHS"), "CONTAIN"),
 				new ParameterDataNode(CoreProperties.getString("String_SpatialQuery_CrossCHS"), "CROSS"),
