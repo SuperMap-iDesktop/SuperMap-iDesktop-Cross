@@ -21,6 +21,9 @@ import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 /**
  * Created By Chens on 2017/8/29 0029
  */
@@ -40,6 +43,7 @@ public class MetaProcessFlowDirection extends MetaProcessGridAnalyst {
 		initParameters();
 		initParameterConstraint();
 		initParametersState();
+		registerListener();
 	}
 
 	private void initParameters() {
@@ -48,8 +52,8 @@ public class MetaProcessFlowDirection extends MetaProcessGridAnalyst {
 		checkBoxCreateDrop = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_CreateDrop"));
 		checkBoxForceOut = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_ForceOut"));
 		resultDatasource = new ParameterDatasource();
-		directionGrid = new ParameterTextField(ProcessOutputResultProperties.getString("String_Result_DirectionGrid"));
-		dropGrid = new ParameterTextField(ProcessOutputResultProperties.getString("String_Result_DropGrid"));
+		directionGrid = new ParameterTextField(ProcessProperties.getString("String_Label_DirectionGrid"));
+		dropGrid = new ParameterTextField(ProcessProperties.getString("String_Label_DropGrid"));
 
 		ParameterCombine sourceCombine = new ParameterCombine();
 		sourceCombine.setDescribe(INPUT_DATA);
@@ -70,7 +74,8 @@ public class MetaProcessFlowDirection extends MetaProcessGridAnalyst {
 		EqualDatasourceConstraint constraintSource = new EqualDatasourceConstraint();
 		constraintSource.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		constraintSource.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-		DatasourceConstraint.getInstance().constrained(resultDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(directionGrid, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(dropGrid, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void initParametersState() {
@@ -81,6 +86,16 @@ public class MetaProcessFlowDirection extends MetaProcessGridAnalyst {
 		}
 		directionGrid.setSelectedItem("result_directionGrid");
 		dropGrid.setSelectedItem("result_dropGrid");
+		checkBoxCreateDrop.setSelectedItem(true);
+	}
+
+	private void registerListener() {
+		checkBoxCreateDrop.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				dropGrid.setEnabled(Boolean.valueOf(checkBoxCreateDrop.getSelectedItem().toString()));
+			}
+		});
 	}
 
 	@Override

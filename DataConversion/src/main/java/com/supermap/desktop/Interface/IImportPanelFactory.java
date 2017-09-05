@@ -11,20 +11,20 @@ import java.util.ArrayList;
  * 导入界面制造工厂接口
  */
 public interface IImportPanelFactory {
-    /**
-     * 创建导入信息panel
-     *
-     * @param owner
-     * @param importInfo
-     * @return
-     */
-    IPanelImport createPanelImport(JDialog owner, ImportInfo importInfo);
+	/**
+	 * 创建导入信息panel
+	 *
+	 * @param owner
+	 * @param importInfo
+	 * @return
+	 */
+	IPanelImport createPanelImport(JDialog owner, ImportInfo importInfo);
 
-    /**
-     * 创建导入信息panel
-     *
-     * @param panelImports
-     * @return
-     */
-    IPanelImport createPanelImport(ArrayList<PanelImport> panelImports);
+	/**
+	 * 创建导入信息panel
+	 *
+	 * @param panelImports
+	 * @return
+	 */
+	IPanelImport createPanelImport(ArrayList<PanelImport> panelImports);
 }

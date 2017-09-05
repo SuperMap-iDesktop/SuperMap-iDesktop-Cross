@@ -34,8 +34,9 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 				new String[]{CommonProperties.getString("String_Field_Caption"),
 						CommonProperties.getString("String_FieldName"),
 						CommonProperties.getString("String_State")} :
-				new String[]{CommonProperties.getString("String_FieldName"),
-						CommonProperties.getString("String_State")};
+				new String[]{CommonProperties.getString("String_FieldName")
+//						, CommonProperties.getString("String_State")
+		};
 	}
 
 	@Override
@@ -101,7 +102,7 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 	public List<DatasetInfo> getTagValueAt(int[] tag) {
 		ArrayList<DatasetInfo> result = new ArrayList<>();
 		for (int i = 0; i < tag.length; i++) {
-			result.add(datasetInfos.get(i));
+			result.add(datasetInfos.get(tag[i]));
 		}
 		return result;
 	}
@@ -124,9 +125,9 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 			if (columnIndex == COLUMN_VECTOR_NAME) {
 				return datasetInfo.getName();
 			}
-			if (columnIndex == COLUMN_VECTOR_STATE) {
-				return datasetInfo.getState();
-			}
+//			if (columnIndex == COLUMN_VECTOR_STATE) {
+//				return datasetInfo.getState();
+//			}
 		}
 		return "";
 	}
@@ -148,9 +149,9 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 			if (columnIndex == COLUMN_VECTOR_NAME) {
 				datasetInfos.get(rowIndex).setName((String) aValue);
 			}
-			if (columnIndex == COLUMN_VECTOR_STATE) {
-				datasetInfos.get(rowIndex).setState((String) aValue);
-			}
+//			if (columnIndex == COLUMN_VECTOR_STATE) {
+//				datasetInfos.get(rowIndex).setState((String) aValue);
+//			}
 		}
 	}
 

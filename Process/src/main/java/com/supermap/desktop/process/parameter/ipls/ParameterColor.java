@@ -35,7 +35,7 @@ public class ParameterColor extends AbstractParameter implements ISelectionParam
 		if (value instanceof Color) {
 			Object oldValue = this.value;
 			this.value = (Color) value;
-			firePropertyChangeListener(new PropertyChangeEvent(this,"value", oldValue, this.value));
+			firePropertyChangeListener(new PropertyChangeEvent(this, "value", oldValue, this.value));
 		}
 	}
 
@@ -58,7 +58,7 @@ public class ParameterColor extends AbstractParameter implements ISelectionParam
 
 	}
 
-	public Color getInitColor(){
+	public Color getInitColor() {
 		return this.value;
 	}
 

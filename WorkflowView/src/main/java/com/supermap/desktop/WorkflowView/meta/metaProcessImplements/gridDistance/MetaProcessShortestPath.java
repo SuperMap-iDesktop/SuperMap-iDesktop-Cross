@@ -116,14 +116,6 @@ public class MetaProcessShortestPath extends MetaProcessGridAnalyst {
 				this.directionDataset.setSelectedItem(dataset);
 			}
 		}
-//		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
-//		if (datasetGrid != null) {
-//			this.sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
-//			this.sourceDataset.setSelectedItem(datasetGrid);
-//
-//			this.resultDataset.setResultDatasource(datasetGrid.getDatasource());
-//			this.resultDataset.setSelectedItem(datasetGrid.getDatasource().getDatasets().getAvailableDatasetName("result_ShortestPath"));
-//		}
 		this.parameterRadioButton.setSelectedItem(parameterDataNodeCell);
 	}
 

@@ -54,7 +54,7 @@ public class TabularTableModel extends AbstractTableModel {
 		if (this.recordset == null) {
 			return null;
 		}
-		return fieldInfos.get(getFieldIndex(column)).getName();
+		return fieldInfos.get(getFieldIndex(column)).getCaption();
 	}
 
 	private int getFieldIndex(int column) {
@@ -173,7 +173,7 @@ public class TabularTableModel extends AbstractTableModel {
 		if (recordset == null || recordset.getDataset().isReadOnly() || recordset.isClosed()) {
 			return false;
 		}
-		if (fieldInfosDataset.get(getColumnName(column)) == null) {
+		if (fieldInfosDataset.get(column) == null) {
 			return false;
 		}
 		boolean flag = true;

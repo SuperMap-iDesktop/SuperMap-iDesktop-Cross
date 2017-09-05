@@ -120,7 +120,7 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 		colorsCellRenderer = new ColorsCellRenderer(this);
 		ColorSchemeManager.getColorSchemeManager().addColorSchemeManagerChangedListener(colorSchemeManagerChangedListener);
 		initComponents();
-        setComponentName();
+		setComponentName();
 		initLayout();
 		initListeners();
 		initComponentState();
@@ -169,17 +169,17 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 		panelShowConstraints = new GridBagConstraintsHelper(1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER);
 	}
 
-    /**
-     * 初始化控件名称
-     */
-    private void setComponentName() {
-        ComponentUIUtilities.setName(this.buttonPopup, "ColorsComboBox_buttonPopup");
-        ComponentUIUtilities.setName(this.panelShow, "ColorsComboBox_panelShow");
-        ComponentUIUtilities.setName(this.popupMenuColorScheme, "ColorsComboBox_popupMenuColorScheme");
-        ComponentUIUtilities.setName(this.textFieldSearch, "ColorsComboBox_textFieldSearch");
-        ComponentUIUtilities.setName(this.treeComboBox, "ColorsComboBox_treeComboBox");
-        ComponentUIUtilities.setName(this.listColors, "ColorsComboBox_listColors");
-    }
+	/**
+	 * 初始化控件名称
+	 */
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.buttonPopup, "ColorsComboBox_buttonPopup");
+		ComponentUIUtilities.setName(this.panelShow, "ColorsComboBox_panelShow");
+		ComponentUIUtilities.setName(this.popupMenuColorScheme, "ColorsComboBox_popupMenuColorScheme");
+		ComponentUIUtilities.setName(this.textFieldSearch, "ColorsComboBox_textFieldSearch");
+		ComponentUIUtilities.setName(this.treeComboBox, "ColorsComboBox_treeComboBox");
+		ComponentUIUtilities.setName(this.listColors, "ColorsComboBox_listColors");
+	}
 
 	private void initLayout() {
 		panelShow.setLayout(new GridBagLayout());
@@ -412,7 +412,7 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 		}
 		return null;
 	}
-	
+
 
 	public void setSelectedItem(Colors colors) {
 		this.currentColors = colors;
@@ -523,9 +523,9 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 		}
 	}
 
-    public JPopupMenu getPopupMenuColorScheme() {
-        return popupMenuColorScheme;
-    }
+	public JPopupMenu getPopupMenuColorScheme() {
+		return popupMenuColorScheme;
+	}
 
 	class ColorsCellRenderer implements ListCellRenderer {
 		private static final long serialVersionUID = 1L;

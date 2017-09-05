@@ -65,6 +65,13 @@ public class RoundProgressBar extends JPanel {
 					|| percentLoc == 0 && isReversed) {
 				isReversed = !isReversed;
 			}
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					repaint();
+				}
+			});
 		}
 	};
 
@@ -99,7 +106,7 @@ public class RoundProgressBar extends JPanel {
 		graphics2d.setColor(foregroundColor);
 
 		if (isIndeterminate) {
-			int progressWidth = getWidth() / 4;
+			int progressWidth = getWidth() / 3;
 			g.drawRoundRect((int) (x + (getWidth() - progressWidth - 20) * ((percentLoc + 0.0) / 100)), y, progressWidth, 8, 8, 8);
 		} else if (progress > 0) {
 			graphics2d.drawRoundRect(x, y, (int) ((getWidth() - 20) * ((progress + 0.0) / (getMaximumProgress() - getMinimumProgress()))), 8, 8, 8);
@@ -190,7 +197,7 @@ public class RoundProgressBar extends JPanel {
 
 		this.isIndeterminate = true;
 		this.updateIndeterminateTimer = new Timer();
-		this.updateIndeterminateTimer.schedule(this.updateIndeterminateTimerTask, 100, 10);
+		this.updateIndeterminateTimer.schedule(this.updateIndeterminateTimerTask, 100, 15);
 	}
 
 	public void stopUpdateProgressIndeterminate() {

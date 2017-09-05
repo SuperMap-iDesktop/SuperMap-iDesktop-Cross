@@ -393,7 +393,7 @@ public class DialogCacheOperationView extends SmDialog {
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci");
 			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
-					MapViewProperties.getString("String_OpenColorTable"), moduleName, "OpenOne");
+					ControlsProperties.getString("String_OpenColorTable"), moduleName, "OpenOne");
 		}
 		SmFileChoose smFileChoose = new SmFileChoose(moduleName);
 		this.fileChooserControlSciFileForUpdate.setFileChooser(smFileChoose);
@@ -404,7 +404,7 @@ public class DialogCacheOperationView extends SmDialog {
 		if (!SmFileChoose.isModuleExist(moduleNameForResume)) {
 			String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci");
 			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
-					MapViewProperties.getString("String_OpenColorTable"), moduleNameForResume, "OpenOne");
+					ControlsProperties.getString("String_OpenColorTable"), moduleNameForResume, "OpenOne");
 		}
 		SmFileChoose smFileChooseForResume = new SmFileChoose(moduleNameForResume);
 		this.fileChooserControlSciFileForResume.setFileChooser(smFileChooseForResume);

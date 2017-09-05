@@ -129,7 +129,7 @@ public class MetaProcessCommonStatistics extends MetaProcessGridAnalyst {
 			StatisticsAnalyst.addSteppedListener(steppedListener);
 			DatasetGrid result = null;
 			if (commonStatisticCombine.isValueChosen()) {
-				double value = commonStatisticCombine.getValue();
+				double value = (double) commonStatisticCombine.getSelectedItem();
 				StatisticsAnalyst.commonStatistics(src, value, type, isIgnore, resultDataset.getResultDatasource(), datasetName);
 			} else {
 				ArrayList<Dataset> datasetArrayList = commonStatisticCombine.getDatasets();

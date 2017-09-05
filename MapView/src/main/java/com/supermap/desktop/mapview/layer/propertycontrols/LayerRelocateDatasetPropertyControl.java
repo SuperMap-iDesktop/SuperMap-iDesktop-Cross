@@ -1,20 +1,7 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
-import com.supermap.data.DatasourceClosedEvent;
-import com.supermap.data.DatasourceClosedListener;
-import com.supermap.data.DatasourceClosingEvent;
-import com.supermap.data.DatasourceClosingListener;
-import com.supermap.data.DatasourceCreatedEvent;
-import com.supermap.data.DatasourceCreatedListener;
-import com.supermap.data.DatasourceOpenedEvent;
-import com.supermap.data.DatasourceOpenedListener;
-import com.supermap.data.Datasources;
+import com.supermap.data.*;
 import com.supermap.data.Enum;
-import com.supermap.data.WorkspaceClosingEvent;
-import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.DefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -44,7 +31,7 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 
 	private boolean itemListenerLock = false;
 
-	 private WorkspaceClosingListener workspaceClosingListener = new WorkspaceClosingListener() {
+	private WorkspaceClosingListener workspaceClosingListener = new WorkspaceClosingListener() {
 		@Override
 		public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
 			Application.getActiveApplication().getWorkspace().getDatasources().removeClosingListener(datasourceClosingEvent);
@@ -61,7 +48,7 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 		}
 	};
 
-	private DatasourceClosingListener datasourceClosingEvent = new DatasourceClosingListener(){
+	private DatasourceClosingListener datasourceClosingEvent = new DatasourceClosingListener() {
 		@Override
 		public void datasourceClosing(DatasourceClosingEvent datasourceClosingEvent) {
 			try {
@@ -137,12 +124,14 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 		// @formatter:on
 		setComponentName();
 	}
+
 	private void setComponentName() {
 		ComponentUIUtilities.setName(this.labelDatasource, "LayerRelocateDatasetPropertyControl_labelDatasource");
 		ComponentUIUtilities.setName(this.labelDataset, "LayerRelocateDatasetPropertyControl_labelDataset");
 		ComponentUIUtilities.setName(this.comboBoxDatasource, "LayerRelocateDatasetPropertyControl_comboBoxDatasource");
 		ComponentUIUtilities.setName(this.comboBoxDataset, "LayerRelocateDatasetPropertyControl_comboBoxDataset");
 	}
+
 	@Override
 	protected void initializeResources() {
 		((TitledBorder) this.getBorder()).setTitle(MapViewProperties.getString("String_FormRelateDataset_Title"));
@@ -151,16 +140,19 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 	}
 
 	private DatasetType[] getSupportDatasetTypes() {
-		if (getLayerPropertyModel().getDataset() != null) {
-			return new DatasetType[]{getLayerPropertyModel().getDataset().getType()};
-		}
-
 		List<DatasetType> datasetTypeList = new ArrayList<>();
-		Enum[] enums = DatasetType.getEnums(DatasetType.class);
-		for (Enum anEnum : enums) {
-			if (anEnum != DatasetType.TABULAR && anEnum != DatasetType.TOPOLOGY) {
-				datasetTypeList.add((DatasetType) anEnum);
+		try {
+			if (getLayerPropertyModel().getDataset() != null) {
+				return new DatasetType[]{getLayerPropertyModel().getDataset().getType()};
 			}
+			Enum[] enums = DatasetType.getEnums(DatasetType.class);
+			for (Enum anEnum : enums) {
+				if (anEnum != DatasetType.TABULAR && anEnum != DatasetType.TOPOLOGY) {
+					datasetTypeList.add((DatasetType) anEnum);
+				}
+			}
+		} catch (Exception e) {
+			//数据集释放处理
 		}
 		return (DatasetType[]) datasetTypeList.toArray(new DatasetType[datasetTypeList.size()]);
 	}

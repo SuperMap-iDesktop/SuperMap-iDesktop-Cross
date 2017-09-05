@@ -1,22 +1,9 @@
 package com.supermap.desktop.controls.property;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetImage;
-import com.supermap.data.DatasetImageCollection;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.Workspace;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IProperty;
-import com.supermap.desktop.controls.property.dataset.DatasetPrjCoordSysHandle;
-import com.supermap.desktop.controls.property.dataset.DatasetPropertyControl;
-import com.supermap.desktop.controls.property.dataset.GridPropertyControl;
-import com.supermap.desktop.controls.property.dataset.ImageCollectionPropertyControl;
-import com.supermap.desktop.controls.property.dataset.ImagePropertyControl;
-import com.supermap.desktop.controls.property.dataset.RecordsetPropertyControl;
-import com.supermap.desktop.controls.property.dataset.VectorPropertyControl;
+import com.supermap.desktop.controls.property.dataset.*;
 import com.supermap.desktop.controls.property.datasource.DatasourceInfoControl;
 import com.supermap.desktop.controls.property.datasource.DatasourcePrjCoordSysHandle;
 import com.supermap.desktop.controls.property.datasource.DatasourcePropertyControl;
@@ -34,6 +21,7 @@ public class WorkspaceTreeDataPropertyFactory {
 	private static DatasourceInfoControl datasourceInfoControl;
 	private static PrjCoordSysPropertyControl prjCoordSysPropertyControl;
 	private static DatasetPropertyControl datasetPropertyControl;
+	private static VectorCollectionPropertyControl vectorCollectionPropertyControl;
 	private static VectorPropertyControl vectorPropertyControl;
 	private static GridPropertyControl gridPropertyControl;
 	private static ImagePropertyControl imagePropertyControl;
@@ -74,8 +62,12 @@ public class WorkspaceTreeDataPropertyFactory {
 		propertiesTemp.add(getDatasetPropertyControl(dataset));
 		if (dataset instanceof DatasetVector) {
 			DatasetVector datasetVector = (DatasetVector) dataset;
-			propertiesTemp.add(getVectorPropertyControl(datasetVector));
-			propertiesTemp.add(getRecordsetPropertyControl(datasetVector));
+			if (dataset.getType() == DatasetType.VECTORCOLLECTION) {
+				propertiesTemp.add(getVectorCollectionPropertyControl(datasetVector));
+			} else {
+				propertiesTemp.add(getVectorPropertyControl(datasetVector));
+				propertiesTemp.add(getRecordsetPropertyControl(datasetVector));
+			}
 
 		} else if (dataset instanceof DatasetGrid) {
 			propertiesTemp.add(getGridPropertyControl((DatasetGrid) dataset));
@@ -93,6 +85,17 @@ public class WorkspaceTreeDataPropertyFactory {
 			propertiesTemp.add(getPrjCoordSysPropertyControl(new DatasetPrjCoordSysHandle(dataset), covert));
 		}
 		return propertiesTemp;
+	}
+
+	private static IProperty getVectorCollectionPropertyControl(DatasetVector datasetVector) {
+		if (vectorCollectionPropertyControl == null) {
+			vectorCollectionPropertyControl = new VectorCollectionPropertyControl(datasetVector);
+		} else {
+			vectorCollectionPropertyControl.setDatasetVector(datasetVector);
+		}
+
+		ComponentUIUtilities.setName(vectorCollectionPropertyControl, "WorkspaceTreeDataPropertyFactory_vectorCollectionPropertyControl");
+		return vectorCollectionPropertyControl;
 	}
 
 	private static WorkspacePropertyControl getWorkspacePropertyControl(Workspace workspace) {

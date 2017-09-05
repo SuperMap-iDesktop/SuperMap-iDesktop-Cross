@@ -130,11 +130,13 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 		if (chunk.isIndeterminate()) {
 			this.progressBar.updateProgressIndeterminate();
 			this.labelMessage.setText(chunk.getMessage());
+			progressBar.setDrawString(false);
 		} else {
 			this.progressBar.stopUpdateProgressIndeterminate();
 			this.progressBar.setProgress(chunk.getPercent());
 			this.labelMessage.setText(chunk.getMessage());
 			this.labelRemaintime.setText(chunk.getRemainTime());
+			progressBar.setDrawString(true);
 		}
 	}
 

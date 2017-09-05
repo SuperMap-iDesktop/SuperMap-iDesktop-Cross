@@ -21,7 +21,7 @@ import java.util.ArrayList;
 /**
  * Created by yuanR on 2017/7/27 0027.
  * 点属性->面属性
- * 待优化内容：追加点属性到面属性之前需要手动创建追加字段，其创建的字段类型都为文本，之后修改为创建的字段类型和点数据字段类型相同。
+ * 待优化内容：追加点属性到面属性之前需要手动创建追加字段，其创建的字段类型都为文本，之后修改为创建的字段类型和点数据字段类型相同（yuanR已优化）。
  */
 public class MetaProcessTabularPointToRegion extends MetaProcessTypeConversion {
 
@@ -104,14 +104,24 @@ public class MetaProcessTabularPointToRegion extends MetaProcessTypeConversion {
 			FieldInfos tragetFieldInfos = targetDataset.getFieldInfos();
 			ArrayList<FieldInfo> newFielInfos = new ArrayList();
 			for (int i = 0; i < sourceFieldInfos.getCount(); i++) {
-				for (int j = i; j < tragetFieldInfos.getCount(); j++) {
-					if (!sourceFieldInfos.get(i).isSystemField() && !tragetFieldInfos.get(j).isSystemField()) {
-						String sourceFielName = sourceFieldInfos.get(i).getName();
-						String tragetFielName = tragetFieldInfos.get(j).getName();
-						if (!sourceFielName.contains(tragetFielName)) {
-							newFielInfos.add(sourceFieldInfos.get(i));
-						}
+				if (sourceFieldInfos.get(i).isSystemField()) {
+					continue;
+				}
+				String sourceFielName = sourceFieldInfos.get(i).getName();
+				Boolean isAdd = true;
+				for (int j = 0; j < tragetFieldInfos.getCount(); j++) {
+					if (tragetFieldInfos.get(j).isSystemField()) {
+						continue;
 					}
+					String tragetFielName = tragetFieldInfos.get(j).getName();
+					if (sourceFielName.equals(tragetFielName)) {
+						// 目标数据集中含有与源数据集相同的字段名，不进行添加，结束循环
+						isAdd = false;
+						break;
+					}
+				}
+				if (isAdd) {
+					newFielInfos.add(sourceFieldInfos.get(i));
 				}
 			}
 

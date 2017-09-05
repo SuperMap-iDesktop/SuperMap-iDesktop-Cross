@@ -12,65 +12,68 @@ import java.util.ArrayList;
  */
 public class PanelExportTransform extends JPanel implements IPanelModel {
 
-    public ExportFileInfo exportsFileInfo;
-    public ArrayList<PanelExportTransform> panels;
-    public int layoutType;
+	public ExportFileInfo exportsFileInfo;
+	public ArrayList<PanelExportTransform> panels;
+	public int layoutType;
 
-    public PanelExportTransform(ExportFileInfo exportsFileInfo) {
-        this.exportsFileInfo = exportsFileInfo;
-        initComponents();
-        initLayerout();
-        initResources();
-    }
+	public PanelExportTransform(ExportFileInfo exportsFileInfo) {
+		this.exportsFileInfo = exportsFileInfo;
+		initComponents();
+		initLayerout();
+		initResources();
+	}
 
-    public void dispose() {
-        if (null != exportsFileInfo) {
-            exportsFileInfo = null;
-        }
-        if (null != panels) {
-            panels = null;
-        }
-    }
-    public PanelExportTransform(ArrayList<PanelExportTransform> panels, int layoutType) {
-        this.panels = panels;
-        this.layoutType = layoutType;
-        initComponents();
-        initLayerout();
-        initResources();
-        setComponentName();
-    }
-    public void setComponentName() {
+	public void dispose() {
+		if (null != exportsFileInfo) {
+			exportsFileInfo = null;
+		}
+		if (null != panels) {
+			panels = null;
+		}
+	}
 
-    }
-    @Override
-    public void initComponents() {
+	public PanelExportTransform(ArrayList<PanelExportTransform> panels, int layoutType) {
+		this.panels = panels;
+		this.layoutType = layoutType;
+		initComponents();
+		initLayerout();
+		initResources();
+		setComponentName();
+	}
 
-    }
+	public void setComponentName() {
 
-    @Override
-    public void initLayerout() {
+	}
 
-    }
+	@Override
+	public void initComponents() {
 
-    @Override
-    public void registEvents() {
+	}
 
-    }
+	@Override
+	public void initLayerout() {
 
-    @Override
-    public void removeEvents() {
+	}
 
-    }
+	@Override
+	public void registEvents() {
 
-    public void setUnEnabled() {
+	}
 
-    }
+	@Override
+	public void removeEvents() {
 
-    public void initResources() {
+	}
 
-    }
+	public void setUnEnabled() {
 
-    public ExportFileInfo getExportsFileInfo() {
-        return exportsFileInfo;
-    }
+	}
+
+	public void initResources() {
+
+	}
+
+	public ExportFileInfo getExportsFileInfo() {
+		return exportsFileInfo;
+	}
 }

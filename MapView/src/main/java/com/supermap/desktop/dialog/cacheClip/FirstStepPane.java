@@ -13,6 +13,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ScaleModel;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -1312,7 +1313,7 @@ public class FirstStepPane extends JPanel implements IState {
 			if (!SmFileChoose.isModuleExist(moduleName)) {
 				String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci");
 				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-						MapViewProperties.getString("String_SaveAsFile"), moduleName, "SaveOne");
+						ControlsProperties.getString("String_SaveAsFile"), moduleName, "SaveOne");
 			}
 			SmFileChoose smFileChoose = new SmFileChoose(moduleName);
 			smFileChoose.setSelectedFile(new File(MapViewProperties.getString("MapCache_CacheConfigFileIsNotbrackets")));
@@ -1345,7 +1346,7 @@ public class FirstStepPane extends JPanel implements IState {
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci"));
 			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-					MapViewProperties.getString("String_OpenColorTable"), moduleName, "OpenMany");
+					ControlsProperties.getString("String_OpenColorTable"), moduleName, "OpenMany");
 		}
 		SmFileChoose smFileChoose = new SmFileChoose(moduleName);
 		int state = smFileChoose.showDefaultDialog();
