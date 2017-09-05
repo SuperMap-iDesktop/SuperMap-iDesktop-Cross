@@ -30,7 +30,7 @@ import java.util.concurrent.CancellationException;
 
 /**
  * Created by caolp on 2017-08-05.
- * 范围汇总分析
+ * 区域汇总分析
  */
 public class MetaProcessSummaryRegion extends MetaProcess {
 	private ParameterIServerLogin parameterIServerLogin = new ParameterIServerLogin();
@@ -85,6 +85,8 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	}
 
 	private void initComponentState() {
+		parameterInputDataType.parameterDataInputWay.removeAllItems();
+		parameterInputDataType.parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PGDataBase"), "2"));
 		parameterInputDataType.setSupportDatasetType(DatasetType.LINE, DatasetType.REGION);
 		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.LINE, DatasetType.REGION);
 		if (defaultBigDataStoreDataset != null) {
