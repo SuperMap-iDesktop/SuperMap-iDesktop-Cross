@@ -1,12 +1,24 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst;
 
-import com.supermap.analyst.spatialanalyst.*;
+import com.supermap.analyst.spatialanalyst.GridStatisticsMode;
+import com.supermap.analyst.spatialanalyst.NeighbourShape;
+import com.supermap.analyst.spatialanalyst.NeighbourShapeAnnulus;
+import com.supermap.analyst.spatialanalyst.NeighbourShapeCircle;
+import com.supermap.analyst.spatialanalyst.NeighbourShapeRectangle;
+import com.supermap.analyst.spatialanalyst.NeighbourShapeType;
+import com.supermap.analyst.spatialanalyst.NeighbourShapeWedge;
+import com.supermap.analyst.spatialanalyst.NeighbourStatisticsAnnulusParameter;
+import com.supermap.analyst.spatialanalyst.NeighbourStatisticsCircleParameter;
+import com.supermap.analyst.spatialanalyst.NeighbourStatisticsParameter;
+import com.supermap.analyst.spatialanalyst.NeighbourStatisticsRectangleParameter;
+import com.supermap.analyst.spatialanalyst.NeighbourStatisticsWedgeParameter;
+import com.supermap.analyst.spatialanalyst.StatisticsAnalyst;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
-import com.supermap.desktop.WorkflowView.meta.MetaProcess;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridAnalyst;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
@@ -14,7 +26,14 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterShapeType;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.GridStatisticsModeUtilities;
@@ -22,7 +41,7 @@ import com.supermap.desktop.utilities.GridStatisticsModeUtilities;
 /**
  * Created By Chens on 2017/8/15 0015
  */
-public class MetaProcessNeighbourStatistics extends MetaProcess {
+public class MetaProcessNeighbourStatistics extends MetaProcessGridAnalyst {
 	private final static String INPUT_DATA = SOURCE_PANEL_DESCRIPTION;
 	private final static String OUTPUT_DATA = "NeighbourStatisticsResult";
 
@@ -111,7 +130,7 @@ public class MetaProcessNeighbourStatistics extends MetaProcess {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean childExecute() {
 		boolean isSuccessful = false;
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
