@@ -3,10 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridDistanc
 import com.supermap.analyst.spatialanalyst.DistanceAnalyst;
 import com.supermap.analyst.spatialanalyst.DistanceAnalystParameter;
 import com.supermap.analyst.spatialanalyst.DistanceAnalystResult;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetType;
-import com.supermap.data.Rectangle2D;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -23,6 +20,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
 
 /**
  * Created by lixiaoyao on 2017/8/7.
@@ -116,13 +114,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 			this.resultDirectionDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_Direction"));
 			this.resultAllocationDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_Allocation"));
 
-			Rectangle2D bounds = dataset.getBounds();
-			double maxEdge = bounds.getHeight();
-			if (bounds.getWidth() > bounds.getHeight()) {
-				maxEdge = bounds.getWidth();
-			}
-			double cellSize = maxEdge / 500;
-			this.parameterNumberResolvingPower.setSelectedItem(cellSize);
+			parameterNumberResolvingPower.setSelectedItem(convertToDecimal(updateCellSize(dataset, (DatasetGrid) costDataset.getSelectedItem())));
 		}
 	}
 
@@ -135,6 +127,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 		directionConstraint.constrained(this.costDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		directionConstraint.constrained(this.costDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
+		DatasourceConstraint.getInstance().constrained(this.resultDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(this.resultDistanceDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(this.resultDirectionDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(this.resultAllocationDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
@@ -145,14 +138,14 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof Dataset) {
-					Rectangle2D bounds = ((Dataset) evt.getNewValue()).getBounds();
-					double maxEdge = bounds.getHeight();
-					if (bounds.getWidth() > bounds.getHeight()) {
-						maxEdge = bounds.getWidth();
-					}
-					double cellSize = maxEdge / 500;
-					parameterNumberResolvingPower.setSelectedItem(cellSize);
+					parameterNumberResolvingPower.setSelectedItem(convertToDecimal(updateCellSize((Dataset) evt.getNewValue(), (DatasetGrid) costDataset.getSelectedItem())));
 				}
+			}
+		});
+		this.costDataset.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				parameterNumberResolvingPower.setSelectedItem(convertToDecimal(updateCellSize(sourceDataset.getSelectedItem(), (DatasetGrid) evt.getNewValue())));
 			}
 		});
 	}
@@ -180,20 +173,25 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 			DatasetGrid cost = null;
 			if (this.getParameters().getInputs().getData(COST_DATA).getValue() != null) {
 				cost = (DatasetGrid) this.getParameters().getInputs().getData(COST_DATA).getValue();
-			} else {
+			} else if(costDataset.getSelectedItem()!=null) {
 				cost = (DatasetGrid) costDataset.getSelectedItem();
 			}
+			DistanceAnalyst.addSteppedListener(steppedListener);
 			distanceAnalystParameter.setDistanceGridName(distanceDatasetName);
 			distanceAnalystParameter.setDirectionGridName(directionDatasetName);
 			distanceAnalystParameter.setAllocationGridName(allocationDatasetName);
 			distanceAnalystParameter.setSourceDataset(src);
 			distanceAnalystParameter.setTargetDatasource(this.resultDatasource.getSelectedItem());
-			distanceAnalystParameter.setCostGrid(cost);
 			distanceAnalystParameter.setMaxDistance(Double.valueOf(this.parameterNumberMaxDistance.getSelectedItem().toString()));
 			distanceAnalystParameter.setCellSize(Double.valueOf(this.parameterNumberResolvingPower.getSelectedItem().toString()));
+			DistanceAnalystResult distanceAnalystResult = null;
+			if (cost != null) {
+				distanceAnalystParameter.setCostGrid(cost);
+				distanceAnalystResult = DistanceAnalyst.costDistance(distanceAnalystParameter);
+			} else {
+				distanceAnalystResult = DistanceAnalyst.straightDistance(distanceAnalystParameter);
+			}
 
-			DistanceAnalyst.addSteppedListener(steppedListener);
-			DistanceAnalystResult distanceAnalystResult = DistanceAnalyst.costDistance(distanceAnalystParameter);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA_DISTANCE).setValue(distanceAnalystResult.getDistanceDatasetGrid());
 			this.getParameters().getOutputs().getData(OUTPUT_DATA_DIRECTION).setValue(distanceAnalystResult.getDirectionDatasetGrid());
 			this.getParameters().getOutputs().getData(OUTPUT_DATA_ALLOCATION).setValue(distanceAnalystResult.getAllocationDatasetGrid());
@@ -221,5 +219,34 @@ public class MetaProcessCreateDistanceRaster extends MetaProcess {
 	@Override
 	public String getTitle() {
 		return ProcessProperties.getString("String_CreateDistanceRaster");
+	}
+
+	private double updateCellSize(Dataset dataset, DatasetGrid datasetGrid) {
+		double cellSize = 1;
+		if (datasetGrid != null) {
+			cellSize = datasetGrid.getBounds().getWidth() / datasetGrid.getWidth();
+		} else if (dataset != null) {
+			Rectangle2D bounds = dataset.getBounds();
+			if (dataset.getType().equals(DatasetType.GRID)) {
+				cellSize = bounds.getWidth() / ((DatasetGrid) dataset).getWidth();
+			} else {
+				cellSize = bounds.getWidth() > bounds.getHeight() ? bounds.getWidth() : bounds.getHeight();
+				if (dataset.getType().equals(DatasetType.POINT) && ((DatasetVector) dataset).getRecordCount() == 1) {
+					cellSize = Math.abs(bounds.getLeft()) < Math.abs(bounds.getBottom()) ? Math.abs(bounds.getLeft()) : Math.abs(bounds.getBottom());
+				}
+				cellSize = cellSize / 500;
+			}
+		}
+
+		return cellSize;
+	}
+
+	private String convertToDecimal(double num) {
+		DecimalFormat format = new DecimalFormat("#0.000000000000000");
+		String result = format.format(num);
+		while (result.charAt(result.length() - 1) == '0') {
+			result = result.substring(0, result.length() - 1);
+		}
+		return result;
 	}
 }

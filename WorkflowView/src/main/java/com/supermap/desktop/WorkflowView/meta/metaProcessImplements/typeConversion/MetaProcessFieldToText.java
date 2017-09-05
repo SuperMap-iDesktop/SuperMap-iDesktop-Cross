@@ -43,6 +43,8 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 			inputDatasource.setSelectedItem(dataset.getDatasource());
 			inputDataset.setSelectedItem(dataset);
 			fieldComboBox.setFieldName((DatasetVector) dataset);
+			// 给转出字段一个默认参数，默认为:smID-yuanR2017.9.5
+			fieldComboBox.setSelectedItem(((DatasetVector) dataset).getFieldInfos().get(0));
 		}
 		fieldComboBox.setShowSystemField(true);
 		outputData.setSelectedItem("result_fieldToText");
@@ -114,26 +116,25 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 				try {
 					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
 					GeoText geoText = new GeoText();
-					String textPartName="";
-					if (recordsetInput.getFieldInfos().get(fieldName).getType()==FieldType.DATETIME){
-						if (value.get(fieldName)!=null) {
+					String textPartName = "";
+					if (recordsetInput.getFieldInfos().get(fieldName).getType() == FieldType.DATETIME) {
+						if (value.get(fieldName) != null) {
 							textPartName = dateFormat.format(value.get(fieldName));
 						}
-					}else if (recordsetInput.getFieldInfos().get(fieldName).getType()==FieldType.LONGBINARY){
-						textPartName= "BinaryData";
-					}
-					else {
-						if (recordsetInput.getFieldValue(fieldName)!=null){
-							textPartName=recordsetInput.getFieldValue(fieldName).toString();
+					} else if (recordsetInput.getFieldInfos().get(fieldName).getType() == FieldType.LONGBINARY) {
+						textPartName = "BinaryData";
+					} else {
+						if (recordsetInput.getFieldValue(fieldName) != null) {
+							textPartName = recordsetInput.getFieldValue(fieldName).toString();
 						}
 					}
-					TextPart textPart = new TextPart(textPartName,recordsetInput.getGeometry().getInnerPoint());
+					TextPart textPart = new TextPart(textPartName, recordsetInput.getGeometry().getInnerPoint());
 					geoText.addPart(textPart.clone());
 					textPart.dispose();
 					recordsetResult.addNew(geoText, value);
 					geoText.dispose();
 
-				} catch (Exception e){
+				} catch (Exception e) {
 					Application.getActiveApplication().getOutput().output(e);
 				}
 				recordsetInput.moveNext();

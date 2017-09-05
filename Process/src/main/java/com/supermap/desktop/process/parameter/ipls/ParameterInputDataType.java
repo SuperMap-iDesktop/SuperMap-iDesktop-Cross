@@ -17,7 +17,7 @@ import java.beans.PropertyChangeListener;
  * Created by caolp on 2017-07-27.
  */
 public class ParameterInputDataType extends ParameterCombine {
-	private ParameterComboBox parameterDataInputWay = new ParameterComboBox(ProcessProperties.getString("String_DataInputWay"));
+	public ParameterComboBox parameterDataInputWay = new ParameterComboBox(ProcessProperties.getString("String_DataInputWay"));
 	private ParameterHDFSPath parameterHDFSPath = new ParameterHDFSPath();
 
 	private ParameterTextField parameterDataSourceType = new ParameterTextField(ProcessProperties.getString("String_DataSourceType"));
@@ -56,7 +56,7 @@ public class ParameterInputDataType extends ParameterCombine {
 		parameterDatasetName.setDefaultWarningValue("newyorkPoint_P");
 		parameterSpark.setDefaultWarningValue("36");
 		ParameterCombine parameterCombine1 = new ParameterCombine();
-		parameterCombine1.addParameters(parameterDataSourceType,
+		parameterCombine1.addParameters(
 				parameterDataSourcePath,
 				parameterDatasetName,
 				parameterDatasetType,
@@ -72,7 +72,6 @@ public class ParameterInputDataType extends ParameterCombine {
 		parameterTextFieldPassword.setSelectedItem("supermap");
 		ParameterCombine parameterCombine2 = new ParameterCombine();
 		parameterCombine2.addParameters(
-				parameterEngineType,
 				parameterTextFieldAddress,
 				parameterDataBaseName,
 				parameterTextFieldUserName,

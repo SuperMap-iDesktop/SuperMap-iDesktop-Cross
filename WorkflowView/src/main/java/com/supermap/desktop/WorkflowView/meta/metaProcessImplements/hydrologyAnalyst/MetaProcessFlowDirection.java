@@ -18,6 +18,9 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 /**
  * Created By Chens on 2017/8/29 0029
  */
@@ -37,6 +40,7 @@ public class MetaProcessFlowDirection extends MetaProcess {
 		initParameters();
 		initParameterConstraint();
 		initParametersState();
+		registerListener();
 	}
 
 	private void initParameters() {
@@ -45,8 +49,8 @@ public class MetaProcessFlowDirection extends MetaProcess {
 		checkBoxCreateDrop = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_CreateDrop"));
 		checkBoxForceOut = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_ForceOut"));
 		resultDatasource = new ParameterDatasource();
-		directionGrid = new ParameterTextField(ProcessOutputResultProperties.getString("String_Result_DirectionGrid"));
-		dropGrid = new ParameterTextField(ProcessOutputResultProperties.getString("String_Result_DropGrid"));
+		directionGrid = new ParameterTextField(ProcessProperties.getString("String_Label_DirectionGrid"));
+		dropGrid = new ParameterTextField(ProcessProperties.getString("String_Label_DropGrid"));
 
 		ParameterCombine sourceCombine = new ParameterCombine();
 		sourceCombine.setDescribe(INPUT_DATA);
@@ -79,6 +83,16 @@ public class MetaProcessFlowDirection extends MetaProcess {
 		}
 		directionGrid.setSelectedItem("result_directionGrid");
 		dropGrid.setSelectedItem("result_dropGrid");
+		checkBoxCreateDrop.setSelectedItem(true);
+	}
+
+	private void registerListener() {
+		checkBoxCreateDrop.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				dropGrid.setEnabled(Boolean.valueOf(checkBoxCreateDrop.getSelectedItem().toString()));
+			}
+		});
 	}
 
 	@Override

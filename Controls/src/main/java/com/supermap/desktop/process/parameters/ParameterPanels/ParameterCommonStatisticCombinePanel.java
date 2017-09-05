@@ -13,13 +13,18 @@ import com.supermap.desktop.process.parameter.ipls.ParameterDatasetChooseTable;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Created By Chens on 2017/8/21 0021
@@ -35,6 +40,7 @@ public class ParameterCommonStatisticCombinePanel extends SwingPanel {
 	private JPanelDatasetChooseForParameter datasetChooseForParameter;
 	private final String[] columnNames = {"", CommonProperties.getString("String_ColumnHeader_Dataset"), CommonProperties.getString("String_ColumnHeader_Datasource")};
 	private final boolean[] enables = {false, false, false};
+	private boolean isSelectingItem = false;
 
 	public ParameterCommonStatisticCombinePanel(IParameter parameterCommonStatisticCombine) {
 		super(parameterCommonStatisticCombine);
@@ -118,10 +124,28 @@ public class ParameterCommonStatisticCombinePanel extends SwingPanel {
 				parameterCommonStatisticCombine.setSelectedItem(datasetChooseForParameter.getDatasets());
 			}
 		});
-		textFieldLegit.addActionListener(new ActionListener() {
+		textFieldLegit.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				parameterCommonStatisticCombine.setSelectedItem(Double.parseDouble(textFieldLegit.getText()));
+			public void insertUpdate(DocumentEvent e) {
+				change();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				change();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				change();
+			}
+
+			private void change() {
+				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldLegit.getText())) {
+					isSelectingItem = true;
+					parameterCommonStatisticCombine.setSelectedItem(Double.valueOf(textFieldLegit.getText().toString()));
+					isSelectingItem = false;
+				}
 			}
 		});
 	}

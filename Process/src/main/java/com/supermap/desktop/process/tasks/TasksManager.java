@@ -34,7 +34,7 @@ public class TasksManager {
 	private final static int WORKFLOW_STATE_RUNNING = 1;
 	private final static int WORKFLOW_STATE_COMPLETED = 2;
 	private final static int WORKFLOW_STATE_INTERRUPTED = 3;
-	private final static int WORKFLOW_STATE_RERUNNING = 4;// 出错重新运行
+	private final static int WORKFLOW_STATE_RERUNNING = 4; // 出错重新运行
 
 	public final static int WORKER_STATE_RUNNING = 1;
 	public final static int WORKER_STATE_READY = 2;
