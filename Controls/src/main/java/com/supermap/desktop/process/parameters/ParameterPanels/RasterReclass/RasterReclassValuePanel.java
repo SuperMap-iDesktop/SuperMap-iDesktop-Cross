@@ -190,8 +190,8 @@ public class RasterReclassValuePanel extends JPanel {
 		this.buttonDefault.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/defaultColors.png"));
 		this.buttonSelectedAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 		this.buttonSelectedInverse.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
-		this.buttonCombine.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
-		this.buttonSplit.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
+		this.buttonCombine.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_ToolButton_UnionRow.png"));
+		this.buttonSplit.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_ToolButton_SplitRow.png"));
 		this.buttonImport.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/Image_ToolButton_Import.png"));
 		this.buttonExport.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/Image_ToolButton_Export.png"));
 		this.buttonInverse.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/invert.png"));

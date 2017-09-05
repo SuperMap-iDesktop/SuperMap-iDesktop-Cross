@@ -47,7 +47,7 @@ public class CtrlActionTreeWorkflowSaveAs extends CtrlAction {
 				}
 			}
 		}
-		dialogSaveAs.setTitle(WorkflowViewProperties.getString("Sting_SaveAsWorkflow"));
+		dialogSaveAs.setTitle(WorkflowViewProperties.getString("String_SaveAsWorkflow"));
 		if (dialogSaveAs.showDialog() == DialogResult.OK) {
 			if (currentForm != null) {
 				currentForm.setText(dialogSaveAs.getCurrentFormName());
