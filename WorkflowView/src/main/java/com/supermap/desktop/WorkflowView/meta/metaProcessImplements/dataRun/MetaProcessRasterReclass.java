@@ -1,8 +1,10 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 
+import com.supermap.analyst.spatialanalyst.GeneralizeAnalyst;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -10,6 +12,7 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
@@ -39,13 +42,13 @@ public class MetaProcessRasterReclass extends MetaProcess {
 	private void initParameters() {
 		this.sourceDatasource = new ParameterDatasourceConstrained();
 		this.dataset = new ParameterSingleDataset(DatasetType.GRID);
-		this.parameterRasterReclass=new ParameterRasterReclass();
+		this.parameterRasterReclass = new ParameterRasterReclass();
 		this.saveDataset = new ParameterSaveDataset();
 
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
 		sourceData.addParameters(sourceDatasource, dataset);
-		ParameterCombine parameterSetting=new ParameterCombine();
+		ParameterCombine parameterSetting = new ParameterCombine();
 		parameterSetting.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
 		parameterSetting.addParameters(this.parameterRasterReclass);
 		ParameterCombine targetData = new ParameterCombine();
@@ -86,6 +89,30 @@ public class MetaProcessRasterReclass extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
+		try {
+			fireRunning(new RunningEvent(MetaProcessRasterReclass.this, 0, "start"));
+
+			String datasetName = saveDataset.getDatasetName();
+			datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
+			DatasetGrid src = null;
+			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
+				src = (DatasetGrid) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+			} else {
+				src = (DatasetGrid) dataset.getSelectedItem();
+			}
+
+			GeneralizeAnalyst.addSteppedListener(steppedListener);
+			Dataset result = GeneralizeAnalyst.reclass(src, this.parameterRasterReclass.getReclassMappingTable(),
+					this.parameterRasterReclass.getReclassPixelFormat(), this.saveDataset.getResultDatasource(), datasetName);
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
+			isSuccessful = result != null;
+			fireRunning(new RunningEvent(MetaProcessRasterReclass.this, 100, "finished"));
+
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			GeneralizeAnalyst.removeSteppedListener(steppedListener);
+		}
 		return isSuccessful;
 	}
 
