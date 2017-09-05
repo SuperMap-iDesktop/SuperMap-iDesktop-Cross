@@ -1467,7 +1467,7 @@ public class DialogMapCacheBuilder extends SmDialog {
 			if (!SmFileChoose.isModuleExist(moduleName)) {
 				String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci");
 				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-						MapViewProperties.getString("String_SaveAsFile"), moduleName, "SaveOne");
+						ControlsProperties.getString("String_SaveAsFile"), moduleName, "SaveOne");
 			}
 			SmFileChoose smFileChoose = new SmFileChoose(moduleName);
 			smFileChoose.setSelectedFile(new File(MapViewProperties.getString("MapCache_CacheConfigFileIsNotbrackets")));

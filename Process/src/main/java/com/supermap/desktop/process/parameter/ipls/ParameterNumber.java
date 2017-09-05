@@ -19,6 +19,7 @@ public class ParameterNumber extends ParameterTextField {
 	private boolean isIncludeMin = true;
 	private boolean isIncludeMax = true;
 	private String toolTip;
+	private String unit = "";
 
 	public ParameterNumber() {
 		this("");
@@ -34,7 +35,7 @@ public class ParameterNumber extends ParameterTextField {
 					if (StringUtilities.isNullOrEmpty(textFieldValue)) {
 						return false;
 					}
-					if (textFieldValue.endsWith(".")||textFieldValue.endsWith("-")) {
+					if (textFieldValue.endsWith(".") || textFieldValue.endsWith("-")) {
 						return false;
 					}
 					if (textFieldValue.split("\\.").length > 2) {
@@ -134,5 +135,15 @@ public class ParameterNumber extends ParameterTextField {
 
 	public void setToolTip(String toolTip) {
 		this.toolTip = toolTip;
+	}
+
+	@Override
+	public String getUnit() {
+		return unit;
+	}
+
+	@Override
+	public void setUnit(String unit) {
+		this.unit = unit;
 	}
 }
