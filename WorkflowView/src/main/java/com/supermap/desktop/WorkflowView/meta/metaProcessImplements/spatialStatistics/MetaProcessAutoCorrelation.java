@@ -37,14 +37,22 @@ public class MetaProcessAutoCorrelation extends MetaProcessAnalyzingPatterns {
 
 
 	protected boolean doWork(DatasetVector datasetVector) {
-		AnalyzingPatternsResult analyzingPatternsResult = AnalyzingPatterns.autoCorrelation(datasetVector, parameterPatternsParameter.getPatternParameter());
-		String result = "";
-		result += ProcessProperties.getString("String_Morans") + " " + analyzingPatternsResult.getIndex() + "\n";
-		result += ProcessProperties.getString("String_Expectation") + " " + analyzingPatternsResult.getExpectation() + "\n";
-		result += ProcessProperties.getString("String_Variance") + " " + analyzingPatternsResult.getVariance() + "\n";
-		result += ProcessProperties.getString("String_ZScor") + " " + analyzingPatternsResult.getZScore() + "\n";
-		result += ProcessProperties.getString("String_PValue") + " " + analyzingPatternsResult.getPValue() + "\n";
-		parameterResult.setSelectedItem(result);
+		AnalyzingPatterns.addSteppedListener(steppedListener);
+		AnalyzingPatternsResult analyzingPatternsResult = null;
+		try {
+			analyzingPatternsResult = AnalyzingPatterns.autoCorrelation(datasetVector, parameterPatternsParameter.getPatternParameter());
+			String result = "";
+			result += ProcessProperties.getString("String_Morans") + " " + analyzingPatternsResult.getIndex() + "\n";
+			result += ProcessProperties.getString("String_Expectation") + " " + analyzingPatternsResult.getExpectation() + "\n";
+			result += ProcessProperties.getString("String_Variance") + " " + analyzingPatternsResult.getVariance() + "\n";
+			result += ProcessProperties.getString("String_ZScor") + " " + analyzingPatternsResult.getZScore() + "\n";
+			result += ProcessProperties.getString("String_PValue") + " " + analyzingPatternsResult.getPValue() + "\n";
+			parameterResult.setSelectedItem(result);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			AnalyzingPatterns.removeSteppedListener(steppedListener);
+		}
 		return analyzingPatternsResult != null;
 	}
 
