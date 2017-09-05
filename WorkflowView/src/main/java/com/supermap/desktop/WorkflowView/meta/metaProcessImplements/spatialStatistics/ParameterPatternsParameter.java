@@ -162,7 +162,9 @@ public class ParameterPatternsParameter extends ParameterCombine {
 			}
 		});
 
-		this.addParameters(parameterAssessmentFieldComboBox, parameterComboBoxConceptModel, parameterDistanceMethod);
+		this.addParameters(parameterAssessmentFieldComboBox, parameterComboBoxConceptModel);
+		// 调整界面布局-yuanR2017.9.5
+		this.addParameters(parameterSwitchMain, parameterDistanceMethod);
 		if (metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST) || metaKeys.equals(MetaKeys.OPTIMIZED_HOT_SPOT_ANALYST)) {
 			this.addParameters(parameterSelfWeightFieldComboBox);
 		} else {
@@ -171,7 +173,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 		if (metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST) || metaKeys.equals(MetaKeys.OPTIMIZED_HOT_SPOT_ANALYST) || metaKeys.equals(MetaKeys.CLUSTER_OUTLIER_ANALYST)) {
 			this.addParameters(parameterCheckBoxFDRAdjusted);
 		}
-		this.addParameters(parameterSwitchMain);
+
 		this.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
 	}
 

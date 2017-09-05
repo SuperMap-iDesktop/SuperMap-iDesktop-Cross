@@ -162,7 +162,7 @@ public class ImageCollectionPropertyControl extends AbstractPropertyControl {
 		this.labelBandCount.setText(ControlsProperties.getString("String_LabelBandsSize"));
 		this.labelNoValue.setText(ControlsProperties.getString("String_LabelNoValue"));
 		this.labelHasPyramid.setText(ControlsProperties.getString("String_LabelPyramid"));
-		this.labelDatasetCount.setText(ControlsProperties.getString("String_Label_DatasetCount"));
+		this.labelDatasetCount.setText(ControlsProperties.getString("String_SubDatasetCount"));
 		this.smButtonSetDatasets.setText(CommonProperties.getString(CommonProperties.Button_Setting));
 		this.labelPixelType.setText(ControlsProperties.getString("String_LabelPixelFormat"));
 		this.labelShowBounds.setText(ControlsProperties.getString("String_LabelClipRegion"));

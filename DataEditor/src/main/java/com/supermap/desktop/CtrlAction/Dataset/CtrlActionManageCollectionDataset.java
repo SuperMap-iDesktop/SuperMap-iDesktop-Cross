@@ -37,9 +37,8 @@ public class CtrlActionManageCollectionDataset extends CtrlAction {
 				}
 			}
 		}
-		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0, datasetVectors.toArray(new DatasetVector[datasetVectors.size()]));
+		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0, datasetVector, datasetVectors.toArray(new DatasetVector[datasetVectors.size()]));
 		createCollectionDataset.isSetDatasetCollectionCount(true);
-		createCollectionDataset.setDatasetVector(datasetVector);
 		createCollectionDataset.showDialog();
 	}
 

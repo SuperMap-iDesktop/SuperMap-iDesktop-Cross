@@ -3,6 +3,7 @@ package com.supermap.desktop.WorkflowView;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.event.FormLoadedListener;
 import com.supermap.desktop.ui.WorkspaceComponentManager;
 import com.supermap.desktop.ui.controls.DockbarManager;
@@ -47,7 +48,7 @@ public class WorkflowsManager implements WorkspaceClosingListener, WorkspaceOpen
 			Application.getActiveApplication().getWorkspace().addClosingListener(this);
 			Application.getActiveApplication().getWorkspace().addOpenedListener(this);
 			Application.getActiveApplication().addFormLoadedListener(this.mainFrameLoadedListener);
-			this.workflowsTreeNode = new DefaultMutableTreeNode("可视化建模");
+			this.workflowsTreeNode = new DefaultMutableTreeNode(ControlsProperties.getString("String_Workflows"));
 		}
 	}
 

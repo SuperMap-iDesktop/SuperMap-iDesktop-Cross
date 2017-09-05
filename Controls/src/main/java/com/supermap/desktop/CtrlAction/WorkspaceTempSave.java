@@ -15,6 +15,7 @@ import com.supermap.data.WorkspaceSavedListener;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.LogUtilities;
@@ -32,6 +33,7 @@ import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.nio.channels.FileLock;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -229,10 +231,12 @@ public class WorkspaceTempSave {
 					saveSymbolLibrary(activeWorkspace);
 				}
 				if (saveSuccess) {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_WorkspaceSaveSuccess"),workspace.getCaption()));
 					if (!saveToFile(activeWorkspace, workspace)) {
 						LogUtilities.outPut("save config autoSaveWorkspaceConfigFile failed");
 					}
 				} else {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_WorkspaceSaveFailed"),workspace.getCaption()));
 					LogUtilities.outPut("workspace autoSave failed");
 				}
 			}

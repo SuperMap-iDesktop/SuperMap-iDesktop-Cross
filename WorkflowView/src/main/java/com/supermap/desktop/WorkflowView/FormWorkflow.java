@@ -46,7 +46,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	private boolean isNeedSave = true;
 
 	public FormWorkflow() {
-		this(ControlsProperties.getString("String_WorkFlows"));
+		this(ControlsProperties.getString("String_Workflows"));
 	}
 
 	public FormWorkflow(String name) {
@@ -247,7 +247,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 				dialogSaveAs.addExistNames(formManager.get(i).getText());
 			}
 		}
-		dialogSaveAs.setTitle(WorkflowViewProperties.getString("Sting_SaveAsWorkflow"));
+		dialogSaveAs.setTitle(WorkflowViewProperties.getString("String_SaveAsWorkflow"));
 		if (dialogSaveAs.showDialog() == DialogResult.OK) {
 			this.setText(dialogSaveAs.getCurrentFormName());
 			Application.getActiveApplication().addWorkflow(getText(), serializeTo());

@@ -9,7 +9,6 @@ import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.events.ParameterPropertyChangedEvent;
 import com.supermap.desktop.process.parameter.events.ParameterPropertyChangedListener;
-import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.ipls.DefaultParameters;
@@ -37,7 +36,8 @@ public abstract class MetaProcess extends AbstractProcess {
 	protected SteppedListener steppedListener = new SteppedListener() {
 		@Override
 		public void stepped(SteppedEvent steppedEvent) {
-			RunningEvent event = new RunningEvent(MetaProcess.this, steppedEvent.getPercent(), AbstractParameter.PROPERTY_VALE);
+			//Application.getActiveApplication().getOutput().output(String.valueOf(steppedEvent.getPercent()));
+			RunningEvent event = new RunningEvent(MetaProcess.this, steppedEvent.getPercent(), steppedEvent.getMessage(), (int)(steppedEvent.getRemainTime() / 1000));
 			fireRunning(event);
 
 			if (event.isCancel()) {

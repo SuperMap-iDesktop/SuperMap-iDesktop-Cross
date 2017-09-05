@@ -54,7 +54,7 @@ public class ParameterCombinePanel extends SwingPanel implements ParameterCombin
 			int weightX = combineType.equals(ParameterCombine.VERTICAL) ? 1 : (weightIndex == -1 || weightIndex == x ? 1 : 0);
 			int weightY = combineType.equals(ParameterCombine.HORIZONTAL) ? 1 : (weightIndex == -1 || weightIndex == y ? 1 : 0);
 			JPanel panel = (JPanel) parameter.getParameterPanel().getPanel();
-			this.panel.add(panel, new GridBagConstraintsHelper(x, y, 1, 1).setWeight(weightX, weightY).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(y > 0 ? 5 : defaultInset, x > 0 ? 5 : defaultInset, 0, 0));
+			this.panel.add(panel, new GridBagConstraintsHelper(x, y, 1, 1).setWeight(weightX, weightY).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(y > 0 ? 5 : defaultInset, x > 0 ? 5 : defaultInset, 0, 0));
 			if (combineType.equals(ParameterCombine.VERTICAL)) {
 				y++;
 			} else {

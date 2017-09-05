@@ -51,6 +51,7 @@ public class ImportParameterCreator implements IParameterCreator {
 
 	/**
 	 * 获得文件/文件夹单选框参数，外部添加监听
+	 *
 	 * @return
 	 */
 	public ParameterRadioButton getParameterRadioButtonFolderOrFile() {
@@ -518,9 +519,9 @@ public class ImportParameterCreator implements IParameterCreator {
 			parameterFileFolder.setEnabled(false);
 
 			ReflectInfo reflectInfoFolderPath = new ReflectInfo();
-			reflectInfoFolderPath.methodName = "setSourceFolderPath";
+			reflectInfoFolderPath.methodName = "setSourceFilePath";
 			reflectInfoFolderPath.parameter = parameterFileFolder;
-			sourceInfo.add(reflectInfoFilePath);
+			sourceInfo.add(reflectInfoFolderPath);
 			parameterCombineSourceInfoSet.addParameters(parameterFileFolder);
 		}
 		parameterCombineSourceInfoSet.addParameters(parameterFile);
@@ -887,7 +888,8 @@ public class ImportParameterCreator implements IParameterCreator {
 				|| importSetting instanceof ImportSettingTEMSClutter || importSetting instanceof ImportSettingVCT
 				|| importSetting instanceof ImportSettingRAW || importSetting instanceof ImportSettingGJB
 				|| importSetting instanceof ImportSettingTEMSVector || importSetting instanceof ImportSettingTEMSBuildingVector
-				|| importSetting instanceof ImportSettingFileGDBVector || importSetting instanceof ImportSettingGeoJson) {
+				|| importSetting instanceof ImportSettingFileGDBVector || importSetting instanceof ImportSettingGeoJson
+				|| importSetting instanceof ImportSettingSimpleJson) {
 			parser.setEnumNames(new String[]{"NONE", "BYTE", "INT16", "INT24", "INT32"});
 			parser.setChName(new String[]{
 					EncodeTypeUtilities.toString(EncodeType.NONE),

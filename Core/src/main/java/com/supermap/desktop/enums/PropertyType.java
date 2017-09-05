@@ -6,6 +6,7 @@ public enum PropertyType {
 	DATASOURCE, // 数据源基本属性
 	DATASET, // 数据集基本属性
 	VECTOR, // 矢量数据属性
+	VECTOR_COLLECTION,//矢量数据集集合属性
 	GRID, // 栅格数据属性
 	IMAGE, // 影像数据属性
 	PRJCOORDSYS, // 投影信息
