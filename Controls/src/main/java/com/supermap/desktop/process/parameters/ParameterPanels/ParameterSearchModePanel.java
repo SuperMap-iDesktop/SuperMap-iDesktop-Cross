@@ -12,6 +12,7 @@ import com.supermap.desktop.process.parameter.ipls.ParameterSearchMode;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.TextFields.NumTextFieldLegit;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -35,8 +36,8 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
     private JRadioButton radioSearchModelQuadTree;
     private JLabel labelMaxRadius;
     private JLabel labelSearchCount;
-    private JTextField textFieldMaxRadius;
-    private JTextField textFieldSearchCount;
+    private NumTextFieldLegit textFieldMaxRadius;
+    private NumTextFieldLegit textFieldSearchCount;
     private ButtonGroup buttonGroup = new ButtonGroup();
 
     private boolean isSelectingItem = false;
@@ -184,8 +185,8 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
         this.radioSearchModelQuadTree.setText(ProcessProperties.getString("String_SearchModelQuadtree"));
         this.labelMaxRadius = new JLabel();
         this.labelSearchCount = new JLabel();
-        this.textFieldMaxRadius = new JTextField();
-        this.textFieldSearchCount = new JTextField();
+        this.textFieldMaxRadius = new NumTextFieldLegit();
+        this.textFieldSearchCount = new NumTextFieldLegit();
         buttonGroup.add(this.radioSearchModelCount);
         buttonGroup.add(this.radioSearchModelRadius);
         buttonGroup.add(this.radioSearchModelQuadTree);

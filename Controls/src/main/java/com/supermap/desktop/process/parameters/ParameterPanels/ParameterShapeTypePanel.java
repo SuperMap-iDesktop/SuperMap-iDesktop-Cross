@@ -8,7 +8,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.parameter.ipls.ParameterShapeType;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.ui.controls.TextFields.NumTextFieldLegit;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -28,19 +28,19 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 	JLabel labelUnitType;
 	JComboBox comboBoxUnitType;
 	JLabel labelWidth;
-	SmTextFieldLegit textFieldWidth;
+	NumTextFieldLegit textFieldWidth;
 	JLabel labelHeight;
-	SmTextFieldLegit textFieldHeight;
+	NumTextFieldLegit textFieldHeight;
 	JLabel labelRadius;
-	SmTextFieldLegit textFieldRadius;
+	NumTextFieldLegit textFieldRadius;
 	JLabel labelInnerRadius;
-	SmTextFieldLegit textFieldInnerRadius;
+	NumTextFieldLegit textFieldInnerRadius;
 	JLabel labelOuterRadius;
-	SmTextFieldLegit textFieldOuterRadius;
+	NumTextFieldLegit textFieldOuterRadius;
 	JLabel labelStartAngle;
-	SmTextFieldLegit textFieldStartAngle;
+	NumTextFieldLegit textFieldStartAngle;
 	JLabel labelEndAngle;
-	SmTextFieldLegit textFieldEndAngle;
+	NumTextFieldLegit textFieldEndAngle;
 
 	private boolean isSelectingItem = false;
 	ParameterShapeType parameterShapeType;
@@ -76,13 +76,13 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 		labelEndAngle =new JLabel();
 		comboBoxShapeType = new JComboBox();
 		comboBoxUnitType = new JComboBox();
-		textFieldWidth = new SmTextFieldLegit();
-		textFieldHeight = new SmTextFieldLegit();
-		textFieldRadius = new SmTextFieldLegit();
-		textFieldInnerRadius = new SmTextFieldLegit();
-		textFieldOuterRadius = new SmTextFieldLegit();
-		textFieldStartAngle = new SmTextFieldLegit();
-		textFieldEndAngle = new SmTextFieldLegit();
+		textFieldWidth = new NumTextFieldLegit();
+		textFieldHeight = new NumTextFieldLegit();
+		textFieldRadius = new NumTextFieldLegit();
+		textFieldInnerRadius = new NumTextFieldLegit();
+		textFieldOuterRadius = new NumTextFieldLegit();
+		textFieldStartAngle = new NumTextFieldLegit();
+		textFieldEndAngle = new NumTextFieldLegit();
 	}
 
 	private void initResources() {
