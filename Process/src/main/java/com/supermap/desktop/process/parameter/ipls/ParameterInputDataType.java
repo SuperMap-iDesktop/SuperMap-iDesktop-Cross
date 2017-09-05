@@ -56,6 +56,7 @@ public class ParameterInputDataType extends ParameterCombine {
 		parameterDataSourcePath.setDefaultWarningValue("G:\\\\ProcessingData\\\\processing.udb");
 		parameterDatasetName.setRequisite(true);
 		parameterDatasetName.setDefaultWarningValue("newyorkPoint_P");
+		parameterSpark.setRequisite(true);
 		parameterSpark.setDefaultWarningValue("36");
 		ParameterCombine parameterCombine1 = new ParameterCombine();
 		parameterCombine1.addParameters(
