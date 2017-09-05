@@ -32,9 +32,11 @@ public class SmMultiFieldsChooseTable extends JTable {
 		public void valueChanged(ListSelectionEvent e) {
 			if (!isSelectionChanged) {
 				isSelectionChanged = true;
-				int[] selectRows = SmMultiFieldsChooseTable.this.getSelectedRows();
-				for (int i = 0, length = selectRows.length; i < length; i++) {
-					notSystemFieldInfos.get(selectRows[i]).setTargetFieldName(String.valueOf(getValueAt(selectRows[i], TABLE_COLUMN_TARGETFIELDNAME)));
+				int rows = SmMultiFieldsChooseTable.this.getRowCount();
+				for (int i = 0; i < rows; i++) {
+					if (((boolean) SmMultiFieldsChooseTable.this.getValueAt(i, TABLE_COLUMN_CHECKABLE))) {
+						notSystemFieldInfos.get(i).setTargetFieldName(String.valueOf(getValueAt(i, TABLE_COLUMN_TARGETFIELDNAME)));
+					}
 				}
 				isSelectionChanged = false;
 			}
@@ -85,7 +87,7 @@ public class SmMultiFieldsChooseTable extends JTable {
 	public ArrayList<Info> getSelectedFieldsName() {
 		ArrayList<Info> selectedFieldsName = new ArrayList();
 
-		for (int i = 0; i < this.getRowCount(); i++) {
+		for (int i = 0, rowCount = this.getRowCount(); i < rowCount; i++) {
 			if (((boolean) this.getValueAt(i, TABLE_COLUMN_CHECKABLE))) {
 				selectedFieldsName.add(notSystemFieldInfos.get(i));
 			}

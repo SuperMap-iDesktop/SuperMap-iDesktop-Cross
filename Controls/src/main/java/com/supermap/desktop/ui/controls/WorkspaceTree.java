@@ -1312,12 +1312,9 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				if (null != connectionInfo) {
 					Datasource datasource = DatasourceUtilities.getDatasource(connectionInfo);
 					if (null != datasource) {
-						Dataset childDataset = datasource.getDatasets().get(collectionDatasetInfo.getDatasetName());
-						if (null != childDataset) {
-							TreeNodeData childDatasetNodeData = new TreeNodeData(childDataset, NodeDataType.DATASET_VECTOR_ITEM);
-							DefaultMutableTreeNode childDatasetNode = new DefaultMutableTreeNode(childDatasetNodeData);
-							datasetNode.add(childDatasetNode);
-						}
+						addDatasetNode(datasetNode, collectionDatasetInfo, datasource);
+					}else{
+						addDatasetNode(datasetNode,collectionDatasetInfo,new Workspace().getDatasources().open(connectionInfo));
 					}
 				}
 			}
@@ -1374,6 +1371,15 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		// 使用下面的方式来刷新 Node，而不要使用 updateUI 来整个刷新 UGDJ-243
 		this.treeModelTemp.insertNodeInto(datasetNode, datasourceNode, datasourceNode.getChildCount());
 		return datasetNode;
+	}
+
+	private void addDatasetNode(DefaultMutableTreeNode datasetNode, CollectionDatasetInfo collectionDatasetInfo, Datasource datasource) {
+		Dataset childDataset = datasource.getDatasets().get(collectionDatasetInfo.getDatasetName());
+		if (null != childDataset) {
+			TreeNodeData childDatasetNodeData = new TreeNodeData(childDataset, NodeDataType.DATASET_VECTOR_ITEM);
+			DefaultMutableTreeNode childDatasetNode = new DefaultMutableTreeNode(childDatasetNodeData);
+			datasetNode.add(childDatasetNode);
+		}
 	}
 
 

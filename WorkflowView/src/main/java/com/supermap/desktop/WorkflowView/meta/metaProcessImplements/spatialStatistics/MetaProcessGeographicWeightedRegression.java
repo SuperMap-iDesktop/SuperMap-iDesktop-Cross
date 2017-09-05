@@ -221,7 +221,12 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 						+ ProcessProperties.getString("String_R2") + gwrSummary.getR2() + "\n"
 						+ ProcessProperties.getString("String_R2Adjusted") + gwrSummary.getR2Adjusted() + "\n"
 						+ ProcessProperties.getString("String_ResidualSquares") + gwrSummary.getResidualSquares() + "\n"
-						+ ProcessProperties.getString("String_Sigma") + gwrSummary.getSigma();
+						+ ProcessProperties.getString("String_Sigma") + gwrSummary.getSigma() + "\n"
+						// 输出窗口增加"how to use"链接信息-yuanR2017.9.5
+						+ "-----------------------------------------" + "\n"
+						+ "How to Use?" + "\n"
+						+ "http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/SpatialRelationshipModeling.html?SpatialStatisticalAnalysis";
+
 				Application.getActiveApplication().getOutput().output(result);
 			}
 		} catch (Exception e) {

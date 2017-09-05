@@ -18,6 +18,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -116,10 +117,10 @@ public class MetaProcessRasterToVector extends MetaProcess {
 	}
 
 	private void initParametersState() {
-		Dataset datasetGrid=null;
-		if (parameters.getInputs().getData(INPUT_DATA).getValue()!=null){
-			datasetGrid=(Dataset) parameters.getInputs().getData(INPUT_DATA).getValue();
-		}else {
+		Dataset datasetGrid = null;
+		if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
+			datasetGrid = (Dataset) parameters.getInputs().getData(INPUT_DATA).getValue();
+		} else {
 			datasetGrid = DatasetUtilities.getDefaultDataset(DatasetType.IMAGE, DatasetType.GRID);
 		}
 		if (datasetGrid != null) {
@@ -129,9 +130,10 @@ public class MetaProcessRasterToVector extends MetaProcess {
 			imageDatasetSetting.setEnabled(datasetGrid instanceof DatasetImage);
 			textFieldGridValue.setEnabled(false);
 			textFieldGridValueTolerance.setEnabled(false);
-			if (datasetGrid instanceof DatasetGrid){
-				textFieldNoValue.setSelectedItem(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue());
-			}else if (datasetGrid instanceof DatasetImage){
+			if (datasetGrid instanceof DatasetGrid) {
+				// 将double转换为字符，防止千分位对值正确性的影响-yuanR2017.9.5
+				textFieldNoValue.setSelectedItem(DoubleUtilities.toString(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue()));
+			} else if (datasetGrid instanceof DatasetImage) {
 				textFieldNoValue.setSelectedItem("16777215");
 			}
 		}
@@ -193,7 +195,8 @@ public class MetaProcessRasterToVector extends MetaProcess {
 				textFieldGridValue.setEnabled(false);
 				textFieldGridValueTolerance.setEnabled(false);
 				if (sourceDataset.getSelectedItem() instanceof DatasetGrid) {
-					textFieldNoValue.setSelectedItem(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue());
+					// 将double转换为字符，防止千分位对值正确性的影响-yuanR2017.9.5
+					textFieldNoValue.setSelectedItem(DoubleUtilities.toString(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue()));
 				} else if (sourceDataset.getSelectedItem() instanceof DatasetImage) {
 					textFieldNoValue.setSelectedItem("16777215");
 				}

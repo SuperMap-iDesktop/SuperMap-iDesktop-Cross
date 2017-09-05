@@ -765,6 +765,7 @@ public class DialogCacheBuilder extends JFrame {
 			String workspacePath = args[2];
 			String mapName = args[3];
 			String cachePath = args[4];
+			String updateSciPath = args[5];
 			DialogCacheBuilder dialogMapCacheBuilder = getDialog(args[0], args[1]);
 			if (!"null".equals(workspacePath)) {
 				dialogMapCacheBuilder.fileChooserWorkspacePath.setPath(workspacePath);

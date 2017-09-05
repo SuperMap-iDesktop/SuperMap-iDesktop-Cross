@@ -54,8 +54,7 @@ public class MetaProcessPourPoints extends MetaProcessHydrology {
 		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
 		if (datasetGrid != null) {
 			flowDatasource.setSelectedItem(datasetGrid.getDatasource());
-			flowDataset.setDatasource(datasetGrid.getDatasource());
-			flowDataset.setShowNullValue(true);
+			flowDataset.setSelectedItem(datasetGrid);
 		}
 		numberThreshold.setSelectedItem(0);
 		numberThreshold.setMaxBit(-1);
