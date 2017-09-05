@@ -18,7 +18,8 @@ SuperMap iDesktop Cross 的配套联机帮助采用基于 node.js 的静态网�
 - [Github pages 联机帮助主页](http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross "Github 联机帮助主页")
 
 # 使用指南 #
-        配置好环境变量后在eclipse中导入工程即可直接启动。配置环境变量细节请参见《SuperMap iDesktop Cross 开发指南.md》第二章
+
+请参考 《SuperMap iDesktop Cross 配置指南(Windows 篇)》 以及 《SuperMap iDesktop Cross 配置指南(Linux 篇)》。
 
 # 更新历史 #
 
@@ -141,9 +142,7 @@ SuperMap iDesktop Cross 的配套联机帮助采用基于 node.js 的静态网�
 
 * WorkflowView
 
-
-# 二次开发说明 #
-详情请参见 《SuperMap iDesktop Cross 开发指南.md》。
+    可视化建模交互插件，提供画布、任务管理面板等功能。
 
 # 许可声明 #
 详情请参见 《LICENSE》。
