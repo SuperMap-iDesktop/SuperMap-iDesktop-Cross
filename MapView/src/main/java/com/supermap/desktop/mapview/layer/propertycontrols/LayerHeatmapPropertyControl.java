@@ -336,7 +336,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 
 	@Override
 	protected void unregisterEvents() {
-		this.textFieldKernelRadius.removeSmTextFieldLegit(this.iSmTextFieldLegitKernelRadius);
+		this.textFieldKernelRadius.removeEvents();
 		this.comboBoxWeightField.removeItemListener(this.selectedChangeListenerWeightField);
 		this.colorsComboBox.removeItemListener(this.selectedChangeListenerColors);
 		this.componentDropDownMaxColor.removePropertyChangeListener(this.propertyChangeListenerMaxColor);
@@ -349,8 +349,8 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 		this.radioButtonSystemMaximum.removeActionListener(this.selectedChangeListenerSystem);
 		this.radioButtonCustomMaximum.removeActionListener(this.selectedChangeListenerCustom);
 		this.getModifiedLayerPropertyModel().getFormMap().getMapControl().getMap().removeDrawingListener(this.mapDrawingListener);
-		this.waringTextFieldCustomMinValue.removeSmTextFieldLegit(this.iSmCustomMinValueLegitKernelRadius);
-		this.waringTextFieldCustomMaxValue.removeSmTextFieldLegit(this.iSmCustomMaxValueLegitKernelRadius);
+		this.waringTextFieldCustomMinValue.removeEvents();
+		this.waringTextFieldCustomMaxValue.removeEvents();
 	}
 
 	@Override
