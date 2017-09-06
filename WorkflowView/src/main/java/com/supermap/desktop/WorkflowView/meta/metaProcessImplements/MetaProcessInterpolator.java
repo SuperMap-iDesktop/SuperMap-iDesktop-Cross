@@ -381,9 +381,14 @@ public class MetaProcessInterpolator extends MetaProcess {
 	public void setInterpolationParameter(InterpolationParameter interpolationParameter) {
 		Rectangle2D bounds = new Rectangle2D();
 		ParameterSearchModeInfo info = (ParameterSearchModeInfo) searchMode.getSelectedItem();
-		interpolationParameter.setExpectedCount(info.expectedCount);
 		interpolationParameter.setSearchMode(info.searchMode);
-		interpolationParameter.setSearchRadius(info.searchRadius);
+		if (!info.searchMode.equals(SearchMode.QUADTREE)) {
+			interpolationParameter.setExpectedCount(info.expectedCount);
+			interpolationParameter.setSearchRadius(info.searchRadius);
+		} else {
+			interpolationParameter.setMaxPointCountForInterpolation(info.maxPointCount);
+			interpolationParameter.setMaxPointCountInNode(info.expectedCount);
+		}
 		interpolationParameter.setResolution(Double.valueOf(parameterResolution.getSelectedItem().toString()));
 		interpolationParameter.setBounds(bounds);
 	}

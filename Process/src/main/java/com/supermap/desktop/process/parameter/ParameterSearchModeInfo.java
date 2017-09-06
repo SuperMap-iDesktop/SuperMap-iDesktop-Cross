@@ -8,5 +8,6 @@ import com.supermap.analyst.spatialanalyst.SearchMode;
 public class ParameterSearchModeInfo {
     public SearchMode searchMode;
     public double searchRadius;
+    public int maxPointCount;
     public int expectedCount;
 }

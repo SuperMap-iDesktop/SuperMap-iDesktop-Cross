@@ -25,7 +25,7 @@ public class SmTextFieldLegit extends JTextField {
 
 	private String backUpValue = "";
 
-	private ISmTextFieldLegit smTextFieldLegit;
+	protected ISmTextFieldLegit smTextFieldLegit;
 
 	private static final Color IL_LEGAL_COLOR = Color.red;
 	private static final Color LEGAL_COLOR = Color.black;

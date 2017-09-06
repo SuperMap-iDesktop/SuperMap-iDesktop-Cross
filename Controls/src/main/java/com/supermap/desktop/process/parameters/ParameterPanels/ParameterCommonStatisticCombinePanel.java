@@ -2,6 +2,7 @@ package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
@@ -12,7 +13,9 @@ import com.supermap.desktop.process.parameter.ipls.ParameterCommonStatisticCombi
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasetChooseTable;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.TextFields.NumTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -36,7 +39,7 @@ public class ParameterCommonStatisticCombinePanel extends SwingPanel {
 	private JRadioButton radioButtonValue;
 	private JRadioButton radioButtonDatasets;
 	private JLabel labelValue;
-	private SmTextFieldLegit textFieldLegit;
+	private NumTextFieldLegit textFieldLegit;
 	private JPanelDatasetChooseForParameter datasetChooseForParameter;
 	private final String[] columnNames = {"", CommonProperties.getString("String_ColumnHeader_Dataset"), CommonProperties.getString("String_ColumnHeader_Datasource")};
 	private final boolean[] enables = {false, false, false};
@@ -55,7 +58,7 @@ public class ParameterCommonStatisticCombinePanel extends SwingPanel {
 		radioButtonValue = new JRadioButton();
 		radioButtonDatasets = new JRadioButton();
 		labelValue = new JLabel();
-		textFieldLegit = new SmTextFieldLegit();
+		textFieldLegit = new NumTextFieldLegit();
 		datasetChooseForParameter = new JPanelDatasetChooseForParameter(parameterCommonStatisticCombine.getDatasets(), columnNames, enables);
 
 		buttonGroup.add(radioButtonValue);
@@ -143,7 +146,7 @@ public class ParameterCommonStatisticCombinePanel extends SwingPanel {
 			private void change() {
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldLegit.getText())) {
 					isSelectingItem = true;
-					parameterCommonStatisticCombine.setSelectedItem(Double.valueOf(textFieldLegit.getText().toString()));
+					parameterCommonStatisticCombine.setSelectedItem(Double.valueOf(textFieldLegit.getBackUpValue().toString()));
 					isSelectingItem = false;
 				}
 			}
