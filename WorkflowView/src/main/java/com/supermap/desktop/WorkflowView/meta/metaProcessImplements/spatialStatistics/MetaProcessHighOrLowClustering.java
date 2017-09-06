@@ -6,14 +6,12 @@ import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextArea;
 
 /**
  * @author XiaJT
  */
 public class MetaProcessHighOrLowClustering extends MetaProcessAnalyzingPatterns {
-	private ParameterTextArea parameterResult;
+//	private ParameterTextArea parameterResult;
 
 	@Override
 	public String getTitle() {
@@ -22,30 +20,34 @@ public class MetaProcessHighOrLowClustering extends MetaProcessAnalyzingPatterns
 
 	@Override
 	protected void initHook() {
-		parameterResult = new ParameterTextArea();
-		ParameterCombine parameterCombine = new ParameterCombine();
-		parameterCombine.addParameters(parameterResult);
-		parameterCombine.setDescribe(ProcessProperties.getString("String_result"));
-		parameters.addParameters(parameterCombine);
+//		parameterResult = new ParameterTextArea();
+//		ParameterCombine parameterCombine = new ParameterCombine();
+//		parameterCombine.addParameters(parameterResult);
+//		parameterCombine.setDescribe(ProcessProperties.getString("String_result"));
+//		parameters.addParameters(parameterCombine);
 	}
 
 	@Override
-	protected boolean doWork(DatasetVector datasetVector) {;
+	protected boolean doWork(DatasetVector datasetVector) {
+		;
 		AnalyzingPatterns.addSteppedListener(steppedListener);
 		AnalyzingPatternsResult analyzingPatternsResult = null;
 		try {
 
 			analyzingPatternsResult = AnalyzingPatterns.highOrLowClustering(datasetVector, parameterPatternsParameter.getPatternParameter());
-			String result = "";
-			result += ProcessProperties.getString("String_GeneralG") + " " + analyzingPatternsResult.getIndex() + "\n";
-			result += ProcessProperties.getString("String_Expectation") + " " + analyzingPatternsResult.getExpectation() + "\n";
-			result += ProcessProperties.getString("String_Variance") + " " + analyzingPatternsResult.getVariance() + "\n";
-			result += ProcessProperties.getString("String_ZScor") + " " + analyzingPatternsResult.getZScore() + "\n";
-			result += ProcessProperties.getString("String_PValue") + " " + analyzingPatternsResult.getPValue() + "\n";
-			parameterResult.setSelectedItem(result);
+			if (analyzingPatternsResult != null) {
+				String result = "";
+				result += ProcessProperties.getString("String_GeneralG") + " " + analyzingPatternsResult.getIndex() + "\n";
+				result += ProcessProperties.getString("String_Expectation") + " " + analyzingPatternsResult.getExpectation() + "\n";
+				result += ProcessProperties.getString("String_Variance") + " " + analyzingPatternsResult.getVariance() + "\n";
+				result += ProcessProperties.getString("String_ZScor") + " " + analyzingPatternsResult.getZScore() + "\n";
+				result += ProcessProperties.getString("String_PValue") + " " + analyzingPatternsResult.getPValue() + "\n";
+				Application.getActiveApplication().getOutput().output(result);
+			}
+//			parameterResult.setSelectedItem(result);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+		} finally {
 			AnalyzingPatterns.removeSteppedListener(steppedListener);
 		}
 		return analyzingPatternsResult != null;
