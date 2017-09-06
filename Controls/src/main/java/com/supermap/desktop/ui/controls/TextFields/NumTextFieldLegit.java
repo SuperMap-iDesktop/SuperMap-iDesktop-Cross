@@ -1,17 +1,15 @@
-package com.supermap.desktop.process.parameter.ipls;
+package com.supermap.desktop.ui.controls.TextFields;
 
 import com.supermap.desktop.Interface.ISmTextFieldLegit;
-import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
-/**
- * @author XiaJT
- * 增加“单位”属性
- * 支持千分位的识别-yuanR2017.9.5
- */
-public class ParameterNumber extends ParameterTextField {
 
+/**
+ * Created By Chens on 2017/9/5 0005
+ * 数字输入限制
+ */
+public class NumTextFieldLegit extends SmTextFieldLegit {
 	private int bit = -1;
 	private boolean isMaxValueEnable = false;
 	private double maxValue;
@@ -20,16 +18,9 @@ public class ParameterNumber extends ParameterTextField {
 	private double minValue;
 	private boolean isIncludeMin = true;
 	private boolean isIncludeMax = true;
-	private String tip;
-	private String unit = "";
 
-	public ParameterNumber() {
-		this("");
-	}
-
-	public ParameterNumber(String describe) {
-		super(describe);
-		setDescribe(describe);
+	public NumTextFieldLegit(String text) {
+		super(text);
 		smTextFieldLegit = new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
@@ -46,20 +37,11 @@ public class ParameterNumber extends ParameterTextField {
 					if (textFieldValue.lastIndexOf("-") > 0) {
 						return false;
 					}
-					// 判断用千分位表示的数字是否正确-yuanR2017.9.5
-					if (textFieldValue.contains(",")) {
-						String temp = DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(textFieldValue));
-						if (!temp.equals(textFieldValue)) {
-							return false;
-						}
-					}
 					for (int i = 0; i < textFieldValue.length(); i++) {
-						// 可识别千分位-yuanR2017.9.5
-						if (!(Character.isDigit(textFieldValue.charAt(i)) || textFieldValue.charAt(i) == ',' || textFieldValue.charAt(i) == '.' || textFieldValue.charAt(i) == '-')) {
+						if (!(Character.isDigit(textFieldValue.charAt(i)) || textFieldValue.charAt(i) == '.' || textFieldValue.charAt(i) == '-')) {
 							return false;
 						}
 					}
-					textFieldValue = textFieldValue.replace(",", "");
 					Double aDouble = DoubleUtilities.stringToValue(textFieldValue);
 					if (isMinValueEnable && (aDouble < minValue || (!isIncludeMin && aDouble == minValue))) {
 						return false;
@@ -94,26 +76,20 @@ public class ParameterNumber extends ParameterTextField {
 		};
 	}
 
-	/**
-	 * 防止千分位的影响，做一下处理
-	 * yuanR
-	 *
-	 * @return
-	 */
-	@Override
-	public String getSelectedItem() {
-		return super.getSelectedItem().replace(",", "");
+	public NumTextFieldLegit() {
+		this(null);
 	}
 
+	public int getBit() {
+		return bit;
+	}
 
-	private String getRangeDescribe() {
-		StringBuilder stringBuffer = new StringBuilder();
-		stringBuffer.append(isIncludeMin() && isMinValueEnable ? "[" : "(");
-		stringBuffer.append(isMinValueEnable ? String.valueOf(minValue) : "-∞");
-		stringBuffer.append(", ");
-		stringBuffer.append(isMaxValueEnable ? String.valueOf(maxValue) : "+∞");
-		stringBuffer.append(isIncludeMax() && isMaxValueEnable ? "]" : ")");
-		return stringBuffer.toString();
+	public void setBit(int bit) {
+		this.bit = bit;
+	}
+
+	public double getMaxValue() {
+		return maxValue;
 	}
 
 	public void setMaxValue(double maxValue) {
@@ -121,21 +97,21 @@ public class ParameterNumber extends ParameterTextField {
 		this.maxValue = maxValue;
 	}
 
+	public double getMinValue() {
+		return minValue;
+	}
+
 	public void setMinValue(double minValue) {
 		isMinValueEnable = true;
 		this.minValue = minValue;
 	}
 
-	public void setMaxBit(int bit) {
-		this.bit = bit;
-	}
-
-	public void setIsIncludeMin(boolean isIncludeMin) {
-		this.isIncludeMin = isIncludeMin;
-	}
-
 	public boolean isIncludeMin() {
 		return isIncludeMin;
+	}
+
+	public void setIncludeMin(boolean includeMin) {
+		isIncludeMin = includeMin;
 	}
 
 	public boolean isIncludeMax() {
@@ -145,27 +121,5 @@ public class ParameterNumber extends ParameterTextField {
 	public void setIncludeMax(boolean includeMax) {
 		isIncludeMax = includeMax;
 	}
-
-	@Override
-	public String getType() {
-		return ParameterType.NUMBER;
-	}
-
-	public String getTip() {
-		return this.tip;
-	}
-
-	public void setTip(String tip) {
-		this.tip = tip;
-	}
-
-	@Override
-	public String getUnit() {
-		return unit;
-	}
-
-	@Override
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
 }
+

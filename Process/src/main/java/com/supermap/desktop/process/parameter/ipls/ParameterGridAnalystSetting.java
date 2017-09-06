@@ -11,6 +11,7 @@ import com.supermap.desktop.GridAnalystSettingInstance;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.parameter.interfaces.IEnvironmentParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 /**
  * @author XiaJT
  */
-public class ParameterGridAnalystSetting extends ParameterCombine {
+public class ParameterGridAnalystSetting extends ParameterCombine implements IEnvironmentParameter {
 	private ParameterComboBox parameterComboBoxResultBounds = new ParameterComboBox();
 	private ParameterSwitch parameterSwitchResultBounds = new ParameterSwitch();
 	private ParameterSwitch parameterSwitchResultBoundsDataset = new ParameterSwitch();
@@ -42,6 +43,7 @@ public class ParameterGridAnalystSetting extends ParameterCombine {
 
 	private GridAnalystSettingInstance gridAnalystSettingInstance;
 	private boolean isSelectedItem = false;
+	private PropertyChangeListener gridAnalystSettingListener;
 
 	public ParameterGridAnalystSetting() {
 		gridAnalystSettingInstance = GridAnalystSettingInstance.getInstance();
@@ -196,22 +198,19 @@ public class ParameterGridAnalystSetting extends ParameterCombine {
 				}
 			}
 		});
-		gridAnalystSettingInstance.addPropertyChangedListener(new PropertyChangeListener() {
+		gridAnalystSettingListener = new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (isSelectedItem) {
 					return;
 				}
 				String propertyName = evt.getPropertyName();
-				if (propertyName.equals(GridAnalystSettingInstance.RESULT_BOUNDS)) {
-					freshResultBoundsView();
-				} else if (propertyName.equals(GridAnalystSettingInstance.CELL_SIZE)) {
-					freshCellSizeView();
-				} else if (propertyName.equals(GridAnalystSettingInstance.CLIP_BOUNDS)) {
-					freshClipBounds();
+				if (propertyName.equals(GridAnalystSettingInstance.INSTANCE_CHANGED) && !isModified()) {
+					reset();
 				}
 			}
-		});
+		};
+		GridAnalystSettingInstance.addPropertyChangedListener(gridAnalystSettingListener);
 
 		parameterDatasetCellSize.addPropertyListener(new PropertyChangeListener() {
 			@Override
@@ -238,6 +237,10 @@ public class ParameterGridAnalystSetting extends ParameterCombine {
 		EqualDatasourceConstraint equalDatasourceConstraintCellSize = new EqualDatasourceConstraint();
 		equalDatasourceConstraintCellSize.constrained(parameterDatasourceCellSize, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraintCellSize.constrained(parameterDatasetCellSize, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+	}
+
+	private void removeListeners() {
+		GridAnalystSettingInstance.removePropertyChangedListener(gridAnalystSettingListener);
 	}
 
 	private void initComponentState() {
@@ -346,4 +349,29 @@ public class ParameterGridAnalystSetting extends ParameterCombine {
 	public GridAnalystSettingInstance getResult() {
 		return gridAnalystSettingInstance;
 	}
+
+	@Override
+	public boolean isModified() {
+		return gridAnalystSettingInstance.isModified();
+	}
+
+	@Override
+	public boolean setAsGlobalEnvironment() {
+		gridAnalystSettingInstance.run();
+		return true;
+	}
+
+	@Override
+	public boolean reset() {
+		gridAnalystSettingInstance = GridAnalystSettingInstance.getInstance();
+		initComponentState();
+		return false;
+	}
+
+	@Override
+	public void dispose() {
+		removeListeners();
+	}
+
+
 }

@@ -80,4 +80,9 @@ public abstract class MetaProcess extends AbstractProcess {
 	public boolean isChangeSourceData() {
 		return isChangeSourceData;
 	}
+
+	@Override
+	public void dispose() {
+		getParameters().dispose();
+	}
 }

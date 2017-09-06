@@ -60,7 +60,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 		parameterComboBoxConceptModel.setDescribe(ProcessProperties.getString("String_ConceptModel"));
 		parameterDistanceMethod.setDescribe(ProcessProperties.getString("String_DistanceMethod"));
 		parameterTextFieldDistanceTolerance.setDescribe(ProcessProperties.getString("String_DistanceTolerance"));
-		parameterTextFieldDistanceTolerance.setToolTip(ProcessProperties.getString("String_DistanceTolerance") + " {-1, [0, +∞) }");
+		parameterTextFieldDistanceTolerance.setTip(ProcessProperties.getString("String_DistanceToleranceTip"));
 		parameterTextFieldExponent.setDescribe(ProcessProperties.getString("String_Exponent"));
 		parameterCheckBoxFDRAdjusted.setDescribe(ProcessProperties.getString("String_FDRAdjusted"));
 		parameterFile.setDescribe(ProcessProperties.getString("String_Label_SWM"));
@@ -164,6 +164,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 
 		this.addParameters(parameterAssessmentFieldComboBox, parameterComboBoxConceptModel);
 		// 调整界面布局-yuanR2017.9.5
+		parameterSwitchMain.switchParameter("FixedDistanceBand");
 		this.addParameters(parameterSwitchMain, parameterDistanceMethod);
 		if (metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST) || metaKeys.equals(MetaKeys.OPTIMIZED_HOT_SPOT_ANALYST)) {
 			this.addParameters(parameterSelfWeightFieldComboBox);
@@ -178,6 +179,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 	}
 
 	private void initParameterState() {
+		parameterComboBoxConceptModel.setSelectedItem(ConceptualizationModel.FIXEDDISTANCEBAND);
 		parameterTextFieldDistanceTolerance.setSelectedItem("-1.0");
 		parameterTextFieldExponent.setSelectedItem("1.0");
 		parameterTextFieldKNeighbors.setSelectedItem("1");

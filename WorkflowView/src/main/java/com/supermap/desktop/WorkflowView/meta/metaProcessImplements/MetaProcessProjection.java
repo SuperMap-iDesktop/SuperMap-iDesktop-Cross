@@ -32,7 +32,7 @@ public class MetaProcessProjection extends MetaProcess {
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String OUTPUT_DATA = "ProjectionResult";
 
-	private PrjCoordSys prjCoordSys;
+	private PrjCoordSys prjCoordSys = null;
 	private ParameterDatasourceConstrained parameterDatasource;
 	private ParameterSingleDataset parameterDataset;
 
@@ -163,6 +163,11 @@ public class MetaProcessProjection extends MetaProcess {
 			} else {
 				src = (Dataset) this.parameterDataset.getSelectedItem();
 			}
+			// 当未设置投影时，给定原数据集投影,防止参数为空报错-yuanR2017.9.6
+			if (prjCoordSys == null) {
+				prjCoordSys = src.getPrjCoordSys();
+			}
+
 			fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
 
 			CoordSysTransMethod method = (CoordSysTransMethod) parameterMode.getSelectedData();

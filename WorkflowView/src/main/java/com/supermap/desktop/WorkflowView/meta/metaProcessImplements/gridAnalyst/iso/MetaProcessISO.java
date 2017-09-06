@@ -3,17 +3,28 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridAnalyst
 import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
-import com.supermap.desktop.WorkflowView.meta.MetaProcess;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridAnalyst;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -25,7 +36,7 @@ import java.text.MessageFormat;
 /**
  * @author XiaJT
  */
-public abstract class MetaProcessISO extends MetaProcess {
+public abstract class MetaProcessISO extends MetaProcessGridAnalyst {
 
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	protected static String OUTPUT_DATA = "ExtractResult";
@@ -184,8 +195,8 @@ public abstract class MetaProcessISO extends MetaProcess {
 			int minValue = (int) ((DatasetGrid) datasetGrid).getMinValue();
 			maxGrid.setSelectedItem(DoubleUtilities.getFormatString(maxValue));
 			minGrid.setSelectedItem(DoubleUtilities.getFormatString(minValue));
-			double baseValue = Double.valueOf((String) datumValue.getSelectedItem());
-			double lineDistance = Double.valueOf((String) interval.getSelectedItem());
+			double baseValue = Double.valueOf(datumValue.getSelectedItem());
+			double lineDistance = Double.valueOf(interval.getSelectedItem());
 			double dRemain = baseValue % lineDistance;
 			double maxIsoValue = (int) ((maxValue - dRemain) / lineDistance) * lineDistance + dRemain;
 			double minIsoValue = (int) ((minValue - dRemain) / lineDistance + 1) * lineDistance + dRemain;
@@ -203,19 +214,19 @@ public abstract class MetaProcessISO extends MetaProcess {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean childExecute() {
 		boolean isSuccessful = false;
 
 		try {
 			SurfaceExtractParameter surfaceExtractParameter = new SurfaceExtractParameter();
-			surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem().toString()));
-			surfaceExtractParameter.setInterval(Double.valueOf(interval.getSelectedItem().toString()));
-			surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem().toString()));
+			surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem()));
+			surfaceExtractParameter.setInterval(Double.valueOf(interval.getSelectedItem()));
+			surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem()));
 			surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
-			surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
+			surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem()));
 			SurfaceAnalyst.addSteppedListener(steppedListener);
 
-			DatasetGrid src = null;
+			DatasetGrid src;
 			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetGrid) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 			} else {

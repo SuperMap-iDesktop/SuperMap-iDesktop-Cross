@@ -42,7 +42,7 @@ public class ParameterColorPanel extends SwingPanel implements IParameterPanel {
 				new PropertyChangeListener() {
 					@Override
 					public void propertyChange(PropertyChangeEvent evt) {
-						if (!isSelectedItem && componentDropDown.getColor()!=null) {
+						if (!isSelectedItem && componentDropDown.getColor() != null) {
 							try {
 								isSelectedItem = true;
 								parameterColor.setSelectedItem((componentDropDown.getColor()));
@@ -56,9 +56,9 @@ public class ParameterColorPanel extends SwingPanel implements IParameterPanel {
 		this.parameterColor.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (!isSelectedItem){
+				if (!isSelectedItem) {
 					isSelectedItem = true;
-					ParameterColorPanel.this.componentDropDown.selectColor((Color)evt.getNewValue());
+					ParameterColorPanel.this.componentDropDown.selectColor((Color) evt.getNewValue());
 					isSelectedItem = false;
 				}
 			}
