@@ -1,14 +1,16 @@
 package com.supermap.desktop.core;
 
+import com.supermap.desktop.properties.CoreProperties;
+
 /**
  * Created by highsad on 2017/9/6.
  */
 public enum TimeType {
-	MILLISECOND(1, 0, 999, "ms"),
-	SECOND(2, 0, 59, "sec"),
-	MINUTE(3, 0, 59, "min"),
-	HOUR(4, 0, 23, "h"),
-	DAY(5, 0, Integer.MAX_VALUE, "d");
+	MILLISECOND(1, 0, 999, CoreProperties.getString("String_MilliSecond")),
+	SECOND(2, 0, 59, CoreProperties.getString("String_Second")),
+	MINUTE(3, 0, 59, CoreProperties.getString("String_Minute")),
+	HOUR(4, 0, 23, CoreProperties.getString("String_Hour")),
+	DAY(5, 0, Integer.MAX_VALUE, CoreProperties.getString("String_Day"));
 
 	private int value;
 	private int min;
