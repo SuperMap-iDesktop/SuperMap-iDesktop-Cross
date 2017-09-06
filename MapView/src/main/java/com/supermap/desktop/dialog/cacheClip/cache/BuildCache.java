@@ -117,7 +117,8 @@ public class BuildCache {
 						builder.setOutputFolder(new File(cachePath).getParent());
 						builder.setCacheName(builder.getCacheName());
 						builder.resumable(false);
-						builder.setIsAppending(isAppending);
+						//多进程切图更新和isAppending无关
+//						builder.setIsAppending(isAppending);
 						cacheBuilderHashMap.put(sciName, builder);
 						FileLocker locker = new FileLocker(sci);
 						if (locker.tryLock()) {
@@ -163,11 +164,11 @@ public class BuildCache {
 		long oneStart = System.currentTimeMillis();
 
 		boolean result;
-		if (isAppending) {
-			result = builder.build();
-		} else {
+//		if (isAppending) {
+//			result = builder.build();
+//		} else {
 			result = builder.buildWithoutConfigFile();
-		}
+//		}
 		//释放锁
 		locker.release();
 		builder.dispose();
