@@ -74,6 +74,7 @@ public class DialogCacheBuilder extends JFrame {
 	private Thread updateThread;
 	private String locale;
 	private CacheProperties cacheProperties;
+	private static String updateSciPath;
 
 	private static Object resultLock = new Object();
 
@@ -215,6 +216,9 @@ public class DialogCacheBuilder extends JFrame {
 
 	private void resetPathInfo() {
 		String sciFilePath = getCacheSci();
+		if (null != updateSciPath && cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip) {
+			sciFilePath = updateSciPath;
+		}
 		if (null != sciFilePath) {
 			MapCacheBuilder builder = new MapCacheBuilder();
 			boolean result = builder.fromConfigFile(sciFilePath);
@@ -256,9 +260,9 @@ public class DialogCacheBuilder extends JFrame {
 
 
 	private void initComponents() {
-		if ("null".equals(locale)){
+		if ("null".equals(locale)) {
 			cacheProperties = new CacheProperties();
-		}else{
+		} else {
 			cacheProperties = new CacheProperties(locale);
 		}
 		this.progressBars = new CopyOnWriteArrayList<>();
@@ -765,7 +769,7 @@ public class DialogCacheBuilder extends JFrame {
 			String workspacePath = args[2];
 			String mapName = args[3];
 			String cachePath = args[4];
-			String updateSciPath = args[5];
+//			String updateSciPath = args[5];
 			DialogCacheBuilder dialogMapCacheBuilder = getDialog(args[0], args[1]);
 			if (!"null".equals(workspacePath)) {
 				dialogMapCacheBuilder.fileChooserWorkspacePath.setPath(workspacePath);
@@ -776,6 +780,9 @@ public class DialogCacheBuilder extends JFrame {
 			if (!"null".equals(cachePath)) {
 				dialogMapCacheBuilder.fileChooserCachePath.setPath(cachePath);
 			}
+//			if (!"null".equals(updateSciPath)) {
+//				dialogMapCacheBuilder.updateSciPath = updateSciPath;
+//			}
 			dialogMapCacheBuilder.setVisible(true);
 		} else {
 			getDialog(args[0], args[1]).setVisible(true);

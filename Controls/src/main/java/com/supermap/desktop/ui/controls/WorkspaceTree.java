@@ -1310,12 +1310,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				CollectionDatasetInfo collectionDatasetInfo = collectionDatasetInfos.get(i);
 				DatasourceConnectionInfo connectionInfo = collectionDatasetInfo.getDatasourceConnectInfo();
 				if (null != connectionInfo) {
-					Datasource datasource = DatasourceUtilities.getDatasource(connectionInfo);
-					if (null != datasource) {
-						addDatasetNode(datasetNode, collectionDatasetInfo, datasource);
-					}else{
-						addDatasetNode(datasetNode,collectionDatasetInfo,new Workspace().getDatasources().open(connectionInfo));
-					}
+					addDatasetNode(datasetNode, collectionDatasetInfo, new Workspace().getDatasources().open(connectionInfo));
 				}
 			}
 		}
