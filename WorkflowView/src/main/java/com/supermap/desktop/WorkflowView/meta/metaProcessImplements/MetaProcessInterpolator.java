@@ -320,7 +320,9 @@ public class MetaProcessInterpolator extends MetaProcess {
 				setInterpolationParameter(interpolationParameter);
 				((InterpolationKrigingParameter) interpolationParameter).setVariogramMode((VariogramMode) ((ParameterDataNode) parameterVariogramMode.getSelectedItem()).getData());
 				((InterpolationKrigingParameter) interpolationParameter).setSill(Double.valueOf(parameterStill.getSelectedItem().toString()));
-				((InterpolationKrigingParameter) interpolationParameter).setAngle(Double.valueOf(parameterAngle.getSelectedItem().toString()));
+				if (!interpolationParameter.getSearchMode().equals(SearchMode.QUADTREE)) {
+					((InterpolationKrigingParameter) interpolationParameter).setAngle(Double.valueOf(parameterAngle.getSelectedItem().toString()));
+				}
 				((InterpolationKrigingParameter) interpolationParameter).setRange(Double.valueOf(parameterRange.getSelectedItem().toString()));
 				if (interpolationParameter.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
 					((InterpolationKrigingParameter) interpolationParameter).setMean(Double.valueOf(parameterMean.getSelectedItem().toString()));

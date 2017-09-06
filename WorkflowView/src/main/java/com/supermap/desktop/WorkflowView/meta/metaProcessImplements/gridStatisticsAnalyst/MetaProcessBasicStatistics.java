@@ -71,7 +71,7 @@ public class MetaProcessBasicStatistics extends MetaProcessGridAnalyst {
 		textFieldAvg = new ParameterTextField(ProcessProperties.getString("String_Label_Mean"));
 		textFieldStd = new ParameterTextField(ProcessProperties.getString("String_Label_StandardDeviation"));
 		textFieldVar = new ParameterTextField(ProcessProperties.getString("String_Label_Variance"));
-		checkBoxShow = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_ShowHistogram"));
+		checkBoxShow = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_CreateHistogram"));
 		numberGroupCount = new ParameterNumber(ProcessProperties.getString("String_Label_GroupCount"));
 		histogram = new ParameterHistogram();
 

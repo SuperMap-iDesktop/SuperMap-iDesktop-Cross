@@ -73,17 +73,19 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 		edgeMatchMode.setRequisite(true);
 
 		edgeTolerance = new ParameterNumber(ProcessProperties.getString("String_EdgeMatchTolerance"));
+		edgeTolerance.setTip(ProcessProperties.getString("String_EdgeMatchToleranceTip"));
 		edgeTolerance.setMaxBit(22);
 		edgeTolerance.setMinValue(0);
 		edgeTolerance.setIsIncludeMin(false);
 		edgeTolerance.setRequisite(true);
 
 		union = new ParameterCheckBox(ProcessProperties.getString("String_EdgeMatchUnion"));
+		union.setTip(ProcessProperties.getString("String_EdgeMatchUnionTip"));
 
 		linkDatasource = new ParameterDatasourceConstrained();
 		linkDatasetName = new ParameterTextField(ControlsProperties.getString("String_Label_ResultDataset"));
 		isLinkDataset = new ParameterCheckBox(ProcessProperties.getString("String_EdgeMatch_OutputDatasetLink"));
-
+		isLinkDataset.setTip(ProcessProperties.getString("String_EdgeMatchOutputDatasetLinkTip"));
 		// 源数据
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
 		parameterCombineSourceData.addParameters(sourceDatasource, sourceDataset);
@@ -112,7 +114,7 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 	private void initComponentState() {
 
 		Dataset datasetVector = DatasetUtilities.getDefaultDataset(DatasetType.LINE);
-		if (datasetVector != null) {
+		if (datasetVector != null && !datasetVector.isReadOnly()) {
 			sourceDatasource.setSelectedItem(datasetVector.getDatasource());
 			sourceDataset.setSelectedItem(datasetVector);
 			linkDatasource.setSelectedItem(datasetVector.getDatasource());
@@ -120,6 +122,7 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 		}
 		edgeMatchMode.setSelectedItem(EdgeMatchMode.THEOTHEREDGE);
 		edgeTolerance.setSelectedItem(0.00001);
+		union.setSelectedItem(true);
 		linkDatasetName.setSelectedItem("LinkDataset");
 
 		linkDatasource.setEnabled(false);
@@ -161,6 +164,12 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 
 			DatasetVector targetDataset = null;
 			targetDataset = (DatasetVector) this.targetDataset.getSelectedItem();
+
+			// 当数据集为空时，给出提示信息-yuanR2017.9.5
+			if (sourceDataset == null || targetDataset == null) {
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ParameterError"));
+				return false;
+			}
 
 			EdgeMatchParameter edgeMatchParameter = new EdgeMatchParameter();
 			edgeMatchParameter.setEdgeMatchMode((EdgeMatchMode) edgeMatchMode.getSelectedData());
