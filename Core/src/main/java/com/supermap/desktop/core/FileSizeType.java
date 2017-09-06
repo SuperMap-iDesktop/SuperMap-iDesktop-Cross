@@ -6,7 +6,7 @@ public enum FileSizeType {
 	private int value;
 	private String text;
 
-	private FileSizeType(int value, String text) {
+	FileSizeType(int value, String text) {
 		this.value = value;
 		this.text = text;
 	}
