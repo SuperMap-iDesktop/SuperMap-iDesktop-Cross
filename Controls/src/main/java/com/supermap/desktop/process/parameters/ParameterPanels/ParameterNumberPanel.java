@@ -20,7 +20,6 @@ public class ParameterNumberPanel extends ParameterTextFieldPanel {
 		super(parameterNumber);
 		this.parameterNumber = (ParameterNumber) parameterNumber;
 		label.setText(getDescribe());
-		label.setToolTipText(this.parameterNumber.getToolTip());
 		labelUnit.setText(this.parameterNumber.getUnit());
 	}
 

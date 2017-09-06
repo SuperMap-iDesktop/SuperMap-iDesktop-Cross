@@ -15,7 +15,7 @@ import java.beans.PropertyChangeEvent;
 public class ParameterTextField extends AbstractParameter implements ISelectionParameter {
 	private String describe;
 	private String unit;
-	private String toolTip;
+	private String tip;
 
 	@ParameterField(name = PROPERTY_VALE)
 	private String value = "";
@@ -96,11 +96,11 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 		return this.unit;
 	}
 
-	public String getToolTip() {
-		return toolTip;
+	public String getTip() {
+		return tip;
 	}
 
-	public void setToolTip(String toolTip) {
-		this.toolTip = toolTip;
+	public void setTip(String tip) {
+		this.tip = tip;
 	}
 }
