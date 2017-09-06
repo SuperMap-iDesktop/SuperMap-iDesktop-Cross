@@ -109,6 +109,7 @@ public class MetaProcessNeighbourStatistics extends MetaProcessGridAnalyst {
 				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MINORITY),GridStatisticsMode.MINORITY),
 				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MEDIAN),GridStatisticsMode.MEDIAN));
 		comboBoxStatisticMode.setSelectedItem(comboBoxStatisticMode.getItemAt(4));
+		checkBoxIgnore.setSelectedItem(true);
 	}
 
 	private void registerListener() {

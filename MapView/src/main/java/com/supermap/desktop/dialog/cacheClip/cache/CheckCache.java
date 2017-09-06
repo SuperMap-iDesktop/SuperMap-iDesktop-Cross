@@ -515,48 +515,58 @@ public class CheckCache {
 	}
 
 	public boolean isSolidWhite(BufferedImage image) {
-		byte[] data = ((DataBufferByte) image.getData().getDataBuffer()).getData();
+		byte[] data = ((DataBufferByte)image.getData().getDataBuffer()).getData();
 		byte value = -1;
-		for (int i = 0; i < data.length; i++) {
-			if (data[i] != value) {
+		for(int i = 0; i < data.length; i++){
+			if(data[i] != value){
 				return false;
 			}
 		}
 		return true;
 	}
 
-	/**
-	 * Validate image's block is white
-	 *
-	 * @param image
-	 * @return
-	 */
-	public boolean isBlockWhite(BufferedImage image) {
-		byte[] data = ((DataBufferByte) image.getData().getDataBuffer()).getData();
+	public boolean isBlockWhite(BufferedImage image){
+		byte[] data = ((DataBufferByte)image.getData().getDataBuffer()).getData();
 		byte value = -1;
-		int whiteStart = 0, index = 0, whiteCount = 0, h, w;
-		int widthByte = data.length / image.getHeight();
-		for (h = 0; h < image.getHeight(); h++) {
+		int whiteStart = 0, index = 0, h, w, hh, indexhh, height = image.getHeight();
+		int widthByte = data.length / height;
+		for(h = 0; h < height; h++){
 			index = h * widthByte;
-			for (w = 0; w < widthByte; w++) {
-				if (data[index + w] == value) {
-					if (whiteStart == -1) {
+			for(w = 0; w < widthByte; w++){
+				if(data[index + w] == value){
+					if(whiteStart == -1){
 						whiteStart = w;
-					} else if ((w - whiteStart) > 128) {
-						whiteCount++;
-						break;
 					}
-				} else {
+					// 当连续白色超过指定值100个像素时，直接返回
+					else if((w - whiteStart) > 400){
+						return true;
+					}
+					// 当读到第一个像素白色时，判断垂直方向是否连续白色
+					else if((w - whiteStart) == 3){
+						for(hh = h + 1; hh < height; hh++){
+							// 如果连续白色像素超过100个，则直接返回
+							if((hh - h) > 100){
+								return true;
+							}
+							indexhh = hh * widthByte + whiteStart;
+							// 如果水平四个byte值，任意不为255值则中断循环
+							if( data[indexhh] != value ||
+									data[indexhh + 1] != value ||
+									data[indexhh + 2] != value ||
+									data[indexhh + 3] != value){
+								break;
+							}
+						}
+					}
+				}
+				else{
+					// 当不是连续白色时重置
 					whiteStart = -1;
 				}
-			}
-			if (whiteCount > 10) {
-				return true;
 			}
 		}
 		return false;
 	}
-
 
 	private void writError(String error) {
 

@@ -26,6 +26,7 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 	public static final String MAX_VALUE = "maxValue";                            // 最大值
 	public static final String MIN_VALUE = "minValue";                            // 最小值
 	public static final String IS_SYSTEM_OR_CUSTOM = "isSystemOrCustom";
+	public static final String IS_CURRENT_VIEW = "isCurrentView";
 
 
 	private Integer kernelRadius = 0;
@@ -40,12 +41,15 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 	private Double customMinValue = Double.MIN_VALUE;
 	private Double systemMaxValue = 0.0;
 	private Double systemMinValue = 0.0;
+	private Double currentViewMinValue = 0.0;
+	private Double currentViewMaxValue = 0.0;
 	private Double maxValue = 0.0;
 	private Double minValue = 0.0;
 	private Boolean isUserDef = false;
-	private Boolean isCurrentView=false;
+	private Boolean isCurrentView = false;
 	private FieldInfos fieldInfos = null;
 	private Colors colors = null;
+	private int maximumState = -1;
 
 	public LayerHeatmapPropertyModel() {
 		// do nothing
@@ -144,6 +148,14 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 		return customMinValue;
 	}
 
+	public void setCustomMaxValue(Double customMaxValue) {
+		this.customMaxValue = customMaxValue;
+	}
+
+	public void setCustomMinValue(Double customMinValue) {
+		this.customMinValue = customMinValue;
+	}
+
 	public Double getSystemMaxValue() {
 		return systemMaxValue;
 	}
@@ -189,7 +201,41 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 	}
 
 	public void setCurrentView(Boolean currentView) {
-		isCurrentView = currentView;
+		this.isCurrentView = currentView;
+	}
+
+	public Double getCurrentViewMinValue() {
+		return currentViewMinValue;
+	}
+
+	public void setCurrentViewMinValue(Double currentViewMinValue) {
+		this.currentViewMinValue = currentViewMinValue;
+	}
+
+	public Double getCurrentViewMaxValue() {
+		return this.currentViewMaxValue;
+	}
+
+	public void setCurrentViewMaxValue(Double currentViewMaxValue) {
+		this.currentViewMaxValue = currentViewMaxValue;
+	}
+
+	public int getMaximumState() {
+		return this.maximumState;
+	}
+
+	public void setMaximumState(int maximumState) {
+		this.maximumState = maximumState;
+		if (this.maximumState == 0) {
+			this.isCurrentView=true;
+			this.isUserDef=false;
+		} else if (this.maximumState == 1) {
+			this.isCurrentView=false;
+			this.isUserDef=false;
+		} else if (this.maximumState == 2) {
+			this.isCurrentView=false;
+			this.isUserDef=true;
+		}
 	}
 
 	@Override
@@ -210,10 +256,16 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 			this.customMinValue = layerHeatmapPropertyModel.getCustomMinValue();
 			this.systemMaxValue = layerHeatmapPropertyModel.getSystemMaxValue();
 			this.systemMinValue = layerHeatmapPropertyModel.getSystemMinValue();
-			this.maxValue=layerHeatmapPropertyModel.getMaxValue();
-			this.minValue=layerHeatmapPropertyModel.getMinValue();
-			this.isCurrentView=layerHeatmapPropertyModel.getCurrentView();
-			this.isUserDef =layerHeatmapPropertyModel.getIsUserDef();
+			this.currentViewMinValue = layerHeatmapPropertyModel.getCurrentViewMinValue();
+			this.currentViewMaxValue = layerHeatmapPropertyModel.getCurrentViewMaxValue();
+			this.maxValue = layerHeatmapPropertyModel.getMaxValue();
+			this.minValue = layerHeatmapPropertyModel.getMinValue();
+			this.isCurrentView = layerHeatmapPropertyModel.getCurrentView();
+			this.isUserDef = layerHeatmapPropertyModel.getIsUserDef();
+			this.maximumState = layerHeatmapPropertyModel.getMaximumState();
+			if (this.maximumState!=-1 && getNewmaximumState()!=this.maximumState){
+				this.maximumState= getNewmaximumState();
+			}
 		}
 	}
 
@@ -221,11 +273,12 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 	public boolean equals(LayerPropertyModel model) {
 		LayerHeatmapPropertyModel layerHeatmapPropertyModel = (LayerHeatmapPropertyModel) model;
 
-		return layerHeatmapPropertyModel != null && this.kernelRadius == layerHeatmapPropertyModel.getKernelRadius()
+		return layerHeatmapPropertyModel != null && super.equals(layerHeatmapPropertyModel)&& this.kernelRadius == layerHeatmapPropertyModel.getKernelRadius()
 				&& this.fuzzyDegree == layerHeatmapPropertyModel.getFuzzyDegree() && this.intensity == layerHeatmapPropertyModel.getIntensity()
-				&& this.weightField.equals(layerHeatmapPropertyModel.getWeightField()) && this.colors.equals(layerHeatmapPropertyModel.getColors());
+				&& this.weightField.equals(layerHeatmapPropertyModel.getWeightField()) && this.colors.equals(layerHeatmapPropertyModel.getColors())
+				&& this.maximumState==layerHeatmapPropertyModel.getMaximumState() && this.isUserDef==layerHeatmapPropertyModel.getIsUserDef() &&
+				this.isCurrentView==layerHeatmapPropertyModel.getCurrentView();
 	}
-
 
 	@Override
 	protected void apply(Layer layer) {
@@ -256,14 +309,26 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 				layerHeatmap.setIntensity(this.intensity);
 			}
 
-//			if (this.propertyEnabled.get(MAX_VALUE) && this.maxValue != null) {
-//				layerHeatmap.setMaxValue(this.maxValue);
-//			}
-//
-//			if (this.propertyEnabled.get(MIN_VALUE) && this.minValue != null) {
-//				layerHeatmap.setMinValue(this.minValue);
-//			}
-			//layerHeatmap.updateData();
+			if (this.propertyEnabled.get(IS_CURRENT_VIEW) && this.maximumState != -1) {
+				if (this.maximumState == 0) {
+					layerHeatmap.setIsUseCurrentView(true);
+					layerHeatmap.setIsUserDef(false);
+					layerHeatmap.setMinValue(this.currentViewMinValue);
+					layerHeatmap.setMaxValue(this.currentViewMaxValue);
+				} else if (this.maximumState == 1) {
+					layerHeatmap.setIsUseCurrentView(false);
+					layerHeatmap.setIsUserDef(false);
+					layerHeatmap.setMinValue(this.systemMinValue);
+					layerHeatmap.setMaxValue(this.systemMaxValue);
+				} else if (this.maximumState == 2) {
+					layerHeatmap.setIsUseCurrentView(false);
+					layerHeatmap.setIsUserDef(true);
+					layerHeatmap.setMinValue(this.customMinValue);
+					layerHeatmap.setMaxValue(this.customMaxValue);
+				}
+			}
+
+			layerHeatmap.updateData();
 		}
 	}
 
@@ -281,14 +346,17 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 					this.kernelRadius = ComplexPropertyUtilties.union(this.kernelRadius, layerHeatmap.getKernelRadius());
 					this.weightField = ComplexPropertyUtilties.union(this.weightField, layerHeatmap.getWeightField());
 					this.maxColor = ComplexPropertyUtilties.union(this.maxColor, layerHeatmap.getMaxColor());
-					this.maxColorTransparence = ComplexPropertyUtilties.union(this.maxColorTransparence, (int)Math.round((1.0 - this.maxColor.getAlpha() / 255.0) * 100));
+					this.maxColorTransparence = ComplexPropertyUtilties.union(this.maxColorTransparence, (int) Math.round((1.0 - this.maxColor.getAlpha() / 255.0) * 100));
 					this.minColor = ComplexPropertyUtilties.union(this.minColor, layerHeatmap.getMinColor());
-					this.minColorTransparence = ComplexPropertyUtilties.union(this.minColorTransparence, (int)Math.round((1.0 - this.minColor.getAlpha() / 255.0) * 100));
+					this.minColorTransparence = ComplexPropertyUtilties.union(this.minColorTransparence, (int) Math.round((1.0 - this.minColor.getAlpha() / 255.0) * 100));
 					this.fuzzyDegree = ComplexPropertyUtilties.union(this.fuzzyDegree, layerHeatmap.getFuzzyDegree());
 					this.intensity = ComplexPropertyUtilties.union(this.intensity, layerHeatmap.getIntensity());
 					this.systemMaxValue = ComplexPropertyUtilties.union(this.systemMaxValue, layerHeatmap.getInternalMaxValue());
 					this.systemMinValue = ComplexPropertyUtilties.union(this.systemMinValue, layerHeatmap.getInternalMinValue());
+					this.currentViewMinValue = ComplexPropertyUtilties.union(this.currentViewMinValue, layerHeatmap.getCurrentWindowMinValue());
+					this.currentViewMaxValue = ComplexPropertyUtilties.union(this.currentViewMaxValue, layerHeatmap.getCurrentWindowMaxValue());
 					this.isUserDef = ComplexPropertyUtilties.union(this.isUserDef, layerHeatmap.getIsUserDef());
+					this.isCurrentView = ComplexPropertyUtilties.union(this.isCurrentView, layerHeatmap.getIsUseCurrentView());
 					DatasetVector datasetVector = (DatasetVector) layer.getDataset();
 					this.fieldInfos = datasetVector.getFieldInfos();
 
@@ -296,11 +364,19 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 						this.customMaxValue = this.systemMaxValue;
 						this.customMinValue = this.systemMinValue;
 					}
+					if (this.isCurrentView) {
+						this.maximumState = 0;
+					} else {
+						if (this.isUserDef) {
+							this.maximumState = 2;
+						} else {
+							this.maximumState = 1;
+						}
+					}
 				}
 			}
 		}
 	}
-
 
 	private void resetProperties() {
 		this.kernelRadius = 0;
@@ -313,29 +389,59 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 		this.intensity = 0.0;
 		this.systemMaxValue = 0.0;
 		this.systemMinValue = 0.0;
+		this.currentViewMinValue = 0.0;
+		this.currentViewMaxValue = 0.0;
 		this.fieldInfos = null;
-		this.isUserDef =false;
+		this.isUserDef = false;
+		this.isCurrentView = false;
+		this.maximumState = -1;
 
 		if (getLayers() != null && getLayers().length > 0) {
 			this.kernelRadius = ((LayerHeatmap) getLayers()[0]).getKernelRadius();
 			this.weightField = ((LayerHeatmap) getLayers()[0]).getWeightField();
 			this.maxColor = ((LayerHeatmap) getLayers()[0]).getMaxColor();
-			this.maxColorTransparence = (int)Math.round((1.0 - this.maxColor.getAlpha() / 255.0) * 100);
+			this.maxColorTransparence = (int) Math.round((1.0 - this.maxColor.getAlpha() / 255.0) * 100);
 			this.minColor = ((LayerHeatmap) getLayers()[0]).getMinColor();
-			this.minColorTransparence = (int)Math.round((1.0 - this.minColor.getAlpha() / 255.0) * 100);
+			this.minColorTransparence = (int) Math.round((1.0 - this.minColor.getAlpha() / 255.0) * 100);
 			this.fuzzyDegree = ((LayerHeatmap) getLayers()[0]).getFuzzyDegree();
 			this.intensity = ((LayerHeatmap) getLayers()[0]).getIntensity();
 			this.systemMaxValue = ((LayerHeatmap) getLayers()[0]).getInternalMaxValue();
 			this.systemMinValue = ((LayerHeatmap) getLayers()[0]).getInternalMinValue();
+			this.currentViewMinValue = ((LayerHeatmap) getLayers()[0]).getCurrentWindowMinValue();
+			this.currentViewMaxValue = ((LayerHeatmap) getLayers()[0]).getCurrentWindowMaxValue();
 			DatasetVector datasetVector = (DatasetVector) getLayers()[0].getDataset();
 			this.fieldInfos = datasetVector.getFieldInfos();
-			this.isUserDef =((LayerHeatmap) getLayers()[0]).getIsUserDef();
+			this.isUserDef = ((LayerHeatmap) getLayers()[0]).getIsUserDef();
+			this.isCurrentView = ((LayerHeatmap) getLayers()[0]).getIsUseCurrentView();
 		}
 
 		if (Double.compare(this.customMaxValue, Double.MIN_VALUE) == 0 && Double.compare(this.customMinValue, Double.MIN_VALUE) == 0) {
 			this.customMaxValue = this.systemMaxValue;
 			this.customMinValue = this.systemMinValue;
 		}
+		if (this.isCurrentView) {
+			this.maximumState = 0;
+		} else {
+			if (this.isUserDef) {
+				this.maximumState = 2;
+			} else {
+				this.maximumState = 1;
+			}
+		}
+	}
+
+	private int getNewmaximumState(){
+		int result=-1;
+		if (this.isCurrentView) {
+			result = 0;
+		} else {
+			if (this.isUserDef) {
+				result = 2;
+			} else {
+				result = 1;
+			}
+		}
+		return result;
 	}
 
 	private void initializeEnabledMap() {
@@ -349,5 +455,6 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 		this.propertyEnabled.put(FUZZY_DEGREE, true);
 		this.propertyEnabled.put(INTENSITY, true);
 		this.propertyEnabled.put(IS_SYSTEM_OR_CUSTOM, true);
+		this.propertyEnabled.put(IS_CURRENT_VIEW, true);
 	}
 }

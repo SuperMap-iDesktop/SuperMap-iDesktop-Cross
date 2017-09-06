@@ -64,6 +64,7 @@ public class WorkspaceTreeDataPropertyFactory {
 			DatasetVector datasetVector = (DatasetVector) dataset;
 			if (dataset.getType() == DatasetType.VECTORCOLLECTION) {
 				propertiesTemp.add(getVectorCollectionPropertyControl(datasetVector));
+				propertiesTemp.add(getRecordsetPropertyControl(datasetVector));
 			} else {
 				propertiesTemp.add(getVectorPropertyControl(datasetVector));
 				propertiesTemp.add(getRecordsetPropertyControl(datasetVector));

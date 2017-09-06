@@ -8,10 +8,7 @@ import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.DatasourceComboBox;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.CoreResources;
@@ -335,14 +332,19 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 				for (int i = 0, size = collectionInfos.size(); i < size; i++) {
 					for (int j = 0, length = selectRows.length; j < length; j++) {
 						String datasetName = tableModel.getTagValueAt(selectRows[j]).getName();
-						delete(collectionInfos, i, datasetName);
+						if (collectionInfos.get(i).getDatasetName().equals(datasetName)) {
+							delete(collectionInfos, i, datasetName);
+						}
 					}
 				}
 			} else {
 				if (null != datasetVector) {
 					for (int i = 0, size = collectionInfos.size(); i < size; i++) {
 						String datasetName = tableModel.getTagValueAt(selectRows[0]).getName();
-						delete(collectionInfos, i, datasetName);
+						if (collectionInfos.get(i).getDatasetName().equals(datasetName)
+								&& new SmOptionPane().showConfirmDialog(MessageFormat.format(CommonProperties.getString("String_RemoveDatasetFromVectorCollection"), datasetVector.getName(), datasetName)) == JOptionPane.OK_OPTION) {
+							delete(collectionInfos, i, datasetName);
+						}
 					}
 				}
 			}
@@ -365,14 +367,11 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	}
 
 	private void delete(ArrayList<CollectionDatasetInfo> collectionInfos, int i, String datasetName) {
-		if (collectionInfos.get(i).getDatasetName().equals(datasetName)
-				&& new SmOptionPane().showConfirmDialog(MessageFormat.format(CommonProperties.getString("String_RemoveDatasetFromVectorCollection"), datasetVector.getName(), datasetName)) == JOptionPane.OK_OPTION) {
-			boolean result = datasetVector.DeleteDatasetFromCollection(collectionInfos.get(i).getDatasourceConnectInfo(), datasetName);
-			if (result) {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_RemoveDatasetFromVectorCollectionSuccess"), datasetVector.getName(), datasetName));
-			} else {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_RemoveDatasetFromVectorCollectionFailed"), datasetVector.getName(), datasetName));
-			}
+		boolean result = datasetVector.DeleteDatasetFromCollection(collectionInfos.get(i).getDatasourceConnectInfo(), datasetName);
+		if (result) {
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_RemoveDatasetFromVectorCollectionSuccess"), datasetVector.getName(), datasetName));
+		} else {
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_RemoveDatasetFromVectorCollectionFailed"), datasetVector.getName(), datasetName));
 		}
 	}
 
@@ -584,6 +583,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		}
 		this.tableDatasetDisplay.getTableHeader().setReorderingAllowed(false);
 		this.tableDatasetDisplay.setModel(this.tableModel);
+		this.tableDatasetDisplay.getColumnModel().getColumn(1).setCellRenderer(TableTooltipCellRenderer.getInstance());
 		this.tableDatasetDisplay.setRowHeight(23);
 		this.buttonOK = ComponentFactory.createButtonOK();
 		this.buttonCancel = ComponentFactory.createButtonCancel();
@@ -723,7 +723,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	public void isSetDatasetCollectionCount(boolean setDatasetCollectionCount) {
 		isSetDatasetCollectionCount = setDatasetCollectionCount;
 		if (isSetDatasetCollectionCount) {
-			this.setTitle(ControlsProperties.getString("String_ManageCollectionDataset"));
+			this.setTitle(MessageFormat.format(ControlsProperties.getString("String_ManageCollectionDataset"), DatasetTypeUtilities.toString(this.datasetVector.GetSubCollectionDatasetType())));
 		}
 		this.initLayout();
 		setButtonState();
