@@ -17,6 +17,7 @@ import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
 import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.utilities.DatasetUtilities;
