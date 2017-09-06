@@ -215,9 +215,9 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 						+ "http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/SpatialRelationshipModeling.html?SpatialStatisticalAnalysis";
 
 				// 不显示时间-yuanR2017.9.6
-				((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
+				((OutputFrame) Application.getActiveApplication().getOutput()).setShowTime(false);
 				Application.getActiveApplication().getOutput().output(result);
-				((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
+				((OutputFrame) Application.getActiveApplication().getOutput()).setShowTime(true);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());

@@ -177,9 +177,9 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 				}
 				result += ProcessProperties.getString("String_Max_Peak") + dcmFmtDistance.format(distance) + "," + dcmFmtOthers.format(z) + "\n";
 				// 不显示时间-yuanR2017.9.6
-				((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
+				((OutputFrame) Application.getActiveApplication().getOutput()).setShowTime(false);
 				Application.getActiveApplication().getOutput().output(result);
-				((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
+				((OutputFrame) Application.getActiveApplication().getOutput()).setShowTime(true);
 				//  parameterResult.setSelectedItem(result);
 			}
 			fireRunning(new RunningEvent(this, 100, "finished"));

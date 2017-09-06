@@ -109,9 +109,9 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 				result += ProcessProperties.getString("String_ZScor") + " " + analyzingPatternsResult.getZScore() + "\n";
 				result += ProcessProperties.getString("String_PValue") + " " + analyzingPatternsResult.getPValue() + "\n";
 				// 不显示时间-yuanR2017.9.6
-				((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
+				((OutputFrame) Application.getActiveApplication().getOutput()).setShowTime(false);
 				Application.getActiveApplication().getOutput().output(result);
-				((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
+				((OutputFrame) Application.getActiveApplication().getOutput()).setShowTime(true);
 //				parameterResult.setSelectedItem(result);
 			}
 
