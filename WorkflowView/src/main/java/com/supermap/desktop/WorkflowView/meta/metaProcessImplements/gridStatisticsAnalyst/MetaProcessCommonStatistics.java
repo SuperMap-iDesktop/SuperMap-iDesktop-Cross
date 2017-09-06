@@ -89,6 +89,7 @@ public class MetaProcessCommonStatistics extends MetaProcessGridAnalyst {
 			commonStatisticCombine.setDataset(datasetGrid);
 		}
 		resultDataset.setSelectedItem("result_commonStatistics");
+		checkBoxIgnore.setSelectedItem(true);
 		comboBoxCompareType.setItems(new ParameterDataNode("<", StatisticsCompareType.LESS),
 				new ParameterDataNode("<=", StatisticsCompareType.LESS_OR_EQUAL),
 				new ParameterDataNode("==", StatisticsCompareType.EQUAL),
@@ -130,7 +131,7 @@ public class MetaProcessCommonStatistics extends MetaProcessGridAnalyst {
 			DatasetGrid result = null;
 			if (commonStatisticCombine.isValueChosen()) {
 				double value = (double) commonStatisticCombine.getSelectedItem();
-				StatisticsAnalyst.commonStatistics(src, value, type, isIgnore, resultDataset.getResultDatasource(), datasetName);
+				result= StatisticsAnalyst.commonStatistics(src, value, type, isIgnore, resultDataset.getResultDatasource(), datasetName);
 			} else {
 				ArrayList<Dataset> datasetArrayList = commonStatisticCombine.getDatasets();
 				DatasetGrid[] datasetGrids = new DatasetGrid[datasetArrayList.size()];
