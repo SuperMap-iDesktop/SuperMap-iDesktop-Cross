@@ -7,7 +7,7 @@ import com.supermap.data.PixelFormat;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
-import com.supermap.desktop.WorkflowView.meta.MetaProcess;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridAnalyst;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
@@ -15,15 +15,22 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.PixelFormatUtilities;
 
 /**
- * Created By Chens on 2017/8/29 0029
+ * Created By ChenS on 2017/8/29 0029
  */
-public class MetaProcessStreamGrid extends MetaProcess {
+public class MetaProcessStreamGrid extends MetaProcessGridAnalyst {
 	private static final String INPUT_DATA = ProcessProperties.getString("String_GroupBox_FlowData");
 	private static final String OUTPUT_DATA = "StreamGridResult";
 
@@ -64,7 +71,7 @@ public class MetaProcessStreamGrid extends MetaProcess {
 
 		parameters.setParameters(sourceCombine, settingCombine, resultCombine);
 		parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_StreamGrid"),DatasetTypes.GRID,resultCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_StreamGrid"), DatasetTypes.GRID, resultCombine);
 	}
 
 	private void initParameterConstraint() {
@@ -111,30 +118,30 @@ public class MetaProcessStreamGrid extends MetaProcess {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean childExecute() {
 		boolean isSuccessful = false;
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
-			DatasetGrid src = null;
+			DatasetGrid src;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetGrid) parameters.getInputs().getData(INPUT_DATA).getValue();
 			} else {
 				src = (DatasetGrid) sourceDataset.getSelectedItem();
 			}
 			MathAnalyst.addSteppedListener(steppedListener);
-			double threshold = Double.parseDouble(numberThreshold.getSelectedItem().toString());
+			double threshold = Double.parseDouble(numberThreshold.getSelectedItem());
 			String expression = "[" + src.getDatasource().getAlias() + "." + src.getName() + "]>" + threshold;
 			PixelFormat pixelFormat = (PixelFormat) comboBoxPixel.getSelectedData();
-			boolean isZip = Boolean.parseBoolean(checkBoxZip.getSelectedItem().toString());
-			boolean isIgnore = Boolean.parseBoolean(checkBoxIgnore.getSelectedItem().toString());
+			boolean isZip = Boolean.parseBoolean(checkBoxZip.getSelectedItem());
+			boolean isIgnore = Boolean.parseBoolean(checkBoxIgnore.getSelectedItem());
 			DatasetGrid result = MathAnalyst.execute(expression, null, pixelFormat, isZip, isIgnore, resultDataset.getResultDatasource(),
 					resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(resultDataset.getDatasetName()));
 			isSuccessful = result != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
-			fireRunning(new RunningEvent(this,100,"finished"));
+			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+		} finally {
 			MathAnalyst.removeSteppedListener(steppedListener);
 		}
 		return isSuccessful;

@@ -22,6 +22,8 @@ public interface IParameters {
 
 	void addParameters(IParameter... iParameters);
 
+	void addEnvironmentParameters(IEnvironmentParameter... environmentParameter);
+
 	ArrayList<IParameter> getParameters();
 
 	IParameter getParameter(String key);
@@ -57,4 +59,5 @@ public interface IParameters {
 	void removeParameterPropertyChangedListener(ParameterPropertyChangedListener parameterPropertyChangedListener);
 
 
+	void dispose();
 }

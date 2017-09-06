@@ -65,5 +65,7 @@ public interface IProcess {
 	IParameterPanel getComponent();
 
 	boolean isChangeSourceData();
+
+	void dispose();
 }
 

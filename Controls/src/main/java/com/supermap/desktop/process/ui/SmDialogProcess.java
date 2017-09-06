@@ -10,6 +10,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 
 /**
  * @author XiaJT
@@ -27,7 +28,6 @@ public class SmDialogProcess extends SmDialog {
 				}
 			}
 		});
-
 		this.setTitle(metaProcess.getTitle());
 		JPanel panel = (JPanel) metaProcess.getComponent().getPanel();
 //		ProcessTask task = TaskUtil.getTask(metaProcess);
@@ -43,5 +43,10 @@ public class SmDialogProcess extends SmDialog {
 		this.setMinimumSize(new Dimension(400, 600));
 		this.setPreferredSize(new Dimension(400, 600));
 		this.setLocationRelativeTo(null);
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		metaProcess.dispose();
 	}
 }

@@ -8,6 +8,7 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.events.StatusChangeEvent;
 import com.supermap.desktop.process.events.StatusChangeListener;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import sun.swing.SwingUtilities2;
 
@@ -60,7 +61,7 @@ public class ProcessGraph extends RectangleGraph {
 	}
 
 	public String getTitle() {
-		return this.process == null ? "未知" : this.process.getTitle();
+		return this.process == null ? CoreProperties.getString("String_Unknown") : this.process.getTitle();
 	}
 
 	@Override

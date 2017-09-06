@@ -4,7 +4,7 @@ import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.WorkflowView.meta.MetaProcess;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridAnalyst;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -20,7 +20,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
  * 地形计算基类
  * 地形计算下所有功能输入、输出都为栅格数据类型，将此部分做一封装
  */
-public abstract class MetaProcessCalTerrain extends MetaProcess {
+public abstract class MetaProcessCalTerrain extends MetaProcessGridAnalyst {
 	private static final String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
 	protected ParameterDatasource datasource = new ParameterDatasource();
 	protected ParameterSingleDataset sourceDataset = new ParameterSingleDataset(DatasetType.GRID);
@@ -74,7 +74,7 @@ public abstract class MetaProcessCalTerrain extends MetaProcess {
 
 
 	@Override
-	public boolean execute() {
+	public boolean childExecute() {
 		boolean isSuccessful = false;
 		DatasetGrid datasetGrid;
 
