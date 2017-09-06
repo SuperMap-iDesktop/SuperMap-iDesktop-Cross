@@ -8,6 +8,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.ArrayList;
 
 /**
  * 文本输入框
@@ -25,7 +26,7 @@ public class SmTextFieldLegit extends JTextField {
 
 	private String backUpValue = "";
 
-	private ISmTextFieldLegit smTextFieldLegit;
+	private ArrayList<ISmTextFieldLegit> smTextFieldLegit=new ArrayList<>();
 
 	private static final Color IL_LEGAL_COLOR = Color.red;
 	private static final Color LEGAL_COLOR = Color.black;
@@ -36,7 +37,7 @@ public class SmTextFieldLegit extends JTextField {
 
 	public SmTextFieldLegit(String text) {
 		super(text);
-		smTextFieldLegit = new ISmTextFieldLegit() {
+		smTextFieldLegit.add(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
 				return true;
@@ -46,7 +47,7 @@ public class SmTextFieldLegit extends JTextField {
 			public String getLegitValue(String currentValue, String backUpValue) {
 				return backUpValue;
 			}
-		};
+		});
 		this.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
@@ -77,7 +78,9 @@ public class SmTextFieldLegit extends JTextField {
 				// 丢失焦点时获得一个合法值
 				if (!isLegitValue(SmTextFieldLegit.this.getText())) {
 					SmTextFieldLegit.this.setForeground(LEGAL_COLOR);
-					SmTextFieldLegit.this.setText(smTextFieldLegit.getLegitValue(SmTextFieldLegit.this.getText(), SmTextFieldLegit.this.backUpValue));
+					for(int i=0;i<smTextFieldLegit.size();i++) {
+						SmTextFieldLegit.this.setText(smTextFieldLegit.get(i).getLegitValue(SmTextFieldLegit.this.getText(), SmTextFieldLegit.this.backUpValue));
+					}
 				}
 			}
 		});
@@ -90,7 +93,11 @@ public class SmTextFieldLegit extends JTextField {
 	 * @return 是否符合
 	 */
 	public boolean isLegitValue(String value) {
-		return smTextFieldLegit.isTextFieldValueLegit(value);
+		if (smTextFieldLegit!=null && smTextFieldLegit.size()>0) {
+			return smTextFieldLegit.get(0).isTextFieldValueLegit(value);
+		}else{
+			return true;
+		}
 	}
 
 	/**
@@ -99,7 +106,12 @@ public class SmTextFieldLegit extends JTextField {
 	 * @param smTextFieldLegit 接口
 	 */
 	public void setSmTextFieldLegit(ISmTextFieldLegit smTextFieldLegit) {
-		this.smTextFieldLegit = smTextFieldLegit;
+		this.smTextFieldLegit.clear();
+		this.smTextFieldLegit.add(smTextFieldLegit);
+	}
+
+	public void removeSmTextFieldLegit(ISmTextFieldLegit smTextFieldLegit) {
+		this.smTextFieldLegit.remove(smTextFieldLegit);
 	}
 
 	/**
