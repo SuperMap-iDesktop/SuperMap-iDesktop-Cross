@@ -147,12 +147,16 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		} else {
 			parameterSourceDataset.setDatasetTypes(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 		}
+		parameterOverlayDataset.setDatasetTypes(DatasetType.REGION);
+		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
+		if (dataset != null) {
+			parameterOverlayDatasource.setSelectedItem(dataset.getDatasource());
+			parameterOverlayDataset.setSelectedItem(dataset);
+		}
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
 		if (datasetVector != null) {
 			parameterSourceDatasource.setSelectedItem(datasetVector.getDatasource());
 			parameterSourceDataset.setSelectedItem(datasetVector);
-			parameterOverlayDatasource.setSelectedItem(datasetVector.getDatasource());
-			parameterOverlayDataset.setSelectedItem(datasetVector);
 			if (!datasetVector.getDatasource().isReadOnly()) {
 				parameterResultDatasource.setSelectedItem(datasetVector.getDatasource());
 			} else {
