@@ -88,28 +88,13 @@ public class NumTextFieldLegit extends SmTextFieldLegit {
 		this.bit = bit;
 	}
 
-	public boolean isMaxValueEnable() {
-		return isMaxValueEnable;
-	}
-
-	public void setMaxValueEnable(boolean maxValueEnable) {
-		isMaxValueEnable = maxValueEnable;
-	}
-
 	public double getMaxValue() {
 		return maxValue;
 	}
 
 	public void setMaxValue(double maxValue) {
+		isMaxValueEnable = true;
 		this.maxValue = maxValue;
-	}
-
-	public boolean isMinValueEnable() {
-		return isMinValueEnable;
-	}
-
-	public void setMinValueEnable(boolean minValueEnable) {
-		isMinValueEnable = minValueEnable;
 	}
 
 	public double getMinValue() {
@@ -117,6 +102,7 @@ public class NumTextFieldLegit extends SmTextFieldLegit {
 	}
 
 	public void setMinValue(double minValue) {
+		isMinValueEnable = true;
 		this.minValue = minValue;
 	}
 
