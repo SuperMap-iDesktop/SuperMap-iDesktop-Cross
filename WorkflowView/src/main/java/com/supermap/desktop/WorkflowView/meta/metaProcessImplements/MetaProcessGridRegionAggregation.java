@@ -42,14 +42,17 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 
 	private void initParameters() {
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_GridRegionAggregationType"), "SUMMARYMESH");
+		parameterAggregationType.setRequisite(true);
 		parameterAggregationType.setItems(parameterDataNode);
 		parameterAggregationType.setSelectedItem(parameterDataNode);
 
 		ParameterDataNode[] parameterDataNodes = {new ParameterDataNode(ProcessProperties.getString("String_QuadrilateralMesh"), "0"), new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1")};
 		parameterMeshType.setSelectedItem(parameterDataNodes[0]);
+		parameterMeshType.setRequisite(true);
 		parameterMeshType.setItems(parameterDataNodes);
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
 		parameterResolution.setDefaultWarningValue("100");
+		parameterResolution.setRequisite(true);
 		parameterStaticModel.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
 		parameterWeightIndex.setToolTip(ProcessProperties.getString("String_WeightIndexTip"));
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);

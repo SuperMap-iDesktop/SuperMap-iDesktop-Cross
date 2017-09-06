@@ -47,14 +47,16 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	private void initComponents() {
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_KernelDensity"), "1");
+		parameterComboBoxAnalyseType.setRequisite(true);
 		parameterComboBoxAnalyseType.setItems(parameterDataNode);
 		parameterComboBoxAnalyseType.setSelectedItem(parameterDataNode);
 		parameterComboBoxMeshType.setItems(new ParameterDataNode(ProcessProperties.getString("String_QuadrilateralMesh"), "0"),
 				new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1"));
-
+		parameterComboBoxMeshType.setRequisite(true);
 		//流程图中不支持在地图中绘制范围，范围表示与iServer的表示相同
 		parameterIndex.setToolTip(ProcessProperties.getString("String_WeightIndexTip"));
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
+		parameterMeshSize.setRequisite(true);
 		parameterMeshSize.setDefaultWarningValue("50");
 		parameterMeshSizeUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),
@@ -62,6 +64,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Foot"), "Foot"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Mile"), "Mile")
 		);
+		parameterRadius.setRequisite(true);
 		parameterRadius.setDefaultWarningValue("300");
 		parameterRadiusUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),

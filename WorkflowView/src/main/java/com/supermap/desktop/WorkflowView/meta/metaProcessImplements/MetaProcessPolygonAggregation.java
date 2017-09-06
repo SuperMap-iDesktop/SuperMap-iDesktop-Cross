@@ -52,14 +52,20 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 
 	private void initComponents() {
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_PolygonAggregationType"), "SUMMARYREGION");
-
+		parameterAggregationType.setRequisite(true);
 		parameterAggregationType.setItems(parameterDataNode);
 		parameterAggregationType.setSelectedItem(parameterDataNode);
 		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+		parameterTextFieldAddress.setRequisite(true);
 		parameterDataBaseName.setDefaultWarningValue("supermap");
+		parameterDataBaseName.setRequisite(true);
 		parameterTextFieldUserName.setDefaultWarningValue("postgres");
+		parameterTextFieldUserName.setRequisite(true);
 		parameterTextFieldPassword.setSelectedItem("supermap");
+		parameterTextFieldPassword.setRequisite(true);
+		parameterBigDatasourceDatasource.setRequisite(true);
 		parameterBigDatasourceDatasource.setDescribe(ControlsProperties.getString("String_Label_ResultDatasource"));
+		parameterSingleDataset.setRequisite(true);
 		parameterSingleDataset.setDescribe(ProcessProperties.getString("String_AggregateDataset"));
 		parameterStaticModel.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
 		parameterWeightIndex.setToolTip(ProcessProperties.getString("String_WeightIndexTip"));

@@ -9,6 +9,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
 import com.supermap.desktop.process.util.ParameterUtil;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
@@ -18,6 +19,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * @author XiaJT
@@ -32,7 +34,7 @@ public class ParameterDatasourcePanel extends SwingPanel {
 	public ParameterDatasourcePanel(IParameter parameterDatasource) {
 		super(parameterDatasource);
 		this.parameterDatasource = ((ParameterDatasource) parameterDatasource);
-		this.label.setText(this.parameterDatasource.getDescribe());
+		this.label.setText(getDescribe());
 		initComboBoxItems();
 		initLayout();
 		initListener();
@@ -101,5 +103,16 @@ public class ParameterDatasourcePanel extends SwingPanel {
 			ParameterDatasourcePanel.this.parameterDatasource.setSelectedItem(datasourceComboBox.getSelectedItem());
 		}
 		isSelectingItem = false;
+	}
+	/**
+	 * @return
+	 */
+	private String getDescribe() {
+		String describe = parameterDatasource.getDescribe();
+		if (parameterDatasource.isRequisite()) {
+			return MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);
+		} else {
+			return describe;
+		}
 	}
 }

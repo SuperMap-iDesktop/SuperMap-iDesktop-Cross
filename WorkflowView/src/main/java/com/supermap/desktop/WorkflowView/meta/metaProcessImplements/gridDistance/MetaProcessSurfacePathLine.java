@@ -4,11 +4,17 @@ import com.supermap.analyst.spatialanalyst.DistanceAnalyst;
 import com.supermap.analyst.spatialanalyst.DistanceAnalystParameter;
 import com.supermap.analyst.spatialanalyst.PathLineResult;
 import com.supermap.analyst.spatialanalyst.SmoothMethod;
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVectorInfo;
+import com.supermap.data.Point2D;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
-import com.supermap.desktop.WorkflowView.meta.MetaProcess;
+import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridAnalyst;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
@@ -16,12 +22,18 @@ import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterButton;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -35,7 +47,7 @@ import java.beans.PropertyChangeListener;
  * Created by yuanR on 2017/8/7.
  * 两点间最短地表路径
  */
-public class MetaProcessSurfacePathLine extends MetaProcess {
+public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String OUTPUT_DATA = "DEMPathLine";
@@ -209,14 +221,13 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean childExecute() {
 		boolean isSuccessful = false;
 		PathLineResult pathLineResult = null;
 		DatasetGrid datasetGrid = null;
 		Recordset resultRecordset = null;
 		String resultDatasetName = null;
 		try {
-
 			if (this.getParameters().getInputs().getData(INPUT_DATA) != null
 					&& this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof DatasetGrid) {
 				datasetGrid = (DatasetGrid) this.getParameters().getInputs().getData(INPUT_DATA).getValue();

@@ -52,15 +52,22 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 	private void initComponents() {
 		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+		parameterTextFieldAddress.setRequisite(true);
 		parameterDataBaseName.setDefaultWarningValue("supermap");
+		parameterDataBaseName.setRequisite(true);
 		parameterTextFieldUserName.setDefaultWarningValue("postgres");
+		parameterTextFieldUserName.setRequisite(true);
 		parameterTextFieldPassword.setSelectedItem("supermap");
+		parameterTextFieldPassword.setRequisite(true);
 		parameterOverlayDatasource = new ParameterBigDatasourceDatasource();
 		parameterOverlayDatasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
+		parameterOverlayDatasource.setRequisite(true);
 		parameterOverlayDataset = new ParameterSingleDataset(DatasetType.REGION);
+		parameterOverlayDataset.setRequisite(true);
 		parameterOverlayDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 
 		parameterOverlayTypeComboBox = new ParameterComboBox(CoreProperties.getString("String_OverlayAnalystType"));
+		parameterOverlayTypeComboBox.setRequisite(true);
 		parameterOverlayTypeComboBox.setItems(
 				new ParameterDataNode(CoreProperties.getString("String_Clip"), "clip"),
 				new ParameterDataNode(CoreProperties.getString("String_Intersect"), "intersect")

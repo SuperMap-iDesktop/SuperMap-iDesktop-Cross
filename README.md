@@ -18,7 +18,8 @@ SuperMap iDesktop Cross 的配套联机帮助采用基于 node.js 的静态网�
 - [Github pages 联机帮助主页](http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross "Github 联机帮助主页")
 
 # 使用指南 #
-        配置好环境变量后在eclipse中导入工程即可直接启动。配置环境变量细节请参见《SuperMap iDesktop Cross 开发指南.md》第二章
+
+请参考 《SuperMap iDesktop Cross 配置指南(Windows 篇)》 以及 《SuperMap iDesktop Cross 配置指南(Linux 篇)》。
 
 # 更新历史 #
 
@@ -40,110 +41,82 @@ SuperMap iDesktop Cross 的配套联机帮助采用基于 node.js 的静态网�
 
 # 目录结构 #
 * Assistant
-
     帮助相关插件，提供帮助支持。
 
 * Configuration
-
     此文件夹用于存放桌面的一些启动参数。
 
 * Controls
-
     界面相关公共插件，新添加插件如果需要使用桌面封装的界面则需要引入此包。
 
 * Core
-
     代码逻辑相关公共插件，新添加插件如果需要使用桌面提供的公共方法则需要引入此包。
 
 * DataConversion
-
     数据转换相关插件，如数据的导入导出。
 
 * DataEditor
-
     数据编辑插件，如数据集新建，复制。
 
 * DataProcess
-
     数据处理插件，如多边形融合（\*）等。
 
 * DataTopology
-
     数据拓扑处理插件，如对数据集拓扑预处理。
 
 * DataView
-
     数据浏览插件，如对数据集进行SQL查询等。
 
 * Frame
-
     主窗体插件，用于管理桌面的主窗体，如退出桌面、登录(\*)等。
 
 * iDesktop
-
     桌面启动插件，用于在桌面其他插件加载之后显示窗体。
 
 * LayoutEditor
-
     布局编辑插件，如在布局上增加指北针(\*)，图例(\*)等。
 
 * LayoutView
-
     布局浏览插件，如布局的放大(\*)、缩小(\*)、全幅显示(\*)。
 
 * MapEditor
-
     地图编辑插件，如在地图上绘制对象、复制、粘贴等。
 
 * MapView
-
     地图浏览插件，如在地图上选择对象，漫游和刷新等。
 
 * NetServices
-
     网络服务插件，如发布iServer服务。
 
 * Process
-
-  可视化建模核心类库，提供可视化建模使用和扩展的全部功能接口。
+    可视化建模核心类库，提供可视化建模使用和扩展的全部功能接口。
 
 * RealspaceEditor
-
     场景编辑插件，如在场景上绘制对象等。
 
 * RealspaceEffect
-
     场景粒子对象绘制插件，如绘制火焰(\*)，降雨(\*)等特效。
 
 * RealspaceView
-
     场景浏览插件，如在场景中漫游(\*),缩放(\*),刷新(\*)。
 
 * Resources
-
     此文件夹用于存放桌面中用到的图标等资源。
 
 * SpatialAnalyst
-
     空间分析插件，如查询栅格值，缓冲区分析等。
 
 * TabularView
-
     属性表浏览插件，用于有关属性表的操作,如属性表的浏览，排序，统计。
 
 * Templates
-
     此文件夹中存放了一些桌面用到的模板，如颜色方案，投影信息等。
 
 * WorkEnvironment
-
     用于存放桌面界面的布局，其中Default文件夹下存放的是windows平台用的布局环境，Linux文件夹下存放的是Linux平台使用的布局环境。
 
 * WorkflowView
-
-
-# 二次开发说明 #
-详情请参见 《SuperMap iDesktop Cross 开发指南.md》。
+    可视化建模交互插件，提供画布、任务管理面板等功能。
 
 # 许可声明 #
 详情请参见 《LICENSE》。

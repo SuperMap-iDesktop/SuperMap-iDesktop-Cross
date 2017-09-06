@@ -17,7 +17,7 @@ import java.beans.PropertyChangeListener;
  * Created by caolp on 2017-07-27.
  */
 public class ParameterInputDataType extends ParameterCombine {
-	private ParameterComboBox parameterDataInputWay = new ParameterComboBox(ProcessProperties.getString("String_DataInputWay"));
+	public ParameterComboBox parameterDataInputWay = new ParameterComboBox(ProcessProperties.getString("String_DataInputWay"));
 	private ParameterHDFSPath parameterHDFSPath = new ParameterHDFSPath();
 
 	private ParameterTextField parameterDataSourceType = new ParameterTextField(ProcessProperties.getString("String_DataSourceType"));
@@ -52,27 +52,35 @@ public class ParameterInputDataType extends ParameterCombine {
 		//udb文件
 		parameterDataSourceType.setSelectedItem("UDB");
 		parameterDataSourceType.setEnabled(false);
+		parameterDataSourcePath.setRequisite(true);
 		parameterDataSourcePath.setDefaultWarningValue("G:\\\\ProcessingData\\\\processing.udb");
+		parameterDatasetName.setRequisite(true);
 		parameterDatasetName.setDefaultWarningValue("newyorkPoint_P");
+		parameterSpark.setRequisite(true);
 		parameterSpark.setDefaultWarningValue("36");
 		ParameterCombine parameterCombine1 = new ParameterCombine();
-		parameterCombine1.addParameters(parameterDataSourceType,
+		parameterCombine1.addParameters(
 				parameterDataSourcePath,
 				parameterDatasetName,
 				parameterDatasetType,
 				parameterSpark);
 		//pg数据库
+		parameterSourceDatasource.setRequisite(true);
 		parameterSourceDatasource.setDescribe(ProcessProperties.getString("String_DataSourceName"));
+		parameterSourceDataset.setRequisite(true);
 		parameterSourceDataset.setDescribe(ProcessProperties.getString("String_DatasetName"));
 		parameterEngineType.setSelectedItem("POSTGRESQL");
 		parameterEngineType.setEnabled(false);
+		parameterTextFieldAddress.setRequisite(true);
 		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
+		parameterDataBaseName.setRequisite(true);
 		parameterDataBaseName.setDefaultWarningValue("supermap");
+		parameterTextFieldUserName.setRequisite(true);
 		parameterTextFieldUserName.setDefaultWarningValue("postgres");
+		parameterTextFieldPassword.setRequisite(true);
 		parameterTextFieldPassword.setSelectedItem("supermap");
 		ParameterCombine parameterCombine2 = new ParameterCombine();
 		parameterCombine2.addParameters(
-				parameterEngineType,
 				parameterTextFieldAddress,
 				parameterDataBaseName,
 				parameterTextFieldUserName,

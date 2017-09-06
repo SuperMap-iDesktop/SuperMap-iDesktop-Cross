@@ -162,11 +162,11 @@ public class WorkspaceComponentManager extends JComponent {
 	}
 
 	//矢量数据集集合子集节点的右键菜单
-	private JPopupMenu datasetVectorItemPopupMenu = null;
+//	private JPopupMenu datasetVectorItemPopupMenu = null;
 
-	public JPopupMenu getDatasetVectorItemPopupMenu() {
-		return datasetVectorItemPopupMenu;
-	}
+//	public JPopupMenu getDatasetVectorItemPopupMenu() {
+//		return datasetVectorItemPopupMenu;
+//	}
 
 	private JPopupMenu datasetVectorPopupMenu = null;
 
@@ -401,7 +401,7 @@ public class WorkspaceComponentManager extends JComponent {
 				this.datasetVectorPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetVector");
 				//modify by xie 2017-08-22
 				this.datasetVectorCollectionPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetVectorCollection");
-				this.datasetVectorItemPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetVectorItem");
+//				this.datasetVectorItemPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetVectorItem");
 
 				this.datasetTabularPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetTabular");
 				this.datasetImagePopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetImage");
@@ -721,7 +721,7 @@ public class WorkspaceComponentManager extends JComponent {
 					popupMenu = this.symbolFillPopupMenu;
 					break;
 				} else if (type == NodeDataType.DATASET_VECTOR_ITEM) {
-					popupMenu = this.datasetVectorItemPopupMenu;
+//					popupMenu = this.datasetVectorItemPopupMenu;
 					break;
 				} else if (type == NodeDataType.DATASET_VECTOR) {
 					Dataset dataset = (Dataset) nodeDatas.get(i).getData();
@@ -749,8 +749,9 @@ public class WorkspaceComponentManager extends JComponent {
 					dataType |= DATASET_TYPE_TOPOLOGY;
 				}
 			}
-			if (popupMenu == null && !nodeDatas.isEmpty() && NodeDataType.RESOURCES != nodeDatas.get(0).getType()) {
-				// 为空，不为资源节点
+			if (popupMenu == null && !nodeDatas.isEmpty() && NodeDataType.RESOURCES != nodeDatas.get(0).getType()
+					&& NodeDataType.DATASET_VECTOR_ITEM != nodeDatas.get(0).getType()) {
+				// 为空，不为资源节点,不为数据集集合子集
 				popupMenu = getPopupMenuByDataType(dataType);
 			}
 		} catch (Exception ex) {

@@ -2,9 +2,9 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStat
 
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.WorkflowViewProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
@@ -79,12 +79,12 @@ public abstract class MetaProcessAnalyzingPatterns extends MetaProcess {
 		} else {
 			datasetVector = (DatasetVector) dataset.getSelectedItem();
 		}
-		try {
-			isSuccessful = doWork(datasetVector);
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e.getMessage());
+		isSuccessful = doWork(datasetVector);
+		if (isSuccessful) {
+			fireRunning(new RunningEvent(this, 100, WorkflowViewProperties.getString("String_FinishedExecuted")));
+		} else {
+			fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_Failed")));
 		}
-		fireRunning(new RunningEvent(this,100, WorkflowViewProperties.getString("String_FinishedExecuted")));
 		return isSuccessful;
 	}
 
