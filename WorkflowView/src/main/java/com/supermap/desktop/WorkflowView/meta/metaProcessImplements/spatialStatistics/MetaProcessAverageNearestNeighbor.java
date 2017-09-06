@@ -15,6 +15,7 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.OutputFrame;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
@@ -107,7 +108,10 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 				result += ProcessProperties.getString("String_Observed_Mean_Distance") + " " + analyzingPatternsResult.getVariance() + "\n";
 				result += ProcessProperties.getString("String_ZScor") + " " + analyzingPatternsResult.getZScore() + "\n";
 				result += ProcessProperties.getString("String_PValue") + " " + analyzingPatternsResult.getPValue() + "\n";
+				// 不显示时间-yuanR2017.9.6
+				((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
 				Application.getActiveApplication().getOutput().output(result);
+				((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
 //				parameterResult.setSelectedItem(result);
 			}
 

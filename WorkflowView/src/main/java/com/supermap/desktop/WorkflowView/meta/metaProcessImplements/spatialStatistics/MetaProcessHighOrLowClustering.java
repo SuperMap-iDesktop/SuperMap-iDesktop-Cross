@@ -6,6 +6,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.ui.OutputFrame;
 
 /**
  * @author XiaJT
@@ -42,7 +43,10 @@ public class MetaProcessHighOrLowClustering extends MetaProcessAnalyzingPatterns
 				result += ProcessProperties.getString("String_Variance") + " " + analyzingPatternsResult.getVariance() + "\n";
 				result += ProcessProperties.getString("String_ZScor") + " " + analyzingPatternsResult.getZScore() + "\n";
 				result += ProcessProperties.getString("String_PValue") + " " + analyzingPatternsResult.getPValue() + "\n";
+				// 不显示时间-yuanR2017.9.6
+				((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
 				Application.getActiveApplication().getOutput().output(result);
+				((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
 			}
 //			parameterResult.setSelectedItem(result);
 		} catch (Exception e) {

@@ -19,6 +19,7 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.OutputFrame;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
 import java.text.DecimalFormat;
@@ -39,7 +40,7 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 	private ParameterNumber parameterTextFieldIncrementalNumber = new ParameterNumber();
 	private ParameterComboBox parameterDistanceMethod = new ParameterComboBox();
 	// 添加展示结果的textArea--yuanR
-	private ParameterTextArea parameterResult = new ParameterTextArea();
+//	private ParameterTextArea parameterResult = new ParameterTextArea();
 
 	public MetaProcessIncrementalAutoCorrelation() {
 		initParameters();
@@ -68,13 +69,13 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 				parameterTextFieldIncrementalNumber, parameterDistanceMethod, parameterCheckBox);
 		parameterCombineSetting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
 		// 结果展示
-		ParameterCombine parameterCombineResult = new ParameterCombine();
-		parameterCombineResult.addParameters(parameterResult);
-		parameterCombineResult.setDescribe(ProcessProperties.getString("String_result"));
+//		ParameterCombine parameterCombineResult = new ParameterCombine();
+//		parameterCombineResult.addParameters(parameterResult);
+//		parameterCombineResult.setDescribe(ProcessProperties.getString("String_result"));
 
 		parameters.setParameters(parameterCombine, parameterCombineSetting);
 		parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.VECTOR, parameterCombine);
-		parameters.addParameters(parameterCombineResult);
+//		parameters.addParameters(parameterCombineResult);
 	}
 
 	private void initParameterState() {
@@ -175,7 +176,11 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 					}
 				}
 				result += ProcessProperties.getString("String_Max_Peak") + dcmFmtDistance.format(distance) + "," + dcmFmtOthers.format(z) + "\n";
-				parameterResult.setSelectedItem(result);
+				// 不显示时间-yuanR2017.9.6
+				((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
+				Application.getActiveApplication().getOutput().output(result);
+				((OutputFrame) Application.getActiveApplication().getOutput()).timeShowStateChange();
+				//  parameterResult.setSelectedItem(result);
 			}
 			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
