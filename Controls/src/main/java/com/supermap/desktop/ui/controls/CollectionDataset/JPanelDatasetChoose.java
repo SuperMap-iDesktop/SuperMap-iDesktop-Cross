@@ -83,11 +83,18 @@ public abstract class JPanelDatasetChoose extends JPanel {
 	private ActionListener deleteListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int[] selectedRows = tableDatasetDisplay.getSelectedRows();
-			for (int length = selectedRows.length, i = length - 1; i >= 0; i--) {
+			int newSelection = tableDatasetDisplay.getSelectedRows()[0];
+			moveLast();
+			int length = datasets.size();
+			for (int i = length - 1; i >= length-2-tableDatasetDisplay.getSelectedRowCount(); i--) {
 				//删除数据集集合内的数据集
-				datasets.remove(selectedRows[i]);
-				tableModel.removeRow(selectedRows[i]);
+				datasets.remove(datasets.get(i));
+				tableModel.removeRow(i);
+			}
+			if (newSelection < tableModel.getRowCount()) {
+				tableDatasetDisplay.setRowSelectionInterval(newSelection, newSelection);
+			} else if(tableModel.getRowCount()>1){
+				tableDatasetDisplay.setRowSelectionInterval(newSelection-1,newSelection-1);
 			}
 		}
 	};
@@ -128,10 +135,10 @@ public abstract class JPanelDatasetChoose extends JPanel {
 		initComponents();
 		initResources();
 		initLayout();
-		registEvents();
+		registerEvents();
 	}
 
-	protected void registEvents() {
+	protected void registerEvents() {
 		removeEvents();
 		this.buttonAddDataset.addActionListener(addDatasetListener);
 		this.buttonSelectAll.addActionListener(selectAllListener);
@@ -307,7 +314,7 @@ public abstract class JPanelDatasetChoose extends JPanel {
 			for (int i = 0; i < size; i++) {
 				tableDatasetDisplay.addRowSelectionInterval(i, i);
 			}
-			scrollToFrist();
+			scrollToFirst();
 		}
 	}
 
@@ -330,13 +337,13 @@ public abstract class JPanelDatasetChoose extends JPanel {
 				tableDatasetDisplay.addRowSelectionInterval(selectRows[i] - 1, selectRows[i] - 1);
 			}
 			if (tableDatasetDisplay.getSelectedRows().length > 0 && tableDatasetDisplay.getSelectedRows()[0] == 0) {
-				scrollToFrist();
+				scrollToFirst();
 			}
 		}
 
 	}
 
-	private void scrollToFrist() {
+	private void scrollToFirst() {
 		Rectangle treeVisibleRectangle = new Rectangle(tableDatasetDisplay.getVisibleRect().x, 0, tableDatasetDisplay.getVisibleRect().width, tableDatasetDisplay.getVisibleRect().height);
 		tableDatasetDisplay.scrollRectToVisible(treeVisibleRectangle);
 	}

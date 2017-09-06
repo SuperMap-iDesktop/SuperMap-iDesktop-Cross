@@ -59,7 +59,7 @@ IntelliJ IDEA 拥有极其丰富且人性化的开发调试工具，并自带 **
 
 ## 获取 ##
 
-SuperMap iDesktop Cross 产品是基于 SuperMap iObjects Java 的二次开发产品，开发以及运行本产品的基本前提是购买并配置了 SuperMap iObjects Java 的许可。
+SuperMap iDesktop Cross 产品是基于 SuperMap iObjects Java 的二次开发产品，开发以及运行本产品的基本前提是购买并配置了 SuperMap iObjects Java 的许可或者使用云许可。
 > 注意：
 >
 > 1. SuperMap iDesktop Cross 开源并免费，SuperMap iObjects Java 是收费产品，该产品可以一定时间的免费试用，之后如有需要请前往 [SuperMap 官方网站](http://www.supermap.com/ "SuperMap 官方网站") 咨询购买；
@@ -168,18 +168,18 @@ SuperMap iDesktop Cross 分支说明：
 
 - 选中 `SuperMap-iDesktop-Cross` 根节点并右键单击打开右键菜单，依次选择 **New - Module** 打开新建向导界面；
 - 选中左边栏 **Maven**，点击 **Next** 进入下一步；
-- 输入任意 ArtifactId，此处输入 MyPlugin，其他参数默认即可，点击 **Next** 进入下一步；
-- 在 **Content root** 后添加 **"\MyPlugin"**,点击 **Finish** 完成创建。
+- 输入任意 ArtifactId，此处输入 NewPlugin，其他参数默认即可，点击 **Next** 进入下一步；
+- 在 **Content root** 后添加 **"\NewPlugin"**,点击 **Finish** 完成创建。
 
 ## 插件注册 ##
 
-新建的工程 `MyPlugin` 的初始化状态需要注册为 SuperMap iDesktop Cross 的插件，才能正确运行。查看工程代码，找到并打开 **Activator.java** 文件，进行以下修改。
+新建的工程 `NewPlugin` 的初始化状态需要注册为 SuperMap iDesktop Cross 的插件，才能正确运行。查看工程代码，找到并打开 **Activator.java** 文件，进行以下修改。
 
     public void start(BundleContext bundleContext) throws Exception {
     	Activator.context = bundleContext;
     
     	// 注册 SuperMap iDesktop Cross 插件
-    	Application.getActiveApplication().getPluginManager().addPlugin("MyPlugin", bundleContext.getBundle());
+    	Application.getActiveApplication().getPluginManager().addPlugin("NewPlugin", bundleContext.getBundle());
     
     	// 插件注册成功
     	System.out.println("MyPlugin Start.");
@@ -190,8 +190,8 @@ SuperMap iDesktop Cross 分支说明：
 
 - 展开 `SuperMap-iDesktop-Cross` 根节点；
 - 打开文件 `module-pom-template.xml`，这是扩展开发插件的 pom 配置模板文件，其中由 `**` 包围的配置项为必填自定义配置；
-- 展开 `MyPlugin` 工程，打开 `pom.xml` 文件，参照模板文件进行配置；
-- 查看 IntelliJ IDEA 右边侧边栏，打开 Maven Projects 管理面板，依次展开 **MyPlugin - Plugins - bundle**，双击 **bundle:manifest** 生成 manifest 文件，等待完成。
+- 展开 `NewPlugin` 工程，打开 `pom.xml` 文件，参照模板文件进行配置；
+- 查看 IntelliJ IDEA 右边侧边栏，打开 Maven Projects 管理面板，依次展开 **NewPlugin - Plugins - bundle**，双击 **bundle:manifest** 生成 manifest 文件，等待完成。
 
 >注意：
 >
@@ -203,11 +203,12 @@ SuperMap iDesktop Cross 分支说明：
 
 ### 工程依赖 ###
 
- `Core` 和 `Controls` 作为项目的核心库，是所有插件的必填依赖。
+ `Core` 、`Process` 、`Controls` 作为项目的核心库，是所有插件的必填依赖。
 
-    Core 和 Controls 工程是整个项目的核心工程。
+    Core、Process、Controls 工程是整个项目的核心工程。
     Core 依赖并导出 SuperMap iObjects Java 以及其他第三方库的类库。
-    Controls 依赖 Core，这两个工程共同构建了整个 Cross 项目的核心架构。
+    Process 作为可视化建模模块的核心库，提供可视化建模的核心接口。
+    Controls 依赖 Core 和 Process，这三个工程共同构建了整个 Cross 项目的核心架构。
     扩展开发自己的插件，必须依赖 Core 和 Controls 工程。
 
 ### OSGI 依赖 ###

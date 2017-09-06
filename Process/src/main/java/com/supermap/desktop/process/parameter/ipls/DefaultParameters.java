@@ -2,10 +2,12 @@ package com.supermap.desktop.process.parameter.ipls;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessEnv;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.parameter.events.ParameterPropertyChangedEvent;
 import com.supermap.desktop.process.parameter.events.ParameterPropertyChangedListener;
+import com.supermap.desktop.process.parameter.interfaces.IEnvironmentParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -15,16 +17,23 @@ import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.util.ParameterUtil;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author XiaJT
@@ -32,6 +41,7 @@ import java.util.Collections;
 public class DefaultParameters implements IParameters {
 	private IProcess process;
 	protected ArrayList<IParameter> parameters = new ArrayList<>();
+	private Map<String, ArrayList<IParameter>> extraParameters = new LinkedHashMap<>();
 	protected JPanel panel;
 	protected EmptyParameterPanel parameterPanel = new EmptyParameterPanel();
 	private InputParametersManager inputParametersManager = new InputParametersManager(this);
@@ -43,6 +53,8 @@ public class DefaultParameters implements IParameters {
 			fireParameterPropertyChangedListener(parameterPropertyChangedEvent);
 		}
 	};
+
+	public static final String ENVIRONMENT = ProcessProperties.getString("String_environment");
 
 	public DefaultParameters(IProcess process) {
 		this.process = process;
@@ -95,6 +107,25 @@ public class DefaultParameters implements IParameters {
 		panel = null;
 	}
 
+	// 暂时不开放，没想好
+	private void addParameter(String title, IParameter... iParameters) {
+		ArrayList<IParameter> parameters = extraParameters.get(title);
+		for (IParameter iParameter : iParameters) {
+			iParameter.setParameters(this);
+		}
+		if (parameters != null) {
+			parameters.addAll(Arrays.asList(iParameters));
+		} else {
+			ArrayList<IParameter> parameters1 = new ArrayList<>();
+			parameters1.addAll(Arrays.asList(iParameters));
+			extraParameters.put(title, parameters1);
+		}
+	}
+
+	@Override
+	public void addEnvironmentParameters(IEnvironmentParameter... environmentParameter) {
+		addParameter(ENVIRONMENT, environmentParameter);
+	}
 
 	@Override
 	public ArrayList<IParameter> getParameters() {
@@ -127,12 +158,71 @@ public class DefaultParameters implements IParameters {
 	@Override
 	public IParameterPanel getPanel() {
 		if (panel == null) {
-			panel = new JPanel();
-			panel.setLayout(new GridBagLayout());
-			for (int i = 0; i < parameters.size(); i++) {
-				panel.add((JPanel) parameters.get(i).getParameterPanel().getPanel(), new GridBagConstraintsHelper(0, i, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+			if (extraParameters.size() == 0) {
+				panel = new JPanel();
+				panel.setLayout(new GridBagLayout());
+				for (int i = 0; i < parameters.size(); i++) {
+					panel.add((JPanel) parameters.get(i).getParameterPanel().getPanel(), new GridBagConstraintsHelper(0, i, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+				}
+				panel.add(new JPanel(), new GridBagConstraintsHelper(0, parameters.size(), 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+			} else {
+				JTabbedPane jTabbedPane = new JTabbedPane();
+
+				JPanel basicPanel = new JPanel();
+				basicPanel.setLayout(new GridBagLayout());
+				for (int i = 0; i < parameters.size(); i++) {
+					basicPanel.add((JPanel) parameters.get(i).getParameterPanel().getPanel(), new GridBagConstraintsHelper(0, i, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+				}
+				basicPanel.add(new JPanel(), new GridBagConstraintsHelper(0, parameters.size(), 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+				jTabbedPane.add(CoreProperties.getString("String_parameter"), basicPanel);
+
+				for (String title : extraParameters.keySet()) {
+					ArrayList<IParameter> currentParameters = extraParameters.get(title);
+					JPanel currentPanel = new JPanel();
+					currentPanel.setLayout(new GridBagLayout());
+					for (int i = 0; i < currentParameters.size(); i++) {
+						currentPanel.add((JPanel) currentParameters.get(i).getParameterPanel().getPanel(), new GridBagConstraintsHelper(0, i, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+					}
+					if (title.equals(ENVIRONMENT)) {
+						// 添加 “环境Paramters”? 会导致结构有点乱？
+						JPanel buttonPanel = new JPanel();
+						JButton buttonReset = new JButton();
+						JButton buttonSetAsGlobalParameter = new JButton();
+						buttonPanel.setLayout(new GridBagLayout());
+						buttonPanel.add(buttonReset, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST)
+								.setWeight(1, 0).setInsets(0, 0, 0, 0));
+						buttonPanel.add(buttonSetAsGlobalParameter, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST)
+								.setWeight(0, 0).setInsets(0, 5, 0, 0));
+						buttonReset.setText(CommonProperties.getString("String_Button_Reset"));
+						buttonSetAsGlobalParameter.setText(ProcessProperties.getString("String_SetAsGlobal"));
+						buttonReset.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								ArrayList<IParameter> parameters = extraParameters.get(ENVIRONMENT);
+								for (IParameter parameter : parameters) {
+									((IEnvironmentParameter) parameter).reset();
+								}
+							}
+						});
+						buttonSetAsGlobalParameter.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								ArrayList<IParameter> parameters = extraParameters.get(ENVIRONMENT);
+								for (IParameter parameter : parameters) {
+									((IEnvironmentParameter) parameter).setAsGlobalEnvironment();
+								}
+							}
+						});
+						currentPanel.add(buttonPanel, new GridBagConstraintsHelper(0, currentParameters.size() + 1, 1, 1)
+								.setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 10, 10, 10));
+					}
+					currentPanel.add(new JPanel(), new GridBagConstraintsHelper(0, currentParameters.size() + 10, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+					jTabbedPane.add(title, currentPanel);
+				}
+				panel = new JPanel();
+				panel.setLayout(new GridBagLayout());
+				panel.add(jTabbedPane, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 			}
-			panel.add(new JPanel(), new GridBagConstraintsHelper(0, parameters.size(), 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 		}
 		parameterPanel.setPanel(panel);
 		return parameterPanel;
@@ -269,6 +359,18 @@ public class DefaultParameters implements IParameters {
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 			if (listeners[i] == ParameterPropertyChangedListener.class) {
 				((ParameterPropertyChangedListener) listeners[i + 1]).parameterPropertyChanged(parameterPropertyChangedEvent);
+			}
+		}
+	}
+
+	@Override
+	public void dispose() {
+		for (IParameter parameter : parameters) {
+			parameter.dispose();
+		}
+		for (ArrayList<IParameter> iParameters : extraParameters.values()) {
+			for (IParameter iParameter : iParameters) {
+				iParameter.dispose();
 			}
 		}
 	}

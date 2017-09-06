@@ -270,4 +270,15 @@ public class OutputFrame extends JScrollPane implements IOutput {
 		return isShowTime;
 	}
 
+	/**
+	 * 是否显示时间
+	 * yuanR2017.9.6
+	 *
+	 * @return
+	 */
+	public void setShowTime(Boolean isShowTime) {
+		this.isShowTime = isShowTime;
+	}
+
+
 }

@@ -1,10 +1,7 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import com.supermap.data.DatasetVector;
+import com.supermap.data.*;
 import com.supermap.data.Enum;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldInfos;
-import com.supermap.data.FieldType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
@@ -197,6 +194,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		this.buttonReset.setText(CommonProperties.getString(CommonProperties.Reset));
 		this.buttonApply.setText(CommonProperties.getString(CommonProperties.Apply));
 	}
+
 	private void setComponentName() {
 		ComponentUIUtilities.setName(this.tableRecordset, "RecordsetPropertyControl_tableRecordset");
 		ComponentUIUtilities.setName(this.buttonAdd, "RecordsetPropertyControl_buttonAdd");
@@ -205,6 +203,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		ComponentUIUtilities.setName(this.buttonApply, "RecordsetPropertyControl_buttonApply");
 		ComponentUIUtilities.setName(this.checkBoxShowWarning, "RecordsetPropertyControl_checkBoxShowWarning");
 	}
+
 	private void initializeTable() {
 		this.tableRecordset = new JTable();
 		this.tableRecordset.setSurrendersFocusOnKeystroke(true);
@@ -567,7 +566,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		public boolean isCellEditable(int row, int column) {
 			boolean isEditable = false;
 
-			if (datasetVector.isReadOnly()) {
+			if (datasetVector.isReadOnly() || datasetVector.getType() == DatasetType.VECTORCOLLECTION) {
 				return false;
 			}
 

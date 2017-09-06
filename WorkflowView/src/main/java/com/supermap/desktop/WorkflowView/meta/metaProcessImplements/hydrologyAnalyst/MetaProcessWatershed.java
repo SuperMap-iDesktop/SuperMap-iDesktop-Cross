@@ -45,7 +45,7 @@ public class MetaProcessWatershed extends MetaProcessHydrology {
 		constraintSource1.constrained(pointsDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		constraintSource1.constrained(pointsDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 		EqualDatasetConstraint datasetConstraintSource = new EqualDatasetConstraint();
-		datasetConstraintSource.constrained(sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		datasetConstraintSource.constrained(pointsDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
 		datasetConstraintSource.constrained(buttonSQL, ParameterSQLExpression.DATASET_FIELD_NAME);
 
 		ParameterCombine weightCombine = new ParameterCombine();

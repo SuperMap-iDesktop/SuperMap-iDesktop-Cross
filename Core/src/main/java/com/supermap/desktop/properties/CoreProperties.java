@@ -4,7 +4,6 @@ import java.util.ResourceBundle;
 
 public class CoreProperties extends Properties {
 	public static final String CORE = "Core";
-	public static final String COMMON = "Common";
 
 	public static final String getString(String key) {
 		return getString(CORE, key);

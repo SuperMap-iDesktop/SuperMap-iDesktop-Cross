@@ -8,6 +8,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.parameter.ipls.ParameterPassword;
 import com.supermap.desktop.process.util.ParameterUtil;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * @author XiaJT
@@ -31,7 +33,7 @@ public class ParameterPasswordPanel extends SwingPanel implements IParameterPane
 	public ParameterPasswordPanel(IParameter parameter) {
 		super(parameter);
 		parameterPassword = (ParameterPassword) parameter;
-		label.setText(parameterPassword.getDescribe());
+		label.setText(getDescribe());
 		label.setToolTipText(parameterPassword.getDescribe());
 		passwordField.setText(String.valueOf(parameterPassword.getSelectedItem()));
 		initLayout();
@@ -90,7 +92,16 @@ public class ParameterPasswordPanel extends SwingPanel implements IParameterPane
 		} finally {
 			isSelectingItem = false;
 		}
-
-
+	}
+	/**
+	 * @return
+	 */
+	private String getDescribe() {
+		String describe = parameterPassword.getDescribe();
+		if (parameterPassword.isRequisite()) {
+			return MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);
+		} else {
+			return describe;
+		}
 	}
 }

@@ -8,6 +8,7 @@ import com.supermap.mapping.LayerSettingGrid;
  * Created by yuanR on 2017/8/31 0031.
  * 栅格数据集相关属性管理类
  * 目前主要负责LayerSettingGrid和originKeys属性的管理
+ *
  */
 public class DatasetGridBean {
 

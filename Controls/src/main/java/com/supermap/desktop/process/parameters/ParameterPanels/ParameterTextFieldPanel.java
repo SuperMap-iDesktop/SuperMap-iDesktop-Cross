@@ -12,7 +12,9 @@ import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,7 +42,6 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		label.setToolTipText(this.parameterTextField.getDescribe());
 		label.setVisible(this.parameterTextField.isDescriptionVisible());
 		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
-		textField.setToolTipText(this.parameterTextField.getToolTip());
 		this.smTextFieldLegit = ((ParameterTextField) parameterTextField).getSmTextFieldLegit();
 		textField.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
@@ -68,8 +69,16 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		textField.setPreferredSize(new Dimension(20, 23));
 		panel.setLayout(new GridBagLayout());
 		panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
-		panel.add(textField, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
-		if (parameterTextField.isSetUnit()) {
+		// 判断是否添加提示按钮-yuanR2017.9.6
+		if (!StringUtilities.isNullOrEmpty(parameterTextField.getTip())) {
+			panel.add(new WarningOrHelpProvider(parameterTextField.getTip(), false),
+					new GridBagConstraintsHelper(1, 0, 1, 1).setInsets(0, 5, 0, 0));
+			panel.add(textField,
+					new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+		} else {
+			panel.add(textField, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
+		}
+		if (!StringUtilities.isNullOrEmpty(parameterTextField.getUnit())) {
 			labelUnit.setText(parameterTextField.getUnit());
 			panel.add(labelUnit, new GridBagConstraintsHelper(2, 0, 1, 1).setInsets(3, 3, 3, 3));
 		}
@@ -84,7 +93,7 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 						isSelectingItem = true;
 						ParameterTextFieldPanel.this.textField.setText(evt.getNewValue() == null ? null : evt.getNewValue().toString());
 						// 当值改变时，同时改变其值得单位-yuanR
-						if (parameterTextField.isSetUnit()) {
+						if (!StringUtilities.isNullOrEmpty(parameterTextField.getUnit())) {
 							labelUnit.setText(parameterTextField.getUnit());
 						}
 					} finally {

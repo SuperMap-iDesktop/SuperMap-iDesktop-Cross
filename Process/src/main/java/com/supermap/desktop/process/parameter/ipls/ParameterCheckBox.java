@@ -9,6 +9,7 @@ import java.beans.PropertyChangeEvent;
 
 /**
  * @author XiaJT
+ * 增加tip提示-yuanR
  */
 public class ParameterCheckBox extends AbstractParameter implements ISelectionParameter {
 
@@ -16,6 +17,7 @@ public class ParameterCheckBox extends AbstractParameter implements ISelectionPa
 	@ParameterField(name = PARAMETER_CHECK_BOX_VALUE)
 	private String value = "false";
 	private String describe;
+	private String tip;
 
 	public ParameterCheckBox() {
 		this("");
@@ -49,6 +51,16 @@ public class ParameterCheckBox extends AbstractParameter implements ISelectionPa
 	public ParameterCheckBox setDescribe(String describe) {
 		this.describe = describe;
 		return this;
+	}
+
+
+	public ParameterCheckBox setTip(String tip) {
+		this.tip = tip;
+		return this;
+	}
+
+	public String getTip() {
+		return tip;
 	}
 
 

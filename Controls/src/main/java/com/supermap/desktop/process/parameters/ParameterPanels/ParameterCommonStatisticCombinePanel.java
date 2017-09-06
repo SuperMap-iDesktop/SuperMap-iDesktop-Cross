@@ -2,6 +2,7 @@ package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
@@ -12,14 +13,21 @@ import com.supermap.desktop.process.parameter.ipls.ParameterCommonStatisticCombi
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasetChooseTable;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.TextFields.NumTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Created By Chens on 2017/8/21 0021
@@ -31,10 +39,11 @@ public class ParameterCommonStatisticCombinePanel extends SwingPanel {
 	private JRadioButton radioButtonValue;
 	private JRadioButton radioButtonDatasets;
 	private JLabel labelValue;
-	private SmTextFieldLegit textFieldLegit;
+	private NumTextFieldLegit textFieldLegit;
 	private JPanelDatasetChooseForParameter datasetChooseForParameter;
 	private final String[] columnNames = {"", CommonProperties.getString("String_ColumnHeader_Dataset"), CommonProperties.getString("String_ColumnHeader_Datasource")};
 	private final boolean[] enables = {false, false, false};
+	private boolean isSelectingItem = false;
 
 	public ParameterCommonStatisticCombinePanel(IParameter parameterCommonStatisticCombine) {
 		super(parameterCommonStatisticCombine);
@@ -49,7 +58,7 @@ public class ParameterCommonStatisticCombinePanel extends SwingPanel {
 		radioButtonValue = new JRadioButton();
 		radioButtonDatasets = new JRadioButton();
 		labelValue = new JLabel();
-		textFieldLegit = new SmTextFieldLegit();
+		textFieldLegit = new NumTextFieldLegit();
 		datasetChooseForParameter = new JPanelDatasetChooseForParameter(parameterCommonStatisticCombine.getDatasets(), columnNames, enables);
 
 		buttonGroup.add(radioButtonValue);
@@ -71,8 +80,8 @@ public class ParameterCommonStatisticCombinePanel extends SwingPanel {
 		JPanel panelRadio = new JPanel();
 		panelRadio.setLayout(new GridBagLayout());
 
-		panelRadio.add(radioButtonValue, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 5, 0));
-		panelRadio.add(radioButtonDatasets, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 5, 0));
+		panelRadio.add(radioButtonValue, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 0));
+		panelRadio.add(radioButtonDatasets, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 5, 0));
 		panel.add(panelRadio, new GridBagConstraintsHelper(0, 0, 2, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 0));
 		panel.add(labelValue, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 0, 20));
 		panel.add(textFieldLegit, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 25, 0, 5));
@@ -118,10 +127,28 @@ public class ParameterCommonStatisticCombinePanel extends SwingPanel {
 				parameterCommonStatisticCombine.setSelectedItem(datasetChooseForParameter.getDatasets());
 			}
 		});
-		textFieldLegit.addActionListener(new ActionListener() {
+		textFieldLegit.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				parameterCommonStatisticCombine.setSelectedItem(Double.parseDouble(textFieldLegit.getText()));
+			public void insertUpdate(DocumentEvent e) {
+				change();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				change();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				change();
+			}
+
+			private void change() {
+				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldLegit.getText())) {
+					isSelectingItem = true;
+					parameterCommonStatisticCombine.setSelectedItem(Double.valueOf(textFieldLegit.getBackUpValue().toString()));
+					isSelectingItem = false;
+				}
 			}
 		});
 	}

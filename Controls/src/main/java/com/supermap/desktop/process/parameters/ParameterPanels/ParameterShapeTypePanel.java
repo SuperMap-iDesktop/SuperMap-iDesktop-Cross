@@ -8,7 +8,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.parameter.ipls.ParameterShapeType;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.ui.controls.TextFields.NumTextFieldLegit;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -28,19 +28,19 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 	JLabel labelUnitType;
 	JComboBox comboBoxUnitType;
 	JLabel labelWidth;
-	SmTextFieldLegit textFieldWidth;
+	NumTextFieldLegit textFieldWidth;
 	JLabel labelHeight;
-	SmTextFieldLegit textFieldHeight;
+	NumTextFieldLegit textFieldHeight;
 	JLabel labelRadius;
-	SmTextFieldLegit textFieldRadius;
+	NumTextFieldLegit textFieldRadius;
 	JLabel labelInnerRadius;
-	SmTextFieldLegit textFieldInnerRadius;
+	NumTextFieldLegit textFieldInnerRadius;
 	JLabel labelOuterRadius;
-	SmTextFieldLegit textFieldOuterRadius;
+	NumTextFieldLegit textFieldOuterRadius;
 	JLabel labelStartAngle;
-	SmTextFieldLegit textFieldStartAngle;
+	NumTextFieldLegit textFieldStartAngle;
 	JLabel labelEndAngle;
-	SmTextFieldLegit textFieldEndAngle;
+	NumTextFieldLegit textFieldEndAngle;
 
 	private boolean isSelectingItem = false;
 	ParameterShapeType parameterShapeType;
@@ -76,13 +76,13 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 		labelEndAngle =new JLabel();
 		comboBoxShapeType = new JComboBox();
 		comboBoxUnitType = new JComboBox();
-		textFieldWidth = new SmTextFieldLegit();
-		textFieldHeight = new SmTextFieldLegit();
-		textFieldRadius = new SmTextFieldLegit();
-		textFieldInnerRadius = new SmTextFieldLegit();
-		textFieldOuterRadius = new SmTextFieldLegit();
-		textFieldStartAngle = new SmTextFieldLegit();
-		textFieldEndAngle = new SmTextFieldLegit();
+		textFieldWidth = new NumTextFieldLegit();
+		textFieldHeight = new NumTextFieldLegit();
+		textFieldRadius = new NumTextFieldLegit();
+		textFieldInnerRadius = new NumTextFieldLegit();
+		textFieldOuterRadius = new NumTextFieldLegit();
+		textFieldStartAngle = new NumTextFieldLegit();
+		textFieldEndAngle = new NumTextFieldLegit();
 	}
 
 	private void initResources() {
@@ -231,6 +231,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			}
 
 			private void change() {
+				textFieldInnerRadius.setMaxValue(Double.valueOf(textFieldOuterRadius.getBackUpValue().toString()));
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldInnerRadius.getText())) {
 					isSelectingItem = true;
 					resetNeighbourShape();
@@ -255,6 +256,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			}
 
 			private void change() {
+				textFieldOuterRadius.setMinValue(Double.valueOf(textFieldInnerRadius.getBackUpValue().toString()));
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldOuterRadius.getText())) {
 					isSelectingItem = true;
 					resetNeighbourShape();
@@ -279,6 +281,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			}
 
 			private void change() {
+				textFieldStartAngle.setMaxValue(Double.valueOf(textFieldEndAngle.getBackUpValue().toString()));
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldStartAngle.getText())) {
 					isSelectingItem = true;
 					resetNeighbourShape();
@@ -303,6 +306,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			}
 
 			private void change() {
+				textFieldEndAngle.setMinValue(Double.valueOf(textFieldStartAngle.getBackUpValue().toString()));
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldEndAngle.getText())) {
 					isSelectingItem = true;
 					resetNeighbourShape();
@@ -316,6 +320,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 				if (!isSelectingItem && e.getStateChange() == ItemEvent.SELECTED) {
 					isSelectingItem = true;
 					resetNeighbourShape();
+
 					isSelectingItem = false;
 				}
 			}
@@ -336,6 +341,15 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 		textFieldOuterRadius.setText("3");
 		textFieldStartAngle.setText("0");
 		textFieldEndAngle.setText("360");
+		textFieldWidth.setMinValue(0);
+		textFieldHeight.setMinValue(0);
+		textFieldRadius.setMinValue(0);
+		textFieldInnerRadius.setMinValue(0);
+		textFieldOuterRadius.setMinValue(0);
+		textFieldStartAngle.setMinValue(0);
+		textFieldEndAngle.setMinValue(0);
+		textFieldEndAngle.setMaxValue(360);
+		textFieldStartAngle.setMaxValue(360);
 		resetNeighbourShape();
 	}
 
@@ -362,20 +376,20 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 	private void resetNeighbourShape() {
 		if (comboBoxShapeType.getSelectedItem().equals(RECTANGLE)) {
 			neighbourShape = new NeighbourShapeRectangle();
-			((NeighbourShapeRectangle) neighbourShape).setWidth(Double.valueOf(textFieldWidth.getText().toString()));
-			((NeighbourShapeRectangle) neighbourShape).setHeight(Double.valueOf(textFieldHeight.getText().toString()));
+			((NeighbourShapeRectangle) neighbourShape).setWidth(Double.valueOf(textFieldWidth.getBackUpValue().toString()));
+			((NeighbourShapeRectangle) neighbourShape).setHeight(Double.valueOf(textFieldHeight.getBackUpValue().toString()));
 		} else if (comboBoxShapeType.getSelectedItem().equals(CIRCLE)) {
 			neighbourShape = new NeighbourShapeCircle();
-			((NeighbourShapeCircle) neighbourShape).setRadius(Double.valueOf(textFieldRadius.getText().toString()));
+			((NeighbourShapeCircle) neighbourShape).setRadius(Double.valueOf(textFieldRadius.getBackUpValue().toString()));
 		} else if (comboBoxShapeType.getSelectedItem().equals(ANNULUS)) {
 			neighbourShape = new NeighbourShapeAnnulus();
-			((NeighbourShapeAnnulus) neighbourShape).setInnerRadius(Double.valueOf(textFieldInnerRadius.getText().toString()));
-			((NeighbourShapeAnnulus) neighbourShape).setOuterRadius(Double.valueOf(textFieldOuterRadius.getText().toString()));
+			((NeighbourShapeAnnulus) neighbourShape).setInnerRadius(Double.valueOf(textFieldInnerRadius.getBackUpValue().toString()));
+			((NeighbourShapeAnnulus) neighbourShape).setOuterRadius(Double.valueOf(textFieldOuterRadius.getBackUpValue().toString()));
 		} else if (comboBoxShapeType.getSelectedItem().equals(WEDGE)) {
 			neighbourShape = new NeighbourShapeWedge();
-			((NeighbourShapeWedge) neighbourShape).setRadius(Double.valueOf(textFieldRadius.getText().toString()));
-			((NeighbourShapeWedge) neighbourShape).setStartAngle(Double.valueOf(textFieldStartAngle.getText().toString()));
-			((NeighbourShapeWedge) neighbourShape).setEndAngle(Double.valueOf(textFieldEndAngle.getText().toString()));
+			((NeighbourShapeWedge) neighbourShape).setRadius(Double.valueOf(textFieldRadius.getBackUpValue().toString()));
+			((NeighbourShapeWedge) neighbourShape).setStartAngle(Double.valueOf(textFieldStartAngle.getBackUpValue().toString()));
+			((NeighbourShapeWedge) neighbourShape).setEndAngle(Double.valueOf(textFieldEndAngle.getBackUpValue().toString()));
 		}
 		if (comboBoxUnitType.getSelectedItem().equals(UNIT_TYPE_CELL)) {
 			neighbourShape.setUnitType(NeighbourUnitType.CELL);

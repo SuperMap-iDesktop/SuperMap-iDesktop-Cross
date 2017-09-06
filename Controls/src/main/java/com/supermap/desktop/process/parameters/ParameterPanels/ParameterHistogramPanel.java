@@ -81,7 +81,7 @@ public class ParameterHistogramPanel extends SwingPanel implements IParameterPan
 			g.drawLine(width,height-15,width-10,height-25);
 			g.drawLine(width,height-15,width-10,height-5);
 			g.drawString(ProcessProperties.getString("String_Histogram_Frequency"),20,10);
-			g.drawString(ProcessProperties.getString("String_Histogram_Interval"),width-10,height-25);
+			g.drawString(ProcessProperties.getString("String_Histogram_Interval"),width-20,height-25);
 
 			double hInterval = (width - 10) / groupCount;
 			g.drawString("0", 10, height);
