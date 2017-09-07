@@ -1,0 +1,37 @@
+﻿<ColorScheme>
+  <FileHeader>
+    <FileType>678370</FileType>
+    <Version>0</Version>
+    <Name>CG_ColorScheme7</Name>
+    <Author>SuperMap</Author>
+    <Description>Random</Description>
+    <Favorites>False</Favorites>
+    <ColorSystem>1</ColorSystem>
+    <IntervalColorBuildMethod>1</IntervalColorBuildMethod>
+    <KeyColorCount>3</KeyColorCount>
+    <IntervalColorCount>0</IntervalColorCount>
+  </FileHeader>
+  <DataBlock>
+    <KeyColor1>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>202</Red>
+      <Green>134</Green>
+      <Blue>34</Blue>
+    </KeyColor1>
+    <KeyColor2>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>145</Red>
+      <Green>199</Green>
+      <Blue>174</Blue>
+    </KeyColor2>
+    <KeyColor3>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>47</Red>
+      <Green>69</Green>
+      <Blue>84</Blue>
+    </KeyColor3>
+  </DataBlock>
+</ColorScheme>

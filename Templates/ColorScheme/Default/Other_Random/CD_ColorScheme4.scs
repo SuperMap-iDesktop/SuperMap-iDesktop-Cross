@@ -1,0 +1,37 @@
+﻿<ColorScheme>
+  <FileHeader>
+    <FileType>678370</FileType>
+    <Version>0</Version>
+    <Name>CD_ColorScheme4</Name>
+    <Author>SuperMap</Author>
+    <Description>Random</Description>
+    <Favorites>False</Favorites>
+    <ColorSystem>1</ColorSystem>
+    <IntervalColorBuildMethod>1</IntervalColorBuildMethod>
+    <KeyColorCount>3</KeyColorCount>
+    <IntervalColorCount>0</IntervalColorCount>
+  </FileHeader>
+  <DataBlock>
+    <KeyColor1>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>249</Red>
+      <Green>231</Green>
+      <Blue>193</Blue>
+    </KeyColor1>
+    <KeyColor2>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>191</Red>
+      <Green>94</Green>
+      <Blue>148</Blue>
+    </KeyColor2>
+    <KeyColor3>
+      <Name></Name>
+      <ColorSystem>CS_RGB</ColorSystem>
+      <Red>5</Red>
+      <Green>140</Green>
+      <Blue>222</Blue>
+    </KeyColor3>
+  </DataBlock>
+</ColorScheme>
