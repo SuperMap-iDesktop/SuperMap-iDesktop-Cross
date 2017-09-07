@@ -249,72 +249,78 @@ public class MetaProcessBuffer extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
-		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
-			// fixme 数据集来源
-			DatasetVector datasetVector;
-			if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
-					&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
-				datasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
-			} else {
-				datasetVector = (DatasetVector) dataset.getSelectedItem();
-			}
 
-			BufferRadiusUnit radiusUnit = (BufferRadiusUnit) parameterBufferRange.getSelectedData();
-			boolean isUnion = "true".equalsIgnoreCase(parameterUnionBuffer.getSelectedItem());
-			boolean isAttributeRetained = "true".equalsIgnoreCase(parameterRetainAttribute.getSelectedItem());
-			int semicircleLineSegment = Integer.valueOf((parameterTextFieldSemicircleLineSegment.getSelectedItem()));
-			Object radiusLeft = null;
-			Object radiusRight = null;
-			if (parameterTextFieldLeftRadius.isEnabled() && !StringUtilities.isNullOrEmpty(parameterTextFieldLeftRadius.getSelectedItem())
-					|| (comboBoxFieldLeft.isEnabled() && !StringUtilities.isNullOrEmpty((String) comboBoxFieldLeft.getSelectedItem()))) {
-				radiusLeft = ((ParameterDataNode) radioButtonNumOrField.getSelectedItem()).getData().equals(VALUE_RELY) ? Double.valueOf(parameterTextFieldLeftRadius.getSelectedItem()) : comboBoxFieldLeft.getFieldName();
-			}
-			if (parameterTextFieldRightRadius.isEnabled() && !StringUtilities.isNullOrEmpty(parameterTextFieldRightRadius.getSelectedItem())
-					|| (comboBoxFieldRight.isEnabled() && !StringUtilities.isNullOrEmpty((String) comboBoxFieldRight.getSelectedItem()))) {
-				radiusRight = ((ParameterDataNode) radioButtonNumOrField.getSelectedItem()).getData().equals(VALUE_RELY) ? Double.valueOf(parameterTextFieldRightRadius.getSelectedItem()) : comboBoxFieldRight.getFieldName();
-			}
-			if (radiusLeft == null && radiusRight == null) {
-				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_NullRadius_Error"));
-				return false;
-			}
-			if (datasetVector.getType().equals(DatasetType.POINT) && radiusLeft instanceof Integer && (int) radiusLeft < 0) {
-				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_MinusRadius_Error"));
-				return false;
-			} else if (((dataset.getSelectedDataset().getType().equals(DatasetType.LINE) || dataset.getSelectedDataset().getType().equals(DatasetType.NETWORK))) &&
-					((radiusLeft instanceof Integer && (Integer) radiusLeft < 0) || (radiusRight instanceof Integer && (Integer) radiusRight < 0))) {
-				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_MinusRadius_Error"));
-				return false;
-			}
+		fireRunning(new RunningEvent(this, 0, "start"));
+		DatasetVector datasetVector;
+		if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
+				&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
+			datasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
+		} else {
+			datasetVector = (DatasetVector) dataset.getSelectedItem();
+		}
 
-			Datasource resultDatasource = parameterSaveDataset.getResultDatasource();
-			String resultName = parameterSaveDataset.getDatasetName();
+		boolean isUnion = "true".equalsIgnoreCase(parameterUnionBuffer.getSelectedItem());
+		boolean isAttributeRetained = "true".equalsIgnoreCase(parameterRetainAttribute.getSelectedItem());
+		int semicircleLineSegment = Integer.valueOf((parameterTextFieldSemicircleLineSegment.getSelectedItem()));
+		Object radiusLeft = null;
+		Object radiusRight = null;
+		if (parameterTextFieldLeftRadius.isEnabled() && !StringUtilities.isNullOrEmpty(parameterTextFieldLeftRadius.getSelectedItem())
+				|| (comboBoxFieldLeft.isEnabled() && !StringUtilities.isNullOrEmpty((String) comboBoxFieldLeft.getSelectedItem()))) {
+			radiusLeft = ((ParameterDataNode) radioButtonNumOrField.getSelectedItem()).getData().equals(VALUE_RELY) ? Double.valueOf(parameterTextFieldLeftRadius.getSelectedItem()) : comboBoxFieldLeft.getFieldName();
+		}
+		if (parameterTextFieldRightRadius.isEnabled() && !StringUtilities.isNullOrEmpty(parameterTextFieldRightRadius.getSelectedItem())
+				|| (comboBoxFieldRight.isEnabled() && !StringUtilities.isNullOrEmpty((String) comboBoxFieldRight.getSelectedItem()))) {
+			radiusRight = ((ParameterDataNode) radioButtonNumOrField.getSelectedItem()).getData().equals(VALUE_RELY) ? Double.valueOf(parameterTextFieldRightRadius.getSelectedItem()) : comboBoxFieldRight.getFieldName();
+		}
 
-			DatasetVectorInfo vectorInfo = new DatasetVectorInfo();
-			vectorInfo.setName(resultDatasource.getDatasets().getAvailableDatasetName(resultName));
-			vectorInfo.setType(DatasetType.REGION);
-			DatasetVector result = resultDatasource.getDatasets().create(vectorInfo);
-			result.setPrjCoordSys(datasetVector.getPrjCoordSys());
-
-			BufferAnalystParameter parameter = new BufferAnalystParameter();
-			parameter.setEndType(((ParameterDataNode) radioButtonFlatOrRound.getSelectedItem()).getData().equals(BUFFER_FLAT) ? BufferEndType.FLAT : BufferEndType.ROUND);
-			parameter.setRadiusUnit(radiusUnit);
-			if (radiusLeft != null) {
-				parameter.setLeftDistance(radiusLeft);
-			}
+		if (radiusLeft == null && radiusRight == null) {
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_NullRadius_Error"));
+			return false;
+		}
+		// 当选择的是根据值生成，进行绝对值处理
+		if (((ParameterDataNode) radioButtonNumOrField.getSelectedItem()).getData().equals(VALUE_RELY)) {
 			if (radiusRight != null) {
-				parameter.setRightDistance(radiusRight);
+				radiusRight = Math.abs((Double) radiusRight);
 			}
-			parameter.setSemicircleLineSegment(semicircleLineSegment);
+			if (radiusLeft != null) {
+				radiusLeft = Math.abs((Double) radiusLeft);
+			}
+		}
 
-			BufferAnalyst.addSteppedListener(this.steppedListener);
+		Datasource resultDatasource = parameterSaveDataset.getResultDatasource();
+		String resultName = parameterSaveDataset.getDatasetName();
+
+		DatasetVectorInfo vectorInfo = new DatasetVectorInfo();
+		vectorInfo.setName(resultDatasource.getDatasets().getAvailableDatasetName(resultName));
+		vectorInfo.setType(DatasetType.REGION);
+		DatasetVector result = resultDatasource.getDatasets().create(vectorInfo);
+		result.setPrjCoordSys(datasetVector.getPrjCoordSys());
+
+		BufferAnalystParameter parameter = new BufferAnalystParameter();
+		BufferEndType bufferEndType = ((ParameterDataNode) radioButtonFlatOrRound.getSelectedItem()).getData().equals(BUFFER_FLAT) ? BufferEndType.FLAT : BufferEndType.ROUND;
+		parameter.setEndType(bufferEndType);
+		BufferRadiusUnit radiusUnit = (BufferRadiusUnit) parameterBufferRange.getSelectedData();
+		parameter.setRadiusUnit(radiusUnit);
+		if (radiusLeft != null) {
+			parameter.setLeftDistance(radiusLeft);
+		}
+		if (radiusRight != null) {
+			parameter.setRightDistance(radiusRight);
+		}
+		parameter.setSemicircleLineSegment(semicircleLineSegment);
+
+		BufferAnalyst.addSteppedListener(this.steppedListener);
+		try {
 			isSuccessful = BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
-
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
-
 			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
+			// 删除新建的数据集
+			// 如果失败了，删除新建的数据集
+			if (resultDatasource != null && resultName != null) {
+				resultDatasource.getDatasets().delete(resultName);
+			}
 		} finally {
 			BufferAnalyst.removeSteppedListener(this.steppedListener);
 		}
