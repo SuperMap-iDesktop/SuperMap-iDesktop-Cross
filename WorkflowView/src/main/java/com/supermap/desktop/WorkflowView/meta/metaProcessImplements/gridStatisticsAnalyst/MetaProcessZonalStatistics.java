@@ -4,11 +4,7 @@ import com.supermap.analyst.spatialanalyst.GridStatisticsMode;
 import com.supermap.analyst.spatialanalyst.StatisticsAnalyst;
 import com.supermap.analyst.spatialanalyst.ZonalStatisticsAnalystParameter;
 import com.supermap.analyst.spatialanalyst.ZonalStatisticsAnalystResult;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.PixelFormat;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -125,6 +121,8 @@ public class MetaProcessZonalStatistics extends MetaProcessGridAnalyst {
 				comboBoxZonalField.setEnabled(false);
 			}
 		}
+		comboBoxZonalField.setFieldType(new FieldType[]{FieldType.INT32});
+		checkBoxIgnore.setSelectedItem(true);
 		resultDatasetGrid.setSelectedItem("result_ZonalStatisticsGrid");
 		resultTable.setSelectedItem("result_ZonalStatisticsTable");
 		comboBoxStatisticMode.setItems(new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MIN),GridStatisticsMode.MIN),

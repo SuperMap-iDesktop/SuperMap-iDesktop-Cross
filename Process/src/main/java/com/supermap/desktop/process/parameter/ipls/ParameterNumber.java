@@ -147,6 +147,11 @@ public class ParameterNumber extends ParameterTextField {
 		isIncludeMax = includeMax;
 	}
 
+	public void setInterval(int min,int max) {
+		minValue = min;
+		maxValue = max;
+	}
+
 	@Override
 	public String getType() {
 		return ParameterType.NUMBER;

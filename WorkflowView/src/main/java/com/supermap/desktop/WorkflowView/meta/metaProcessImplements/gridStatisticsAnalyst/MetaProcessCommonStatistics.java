@@ -11,6 +11,7 @@ import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridAnalyst;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
+import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -78,6 +79,9 @@ public class MetaProcessCommonStatistics extends MetaProcessGridAnalyst {
 		EqualDatasourceConstraint constraintSource = new EqualDatasourceConstraint();
 		constraintSource.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		constraintSource.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		EqualDatasetConstraint datasetConstraint = new EqualDatasetConstraint();
+		datasetConstraint.constrained(sourceDataset,ParameterSingleDataset.DATASET_FIELD_NAME);
+		datasetConstraint.constrained(commonStatisticCombine,ParameterCommonStatisticCombine.DATASET_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(resultDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
