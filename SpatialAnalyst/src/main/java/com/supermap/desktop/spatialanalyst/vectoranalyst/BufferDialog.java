@@ -33,7 +33,6 @@ public class BufferDialog extends SmDialog {
 	// 数据类型面板：点、面数据/线数据
 	private JPanel panelDataType;
 	private JLabel labelDataType;
-	private ButtonGroup buttonGroup;
 	private JRadioButton radioButtonPointOrRegion = new JRadioButton("PointOrRegion");
 	private JRadioButton radioButtonLine = new JRadioButton("Line");
 	// 数据类型对应的缓冲区面板
@@ -84,9 +83,9 @@ public class BufferDialog extends SmDialog {
 		this.mainPanel = new JPanel();
 		// 初始化数据类型面板及其控件
 		this.labelDataType = new JLabel("DataType");
-		this.buttonGroup = new ButtonGroup();
-		this.buttonGroup.add(this.radioButtonPointOrRegion);
-		this.buttonGroup.add(this.radioButtonLine);
+		ButtonGroup buttonGroup = new ButtonGroup();
+		buttonGroup.add(this.radioButtonPointOrRegion);
+		buttonGroup.add(this.radioButtonLine);
 		this.panelDataType = new JPanel();
 		// 初始化其他面板
 		this.panelBufferType = new JPanel();
@@ -185,7 +184,7 @@ public class BufferDialog extends SmDialog {
 	 * 根据地图以及树节点的选择情况，设置其缓冲区功能的核心面板属性
 	 */
 	private void initPanelBufferBasic() {
-		int layersCount = 0;
+		int layersCount;
 		// 打开地图时，如果选中点面或线数据集时，初始化打开界面为对应的选中缓冲区类型界面，如果选中的数据类型没有点，面，线，网络等类型时，默认打开线缓冲区界面
 		if (Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 			this.mapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
@@ -214,7 +213,7 @@ public class BufferDialog extends SmDialog {
 		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
 		TreePath selectedPath = workspaceTree.getSelectionPath();
 		if (selectedPath != null) {
-			if (selectedPath != null && selectedPath.getLastPathComponent() instanceof DefaultMutableTreeNode) {
+			if (selectedPath.getLastPathComponent() instanceof DefaultMutableTreeNode) {
 				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
 				TreeNodeData nodeData = (TreeNodeData) selectedNode.getUserObject();
 				if (nodeData.getData() instanceof Dataset) {
@@ -269,22 +268,20 @@ public class BufferDialog extends SmDialog {
 	}
 
 	private void okButtonClicked() {
-		boolean flag = false;
 		try {
 			if (radioButtonPointOrRegion.isSelected()) {
-				flag = panelPointOrRegionAnalyst.createCurrentBuffer();
-
+				panelPointOrRegionAnalyst.createCurrentBuffer();
 			} else if (radioButtonLine.isSelected()) {
-				flag = panelLineBufferAnalyst.CreateCurrentBuffer();
+				panelLineBufferAnalyst.CreateCurrentBuffer();
 			}
-		} catch (Exception e1) {
+		} catch (Exception ignored) {
 
 		} finally {
 			BufferDialog.this.dispose();
 		}
 	}
 
-	public void escapePressed() {
+	private void escapePressed() {
 		BufferDialog.this.dispose();
 	}
 

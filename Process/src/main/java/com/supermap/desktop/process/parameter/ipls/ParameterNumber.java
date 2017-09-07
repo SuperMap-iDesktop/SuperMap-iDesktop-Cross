@@ -20,7 +20,8 @@ public class ParameterNumber extends ParameterTextField {
 	private double minValue;
 	private boolean isIncludeMin = true;
 	private boolean isIncludeMax = true;
-	private String tip;
+	private String toolTip;
+	private String tipButtonMessage;
 	private String unit = "";
 
 	public ParameterNumber() {
@@ -151,12 +152,20 @@ public class ParameterNumber extends ParameterTextField {
 		return ParameterType.NUMBER;
 	}
 
-	public String getTip() {
-		return this.tip;
+	public String getTipButtonMessage() {
+		return this.tipButtonMessage;
 	}
 
-	public void setTip(String tip) {
-		this.tip = tip;
+	public void setTipButtonMessage(String tipButtonMessage) {
+		this.tipButtonMessage = tipButtonMessage;
+	}
+
+	public String getToolTip() {
+		return StringUtilities.isNullOrEmpty(toolTip) ? getDescribe() + getRangeDescribe() : toolTip;
+	}
+
+	public void setToolTip(String toolTip) {
+		this.toolTip = toolTip;
 	}
 
 	@Override

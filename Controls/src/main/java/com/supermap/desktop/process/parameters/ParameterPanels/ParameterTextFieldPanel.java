@@ -39,9 +39,9 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		super(parameterTextField);
 		this.parameterTextField = (ParameterTextField) parameterTextField;
 		label.setText(getDescribe());
-		label.setToolTipText(this.parameterTextField.getDescribe());
 		label.setVisible(this.parameterTextField.isDescriptionVisible());
 		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
+		textField.setToolTipText(this.parameterTextField.getToolTip());
 		this.smTextFieldLegit = ((ParameterTextField) parameterTextField).getSmTextFieldLegit();
 		textField.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
@@ -70,8 +70,8 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		panel.setLayout(new GridBagLayout());
 		panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
 		// 判断是否添加提示按钮-yuanR2017.9.6
-		if (!StringUtilities.isNullOrEmpty(parameterTextField.getTip())) {
-			panel.add(new WarningOrHelpProvider(parameterTextField.getTip(), false),
+		if (!StringUtilities.isNullOrEmpty(parameterTextField.getTipButtonMessage())) {
+			panel.add(new WarningOrHelpProvider(parameterTextField.getTipButtonMessage(), false),
 					new GridBagConstraintsHelper(1, 0, 1, 1).setInsets(0, 5, 0, 0));
 			panel.add(textField,
 					new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
@@ -122,7 +122,7 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 	/**
 	 * @return
 	 */
-	private String getDescribe() {
+	protected String getDescribe() {
 		String describe = parameterTextField.getDescribe();
 		if (parameterTextField.isRequisite()) {
 			return MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);

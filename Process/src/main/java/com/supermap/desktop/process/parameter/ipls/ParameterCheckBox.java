@@ -54,9 +54,8 @@ public class ParameterCheckBox extends AbstractParameter implements ISelectionPa
 	}
 
 
-	public ParameterCheckBox setTip(String tip) {
+	public void setTip(String tip) {
 		this.tip = tip;
-		return this;
 	}
 
 	public String getTip() {
