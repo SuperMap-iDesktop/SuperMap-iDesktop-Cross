@@ -7,6 +7,7 @@ import java.awt.*;
 
 /**
  * Created by lixiaoyao on 2017/3/3.
+ * 增加text信息，当text属性为空时，不做任何操作
  */
 public class WarningOrHelpProvider extends JLabel {
     private String tipText = "";
