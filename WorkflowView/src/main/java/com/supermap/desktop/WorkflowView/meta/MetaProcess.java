@@ -37,7 +37,7 @@ public abstract class MetaProcess extends AbstractProcess {
 		@Override
 		public void stepped(SteppedEvent steppedEvent) {
 			//Application.getActiveApplication().getOutput().output(String.valueOf(steppedEvent.getPercent()));
-			RunningEvent event = new RunningEvent(MetaProcess.this, steppedEvent.getPercent(), steppedEvent.getMessage(), (int)(steppedEvent.getRemainTime() / 1000));
+			RunningEvent event = new RunningEvent(MetaProcess.this, steppedEvent.getPercent(), steppedEvent.getMessage(), steppedEvent.getRemainTime());
 			fireRunning(event);
 
 			if (event.isCancel()) {

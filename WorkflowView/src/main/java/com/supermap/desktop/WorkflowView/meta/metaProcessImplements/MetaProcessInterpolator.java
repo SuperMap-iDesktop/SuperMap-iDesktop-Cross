@@ -168,22 +168,17 @@ public class MetaProcessInterpolator extends MetaProcess {
 		searchMode.setSelectedItem(info);
 		ParameterCombine modeSetCombine = new ParameterCombine();
 		modeSetCombine.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_SearchModeSetting"));
-//			if(interpolationAlgorithmType == InterpolationAlgorithmType.RBF || interpolationAlgorithmType == INTERPOLATION_ALGORITHM_TYPE.KRIGING){
-//				modeSetCombine.addParameters(searchMode);
-//			}
 		modeSetCombine.addParameters(searchMode);
 
 		parameterPower = new ParameterNumber(CommonProperties.getString("String_Power"));
 		parameterPower.setSelectedItem(2);
-		parameterPower.setMaxValue(100);
-		parameterPower.setMinValue(1);
+		parameterPower.setInterval(1,100);
 		parameterTension = new ParameterNumber(CommonProperties.getString("String_Tension"));
 		parameterTension.setSelectedItem(40);
 		parameterTension.setMinValue(0);
 		parameterSmooth = new ParameterNumber(CommonProperties.getString("String_Smooth"));
 		parameterSmooth.setSelectedItem(0.1);
-		parameterSmooth.setMinValue(0);
-		parameterSmooth.setMaxValue(1);
+		parameterSmooth.setInterval(0,1);
 		ParameterDataNode spherical = new ParameterDataNode(CommonProperties.getString("String_VariogramMode_Spherical"), VariogramMode.SPHERICAL);
 		parameterVariogramMode = new ParameterComboBox().setDescribe(CommonProperties.getString("String_VariogramMode"));
 		parameterVariogramMode.setItems(new ParameterDataNode(CommonProperties.getString("String_VariogramMode_Exponential"), VariogramMode.EXPONENTIAL),
@@ -320,7 +315,9 @@ public class MetaProcessInterpolator extends MetaProcess {
 				setInterpolationParameter(interpolationParameter);
 				((InterpolationKrigingParameter) interpolationParameter).setVariogramMode((VariogramMode) ((ParameterDataNode) parameterVariogramMode.getSelectedItem()).getData());
 				((InterpolationKrigingParameter) interpolationParameter).setSill(Double.valueOf(parameterStill.getSelectedItem().toString()));
-				((InterpolationKrigingParameter) interpolationParameter).setAngle(Double.valueOf(parameterAngle.getSelectedItem().toString()));
+				if (!interpolationParameter.getSearchMode().equals(SearchMode.QUADTREE)) {
+					((InterpolationKrigingParameter) interpolationParameter).setAngle(Double.valueOf(parameterAngle.getSelectedItem().toString()));
+				}
 				((InterpolationKrigingParameter) interpolationParameter).setRange(Double.valueOf(parameterRange.getSelectedItem().toString()));
 				if (interpolationParameter.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
 					((InterpolationKrigingParameter) interpolationParameter).setMean(Double.valueOf(parameterMean.getSelectedItem().toString()));

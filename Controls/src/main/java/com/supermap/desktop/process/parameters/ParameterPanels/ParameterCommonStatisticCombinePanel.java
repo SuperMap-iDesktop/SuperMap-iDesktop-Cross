@@ -114,7 +114,7 @@ public class ParameterCommonStatisticCombinePanel extends SwingPanel {
 		parameterCommonStatisticCombine.addFieldConstraintChangedListener(new FieldConstraintChangedListener() {
 			@Override
 			public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
-				Dataset dataset = ((ParameterDatasetChooseTable) event.getParameter()).getDataset();
+				Dataset dataset = ((ParameterCommonStatisticCombine) event.getParameter()).getDataset();
 				if (null != dataset) {
 					datasetChooseForParameter.setIllegalDataset(dataset);
 					datasetChooseForParameter.setSupportDatasetTypes(new DatasetType[]{dataset.getType()});

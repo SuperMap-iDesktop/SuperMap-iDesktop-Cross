@@ -119,7 +119,7 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
                     if (null == info) {
                         info = new ParameterSearchModeInfo();
                     }
-                    info.searchRadius = Double.parseDouble(textFieldMaxRadius.getText());
+                    info.searchRadius = Double.parseDouble(textFieldMaxRadius.getBackUpValue());
                     isSelectingItem = false;
                 }
             }
@@ -146,7 +146,7 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
                     if (null == info) {
                         info = new ParameterSearchModeInfo();
                     }
-                    info.expectedCount = Integer.parseInt(textFieldSearchCount.getText());
+                    info.expectedCount = Integer.parseInt(textFieldSearchCount.getBackUpValue());
                     isSelectingItem = false;
                 }
             }
@@ -173,7 +173,7 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
                     if (null == info) {
                         info = new ParameterSearchModeInfo();
                     }
-                    info.maxPointCount = Integer.parseInt(textFieldMaxPointCount.getText());
+                    info.maxPointCount = Integer.parseInt(textFieldMaxPointCount.getBackUpValue());
                     isSelectingItem = false;
                 }
             }
@@ -226,7 +226,9 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
             radioChange(info.searchMode);
         }
 
-        textFieldMaxPointCount.setMinValue(0);
+        textFieldMaxRadius.setMinValue(0);
+        textFieldSearchCount.setMinValue(1);
+        textFieldMaxPointCount.setMinValue(4);
         textFieldMaxPointCount.setIncludeMin(false);
     }
 
@@ -262,6 +264,7 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
             textFieldMaxPointCount.setVisible(false);
             textFieldMaxRadius.setText("0");
             textFieldSearchCount.setText("12");
+            textFieldSearchCount.setMinValue(1);
         } else if (mode == SearchMode.KDTREE_FIXED_RADIUS) {
             radioSearchModelRadius.setSelected(true);
             labelMaxRadius.setText(CommonProperties.getString("String_SearchRadius"));
@@ -272,6 +275,7 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
             textFieldMaxPointCount.setVisible(false);
             textFieldMaxRadius.setText("32195");
             textFieldSearchCount.setText("15");
+            textFieldSearchCount.setInterval(2,12);
         } else if (mode == SearchMode.QUADTREE) {
             radioSearchModelQuadTree.setSelected(true);
             labelSearchCount.setText(CommonProperties.getString("String_InterpolationAnalyst_QuadTree_MaxPoint_InBlock"));
@@ -281,6 +285,7 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
             textFieldMaxPointCount.setVisible(true);
             textFieldMaxPointCount.setText("20");
             textFieldSearchCount.setText("5");
+            textFieldSearchCount.setMinValue(1);
         }
     }
 }

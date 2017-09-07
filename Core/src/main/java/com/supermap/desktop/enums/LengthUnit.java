@@ -8,18 +8,18 @@ import com.supermap.desktop.properties.CommonProperties;
 
 public enum LengthUnit {
 	// @formatter:off
-	MILLIMETER(UnitValue.MILLIMETER, Unit.MILIMETER), 
-	CENTIMETER(UnitValue.CENTIMETER, Unit.CENTIMETER), 
-	DECIMETER(UnitValue.DECIMETER, Unit.DECIMETER), 
-	METER(UnitValue.METER, Unit.METER), 
-	KILOMETER(UnitValue.KILOMETER, Unit.KILOMETER), 
-	MILE(UnitValue.MILE, Unit.MILE), 
-	INCH(UnitValue.INCH, Unit.INCH), 
-	FOOT(UnitValue.FOOT, Unit.FOOT), 
-	YARD(UnitValue.YARD, Unit.YARD), 
-	SECOND(UnitValue.SECOND, Unit.SECOND), 
-	MINUTE(UnitValue.MINUTE, Unit.MINUTE), 
-	DEGREE(UnitValue.DEGREE, Unit.DEGREE), 
+	MILLIMETER(UnitValue.MILLIMETER, Unit.MILIMETER),
+	CENTIMETER(UnitValue.CENTIMETER, Unit.CENTIMETER),
+	DECIMETER(UnitValue.DECIMETER, Unit.DECIMETER),
+	METER(UnitValue.METER, Unit.METER),
+	KILOMETER(UnitValue.KILOMETER, Unit.KILOMETER),
+	MILE(UnitValue.MILE, Unit.MILE),
+	INCH(UnitValue.INCH, Unit.INCH),
+	FOOT(UnitValue.FOOT, Unit.FOOT),
+	YARD(UnitValue.YARD, Unit.YARD),
+	SECOND(UnitValue.SECOND, Unit.SECOND),
+	MINUTE(UnitValue.MINUTE, Unit.MINUTE),
+	DEGREE(UnitValue.DEGREE, Unit.DEGREE),
 	RADIAN(UnitValue.RADIAN, Unit.RADIAN);
 	// @formatter:on
 
@@ -135,7 +135,6 @@ public enum LengthUnit {
 
 	/**
 	 * 以投影系统的坐标单位作为参照，进行距离单位换算，平面坐标系使用坐标单位，其他坐标系单位默认为米
-	 *
 	 * @param prjCoordSys
 	 * @param desUnit
 	 * @param distance

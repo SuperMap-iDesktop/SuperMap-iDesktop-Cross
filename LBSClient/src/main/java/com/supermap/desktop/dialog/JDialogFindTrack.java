@@ -3,9 +3,9 @@ package com.supermap.desktop.dialog;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CtrlAction.CalendarChooser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.DateTimeComponent.CalendarChooser;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilities.CursorUtilities;
 
