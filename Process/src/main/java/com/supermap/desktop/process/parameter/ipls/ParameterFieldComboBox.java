@@ -42,6 +42,7 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 
 	@Override
 	public void setSelectedItem(Object item) {
+		String oldValue = this.fieldName;
 		if (item == null) {
 			fieldName = "";
 		} else if (item instanceof FieldInfo) {
@@ -49,6 +50,7 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 		} else {
 			fieldName = item.toString();
 		}
+		firePropertyChangeListener(new PropertyChangeEvent(this, PROPERTY_VALE, oldValue, fieldName));
 	}
 
 	@Override

@@ -107,8 +107,8 @@ public class MetaProcessISOPoint extends MetaProcess {
 	private void reloadValue() {
 		Dataset dataset = sourceDataset.getSelectedDataset();
 		if (dataset != null) {
-			double resulation = getResulation(dataset);
-			resolution.setSelectedItem(DoubleUtilities.getFormatString(resulation));
+			double resolution = getResolution(dataset);
+			this.resolution.setSelectedItem(DoubleUtilities.getFormatString(resolution));
 			double maxValue = 0;
 			double minValue = 0;
 			Recordset recordset = ((DatasetVector) dataset).getRecordset(false, CursorType.STATIC);
@@ -122,8 +122,8 @@ public class MetaProcessISOPoint extends MetaProcess {
 			}
 			int dSpan = (int) getDefaultInterval(maxValue, minValue);
 			interval.setSelectedItem(dSpan);
-			double baseValue = Double.valueOf((String) datumValue.getSelectedItem());
-			double lineDistance = Double.valueOf((String) interval.getSelectedItem());
+			double baseValue = Double.valueOf(datumValue.getSelectedItem());
+			double lineDistance = Double.valueOf(interval.getSelectedItem());
 			double dRemain = baseValue % lineDistance;
 			double maxIsoValue = (int) ((maxValue - dRemain) / lineDistance) * lineDistance + dRemain;
 			double minIsoValue = (int) ((minValue - dRemain) / lineDistance) * lineDistance + dRemain;
@@ -132,7 +132,6 @@ public class MetaProcessISOPoint extends MetaProcess {
 			minISOLine.setSelectedItem(DoubleUtilities.getFormatString(minIsoValue));
 			isoLine.setSelectedItem(String.valueOf(isoCount));
 		}
-
 	}
 
 	private void reload() {
@@ -158,16 +157,15 @@ public class MetaProcessISOPoint extends MetaProcess {
 		}
 	}
 
-
-	private double getResulation(Dataset dataset) {
-		double resulation = 1.0;
+	private double getResolution(Dataset dataset) {
+		double resolution = 1.0;
 		if (dataset != null && dataset.getBounds() != null && dataset.getBounds().getHeight() > 0 && dataset.getBounds().getWidth() > 0) {
 			Rectangle2D bounds = dataset.getBounds();
 			double x = bounds.getWidth() / 500.0;
 			double y = bounds.getHeight() / 500.0;
-			resulation = x > y ? x : y;
+			resolution = x > y ? x : y;
 		}
-		return resulation;
+		return resolution;
 
 	}
 
@@ -193,7 +191,6 @@ public class MetaProcessISOPoint extends MetaProcess {
 		}
 		return result;
 	}
-
 
 	private void initParameters() {
 		this.sourceDatasource = new ParameterDatasourceConstrained();
@@ -290,7 +287,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 		fields.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (!isSelectChanged && evt.getPropertyName().equals(ParameterTextField.PROPERTY_VALE)) {
+				if (!isSelectChanged && evt.getPropertyName().equals(ParameterFieldComboBox.PROPERTY_VALE)) {
 					isSelectChanged = true;
 					reloadValue();
 					isSelectChanged = false;
