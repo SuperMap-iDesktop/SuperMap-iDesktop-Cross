@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.data.Colors;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -13,6 +14,8 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
@@ -25,11 +28,12 @@ import java.text.MessageFormat;
 public class ParameterColorsTablePanel extends SwingPanel implements IParameterPanel {
 	private ParameterColorsTable parameterColorsTable;
 	private JLabel label = new JLabel();
-	private ColorsComboBox colorsComboBox = new ColorsComboBox();
+	private ColorsComboBox colorsComboBox = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Grid_DEM"));
 
 	public ParameterColorsTablePanel(IParameter parameterColor) {
 		super(parameterColor);
 		this.parameterColorsTable = (ParameterColorsTable) parameterColor;
+		this.parameterColorsTable.setSelectedItem(colorsComboBox.getSelectedItem());
 		label.setText(getDescribe());
 		label.setToolTipText(this.parameterColorsTable.getDescribe());
 		initLayout();
@@ -47,16 +51,14 @@ public class ParameterColorsTablePanel extends SwingPanel implements IParameterP
 
 
 	private void initListeners() {
-		this.colorsComboBox.addPropertyChangeListener(
-				new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent evt) {
-						if (colorsComboBox.getSelectedItem() != null) {
-							parameterColorsTable.setSelectedItem((colorsComboBox.getSelectedItem()));
-						}
-					}
+		this.colorsComboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (colorsComboBox.getSelectedItem() != null) {
+					parameterColorsTable.setSelectedItem((colorsComboBox.getSelectedItem()));
 				}
-		);
+			}
+		});
 		this.parameterColorsTable.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
