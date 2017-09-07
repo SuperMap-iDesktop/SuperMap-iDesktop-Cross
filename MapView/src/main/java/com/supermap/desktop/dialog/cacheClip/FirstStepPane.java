@@ -26,10 +26,7 @@ import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
-import com.supermap.desktop.utilities.Convert;
-import com.supermap.desktop.utilities.CoreResources;
-import com.supermap.desktop.utilities.DoubleUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -129,6 +126,7 @@ public class FirstStepPane extends JPanel implements IState {
 	private String sciPath;
 
 	private double originMapCacheScale[];
+
 	public ArrayList<Double> currentMapCacheScale;
 	private static final String SHOW_SCALE_PRE_PART = "1:";
 	private static final String COLON = ":";
@@ -320,7 +318,7 @@ public class FirstStepPane extends JPanel implements IState {
 		initGlobalValue();
 		initBasicSettingPanelValue();
 		initResources();
-		registEvents();
+		registerEvents();
 		enabled();
 	}
 
@@ -392,43 +390,24 @@ public class FirstStepPane extends JPanel implements IState {
 	}
 
 	private void initComponentsState() {
-		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip || cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
-			this.labelVersion.setEnabled(false);
-			this.comboboxVersion.setEnabled(false);
-			this.labelSplitMode.setEnabled(false);
-			this.comboBoxSplitMode.setEnabled(false);
-			this.labelCacheName.setEnabled(false);
-			this.textFieldCacheName.setEnabled(false);
-			this.labelCachePath.setEnabled(false);
-			this.fileChooserControlFileCache.setEnabled(false);
-			this.labelSaveType.setEnabled(false);
-			this.comboBoxSaveType.setEnabled(false);
-			this.labelUserPassword.setEnabled(false);
-			this.labelConfirmPassword.setEnabled(false);
-			this.labelUserName.setEnabled(false);
-			this.labelServerName.setEnabled(false);
-			this.textFieldServerName.setEnabled(false);
-			this.labelDatabaseName.setEnabled(false);
-			this.comboBoxDatabaseName.setEnabled(false);
-		} else {
-			this.labelVersion.setEnabled(true);
-			this.comboboxVersion.setEnabled(true);
-			this.labelSplitMode.setEnabled(true);
-			this.comboBoxSplitMode.setEnabled(true);
-			this.labelCacheName.setEnabled(true);
-			this.textFieldCacheName.setEnabled(true);
-			this.labelCachePath.setEnabled(true);
-			this.fileChooserControlFileCache.setEnabled(true);
-			this.labelSaveType.setEnabled(true);
-			this.comboBoxSaveType.setEnabled(true);
-			this.labelUserPassword.setEnabled(true);
-			this.labelConfirmPassword.setEnabled(true);
-			this.labelUserName.setEnabled(true);
-			this.labelServerName.setEnabled(true);
-			this.textFieldServerName.setEnabled(true);
-			this.labelDatabaseName.setEnabled(true);
-			this.comboBoxDatabaseName.setEnabled(true);
-		}
+		boolean componentsState = !(cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip || cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip);
+		this.labelVersion.setEnabled(componentsState);
+		this.comboboxVersion.setEnabled(componentsState);
+		this.labelSplitMode.setEnabled(componentsState);
+		this.comboBoxSplitMode.setEnabled(componentsState);
+		this.labelCacheName.setEnabled(componentsState);
+		this.textFieldCacheName.setEnabled(componentsState);
+		this.labelCachePath.setEnabled(componentsState);
+		this.fileChooserControlFileCache.setEnabled(componentsState);
+		this.labelSaveType.setEnabled(componentsState);
+		this.comboBoxSaveType.setEnabled(componentsState);
+		this.labelUserPassword.setEnabled(componentsState);
+		this.labelConfirmPassword.setEnabled(componentsState);
+		this.labelUserName.setEnabled(componentsState);
+		this.labelServerName.setEnabled(componentsState);
+		this.textFieldServerName.setEnabled(componentsState);
+		this.labelDatabaseName.setEnabled(componentsState);
+		this.comboBoxDatabaseName.setEnabled(componentsState);
 	}
 
 	private void initBasicSettingPanelValue() {
@@ -466,7 +445,7 @@ public class FirstStepPane extends JPanel implements IState {
 //		this.warningProviderCachePathIllegal.hideWarning();
 	}
 
-	private void registEvents() {
+	private void registerEvents() {
 		removeEvents();
 		this.jMenuItemAddScale.addActionListener(this.addScaleListener);
 		this.jMenuItemDefaultScale.addActionListener(this.defaultScaleListener);
@@ -596,7 +575,8 @@ public class FirstStepPane extends JPanel implements IState {
 	 */
 	private void updateDBNames() {
 		if ((cmdType == DialogMapCacheClipBuilder.ResumeProcessClip
-				|| cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip)
+				|| cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip
+				|| cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip)
 				&& null != comboBoxDatabaseName.getSelectedItem()) {
 			return;
 		}
@@ -927,7 +907,9 @@ public class FirstStepPane extends JPanel implements IState {
 
 	private void initGlobalValue() {
 		this.scientificNotation.setGroupingUsed(false);
-		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip || cmdType == DialogMapCacheClipBuilder.ResumeProcessClip || cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
+		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip
+				|| cmdType == DialogMapCacheClipBuilder.ResumeProcessClip
+				|| cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
 			this.originMapCacheScale = this.mapCacheBuilder.getOutputScales();
 		} else {
 			this.originMapCacheScale = this.mapCacheBuilder.getDefultOutputScales();
@@ -1029,6 +1011,7 @@ public class FirstStepPane extends JPanel implements IState {
 		for (int i = 0; i < 21; i++) {
 			levels[i] = i;
 		}
+		this.mapCacheBuilder.setMap(MapUtilities.getActiveMap() == null ? CacheUtilities.getWorkspaceSelectedMap() : MapUtilities.getActiveMap());
 		this.globalSplitScale = this.mapCacheBuilder.globalLevelToScale(levels);
 		double avaliableScale = getAvaliableScale();
 
@@ -1078,7 +1061,8 @@ public class FirstStepPane extends JPanel implements IState {
 				temp = globalScaleSortKeys[i];
 				MultipleCheckboxItem multipleCheckboxItem = new MultipleCheckboxItem();
 				multipleCheckboxItem.setText(this.globalSplitScale.get(temp));
-				if (this.globalSplitScale.get(temp).equals(avaliableLevel)) {
+				if (this.globalSplitScale.get(temp).equals(avaliableLevel)
+						&& (cmdType == DialogMapCacheClipBuilder.SingleProcessClip || cmdType == DialogMapCacheClipBuilder.MultiProcessClip)) {
 					isSelected = true;
 				}
 				multipleCheckboxItem.setSelected(isSelected);
@@ -1096,7 +1080,7 @@ public class FirstStepPane extends JPanel implements IState {
 				return getScale(this.currentMap);
 			} else {
 				Workspace wk = Application.getActiveApplication().getWorkspace();
-				Map map = new Map();
+				Map map = new Map(wk);
 				map.setName(this.mapCacheBuilder.getCacheName());
 				map.open(mapCacheBuilder.getCacheName());
 				Map newMap = new Map(wk);

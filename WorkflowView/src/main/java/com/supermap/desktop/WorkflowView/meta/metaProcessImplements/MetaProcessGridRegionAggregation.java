@@ -122,7 +122,7 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 
 					@Override
 					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-						fireRunning(new RunningEvent(MetaProcessGridRegionAggregation.this, percent, message, -1));
+						fireRunning(new RunningEvent(MetaProcessGridRegionAggregation.this, percent, message));
 					}
 
 					@Override
