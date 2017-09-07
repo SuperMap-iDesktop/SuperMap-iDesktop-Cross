@@ -374,7 +374,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					return;
 				}
 				if (cmdType == MultiUpdateProcessClip) {
-					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
+					mapCacheBuilder.setMap(MapUtilities.getActiveMap() == null ? CacheUtilities.getWorkspaceSelectedMap() : MapUtilities.getActiveMap());
 				}
 				String cachePath = firstStepPane.fileChooserControlFileCache.getPath();
 				String sciPath = "";
