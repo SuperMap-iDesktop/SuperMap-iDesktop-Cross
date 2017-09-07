@@ -26,6 +26,7 @@ import java.beans.PropertyChangeListener;
 
 /**
  * Created by Chen on 2017/6/30 0030.
+ * 栅格矢量化
  */
 public class MetaProcessRasterToVector extends MetaProcess {
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
