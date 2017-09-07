@@ -567,6 +567,7 @@ public class RasterReclassValuePanel extends JPanel {
 		this.reclassMappingTable.setReclassType(ReclassType.RANGE);
 		this.reclassMappingTable.setRetainMissingValue(true);
 		this.reclassValueChange.reClassPixelFormat(ReclassPixelFormat.BIT32);
+		this.buttonImport.setVisible(false);
 	}
 
 	public void addReclassValueChangeListener(ReclassValueChange reclassValueChange) {

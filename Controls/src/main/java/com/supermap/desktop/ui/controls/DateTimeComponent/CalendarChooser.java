@@ -1,7 +1,4 @@
-package com.supermap.desktop.ui.controls;
-
-import com.supermap.desktop.ui.controls.DateTimeComponent.DateSpinner;
-import com.supermap.desktop.ui.controls.DateTimeComponent.DateSpinnerFormat;
+package com.supermap.desktop.ui.controls.DateTimeComponent;
 
 import javax.swing.*;
 import javax.swing.event.AncestorEvent;
@@ -624,8 +621,13 @@ public class CalendarChooser extends JPanel {
 //		label.setBounds(10, 50, 200, 30);
 //		ser2.register(label);
 
+		CalendarTextField calendarTextField=new CalendarTextField();
+		//calendarTextField.setText("2013-10-11");
+		calendarTextField.setBounds(10, 50, 200, 30);
+
+
 		jf.add(text);
-//		jf.add(label);
+		jf.add(calendarTextField);
 		jf.add(dateSpinner);
 		jf.setVisible(true);
 	}
