@@ -69,17 +69,21 @@ title: 空间统计分析基本词汇
 
 ### 空间权重矩阵
 
+　　空间权重矩阵是数据空间结构的一种表现形式。它是对数据集要素之间存在的空间关系的一种量化（或者，至少是对此类关系的概念化方法的一种量化）。因为空间权重矩阵要对数据强加一种结构，所以应选择可最恰当地反映要素彼此间实际交互方式的概念化（当然，还需考虑要尝试测量的对象）。例如，如果要测量森林中某种特定种类的种子繁殖树种的聚类，使用某种形式的反距离可能最适合。但是，如果要评估某一地区通勤者的地理分布，行程时间和行程成本可能是更好的选择。
+
+　　虽然是依靠各种方法物理实现的，但从概念上讲，空间权重矩阵是 NxN 表（N 表示数据集中的要素数）。每个要素只有一行和一列。任意给定行/列组合的像元值即为权重，可用于量化这些行要素和列要素之间的空间关系。
+
 　　
 
 
-### ![](img/seealso.png) 相关主题
+### ![](../img/seealso.png) 相关主题
 
-![](img/smalltitle.png)[地理度量分析](MeasureGeographicDistributions.html)
+　　![](../img/smalltitle.png) [地理度量分析](MeasureGeographicDistributions.html)
 
-![](img/smalltitle.png)[聚类分析](Clusters.html)
+　　![](../img/smalltitle.png) [聚类分析](Clusters.html)
 
-![](img/smalltitle.png)[空间关系建模](SpatialRelationshipModeling.html)
+　　![](../img/smalltitle.png) [空间关系建模](SpatialRelationshipModeling.html)
 
-![](img/smalltitle.png)[分析模式](AnalyzingPatterns.html)
+　　![](../img/smalltitle.png) [分析模式](AnalyzingPatterns.html)
 
 

@@ -66,6 +66,9 @@ docs:
     Clusters: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/Clusters.html
     SpatialRelationshipModeling: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/SpatialRelationshipModeling.html
     AnalyzingPatterns: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/AnalyzingPatterns.html
+  BigData:
+    BigDataAnalysisEnvironmentConfiguration: /SuperMap-iDesktop-Cross-Docs/source/docs/BigData/BigDataAnalysisEnvironmentConfiguration.html
+    DataPreparation: /SuperMap-iDesktop-Cross-Docs/source/docs/BigData/DataPreparation.html
   Scene:
     SceneDia: /SuperMap-iDesktop-Cross/docs/Scene/SceneDia.html
   FAQAll:

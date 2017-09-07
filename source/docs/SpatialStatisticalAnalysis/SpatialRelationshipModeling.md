@@ -1,4 +1,4 @@
-空间关系建模
+title: 空间关系建模
 ---
 
 　除了分析空间模式之外，GIS 分析还可用于挖掘或量化要素间关系。“空间关系建模”可利用回归分析建立空间关系模型。从而使您可以对未知值进行预测或更好地理解可对要建模的变量产生影响的关键因素。
@@ -9,23 +9,17 @@
 
 　　地理加权回归是近年来提出的一种新的空间分析方法， 为局部回归模型，它通过将空间结构嵌入线性回归模型中，以此来探测空间关系的非平稳性。通过回归分析，我们可以对空间关系进行建模、检查和探究，还可以解释所观测到的空间模式背后的诸多因素，还可以对这些现象进行预测。
 
-
-
 ##### 分析原理
 
 　　地理加权回归(GWR) 是若干空间回归技术中的一种，越来越多地用于地理及其他学科。通过使回归方程适合数据集中的每个要素，地理加权回归(GWR) 可为您要尝试了解、预测的变量或过程提供局部模型。地理加权回归(GWR )构建这些独立方程的方法是：将落在每个目标要素的带宽范围内的要素的因变量和解释变量进行合并。带宽的形状和大小取决于用户输入的核类型、带宽方法、距离以及相邻点的数目参数。是一种用于建模空间变化关系的线性回归的局部形式。
 
 　　地理加权回归方程是一个可利用一个或多个解释变量对因变量进行最佳预测的数学公式。回归方程中的因变量总是标记为 **y**，自变量或解释变量总是标记为 **X**，这种表示方式对于那些将 x 和 y 视为坐标的地理学界的专业人员来说可能有些不便。每个自变量都与一个描述该变量与因变量之间关系强度和符号的回归系数相关联。回归方程的可能形式如下，其中，y 是因变量，X 是解释变量，β 是回归系数。
 
-![](img/GWR.png)
+　　![](img/GWR.png)
 
 　　地理加权回归分析首先要确定一个研究区域，利用每个要素的不同空间位置，去计算衰减函数，这个是一个连续的函数，有了这个衰减函数，当你把每个要素的空间位置（一般是坐标信息（x,y))和要素的值带入到这个函数里面之后，就可以得到一个权重值（β），这个值就可以带入到回归方程里面去。如下衰减函数中的W(ui，vi）是空间权重矩阵。
 
-![](img/AttenuationFunction.png)
-
-
-
-　　
+　　![](img/AttenuationFunction.png)
 
 ##### 应用案例
 
@@ -65,7 +59,7 @@
 
 　　设置好以上参数后，单击对话框中的“运行”按钮，即可执行地理加权回归分析，结果数据集包含结果属性字段：交叉验证(CVScore)、预测值(Predicted)、回归系数(Intercept、C1/_解释字段名)、残差(Residual)、标准误(StdError)、系数标准误(SE/_Intercept、SE1/_解释字段名)、伪t值(TV_Intercept、TV1_解释字段名)和Studentised残差(StdResidual)。如下图所示：
 
-![](img/GeoWeightedRegressionResult1.png)
+　　![](img/GeoWeightedRegressionResult1.png)
 
 - 交叉验证(CVScore)：该值就是每个回归点在交叉验证中得到的估计值与实际值之差，它们的平方和为CV值。作为一个模型性能指标。
 
@@ -91,22 +85,20 @@
 
 　　执行成功后，输出窗口会输出本次分析的结果信息，如下图所示。若分析结果的残差在用户的接受范围内，即可根据该结果及解释变量，预测事件的结果。
 
-![](img/GeoWeightedRegressionResult3.png)
+　　![](img/GeoWeightedRegressionResult3.png)
 
 　　此时，可根据地理加权回归分析的结果属性值及2017年新增的地铁站和地铁线路长度，对2017年北京市中心城区的房价进行预测，计算公式为：2017预测房价 = Intercept(回归系数) + C1(解释字段1回归系数) * 2017地铁站 + C2(解释字段2回归系数) * 2017地铁线长度。根据该公式可根据地铁的变化信息，预测北京中心城区2017年的房价，结果如下图所示，从结果图中可知，地铁线路有变化的地区房价又有一定的波动。
 
-![](img/GeoWeightedRegressionResult4.png)
-
-　
+　　![](img/GeoWeightedRegressionResult4.png)
 
 
-### ![](img/seealso.png) 相关主题
+### ![](../img/seealso.png) 相关主题
 
-![](img/smalltitle.png)[基础词汇](BasicVocabulary.html)
+　　![](../img/smalltitle.png) [基础词汇](BasicVocabulary.html)
 
-![](img/smalltitle.png)[地理度量分析](MeasureGeographicDistributions.html)
+　　![](../img/smalltitle.png) [地理度量分析](MeasureGeographicDistributions.html)
 
-![](img/smalltitle.png)[聚类分析](Clusters.html)
+　　![](../img/smalltitle.png) [聚类分析](Clusters.html)
 
-![](img/smalltitle.png)[分析模式](AnalyzingPatterns.html)
+　　![](../img/smalltitle.png) [分析模式](AnalyzingPatterns.html)
 

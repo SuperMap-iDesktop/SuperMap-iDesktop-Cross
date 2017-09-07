@@ -129,7 +129,7 @@ title: 聚类分布
 
 　　聚类和异常值分析的结果数据集中，将会包含四个属性字段：局部莫兰指数、z 得分和 p 值、聚类和异常值类型，分别为ALMI_MoranI 、 ALMI_Zscore、ALMI_Pvalue 、ALMI_Type 四个字段。如下图所示：
 
-![](img/ClusterOutlierResult1.png)
+　　![](img/ClusterOutlierResult1.png)
 
 - 由于聚类和异常值分是基于置信度95%做的运算，因此只有P值小于0.05时，ALMI_Type字段中才具有值。如果应用错误发现率 (FDR) 校正，统计显著性将会以校正的置信度（将p 值阈值从 0.05 降低到某个新值）为基础, 以兼顾多重测试和空间依赖性。
 
@@ -142,19 +142,14 @@ title: 聚类分布
   ![](img/ClusterOutlierResult.png)
 
 
+### ![](../img/seealso.png) 相关主题
 
+　　![](../img/smalltitle.png)[基础词汇](BasicVocabulary.html)
 
+　　![](../img/smalltitle.png)[地理度量分析](MeasureGeographicDistributions.html)
 
+　　![](../img/smalltitle.png)[空间关系建模](SpatialRelationshipModeling.html)
 
-
-### ![](img/seealso.png) 相关主题
-
-![](img/smalltitle.png)[基础词汇](BasicVocabulary.html)
-
-![](img/smalltitle.png)[地理度量分析](MeasureGeographicDistributions.html)
-
-![](img/smalltitle.png)[空间关系建模](SpatialRelationshipModeling.html)
-
-![](img/smalltitle.png)[分析模式](AnalyzingPatterns.html)
+　　![](../img/smalltitle.png)[分析模式](AnalyzingPatterns.html)
 
 

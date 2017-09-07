@@ -86,6 +86,9 @@ sidebar:
     Clusters: 聚类分析
     SpatialRelationshipModeling: 空间关系建模
     AnalyzingPatterns: 分析模式
+    BigData: 大数据在线分析
+    BigDataAnalysisEnvironmentConfiguration: 分析环境配置
+    DataPreparation: 数据准备
     Scene: 三维场景
     SceneDia: 场景概述
     FAQAll: FAQ
