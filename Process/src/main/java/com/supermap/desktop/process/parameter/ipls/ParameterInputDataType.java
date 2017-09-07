@@ -34,7 +34,7 @@ public class ParameterInputDataType extends ParameterCombine {
 	private ParameterDefaultValueTextField parameterTextFieldAddress = new ParameterDefaultValueTextField(CoreProperties.getString("String_Server"));
 	private ParameterDefaultValueTextField parameterTextFieldUserName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_UserName"));
 	private ParameterPassword parameterTextFieldPassword = new ParameterPassword(ProcessProperties.getString("String_PassWord"));
-
+	public ParameterSwitch parameterSwitch = new ParameterSwitch();
 	public ParameterInputDataType() {
 		super();
 		initComponents();
@@ -88,7 +88,7 @@ public class ParameterInputDataType extends ParameterCombine {
 				parameterSourceDatasource,
 				parameterSourceDataset,
 				parameterDatasetType1);
-		final ParameterSwitch parameterSwitch = new ParameterSwitch();
+
 		parameterSwitch.add("0", parameterCombine);
 		parameterSwitch.add("1", parameterCombine1);
 		parameterSwitch.add("2", parameterCombine2);
@@ -98,13 +98,12 @@ public class ParameterInputDataType extends ParameterCombine {
 				if (evt.getPropertyName().equals(ParameterComboBox.comboBoxValue)) {
 					if (parameterDataInputWay.getSelectedData().toString().equals("0")) {
 						parameterSwitch.switchParameter("0");
+					} else if (parameterDataInputWay.getSelectedData().toString().equals("1")) {
+						parameterSwitch.switchParameter("1");
 					} else {
-						if (parameterDataInputWay.getSelectedData().toString().equals("1")) {
-							parameterSwitch.switchParameter("1");
-						} else {
-							parameterSwitch.switchParameter("2");
-						}
+						parameterSwitch.switchParameter("2");
 					}
+
 				}
 			}
 		});

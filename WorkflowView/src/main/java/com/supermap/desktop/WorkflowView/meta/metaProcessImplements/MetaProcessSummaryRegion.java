@@ -97,6 +97,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	private void initComponentState() {
 		parameterInputDataType.parameterDataInputWay.removeAllItems();
 		parameterInputDataType.parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PGDataBase"), "2"));
+		parameterInputDataType.parameterSwitch.switchParameter("1");
 		parameterInputDataType.setSupportDatasetType(DatasetType.LINE, DatasetType.REGION);
 		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.LINE, DatasetType.REGION);
 		if (defaultBigDataStoreDataset != null) {
@@ -247,7 +248,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 
 					@Override
 					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-						fireRunning(new RunningEvent(MetaProcessSummaryRegion.this, percent, message, -1));
+						fireRunning(new RunningEvent(MetaProcessSummaryRegion.this, percent, message));
 					}
 
 					@Override
