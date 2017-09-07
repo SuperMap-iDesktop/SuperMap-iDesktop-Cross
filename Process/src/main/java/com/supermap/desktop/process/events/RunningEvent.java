@@ -13,8 +13,8 @@ public class RunningEvent extends EventObject {
 	private boolean isIndeterminate = false;
 	private int progress;
 	private String message;
-	private int remainTime; // milliseconds
-	private int totalTime; // milliseconds
+	private long remainTime; // milliseconds
+	private long totalTime; // milliseconds
 	private boolean isCancel = false;
 
 	public RunningEvent(IProcess process, String message) {
@@ -28,11 +28,11 @@ public class RunningEvent extends EventObject {
 		this(process, progress, message, 0, 0);
 	}
 
-	public RunningEvent(IProcess process, int progress, String message, int remainTime) {
+	public RunningEvent(IProcess process, int progress, String message, long remainTime) {
 		this(process, progress, message, remainTime, 0);
 	}
 
-	public RunningEvent(IProcess process, int progress, String message, int remainTime, int totalTime) {
+	public RunningEvent(IProcess process, int progress, String message, long remainTime, long totalTime) {
 		super(process);
 		this.progress = progress;
 		this.message = message;
@@ -53,11 +53,11 @@ public class RunningEvent extends EventObject {
 		return message;
 	}
 
-	public int getRemainTime() {
+	public long getRemainTime() {
 		return remainTime;
 	}
 
-	public int getTotalTime() {
+	public long getTotalTime() {
 		return totalTime;
 	}
 
