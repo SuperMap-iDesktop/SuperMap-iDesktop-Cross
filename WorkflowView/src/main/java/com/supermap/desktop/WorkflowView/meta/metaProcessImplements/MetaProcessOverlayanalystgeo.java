@@ -92,8 +92,8 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 	private void initComponentState() {
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
-		if (defaultBigDataStoreDataset != null) {
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		if (defaultBigDataStoreDataset != null && DatasetType.REGION == defaultBigDataStoreDataset.getType()) {
 			parameterOverlayDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterOverlayDataset.setSelectedItem(defaultBigDataStoreDataset);
 

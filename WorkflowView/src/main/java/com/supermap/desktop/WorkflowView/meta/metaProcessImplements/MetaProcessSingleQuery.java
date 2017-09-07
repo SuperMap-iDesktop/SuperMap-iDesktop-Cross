@@ -95,8 +95,9 @@ public class MetaProcessSingleQuery extends MetaProcess {
 
 	private void initComponentState() {
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
-		if (defaultBigDataStoreDataset != null) {
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		if (defaultBigDataStoreDataset != null && (DatasetType.POINT == defaultBigDataStoreDataset.getType() || DatasetType.LINE == defaultBigDataStoreDataset.getType()
+				|| DatasetType.REGION == defaultBigDataStoreDataset.getType())) {
 			parameterQueryDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterQueryDataset.setSelectedItem(defaultBigDataStoreDataset);
 		}

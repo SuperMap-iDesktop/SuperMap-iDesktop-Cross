@@ -94,8 +94,8 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 
 	private void initComponentState() {
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
-		if (defaultBigDataStoreDataset != null) {
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		if (defaultBigDataStoreDataset != null && DatasetType.REGION == defaultBigDataStoreDataset.getType()) {
 			parameterBigDatasourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterSingleDataset.setSelectedItem(defaultBigDataStoreDataset);
 		}
