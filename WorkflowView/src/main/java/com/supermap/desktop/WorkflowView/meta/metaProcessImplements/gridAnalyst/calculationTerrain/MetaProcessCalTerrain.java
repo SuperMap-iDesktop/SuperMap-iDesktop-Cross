@@ -85,6 +85,8 @@ public abstract class MetaProcessCalTerrain extends MetaProcessGridAnalyst {
 			datasetGrid = (DatasetGrid) sourceDataset.getSelectedItem();
 		}
 		try {
+			// 运行之前，确保结果数据集名称正确-yuanR2017.9.7
+			parameterSaveDataset.setDatasetName(datasetGrid.getDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()));
 			isSuccessful = doWork(datasetGrid);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
