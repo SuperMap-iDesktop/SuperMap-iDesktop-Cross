@@ -37,14 +37,11 @@ public class MetaProcessVectorResample extends MetaProcess {
 	// 重采样距离
 	private ParameterNumber parameterResampleTolerance;
 	// 重采样是否保留小对象
-	private ParameterCheckBox parameterisSaveSmallGeometry;
+	private ParameterCheckBox parameterIsSaveSmallGeometry;
 	// 进行拓扑预处理
-	private ParameterCheckBox parameterisTopologyPreprocess;
+	private ParameterCheckBox parameterIsTopologyPreprocess;
 	// 节点捕捉容限
 	private ParameterNumber parameterVertexTolerance;
-	// 字符：度
-	private ParameterLabel label;
-
 
 	public MetaProcessVectorResample() {
 		initParameters();
@@ -65,8 +62,8 @@ public class MetaProcessVectorResample extends MetaProcess {
 		// 参数设置
 		parameterResampleType = new ParameterComboBox(ProcessProperties.getString("String_Resample_Type"));
 		parameterResampleTolerance = new ParameterNumber(ProcessProperties.getString("String_Resample_Tolerance"));
-		parameterisSaveSmallGeometry = new ParameterCheckBox(ProcessProperties.getString("String_Resample_SaveSmallGeometry"));
-		parameterisTopologyPreprocess = new ParameterCheckBox(ProcessProperties.getString("String_Resample_TopologyPreprocess"));
+		parameterIsSaveSmallGeometry = new ParameterCheckBox(ProcessProperties.getString("String_Resample_SaveSmallGeometry"));
+		parameterIsTopologyPreprocess = new ParameterCheckBox(ProcessProperties.getString("String_Resample_TopologyPreprocess"));
 		parameterVertexTolerance = new ParameterNumber(ProcessProperties.getString("String_Resample_VertexInterval"));
 
 		parameterResampleType.addItem(new ParameterDataNode(ProcessProperties.getString("String_ResampleType_RTBEND"), ResampleType.RTBEND));
@@ -82,11 +79,11 @@ public class MetaProcessVectorResample extends MetaProcess {
 
 		ParameterCombine parameterCombineParameter = new ParameterCombine();
 		parameterCombineParameter.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		parameterCombineParameter.addParameters(parameterResampleType, parameterResampleTolerance, parameterisSaveSmallGeometry,
-				parameterisTopologyPreprocess, parameterVertexTolerance);
+		parameterCombineParameter.addParameters(parameterResampleType, parameterResampleTolerance, parameterIsSaveSmallGeometry,
+				parameterIsTopologyPreprocess, parameterVertexTolerance);
 
 
-		parameters.setParameters(parameterCombineSourceData,parameterCombineParameter);
+		parameters.setParameters(parameterCombineSourceData, parameterCombineParameter);
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Resample"), DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
 	}
@@ -101,8 +98,8 @@ public class MetaProcessVectorResample extends MetaProcess {
 //			this.resultDataset.setSelectedItem(datasetVector.getDatasource().getDatasets().getAvailableDatasetName("result_VectorResample"));
 		}
 		parameterResampleType.setSelectedItem(ResampleType.RTBEND);
-		reloadValue();
 		parameterVertexTolerance.setEnabled(false);
+		reloadValue();
 	}
 
 	private void initParameterConstraint() {
@@ -113,7 +110,7 @@ public class MetaProcessVectorResample extends MetaProcess {
 
 //		DatasourceConstraint.getInstance().constrained(resultDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 
-		parameterisTopologyPreprocess.addPropertyListener(new PropertyChangeListener() {
+		parameterIsTopologyPreprocess.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getPropertyName().equals(ParameterCheckBox.PARAMETER_CHECK_BOX_VALUE)) {
@@ -147,28 +144,23 @@ public class MetaProcessVectorResample extends MetaProcess {
 				parameterResampleTolerance.setSelectedItem("0.0001");
 				parameterVertexTolerance.setSelectedItem("0.0001");
 
-				parameterisSaveSmallGeometry.setSelectedItem(false);
-				parameterisSaveSmallGeometry.setEnabled(false);
-				parameterisTopologyPreprocess.setSelectedItem(false);
-				parameterisTopologyPreprocess.setEnabled(false);
+				parameterIsSaveSmallGeometry.setSelectedItem(false);
+				parameterIsSaveSmallGeometry.setEnabled(false);
+				parameterIsTopologyPreprocess.setSelectedItem(false);
+				parameterIsTopologyPreprocess.setEnabled(false);
+				parameterVertexTolerance.setEnabled(Boolean.valueOf(parameterIsTopologyPreprocess.getSelectedItem()));
 			} else if (datasetType.equals(DatasetType.REGION)) {
 				parameterResampleTolerance.setUnit(ProcessProperties.getString("String_Label_meter"));
 				parameterVertexTolerance.setUnit(ProcessProperties.getString("String_Label_meter"));
 				parameterResampleTolerance.setSelectedItem("10");
 				parameterVertexTolerance.setSelectedItem("10");
-				// 根据可读与否设置拓扑预处理是否可用--yuanR 2017.8.8
-				if (dataset.getSelectedItem().isReadOnly()) {
-					parameterisSaveSmallGeometry.setSelectedItem(false);
-					parameterisSaveSmallGeometry.setEnabled(false);
-					parameterisTopologyPreprocess.setSelectedItem(false);
-					parameterisTopologyPreprocess.setEnabled(false);
-				} else {
-					parameterisSaveSmallGeometry.setSelectedItem(true);
-					parameterisSaveSmallGeometry.setEnabled(true);
-					parameterisTopologyPreprocess.setSelectedItem(true);
-					parameterisTopologyPreprocess.setEnabled(true);
-				}
 
+				// 根据可读与否设置拓扑预处理是否可用--yuanR 2017.8.8
+				parameterIsSaveSmallGeometry.setSelectedItem(!dataset.getSelectedItem().isReadOnly());
+				parameterIsSaveSmallGeometry.setEnabled(!dataset.getSelectedItem().isReadOnly());
+				parameterIsTopologyPreprocess.setSelectedItem(!dataset.getSelectedItem().isReadOnly());
+				parameterIsTopologyPreprocess.setEnabled(!dataset.getSelectedItem().isReadOnly());
+				parameterVertexTolerance.setEnabled(Boolean.valueOf(parameterIsTopologyPreprocess.getSelectedItem()));
 			}
 		}
 	}
@@ -188,9 +180,9 @@ public class MetaProcessVectorResample extends MetaProcess {
 
 			ResampleType resampleType = (ResampleType) parameterResampleType.getSelectedData();
 			double tolerance = Double.valueOf((String) parameterResampleTolerance.getSelectedItem());
-			Boolean isSaveSmallGeometry = "true".equalsIgnoreCase((String) parameterisSaveSmallGeometry.getSelectedItem());
-			Boolean isTopologyPreprocess = "true".equalsIgnoreCase((String) parameterisTopologyPreprocess.getSelectedItem());
-			double vertexTolerance = Double.valueOf((String) parameterVertexTolerance.getSelectedItem());
+			Boolean isSaveSmallGeometry = "true".equalsIgnoreCase(parameterIsSaveSmallGeometry.getSelectedItem());
+			Boolean isTopologyPreprocess = "true".equalsIgnoreCase(parameterIsTopologyPreprocess.getSelectedItem());
+			double vertexTolerance = Double.valueOf(parameterVertexTolerance.getSelectedItem());
 
 			ResampleInformation resampleInformation = new ResampleInformation();
 			resampleInformation.setResampleType(resampleType);
