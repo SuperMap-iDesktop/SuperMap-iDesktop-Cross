@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.analyst.spatialanalyst.*;
+import com.supermap.data.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -45,6 +46,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 	private boolean isSelectingItem = false;
 	ParameterShapeType parameterShapeType;
 	NeighbourShape neighbourShape;
+	Dataset dataset;
 
 	static final String RECTANGLE = ProcessProperties.getString("String_Rectangle");
 	static final String CIRCLE = ProcessProperties.getString("String_Circle");
@@ -57,6 +59,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 		super(parameterShapeType);
 		this.parameterShapeType = (ParameterShapeType) parameterShapeType;
 		this.neighbourShape = (NeighbourShape) ((ParameterShapeType) parameterShapeType).getSelectedItem();
+		this.dataset = ((ParameterShapeType) parameterShapeType).getDataset();
 		initComponent();
 		initResources();
 		initLayout();
@@ -136,7 +139,7 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 					} else if (comboBoxShapeType.getSelectedItem().equals(WEDGE)) {
 						setComponentVisible(new JComponent[]{labelRadius,labelStartAngle,labelEndAngle,textFieldRadius,textFieldStartAngle,textFieldEndAngle});
 					}
-					resetNeighbourShape();
+					resetTextField();
 					parameterShapeType.setSelectedItem(neighbourShape);
 					isSelectingItem = false;
 				}
@@ -319,8 +322,8 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			public void itemStateChanged(ItemEvent e) {
 				if (!isSelectingItem && e.getStateChange() == ItemEvent.SELECTED) {
 					isSelectingItem = true;
-					resetNeighbourShape();
-
+					resetTextField();
+					parameterShapeType.setSelectedItem(neighbourShape);
 					isSelectingItem = false;
 				}
 			}
@@ -397,5 +400,31 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			neighbourShape.setUnitType(NeighbourUnitType.MAP);
 		}
 		parameterShapeType.setSelectedItem(neighbourShape);
+	}
+
+	private void resetTextField() {
+		NeighbourUnitType unitType =null;
+		if (comboBoxUnitType.getSelectedItem().equals(UNIT_TYPE_CELL)) {
+			unitType = NeighbourUnitType.CELL;
+		}else {
+			unitType = NeighbourUnitType.MAP;
+		}
+		if (dataset != null) {
+			Rectangle2D bounds = dataset.getBounds();
+			if (comboBoxShapeType.getSelectedItem().equals(RECTANGLE)) {
+				textFieldWidth.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
+				textFieldHeight.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getHeight()/20:"3"));
+			} else if (comboBoxShapeType.getSelectedItem().equals(CIRCLE)) {
+				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
+			} else if (comboBoxShapeType.getSelectedItem().equals(ANNULUS)) {
+				textFieldInnerRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? bounds.getWidth() / 20 : "1"));
+				textFieldOuterRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? bounds.getWidth() / 20 : "3"));
+			} else {
+				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
+				textFieldStartAngle.setText("0");
+				textFieldEndAngle.setText("360");
+			}
+		}
+		resetNeighbourShape();
 	}
 }
