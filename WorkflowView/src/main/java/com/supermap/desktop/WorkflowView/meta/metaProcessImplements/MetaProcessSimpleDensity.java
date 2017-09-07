@@ -149,7 +149,7 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 
 					@Override
 					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-						fireRunning(new RunningEvent(MetaProcessSimpleDensity.this, percent, message, -1));
+						fireRunning(new RunningEvent(MetaProcessSimpleDensity.this, percent, message));
 					}
 
 					@Override

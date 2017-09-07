@@ -150,7 +150,7 @@ public class MetaProcessSingleQuery extends MetaProcess {
 
 					@Override
 					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-						fireRunning(new RunningEvent(MetaProcessSingleQuery.this, percent, message, -1));
+						fireRunning(new RunningEvent(MetaProcessSingleQuery.this, percent, message));
 					}
 
 					@Override

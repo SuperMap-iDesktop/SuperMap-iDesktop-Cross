@@ -248,7 +248,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 
 					@Override
 					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-						fireRunning(new RunningEvent(MetaProcessSummaryRegion.this, percent, message, -1));
+						fireRunning(new RunningEvent(MetaProcessSummaryRegion.this, percent, message));
 					}
 
 					@Override
