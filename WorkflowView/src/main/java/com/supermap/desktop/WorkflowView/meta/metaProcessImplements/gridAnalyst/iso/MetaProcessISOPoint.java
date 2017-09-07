@@ -26,7 +26,6 @@ import com.supermap.desktop.utilities.StringUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.MessageFormat;
 
 /**
  * Created by xie on 2017/3/10.
@@ -145,8 +144,8 @@ public class MetaProcessISOPoint extends MetaProcess {
 				maxValue = recordset.statistic(fieldName, StatisticMode.MAX);
 				minValue = recordset.statistic(fieldName, StatisticMode.MIN);
 			}
-			double baseValue = Double.valueOf((String) datumValue.getSelectedItem());
-			double lineDistance = Double.valueOf((String) interval.getSelectedItem());
+			double baseValue = Double.valueOf(datumValue.getSelectedItem());
+			double lineDistance = Double.valueOf(interval.getSelectedItem());
 			double dRemain = baseValue % lineDistance;
 			double maxIsoValue = (int) ((maxValue - dRemain) / lineDistance) * lineDistance + dRemain;
 			double minIsoValue = (int) ((minValue - dRemain) / lineDistance) * lineDistance + dRemain;
@@ -240,7 +239,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 		this.parameters.setParameters(sourceData, paramSet, resultData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
-				MessageFormat.format(ProcessOutputResultProperties.getString("String_SurfaceAnalyst_IsoResult"), "Line"),
+				ProcessOutputResultProperties.getString("String_SurfaceAnalyst_ISOLineResult"),
 				DatasetTypes.LINE, resultData);
 	}
 
@@ -307,21 +306,21 @@ public class MetaProcessISOPoint extends MetaProcess {
 
 		try {
 			SurfaceExtractParameter surfaceExtractParameter = new SurfaceExtractParameter();
-			surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem().toString()));
-			surfaceExtractParameter.setInterval(Double.valueOf(interval.getSelectedItem().toString()));
-			surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem().toString()));
+			surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem()));
+			surfaceExtractParameter.setInterval(Double.valueOf(interval.getSelectedItem()));
+			surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem()));
 			surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
-			surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
+			surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem()));
 			SurfaceAnalyst.addSteppedListener(this.stepListener);
 
-			DatasetVector src = null;
+			DatasetVector src;
 			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 			} else {
 				src = (DatasetVector) sourceDataset.getSelectedItem();
 			}
 			DatasetVector result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, fields.getFieldName(),
-					targetDataset.getResultDatasource(), targetDataset.getDatasetName(), Double.valueOf(resolution.getSelectedItem().toString()), null);
+					targetDataset.getResultDatasource(), targetDataset.getDatasetName(), Double.valueOf(resolution.getSelectedItem()), null);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = (result != null);
 			fireRunning(new RunningEvent(MetaProcessISOPoint.this, 100, "finished"));
