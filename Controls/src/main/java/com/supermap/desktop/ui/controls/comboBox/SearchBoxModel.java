@@ -16,20 +16,25 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 
-public class SearchBoxModel<T> extends AbstractListModel
-		implements MutableComboBoxModel, KeyListener, ItemListener {
+public class SearchBoxModel<T> extends AbstractListModel<T>
+		implements MutableComboBoxModel<T>, KeyListener, ItemListener {
 	private SearchItemValueGetter searchItemValueGetter;
 	private ArrayList<T> data = new ArrayList<>();
-	private ArrayList<T> searchData = new ArrayList<>();
+	protected ArrayList<T> searchData = new ArrayList<>();
 	private T selection;
-	private JComboBox<T> comboBox;
+	protected JComboBox<T> comboBox;
 	private ComboBoxEditor comboBoxEditor;
 	private boolean isKeyReleased = false;
 
 
 	public SearchBoxModel(JComboBox<T> comboBox, SearchItemValueGetter searchItemValueGetter) {
 		this.comboBox = comboBox;
-		this.searchItemValueGetter = searchItemValueGetter == null ? new SearchItemValueGetter() : searchItemValueGetter;
+		this.searchItemValueGetter = searchItemValueGetter == null ? new SearchItemValueGetter() {
+			@Override
+			public String getSearchString(Object item) {
+				return item.toString();
+			}
+		} : searchItemValueGetter;
 		comboBoxEditor = comboBox.getEditor();
 		//here we add the key listener to the text field that the combobox is wrapped around
 		comboBoxEditor.getEditorComponent().addKeyListener(this);
@@ -55,7 +60,7 @@ public class SearchBoxModel<T> extends AbstractListModel
 				}
 			}
 		}
-		super.fireContentsChanged(this, 0, searchData.size());
+//		super.fireContentsChanged(this, 0, searchData.size());
 
 //this is a hack to get around redraw problems when changing the lsit length of the displayed popups
 		if (comboBox.isPopupVisible()) {
@@ -79,7 +84,10 @@ public class SearchBoxModel<T> extends AbstractListModel
 		return searchData.size();
 	}
 
-	public Object getElementAt(int index) {
+	public T getElementAt(int index) {
+		if (index >= searchData.size()) {
+			return null;
+		}
 		return searchData.get(index);
 	}
 
@@ -101,25 +109,28 @@ public class SearchBoxModel<T> extends AbstractListModel
 
 	public void keyReleased(KeyEvent e) {
 		isKeyReleased = true;
+		if (e.isControlDown() || e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+			return;
+		}
 		String str = comboBoxEditor.getItem().toString();
 		JTextField jtf = (JTextField) comboBoxEditor.getEditorComponent();
 		int currentPos = jtf.getCaretPosition();
 
 		if (e.getKeyChar() == KeyEvent.CHAR_UNDEFINED) {
 			if (e.getKeyCode() != KeyEvent.VK_ENTER) {
-				comboBoxEditor.setItem(str);
+//				comboBoxEditor.setItem(str);
 				jtf.setCaretPosition(currentPos);
 			}
 		} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			if (getSelectedIndex() != -1) {
 				comboBox.setSelectedIndex(comboBox.getSelectedIndex());
 			} else {
-				comboBox.setSelectedItem(str);
+//				comboBox.setSelectedItem(str);
 			}
 		} else {
-			updateModel(comboBox.getEditor().getItem().toString());
-			comboBoxEditor.setItem(str);
-			jtf.setCaretPosition(currentPos);
+			updateModel(str);
+//			comboBoxEditor.setItem(str);
+//			jtf.setCaretPosition(currentPos);
 		}
 		isKeyReleased = false;
 	}
@@ -175,5 +186,10 @@ public class SearchBoxModel<T> extends AbstractListModel
 
 	public boolean isSearch() {
 		return searchData.size() != data.size();
+	}
+
+	public void addSearchResult(T resultData) {
+		searchData.add(resultData);
+//		super.fireContentsChanged(this, searchData.size() - 1, searchData.size());
 	}
 }

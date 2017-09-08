@@ -270,7 +270,8 @@
                             org.apache.*,
                             org.jdesktop.*,
                             com.mongodb.*,
-                            net.sf.image4j.codec.*
+                            net.sf.image4j.codec.*,
+                            net.sourceforge.pinyin4j.*
                         </Export-Package>
                     </instructions>
                 </configuration>
