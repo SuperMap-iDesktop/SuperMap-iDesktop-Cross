@@ -108,6 +108,7 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 		this.saveDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 		this.parameterNumberRadius.setMinValue(0);
 		this.parameterNumberRadius.setIsIncludeMin(false);
+		this.checkBoxRandomSaveRerefyPoints.setSelectedItem(true);
 		this.comboBoxStatisticsType.setItems(
 				this.parameterDataNodeAverage,
 				new ParameterDataNode(StatisticsTypeUtilities.getStatisticsTypeNameForDatasetRarefyPointsType(StatisticsFieldType.MAXVALUE), StatisticsFieldType.MAXVALUE),
