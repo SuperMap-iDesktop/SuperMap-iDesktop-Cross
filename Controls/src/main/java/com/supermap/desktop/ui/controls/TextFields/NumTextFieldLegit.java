@@ -121,5 +121,10 @@ public class NumTextFieldLegit extends SmTextFieldLegit {
 	public void setIncludeMax(boolean includeMax) {
 		isIncludeMax = includeMax;
 	}
+
+	public void setInterval(int min, int max) {
+		minValue = min;
+		maxValue = max;
+	}
 }
 

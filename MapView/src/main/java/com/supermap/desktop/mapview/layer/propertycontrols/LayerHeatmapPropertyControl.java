@@ -102,7 +102,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 		this.labelWeightField = new JLabel("WeightField:");
 		this.comboBoxWeightField = new JComboBox();
 		this.labelColorScheme = new JLabel("ColorScheme:");
-		this.colorsComboBox = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Map_GridAggregation"));
+		this.colorsComboBox = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Grid_DEM"));
 		this.labelMaxColor = new JLabel("MaxColor:");
 		this.componentDropDownMaxColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
 		this.labelMinColor = new JLabel("MinColor:");

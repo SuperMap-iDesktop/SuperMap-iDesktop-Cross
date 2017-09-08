@@ -3,13 +3,8 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridAnalyst
 import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridAnalyst;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
@@ -17,21 +12,13 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.MessageFormat;
 
 /**
  * @author XiaJT
@@ -40,7 +27,7 @@ public abstract class MetaProcessISO extends MetaProcessGridAnalyst {
 
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	protected static String OUTPUT_DATA = "ExtractResult";
-	protected static String OUTPUT_DATA_TYPE;
+	protected static String OUTPUT_DATA_TYPE = "";
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset dataset;
@@ -141,9 +128,7 @@ public abstract class MetaProcessISO extends MetaProcessGridAnalyst {
 		paramSet.addParameters(datumValue, interval, resampleTolerance, smoothMethod, smoothNess);
 		this.parameters.setParameters(sourceData, paramSet, resultInfo, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA,
-				MessageFormat.format(ProcessOutputResultProperties.getString("String_SurfaceAnalyst_IsoResult"), OUTPUT_DATA_TYPE),
-				DatasetTypes.LINE_POLYGON_VECTOR, targetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, OUTPUT_DATA_TYPE, DatasetTypes.LINE_POLYGON_VECTOR, targetData);
 	}
 
 	protected void initParametersListener() {

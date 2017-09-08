@@ -97,9 +97,10 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	private void initComponentState() {
 		parameterInputDataType.parameterDataInputWay.removeAllItems();
 		parameterInputDataType.parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PGDataBase"), "2"));
+		parameterInputDataType.parameterSwitch.switchParameter("1");
 		parameterInputDataType.setSupportDatasetType(DatasetType.LINE, DatasetType.REGION);
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.LINE, DatasetType.REGION);
-		if (defaultBigDataStoreDataset != null) {
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		if (defaultBigDataStoreDataset != null && (DatasetType.LINE == defaultBigDataStoreDataset.getType() || DatasetType.REGION == defaultBigDataStoreDataset.getType())) {
 			parameterBigDatasourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterSingleDataset.setSelectedItem(defaultBigDataStoreDataset);
 		}
@@ -169,7 +170,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterCombineSetting.addParameters(parameterSummaryType, parameterSwitch, parameterStandardFields, switchStandardFields,
 				parameterWeightedFields, switchWeightedFields, parametersumShape);
 		parameters.addParameters(parameterIServerLogin, parameterInputDataType, parameterCombineSetting);
-		parameters.getOutputs().addData("SummaryRegionResult", ProcessOutputResultProperties.getString("String_BoundsAnalysisResult"),Type.UNKOWN);
+		parameters.getOutputs().addData("SummaryRegionResult", ProcessOutputResultProperties.getString("String_BoundsAnalysisResult"), Type.UNKOWN);
 	}
 
 	private void initConstraint() {
@@ -247,7 +248,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 
 					@Override
 					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-						fireRunning(new RunningEvent(MetaProcessSummaryRegion.this, percent, message, -1));
+						fireRunning(new RunningEvent(MetaProcessSummaryRegion.this, percent, message));
 					}
 
 					@Override

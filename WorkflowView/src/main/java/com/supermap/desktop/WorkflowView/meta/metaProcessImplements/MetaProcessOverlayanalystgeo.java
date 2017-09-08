@@ -92,8 +92,8 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 	private void initComponentState() {
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
-		if (defaultBigDataStoreDataset != null) {
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		if (defaultBigDataStoreDataset != null && DatasetType.REGION == defaultBigDataStoreDataset.getType()) {
 			parameterOverlayDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterOverlayDataset.setSelectedItem(defaultBigDataStoreDataset);
 
@@ -148,7 +148,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 					@Override
 					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-						fireRunning(new RunningEvent(MetaProcessOverlayanalystgeo.this, percent, message, -1));
+						fireRunning(new RunningEvent(MetaProcessOverlayanalystgeo.this, percent, message));
 					}
 
 					@Override
