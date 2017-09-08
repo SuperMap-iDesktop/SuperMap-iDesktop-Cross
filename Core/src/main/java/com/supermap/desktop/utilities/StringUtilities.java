@@ -1,6 +1,10 @@
 package com.supermap.desktop.utilities;
 
 import com.supermap.desktop.Application;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -294,4 +298,57 @@ public class StringUtilities {
 		return result > 0 ? ++result : --result;
 	}
 
+	public static boolean isChinese(char c) {
+		Character.UnicodeBlock unicodeBlock = Character.UnicodeBlock.of(c);
+		if (unicodeBlock == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || unicodeBlock == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+				|| unicodeBlock == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A || unicodeBlock == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
+				|| unicodeBlock == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION || unicodeBlock == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS
+				|| unicodeBlock == Character.UnicodeBlock.GENERAL_PUNCTUATION) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isAllChinese(String s) {
+		for (int i = 0; i < s.length(); i++) {
+			if (!isChinese(s.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean isContainChinese(String s) {
+		for (int i = 0; i < s.length(); i++) {
+			if (isChinese(s.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static String convertToPingYin(String chineseString) {
+		HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
+		format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+		format.setVCharType(HanyuPinyinVCharType.WITH_U_UNICODE);
+		StringBuilder stringBuilder = new StringBuilder();
+		for (int j = 0; j < chineseString.length(); j++) {
+			char charAt = chineseString.charAt(j);
+			if (StringUtilities.isChinese(charAt)) {
+				try {
+					String[] strings = PinyinHelper.toHanyuPinyinStringArray(charAt, format);
+					if (strings != null && strings.length > 0) {
+						stringBuilder.append(strings[0]);
+					} else {
+						stringBuilder.append(charAt);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				stringBuilder.append(charAt);
+			}
+		}
+		return stringBuilder.toString();
+	}
 }

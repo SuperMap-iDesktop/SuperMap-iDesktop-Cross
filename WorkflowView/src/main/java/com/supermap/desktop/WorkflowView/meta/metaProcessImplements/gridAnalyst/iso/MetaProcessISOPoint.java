@@ -47,7 +47,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 	private ParameterNumber interval;
 	private ParameterNumber resampleTolerance;
 	private ParameterComboBox smoothMethod;
-	private ParameterNumber smoothNess;
+	private ParameterNumber smoothness;
 	private boolean isSelectChanged = false;
 	private SteppedListener stepListener = new SteppedListener() {
 		@Override
@@ -100,7 +100,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_BSLine"), SmoothMethod.BSPLINE),
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_POLISH"), SmoothMethod.POLISH));
 		this.smoothMethod.setSelectedItem(selectedSmoothNode);
-		this.smoothNess.setEnabled(false);
+		this.smoothness.setEnabled(false);
 	}
 
 	private void reloadValue() {
@@ -219,11 +219,11 @@ public class MetaProcessISOPoint extends MetaProcess {
 		resampleTolerance.setMinValue(0);
 		resampleTolerance.setIsIncludeMin(true);
 		this.smoothMethod = new ParameterComboBox().setDescribe(CommonProperties.getString("String_SmoothMethod"));
-		this.smoothNess = new ParameterNumber(CommonProperties.getString("String_SmoothNess"));
-		smoothNess.setMinValue(2);
-		smoothNess.setMaxValue(5);
-		smoothNess.setMaxBit(0);
-		this.smoothNess.setSelectedItem("2");
+		this.smoothness = new ParameterNumber(CommonProperties.getString("String_SmoothNess"));
+		smoothness.setMinValue(2);
+		smoothness.setMaxValue(5);
+		smoothness.setMaxBit(0);
+		this.smoothness.setSelectedItem("2");
 
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
@@ -234,7 +234,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 		ParameterCombine paramSet = new ParameterCombine();
 		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
 		paramSet.addParameters(fields, terrainInterpolateType, resolution, datumValue, interval,
-				resampleTolerance, smoothMethod, smoothNess);
+				resampleTolerance, smoothMethod, smoothness);
 
 		this.parameters.setParameters(sourceData, paramSet, resultData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, sourceData);
@@ -248,7 +248,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getPropertyName().equals(ParameterComboBox.comboBoxValue)) {
-					smoothNess.setEnabled(smoothMethod.getSelectedIndex() != 0);
+					smoothness.setEnabled(smoothMethod.getSelectedIndex() != 0);
 				}
 			}
 		});
@@ -310,7 +310,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 			surfaceExtractParameter.setInterval(Double.valueOf(interval.getSelectedItem()));
 			surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem()));
 			surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
-			surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem()));
+			surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothness.getSelectedItem()));
 			SurfaceAnalyst.addSteppedListener(this.stepListener);
 
 			DatasetVector src;
