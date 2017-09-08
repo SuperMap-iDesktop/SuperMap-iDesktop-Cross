@@ -21,9 +21,9 @@ import com.supermap.desktop.utilities.DatasetUtilities;
  * Created by lixiaoyao on 2017/8/15.
  */
 public class MetaProcessImageCombine extends MetaProcess {
-	private final static String INTPUT_RED_DATA = CommonProperties.getString("String_RedBand");
-	private final static String INTPUT_GREEN_DATA = CommonProperties.getString("String_GreendBand");
-	private final static String INTPUT_BLUE_DATA = CommonProperties.getString("String_BlueBand");
+	private final static String INPUT_RED_DATA = CommonProperties.getString("String_RedBand");
+	private final static String INPUT_GREEN_DATA = CommonProperties.getString("String_GreenBand");
+	private final static String INPUT_BLUE_DATA = CommonProperties.getString("String_BlueBand");
 	private final static String OUTPUT_DATA = "ImageCombineResult";
 
 	private ParameterDatasourceConstrained redDatasource;
@@ -37,7 +37,7 @@ public class MetaProcessImageCombine extends MetaProcess {
 	public MetaProcessImageCombine() {
 		initParameters();
 		initParametersState();
-		initParameterConstrint();
+		initParameterConstraint();
 	}
 
 	private void initParameters() {
@@ -58,22 +58,22 @@ public class MetaProcessImageCombine extends MetaProcess {
 		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 
 		ParameterCombine redData = new ParameterCombine();
-		redData.setDescribe(INTPUT_RED_DATA);
+		redData.setDescribe(INPUT_RED_DATA);
 		redData.addParameters(this.redDatasource, this.redDataset);
 		ParameterCombine greenData = new ParameterCombine();
-		greenData.setDescribe(INTPUT_GREEN_DATA);
+		greenData.setDescribe(INPUT_GREEN_DATA);
 		greenData.addParameters(this.greenDatasource, this.greenDataset);
 		ParameterCombine blueData = new ParameterCombine();
-		blueData.setDescribe(INTPUT_BLUE_DATA);
+		blueData.setDescribe(INPUT_BLUE_DATA);
 		blueData.addParameters(this.blueDatasource, this.blueDataset);
 		ParameterCombine targetData = new ParameterCombine();
 		targetData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		targetData.addParameters(this.resultDataset);
 
 		this.parameters.setParameters(redData, greenData, blueData, targetData);
-		this.parameters.addInputParameters(INTPUT_RED_DATA, DatasetTypes.IMAGE, redData);
-		this.parameters.addInputParameters(INTPUT_GREEN_DATA, DatasetTypes.IMAGE, greenData);
-		this.parameters.addInputParameters(INTPUT_BLUE_DATA, DatasetTypes.IMAGE, blueData);
+		this.parameters.addInputParameters(INPUT_RED_DATA, DatasetTypes.IMAGE, redData);
+		this.parameters.addInputParameters(INPUT_GREEN_DATA, DatasetTypes.IMAGE, greenData);
+		this.parameters.addInputParameters(INPUT_BLUE_DATA, DatasetTypes.IMAGE, blueData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_ImageCombine"), DatasetTypes.IMAGE, targetData);
 	}
 
@@ -91,7 +91,7 @@ public class MetaProcessImageCombine extends MetaProcess {
 		}
 	}
 
-	private void initParameterConstrint() {
+	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(this.redDatasource, ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(this.redDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
@@ -116,26 +116,26 @@ public class MetaProcessImageCombine extends MetaProcess {
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 
 			Dataset srcRed = null;
-			if (this.getParameters().getInputs().getData(INTPUT_RED_DATA).getValue() != null) {
-				srcRed = (Dataset) this.getParameters().getInputs().getData(INTPUT_RED_DATA).getValue();
+			if (this.getParameters().getInputs().getData(INPUT_RED_DATA).getValue() != null) {
+				srcRed = (Dataset) this.getParameters().getInputs().getData(INPUT_RED_DATA).getValue();
 			} else {
 				srcRed = redDataset.getSelectedItem();
 			}
 			Dataset srcGreen = null;
-			if (this.getParameters().getInputs().getData(INTPUT_GREEN_DATA).getValue() != null) {
-				srcGreen = (Dataset) this.getParameters().getInputs().getData(INTPUT_GREEN_DATA).getValue();
+			if (this.getParameters().getInputs().getData(INPUT_GREEN_DATA).getValue() != null) {
+				srcGreen = (Dataset) this.getParameters().getInputs().getData(INPUT_GREEN_DATA).getValue();
 			} else {
 				srcGreen = greenDataset.getSelectedItem();
 			}
 			Dataset srcBlue = null;
-			if (this.getParameters().getInputs().getData(INTPUT_BLUE_DATA).getValue() != null) {
-				srcBlue = (Dataset) this.getParameters().getInputs().getData(INTPUT_BLUE_DATA).getValue();
+			if (this.getParameters().getInputs().getData(INPUT_BLUE_DATA).getValue() != null) {
+				srcBlue = (Dataset) this.getParameters().getInputs().getData(INPUT_BLUE_DATA).getValue();
 			} else {
 				srcBlue = blueDataset.getSelectedItem();
 			}
-			boolean result= Toolkit.CombineBand(datasetName, this.resultDataset.getResultDatasource(),srcRed,srcGreen,srcBlue);
-			isSuccessful=result!=false;
+			isSuccessful= Toolkit.CombineBand(datasetName, this.resultDataset.getResultDatasource(),srcRed,srcGreen,srcBlue);
 			Dataset resultDataset=this.resultDataset.getResultDatasource().getDatasets().get(datasetName);
+			this.resultDataset.getResultDatasource().refresh();
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
 			fireRunning(new RunningEvent(MetaProcessImageCombine.this, 100, "finished"));
 
