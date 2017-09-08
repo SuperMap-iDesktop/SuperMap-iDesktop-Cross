@@ -38,12 +38,14 @@ public class DialogCacheOperationView extends SmDialog {
 	private final int RESUME_CACHE = 2;
 	private final int MULTI_CACHE_NEW = 3;
 	private final int MULTI_CACHE_EXECUTE = 4;
+	private final int MULTI_CACHE_UPDATE = 5;
 	//单任务界面控件
 	private JRadioButton radioButtonNewMission;
 	private JLabel labelNewMission;
 	private JRadioButton radioButtonUpdateSciFile;
 	private JLabel labelSciFileForUpdate;
 	private JFileChooserControl fileChooserControlSciFileForUpdate;
+	private JFileChooserControl fileChooserControlSciFileForMultiUpdate;
 	private JRadioButton radioButtonResumeSciFile;
 	private JLabel labelSciFileForResume;
 	private JFileChooserControl fileChooserControlSciFileForResume;
@@ -98,6 +100,7 @@ public class DialogCacheOperationView extends SmDialog {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				missionType = MULTI_CACHE_NEW;
+				setMultiUpdateRadioEnabled();
 			}
 		}
 	};
@@ -106,9 +109,23 @@ public class DialogCacheOperationView extends SmDialog {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				missionType = MULTI_CACHE_EXECUTE;
+				setMultiUpdateRadioEnabled();
 			}
 		}
 	};
+	private ItemListener multiCacheUpdateListener = new ItemListener() {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				missionType = MULTI_CACHE_UPDATE;
+				setMultiUpdateRadioEnabled();
+			}
+		}
+	};
+
+	private void setMultiUpdateRadioEnabled() {
+		fileChooserControlSciFileForMultiUpdate.setEnabled(radioButtonUpdateSciFile.isSelected());
+	}
 
 	private void buildCacheMission() {
 		switch (missionType) {
@@ -118,7 +135,7 @@ public class DialogCacheOperationView extends SmDialog {
 				break;
 			case UPDATE_CACHE:
 				//单进程更新
-				updateCacheMission();
+				updateCacheMission(DialogMapCacheClipBuilder.SingleUpdateProcessClip);
 				break;
 			case RESUME_CACHE:
 				//单任务续传
@@ -131,6 +148,10 @@ public class DialogCacheOperationView extends SmDialog {
 			case MULTI_CACHE_EXECUTE:
 				//执行多任务缓存
 				mulitCacheExecuteMission();
+				break;
+			case MULTI_CACHE_UPDATE:
+				//多进程更新
+				updateCacheMission(DialogMapCacheClipBuilder.MultiUpdateProcessClip);
 				break;
 			default:
 				break;
@@ -201,6 +222,7 @@ public class DialogCacheOperationView extends SmDialog {
 			case DialogMapCacheClipBuilder.MultiProcessClip:
 				this.radioButtonMultiMissionNew.addItemListener(multiCacheNewListener);
 				this.radioButtonMultiMissionExecute.addItemListener(multiCacheExecuteListener);
+				this.radioButtonUpdateSciFile.addItemListener(multiCacheUpdateListener);
 				break;
 			default:
 				break;
@@ -219,6 +241,7 @@ public class DialogCacheOperationView extends SmDialog {
 			case DialogMapCacheClipBuilder.MultiProcessClip:
 				this.radioButtonMultiMissionNew.removeItemListener(multiCacheNewListener);
 				this.radioButtonMultiMissionExecute.removeItemListener(multiCacheExecuteListener);
+				this.radioButtonUpdateSciFile.removeItemListener(multiCacheUpdateListener);
 				break;
 			default:
 				break;
@@ -265,14 +288,13 @@ public class DialogCacheOperationView extends SmDialog {
 		}
 	}
 
-	private void updateCacheMission() {
-		File sciFile = new File(fileChooserControlSciFileForUpdate.getPath());
+	private void updateCacheMission(int cmdType) {
+		File sciFile = new File(cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip ? fileChooserControlSciFileForUpdate.getPath() : fileChooserControlSciFileForMultiUpdate.getPath());
 		if (sciFile.exists()) {
 			DialogCacheOperationView.this.dispose();
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
-//			mapCacheBuilder.setMap(getMap());
 			mapCacheBuilder.fromConfigFile(sciFile.getPath());
-			DialogMapCacheClipBuilder builder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.SingleUpdateProcessClip, mapCacheBuilder);
+			DialogMapCacheClipBuilder builder = new DialogMapCacheClipBuilder(cmdType, mapCacheBuilder);
 			builder.firstStepPane.textFieldCacheName.setText(mapCacheBuilder.getCacheName());
 			builder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());
 			builder.firstStepPane.setSciPath(sciFile.getPath());
@@ -314,6 +336,8 @@ public class DialogCacheOperationView extends SmDialog {
 				this.labelMultiMissionNew.setText(CommonProperties.getString("String_MultiCacheNewTip"));
 				this.radioButtonMultiMissionExecute.setText(CommonProperties.getString("String_MultiCacheExecute"));
 				this.labelMultiMissionExecute.setText(CommonProperties.getString("String_MultiCahceExecuteTip"));
+				this.radioButtonUpdateSciFile.setText(CommonProperties.getString("String_UpdateCacheSciFile"));
+				this.labelSciFileForUpdate.setText(CommonProperties.getString("String_SciFilePath"));
 				break;
 			default:
 				break;
@@ -342,11 +366,14 @@ public class DialogCacheOperationView extends SmDialog {
 				break;
 			case DialogMapCacheClipBuilder.MultiProcessClip:
 				panelContent.add(this.radioButtonMultiMissionNew, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 20, 5, 0));
-				panelContent.add(this.labelMultiMissionNew, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 30, 25, 10));
+				panelContent.add(this.labelMultiMissionNew, new GridBagConstraintsHelper(0, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 30, 15, 10));
 				panelContent.add(this.radioButtonMultiMissionExecute, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 20, 5, 0));
-				panelContent.add(this.labelMultiMissionExecute, new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 30, 25, 10));
-				panelContent.add(new JPanel(), new GridBagConstraintsHelper(0, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-				panelContent.add(panelButton, new GridBagConstraintsHelper(0, 5, 3, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+				panelContent.add(this.labelMultiMissionExecute, new GridBagConstraintsHelper(0, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 30, 15, 10));
+				panelContent.add(this.radioButtonUpdateSciFile, new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 20, 5, 0));
+				panelContent.add(this.labelSciFileForUpdate, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 30, 15, 10));
+				panelContent.add(this.fileChooserControlSciFileForMultiUpdate, new GridBagConstraintsHelper(1, 5, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 15, 10).setWeight(1, 0));
+				panelContent.add(new JPanel(), new GridBagConstraintsHelper(0, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+				panelContent.add(panelButton, new GridBagConstraintsHelper(0, 7, 3, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 				break;
 			default:
 				break;
@@ -376,11 +403,24 @@ public class DialogCacheOperationView extends SmDialog {
 		this.labelMultiMissionNew = new JLabel();
 		this.radioButtonMultiMissionExecute = new JRadioButton();
 		this.labelMultiMissionExecute = new JLabel();
+		this.radioButtonMultiMissionNew.setSelected(true);
+		this.missionType = MULTI_CACHE_NEW;
+		this.radioButtonUpdateSciFile = new JRadioButton();
+		this.labelSciFileForUpdate = new JLabel();
+		this.fileChooserControlSciFileForMultiUpdate = new JFileChooserControl();
+		String moduleName = "GetCacheMultiUpdateConfigFile";
+		if (!SmFileChoose.isModuleExist(moduleName)) {
+			String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci");
+			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
+					ControlsProperties.getString("String_OpenColorTable"), moduleName, "OpenOne");
+		}
+		SmFileChoose smFileChoose = new SmFileChoose(moduleName);
+		this.fileChooserControlSciFileForMultiUpdate.setFileChooser(smFileChoose);
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(radioButtonMultiMissionNew);
 		buttonGroup.add(radioButtonMultiMissionExecute);
-		this.radioButtonMultiMissionNew.setSelected(true);
-		this.missionType = MULTI_CACHE_NEW;
+		buttonGroup.add(radioButtonUpdateSciFile);
+		setMultiUpdateRadioEnabled();
 	}
 
 	private void initSingleCacheComponents() {

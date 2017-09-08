@@ -5,6 +5,7 @@ import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
+import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.properties.CommonProperties;
@@ -15,7 +16,7 @@ import com.supermap.desktop.properties.CommonProperties;
 public class MetaProcessISORegion extends MetaProcessISO {
 
 	public MetaProcessISORegion() {
-		OUTPUT_DATA_TYPE = "Region";
+		OUTPUT_DATA_TYPE = ProcessOutputResultProperties.getString("String_SurfaceAnalyst_ISORegionResult");
 		super.initParameters();
 		super.initParameterConstraint();
 		super.initParametersState();

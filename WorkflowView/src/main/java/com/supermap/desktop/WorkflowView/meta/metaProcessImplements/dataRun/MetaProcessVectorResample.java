@@ -137,7 +137,7 @@ public class MetaProcessVectorResample extends MetaProcess {
 		Dataset datasetSelectedDataset = (Dataset) this.dataset.getSelectedItem();
 		if (datasetSelectedDataset != null) {
 			DatasetType datasetType = datasetSelectedDataset.getType();
-			String unit = datasetType.equals(DatasetType.LINE) ? ProcessProperties.getString("String_Label_degree") : ProcessProperties.getString("String_Label_meter");
+			String unit = ProcessProperties.getString(datasetType.equals(DatasetType.LINE) ? "String_Label_degree" : "String_Label_meter");
 			this.parameterResampleTolerance.setUnit(unit);
 			this.parameterVertexTolerance.setUnit(unit);
 			String value = datasetType.equals(DatasetType.LINE) ? "0.0001" : "10";

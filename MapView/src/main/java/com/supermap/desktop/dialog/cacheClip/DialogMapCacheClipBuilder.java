@@ -8,7 +8,6 @@ import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
 import com.supermap.data.processing.MapTilingMode;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
@@ -82,10 +81,24 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private ActionListener buildListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (cmdType == ResumeProcessClip) {
-				resume();
-			} else {
-				run();
+			switch (cmdType){
+				case ResumeProcessClip:
+					resume();
+					break;
+				case SingleProcessClip:
+					singleProcessBuilder(SingleProcessClip);
+					break;
+				case SingleUpdateProcessClip:
+					singleProcessBuilder(SingleUpdateProcessClip);
+					break;
+				case MultiProcessClip:
+					multiProcessBuilder();
+					break;
+				case MultiUpdateProcessClip:
+					multiProcessBuilder();
+					break;
+				default:
+					break;
 			}
 		}
 	};
@@ -217,6 +230,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	}
 
 	private boolean validateCacheFolderSave() {
+		//检查缓存路径是否可用
 		boolean result = true;
 		try {
 			if (cmdType == MultiUpdateProcessClip || cmdType == SingleUpdateProcessClip
@@ -364,111 +378,103 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		}
 	}
 
-	private void run() {
-		try {
-			nextStepPane.dispose();
-			if (cmdType == SingleProcessClip || cmdType == SingleUpdateProcessClip) {
-				singleProcessBuilder();
-			} else {
-				if (!validateCacheFolderSave()) {
-					return;
-				}
-				if (cmdType == MultiUpdateProcessClip) {
-					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
-				}
-				String cachePath = firstStepPane.fileChooserControlFileCache.getPath();
-				String sciPath = "";
-				if (cmdType == MultiUpdateProcessClip) {
-					//todo 多进程更新功能后续处理
-//					tasksPath = CacheUtilities.replacePath(tasksPath, "update");
-					sciPath = CacheUtilities.replacePath(cachePath, mapCacheBuilder.getCacheName() + ".sci");
-				} else {
-					sciPath = CacheUtilities.replacePath(cachePath, firstStepPane.textFieldCacheName.getText());
-					File sciDirectory = new File(sciPath);
-					if (!sciDirectory.exists()) {
-						sciDirectory.mkdir();
-					}
-					if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
-						sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + "_mongo.sci");
-					} else {
-						sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + ".sci");
-					}
-				}
-				if (null != mapCacheBuilder.getMap().getVisibleScales() && 0 != mapCacheBuilder.getMap().getVisibleScales().length) {
-					//地图存在固定比例从时的处理方式
-					if (firstStepPane.addScaleDropDown.isEnabled()) {
-						if (this.mapCacheBuilder.getMap().getVisibleScales().length < firstStepPane.currentMapCacheScale.size()) {
-							new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
-							return;
-						} else {
-							int count = 0;
-							for (int i = 0; i < this.mapCacheBuilder.getMap().getVisibleScales().length; i++) {
-								for (int j = 0; j < firstStepPane.currentMapCacheScale.size(); j++) {
-									if (Double.compare(this.mapCacheBuilder.getMap().getVisibleScales()[i], firstStepPane.currentMapCacheScale.get(j)) == 0) {
-										count++;
-										break;
-									}
-								}
-							}
-							if (count != firstStepPane.currentMapCacheScale.size()) {
-								new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
-								return;
-							}
-						}
-
-					} else {
-						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
-						return;
-					}
-
-				}
-				setMapCacheBuilderValueBeforeRun();
-				boolean result = true;
-				//SaveType==MongoType,build some cache for creating a database
-				this.buttonOk.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
-					//Mongo类型单独处理,调用组件接口返回正确的sci
-					result = mapCacheBuilder.createMongoDB();
-					if (!new File(sciPath).exists()) {
-						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_ErrorForMongoInfo"));
-					}
-				} else {
-					result = mapCacheBuilder.toConfigFile(sciPath);
-				}
-				if (result) {
-					String[] params = {sciPath, CacheUtilities.replacePath(cachePath, CacheTask), tasksSize, canudb};
-					boolean buildTaskResult = TaskBuilder.buildSci(params);
-					if (!buildTaskResult) {
-						this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-						return;
-					}
-					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-					dispose();
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetCachePath"), cachePath));
-					Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheExecute"));
-					if (nextStepPane.checkBoxClipOnThisComputer.isSelected()) {
-						String mapName = this.mapCacheBuilder.getCacheName();
-						if (null != this.mapCacheBuilder.getMap()) {
-							mapName = this.mapCacheBuilder.getMap().getName();
-						}
-						String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi", "zh-CN",
-								Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), mapName, cachePath};
-						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
-					}
-				}
-				if (this.checkBoxAutoClosed.isSelected()) {
-					dispose();
-					this.mapCacheBuilder.dispose();
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			Application.getActiveApplication().getOutput().output(e);
+	private void multiProcessBuilder() {
+		if (!validateCacheFolderSave()) {
+			return;
 		}
-
+		if (cmdType == MultiUpdateProcessClip && null == mapCacheBuilder.getMap()) {
+			mapCacheBuilder.setMap(MapUtilities.getActiveMap() == null ? CacheUtilities.getWorkspaceSelectedMap() : MapUtilities.getActiveMap());
+		}
+		String cachePath = firstStepPane.fileChooserControlFileCache.getPath();
+		String sciPath = "";
+		sciPath = CacheUtilities.replacePath(cachePath, firstStepPane.textFieldCacheName.getText());
+		File sciDirectory = new File(sciPath);
+		if (!sciDirectory.exists()) {
+			sciDirectory.mkdir();
+		}
+		if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
+			sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + "_mongo.sci");
+		} else {
+			sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + ".sci");
+		}
+		validateScales();
+		setMapCacheBuilderValueBeforeRun();
+		splitCahceAndDoBuild(cachePath, sciPath);
 	}
 
-	private void singleProcessBuilder() {
+	private void splitCahceAndDoBuild(String cachePath, String sciPath) {
+		boolean result = true;
+		//SaveType==MongoType,build some cache for creating a database
+		this.buttonOk.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+		if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
+			//Mongo类型单独处理,调用组件接口返回正确的sci
+			result = mapCacheBuilder.createMongoDB();
+			if (!new File(sciPath).exists()) {
+				new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_ErrorForMongoInfo"));
+			}
+		} else {
+			result = mapCacheBuilder.toConfigFile(sciPath);
+		}
+		if (result) {
+			String[] params = {sciPath, CacheUtilities.replacePath(cachePath, CacheTask), tasksSize, canudb};
+			boolean buildTaskResult = TaskBuilder.buildSci(params);
+			if (!buildTaskResult) {
+				this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				return;
+			}
+			this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			dispose();
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetCachePath"), cachePath));
+			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheExecute"));
+			if (nextStepPane.checkBoxClipOnThisComputer.isSelected()) {
+				String mapName = this.mapCacheBuilder.getCacheName();
+				if (null != this.mapCacheBuilder.getMap()) {
+					mapName = this.mapCacheBuilder.getMap().getName();
+				}
+				String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi", "zh-CN",
+						Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), mapName, cachePath};
+				CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
+			}
+		}
+		if (this.checkBoxAutoClosed.isSelected()) {
+			dispose();
+			this.mapCacheBuilder.dispose();
+		}
+		return;
+	}
+
+	private boolean validateScales() {
+		if (null != mapCacheBuilder.getMap().getVisibleScales() && 0 != mapCacheBuilder.getMap().getVisibleScales().length) {
+			//地图存在固定比例从时的处理方式
+			if (firstStepPane.addScaleDropDown.isEnabled()) {
+				if (this.mapCacheBuilder.getMap().getVisibleScales().length < firstStepPane.currentMapCacheScale.size()) {
+					new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
+					return true;
+				} else {
+					int count = 0;
+					for (int i = 0; i < this.mapCacheBuilder.getMap().getVisibleScales().length; i++) {
+						for (int j = 0; j < firstStepPane.currentMapCacheScale.size(); j++) {
+							if (Double.compare(this.mapCacheBuilder.getMap().getVisibleScales()[i], firstStepPane.currentMapCacheScale.get(j)) == 0) {
+								count++;
+								break;
+							}
+						}
+					}
+					if (count != firstStepPane.currentMapCacheScale.size()) {
+						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
+						return true;
+					}
+				}
+
+			} else {
+				new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void singleProcessBuilder(int cmdType) {
 		if (!validateCacheFolderSave()) {
 			return;
 		}

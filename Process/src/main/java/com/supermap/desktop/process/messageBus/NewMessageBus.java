@@ -36,6 +36,8 @@ public class NewMessageBus {
 	public boolean run() {
 		boolean result = false;
 		try {
+
+			// 重复请求，直到收到执行成功的答复
 			while (!stop) {
 				result = excute(response);
 			}
