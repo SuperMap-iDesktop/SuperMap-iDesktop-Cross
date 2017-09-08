@@ -83,18 +83,21 @@ public abstract class JPanelDatasetChoose extends JPanel {
 	private ActionListener deleteListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int newSelection = tableDatasetDisplay.getSelectedRows()[0];
-			moveLast();
-			int length = datasets.size();
-			for (int i = length - 1; i >= length-2-tableDatasetDisplay.getSelectedRowCount(); i--) {
-				//删除数据集集合内的数据集
-				datasets.remove(datasets.get(i));
-				tableModel.removeRow(i);
-			}
-			if (newSelection < tableModel.getRowCount()) {
-				tableDatasetDisplay.setRowSelectionInterval(newSelection, newSelection);
-			} else if(tableModel.getRowCount()>1){
-				tableDatasetDisplay.setRowSelectionInterval(newSelection-1,newSelection-1);
+			if (tableModel.getRowCount() > 0) {
+				int newSelection = tableDatasetDisplay.getSelectedRows()[0];
+				moveLast();
+				int length = datasets.size();
+				int rowCount = tableDatasetDisplay.getSelectedRowCount();
+				for (int i = length - 1; i >= length-rowCount; i--) {
+					//删除数据集集合内的数据集
+					datasets.remove(datasets.get(i));
+					tableModel.removeRow(i);
+				}
+				if (newSelection < tableModel.getRowCount()) {
+					tableDatasetDisplay.setRowSelectionInterval(newSelection, newSelection);
+				} else if(tableModel.getRowCount()>=1){
+					tableDatasetDisplay.setRowSelectionInterval(newSelection-1,newSelection-1);
+				}
 			}
 		}
 	};
