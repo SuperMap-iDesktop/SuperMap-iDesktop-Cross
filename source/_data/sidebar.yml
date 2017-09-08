@@ -69,6 +69,7 @@ docs:
   BigData:
     BigDataAnalysisEnvironmentConfiguration: /SuperMap-iDesktop-Cross/docs/BigData/BigDataAnalysisEnvironmentConfiguration.html
     DataPreparation: /SuperMap-iDesktop-Cross/docs/BigData/DataPreparation.html
+    DensityAnalysis: /SuperMap-iDesktop-Cross/docs/BigData/DensityAnalysis.html
   Scene:
     SceneDia: /SuperMap-iDesktop-Cross/docs/Scene/SceneDia.html
   FAQAll:

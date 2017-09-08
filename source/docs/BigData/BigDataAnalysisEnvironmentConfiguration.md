@@ -29,6 +29,8 @@ title: 大数据分析环境配置
 
 　　![](../img/smalltitle.png) [数据准备](DataPreparation.html)
 
+　　![](../img/smalltitle.png) [密度分析](DensityAnalysis.html)
+
 
 
 
