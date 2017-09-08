@@ -103,23 +103,23 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 	private void initLayout() {
 		panel.setLayout(new GridBagLayout());
 
-		panel.add(labelUnitType, new GridBagConstraintsHelper(0,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,20));
+		panel.add(labelUnitType, new GridBagConstraintsHelper(0,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20));
 		panel.add(comboBoxUnitType, new GridBagConstraintsHelper(1,0,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelShapeType, new GridBagConstraintsHelper(0,1,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,20));
+		panel.add(labelShapeType, new GridBagConstraintsHelper(0,1,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20));
 		panel.add(comboBoxShapeType, new GridBagConstraintsHelper(1,1,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelWidth, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelWidth, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldWidth, new GridBagConstraintsHelper(1,2,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelHeight, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelHeight, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldHeight, new GridBagConstraintsHelper(1,3,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelRadius, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelRadius, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldRadius, new GridBagConstraintsHelper(1,4,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelInnerRadius, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelInnerRadius, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldInnerRadius, new GridBagConstraintsHelper(1,5,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelOuterRadius, new GridBagConstraintsHelper(0, 6, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelOuterRadius, new GridBagConstraintsHelper(0, 6, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldOuterRadius, new GridBagConstraintsHelper(1,6,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelStartAngle, new GridBagConstraintsHelper(0, 7, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelStartAngle, new GridBagConstraintsHelper(0, 7, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldStartAngle, new GridBagConstraintsHelper(1,7,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelEndAngle, new GridBagConstraintsHelper(0, 8, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,0,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelEndAngle, new GridBagConstraintsHelper(0, 8, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,0,20).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldEndAngle, new GridBagConstraintsHelper(1,8,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,0,0));
 		setComponentVisible(new JComponent[]{labelWidth,labelHeight,textFieldWidth,textFieldHeight});
 	}
