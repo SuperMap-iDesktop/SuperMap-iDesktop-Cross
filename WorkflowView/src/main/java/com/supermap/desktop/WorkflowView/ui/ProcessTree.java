@@ -7,6 +7,7 @@ import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.loader.IProcessGroup;
 import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.ui.SmDialogProcess;
+import com.supermap.desktop.ui.controls.comboBox.SearchItemValueGetter;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -22,7 +23,7 @@ import java.awt.event.MouseEvent;
 /**
  * Created by xie on 2017/2/23.
  */
-public class ProcessTree extends JTree {
+public class ProcessTree extends JTree implements SearchItemValueGetter<DefaultMutableTreeNode> {
 	private static final Icon ICON_GROUP = ProcessResources.getIcon("/processresources/Image_ProcessGroup.png");
 	private static final Icon ICON_PROCESS = ProcessResources.getIcon("/processresources/Image_Process.png");
 
@@ -60,6 +61,9 @@ public class ProcessTree extends JTree {
 			@Override
 			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 
+				if (value == null) {
+					return new JLabel();
+				}
 				Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
 //				ProcessTreeNodeBean bean = (ProcessTreeNodeBean) ((DefaultMutableTreeNode) value).getUserObject();
 				JLabel jLabel = new JLabel();
@@ -96,6 +100,11 @@ public class ProcessTree extends JTree {
 				}
 			}
 		});
+	}
+
+	@Override
+	public String getSearchString(DefaultMutableTreeNode item) {
+		return getTitle(item.getUserObject());
 	}
 
 	class TreeDropAndDragHandler extends DropAndDragHandler {

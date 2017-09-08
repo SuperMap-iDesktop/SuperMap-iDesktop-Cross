@@ -8,6 +8,7 @@ import javax.swing.*;
 public class JSearchComboBox<E> extends JComboBox<E> {
 	public JSearchComboBox() {
 		super();
+		this.setEditable(true);
 		setModel(new SearchBoxModel<>(this));
 	}
 
@@ -23,5 +24,13 @@ public class JSearchComboBox<E> extends JComboBox<E> {
 			return ((SearchBoxModel) getModel()).getSelectedIndex();
 		}
 		return super.getSelectedIndex();
+	}
+
+	public void setIcon(Icon icon) {
+		for (int i = 0; i < getComponentCount(); i++) {
+			if (getComponent(i) instanceof JButton) {
+				((JButton) getComponent(i)).setIcon(icon);
+			}
+		}
 	}
 }
