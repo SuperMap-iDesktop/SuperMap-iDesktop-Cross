@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1504777106515
+Bnd-LastModified: 1504841207206
 Build-Jdk: 1.7.0_80
 Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.core.CoreActivator
@@ -716,10 +716,10 @@ Export-Package: com.supermap.desktop;version="1.0.0";uses:="com.supermap
  nc,com.mongodb.binding,com.mongodb.bulk,com.mongodb.connection",com.mon
  godb.selector;version="3.0.4";uses:="com.mongodb,com.mongodb.annotation
  s,com.mongodb.connection",com.mongodb.util;version="3.0.4",net.sf.image
- 4j.codec.bmp;version="1.0.0",net.sf.image4j.codec.ico;uses:="net.sf.ima
- ge4j.codec.bmp";version="1.0.0",net.sourceforge.pinyin4j;uses:="net.sou
- rceforge.pinyin4j.format,net.sourceforge.pinyin4j.format.exception";ver
- sion="1.0.0",net.sourceforge.pinyin4j.format;version="1.0.0",net.source
+ 4j.codec.bmp;version="1.0.0",net.sf.image4j.codec.ico;version="1.0.0";u
+ ses:="net.sf.image4j.codec.bmp",net.sourceforge.pinyin4j;version="1.0.0
+ ";uses:="net.sourceforge.pinyin4j.format,net.sourceforge.pinyin4j.forma
+ t.exception",net.sourceforge.pinyin4j.format;version="1.0.0",net.source
  forge.pinyin4j.format.exception;version="1.0.0",net.sourceforge.pinyin4
  j.multipinyin;version="1.0.0"
 Import-Package: org.osgi.framework;version="[1.8,1.9)",org.osgi.util.tra
