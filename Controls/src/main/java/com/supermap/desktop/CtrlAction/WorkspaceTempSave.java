@@ -101,10 +101,13 @@ public class WorkspaceTempSave {
 			@Override
 			public void run() {
 				boolean saveSuccess = autoSave(false);
+				if (null == workspace) {
+					return;
+				}
 				if (saveSuccess) {
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_WorkspaceSaveSuccess"), workspace.getCaption()));
 				} else {
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_WorkspaceSaveFailed"),workspace.getCaption()));
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_WorkspaceSaveFailed"), workspace.getCaption()));
 				}
 			}
 		};

@@ -31,6 +31,8 @@ public class ParameterType {
 	public static final String MULTI_BUFFER_RADIOLIST = " MultiBufferRadioList";
 	public static final String STATISTICS_FIELD_FOR_RAREFY_POINTS = "StatisticsFieldForRarefyPoints";
 	public static final String RASTER_RECLASS = "RasterReclass";
+	public static final String SOLAR_RADIATION="SolarRadiation";
+	public static final String CHECK_AND_TEXTFIELD="CheckAndTextfield";
 
 
 	public static final String HDFS_PATH = "HDFSPath";
