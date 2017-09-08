@@ -69,14 +69,7 @@ title: 数据准备
 
 ### ![](../img/seealso.png) 相关主题
 
-　　![](../img/smalltitle.png) [基础词汇](BasicVocabulary.html)
+　　![](../img/smalltitle.png) [环境配置](BigDataAnalysisEnvironmentConfiguration.html)
 
-　　![](../img/smalltitle.png) [地理度量分析](MeasureGeographicDistributions.html)
-
-　　![](../img/smalltitle.png) [聚类分析](Clusters.html)
-
-　　![](../img/smalltitle.png) [空间关系建模](SpatialRelationshipModeling.html)
-
-　　![](../img/smalltitle.png) [分析模式](AnalyzingPatterns.html)
 
 
