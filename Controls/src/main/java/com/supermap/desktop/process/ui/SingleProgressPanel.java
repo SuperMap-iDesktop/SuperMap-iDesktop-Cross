@@ -144,6 +144,7 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 
 	@Override
 	public void done() {
+		this.labelRemaintime.setVisible(false);
 		this.buttonRun.setProcedure(ButtonExecutor.READY);
 	}
 }

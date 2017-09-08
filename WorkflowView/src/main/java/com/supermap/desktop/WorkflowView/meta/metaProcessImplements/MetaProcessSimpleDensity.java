@@ -143,12 +143,17 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 				isSuccessful = false;
 			}
 
-			fireRunning(new RunningEvent(this, 100, CoreProperties.getString(isSuccessful ? "String_Message_Succeed" : "String_Message_Failed")));
 			parameters.getOutputs().getData("SimpleDensityResult").setValue("");// // TODO: 2017/5/26
 			CursorUtilities.setDefaultCursor();
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-			return false;
+			isSuccessful = false;
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+		}
+
+		if (isSuccessful) {
+			fireRunning(new RunningEvent(this, 100, CoreProperties.getString("String_Message_Succeed")));
+		} else {
+			fireRunning(new RunningEvent(this, 0, CoreProperties.getString("String_Message_Failed")));
 		}
 		return isSuccessful;
 	}

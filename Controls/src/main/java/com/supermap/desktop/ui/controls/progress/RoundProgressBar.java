@@ -52,28 +52,6 @@ public class RoundProgressBar extends JPanel {
 	private int percentLoc = 0;
 	private boolean isReversed = false;
 	private java.util.Timer updateIndeterminateTimer;
-	private TimerTask updateIndeterminateTimerTask = new TimerTask() {
-		@Override
-		public void run() {
-			if (isReversed) {
-				percentLoc--;
-			} else {
-				percentLoc++;
-			}
-
-			if ((percentLoc == 100 && !isReversed)
-					|| percentLoc == 0 && isReversed) {
-				isReversed = !isReversed;
-			}
-
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					repaint();
-				}
-			});
-		}
-	};
 
 	public RoundProgressBar() {
 		setMinimumProgress(0);
@@ -178,7 +156,29 @@ public class RoundProgressBar extends JPanel {
 
 		this.isIndeterminate = true;
 		this.updateIndeterminateTimer = new Timer();
-		this.updateIndeterminateTimer.schedule(this.updateIndeterminateTimerTask, 100, 15);
+		TimerTask updateIndeterminateTimerTask = new TimerTask() {
+			@Override
+			public void run() {
+				if (isReversed) {
+					percentLoc--;
+				} else {
+					percentLoc++;
+				}
+
+				if ((percentLoc == 100 && !isReversed)
+						|| percentLoc == 0 && isReversed) {
+					isReversed = !isReversed;
+				}
+
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						repaint();
+					}
+				});
+			}
+		};
+		this.updateIndeterminateTimer.schedule(updateIndeterminateTimerTask, 100, 15);
 	}
 
 	public void stopUpdateProgressIndeterminate() {
