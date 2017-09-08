@@ -2,11 +2,8 @@ package com.supermap.desktop.dialog.cacheClip.cache;
 
 import com.supermap.data.*;
 import com.supermap.data.processing.CacheWriter;
-import com.supermap.desktop.dialog.SmOptionPane;
-import com.supermap.desktop.mapview.MapViewProperties;
 
 import java.io.*;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,11 +56,14 @@ public class TaskBuilder {
 				String checkPath = CacheUtilities.replacePath(args[1], "check");
 				String datasourcePath = CacheUtilities.replacePath(checkPath, datasourceName + ".udb");
 				File datasourceFile = new File(datasourcePath);
-				if (datasourceFile.exists()) {
-					SmOptionPane smOptionPane = new SmOptionPane();
-					smOptionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Message_UDBExist"), datasourcePath));
-					return false;
-				} else {
+//				if (datasourceFile.exists()) {
+//					SmOptionPane smOptionPane = new SmOptionPane();
+//					smOptionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Message_UDBExist"), datasourcePath));
+//					return false;
+//				} else {
+//					datasourceFile.getParentFile().mkdirs();
+//				}
+				if (!datasourceFile.exists()) {
 					datasourceFile.getParentFile().mkdirs();
 				}
 				DatasourceConnectionInfo info = new DatasourceConnectionInfo();

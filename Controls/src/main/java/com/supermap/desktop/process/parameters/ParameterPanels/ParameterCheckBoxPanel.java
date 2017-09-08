@@ -7,6 +7,8 @@ import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +40,12 @@ public class ParameterCheckBoxPanel extends SwingPanel implements IParameterPane
 
 	private void initLayout() {
 		panel.setLayout(new GridBagLayout());
-		panel.add(checkBox, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
+		if (!StringUtilities.isNullOrEmpty(parameterCheckBox.getTip())) {
+			panel.add(checkBox, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
+			panel.add(new WarningOrHelpProvider(parameterCheckBox.getTip(), false), new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		} else {
+			panel.add(checkBox, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
+		}
 	}
 
 	private void initListeners() {

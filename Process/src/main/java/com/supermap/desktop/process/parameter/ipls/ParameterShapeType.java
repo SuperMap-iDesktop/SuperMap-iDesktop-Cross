@@ -3,6 +3,7 @@ package com.supermap.desktop.process.parameter.ipls;
 import com.supermap.analyst.spatialanalyst.NeighbourShape;
 import com.supermap.analyst.spatialanalyst.NeighbourShapeType;
 import com.supermap.analyst.spatialanalyst.NeighbourStatisticsParameter;
+import com.supermap.data.Dataset;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
@@ -16,6 +17,9 @@ import java.beans.PropertyChangeEvent;
 public class ParameterShapeType extends AbstractParameter implements ISelectionParameter {
 	@ParameterField(name = "value")
 	private NeighbourShape selectedItem;
+	public static final String DATASET_FIELD_NAME = "Dataset";
+	@ParameterField(name = DATASET_FIELD_NAME)
+	private Dataset dataset;
 
 	@Override
 	public void setSelectedItem(Object item) {
@@ -39,6 +43,14 @@ public class ParameterShapeType extends AbstractParameter implements ISelectionP
 	@Override
 	public void dispose() {
 
+	}
+
+	public Dataset getDataset() {
+		return dataset;
+	}
+
+	public void setDataset(Dataset dataset) {
+		this.dataset = dataset;
 	}
 
 	@Override

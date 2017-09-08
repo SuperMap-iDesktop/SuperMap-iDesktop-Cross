@@ -1,8 +1,10 @@
 package com.supermap.desktop.ui.controls.CollectionDataset;
 
+import com.supermap.data.DatasourceConnectionInfo;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.table.AbstractTableModel;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 	public final int COLUMN_IMAGE_STATE = 2;
 
 	public final int COLUMN_VECTOR_NAME = 0;
-	public final int COLUMN_VECTOR_STATE = 1;
+	public final int COLUMN_VECTOR_CONNECTIONINFO = 1;
 
 	private String[] title = null;
 	private ArrayList<DatasetInfo> datasetInfos = new ArrayList<>();
@@ -35,8 +37,8 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 						CommonProperties.getString("String_FieldName"),
 						CommonProperties.getString("String_State")} :
 				new String[]{CommonProperties.getString("String_FieldName")
-//						, CommonProperties.getString("String_State")
-		};
+						, CommonProperties.getString("String_DatasourceConnectionInfo")
+				};
 	}
 
 	@Override
@@ -87,9 +89,9 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		if (collectionType == IMAGE_COLLECTION_TYPE && columnIndex == COLUMN_IMAGE_CAPTION) {
-			return true;
-		}
+//		if (collectionType == IMAGE_COLLECTION_TYPE && columnIndex == COLUMN_IMAGE_CAPTION) {
+//			return true;
+//		}
 		return false;
 	}
 
@@ -125,9 +127,11 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 			if (columnIndex == COLUMN_VECTOR_NAME) {
 				return datasetInfo.getName();
 			}
-//			if (columnIndex == COLUMN_VECTOR_STATE) {
-//				return datasetInfo.getState();
-//			}
+			if (columnIndex == COLUMN_VECTOR_CONNECTIONINFO) {
+				DatasourceConnectionInfo connectionInfo = datasetInfo.getDataset().getDatasource().getConnectionInfo();
+				return MessageFormat.format(CommonProperties.getString("String_DatasourceConnectionInfoTip"),
+						connectionInfo.getServer(), connectionInfo.getEngineType(), connectionInfo.getAlias(), connectionInfo.getUser());
+			}
 		}
 		return "";
 	}
@@ -149,7 +153,7 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 			if (columnIndex == COLUMN_VECTOR_NAME) {
 				datasetInfos.get(rowIndex).setName((String) aValue);
 			}
-//			if (columnIndex == COLUMN_VECTOR_STATE) {
+//			if (columnIndex == COLUMN_VECTOR_CONNECTIONINFO) {
 //				datasetInfos.get(rowIndex).setState((String) aValue);
 //			}
 		}

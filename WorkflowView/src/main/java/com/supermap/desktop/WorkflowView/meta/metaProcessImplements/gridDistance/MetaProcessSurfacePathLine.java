@@ -113,11 +113,6 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 		parameterTargetPointX = new ParameterNumber(ProcessProperties.getString("String_TargetPointX"));
 		parameterTargetPointY = new ParameterNumber(ProcessProperties.getString("String_TargetPointY"));
 
-		parameterSourcePointX.setToolTip(ProcessProperties.getString("String_SourcePointX").replace(":", ProcessProperties.getString("String_ZonalStatistic_ValueData")));
-		parameterSourcePointY.setToolTip(ProcessProperties.getString("String_SourcePointY").replace(":", ProcessProperties.getString("String_ZonalStatistic_ValueData")));
-		parameterTargetPointX.setToolTip(ProcessProperties.getString("String_TargetPointX").replace(":", ProcessProperties.getString("String_ZonalStatistic_ValueData")));
-		parameterTargetPointY.setToolTip(ProcessProperties.getString("String_TargetPointY").replace(":", ProcessProperties.getString("String_ZonalStatistic_ValueData")));
-
 		parameterSourcePointX.setRequisite(true);
 		parameterSourcePointY.setRequisite(true);
 		parameterTargetPointX.setRequisite(true);

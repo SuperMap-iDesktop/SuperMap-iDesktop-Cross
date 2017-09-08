@@ -33,7 +33,7 @@ import java.beans.PropertyChangeListener;
 /**
  * Created by lixiaoyao on 2017/7/21.
  */
-public class  LayerGridAggregationPropertyControl extends AbstractLayerPropertyControl {
+public class LayerGridAggregationPropertyControl extends AbstractLayerPropertyControl {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel labelGridField;
@@ -266,15 +266,11 @@ public class  LayerGridAggregationPropertyControl extends AbstractLayerPropertyC
 			this.smSpinnerMinColorTransparence.setValue(getLayerPropertyModel().getMinColorTransparence());
 			this.checkboxShowLabel.setSelected(getLayerPropertyModel().getShowGridLabel());
 			this.buttonSetingLabel.setEnabled(this.checkboxShowLabel.isSelected());
-//			if (getLayerPropertyModel().getLineStyle()==null){
-//				System.out.println("111111111");
-//			}
 			fillLineStyle(getLayerPropertyModel().getLineStyle());
 			if (getLayerPropertyModel().getTextStyle() == null) {
-				//System.out.println("22222222");
 				this.textStyle = new TextStyle();
-			}else{
-				this.textStyle=getLayerPropertyModel().getTextStyle().clone();
+			} else {
+				this.textStyle = getLayerPropertyModel().getTextStyle();
 			}
 		}
 	}
@@ -424,13 +420,13 @@ public class  LayerGridAggregationPropertyControl extends AbstractLayerPropertyC
 		public void actionPerformed(ActionEvent e) {
 			labelSettingDialog = new LabelSettingDialog(textStyle);
 			labelSettingDialog.showDialog();
-			if (labelSettingDialog.getDialogResult()==DialogResult.OK){
+			if (labelSettingDialog.getDialogResult() == DialogResult.OK) {
 				textStyleChange();
 			}
 		}
 	};
 
-	private ItemListener selectedChangeListenerLineType=new ItemListener() {
+	private ItemListener selectedChangeListenerLineType = new ItemListener() {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			comboBoxLineTypeChange();
@@ -488,17 +484,17 @@ public class  LayerGridAggregationPropertyControl extends AbstractLayerPropertyC
 			this.comboBoxLineType.addItem(this.dataCellDottedLine);
 			this.comboBoxLineType.setRenderer(new CommonListCellRenderer());
 			if (lineStyle != null) {
-				if (lineStyle.getLineSymbolID()==0){
+				if (lineStyle.getLineSymbolID() == 0) {
 					this.comboBoxLineType.setSelectedIndex(1);
-				}else if (lineStyle.getLineSymbolID()==1){
+				} else if (lineStyle.getLineSymbolID() == 1) {
 					this.comboBoxLineType.setSelectedIndex(2);
 				}
 				this.componentDropDownLineColor.setColor(lineStyle.getLineColor());
 				this.smSpinnerLineColorTransparence.setValue((int) Math.round((1.0 - lineStyle.getLineColor().getAlpha() / 255.0) * 100));
 				this.smSpinnerLineWidth.setValue(lineStyle.getLineWidth());
-				this.lineStyle=lineStyle.clone();
+				this.lineStyle = lineStyle.clone();
 			} else {
-				this.lineStyle=new GeoStyle();
+				this.lineStyle = new GeoStyle();
 				this.lineStyle.setLineColor(Color.WHITE);
 				this.lineStyle.setLineWidth(0);
 				this.componentDropDownLineColor.setColor(this.lineStyle.getLineColor());
@@ -577,33 +573,33 @@ public class  LayerGridAggregationPropertyControl extends AbstractLayerPropertyC
 		return newColor;
 	}
 
-	private void showLabelChange(){
+	private void showLabelChange() {
 		this.buttonSetingLabel.setEnabled(this.checkboxShowLabel.isSelected());
 		getModifiedLayerPropertyModel().setShowGridLabel(this.checkboxShowLabel.isSelected());
 		checkChanged();
 	}
 
-	private void textStyleChange(){
-		this.textStyle=this.labelSettingDialog.getTextStyle().clone();
+	private void textStyleChange() {
+		this.textStyle = this.labelSettingDialog.getTextStyle().clone();
 		getModifiedLayerPropertyModel().setTextStyle(this.textStyle.clone());
 		checkChanged();
 	}
 
-	private void comboBoxLineTypeChange(){
-		if (comboBoxLineType.getSelectedItem()!=null){
-			if (comboBoxLineType.getSelectedIndex()==0){
+	private void comboBoxLineTypeChange() {
+		if (comboBoxLineType.getSelectedItem() != null) {
+			if (comboBoxLineType.getSelectedIndex() == 0) {
 				this.lineStyle.setLineSymbolID(5);
-			}else if (comboBoxLineType.getSelectedIndex()==1){
+			} else if (comboBoxLineType.getSelectedIndex() == 1) {
 				this.lineStyle.setLineSymbolID(0);
-			}else if (comboBoxLineType.getSelectedIndex()==2){
+			} else if (comboBoxLineType.getSelectedIndex() == 2) {
 				this.lineStyle.setLineSymbolID(1);
 			}
 		}
 		lineStyleChange();
 	}
 
-	private void lineColorChange(){
-		if (this.componentDropDownLineColor.getColor()==null){
+	private void lineColorChange() {
+		if (this.componentDropDownLineColor.getColor() == null) {
 			this.componentDropDownLineColor.setColor(Color.WHITE);
 		}
 		this.lineStyle.setLineColor(this.componentDropDownLineColor.getColor());
@@ -625,7 +621,7 @@ public class  LayerGridAggregationPropertyControl extends AbstractLayerPropertyC
 		lineStyleChange();
 	}
 
-	private void lineStyleChange(){
+	private void lineStyleChange() {
 		getModifiedLayerPropertyModel().setLineStyle(this.lineStyle.clone());
 		checkChanged();
 	}

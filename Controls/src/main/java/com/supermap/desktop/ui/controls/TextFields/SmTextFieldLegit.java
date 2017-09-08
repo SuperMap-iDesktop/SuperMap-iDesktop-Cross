@@ -8,6 +8,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.Vector;
 
 /**
  * 文本输入框
@@ -19,16 +20,49 @@ import java.awt.event.FocusEvent;
 public class SmTextFieldLegit extends JTextField {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
 	private String backUpValue = "";
 
-	private ISmTextFieldLegit smTextFieldLegit;
+	protected ISmTextFieldLegit smTextFieldLegit;
+
+	private Vector<ISmTextFieldLegit> vector;
 
 	private static final Color IL_LEGAL_COLOR = Color.red;
 	private static final Color LEGAL_COLOR = Color.black;
+	private DocumentListener documentListener = new DocumentListener() {
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			checkTextFieldState();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			checkTextFieldState();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			checkTextFieldState();
+		}
+	};
+	private FocusAdapter focusAdapter = new FocusAdapter() {
+		@Override
+		public void focusGained(FocusEvent e) {
+			backUpValue = SmTextFieldLegit.this.getText();
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			// 丢失焦点时获得一个合法值
+			if (!isLegitValue(SmTextFieldLegit.this.getText())) {
+				SmTextFieldLegit.this.setForeground(LEGAL_COLOR);
+				SmTextFieldLegit.this.setText(smTextFieldLegit.getLegitValue(SmTextFieldLegit.this.getText(), SmTextFieldLegit.this.backUpValue));
+			}
+		}
+	};
 
 	public SmTextFieldLegit() {
 		this(null);
@@ -47,40 +81,19 @@ public class SmTextFieldLegit extends JTextField {
 				return backUpValue;
 			}
 		};
-		this.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				checkTextFieldState();
-			}
+		registerEvents();
+	}
 
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				checkTextFieldState();
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				checkTextFieldState();
-			}
-		});
-
+	private void registerEvents() {
+		removeEvents();
+		this.getDocument().addDocumentListener(documentListener);
 		// 丢失焦点还原为最近一次修改
+		this.addFocusListener(focusAdapter);
+	}
 
-		this.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				backUpValue = SmTextFieldLegit.this.getText();
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				// 丢失焦点时获得一个合法值
-				if (!isLegitValue(SmTextFieldLegit.this.getText())) {
-					SmTextFieldLegit.this.setForeground(LEGAL_COLOR);
-					SmTextFieldLegit.this.setText(smTextFieldLegit.getLegitValue(SmTextFieldLegit.this.getText(), SmTextFieldLegit.this.backUpValue));
-				}
-			}
-		});
+	public void removeEvents() {
+		this.getDocument().removeDocumentListener(documentListener);
+		this.removeFocusListener(focusAdapter);
 	}
 
 	/**
@@ -100,6 +113,7 @@ public class SmTextFieldLegit extends JTextField {
 	 */
 	public void setSmTextFieldLegit(ISmTextFieldLegit smTextFieldLegit) {
 		this.smTextFieldLegit = smTextFieldLegit;
+		registerEvents();
 	}
 
 	/**
@@ -129,4 +143,5 @@ public class SmTextFieldLegit extends JTextField {
 		super.setEditable(b);
 		this.setFocusable(b);
 	}
+
 }

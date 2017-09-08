@@ -1,4 +1,4 @@
-package com.supermap.desktop.CtrlAction;
+package com.supermap.desktop.ui.controls.DateTimeComponent;
 
 import javax.swing.*;
 import javax.swing.event.AncestorEvent;
@@ -40,7 +40,7 @@ public class CalendarChooser extends JPanel {
 
 	private JComponent showDate;
 	private boolean isShow = false;
-	private static final String DEFAULTFORMAT = "yyyy-MM-dd";
+	private static String DEFAULTFORMAT = "yyyy-MM-dd";
 	private static final String[] showTEXT = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 	private static WeekLabel[] weekLabels = new WeekLabel[7];
 	private static int defaultStartDAY = 0;// 0 is from Sun, 1 is from Mon, 2 is from Tue
@@ -76,6 +76,14 @@ public class CalendarChooser extends JPanel {
 
 	public static CalendarChooser getInstance() {
 		return getInstance(new java.util.Date(), DEFAULTFORMAT);
+	}
+
+	public CalendarChooser(String format){
+		DEFAULTFORMAT=format;
+	}
+
+	public static void setFormat(String format){
+		DEFAULTFORMAT=format;
 	}
 
 	private void initCalendarPanel() {
@@ -601,13 +609,30 @@ public class CalendarChooser extends JPanel {
 		text.setText("2013-10-11");
 		ser.register(text);
 
-		CalendarChooser ser2 = CalendarChooser.getInstance("yyyy年MM月dd日");
-		JLabel label = new JLabel("please click me.");
-		label.setBounds(10, 50, 200, 30);
-		ser2.register(label);
+		Date date=new Date(2017,6,6,0,0);
+//		Date startDate=new Date("0:00");
+//		Date endDate=new Date("23:59");
+
+//		JSpinner jSpinner=new JSpinner(new SpinnerDateModel());
+//		jSpinner.setValue(date);
+//		JSpinner.DateEditor dateEditor_2 = new JSpinner.DateEditor(jSpinner, "hh:mm:ss");
+//		jSpinner.setEditor(dateEditor_2);
+//		jSpinner.setBounds(10, 100, 200, 30);
+
+		DateSpinner dateSpinner=new DateSpinner(new SpinnerDateModel());
+		dateSpinner.setValue(date);
+		dateSpinner.setSpinnerFormat(DateSpinnerFormat.HOUR_MINUTE);
+		dateSpinner.setBounds(10, 100, 200, 30);
+
+		DateSpinner calendarTextField=new DateSpinner(new SpinnerDateModel());
+		//calendarTextField.setText("2013-10-11");
+		calendarTextField.setSpinnerFormat(DateSpinnerFormat.MONTH_DAY);
+		calendarTextField.setBounds(10, 50, 200, 30);
+
 
 		jf.add(text);
-		jf.add(label);
+		jf.add(calendarTextField);
+		jf.add(dateSpinner);
 		jf.setVisible(true);
 	}
 }

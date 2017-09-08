@@ -122,25 +122,6 @@ public class RoundProgressBar extends JPanel {
 		}
 	}
 
-	private void paintProgress(Graphics2D g) {
-		int progressWidth = getWidth() / 4;
-
-		int x = 5;
-		int y = (getHeight() / 2 - 5) > 0 ? (getHeight() / 2 - 5) : 5;
-		g.drawRoundRect((int) (x + (getWidth() - progressWidth - 20) * ((percentLoc + 0.0) / 100)), y, progressWidth, 8, 8, 8);
-
-		if (isReversed) {
-			percentLoc--;
-		} else {
-			percentLoc++;
-		}
-
-		if ((percentLoc == 100 && !isReversed)
-				|| percentLoc == 0 && isReversed) {
-			isReversed = !isReversed;
-		}
-	}
-
 	/**
 	 * @return
 	 */

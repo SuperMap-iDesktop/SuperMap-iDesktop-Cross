@@ -97,9 +97,10 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	private void initComponentState() {
 		parameterInputDataType.parameterDataInputWay.removeAllItems();
 		parameterInputDataType.parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PGDataBase"), "2"));
+		parameterInputDataType.parameterSwitch.switchParameter("1");
 		parameterInputDataType.setSupportDatasetType(DatasetType.LINE, DatasetType.REGION);
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.LINE, DatasetType.REGION);
-		if (defaultBigDataStoreDataset != null) {
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		if (defaultBigDataStoreDataset != null && (DatasetType.LINE == defaultBigDataStoreDataset.getType() || DatasetType.REGION == defaultBigDataStoreDataset.getType())) {
 			parameterBigDatasourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterSingleDataset.setSelectedItem(defaultBigDataStoreDataset);
 		}
@@ -169,7 +170,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterCombineSetting.addParameters(parameterSummaryType, parameterSwitch, parameterStandardFields, switchStandardFields,
 				parameterWeightedFields, switchWeightedFields, parametersumShape);
 		parameters.addParameters(parameterIServerLogin, parameterInputDataType, parameterCombineSetting);
-		parameters.getOutputs().addData("SummaryRegionResult", ProcessOutputResultProperties.getString("String_BoundsAnalysisResult"),Type.UNKOWN);
+		parameters.getOutputs().addData("SummaryRegionResult", ProcessOutputResultProperties.getString("String_BoundsAnalysisResult"), Type.UNKOWN);
 	}
 
 	private void initConstraint() {
@@ -186,13 +187,14 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 
 	@Override
 	public boolean execute() {
-		boolean isSuccess;
+		boolean isSuccessful;
 		try {
 			if (parameterStandardFields.getSelectedItem().toString().equals("false") && parameterWeightedFields.getSelectedItem().toString().equals("false")) {
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SummaryRegionMessage"));
 				return false;
 			}
-			fireRunning(new RunningEvent(this, 0, "start"));
+
+			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
 			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
@@ -234,42 +236,13 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 			JobResultResponse response = service.queryResult(MetaKeys.SUMMARY_REGION, commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
-				NewMessageBus messageBus = new NewMessageBus(response, new IUpdateProgress() {
-					@Override
-					public boolean isCancel() {
-						return false;
-					}
-
-					@Override
-					public void setCancel(boolean isCancel) {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-						fireRunning(new RunningEvent(MetaProcessSummaryRegion.this, percent, message, -1));
-					}
-
-					@Override
-					public void updateProgress(String message, int percent, String currentMessage) throws CancellationException {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, String recentTask, int totalPercent, String message) throws CancellationException {
-
-					}
-				}, DefaultOpenServerMap.INSTANCE);
-				isSuccess = messageBus.run();
+				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);
+				isSuccessful = messageBus.run();
 			} else {
-				fireRunning(new RunningEvent(this, 100, "Failed"));
-				isSuccess = false;
+				isSuccessful = false;
 			}
+
+			fireRunning(new RunningEvent(this, 100, CoreProperties.getString(isSuccessful ? "String_Message_Succeed" : "String_Message_Failed")));
 			parameters.getOutputs().getData("SummaryRegionResult").setValue("");
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -277,7 +250,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		} finally {
 			CursorUtilities.setDefaultCursor();
 		}
-		return isSuccess;
+		return isSuccessful;
 	}
 
 	@Override

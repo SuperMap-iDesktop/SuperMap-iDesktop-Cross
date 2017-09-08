@@ -16,6 +16,7 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 	private String describe;
 	private String unit;
 	private String toolTip;
+	private String tipButtonMessage;
 
 	@ParameterField(name = PROPERTY_VALE)
 	private String value = "";
@@ -94,6 +95,14 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 	 */
 	public String getUnit() {
 		return this.unit;
+	}
+
+	public String getTipButtonMessage() {
+		return tipButtonMessage;
+	}
+
+	public void setTipButtonMessage(String tipButtonMessage) {
+		this.tipButtonMessage = tipButtonMessage;
 	}
 
 	public String getToolTip() {

@@ -95,8 +95,9 @@ public class MetaProcessSingleQuery extends MetaProcess {
 
 	private void initComponentState() {
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
-		if (defaultBigDataStoreDataset != null) {
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		if (defaultBigDataStoreDataset != null && (DatasetType.POINT == defaultBigDataStoreDataset.getType() || DatasetType.LINE == defaultBigDataStoreDataset.getType()
+				|| DatasetType.REGION == defaultBigDataStoreDataset.getType())) {
 			parameterQueryDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
 			parameterQueryDataset.setSelectedItem(defaultBigDataStoreDataset);
 		}
@@ -120,8 +121,9 @@ public class MetaProcessSingleQuery extends MetaProcess {
 
 	@Override
 	public boolean execute() {
-		boolean isSuccess;
+		boolean isSuccessful;
 		try {
+			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
 			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
@@ -137,42 +139,13 @@ public class MetaProcessSingleQuery extends MetaProcess {
 			CursorUtilities.setWaitCursor();
 			JobResultResponse response = service.queryResult(MetaKeys.SINGLE_QUERY, commonSettingCombine.getFinalJSon());
 			if (null != response) {
-				NewMessageBus messageBus = new NewMessageBus(response, new IUpdateProgress() {
-					@Override
-					public boolean isCancel() {
-						return false;
-					}
-
-					@Override
-					public void setCancel(boolean isCancel) {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-						fireRunning(new RunningEvent(MetaProcessSingleQuery.this, percent, message, -1));
-					}
-
-					@Override
-					public void updateProgress(String message, int percent, String currentMessage) throws CancellationException {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, String recentTask, int totalPercent, String message) throws CancellationException {
-
-					}
-				}, DefaultOpenServerMap.INSTANCE);
-				isSuccess = messageBus.run();
+				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);
+				isSuccessful = messageBus.run();
 			} else {
-				fireRunning(new RunningEvent(this, 100, "Failed"));
-				isSuccess = false;
+				isSuccessful = false;
 			}
+
+			fireRunning(new RunningEvent(this, 100, CoreProperties.getString(isSuccessful ? "String_Message_Succeed" : "String_Message_Failed")));
 			parameters.getOutputs().getData("QueryResult").setValue("");
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -180,7 +153,7 @@ public class MetaProcessSingleQuery extends MetaProcess {
 		} finally {
 			CursorUtilities.setDefaultCursor();
 		}
-		return isSuccess;
+		return isSuccessful;
 	}
 
 	@Override

@@ -5,7 +5,7 @@
     <Name>CA_Red Rose</Name>
     <Author>SuperMap</Author>
     <Description>Random</Description>
-    <Favorites>False</Favorites>
+    <Favorites>True</Favorites>
     <ColorSystem>1</ColorSystem>
     <IntervalColorBuildMethod>1</IntervalColorBuildMethod>
     <KeyColorCount>3</KeyColorCount>

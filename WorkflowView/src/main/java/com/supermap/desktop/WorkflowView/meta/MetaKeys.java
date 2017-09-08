@@ -62,6 +62,7 @@ public class MetaKeys {
 	public static final String SHORTEST_PATH = "ShortestPath";
 	public static final String SURFACE_PATH_LINE = "SurfacePathLine";
 	public static final String CREATE_DISTANCE_RASTER = "CreateDistanceRaster";
+	public static final String SOLAR_RADIATION="SolarRadiation";
 
 	// 水文分析
 	public static final String FILL_SINK = "FillSink";

@@ -1,28 +1,10 @@
 package com.supermap.desktop.CtrlAction;
 
-import com.supermap.data.Datasources;
-import com.supermap.data.EngineType;
-import com.supermap.data.Workspace;
-import com.supermap.data.WorkspaceClosingEvent;
-import com.supermap.data.WorkspaceClosingListener;
-import com.supermap.data.WorkspaceConnectionInfo;
-import com.supermap.data.WorkspaceOpenedEvent;
-import com.supermap.data.WorkspaceOpenedListener;
-import com.supermap.data.WorkspaceSavedAsEvent;
-import com.supermap.data.WorkspaceSavedAsListener;
-import com.supermap.data.WorkspaceSavedEvent;
-import com.supermap.data.WorkspaceSavedListener;
-import com.supermap.data.WorkspaceType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilities.DatasourceUtilities;
-import com.supermap.desktop.utilities.FileUtilities;
-import com.supermap.desktop.utilities.LogUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.desktop.utilities.WorkspaceConnectionInfoUtilities;
-import com.supermap.desktop.utilities.WorkspaceUtilities;
-import com.supermap.desktop.utilities.XmlUtilities;
+import com.supermap.desktop.utilities.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import sun.misc.BASE64Encoder;
@@ -118,7 +100,15 @@ public class WorkspaceTempSave {
 		task = new TimerTask() {
 			@Override
 			public void run() {
-				autoSave(false);
+				boolean saveSuccess = autoSave(false);
+				if (null == workspace) {
+					return;
+				}
+				if (saveSuccess) {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_WorkspaceSaveSuccess"), workspace.getCaption()));
+				} else {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_WorkspaceSaveFailed"), workspace.getCaption()));
+				}
 			}
 		};
 		if (timer != null) {
@@ -167,12 +157,13 @@ public class WorkspaceTempSave {
 		return appDataPath + StringUtilities.getUniqueName(defaultName, list) + ".xml";
 	}
 
-	private void autoSave(boolean isIgnoreModified) {
+	private boolean autoSave(boolean isIgnoreModified) {
+		boolean result = false;
 		Workspace activeWorkspace = Application.getActiveApplication().getWorkspace();
 
 		synchronized (activeWorkspace) {
 			if (!isIgnoreModified && !WorkspaceUtilities.isWorkspaceModified()) {
-				return;
+				return result;
 			}
 			activeWorkspace.addClosingListener(workspaceClosingListener);
 			WorkspaceConnectionInfo connectionInfo = activeWorkspace.getConnectionInfo();
@@ -227,16 +218,15 @@ public class WorkspaceTempSave {
 				} else {
 					saveSuccess = workspace.save();
 				}
+				result = saveSuccess;
 				if (System.currentTimeMillis() >= nextSaveSymbolTime) {
 					saveSymbolLibrary(activeWorkspace);
 				}
 				if (saveSuccess) {
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_WorkspaceSaveSuccess"),workspace.getCaption()));
 					if (!saveToFile(activeWorkspace, workspace)) {
 						LogUtilities.outPut("save config autoSaveWorkspaceConfigFile failed");
 					}
 				} else {
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_WorkspaceSaveFailed"),workspace.getCaption()));
 					LogUtilities.outPut("workspace autoSave failed");
 				}
 			}
@@ -245,6 +235,7 @@ public class WorkspaceTempSave {
 			// 无视改动时要更改保存时间
 			resetNextSaveTime();
 		}
+		return result;
 	}
 
 	private void resetNextSaveTime() {

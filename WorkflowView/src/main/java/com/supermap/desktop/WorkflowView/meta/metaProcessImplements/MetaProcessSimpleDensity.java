@@ -18,6 +18,7 @@ import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
 
 import java.util.concurrent.CancellationException;
@@ -112,9 +113,9 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 
 	@Override
 	public boolean execute() {
-		boolean isSuccess;
+		boolean isSuccessful;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
+			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
 			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
@@ -136,49 +137,20 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				CursorUtilities.setDefaultCursor();
-				NewMessageBus messageBus = new NewMessageBus(response, new IUpdateProgress() {
-					@Override
-					public boolean isCancel() {
-						return false;
-					}
-
-					@Override
-					public void setCancel(boolean isCancel) {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-						fireRunning(new RunningEvent(MetaProcessSimpleDensity.this, percent, message, -1));
-					}
-
-					@Override
-					public void updateProgress(String message, int percent, String currentMessage) throws CancellationException {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, String recentTask, int totalPercent, String message) throws CancellationException {
-
-					}
-				}, DefaultOpenServerMap.INSTANCE);
-				isSuccess = messageBus.run();
+				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);
+				isSuccessful = messageBus.run();
 			} else {
-				fireRunning(new RunningEvent(this, 100, "Failed"));
-				isSuccess = false;
+				isSuccessful = false;
 			}
+
+			fireRunning(new RunningEvent(this, 100, CoreProperties.getString(isSuccessful ? "String_Message_Succeed" : "String_Message_Failed")));
 			parameters.getOutputs().getData("SimpleDensityResult").setValue("");// // TODO: 2017/5/26
 			CursorUtilities.setDefaultCursor();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 			return false;
 		}
-		return isSuccess;
+		return isSuccessful;
 	}
 
 	@Override

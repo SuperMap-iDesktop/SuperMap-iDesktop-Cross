@@ -6,7 +6,6 @@ import com.supermap.analyst.spatialanalyst.Generalization;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -73,17 +72,19 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 		edgeMatchMode.setRequisite(true);
 
 		edgeTolerance = new ParameterNumber(ProcessProperties.getString("String_EdgeMatchTolerance"));
+		edgeTolerance.setTipButtonMessage(ProcessProperties.getString("String_EdgeMatchToleranceTip"));
 		edgeTolerance.setMaxBit(22);
 		edgeTolerance.setMinValue(0);
 		edgeTolerance.setIsIncludeMin(false);
 		edgeTolerance.setRequisite(true);
 
 		union = new ParameterCheckBox(ProcessProperties.getString("String_EdgeMatchUnion"));
+		union.setTip(ProcessProperties.getString("String_EdgeMatchUnionTip"));
 
 		linkDatasource = new ParameterDatasourceConstrained();
 		linkDatasetName = new ParameterTextField(ControlsProperties.getString("String_Label_ResultDataset"));
 		isLinkDataset = new ParameterCheckBox(ProcessProperties.getString("String_EdgeMatch_OutputDatasetLink"));
-
+		isLinkDataset.setTip(ProcessProperties.getString("String_EdgeMatchOutputDatasetLinkTip"));
 		// 源数据
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
 		parameterCombineSourceData.addParameters(sourceDatasource, sourceDataset);
@@ -112,7 +113,7 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 	private void initComponentState() {
 
 		Dataset datasetVector = DatasetUtilities.getDefaultDataset(DatasetType.LINE);
-		if (datasetVector != null) {
+		if (datasetVector != null && !datasetVector.isReadOnly()) {
 			sourceDatasource.setSelectedItem(datasetVector.getDatasource());
 			sourceDataset.setSelectedItem(datasetVector);
 			linkDatasource.setSelectedItem(datasetVector.getDatasource());
@@ -120,6 +121,7 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 		}
 		edgeMatchMode.setSelectedItem(EdgeMatchMode.THEOTHEREDGE);
 		edgeTolerance.setSelectedItem(0.00001);
+		union.setSelectedItem(true);
 		linkDatasetName.setSelectedItem("LinkDataset");
 
 		linkDatasource.setEnabled(false);
@@ -151,7 +153,7 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
-			DatasetVector sourceDataset = null;
+			DatasetVector sourceDataset;
 			if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
 					&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
 				sourceDataset = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
@@ -159,18 +161,24 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 				sourceDataset = (DatasetVector) this.sourceDataset.getSelectedItem();
 			}
 
-			DatasetVector targetDataset = null;
+			DatasetVector targetDataset;
 			targetDataset = (DatasetVector) this.targetDataset.getSelectedItem();
+
+			// 当数据集为空时，给出提示信息-yuanR2017.9.5
+			if (sourceDataset == null || targetDataset == null) {
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ParameterError"));
+				return false;
+			}
 
 			EdgeMatchParameter edgeMatchParameter = new EdgeMatchParameter();
 			edgeMatchParameter.setEdgeMatchMode((EdgeMatchMode) edgeMatchMode.getSelectedData());
-			edgeMatchParameter.setTolerance(Double.valueOf((String) edgeTolerance.getSelectedItem()));
-			edgeMatchParameter.setUnion("true".equalsIgnoreCase((String) union.getSelectedItem()));
+			edgeMatchParameter.setTolerance(Double.valueOf(edgeTolerance.getSelectedItem()));
+			edgeMatchParameter.setUnion("true".equalsIgnoreCase(union.getSelectedItem()));
 
-			Boolean isLinkData = "true".equalsIgnoreCase((String) isLinkDataset.getSelectedItem());
+			Boolean isLinkData = "true".equalsIgnoreCase(isLinkDataset.getSelectedItem());
 			if (isLinkData) {
-				edgeMatchParameter.setOutputDatasource((Datasource) linkDatasource.getSelectedItem());
-				edgeMatchParameter.setOutputDatasetLinkName((String) linkDatasetName.getSelectedItem());
+				edgeMatchParameter.setOutputDatasource(linkDatasource.getSelectedItem());
+				edgeMatchParameter.setOutputDatasetLinkName(linkDatasetName.getSelectedItem());
 			}
 
 			Generalization.addSteppedListener(this.steppedListener);

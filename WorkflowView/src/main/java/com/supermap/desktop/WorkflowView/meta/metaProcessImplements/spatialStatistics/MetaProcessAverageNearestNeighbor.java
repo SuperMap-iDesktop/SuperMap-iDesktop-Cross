@@ -15,6 +15,7 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.OutputFrame;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
@@ -29,7 +30,8 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 	private ParameterNumber parameterTextFieldArea = new ParameterNumber();
 	private ParameterComboBox parameterComboBox = new ParameterComboBox();
 	// 添加展示结果的textArea--yuanR
-	private ParameterTextArea parameterResult = new ParameterTextArea();
+	//去除展示textArea，分析执行过后会关闭窗口，将分析结果展示在output中-yuanR2017.9.6
+//	private ParameterTextArea parameterResult = new ParameterTextArea();
 
 	public MetaProcessAverageNearestNeighbor() {
 		initParameters();
@@ -51,14 +53,14 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
 		parameterCombineSetting.addParameters(parameterTextFieldArea, parameterComboBox);
 		parameterCombineSetting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		// 结果展示
-		ParameterCombine parameterCombineResult = new ParameterCombine();
-		parameterCombineResult.setDescribe(ProcessProperties.getString("String_result"));
-		parameterCombineResult.addParameters(parameterResult);
+//		// 结果展示
+//		ParameterCombine parameterCombineResult = new ParameterCombine();
+//		parameterCombineResult.setDescribe(ProcessProperties.getString("String_result"));
+//		parameterCombineResult.addParameters(parameterResult);
 
 		parameters.addParameters(parameterCombine, parameterCombineSetting);
 		parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.VECTOR, parameterCombine);
-		parameters.addParameters(parameterCombineResult);
+//		parameters.addParameters(parameterCombineResult);
 
 	}
 
@@ -106,7 +108,11 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 				result += ProcessProperties.getString("String_Observed_Mean_Distance") + " " + analyzingPatternsResult.getVariance() + "\n";
 				result += ProcessProperties.getString("String_ZScor") + " " + analyzingPatternsResult.getZScore() + "\n";
 				result += ProcessProperties.getString("String_PValue") + " " + analyzingPatternsResult.getPValue() + "\n";
-				parameterResult.setSelectedItem(result);
+				// 不显示时间-yuanR2017.9.6
+				((OutputFrame) Application.getActiveApplication().getOutput()).setShowTime(false);
+				Application.getActiveApplication().getOutput().output(result);
+				((OutputFrame) Application.getActiveApplication().getOutput()).setShowTime(true);
+//				parameterResult.setSelectedItem(result);
 			}
 
 		} catch (Exception e) {

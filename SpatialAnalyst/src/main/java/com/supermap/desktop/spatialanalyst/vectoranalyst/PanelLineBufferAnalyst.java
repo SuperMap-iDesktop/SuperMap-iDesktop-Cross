@@ -43,9 +43,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private PanelResultData panelResultData = new PanelResultData();
 	private PanelParameterSet panelParameterSet = new PanelParameterSet();
 
-	private Recordset recordset;
-	private Object radiusLeft;
-	private Object radiusRight;
 	private String resultDatasetName;
 
 	private boolean isArcSegmentSuitable = true;
@@ -55,8 +52,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 	private DoSome some;
 	private DatasetVector resultDatasetVector;
-	private BufferProgressCallable bufferProgressCallable;
-	private boolean isBufferSucceed;
 	private final static int DEFAULT_MIN = 4;
 	private final static int DEFAULT_MAX = 200;
 
@@ -151,7 +146,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 	}
 
-	public void intPanelLineBufferAnalyst() {
+	private void intPanelLineBufferAnalyst() {
 		// 根据数据集初始化各个面板种需要用到数据集的地方
 		this.panelBufferData.initDataset(DatasetType.LINE);
 		this.panelResultData.getComboBoxResultDataDatasource().setSelectedDatasource(
@@ -179,8 +174,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 	/**
 	 * 创建缓冲区分析
 	 */
-	public boolean CreateCurrentBuffer() {
-		isBufferSucceed = false;
+	void CreateCurrentBuffer() {
+		boolean isBufferSucceed = false;
 		if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() != null) {
 			DatasetVector sourceDatasetVector = (DatasetVector) this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset();
 			BufferAnalystParameter bufferAnalystParameter = new BufferAnalystParameter();
@@ -190,27 +185,27 @@ public class PanelLineBufferAnalyst extends JPanel {
 				createResultDataset(sourceDatasetVector);
 			}
 			// TODO yuanR 2017.3.10 需要组件对其接口进行修改，满足传入的参数符合多种情况。
-			this.radiusLeft = this.panelLineBufferRadiu.getNumericFieldComboBoxLeft().getSelectedItem().toString();
-			this.radiusRight = this.panelLineBufferRadiu.getNumericFieldComboBoxRight().getSelectedItem().toString();
+			Object radiusLeft = this.panelLineBufferRadiu.getNumericFieldComboBoxLeft().getSelectedItem();
+			Object radiusRight = this.panelLineBufferRadiu.getNumericFieldComboBoxRight().getSelectedItem();
 			// 暂时由我们桌面进行预处理，如果是可以转为数字的字符串，转换为数字
 			// 因为当源数据集是记录集时，不接受：“10” 这样的字符串
 			// 获得缓冲长度
-			if (DoubleUtilities.isDouble((String) this.radiusRight) && (DoubleUtilities.isDouble((String) this.radiusLeft))) {
-				this.radiusRight = DoubleUtilities.stringToValue(this.panelLineBufferRadiu.getNumericFieldComboBoxRight().getSelectedItem().toString());
-				this.radiusLeft = DoubleUtilities.stringToValue(this.panelLineBufferRadiu.getNumericFieldComboBoxLeft().getSelectedItem().toString());
+			if (DoubleUtilities.isDouble((String) radiusRight) && (DoubleUtilities.isDouble((String) radiusLeft))) {
+				radiusRight = DoubleUtilities.stringToValue((String) this.panelLineBufferRadiu.getNumericFieldComboBoxRight().getSelectedItem());
+				radiusLeft = DoubleUtilities.stringToValue((String) this.panelLineBufferRadiu.getNumericFieldComboBoxLeft().getSelectedItem());
 			}
 
 			if (this.panelBufferType.getRadioButtonBufferTypeRound().isSelected()) {
 				bufferAnalystParameter.setEndType(BufferEndType.ROUND);
-				bufferAnalystParameter.setLeftDistance(this.radiusLeft);
-				bufferAnalystParameter.setRightDistance(this.radiusRight);
+				bufferAnalystParameter.setLeftDistance(radiusLeft);
+				bufferAnalystParameter.setRightDistance(radiusRight);
 			} else if (this.panelBufferType.getRadioButtonBufferTypeFlat().isSelected()) {
 				bufferAnalystParameter.setEndType(BufferEndType.FLAT);
 				if (this.panelBufferType.getCheckBoxBufferLeft().isSelected()) {
-					bufferAnalystParameter.setLeftDistance(this.radiusLeft);
+					bufferAnalystParameter.setLeftDistance(radiusLeft);
 				}
 				if (this.panelBufferType.getCheckBoxBufferRight().isSelected()) {
-					bufferAnalystParameter.setRightDistance(this.radiusRight);
+					bufferAnalystParameter.setRightDistance(radiusRight);
 				}
 			}
 
@@ -221,39 +216,45 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 			// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析
 			FormProgress formProgress = new FormProgress();
-			if (this.panelBufferData.getCheckBoxGeometrySelect().isSelected()) {
-				for (int i = 0; i < this.panelBufferData.getRecordsetList().size(); i++) {
-					this.recordset = this.panelBufferData.getRecordsetList().get(i);
-					this.bufferProgressCallable = new BufferProgressCallable(this.recordset, this.resultDatasetVector, bufferAnalystParameter, this.panelParameterSet
-							.getCheckBoxUnionBuffer().isSelected(), this.panelParameterSet.getCheckBoxRemainAttributes().isSelected(), isShowInMap);
-					if (formProgress != null) {
-						formProgress.doWork(this.bufferProgressCallable);
-						this.isBufferSucceed = this.bufferProgressCallable.isSucceed();
+			BufferProgressCallable bufferProgressCallable;
+			Recordset recordset = null;
+			try {
+				if (this.panelBufferData.getCheckBoxGeometrySelect().isSelected()) {
+					for (int i = 0; i < this.panelBufferData.getRecordsetList().size(); i++) {
+						recordset = this.panelBufferData.getRecordsetList().get(i);
+						bufferProgressCallable = new BufferProgressCallable(recordset, this.resultDatasetVector, bufferAnalystParameter, this.panelParameterSet
+								.getCheckBoxUnionBuffer().isSelected(), this.panelParameterSet.getCheckBoxRemainAttributes().isSelected(), isShowInMap);
+
+						formProgress.doWork(bufferProgressCallable);
+						isBufferSucceed = bufferProgressCallable.isSucceed();
+
 					}
-				}
-				// 将生成成功生成的数据集添加到地图-yuanR 2017.3.13
-				if (isShowInMap && this.isBufferSucceed) {
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							addRecordsetDatasettoMap();
-						}
-					});
-				}
-			} else {
-				this.bufferProgressCallable = new BufferProgressCallable(sourceDatasetVector, this.resultDatasetVector, bufferAnalystParameter, this.panelParameterSet
-						.getCheckBoxUnionBuffer().isSelected(), this.panelParameterSet.getCheckBoxRemainAttributes().isSelected(), isShowInMap);
-				if (formProgress != null) {
-					formProgress.doWork(this.bufferProgressCallable);
-					this.isBufferSucceed = this.bufferProgressCallable.isSucceed();
+					// 将生成成功生成的数据集添加到地图-yuanR 2017.3.13
+					if (isShowInMap && isBufferSucceed) {
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								addRecordsetDatasettoMap();
+							}
+						});
+					}
+				} else {
+					bufferProgressCallable = new BufferProgressCallable(sourceDatasetVector, this.resultDatasetVector, bufferAnalystParameter, this.panelParameterSet
+							.getCheckBoxUnionBuffer().isSelected(), this.panelParameterSet.getCheckBoxRemainAttributes().isSelected(), isShowInMap);
+					formProgress.doWork(bufferProgressCallable);
+					isBufferSucceed = bufferProgressCallable.isSucceed();
 					// 如果生成缓冲区失败，删除新建的数据集--yuanR 2017.3.10
-					if (!this.isBufferSucceed) {
+					if (!isBufferSucceed) {
 						deleteResultDataset();
 					}
 				}
+			} catch (Exception e) {
+			} finally {
+				recordset.close();
+				recordset.dispose();
 			}
+
 		}
-		return this.isBufferSucceed;
 	}
 
 	/**
@@ -378,11 +379,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		 */
 		private boolean isAvailableDatasetName(String name) {
 			if (panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource() != null) {
-				if (panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getDatasets().isAvailableDatasetName(name)) {
-					return true;
-				} else {
-					return false;
-				}
+				return panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getDatasets().isAvailableDatasetName(name);
 			} else {
 				return false;
 			}
@@ -413,7 +410,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	 *
 	 * @param isComboBoxDatasetNotNull
 	 */
-	public void setComboBoxDatasetNotNull(boolean isComboBoxDatasetNotNull) {
+	private void setComboBoxDatasetNotNull(boolean isComboBoxDatasetNotNull) {
 		this.isComboBoxDatasetNotNull = isComboBoxDatasetNotNull;
 		if (some != null) {
 			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDataset);
@@ -441,7 +438,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	 *
 	 * @param isArcSegmentSuitable
 	 */
-	public void setArcSegmentSuitable(boolean isArcSegmentSuitable) {
+	private void setArcSegmentSuitable(boolean isArcSegmentSuitable) {
 		this.isArcSegmentSuitable = isArcSegmentSuitable;
 		if (some != null) {
 			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDataset);
@@ -453,7 +450,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	 *
 	 * @param isHasResultDatasource
 	 */
-	public void setHasResultDataset(boolean isHasResultDatasource) {
+	private void setHasResultDataset(boolean isHasResultDatasource) {
 		this.isHasResultDataset = isHasResultDatasource;
 		if (some != null) {
 			some.doSome(isArcSegmentSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDatasource);
