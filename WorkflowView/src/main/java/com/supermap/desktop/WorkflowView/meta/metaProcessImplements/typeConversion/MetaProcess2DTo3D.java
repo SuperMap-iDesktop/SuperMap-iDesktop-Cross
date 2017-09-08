@@ -86,12 +86,12 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 			outputData.setSelectedItem("result_region2DTo3D");
 			settingCombine.addParameters(comboBoxZ);
 		}
-		parameters.setParameters(inputCombine,settingCombine,outputCombine);
-		parameters.addInputParameters(INPUT_DATA, datasetTypeToTypes(inputType),inputCombine);
+		parameters.setParameters(inputCombine, settingCombine, outputCombine);
+		parameters.addInputParameters(INPUT_DATA, datasetTypeToTypes(inputType), inputCombine);
 		if (outputType.equals(DatasetType.REGION3D)) {
-			parameters.addOutputParameters(OUTPUT_DATA,ProcessOutputResultProperties.getString("String_Result_Region3D_Dataset"), datasetTypeToTypes(outputType), outputCombine);
+			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Region3D_Dataset"), datasetTypeToTypes(outputType), outputCombine);
 		} else if (outputType.equals(DatasetType.LINE3D)) {
-			parameters.addOutputParameters(OUTPUT_DATA,ProcessOutputResultProperties.getString("String_Result_Line3D_Dataset"), datasetTypeToTypes(outputType), outputCombine);
+			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Line3D_Dataset"), datasetTypeToTypes(outputType), outputCombine);
 		} else if (outputType.equals(DatasetType.POINT3D)) {
 			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Point3D_Dataset"), datasetTypeToTypes(outputType), outputCombine);
 		}
@@ -103,10 +103,10 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 		equalDatasourceConstraint.constrained(inputDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
-		equalDatasetConstraint.constrained(inputDataset,ParameterSingleDataset.DATASET_FIELD_NAME);
-		equalDatasetConstraint.constrained(comboBoxZ,ParameterFieldComboBox.DATASET_FIELD_NAME);
-		equalDatasetConstraint.constrained(comboBoxFrom,ParameterFieldComboBox.DATASET_FIELD_NAME);
-		equalDatasetConstraint.constrained(comboBoxTo,ParameterFieldComboBox.DATASET_FIELD_NAME);
+		equalDatasetConstraint.constrained(inputDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		equalDatasetConstraint.constrained(comboBoxZ, ParameterFieldComboBox.DATASET_FIELD_NAME);
+		equalDatasetConstraint.constrained(comboBoxFrom, ParameterFieldComboBox.DATASET_FIELD_NAME);
+		equalDatasetConstraint.constrained(comboBoxTo, ParameterFieldComboBox.DATASET_FIELD_NAME);
 	}
 
 	@Override
@@ -143,9 +143,9 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 		boolean isSuccessful = false;
 		Recordset recordsetResult = null;
 		try {
-			fireRunning(new RunningEvent(this,0,"start"));
+			fireRunning(new RunningEvent(this, 0, "start"));
 
-			DatasetVector src = null;
+			DatasetVector src;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
 			} else {
@@ -184,9 +184,9 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 					if (outputType.equals(DatasetType.LINE3D)) {
 						convert(recordsetResult, geometry, value, recordsetInput.getFieldValue(fromCoordinate), recordsetInput.getFieldValue(toCoordinate));
 					} else {
-						convert(recordsetResult, geometry, value,recordsetInput.getFieldValue(zCoordinate));
+						convert(recordsetResult, geometry, value, recordsetInput.getFieldValue(zCoordinate));
 					}
-				}finally {
+				} finally {
 					if (geometry != null) {
 						geometry.dispose();
 					}
@@ -202,10 +202,10 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 			} else {
 				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
 			}
-			fireRunning(new RunningEvent(this,100,"finish"));
+			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+		} finally {
 			if (recordsetResult != null) {
 				recordsetResult.removeSteppedListener(steppedListener);
 				recordsetResult.close();
@@ -216,7 +216,7 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 		return isSuccessful;
 	}
 
-	private boolean convert(Recordset recordsetResult, Geometry geometry, Map<String, Object> value,Object zCoordinate) {
+	private boolean convert(Recordset recordsetResult, Geometry geometry, Map<String, Object> value, Object zCoordinate) {
 		boolean isConvert = true;
 		if (geometry instanceof GeoPoint) {
 			GeoPoint geoPoint = (GeoPoint) geometry;
@@ -237,11 +237,13 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 				geoRegion3D.dispose();
 			}
 			geoRegion.dispose();
+		} else {
+			isConvert = false;
 		}
 		return isConvert;
 	}
 
-	private boolean convert(Recordset recordsetResult, Geometry geometry, Map<String, Object> value,Object fromCoordinate,Object toCoordinate) {
+	private boolean convert(Recordset recordsetResult, Geometry geometry, Map<String, Object> value, Object fromCoordinate, Object toCoordinate) {
 		boolean isConvert = true;
 		if (geometry instanceof GeoLine) {
 			GeoLine geoLine = (GeoLine) geometry;

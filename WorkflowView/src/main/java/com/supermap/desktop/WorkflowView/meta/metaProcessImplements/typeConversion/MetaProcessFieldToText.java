@@ -37,6 +37,7 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 		inputDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.MODEL);
 		outputData = new ParameterSaveDataset();
 		fieldComboBox = new ParameterFieldComboBox(ProcessProperties.getString("String_ExportField"));
+		fieldComboBox.setRequisite(true);
 
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.MODEL);
 		if (dataset != null) {
@@ -87,7 +88,7 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 
-			DatasetVector src = null;
+			DatasetVector src;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
 			} else {

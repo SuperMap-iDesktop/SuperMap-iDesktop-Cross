@@ -35,6 +35,8 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
 		outputData = new ParameterSaveDataset();
 		comboBoxX = new ParameterFieldComboBox(ProcessProperties.getString("String_Xcoordinate"));
 		comboBoxY = new ParameterFieldComboBox(ProcessProperties.getString("String_Ycoordinate"));
+		comboBoxX.setRequisite(true);
+		comboBoxY.setRequisite(true);
 
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
 		if (datasetVector != null) {
@@ -43,7 +45,7 @@ public class MetaProcessTabularToPoint extends MetaProcessTypeConversion {
 			comboBoxY.setFieldName(datasetVector);
 			comboBoxX.setFieldName(datasetVector);
 		}
-		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE,FieldType.WTEXT};
+		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE, FieldType.WTEXT};
 		comboBoxX.setFieldType(fieldType);
 		comboBoxY.setFieldType(fieldType);
 		outputData.setSelectedItem("result_tabularToPoint");

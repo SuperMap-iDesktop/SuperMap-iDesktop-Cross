@@ -1,3 +1,4 @@
+
 package com.supermap.desktop.process.parameter.ipls;
 
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
@@ -13,12 +14,12 @@ import java.awt.event.ActionListener;
  */
 public class ParameterButton extends AbstractParameter implements ISelectionParameter {
 
-	public static final String PARAMETER_BUTTON_VALUE = "PARAMETER_BUTTON_VALUE";
+	private static final String PARAMETER_BUTTON_VALUE = "PARAMETER_BUTTON_VALUE";
 	@ParameterField(name = PARAMETER_BUTTON_VALUE)
 	private String describe;
 	private Object value;
 	private ActionListener actionListener;
-	// 给于button设置拉伸方式的方法
+	// 给于button设置拉伸方式的方法-yuanR2017.9.8
 	private Integer fill = GridBagConstraints.NONE;
 
 	public ParameterButton(String describe) {
@@ -46,16 +47,16 @@ public class ParameterButton extends AbstractParameter implements ISelectionPara
 		return this;
 	}
 
-	/**
-	 * 拉伸方式
-	 *
-	 * @param fill
-	 * @return
-	 */
-	public ParameterButton setFill(int fill) {
-		this.fill = fill;
-		return this;
-	}
+//	/**
+//	 * 拉伸方式
+//	 *
+//	 * @param fill
+//	 * @return
+//	 */
+//	public ParameterButton setFill(int fill) {
+//		this.fill = fill;
+//		return this;
+//	}
 
 	public Integer getFill() {
 		return fill;

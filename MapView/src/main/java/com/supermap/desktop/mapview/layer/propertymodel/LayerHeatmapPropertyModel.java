@@ -51,6 +51,10 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 	private Colors colors = null;
 	private int maximumState = -1;
 
+	public static final int CURRENTVIEW = 0;
+	public static final int SYSTEMVIEW = 1;
+	public static final int CUSTOMVIEW = 2;
+
 	public LayerHeatmapPropertyModel() {
 		// do nothing
 	}
@@ -226,15 +230,15 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 
 	public void setMaximumState(int maximumState) {
 		this.maximumState = maximumState;
-		if (this.maximumState == 0) {
-			this.isCurrentView=true;
-			this.isUserDef=false;
-		} else if (this.maximumState == 1) {
-			this.isCurrentView=false;
-			this.isUserDef=false;
-		} else if (this.maximumState == 2) {
-			this.isCurrentView=false;
-			this.isUserDef=true;
+		if (this.maximumState == CURRENTVIEW) {
+			this.isCurrentView = true;
+			this.isUserDef = false;
+		} else if (this.maximumState == SYSTEMVIEW) {
+			this.isCurrentView = false;
+			this.isUserDef = false;
+		} else if (this.maximumState == CUSTOMVIEW) {
+			this.isCurrentView = false;
+			this.isUserDef = true;
 		}
 	}
 
@@ -263,8 +267,8 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 			this.isCurrentView = layerHeatmapPropertyModel.getCurrentView();
 			this.isUserDef = layerHeatmapPropertyModel.getIsUserDef();
 			this.maximumState = layerHeatmapPropertyModel.getMaximumState();
-			if (this.maximumState!=-1 && getNewmaximumState()!=this.maximumState){
-				this.maximumState= getNewmaximumState();
+			if (this.maximumState != -1 && getNewmaximumState() != this.maximumState) {
+				this.maximumState = getNewmaximumState();
 			}
 		}
 	}
@@ -273,11 +277,11 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 	public boolean equals(LayerPropertyModel model) {
 		LayerHeatmapPropertyModel layerHeatmapPropertyModel = (LayerHeatmapPropertyModel) model;
 
-		return layerHeatmapPropertyModel != null && super.equals(layerHeatmapPropertyModel)&& this.kernelRadius == layerHeatmapPropertyModel.getKernelRadius()
+		return layerHeatmapPropertyModel != null && super.equals(layerHeatmapPropertyModel) && this.kernelRadius == layerHeatmapPropertyModel.getKernelRadius()
 				&& this.fuzzyDegree == layerHeatmapPropertyModel.getFuzzyDegree() && this.intensity == layerHeatmapPropertyModel.getIntensity()
 				&& this.weightField.equals(layerHeatmapPropertyModel.getWeightField()) && this.colors.equals(layerHeatmapPropertyModel.getColors())
-				&& this.maximumState==layerHeatmapPropertyModel.getMaximumState() && this.isUserDef==layerHeatmapPropertyModel.getIsUserDef() &&
-				this.isCurrentView==layerHeatmapPropertyModel.getCurrentView();
+				&& this.maximumState == layerHeatmapPropertyModel.getMaximumState() && this.isUserDef == layerHeatmapPropertyModel.getIsUserDef() &&
+				this.isCurrentView == layerHeatmapPropertyModel.getCurrentView();
 	}
 
 	@Override
@@ -310,17 +314,17 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 			}
 
 			if (this.propertyEnabled.get(IS_CURRENT_VIEW) && this.maximumState != -1) {
-				if (this.maximumState == 0) {
+				if (this.maximumState == CURRENTVIEW) {
 					layerHeatmap.setIsUseCurrentView(true);
 					layerHeatmap.setIsUserDef(false);
 					layerHeatmap.setMinValue(this.currentViewMinValue);
 					layerHeatmap.setMaxValue(this.currentViewMaxValue);
-				} else if (this.maximumState == 1) {
+				} else if (this.maximumState == SYSTEMVIEW) {
 					layerHeatmap.setIsUseCurrentView(false);
 					layerHeatmap.setIsUserDef(false);
 					layerHeatmap.setMinValue(this.systemMinValue);
 					layerHeatmap.setMaxValue(this.systemMaxValue);
-				} else if (this.maximumState == 2) {
+				} else if (this.maximumState == CUSTOMVIEW) {
 					layerHeatmap.setIsUseCurrentView(false);
 					layerHeatmap.setIsUserDef(true);
 					layerHeatmap.setMinValue(this.customMinValue);
@@ -365,12 +369,12 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 						this.customMinValue = this.systemMinValue;
 					}
 					if (this.isCurrentView) {
-						this.maximumState = 0;
+						this.maximumState = CURRENTVIEW;
 					} else {
 						if (this.isUserDef) {
-							this.maximumState = 2;
+							this.maximumState = CUSTOMVIEW;
 						} else {
-							this.maximumState = 1;
+							this.maximumState = SYSTEMVIEW;
 						}
 					}
 				}
@@ -420,25 +424,25 @@ public class LayerHeatmapPropertyModel extends LayerPropertyModel {
 			this.customMinValue = this.systemMinValue;
 		}
 		if (this.isCurrentView) {
-			this.maximumState = 0;
+			this.maximumState = CURRENTVIEW;
 		} else {
 			if (this.isUserDef) {
-				this.maximumState = 2;
+				this.maximumState = CUSTOMVIEW;
 			} else {
-				this.maximumState = 1;
+				this.maximumState = SYSTEMVIEW;
 			}
 		}
 	}
 
-	private int getNewmaximumState(){
-		int result=-1;
+	private int getNewmaximumState() {
+		int result = -1;
 		if (this.isCurrentView) {
-			result = 0;
+			result = CURRENTVIEW;
 		} else {
 			if (this.isUserDef) {
-				result = 2;
+				result = CUSTOMVIEW;
 			} else {
-				result = 1;
+				result = SYSTEMVIEW;
 			}
 		}
 		return result;

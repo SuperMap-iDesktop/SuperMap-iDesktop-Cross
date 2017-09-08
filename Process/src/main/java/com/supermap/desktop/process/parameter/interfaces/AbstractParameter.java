@@ -295,7 +295,7 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 			return false;
 		}
 		if (item instanceof String) {
-			return !StringUtilities.isNullOrEmpty((String) item);
+			return !StringUtilities.isNullOrEmptyString(item);
 		}
 		return true;
 	}
