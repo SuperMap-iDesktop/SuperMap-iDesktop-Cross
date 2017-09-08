@@ -370,6 +370,12 @@ public class SolarRadiationAnalysisTypePanel extends JPanel {
 		fireChangeListener();
 	}
 
+	// According to the daily value of the month, the date of this year's code is very winding,
+	// the interface saw in June 9th, in fact, get the value of May 9th. Therefore,
+	// we need to add 1 to the month, and at the time of initialization, we have added 1. After initialization,
+	// we will assign the solar radiation parameters, and then we will calculate it again.
+	// Therefore, a constant sign is required to indicate whether to initialize or change the value.
+
 	private int calculationDayCount(int year, int month, int day, boolean isInit) {
 		int count = 0;
 		int days = 0;
