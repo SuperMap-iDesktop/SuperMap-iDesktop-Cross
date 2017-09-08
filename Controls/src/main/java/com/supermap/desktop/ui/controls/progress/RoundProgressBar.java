@@ -52,28 +52,6 @@ public class RoundProgressBar extends JPanel {
 	private int percentLoc = 0;
 	private boolean isReversed = false;
 	private java.util.Timer updateIndeterminateTimer;
-	private TimerTask updateIndeterminateTimerTask = new TimerTask() {
-		@Override
-		public void run() {
-			if (isReversed) {
-				percentLoc--;
-			} else {
-				percentLoc++;
-			}
-
-			if ((percentLoc == 100 && !isReversed)
-					|| percentLoc == 0 && isReversed) {
-				isReversed = !isReversed;
-			}
-
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					repaint();
-				}
-			});
-		}
-	};
 
 	public RoundProgressBar() {
 		setMinimumProgress(0);
@@ -119,25 +97,6 @@ public class RoundProgressBar extends JPanel {
 			int digitalAscent = fontMetrics.getAscent();
 			graphics2d.setColor(digitalColor);
 			graphics2d.drawString(progress + "%", getWidth() / 2 - digitalWidth / 2, getHeight() / 2 + digitalAscent / 2);
-		}
-	}
-
-	private void paintProgress(Graphics2D g) {
-		int progressWidth = getWidth() / 4;
-
-		int x = 5;
-		int y = (getHeight() / 2 - 5) > 0 ? (getHeight() / 2 - 5) : 5;
-		g.drawRoundRect((int) (x + (getWidth() - progressWidth - 20) * ((percentLoc + 0.0) / 100)), y, progressWidth, 8, 8, 8);
-
-		if (isReversed) {
-			percentLoc--;
-		} else {
-			percentLoc++;
-		}
-
-		if ((percentLoc == 100 && !isReversed)
-				|| percentLoc == 0 && isReversed) {
-			isReversed = !isReversed;
 		}
 	}
 
@@ -197,7 +156,29 @@ public class RoundProgressBar extends JPanel {
 
 		this.isIndeterminate = true;
 		this.updateIndeterminateTimer = new Timer();
-		this.updateIndeterminateTimer.schedule(this.updateIndeterminateTimerTask, 100, 15);
+		TimerTask updateIndeterminateTimerTask = new TimerTask() {
+			@Override
+			public void run() {
+				if (isReversed) {
+					percentLoc--;
+				} else {
+					percentLoc++;
+				}
+
+				if ((percentLoc == 100 && !isReversed)
+						|| percentLoc == 0 && isReversed) {
+					isReversed = !isReversed;
+				}
+
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						repaint();
+					}
+				});
+			}
+		};
+		this.updateIndeterminateTimer.schedule(updateIndeterminateTimerTask, 100, 15);
 	}
 
 	public void stopUpdateProgressIndeterminate() {

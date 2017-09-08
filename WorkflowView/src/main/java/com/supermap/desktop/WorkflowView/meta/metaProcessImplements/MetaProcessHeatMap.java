@@ -15,6 +15,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
 
 import java.util.concurrent.CancellationException;
@@ -110,8 +111,10 @@ public class MetaProcessHeatMap extends MetaProcess {
 
 	@Override
 	public boolean execute() {
+		boolean isSuccessful = false;
+
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
+			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
 			IServerService service = parameterIServerLogin.login();
 			//热度图分析功能
 			CommonSettingCombine filePath = new CommonSettingCombine("filePath", parameterHDFSPath.getSelectedItem().toString());
@@ -142,47 +145,26 @@ public class MetaProcessHeatMap extends MetaProcess {
 			JobResultResponse response = service.queryResult(MetaKeys.HEAT_MAP, finalJSon);
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
-				NewMessageBus messageBus = new NewMessageBus(response, new IUpdateProgress() {
-					@Override
-					public boolean isCancel() {
-						return false;
-					}
-
-					@Override
-					public void setCancel(boolean isCancel) {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-						fireRunning(new RunningEvent(MetaProcessHeatMap.this, percent, message, -1));
-					}
-
-					@Override
-					public void updateProgress(String message, int percent, String currentMessage) throws CancellationException {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, String recentTask, int totalPercent, String message) throws CancellationException {
-
-					}
-				}, DefaultOpenServerMap.INSTANCE);
-				messageBus.run();
+				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);
+				fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
+				isSuccessful = messageBus.run();
+			} else {
+				isSuccessful = false;
 			}
-			fireRunning(new RunningEvent(this, 100, "finished"));
+
 			parameters.getOutputs().getData("HeatMapResult").setValue("");
 			CursorUtilities.setDefaultCursor();
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-			return false;
+			isSuccessful = false;
+			Application.getActiveApplication().getOutput().output(e.getMessage());
 		}
-		return true;
+
+		if (isSuccessful) {
+			fireRunning(new RunningEvent(this, 100, CoreProperties.getString("String_Message_Succeed")));
+		} else {
+			fireRunning(new RunningEvent(this, 0, CoreProperties.getString("String_Message_Failed")));
+		}
+		return isSuccessful;
 	}
 
 	@Override
