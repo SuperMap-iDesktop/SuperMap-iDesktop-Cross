@@ -414,16 +414,18 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 		}
 		if (dataset != null) {
 			Rectangle2D bounds = dataset.getBounds();
+			double max = bounds.getWidth() > bounds.getHeight() ? bounds.getWidth() : bounds.getHeight();
+			double min = bounds.getWidth() < bounds.getHeight() ? bounds.getWidth() : bounds.getHeight();
 			if (comboBoxShapeType.getSelectedItem().equals(RECTANGLE)) {
 				textFieldWidth.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
 				textFieldHeight.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getHeight()/20:"3"));
 			} else if (comboBoxShapeType.getSelectedItem().equals(CIRCLE)) {
-				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
+				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?max/20:"3"));
 			} else if (comboBoxShapeType.getSelectedItem().equals(ANNULUS)) {
-				textFieldInnerRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? bounds.getWidth() / 20 : "1"));
-				textFieldOuterRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? bounds.getWidth() / 20 : "3"));
+				textFieldInnerRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? min / 20 : "1"));
+				textFieldOuterRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? max / 20 : "3"));
 			} else {
-				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
+				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?max/20:"3"));
 				textFieldStartAngle.setText("0");
 				textFieldEndAngle.setText("360");
 			}
