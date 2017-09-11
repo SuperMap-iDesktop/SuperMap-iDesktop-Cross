@@ -109,16 +109,16 @@ public class MetaProcessFlowDirection extends MetaProcessGridAnalyst {
 				src = (DatasetGrid) sourceDataset.getSelectedItem();
 			}
 			HydrologyAnalyst.addSteppedListener(steppedListener);
-			boolean forceFlowAtEdge = Boolean.parseBoolean(checkBoxForceOut.getSelectedItem().toString());
-			boolean createDrop = Boolean.parseBoolean(checkBoxCreateDrop.getSelectedItem().toString());
+			boolean forceFlowAtEdge = Boolean.parseBoolean(checkBoxForceOut.getSelectedItem());
+			boolean createDrop = Boolean.parseBoolean(checkBoxCreateDrop.getSelectedItem());
 			DatasetGrid resultDirection = null;
 			if (createDrop) {
 				resultDirection = HydrologyAnalyst.flowDirection(src,forceFlowAtEdge,resultDatasource.getSelectedItem(),
-						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(directionGrid.getSelectedItem().toString()),
-						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(dropGrid.getSelectedItem().toString()));
+						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(directionGrid.getSelectedItem()),
+						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(dropGrid.getSelectedItem()));
 			} else {
 				resultDirection = HydrologyAnalyst.flowDirection(src,forceFlowAtEdge,resultDatasource.getSelectedItem(),
-						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(directionGrid.getSelectedItem().toString()));
+						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(directionGrid.getSelectedItem()));
 			}
 			isSuccessful = resultDirection != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDirection);

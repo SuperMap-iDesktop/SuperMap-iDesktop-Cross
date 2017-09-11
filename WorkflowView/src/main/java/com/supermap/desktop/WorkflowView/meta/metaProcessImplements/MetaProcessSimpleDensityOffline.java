@@ -147,6 +147,10 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 
 	private void updateBound(Dataset dataset) {
 		Rectangle2D rectangle2D = dataset.getBounds();
+		numberTop.setMinValue(rectangle2D.getBottom());
+		numberBottom.setMaxValue(rectangle2D.getTop());
+		numberLeft.setMaxValue(rectangle2D.getRight());
+		numberRight.setMinValue(rectangle2D.getLeft());
 		numberBottom.setSelectedItem(rectangle2D.getBottom());
 		numberLeft.setSelectedItem(rectangle2D.getLeft());
 		numberRight.setSelectedItem(rectangle2D.getRight());

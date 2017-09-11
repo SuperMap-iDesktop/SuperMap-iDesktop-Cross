@@ -450,6 +450,12 @@ public class RasterReclassValuePanel extends JPanel {
 		}
 	}
 
+	/*
+	The following definition of ReclassMappingTable variables,
+	 re acquisition value is in order to solve the global variable this.reclassMappingTable
+    to get to the ReclassSegmentType type is not correct, have not found the cause,
+    being the first such treatment.
+	 */
 	private void importFile() {
 		String moduleName = "ImportMappingTable";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
@@ -465,17 +471,19 @@ public class RasterReclassValuePanel extends JPanel {
 				filePath = smFileChoose.getFilePath();
 				if (this.reclassMappingTable.fromXmlFile(filePath)) {
 					this.isImporting = true;
-//				System.out.println(this.reclassMappingTable.getChangeNoValueTo());
 					this.textFieldLegitNoValue.setText(String.valueOf(this.reclassMappingTable.getChangeNoValueTo()));
 					this.textFieldLegitNoClass.setText(String.valueOf(this.reclassMappingTable.getChangeMissingValueTo()));
-					if (this.reclassMappingTable.getSegments()[0].getSegmentType() == ReclassSegmentType.OPENCLOSE) {
+					this.rasterReclassModel.setSegmentData(this.reclassMappingTable.getSegments());
+					ReclassMappingTable mappingTable = new ReclassMappingTable();
+					mappingTable.fromXmlFile(filePath);
+					ReclassSegmentType type = mappingTable.getSegments()[0].getSegmentType();
+					if (type == ReclassSegmentType.OPENCLOSE) {
 						this.rasterReclassModel.setReclassSegmentType(ReclassSegmentType.OPENCLOSE);
 						this.radioButtonLeftOpen.setSelected(true);
-					} else if (this.reclassMappingTable.getSegments()[0].getSegmentType() == ReclassSegmentType.CLOSEOPEN){
+					} else if (type == ReclassSegmentType.CLOSEOPEN) {
 						this.rasterReclassModel.setReclassSegmentType(ReclassSegmentType.CLOSEOPEN);
 						this.radioButtonLeftClose.setSelected(true);
 					}
-					this.rasterReclassModel.setSegmentData(this.reclassMappingTable.getSegments());
 					Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_ReclassFileInputSuccess") + filePath);
 				} else {
 					Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_ReclassFileInputFailed"));
@@ -485,7 +493,7 @@ public class RasterReclassValuePanel extends JPanel {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			this.isImporting = false;
-			currentMappingTableChange();
+			getNewMappingTable();
 		}
 	}
 
@@ -548,7 +556,7 @@ public class RasterReclassValuePanel extends JPanel {
 	}
 
 	private void currentMappingTableChange() {
-		if (this.reclassValueChange != null &&!isImporting) {
+		if (this.reclassValueChange != null && !isImporting) {
 			this.reclassValueChange.reclassMappingTableChange(this.reclassMappingTable);
 		}
 	}
