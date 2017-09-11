@@ -32,6 +32,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 /**
+ * 提取等值线/面
  * @author XiaJT
  */
 public abstract class MetaProcessISO extends MetaProcessGridAnalyst {
