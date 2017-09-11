@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.ui;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.StatusChangeEvent;
@@ -18,13 +19,17 @@ import java.awt.event.WindowEvent;
 public class SmDialogProcess extends SmDialog {
 	private IProcess metaProcess;
 
-	public SmDialogProcess(IProcess metaProcess) {
+	public SmDialogProcess(final IProcess metaProcess) {
 		this.metaProcess = metaProcess;
 		this.metaProcess.addStatusChangeListener(new StatusChangeListener() {
 			@Override
 			public void statusChange(StatusChangeEvent e) {
 				if (e.getStatus() == RunningStatus.COMPLETED) {
-					setVisible(false);
+
+					// TODO 基本统计执行完毕不关闭界面，临时处理。后续优化输出窗口，支持输出自定义数据的时候再修改
+					if (!metaProcess.getClass().getName().equals("com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst.MetaProcessBasicStatistics")) {
+						setVisible(false);
+					}
 				}
 			}
 		});

@@ -5,6 +5,7 @@ import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.AbstractProcess;
+import com.supermap.desktop.process.core.ReadyEvent;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.events.ParameterPropertyChangedEvent;
@@ -51,7 +52,7 @@ public abstract class MetaProcess extends AbstractProcess {
 		parameterPropertyChangedListener = new ParameterPropertyChangedListener() {
 			@Override
 			public void parameterPropertyChanged(ParameterPropertyChangedEvent parameterPropertyChangedEvent) {
-				checkReadyState();
+				checkReadyState(new ReadyEvent(MetaProcess.this, false));
 			}
 		};
 		parameters.addParameterPropertyChangedListener(parameterPropertyChangedListener);
