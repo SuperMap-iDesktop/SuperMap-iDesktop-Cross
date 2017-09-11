@@ -9,7 +9,6 @@ import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -100,7 +99,6 @@ public class MetaProcessAlgebraOperation extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(MetaProcessAlgebraOperation.this, 0, "start"));
 			String datasetName = resultDataset.getDatasetName();
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 
@@ -109,7 +107,6 @@ public class MetaProcessAlgebraOperation extends MetaProcess {
 					this.buttonExpression.isZip(), this.buttonExpression.isIgnoreNoValue(), resultDataset.getResultDatasource(), datasetName);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
-			fireRunning(new RunningEvent(MetaProcessAlgebraOperation.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

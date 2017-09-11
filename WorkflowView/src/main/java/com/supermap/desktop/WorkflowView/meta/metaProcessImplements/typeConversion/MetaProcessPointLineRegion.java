@@ -6,7 +6,6 @@ import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
@@ -67,7 +66,7 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 		if (outputType.equals(DatasetType.REGION)) {
 			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Region_Dataset"), datasetTypeToTypes(outputType), outputCombine);
 		} else if (outputType.equals(DatasetType.LINE)) {
-			parameters.addOutputParameters(OUTPUT_DATA,ProcessOutputResultProperties.getString("String_Result_Line_Dataset"), datasetTypeToTypes(outputType), outputCombine);
+			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Line_Dataset"), datasetTypeToTypes(outputType), outputCombine);
 		} else if (outputType.equals(DatasetType.POINT)) {
 			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Point_Dataset"), datasetTypeToTypes(outputType), outputCombine);
 		}
@@ -89,7 +88,6 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 		boolean isSuccessful = false;
 		Recordset recordsetResult = null;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 
 			DatasetVector src = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
@@ -140,7 +138,6 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 			} else {
 				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
 			}
-			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

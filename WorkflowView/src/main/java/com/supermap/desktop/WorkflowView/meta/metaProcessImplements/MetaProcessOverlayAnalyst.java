@@ -208,7 +208,6 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		boolean isSuccessful = false;
 
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 			ParameterOverlayAnalystInfo info = new ParameterOverlayAnalystInfo();
 			if (parameters.getInputs().getData(INPUT_DATA) != null && parameters.getInputs().getData(INPUT_DATA).getValue() instanceof DatasetVector) {
 				info.sourceDataset = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -285,7 +284,6 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 				default:
 					break;
 			}
-			fireRunning(new RunningEvent(this, 100, "finished"));
 			this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(targetDataset);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

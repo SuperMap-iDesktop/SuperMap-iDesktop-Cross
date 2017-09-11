@@ -3,6 +3,7 @@ package com.supermap.desktop.process.tasks.taskStates;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.ReadyEvent;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.StatusChangeEvent;
@@ -101,7 +102,7 @@ public class TaskStateManager {
 		Vector<IProcess> processes = workflow.getProcesses();
 		for (IProcess process : processes) {
 			process.reset();
-			if (process.isReady()) {
+			if (process.isReady(new ReadyEvent(this, false))) {
 				moveProcess(process, TasksManager.WORKER_STATE_WAITING);
 			}
 		}
@@ -178,7 +179,7 @@ public class TaskStateManager {
 			for (IProcess nextProcess : nextProcesses) {
 
 				// 该节点的所有前置节点均已执行完成准备就绪，就将节点移动到 ready
-				if (isReady(nextProcess) && nextProcess.isReady()) {
+				if (isReady(nextProcess) && nextProcess.isReady(new ReadyEvent(this, false))) {
 					moveProcess(nextProcess, TasksManager.WORKER_STATE_READY);
 				}
 			}

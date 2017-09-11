@@ -17,7 +17,6 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -166,7 +165,6 @@ public class MetaProcessDissolve extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(MetaProcessDissolve.this, 0, "start"));
 			DissolveParameter dissolveParameter = new DissolveParameter();
 
 			String datasetName = resultDataset.getDatasetName();
@@ -197,7 +195,6 @@ public class MetaProcessDissolve extends MetaProcess {
 			DatasetVector result = Generalization.dissolve(src, this.resultDataset.getResultDatasource(), datasetName, dissolveParameter);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
-			fireRunning(new RunningEvent(MetaProcessDissolve.this, 100, "finished"));
 
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

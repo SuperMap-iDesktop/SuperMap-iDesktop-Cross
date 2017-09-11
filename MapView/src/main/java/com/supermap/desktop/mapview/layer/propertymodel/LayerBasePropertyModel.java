@@ -4,10 +4,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerChart;
-import com.supermap.mapping.LayerGroup;
-import com.supermap.mapping.ThemeType;
+import com.supermap.mapping.*;
 
 public class LayerBasePropertyModel extends LayerPropertyModel {
 
@@ -310,15 +307,15 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 					// 只读数据源下的数据集以及只读数据集不可编辑
 					boolean isReadOnly = !isDatasetNull && (layer.getDataset().getDatasource().isReadOnly() || layer.getDataset().isReadOnly());
 
-					// 海图数据集不可编辑
-					boolean isLayerChart = layer instanceof LayerChart;
+					// 海图数据集、热力图、网格图不可编辑
+					boolean isCanEditLayer = layer instanceof LayerChart || layer instanceof LayerHeatmap || layer instanceof LayerGridAggregation;
 
 					// 标签、统计、等级符号专题图，不可选择，不可编辑，不可捕捉
 					boolean isInvalidThemeLayer = layer.getTheme() != null
 							&& (layer.getTheme().getType() == ThemeType.LABEL || layer.getTheme().getType() == ThemeType.GRADUATEDSYMBOL || layer.getTheme()
 									.getType() == ThemeType.GRAPH);
 
-					isEditableEnabled = isEditableEnabled && isVisibleSettingsValue && isDatasetVector && !isReadOnly && !isLayerChart && !isInvalidThemeLayer;
+					isEditableEnabled = isEditableEnabled && isVisibleSettingsValue && isDatasetVector && !isReadOnly && !isCanEditLayer && !isInvalidThemeLayer;
 					isSelectableEnabled = isSelectableEnabled && isVisibleSettingsValue && isDatasetVector && !isInvalidThemeLayer;
 					isSnapableEnabled = isSnapableEnabled && isVisibleSettingsValue && isDatasetVector && !isInvalidThemeLayer;
 					transparenceEnabled = transparenceEnabled && !(layer instanceof LayerGroup);

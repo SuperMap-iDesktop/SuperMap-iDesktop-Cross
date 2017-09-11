@@ -13,18 +13,10 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterCommonStatisticCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -80,8 +72,8 @@ public class MetaProcessCommonStatistics extends MetaProcessGridAnalyst {
 		constraintSource.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		constraintSource.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 		EqualDatasetConstraint datasetConstraint = new EqualDatasetConstraint();
-		datasetConstraint.constrained(sourceDataset,ParameterSingleDataset.DATASET_FIELD_NAME);
-		datasetConstraint.constrained(commonStatisticCombine,ParameterCommonStatisticCombine.DATASET_FIELD_NAME);
+		datasetConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		datasetConstraint.constrained(commonStatisticCombine, ParameterCommonStatisticCombine.DATASET_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(resultDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
@@ -120,7 +112,6 @@ public class MetaProcessCommonStatistics extends MetaProcessGridAnalyst {
 	public boolean childExecute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 			DatasetGrid src = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetGrid) parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -135,7 +126,7 @@ public class MetaProcessCommonStatistics extends MetaProcessGridAnalyst {
 			DatasetGrid result = null;
 			if (commonStatisticCombine.isValueChosen()) {
 				double value = (double) commonStatisticCombine.getSelectedItem();
-				result= StatisticsAnalyst.commonStatistics(src, value, type, isIgnore, resultDataset.getResultDatasource(), datasetName);
+				result = StatisticsAnalyst.commonStatistics(src, value, type, isIgnore, resultDataset.getResultDatasource(), datasetName);
 			} else {
 				ArrayList<Dataset> datasetArrayList = commonStatisticCombine.getDatasets();
 				DatasetGrid[] datasetGrids = new DatasetGrid[datasetArrayList.size()];
@@ -146,7 +137,6 @@ public class MetaProcessCommonStatistics extends MetaProcessGridAnalyst {
 			}
 			isSuccessful = result != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
-			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

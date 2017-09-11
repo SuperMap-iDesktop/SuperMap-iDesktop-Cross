@@ -1,7 +1,7 @@
 package com.supermap.desktop.CtrlAction.property;
 
-import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
@@ -19,9 +19,9 @@ import javax.swing.tree.TreePath;
 /**
  * Created by lixiaoyao on 2017/9/8.
  */
-public class CtrlActionCopyPath extends CtrlAction {
+public class CtrlActionCopyPathWorkspace extends CtrlAction {
 
-	public CtrlActionCopyPath(IBaseItem caller, IForm formClass) {
+	public CtrlActionCopyPathWorkspace(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 
@@ -33,17 +33,45 @@ public class CtrlActionCopyPath extends CtrlAction {
 			if (selectedPath != null && selectedPath.getLastPathComponent() instanceof DefaultMutableTreeNode) {
 				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
 				TreeNodeData nodeData = (TreeNodeData) selectedNode.getUserObject();
-				if (nodeData.getType()== NodeDataType.WORKSPACE) {
+				if (nodeData.getType() == NodeDataType.WORKSPACE) {
 					Workspace workspace = (Workspace) nodeData.getData();
 					ClipBoardUtilties.setSysClipboardText(workspace.getConnectionInfo().getServer());
-				}else if(nodeData.getType() == NodeDataType.DATASOURCE){
-					Datasource tempDatasource = (Datasource) nodeData.getData();
-					ClipBoardUtilties.setSysClipboardText(tempDatasource.getConnectionInfo().getServer());
 				}
+//				else if (nodeData.getType() == NodeDataType.DATASOURCE) {
+//					Datasource tempDatasource = (Datasource) nodeData.getData();
+//					ClipBoardUtilties.setSysClipboardText(tempDatasource.getConnectionInfo().getServer());
+//				}
 				Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_CopyFilePath"));
 			}
-		}catch (Exception e){
+		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
+	}
+
+	@Override
+	public boolean enable() {
+		boolean enable = false;
+		try {
+			enable = this.isFileWorkspace();
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return enable;
+	}
+
+
+	boolean isFileWorkspace() {
+		boolean result = false;
+		try {
+			if (Application.getActiveApplication().getWorkspace().getType() == WorkspaceType.SMW
+					|| Application.getActiveApplication().getWorkspace().getType() == WorkspaceType.SMWU
+					|| Application.getActiveApplication().getWorkspace().getType() == WorkspaceType.SXW
+					|| Application.getActiveApplication().getWorkspace().getType() == WorkspaceType.SXWU) {
+				result = true;
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return result;
 	}
 }

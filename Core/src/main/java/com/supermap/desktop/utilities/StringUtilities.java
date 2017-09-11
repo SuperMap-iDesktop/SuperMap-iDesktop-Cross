@@ -338,7 +338,12 @@ public class StringUtilities {
 				try {
 					String[] strings = PinyinHelper.toHanyuPinyinStringArray(charAt, format);
 					if (strings != null && strings.length > 0) {
-						stringBuilder.append(strings[0]);
+						if (charAt == 26629) {
+							// fixme 临时处理
+							stringBuilder.append(strings[1]);
+						} else {
+							stringBuilder.append(strings[0]);
+						}
 					} else {
 						stringBuilder.append(charAt);
 					}

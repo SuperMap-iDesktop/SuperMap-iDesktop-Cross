@@ -2,6 +2,7 @@ package com.supermap.desktop.process.tasks;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.ReadyEvent;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.StatusChangeEvent;
@@ -211,7 +212,7 @@ public class TasksManager {
 	private void initialize() {
 		Vector<IProcess> processes = this.workflow.getProcesses();
 		for (IProcess process : processes) {
-			if (this.workflow.isLeadingProcess(process) && process.isReady()) {
+			if (this.workflow.isLeadingProcess(process) && process.isReady(new ReadyEvent(this, false))) {
 				taskStateManager.moveProcess(process, WORKER_STATE_READY);
 			}
 		}

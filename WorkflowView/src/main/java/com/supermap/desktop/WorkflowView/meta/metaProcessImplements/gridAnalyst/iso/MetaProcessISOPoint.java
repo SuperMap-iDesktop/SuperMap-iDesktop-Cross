@@ -326,7 +326,6 @@ public class MetaProcessISOPoint extends MetaProcess {
 					targetDataset.getResultDatasource(), targetDataset.getDatasetName(), Double.valueOf(resolution.getSelectedItem()), null);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = (result != null);
-			fireRunning(new RunningEvent(MetaProcessISOPoint.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
