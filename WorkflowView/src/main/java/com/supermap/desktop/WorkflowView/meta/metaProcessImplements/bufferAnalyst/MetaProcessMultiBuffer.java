@@ -11,7 +11,6 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -226,7 +225,6 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 		Datasource resultDatasource = null;
 		String resultName = null;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 
 			// 源数据
 			DatasetVector sourceDatasetVector = null;
@@ -293,7 +291,6 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 						radioListResult, radiusUnit, semicircleLineSegment,
 						isUnion, isAttributeRetained, isRing);
 			}
-			fireRunning(new RunningEvent(this, 100, "finished"));
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(resultDataset);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

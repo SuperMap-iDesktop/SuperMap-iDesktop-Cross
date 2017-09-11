@@ -136,7 +136,6 @@ public class MetaProcessAppendFields extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean result = false;
-		fireRunning(new RunningEvent(this, 0, "start"));
 		DatasetVector targetDatasetVector = (DatasetVector) targetDataset.getSelectedDataset();
 		String sourceLinked = sourceLinkedField.getFieldName();
 		String targetLinked = targetLinkedField.getFieldName();
@@ -147,11 +146,9 @@ public class MetaProcessAppendFields extends MetaProcess {
 			targetDatasetVector.addSteppedListener(this.steppedListener);
 			result = targetDatasetVector.appendFields(sourceDatasetVector, sourceLinked, targetLinked, sourceFields, targetFields);
 			if (result) {
-				fireRunning(new RunningEvent(this, 100, "success"));
 				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsSuccess"), sourceDatasetVector.getName(), targetDatasetVector.getName()));
 				TabularUtilities.refreshTabularDatas(targetDatasetVector);
 			} else {
-				fireRunning(new RunningEvent(this, 100, "failed"));
 				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsFailed"), sourceDatasetVector.getName(), targetDatasetVector.getName()));
 			}
 		} else {

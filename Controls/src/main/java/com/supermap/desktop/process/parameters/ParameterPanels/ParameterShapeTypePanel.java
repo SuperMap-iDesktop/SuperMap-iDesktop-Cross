@@ -4,6 +4,7 @@ import com.supermap.analyst.spatialanalyst.*;
 import com.supermap.data.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
@@ -18,6 +19,8 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Created By Chens on 2017/8/16 0016
@@ -411,20 +414,31 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 		}
 		if (dataset != null) {
 			Rectangle2D bounds = dataset.getBounds();
+			double max = bounds.getWidth() > bounds.getHeight() ? bounds.getWidth() : bounds.getHeight();
+			double min = bounds.getWidth() < bounds.getHeight() ? bounds.getWidth() : bounds.getHeight();
 			if (comboBoxShapeType.getSelectedItem().equals(RECTANGLE)) {
 				textFieldWidth.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
 				textFieldHeight.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getHeight()/20:"3"));
 			} else if (comboBoxShapeType.getSelectedItem().equals(CIRCLE)) {
-				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
+				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?max/20:"3"));
 			} else if (comboBoxShapeType.getSelectedItem().equals(ANNULUS)) {
-				textFieldInnerRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? bounds.getWidth() / 20 : "1"));
-				textFieldOuterRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? bounds.getWidth() / 20 : "3"));
+				textFieldInnerRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? min / 20 : "1"));
+				textFieldOuterRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? max / 20 : "3"));
 			} else {
-				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
+				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?max/20:"3"));
 				textFieldStartAngle.setText("0");
 				textFieldEndAngle.setText("360");
 			}
 		}
 		resetNeighbourShape();
+	}
+
+	@Override
+	public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
+		if (event.getFieldName().equals(ParameterShapeType.DATASET_FIELD_NAME)) {
+			this.dataset = parameterShapeType.getDataset();
+			resetTextField();
+			parameterShapeType.setSelectedItem(neighbourShape);
+		}
 	}
 }

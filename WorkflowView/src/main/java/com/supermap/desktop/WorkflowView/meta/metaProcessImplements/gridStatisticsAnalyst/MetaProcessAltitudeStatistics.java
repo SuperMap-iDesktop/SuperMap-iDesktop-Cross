@@ -1,17 +1,6 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.GeoPoint;
-import com.supermap.data.GeoPoint3D;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
-import com.supermap.data.SpatialQueryMode;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -19,14 +8,9 @@ import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessG
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -112,7 +96,6 @@ public class MetaProcessAltitudeStatistics extends MetaProcessGridAnalyst {
 	public boolean childExecute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(MetaProcessAltitudeStatistics.this, 0, "start"));
 			String datasetName = resultDataset.getDatasetName();
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 
@@ -175,7 +158,6 @@ public class MetaProcessAltitudeStatistics extends MetaProcessGridAnalyst {
 			}
 
 			isSuccessful = result != null;
-			fireRunning(new RunningEvent(MetaProcessAltitudeStatistics.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

@@ -167,9 +167,7 @@ public class MetaProcessProjection extends MetaProcess {
 			if (prjCoordSys == null) {
 				prjCoordSys = src.getPrjCoordSys();
 			}
-
 			fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
-
 			CoordSysTransMethod method = (CoordSysTransMethod) parameterMode.getSelectedData();
 
 			CoordSysTransParameter coordSysTransParameter = new CoordSysTransParameter();
@@ -181,7 +179,6 @@ public class MetaProcessProjection extends MetaProcess {
 			coordSysTransParameter.setTranslateY(Double.valueOf((String) parameterTextFieldOffsetY.getSelectedItem()));
 			coordSysTransParameter.setTranslateZ(Double.valueOf((String) parameterTextFieldOffsetZ.getSelectedItem()));
 			CoordSysTranslator.convert(src, prjCoordSys, coordSysTransParameter, method);
-			fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
 			isSuccessful = true;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
 		} catch (Exception e) {

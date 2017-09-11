@@ -14,7 +14,6 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
@@ -143,7 +142,6 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 			// 当选择的字段类型为字符时，无法正常运行 -yuanR2017.9.5
 			// 当字段值较少时，会抛异常 -yuanR2017.9.5
 			// todo 建议组建修改yuanR2017.9.5
-			fireRunning(new RunningEvent(this, 0, "start"));
 			AnalyzingPatterns.addSteppedListener(steppedListener);
 			IncrementalResult[] incrementalResults = AnalyzingPatterns.incrementalAutoCorrelation(datasetVector, incrementalParameter);
 			isSuccessful = incrementalResults != null && incrementalResults.length > 0;
@@ -182,7 +180,6 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 				((OutputFrame) Application.getActiveApplication().getOutput()).setShowTime(true);
 				//  parameterResult.setSelectedItem(result);
 			}
-			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

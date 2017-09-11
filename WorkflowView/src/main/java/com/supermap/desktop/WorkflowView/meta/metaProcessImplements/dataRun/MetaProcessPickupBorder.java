@@ -10,15 +10,9 @@ import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -99,8 +93,6 @@ public class MetaProcessPickupBorder extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(MetaProcessPickupBorder.this, 0, "start"));
-
 			String datasetName = saveDataset.getDatasetName();
 			datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 			DatasetVector src = null;
@@ -119,10 +111,9 @@ public class MetaProcessPickupBorder extends MetaProcess {
 			Dataset result = TopologyProcessing.pickupBorder(src, this.saveDataset.getResultDatasource(), datasetName, isPreProcess);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
-			fireRunning(new RunningEvent(MetaProcessPickupBorder.this, 100, "finished"));
-
 
 		} catch (Exception e) {
+
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			TopologyProcessing.removeSteppedListener(steppedListener);

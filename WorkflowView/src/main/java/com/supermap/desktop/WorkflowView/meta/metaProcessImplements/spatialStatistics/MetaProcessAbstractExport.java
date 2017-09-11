@@ -285,7 +285,6 @@ public class MetaProcessAbstractExport extends MetaProcess {
 			DataExport dataExport = new DataExport();
 			dataExport.getExportSettings().add(exportSetting);
 			try {
-				fireRunning(new RunningEvent(this, 0, "start"));
 				dataExport.addExportSteppedListener(exportListener);
 
 				ExportResult result = dataExport.run();
@@ -293,11 +292,9 @@ public class MetaProcessAbstractExport extends MetaProcess {
 				if (succeedSettings.length > 0) {
 					isSuccessful = true;
 					time = String.valueOf((System.currentTimeMillis() - startTime) / 1000);
-					fireRunning(new RunningEvent(this, 100, "finished"));
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_FormExport_OutPutInfoTwo"),
 							selectDataset.getName() + "@" + selectDataset.getDatasource().getAlias(), targetPath, time));
 				} else {
-					fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ExportFailed")));
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_FormExport_OutPutInfoOne"), selectDataset.getName() + "@" + selectDataset.getDatasource().getAlias()));
 				}
 			} catch (Exception e) {
@@ -326,9 +323,6 @@ public class MetaProcessAbstractExport extends MetaProcess {
 					String failDatasetAlis = getDatasetAlis(result.getFail());
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(failExportInfo, failDatasetAlis));
 				}
-				fireRunning(new RunningEvent(this, 100, "finished"));
-			} else {
-				fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ExportFailed")));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -359,5 +353,4 @@ public class MetaProcessAbstractExport extends MetaProcess {
 	public IParameterPanel getComponent() {
 		return parameters.getPanel();
 	}
-
 }

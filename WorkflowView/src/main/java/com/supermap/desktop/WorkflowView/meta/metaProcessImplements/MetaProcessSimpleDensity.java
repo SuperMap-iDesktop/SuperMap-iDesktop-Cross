@@ -9,19 +9,14 @@ import com.supermap.desktop.lbs.Interface.IServerService;
 import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.lbs.params.JobResultResponse;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
-import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
-
-import java.util.concurrent.CancellationException;
 
 /**
  * Created by caolp on 2017-05-26.
@@ -115,7 +110,6 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful;
 		try {
-			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
 			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
@@ -150,11 +144,6 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		}
 
-		if (isSuccessful) {
-			fireRunning(new RunningEvent(this, 100, CoreProperties.getString("String_Message_Succeed")));
-		} else {
-			fireRunning(new RunningEvent(this, 0, CoreProperties.getString("String_Message_Failed")));
-		}
 		return isSuccessful;
 	}
 

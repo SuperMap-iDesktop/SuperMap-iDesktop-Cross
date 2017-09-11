@@ -9,7 +9,6 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
@@ -99,7 +98,6 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		boolean isSuccessful = false;
 		Recordset resultRecord = null;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 			DatasetVector currentDatasetVector = null;
 			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof DatasetVector) {
 				currentDatasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
@@ -123,7 +121,6 @@ public class MetaProcessSqlQuery extends MetaProcess {
 				queryParameter.setSpatialQueryObject(currentDatasetVector);
 				resultRecord = currentDatasetVector.query(queryParameter);
 				if (resultRecord != null && resultRecord.getRecordCount() > 0) {
-					fireRunning(new RunningEvent(this, 100, "finished"));
 					// 保存查询结果
 					DatasetVector datasetVector = saveQueryResult(resultRecord);
 					isSuccessful = true;
