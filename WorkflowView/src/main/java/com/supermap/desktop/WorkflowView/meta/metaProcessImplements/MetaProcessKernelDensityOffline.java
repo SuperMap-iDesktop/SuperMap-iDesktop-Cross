@@ -114,6 +114,7 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof Dataset) {
 					updateBound((Dataset) evt.getNewValue());
+					comboBoxField.setSelectedItem("SmUserID");
 				}
 			}
 		});

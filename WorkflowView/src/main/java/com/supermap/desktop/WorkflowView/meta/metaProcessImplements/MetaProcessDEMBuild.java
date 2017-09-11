@@ -311,6 +311,7 @@ public class MetaProcessDEMBuild extends MetaProcess {
 					isDatasetLine = ((DatasetVector) evt.getNewValue()).getType() == DatasetType.LINE;
 					textNumResampleTolerance.setEnabled(isDatasetLine && isInterpolateTypeTIN);
 				}
+				comboBoxSourceField.setSelectedItem("SmUserID");
 			}
 		});
 		comboBoxInterpolateType.addPropertyListener(new PropertyChangeListener() {
