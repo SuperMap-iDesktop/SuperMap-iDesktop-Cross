@@ -54,7 +54,7 @@ public class DefaultParameters implements IParameters {
 		}
 	};
 
-	public static final String ENVIRONMENT = ProcessProperties.getString("String_environment");
+	private static final String ENVIRONMENT = ProcessProperties.getString("String_environment");
 
 	public DefaultParameters(IProcess process) {
 		this.process = process;

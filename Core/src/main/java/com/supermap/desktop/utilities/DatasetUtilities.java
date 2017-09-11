@@ -451,21 +451,21 @@ public class DatasetUtilities {
 
 	public static DatasetVector getDefaultDatasetVector() {
 		DatasetVector datasetVector = null;
-		if(Application.getActiveApplication().getWorkspace().getDatasources().getCount()>0){
+		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
 			Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
 			for (Dataset activeDataset : activeDatasets) {
 				if (activeDataset instanceof DatasetVector) {
 					datasetVector = (DatasetVector) activeDataset;
-					return datasetVector ;
+					return datasetVector;
 				}
 			}
 			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
-			if(activeDatasources.length>0){
+			if (activeDatasources.length > 0) {
 				Datasets datasets = activeDatasources[0].getDatasets();
 				for (int i = 0; i < datasets.getCount(); i++) {
 					if (datasets.get(i) instanceof DatasetVector) {
 						datasetVector = (DatasetVector) datasets.get(i);
-						return datasetVector ;
+						return datasetVector;
 					}
 				}
 			}
@@ -476,28 +476,28 @@ public class DatasetUtilities {
 					break;
 				}
 			}
-			return datasetVector ;
+			return datasetVector;
 		}
 		return datasetVector;
 	}
 
 	public static DatasetGrid getDefaultDatasetGrid() {
 		DatasetGrid datasetGrid = null;
-		if(Application.getActiveApplication().getWorkspace().getDatasources().getCount()>0){
+		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
 			Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
 			for (Dataset activeDataset : activeDatasets) {
 				if (activeDataset instanceof DatasetGrid) {
 					datasetGrid = (DatasetGrid) activeDataset;
-					return datasetGrid ;
+					return datasetGrid;
 				}
 			}
 			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
-			if(activeDatasources.length>0){
+			if (activeDatasources.length > 0) {
 				Datasets datasets = activeDatasources[0].getDatasets();
 				for (int i = 0; i < datasets.getCount(); i++) {
 					if (datasets.get(i) instanceof DatasetGrid) {
 						datasetGrid = (DatasetGrid) datasets.get(i);
-						return datasetGrid ;
+						return datasetGrid;
 					}
 				}
 			}
@@ -508,7 +508,7 @@ public class DatasetUtilities {
 					break;
 				}
 			}
-			return datasetGrid ;
+			return datasetGrid;
 		}
 		return datasetGrid;
 	}
@@ -544,30 +544,41 @@ public class DatasetUtilities {
 	}
 
 	public static Dataset getDefaultDataset() {
-		if(Application.getActiveApplication().getWorkspace().getDatasources().getCount()>0){
+		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
 			Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
-			if(activeDatasets.length > 0){
+			if (activeDatasets.length > 0) {
 				return Application.getActiveApplication().getActiveDatasets()[0];
 			}
 			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
-			if(activeDatasources.length > 0 && activeDatasources[0].getDatasets().getCount()>0){
+			if (activeDatasources.length > 0 && activeDatasources[0].getDatasets().getCount() > 0) {
 				return activeDatasources[0].getDatasets().get(0);
 			}
 			Datasets datasets = Application.getActiveApplication().getWorkspace().getDatasources().get(0).getDatasets();
-			if(datasets.getCount()>0){
+			if (datasets.getCount() > 0) {
 				return datasets.get(0);
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * 默认获得非只读数据
+	 * yuanR2017.9.11
+	 *
+	 * @param datasetTypes
+	 * @return
+	 */
 	public static Dataset getDefaultDataset(DatasetType... datasetTypes) {
 		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
 			Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
 			if (activeDatasets.length > 0) {
 				for (Dataset activeDataset : activeDatasets) {
 					if (ArrayUtilities.isArrayContains(datasetTypes, activeDataset.getType())) {
-						return activeDataset;
+						if (activeDataset.isReadOnly()) {
+							continue;
+						} else {
+							return activeDataset;
+						}
 					}
 				}
 			}
@@ -577,7 +588,12 @@ public class DatasetUtilities {
 					Datasets datasets = activeDatasource.getDatasets();
 					for (int i = 0; i < datasets.getCount(); i++) {
 						if (ArrayUtilities.isArrayContains(datasetTypes, datasets.get(i).getType())) {
-							return datasets.get(i);
+							if (datasets.get(i).isReadOnly()) {
+								// 当前激活的数据源下的数据集为只读，那当前数据源都为只读-yuanR2017.9.11
+								break;
+							} else {
+								return datasets.get(i);
+							}
 						}
 					}
 				}
@@ -588,7 +604,12 @@ public class DatasetUtilities {
 				Datasets datasets = datasource.getDatasets();
 				for (int j = 0; j < datasets.getCount(); j++) {
 					if (ArrayUtilities.isArrayContains(datasetTypes, datasets.get(j).getType())) {
-						return datasets.get(j);
+						if (datasets.get(i).isReadOnly()) {
+							// 当数据源下的数据集为只读，那当前数据源都为只读-yuanR2017.9.11
+							break;
+						} else {
+							return datasets.get(j);
+						}
 					}
 				}
 			}
