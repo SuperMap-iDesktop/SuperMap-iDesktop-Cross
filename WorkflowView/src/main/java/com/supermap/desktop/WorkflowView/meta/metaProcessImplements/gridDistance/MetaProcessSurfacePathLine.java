@@ -194,6 +194,7 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 			resultDataset.setSelectedItem(datasetGrid.getDatasource().getDatasets().getAvailableDatasetName("result_DEMPastLine"));
 		}
 		parameterPathLineSmoothDegree.setEnabled(false);
+		resultDataset.setSelectedItem("result_DEMPastLine");
 	}
 
 	private void initParameterConstrint() {

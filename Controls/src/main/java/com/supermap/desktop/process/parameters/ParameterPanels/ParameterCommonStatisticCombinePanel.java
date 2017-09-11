@@ -83,7 +83,7 @@ public class ParameterCommonStatisticCombinePanel extends SwingPanel {
 		panelRadio.add(radioButtonValue, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 0));
 		panelRadio.add(radioButtonDatasets, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 5, 0));
 		panel.add(panelRadio, new GridBagConstraintsHelper(0, 0, 2, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 0));
-		panel.add(labelValue, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 0, 20));
+		panel.add(labelValue, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 25));
 		panel.add(textFieldLegit, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 25, 0, 5));
 		panel.add(datasetChooseForParameter, new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 0, 0));
 	}

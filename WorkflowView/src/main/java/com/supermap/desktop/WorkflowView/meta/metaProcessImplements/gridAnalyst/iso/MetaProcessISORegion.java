@@ -11,6 +11,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.properties.CommonProperties;
 
 /**
+ * 提取等值面
  * Created by xie on 2017/3/7.
  */
 public class MetaProcessISORegion extends MetaProcessISO {

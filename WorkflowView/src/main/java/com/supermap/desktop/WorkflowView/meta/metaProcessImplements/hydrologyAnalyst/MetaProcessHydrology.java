@@ -22,7 +22,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
  * Created By Chens on 2017/8/29 0029
  */
 public abstract class MetaProcessHydrology extends MetaProcessGridAnalyst {
-	protected String INPUT_DATA = SOURCE_PANEL_DESCRIPTION;;
+	protected String INPUT_DATA = SOURCE_PANEL_DESCRIPTION;
 	protected String OUTPUT_DATA;
 
 	protected ParameterDatasourceConstrained sourceDatasource;
