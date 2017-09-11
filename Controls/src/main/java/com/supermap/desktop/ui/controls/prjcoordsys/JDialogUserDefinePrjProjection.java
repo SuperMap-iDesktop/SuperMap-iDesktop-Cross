@@ -5,13 +5,13 @@ import com.supermap.data.PrjCoordSys;
 import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.ProjectionType;
 import com.supermap.data.Unit;
+import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.comboBox.JSearchComboBox;
@@ -40,7 +40,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 			dispose();
 		}
 	};
-	private final ActionListener buttonCalcelListener = new ActionListener() {
+	private final ActionListener buttonCancelListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			dialogResult = DialogResult.CANCEL;
@@ -478,7 +478,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 
 	private void addListeners() {
 		buttonOK.addActionListener(buttonOkListener);
-		buttonCancel.addActionListener(buttonCalcelListener);
+		buttonCancel.addActionListener(buttonCancelListener);
 		radioButtonAMS.addItemListener(radioAMSListener);
 		comboBoxName.addItemListener(comboBoxNameListener);
 		comboBoxCoordType.addItemListener(comboBoxCoordTypeListener);
@@ -487,7 +487,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 
 	private void removeListeners() {
 		buttonOK.removeActionListener(buttonOkListener);
-		buttonCancel.removeActionListener(buttonCalcelListener);
+		buttonCancel.removeActionListener(buttonCancelListener);
 		radioButtonAMS.removeItemListener(radioAMSListener);
 		comboBoxName.removeItemListener(comboBoxNameListener);
 		comboBoxCoordType.removeItemListener(comboBoxCoordTypeListener);

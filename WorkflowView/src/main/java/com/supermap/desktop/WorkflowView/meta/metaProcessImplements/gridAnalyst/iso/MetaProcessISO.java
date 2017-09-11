@@ -3,7 +3,11 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridAnalyst
 import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridAnalyst;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
@@ -12,7 +16,14 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -217,7 +228,7 @@ public abstract class MetaProcessISO extends MetaProcessGridAnalyst {
 			} else {
 				src = (DatasetGrid) dataset.getSelectedItem();
 			}
-			DatasetVector result = subExecute(surfaceExtractParameter, src, saveDataset.getResultDatasource(), saveDataset.getDatasetName());
+			DatasetVector result = subExecute(surfaceExtractParameter, src, saveDataset.getResultDatasource(), saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(saveDataset.getDatasetName()));
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
 			fireRunning(new RunningEvent(this, 100, "finished"));
