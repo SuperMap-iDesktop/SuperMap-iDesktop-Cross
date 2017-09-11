@@ -4,6 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.IReadyChecker;
+import com.supermap.desktop.process.core.ReadyEvent;
 import com.supermap.desktop.process.core.Workflow;
 
 import java.text.MessageFormat;
@@ -14,11 +15,11 @@ import java.util.Vector;
  */
 public class WorkflowProcessReadyChecker<E extends Workflow> implements IReadyChecker<E> {
 	@Override
-	public boolean isReady(Workflow workflow) {
-		Vector<IProcess> processes = workflow.getProcesses();
+	public boolean isReady(ReadyEvent<E> workflow) {
+		Vector<IProcess> processes = workflow.getSourceData().getProcesses();
 		StringBuilder stringBuilder = new StringBuilder();
 		for (IProcess process : processes) {
-			boolean readyState = process.checkReadyState();
+			boolean readyState = process.checkReadyState(workflow);
 			if (!readyState) {
 				stringBuilder.append(", \"").append(process.getTitle()).append("\"");
 			}

@@ -14,6 +14,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 
 import javax.swing.event.EventListenerList;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 /**
@@ -56,7 +57,7 @@ public abstract class AbstractProcess implements IProcess {
 		}
 		Workflow oldWorkflow = this.workflow;
 		this.workflow = workflow;
-		checkReadyState();
+		checkReadyState(new ReadyEvent(this, false));
 		workflowChanged(oldWorkflow, workflow);
 		if (this.workflow != null) {
 			getParameters().bindWorkflow(this.workflow);
@@ -76,7 +77,7 @@ public abstract class AbstractProcess implements IProcess {
 
 		try {
 			// 运行前，必要参数值是否异常判断-yuanR2017.9.8
-			if (isReady()) {
+			if (isReady(new ReadyEvent(this, true))) {
 				setStatus(RunningStatus.RUNNING);
 				isSuccessful = execute();
 
@@ -96,17 +97,21 @@ public abstract class AbstractProcess implements IProcess {
 	}
 
 	@Override
-	public final boolean isReady() {
+	public final boolean isReady(ReadyEvent readyEvent) {
 		if (!isReadyHook()) {
 			return false;
 		}
 		// 参数是否准备就续-yuanR
 		if (!getParameters().isReady()) {
+			if (readyEvent.isOutputMessage()) {
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_ParameterRequisiteUnFilled"), getTitle()));
+			}
 			return false;
 		}
+		ReadyEvent<IProcess> childReadyEvent = new ReadyEvent<>((IProcess) this, readyEvent.isOutputMessage());
 		if (processReadyCheckerList.size() > 0) {
 			for (IReadyChecker<IProcess> iProcessReadyChecker : processReadyCheckerList) {
-				if (!iProcessReadyChecker.isReady(this)) {
+				if (!iProcessReadyChecker.isReady(childReadyEvent)) {
 					return false;
 				}
 			}
@@ -119,8 +124,8 @@ public abstract class AbstractProcess implements IProcess {
 	}
 
 	@Override
-	public boolean checkReadyState() {
-		if (isReady()) {
+	public boolean checkReadyState(ReadyEvent readyEvent) {
+		if (isReady(readyEvent)) {
 			setStatus(RunningStatus.READY);
 			return true;
 		} else {
@@ -158,7 +163,7 @@ public abstract class AbstractProcess implements IProcess {
 	public void reset() {
 		RunningStatus oldStatus = this.status;
 
-		RunningStatus currentStatus = isReady() ? RunningStatus.READY : RunningStatus.WARNING;
+		RunningStatus currentStatus = isReady(new ReadyEvent(this, false)) ? RunningStatus.READY : RunningStatus.WARNING;
 		if (oldStatus != currentStatus) {
 			setStatus(currentStatus);
 			fireStatusChange(new StatusChangeEvent(this, getStatus(), oldStatus));

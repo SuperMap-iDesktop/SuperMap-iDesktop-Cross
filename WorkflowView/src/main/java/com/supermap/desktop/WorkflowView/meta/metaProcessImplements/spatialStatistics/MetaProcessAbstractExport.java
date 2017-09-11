@@ -2,20 +2,38 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStat
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.conversion.*;
+import com.supermap.data.conversion.DataExport;
+import com.supermap.data.conversion.ExportResult;
+import com.supermap.data.conversion.ExportSetting;
+import com.supermap.data.conversion.ExportSteppedListener;
+import com.supermap.data.conversion.FileType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
+import com.supermap.desktop.WorkflowView.WorkflowViewProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.WorkflowView.meta.dataconversion.ExportSettingUtilities;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.implement.UserDefineType.*;
+import com.supermap.desktop.implement.UserDefineType.ExportSettingExcel;
+import com.supermap.desktop.implement.UserDefineType.ExportSettingGPX;
+import com.supermap.desktop.implement.UserDefineType.GPXAnalytic;
+import com.supermap.desktop.implement.UserDefineType.UserDefineExportResult;
+import com.supermap.desktop.implement.UserDefineType.UserDefineFileType;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.IReadyChecker;
+import com.supermap.desktop.process.core.ReadyEvent;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterFile;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -68,7 +86,30 @@ public class MetaProcessAbstractExport extends MetaProcess {
 	};
 
 	public MetaProcessAbstractExport() {
-
+		this.addProcessReadyChecker(new IReadyChecker<IProcess>() {
+			@Override
+			public boolean isReady(ReadyEvent<IProcess> readyEvent) {
+				String parentPath = exportPath.getSelectedItem();
+				if (StringUtilities.isNullOrEmpty(parentPath)) {
+					if (readyEvent.isOutputMessage()) {
+						Application.getActiveApplication().getOutput().output(MessageFormat.format(WorkflowViewProperties.getString("String_ExportPathCannotBeNull"), getTitle()));
+					}
+					return false;
+				}
+				if (readyEvent.isOutputMessage()) {
+					File file = new File(parentPath);
+					if (!file.exists()) {
+						try {
+							file.mkdirs();
+						} catch (Exception e) {
+							Application.getActiveApplication().getOutput().output((MessageFormat.format(WorkflowViewProperties.getString("String_ExportPathUnLegal"), getTitle())));
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+		});
 	}
 
 	protected void registEvents() {
@@ -234,13 +275,13 @@ public class MetaProcessAbstractExport extends MetaProcess {
 			time = String.valueOf((System.currentTimeMillis() - startTime) / 1000.0);
 			printExportInfo(result, time);
 			((ExportSettingGPX) exportSetting).removeExportSteppedListener(exportListener);
-		} else if(exportSetting instanceof ExportSettingExcel) {
+		} else if (exportSetting instanceof ExportSettingExcel) {
 			((ExportSettingExcel) exportSetting).addExportSteppedListener(exportListener);
 			UserDefineExportResult result = ((ExportSettingExcel) exportSetting).run();
 			time = String.valueOf((System.currentTimeMillis() - startTime) / 1000.0);
 			printExportInfo(result, time);
 			((ExportSettingExcel) exportSetting).removeExportSteppedListener(exportListener);
-		}else {
+		} else {
 			DataExport dataExport = new DataExport();
 			dataExport.getExportSettings().add(exportSetting);
 			try {
@@ -318,4 +359,5 @@ public class MetaProcessAbstractExport extends MetaProcess {
 	public IParameterPanel getComponent() {
 		return parameters.getPanel();
 	}
+
 }
