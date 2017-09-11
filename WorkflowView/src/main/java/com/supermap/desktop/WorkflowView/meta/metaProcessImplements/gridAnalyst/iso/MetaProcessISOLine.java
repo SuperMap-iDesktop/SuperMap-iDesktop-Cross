@@ -11,6 +11,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.properties.CommonProperties;
 
 /**
+ * 提取等值线
  * Created by xie on 2017/3/6.
  */
 public class MetaProcessISOLine extends MetaProcessISO {
