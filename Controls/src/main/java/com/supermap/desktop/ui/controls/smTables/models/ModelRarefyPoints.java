@@ -150,7 +150,7 @@ public class ModelRarefyPoints extends DefaultTableModel implements IModel {
 
 			for (int i = 0; i < count; i++) {
 				if (ArrayUtilities.isArrayContains(fieldType, fieldInfos.get(i).getType())) {
-					if (!fieldInfos.get(i).isSystemField()) {
+					if (!fieldInfos.get(i).isSystemField() && !fieldInfos.get(i).getName().equals("SmUserID")) {
 						ArrayList<StatisticsFieldType> supportedStatisticsType = getSupportedStatisticsType();
 						tableDatas.add(new TableData(fieldInfos.get(i), supportedStatisticsType, supportedStatisticsType.get(0),fieldInfos.get(i).getName()+"_Average"));
 					}
