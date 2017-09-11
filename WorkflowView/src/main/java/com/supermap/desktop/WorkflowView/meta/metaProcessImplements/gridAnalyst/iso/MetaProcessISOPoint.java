@@ -261,6 +261,9 @@ public class MetaProcessISOPoint extends MetaProcess {
 					reloadValue();
 					isSelectChanged = false;
 				}
+				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
+					fields.setSelectedItem("SmUserID");
+				}
 			}
 		});
 		datumValue.addPropertyListener(new PropertyChangeListener() {
