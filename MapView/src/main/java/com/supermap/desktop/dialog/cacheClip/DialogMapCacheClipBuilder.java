@@ -21,7 +21,6 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
@@ -398,7 +397,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		} else {
 			sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + ".sci");
 		}
-		if (validateScales()) {
+		if (validateFixedScales()) {
 			setMapCacheBuilderValueBeforeRun();
 			splitCahceAndDoBuild(cachePath, sciPath);
 		}
@@ -445,13 +444,14 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		return;
 	}
 
-	private boolean validateScales() {
+	private boolean validateFixedScales() {
+		boolean hasFixedScalesError = true;
 		if (null != mapCacheBuilder.getMap().getVisibleScales() && 0 != mapCacheBuilder.getMap().getVisibleScales().length) {
 			//地图存在固定比例从时的处理方式
 			if (firstStepPane.addScaleDropDown.isEnabled()) {
 				if (this.mapCacheBuilder.getMap().getVisibleScales().length < firstStepPane.currentMapCacheScale.size()) {
 					new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
-					return true;
+					hasFixedScalesError = false;
 				} else {
 					int count = 0;
 					for (int i = 0; i < this.mapCacheBuilder.getMap().getVisibleScales().length; i++) {
@@ -464,18 +464,13 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					}
 					if (count != firstStepPane.currentMapCacheScale.size()) {
 						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
-						return true;
+						hasFixedScalesError = false;
 					}
 				}
 
-			} else {
-				new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
-				return true;
 			}
-		}else{
-			return true;
 		}
-		return false;
+		return hasFixedScalesError;
 	}
 
 	private void singleProcessBuilder(int cmdType) {
