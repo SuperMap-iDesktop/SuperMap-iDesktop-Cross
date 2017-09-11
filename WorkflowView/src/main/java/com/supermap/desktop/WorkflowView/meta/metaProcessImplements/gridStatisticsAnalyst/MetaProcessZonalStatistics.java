@@ -13,19 +13,10 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterFieldComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.GridStatisticsModeUtilities;
@@ -64,7 +55,7 @@ public class MetaProcessZonalStatistics extends MetaProcessGridAnalyst {
 		valueDatasource = new ParameterDatasourceConstrained();
 		valueDataset = new ParameterSingleDataset(DatasetType.GRID);
 		zonalDatasource = new ParameterDatasourceConstrained();
-		zonalDataset = new ParameterSingleDataset(DatasetType.GRID,DatasetType.REGION);
+		zonalDataset = new ParameterSingleDataset(DatasetType.GRID, DatasetType.REGION);
 		resultDatasource = new ParameterDatasourceConstrained();
 		resultDatasetGrid = new ParameterTextField(ProcessProperties.getString("String_Label_StatisticResult_Grid"));
 		resultTable = new ParameterTextField(ProcessProperties.getString("String_Label_StatisticResult_Tabular"));
@@ -74,10 +65,10 @@ public class MetaProcessZonalStatistics extends MetaProcessGridAnalyst {
 
 		ParameterCombine valueCombine = new ParameterCombine();
 		valueCombine.setDescribe(VALUE_DATA);
-		valueCombine.addParameters(valueDatasource,valueDataset);
+		valueCombine.addParameters(valueDatasource, valueDataset);
 		ParameterCombine zonalCombine = new ParameterCombine();
 		zonalCombine.setDescribe(ZONAL_DATA);
-		zonalCombine.addParameters(zonalDatasource,zonalDataset);
+		zonalCombine.addParameters(zonalDatasource, zonalDataset);
 		ParameterCombine settingCombine = new ParameterCombine();
 		settingCombine.setDescribe(ProcessProperties.getString("String_setParameter"));
 		settingCombine.addParameters(comboBoxZonalField, comboBoxStatisticMode, checkBoxIgnore);
@@ -125,16 +116,16 @@ public class MetaProcessZonalStatistics extends MetaProcessGridAnalyst {
 		checkBoxIgnore.setSelectedItem(true);
 		resultDatasetGrid.setSelectedItem("result_ZonalStatisticsGrid");
 		resultTable.setSelectedItem("result_ZonalStatisticsTable");
-		comboBoxStatisticMode.setItems(new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MIN),GridStatisticsMode.MIN),
-				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MAX),GridStatisticsMode.MAX),
-				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MEAN),GridStatisticsMode.MEAN),
-				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.STDEV),GridStatisticsMode.STDEV),
-				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.SUM),GridStatisticsMode.SUM),
-				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.VARIETY),GridStatisticsMode.VARIETY),
-				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.RANGE),GridStatisticsMode.RANGE),
-				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MAJORITY),GridStatisticsMode.MAJORITY),
-				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MINORITY),GridStatisticsMode.MINORITY),
-				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MEDIAN),GridStatisticsMode.MEDIAN));
+		comboBoxStatisticMode.setItems(new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MIN), GridStatisticsMode.MIN),
+				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MAX), GridStatisticsMode.MAX),
+				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MEAN), GridStatisticsMode.MEAN),
+				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.STDEV), GridStatisticsMode.STDEV),
+				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.SUM), GridStatisticsMode.SUM),
+				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.VARIETY), GridStatisticsMode.VARIETY),
+				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.RANGE), GridStatisticsMode.RANGE),
+				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MAJORITY), GridStatisticsMode.MAJORITY),
+				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MINORITY), GridStatisticsMode.MINORITY),
+				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MEDIAN), GridStatisticsMode.MEDIAN));
 		comboBoxStatisticMode.setSelectedItem(comboBoxStatisticMode.getItemAt(4));
 	}
 
@@ -166,7 +157,6 @@ public class MetaProcessZonalStatistics extends MetaProcessGridAnalyst {
 	public boolean childExecute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 			DatasetGrid src = null;
 			if (parameters.getInputs().getData(VALUE_DATA).getValue() != null) {
 				src = (DatasetGrid) parameters.getInputs().getData(VALUE_DATA).getValue();
@@ -175,7 +165,7 @@ public class MetaProcessZonalStatistics extends MetaProcessGridAnalyst {
 			}
 			Dataset srcZonal = null;
 			if (parameters.getInputs().getData(ZONAL_DATA).getValue() != null) {
-				srcZonal = (Dataset)parameters.getInputs().getData(ZONAL_DATA).getValue();
+				srcZonal = (Dataset) parameters.getInputs().getData(ZONAL_DATA).getValue();
 			} else {
 				srcZonal = zonalDataset.getSelectedItem();
 			}
@@ -205,10 +195,9 @@ public class MetaProcessZonalStatistics extends MetaProcessGridAnalyst {
 			isSuccessful = result != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA_GRID).setValue(result.getResultDatasetGrid());
 			this.getParameters().getOutputs().getData(OUTPUT_DATA_TABLE).setValue(result.getResultTable());
-			fireRunning(new RunningEvent(this,100,"finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+		} finally {
 			StatisticsAnalyst.removeSteppedListener(steppedListener);
 		}
 

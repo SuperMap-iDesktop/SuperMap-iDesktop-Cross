@@ -13,7 +13,6 @@ import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -130,7 +129,6 @@ public class MetaProcessDEMLake extends MetaProcess {
 		boolean isSuccessful = false;
 
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 
 			TerrainBuilderParameter terrainBuilderParameter = new TerrainBuilderParameter();
 			terrainBuilderParameter.setLakeDataset((DatasetVector) lakeDataset.getSelectedItem());
@@ -149,14 +147,13 @@ public class MetaProcessDEMLake extends MetaProcess {
 
 			ParameterDataNode node = (ParameterDataNode) fieldOrValue.getSelectedItem();
 			if (fieldOrValue.getItemIndex(node) == 0) {
-				isSuccessful =(heightFieldComboBox.getSelectedItem()==null?TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), null):
-				 TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), heightFieldComboBox.getSelectedItem().toString()));
+				isSuccessful = (heightFieldComboBox.getSelectedItem() == null ? TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), null) :
+						TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), heightFieldComboBox.getSelectedItem().toString()));
 			} else if (fieldOrValue.getItemIndex(node) == 1) {
 				isSuccessful = TerrainBuilder.buildLake(src, (DatasetVector) lakeDataset.getSelectedItem(), Double.valueOf(heightValue.getSelectedItem().toString()));
 			}
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
 
-			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

@@ -4,6 +4,7 @@ import com.supermap.analyst.spatialanalyst.*;
 import com.supermap.data.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
@@ -18,6 +19,8 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Created By Chens on 2017/8/16 0016
@@ -103,23 +106,23 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 	private void initLayout() {
 		panel.setLayout(new GridBagLayout());
 
-		panel.add(labelUnitType, new GridBagConstraintsHelper(0,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20));
+		panel.add(labelUnitType, new GridBagConstraintsHelper(0,0,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,25));
 		panel.add(comboBoxUnitType, new GridBagConstraintsHelper(1,0,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelShapeType, new GridBagConstraintsHelper(0,1,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20));
+		panel.add(labelShapeType, new GridBagConstraintsHelper(0,1,1,1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,25));
 		panel.add(comboBoxShapeType, new GridBagConstraintsHelper(1,1,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelWidth, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelWidth, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,25).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldWidth, new GridBagConstraintsHelper(1,2,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelHeight, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelHeight, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,25).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldHeight, new GridBagConstraintsHelper(1,3,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelRadius, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelRadius, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,25).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldRadius, new GridBagConstraintsHelper(1,4,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelInnerRadius, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelInnerRadius, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,25).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldInnerRadius, new GridBagConstraintsHelper(1,5,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelOuterRadius, new GridBagConstraintsHelper(0, 6, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelOuterRadius, new GridBagConstraintsHelper(0, 6, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,25).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldOuterRadius, new GridBagConstraintsHelper(1,6,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelStartAngle, new GridBagConstraintsHelper(0, 7, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,5,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelStartAngle, new GridBagConstraintsHelper(0, 7, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,5,25).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldStartAngle, new GridBagConstraintsHelper(1,7,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,5,0));
-		panel.add(labelEndAngle, new GridBagConstraintsHelper(0, 8, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,5,0,20).setAnchor(GridBagConstraints.WEST));
+		panel.add(labelEndAngle, new GridBagConstraintsHelper(0, 8, 1, 1).setWeight(0,1).setFill(GridBagConstraints.NONE).setInsets(0,0,0,25).setAnchor(GridBagConstraints.WEST));
 		panel.add(textFieldEndAngle, new GridBagConstraintsHelper(1,8,1,1).setWeight(1,1).setFill(GridBagConstraints.HORIZONTAL).setInsets(0,20,0,0));
 		setComponentVisible(new JComponent[]{labelWidth,labelHeight,textFieldWidth,textFieldHeight});
 	}
@@ -411,20 +414,31 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 		}
 		if (dataset != null) {
 			Rectangle2D bounds = dataset.getBounds();
+			double max = bounds.getWidth() > bounds.getHeight() ? bounds.getWidth() : bounds.getHeight();
+			double min = bounds.getWidth() < bounds.getHeight() ? bounds.getWidth() : bounds.getHeight();
 			if (comboBoxShapeType.getSelectedItem().equals(RECTANGLE)) {
 				textFieldWidth.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
 				textFieldHeight.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getHeight()/20:"3"));
 			} else if (comboBoxShapeType.getSelectedItem().equals(CIRCLE)) {
-				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
+				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?max/20:"3"));
 			} else if (comboBoxShapeType.getSelectedItem().equals(ANNULUS)) {
-				textFieldInnerRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? bounds.getWidth() / 20 : "1"));
-				textFieldOuterRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? bounds.getWidth() / 20 : "3"));
+				textFieldInnerRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? min / 20 : "1"));
+				textFieldOuterRadius.setText("" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? max / 20 : "3"));
 			} else {
-				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
+				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?max/20:"3"));
 				textFieldStartAngle.setText("0");
 				textFieldEndAngle.setText("360");
 			}
 		}
 		resetNeighbourShape();
+	}
+
+	@Override
+	public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
+		if (event.getFieldName().equals(ParameterShapeType.DATASET_FIELD_NAME)) {
+			this.dataset = parameterShapeType.getDataset();
+			resetTextField();
+			parameterShapeType.setSelectedItem(neighbourShape);
+		}
 	}
 }

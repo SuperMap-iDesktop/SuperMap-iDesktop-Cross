@@ -10,16 +10,9 @@ import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessG
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
 import java.beans.PropertyChangeEvent;
@@ -75,6 +68,7 @@ public class MetaProcessFlowDirection extends MetaProcessGridAnalyst {
 		EqualDatasourceConstraint constraintSource = new EqualDatasourceConstraint();
 		constraintSource.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		constraintSource.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(resultDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(directionGrid, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(dropGrid, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
@@ -108,7 +102,6 @@ public class MetaProcessFlowDirection extends MetaProcessGridAnalyst {
 	public boolean childExecute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 			DatasetGrid src = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetGrid) parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -116,20 +109,19 @@ public class MetaProcessFlowDirection extends MetaProcessGridAnalyst {
 				src = (DatasetGrid) sourceDataset.getSelectedItem();
 			}
 			HydrologyAnalyst.addSteppedListener(steppedListener);
-			boolean forceFlowAtEdge = Boolean.parseBoolean(checkBoxForceOut.getSelectedItem().toString());
-			boolean createDrop = Boolean.parseBoolean(checkBoxCreateDrop.getSelectedItem().toString());
+			boolean forceFlowAtEdge = Boolean.parseBoolean(checkBoxForceOut.getSelectedItem());
+			boolean createDrop = Boolean.parseBoolean(checkBoxCreateDrop.getSelectedItem());
 			DatasetGrid resultDirection = null;
 			if (createDrop) {
 				resultDirection = HydrologyAnalyst.flowDirection(src,forceFlowAtEdge,resultDatasource.getSelectedItem(),
-						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(directionGrid.getSelectedItem().toString()),
-						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(dropGrid.getSelectedItem().toString()));
+						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(directionGrid.getSelectedItem()),
+						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(dropGrid.getSelectedItem()));
 			} else {
 				resultDirection = HydrologyAnalyst.flowDirection(src,forceFlowAtEdge,resultDatasource.getSelectedItem(),
-						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(directionGrid.getSelectedItem().toString()));
+						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(directionGrid.getSelectedItem()));
 			}
 			isSuccessful = resultDirection != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDirection);
-			fireRunning(new RunningEvent(this,100,"finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}finally {

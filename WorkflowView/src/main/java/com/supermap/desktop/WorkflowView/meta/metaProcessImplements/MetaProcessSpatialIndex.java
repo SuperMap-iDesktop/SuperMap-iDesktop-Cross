@@ -158,9 +158,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 				src = (DatasetVector) this.dataset.getSelectedItem();
 			}
 			SpatialIndexType spatialIndexType = (SpatialIndexType) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData();
-			fireRunning(new RunningEvent(this, 0, "start build spatial index"));
 			isSuccessful = src.buildSpatialIndex(spatialIndexType);
-			fireRunning(new RunningEvent(this, 100, "build spatial index finished"));
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

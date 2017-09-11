@@ -8,21 +8,15 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridAnalyst;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.utilities.DatasetUtilities;
-
 /**
  * Created By Chens on 2017/8/29 0029
  */
 public abstract class MetaProcessHydrology extends MetaProcessGridAnalyst {
-	protected String INPUT_DATA = SOURCE_PANEL_DESCRIPTION;;
+	protected String INPUT_DATA = SOURCE_PANEL_DESCRIPTION;
 	protected String OUTPUT_DATA;
 
 	protected ParameterDatasourceConstrained sourceDatasource;
@@ -52,7 +46,7 @@ public abstract class MetaProcessHydrology extends MetaProcessGridAnalyst {
 
 		initParaComponent();
 		parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, getOutputText(),getOutputType(),resultCombine);
+		parameters.addOutputParameters(OUTPUT_DATA, getOutputText(), getOutputType(), resultCombine);
 	}
 
 	protected Type getOutputType() {
@@ -89,7 +83,6 @@ public abstract class MetaProcessHydrology extends MetaProcessGridAnalyst {
 	public boolean childExecute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 			DatasetGrid src = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetGrid) parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -100,10 +93,9 @@ public abstract class MetaProcessHydrology extends MetaProcessGridAnalyst {
 			Dataset result = doWork(src);
 			isSuccessful = result != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
-			fireRunning(new RunningEvent(this,100,"finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+		} finally {
 			HydrologyAnalyst.removeSteppedListener(steppedListener);
 		}
 		return isSuccessful;

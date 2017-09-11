@@ -13,7 +13,6 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -129,7 +128,6 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(MetaProcessAggregatePoints.this, 0, "start"));
 			String datasetName = saveDataset.getDatasetName();
 			datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 			DatasetVector src = null;
@@ -147,9 +145,6 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 			Dataset dataset = saveDataset.getResultDatasource().getDatasets().get(datasetName);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
 			isSuccessful = dataset != null;
-
-			fireRunning(new RunningEvent(MetaProcessAggregatePoints.this, 100, "finished"));
-
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

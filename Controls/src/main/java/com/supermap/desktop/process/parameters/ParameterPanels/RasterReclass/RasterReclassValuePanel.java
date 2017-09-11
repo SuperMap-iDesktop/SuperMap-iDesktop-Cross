@@ -304,8 +304,8 @@ public class RasterReclassValuePanel extends JPanel {
 	private ActionListener importListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-//			importFile();
-//			getNewMappingTable();
+			importFile();
+			getNewMappingTable();
 		}
 	};
 
@@ -450,6 +450,12 @@ public class RasterReclassValuePanel extends JPanel {
 		}
 	}
 
+	/*
+	The following definition of ReclassMappingTable variables,
+	 re acquisition value is in order to solve the global variable this.reclassMappingTable
+    to get to the ReclassSegmentType type is not correct, have not found the cause,
+    being the first such treatment.
+	 */
 	private void importFile() {
 		String moduleName = "ImportMappingTable";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
@@ -460,26 +466,34 @@ public class RasterReclassValuePanel extends JPanel {
 		SmFileChoose smFileChoose = new SmFileChoose(moduleName);
 		int state = smFileChoose.showDefaultDialog();
 		String filePath = "";
-		if (state == JFileChooser.APPROVE_OPTION) {
-			filePath = smFileChoose.getFilePath();
-
-			if (this.reclassMappingTable.fromXmlFile(filePath)) {
-				this.isImporting = true;
-//				System.out.println(this.reclassMappingTable.getChangeNoValueTo());
-				this.textFieldLegitNoValue.setText(String.valueOf(this.reclassMappingTable.getChangeNoValueTo()));
-				this.textFieldLegitNoClass.setText(String.valueOf(this.reclassMappingTable.getChangeMissingValueTo()));
-//				if (this.reclassMappingTable.getSegments()[0].getSegmentType() == ReclassSegmentType.OPENCLOSE) {
-//					this.rasterReclassModel.setReclassSegmentType(ReclassSegmentType.OPENCLOSE);
-//					this.radioButtonLeftOpen.setSelected(true);
-//				} else {
-//					this.rasterReclassModel.setReclassSegmentType(ReclassSegmentType.CLOSEOPEN);
-//					this.radioButtonLeftClose.setSelected(true);
-//				}
-				this.rasterReclassModel.setSegmentData(this.reclassMappingTable.getSegments());
-				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_ReclassFileInputSuccess") + filePath);
-			} else {
-				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_ReclassFileInputFailed"));
+		try {
+			if (state == JFileChooser.APPROVE_OPTION) {
+				filePath = smFileChoose.getFilePath();
+				if (this.reclassMappingTable.fromXmlFile(filePath)) {
+					this.isImporting = true;
+					this.textFieldLegitNoValue.setText(String.valueOf(this.reclassMappingTable.getChangeNoValueTo()));
+					this.textFieldLegitNoClass.setText(String.valueOf(this.reclassMappingTable.getChangeMissingValueTo()));
+					this.rasterReclassModel.setSegmentData(this.reclassMappingTable.getSegments());
+					ReclassMappingTable mappingTable = new ReclassMappingTable();
+					mappingTable.fromXmlFile(filePath);
+					ReclassSegmentType type = mappingTable.getSegments()[0].getSegmentType();
+					if (type == ReclassSegmentType.OPENCLOSE) {
+						this.rasterReclassModel.setReclassSegmentType(ReclassSegmentType.OPENCLOSE);
+						this.radioButtonLeftOpen.setSelected(true);
+					} else if (type == ReclassSegmentType.CLOSEOPEN) {
+						this.rasterReclassModel.setReclassSegmentType(ReclassSegmentType.CLOSEOPEN);
+						this.radioButtonLeftClose.setSelected(true);
+					}
+					Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_ReclassFileInputSuccess") + filePath);
+				} else {
+					Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_ReclassFileInputFailed"));
+				}
 			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			this.isImporting = false;
+			getNewMappingTable();
 		}
 	}
 
@@ -542,7 +556,7 @@ public class RasterReclassValuePanel extends JPanel {
 	}
 
 	private void currentMappingTableChange() {
-		if (this.reclassValueChange != null) {
+		if (this.reclassValueChange != null && !isImporting) {
 			this.reclassValueChange.reclassMappingTableChange(this.reclassMappingTable);
 		}
 	}
@@ -567,7 +581,7 @@ public class RasterReclassValuePanel extends JPanel {
 		this.reclassMappingTable.setReclassType(ReclassType.RANGE);
 		this.reclassMappingTable.setRetainMissingValue(true);
 		this.reclassValueChange.reClassPixelFormat(ReclassPixelFormat.BIT32);
-		this.buttonImport.setVisible(false);
+		//this.buttonImport.setVisible(false);
 	}
 
 	public void addReclassValueChangeListener(ReclassValueChange reclassValueChange) {

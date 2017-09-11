@@ -8,7 +8,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridAnalyst;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -21,6 +20,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 /**
+ * 提取等值线/面
  * @author XiaJT
  */
 public abstract class MetaProcessISO extends MetaProcessGridAnalyst {
@@ -217,10 +217,9 @@ public abstract class MetaProcessISO extends MetaProcessGridAnalyst {
 			} else {
 				src = (DatasetGrid) dataset.getSelectedItem();
 			}
-			DatasetVector result = subExecute(surfaceExtractParameter, src, saveDataset.getResultDatasource(), saveDataset.getDatasetName());
+			DatasetVector result = subExecute(surfaceExtractParameter, src, saveDataset.getResultDatasource(), saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(saveDataset.getDatasetName()));
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
-			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

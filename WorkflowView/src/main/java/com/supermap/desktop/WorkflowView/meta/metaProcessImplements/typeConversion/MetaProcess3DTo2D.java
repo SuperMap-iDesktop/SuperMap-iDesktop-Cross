@@ -6,7 +6,6 @@ import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
 import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
@@ -113,7 +112,6 @@ public abstract class MetaProcess3DTo2D extends MetaProcessTypeConversion {
 			}
 
 			if (src.getFieldInfos() != null) {
-				fireRunning(new RunningEvent(this, 0, "start"));
 
 				DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
 				datasetVectorInfo.setName(outputData.getResultDatasource().getDatasets().getAvailableDatasetName(outputData.getDatasetName()));
@@ -164,7 +162,6 @@ public abstract class MetaProcess3DTo2D extends MetaProcessTypeConversion {
 				} else {
 					outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
 				}
-				fireRunning(new RunningEvent(this, 100, "finish"));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

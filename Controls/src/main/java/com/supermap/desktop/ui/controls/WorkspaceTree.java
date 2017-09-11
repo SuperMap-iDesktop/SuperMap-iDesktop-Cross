@@ -88,6 +88,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 
 	private transient Enumeration<TreePath> scenesTreePath = null;
 
+	private transient Enumeration<TreePath> workflowTreePath = null;
+
 	private transient Enumeration<TreePath> resourcesTreePath = null;
 
 	private transient Workspace currentWorkspace = null;
@@ -343,6 +345,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		}
 	}
 
+
 	/**
 	 * 返回/设置布局集合节点是否可见
 	 */
@@ -392,18 +395,49 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				isScenesNodeVisible = bool;
 
 				if (isScenesNodeVisible) {
-					if (treeNodeResources.getParent() == null) {
-						treeModelTemp.insertNodeInto(treeNodeScenes, treeNodeWorkspace, treeNodeWorkspace.getChildCount());
-					} else {
-						treeModelTemp.insertNodeInto(treeNodeScenes, treeNodeWorkspace, treeNodeWorkspace.getChildCount() - 1);
+					int count = 0;
+					if (treeNodeResources.getParent() != null) {
+						count++;
 					}
-
+					if (treeNodeWorkFlow.getParent() != null) {
+						count++;
+					}
+					treeModelTemp.insertNodeInto(treeNodeScenes, treeNodeWorkspace, treeNodeWorkspace.getChildCount() - count);
 					for (; scenesTreePath != null && scenesTreePath.hasMoreElements(); ) {
 						this.setExpandedState(scenesTreePath.nextElement(), true);
 					}
 				} else {
 					scenesTreePath = this.getExpandedDescendants(new TreePath(treeNodeScenes.getPath()));
 					treeModelTemp.removeNodeFromParent(treeNodeScenes);
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+	}
+
+	public boolean isWorkFlowNodeVisible() {
+		return isWorkFlowNodeVisible;
+	}
+
+	public void setWorkflowVisible(boolean bool) {
+		try {
+			if (bool != isWorkFlowNodeVisible) {
+				isWorkFlowNodeVisible = bool;
+
+				if (isWorkFlowNodeVisible) {
+					int count = 0;
+					if (treeNodeResources.getParent() != null) {
+						count++;
+					}
+					treeModelTemp.insertNodeInto(treeNodeWorkFlow, treeNodeWorkspace, treeNodeWorkspace.getChildCount() - count);
+
+					for (; workflowTreePath != null && workflowTreePath.hasMoreElements(); ) {
+						this.setExpandedState(workflowTreePath.nextElement(), true);
+					}
+				} else {
+					workflowTreePath = this.getExpandedDescendants(new TreePath(treeNodeWorkFlow.getPath()));
+					treeModelTemp.removeNodeFromParent(treeNodeWorkFlow);
 				}
 			}
 		} catch (Exception e) {
@@ -1304,14 +1338,16 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		DatasetType type = dataset.getType();
 		datasetNode = new DefaultMutableTreeNode(datasetNodeData);
 		if (type == DatasetType.VECTORCOLLECTION && ((DatasetVector) dataset).getCollectionDatasetInfos().size() > 0) {
+			DatasetType subDatasetType = ((DatasetVector) dataset).GetSubCollectionDatasetType();
 			//添加矢量数据集集合的子集
 			ArrayList<CollectionDatasetInfo> collectionDatasetInfos = ((DatasetVector) dataset).getCollectionDatasetInfos();
 			for (int i = 0; i < collectionDatasetInfos.size(); i++) {
-				CollectionDatasetInfo collectionDatasetInfo = collectionDatasetInfos.get(i);
-				DatasourceConnectionInfo connectionInfo = collectionDatasetInfo.getDatasourceConnectInfo();
-				if (null != connectionInfo) {
-					addDatasetNode(datasetNode, collectionDatasetInfo, new Workspace().getDatasources().open(connectionInfo));
-				}
+				CollectionInfo collectionInfo = new CollectionInfo();
+				collectionInfo.setCollectionDatasetInfo(collectionDatasetInfos.get(i));
+				collectionInfo.setDatasetType(subDatasetType);
+				TreeNodeData childDatasetNodeData = new TreeNodeData(collectionInfo, NodeDataType.DATASET_VECTOR_ITEM);
+				DefaultMutableTreeNode childDatasetNode = new DefaultMutableTreeNode(childDatasetNodeData);
+				datasetNode.add(childDatasetNode);
 			}
 		}
 		if (type.equals(DatasetType.NETWORK) || type.equals(DatasetType.NETWORK3D)) {
@@ -1367,16 +1403,6 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		this.treeModelTemp.insertNodeInto(datasetNode, datasourceNode, datasourceNode.getChildCount());
 		return datasetNode;
 	}
-
-	private void addDatasetNode(DefaultMutableTreeNode datasetNode, CollectionDatasetInfo collectionDatasetInfo, Datasource datasource) {
-		Dataset childDataset = datasource.getDatasets().get(collectionDatasetInfo.getDatasetName());
-		if (null != childDataset) {
-			TreeNodeData childDatasetNodeData = new TreeNodeData(childDataset, NodeDataType.DATASET_VECTOR_ITEM);
-			DefaultMutableTreeNode childDatasetNode = new DefaultMutableTreeNode(childDatasetNodeData);
-			datasetNode.add(childDatasetNode);
-		}
-	}
-
 
 	private void fillImageCollectionNodes(DatasetImageCollection imageCollection, DefaultMutableTreeNode datasetNode) {
 		String[] aliasNames = InternalDatasetImageCollection.getAliasNames(imageCollection);
@@ -1453,6 +1479,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		TreePath treePathWorkFlow = new TreePath(treeNodeWorkFlow.getPath());
 		this.expandPath(treePathWorkFlow);
 	}
+
 
 	private class WorkspaceTreeMouseListener extends MouseAdapter {
 
@@ -2335,23 +2362,29 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		return flag;
 	}
 
-	public DropTarget getWorkspaceDropTarget() {
-		return workspaceDropTarget;
-	}
-
 	public void setWorkspaceDropTarget(DropTarget workspaceDropTarget) {
 		this.workspaceDropTarget = workspaceDropTarget;
 	}
 
-	private boolean isSupportEngineType(EngineType engineType) {
-		boolean result = true;
+	public class CollectionInfo{
+		private DatasetType datasetType;
+		private CollectionDatasetInfo collectionDatasetInfo;
 
-		for (EngineType type : UN_SUPPORT_TYPE) {
-			if (engineType == type) {
-				result = false;
-				break;
-			}
+		public DatasetType getDatasetType() {
+			return datasetType;
 		}
-		return result;
+
+		public void setDatasetType(DatasetType datasetType) {
+			this.datasetType = datasetType;
+		}
+
+		public CollectionDatasetInfo getCollectionDatasetInfo() {
+			return collectionDatasetInfo;
+		}
+
+		public void setCollectionDatasetInfo(CollectionDatasetInfo collectionDatasetInfo) {
+			this.collectionDatasetInfo = collectionDatasetInfo;
+		}
 	}
+
 }

@@ -7,7 +7,6 @@ import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
@@ -87,7 +86,6 @@ public class MetaProcessTabularPointToRegion extends MetaProcessTypeConversion {
 		Recordset targetRecordset = null;
 		Recordset sourceRecordset = null;
 		try {
-			fireRunning(new RunningEvent(MetaProcessTabularPointToRegion.this, 0, "start"));
 			DatasetVector sourceDataset = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				sourceDataset = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -178,7 +176,6 @@ public class MetaProcessTabularPointToRegion extends MetaProcessTypeConversion {
 			sourceRecordset.addSteppedListener(steppedListener);
 			isSuccessful = targetDataset.updateFields(sourceRecordset, SpatialRelationType.WITHIN, newName, newName, AttributeStatisticsType.VALUE, true, stasticInfo, true);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(targetDataset);
-			fireRunning(new RunningEvent(MetaProcessTabularPointToRegion.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

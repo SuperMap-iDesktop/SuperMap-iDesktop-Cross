@@ -4,7 +4,6 @@ import com.supermap.desktop.WorkflowView.WorkflowViewProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.parameter.ipls.ParameterGridAnalystSetting;
 
@@ -28,10 +27,10 @@ public class MetaProcessGridAnalystSetting extends MetaProcess {
 
 	@Override
 	public boolean execute() {
-		fireRunning(new RunningEvent(this, 0, WorkflowViewProperties.getString("String_GridAnalystSetStart")));
 		parameterGridAnalystSetting.run();
 		getOutputs().getData("GridAnalystSetting").setValue(parameterGridAnalystSetting.getResult());
-		fireRunning(new RunningEvent(this, 100, WorkflowViewProperties.getString("String_SetGridAnalystSetSuccess")));
+		COMPLETEDMESSAGE = WorkflowViewProperties.getString("String_SetGridAnalystSetSuccess");
+//		fireRunning(new RunningEvent(this, 100, WorkflowViewProperties.getString("String_SetGridAnalystSetSuccess")));
 		return true;
 	}
 
