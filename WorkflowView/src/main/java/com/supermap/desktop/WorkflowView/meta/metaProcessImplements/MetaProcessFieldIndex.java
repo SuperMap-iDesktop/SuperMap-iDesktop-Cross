@@ -8,7 +8,6 @@ import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
@@ -161,7 +160,6 @@ public class MetaProcessFieldIndex extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(MetaProcessFieldIndex.this, 0, "start"));
 			String fields = this.parameterTextAreaField.getSelectedItem().toString();
 			String[] fieldIndex;
 			if (fields.contains(",")) {
@@ -170,7 +168,6 @@ public class MetaProcessFieldIndex extends MetaProcess {
 				fieldIndex = new String[]{fields};
 			}
 			isSuccessful = ((DatasetVector) sourceDataset.getSelectedDataset()).buildFieldIndex(fieldIndex, this.parameterTextField.getSelectedItem().toString());
-			fireRunning(new RunningEvent(MetaProcessFieldIndex.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}

@@ -7,7 +7,6 @@ import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
@@ -86,7 +85,6 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 		Recordset recordsetResult = null;
 
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 
 			DatasetVector src;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
@@ -149,7 +147,6 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 			} else {
 				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
 			}
-			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

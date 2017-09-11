@@ -6,7 +6,6 @@ import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
@@ -68,7 +67,6 @@ public class MetaProcessNetWorkToPoint2D extends MetaProcessTypeConversion {
 		boolean isSuccessful = false;
 		Recordset recordsetResult = null;
 		try {
-			fireRunning(new RunningEvent(MetaProcessNetWorkToPoint2D.this, 0, "start"));
 			DatasetVector src = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -115,7 +113,6 @@ public class MetaProcessNetWorkToPoint2D extends MetaProcessTypeConversion {
 			} else {
 				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
 			}
-			fireRunning(new RunningEvent(MetaProcessNetWorkToPoint2D.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

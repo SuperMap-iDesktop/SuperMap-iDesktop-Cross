@@ -7,7 +7,6 @@ import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
@@ -143,7 +142,6 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 		boolean isSuccessful = false;
 		Recordset recordsetResult = null;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 
 			DatasetVector src;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
@@ -202,7 +200,6 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 			} else {
 				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
 			}
-			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

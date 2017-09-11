@@ -103,41 +103,44 @@ public class MetaProcessAppendRow extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean result = false;
-		fireRunning(new RunningEvent(MetaProcessAppendRow.this, 0, "start"));
-		DatasetVector datasetVector = (DatasetVector) this.dataset.getSelectedDataset();
-		datasetVector.addSteppedListener(this.steppedListener);
-		ArrayList<FieldInfo> sourceDatasetFieldInfos = getFieldInfos(datasetVector);
-		ArrayList<String> fieldNames = new ArrayList<>();
-		for (int i = 0, length = sourceDatasetFieldInfos.size(); i < length; i++) {
-			fieldNames.add(sourceDatasetFieldInfos.get(i).getName());
-		}
-		datasetVector.addSteppedListener(this.steppedListener);
-		ArrayList<Dataset> datasets = (ArrayList<Dataset>) chooseTable.getSelectedItem();
-		if (null == datasets) {
-			Application.getActiveApplication().getOutput().output("String_AppendRowDatasetIsNull");
-			return result;
-		}
-		for (int i = 0, datasetsLength = datasets.size(); i < datasetsLength; i++) {
-			DatasetVector tempDataset = (DatasetVector) datasets.get(i);
-			ArrayList<FieldInfo> tempFieldInfos = getFieldInfos(tempDataset);
-			Recordset recordset = tempDataset.getRecordset(false, CursorType.STATIC);
-			if (Boolean.valueOf(checkBox.getSelectedItem().toString())) {
-				for (int j = 0, size = tempFieldInfos.size(); j < size; j++) {
-					if (!fieldNames.contains(tempFieldInfos.get(j).getName())) {
-						datasetVector.getFieldInfos().add(tempFieldInfos.get(j));
+		DatasetVector datasetVector = null;
+		try {
+			datasetVector = (DatasetVector) this.dataset.getSelectedDataset();
+			ArrayList<FieldInfo> sourceDatasetFieldInfos = getFieldInfos(datasetVector);
+			ArrayList<String> fieldNames = new ArrayList<>();
+			for (int i = 0, length = sourceDatasetFieldInfos.size(); i < length; i++) {
+				fieldNames.add(sourceDatasetFieldInfos.get(i).getName());
+			}
+			datasetVector.addSteppedListener(this.steppedListener);
+			ArrayList<Dataset> datasets = (ArrayList<Dataset>) chooseTable.getSelectedItem();
+			if (null == datasets) {
+				Application.getActiveApplication().getOutput().output("String_AppendRowDatasetIsNull");
+				return result;
+			}
+			for (int i = 0, datasetsLength = datasets.size(); i < datasetsLength; i++) {
+				DatasetVector tempDataset = (DatasetVector) datasets.get(i);
+				ArrayList<FieldInfo> tempFieldInfos = getFieldInfos(tempDataset);
+				Recordset recordset = tempDataset.getRecordset(false, CursorType.STATIC);
+				if (Boolean.valueOf(checkBox.getSelectedItem().toString())) {
+					for (int j = 0, size = tempFieldInfos.size(); j < size; j++) {
+						if (!fieldNames.contains(tempFieldInfos.get(j).getName())) {
+							datasetVector.getFieldInfos().add(tempFieldInfos.get(j));
+						}
 					}
+					result = getResult(datasetVector, tempDataset, recordset);
+				} else {
+					result = getResult(datasetVector, tempDataset, recordset);
 				}
-				result = getResult(datasetVector, tempDataset, recordset);
-			} else {
-				result = getResult(datasetVector, tempDataset, recordset);
+				TabularUtilities.refreshTabularDatas(datasetVector);
+				if (null != recordset) {
+					recordset.dispose();
+				}
 			}
-			TabularUtilities.refreshTabularDatas(datasetVector);
-			fireRunning(new RunningEvent(MetaProcessAppendRow.this, 100, "finished"));
-			if (null != recordset) {
-				recordset.dispose();
-			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			datasetVector.removeSteppedListener(this.steppedListener);
 		}
-		datasetVector.removeSteppedListener(this.steppedListener);
 		return result;
 	}
 

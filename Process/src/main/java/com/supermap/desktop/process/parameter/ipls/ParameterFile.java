@@ -55,7 +55,7 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
 
 
 	@Override
-	public Object getSelectedItem() {
+	public String getSelectedItem() {
 		return selectedPath;
 	}
 

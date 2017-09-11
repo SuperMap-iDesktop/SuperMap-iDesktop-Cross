@@ -10,7 +10,6 @@ import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
@@ -111,7 +110,6 @@ public class MetaProcessImageCombine extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(MetaProcessImageCombine.this, 0, "start"));
 			String datasetName = resultDataset.getDatasetName();
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 
@@ -133,12 +131,10 @@ public class MetaProcessImageCombine extends MetaProcess {
 			} else {
 				srcBlue = blueDataset.getSelectedItem();
 			}
-			isSuccessful= Toolkit.CombineBand(datasetName, this.resultDataset.getResultDatasource(),srcRed,srcGreen,srcBlue);
-			Dataset resultDataset=this.resultDataset.getResultDatasource().getDatasets().get(datasetName);
+			isSuccessful = Toolkit.CombineBand(datasetName, this.resultDataset.getResultDatasource(), srcRed, srcGreen, srcBlue);
+			Dataset resultDataset = this.resultDataset.getResultDatasource().getDatasets().get(datasetName);
 			this.resultDataset.getResultDatasource().refresh();
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
-			fireRunning(new RunningEvent(MetaProcessImageCombine.this, 100, "finished"));
-
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
