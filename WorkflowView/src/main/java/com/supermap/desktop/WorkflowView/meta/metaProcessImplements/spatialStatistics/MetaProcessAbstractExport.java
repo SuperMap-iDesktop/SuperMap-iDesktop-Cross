@@ -202,6 +202,12 @@ public class MetaProcessAbstractExport extends MetaProcess {
 					} else {
 						result = filePath + fileName + ".x";
 					}
+				} else if (FileType.SimpleJson == fileType || FileType.GEOJSON == fileType) {
+					if (!filePath.endsWith(File.separator)) {
+						result = filePath + File.separator + fileName + ".json";
+					} else {
+						result = filePath + fileName + ".json";
+					}
 				} else {
 					if (!filePath.endsWith(File.separator)) {
 						result = filePath + File.separator + fileName + "." + fileType.toString().toLowerCase();

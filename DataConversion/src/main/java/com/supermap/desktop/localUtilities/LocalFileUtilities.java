@@ -29,10 +29,10 @@ public class LocalFileUtilities {
 		}
 		SmFileChoose tempfileChooser = new SmFileChoose("DataExportFrame_OutPutDirectories");
 
+		tempfileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		if (!StringUtilities.isNullOrEmpty(filePath)) {
 			tempfileChooser.setCurrentDirectory(new File(filePath));
 		}
-		tempfileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		return tempfileChooser;
 	}
 
@@ -57,9 +57,8 @@ public class LocalFileUtilities {
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[9], "dem", "bil", "raw", "bsq", "bip", "b"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[10], "txt"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[11], "dgn", "vct"),
-						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[12], "geojson", "json"),
-						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[13], "simplejson", "json"),
-						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[14], "gpx")
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[12], "json"),
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[13], "gpx")
 				);
 				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
 						DataConversionProperties.getString("String_FileType"), "CommonFunction", "OpenMany");
@@ -74,9 +73,8 @@ public class LocalFileUtilities {
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[6], "kml", "kmz"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[7], "dem", "bil", "raw", "bsq", "bip"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[8], "vct"),
-						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[9], "geojson", "json"),
-						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[10], "simplejson", "json"),
-						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[11], "gpx")
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[9], "json"),
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[10], "gpx")
 				);
 				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
 						DataConversionProperties.getString("String_FileType"), "CommonFunction", "OpenMany");

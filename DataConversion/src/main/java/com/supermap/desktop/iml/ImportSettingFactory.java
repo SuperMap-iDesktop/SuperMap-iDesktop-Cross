@@ -121,15 +121,6 @@ public class ImportSettingFactory implements IImportSettingFactory {
 			importSetting = new ImportSettingModelFBX();
 		} else if (fileType.equalsIgnoreCase(FileTypeLocale.GPX_STRING)) {
 			importSetting = new ImportSettingGPX();
-		} else if (fileType.equalsIgnoreCase(FileTypeLocale.GEOJSON_STRING)) {
-			//默认设置导入空数据集为true
-			importSetting = new ImportSettingGeoJson();
-			((ImportSettingGeoJson) importSetting).setImportEmptyDataset(true);
-		} else if (fileType.equalsIgnoreCase(FileTypeLocale.SIMPLEJSON_STRING)) {
-			//默认设置导入空数据集为true
-			importSetting = new ImportSettingSimpleJson();
-			((ImportSettingSimpleJson) importSetting).setImportEmptyDataset(true);
-
 		} else if (fileType.equalsIgnoreCase(FileTypeLocale.JSON_STRING)) {
 			// 对于GeoJson和SimpleJson，文件类型都可以为".json",不同在于simpleJson同目录下有xxx.meta文件
 			// 判断是否存在xxx.mate文件-yuanR2017.9.4
