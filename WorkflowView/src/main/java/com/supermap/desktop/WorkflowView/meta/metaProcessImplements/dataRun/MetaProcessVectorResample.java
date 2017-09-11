@@ -14,6 +14,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -179,6 +180,10 @@ public class MetaProcessVectorResample extends MetaProcess {
 
 			sourceDatasetVector.addSteppedListener(this.steppedListener);
 			isSuccessful = sourceDatasetVector.resample(resampleInformation, true, isSaveSmallGeometry);
+
+			if (isSuccessful) {
+				MapUtilities.refreshIfDatasetOpened(sourceDatasetVector);
+			}
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(sourceDatasetVector);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
