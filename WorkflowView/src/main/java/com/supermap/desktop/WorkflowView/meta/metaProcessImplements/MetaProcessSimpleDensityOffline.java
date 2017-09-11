@@ -85,6 +85,9 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
 		equalDatasetConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
 		equalDatasetConstraint.constrained(comboBoxField, ParameterFieldComboBox.DATASET_FIELD_NAME);
+		EqualDatasetConstraint equalDatasetConstraint1 = new EqualDatasetConstraint();
+		equalDatasetConstraint1.constrained(sourceDataset,ParameterSingleDataset.DATASET_FIELD_NAME);
+		equalDatasetConstraint1.constrained(shapeType,ParameterShapeType.DATASET_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(resultDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
