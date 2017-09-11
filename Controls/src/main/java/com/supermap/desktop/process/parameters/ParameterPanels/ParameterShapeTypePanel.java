@@ -4,6 +4,7 @@ import com.supermap.analyst.spatialanalyst.*;
 import com.supermap.data.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
@@ -18,6 +19,8 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Created By Chens on 2017/8/16 0016
@@ -426,5 +429,14 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			}
 		}
 		resetNeighbourShape();
+	}
+
+	@Override
+	public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
+		if (event.getFieldName().equals(ParameterShapeType.DATASET_FIELD_NAME)) {
+			this.dataset = parameterShapeType.getDataset();
+			resetTextField();
+			parameterShapeType.setSelectedItem(neighbourShape);
+		}
 	}
 }
