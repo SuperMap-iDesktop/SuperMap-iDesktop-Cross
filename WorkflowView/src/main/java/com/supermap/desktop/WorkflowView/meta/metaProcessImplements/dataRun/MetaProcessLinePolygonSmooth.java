@@ -14,6 +14,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 
 /**
  * Created by yuanR on 2017/7/18.
@@ -90,6 +91,10 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 
 			datasetVector.addSteppedListener(this.steppedListener);
 			isSuccessful = datasetVector.smooth(smoothness, true);
+
+			if (isSuccessful) {
+				MapUtilities.refreshIfDatasetOpened(datasetVector);
+			}
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(datasetVector);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
