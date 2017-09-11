@@ -23,7 +23,6 @@ import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.IReadyChecker;
 import com.supermap.desktop.process.core.ReadyEvent;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
