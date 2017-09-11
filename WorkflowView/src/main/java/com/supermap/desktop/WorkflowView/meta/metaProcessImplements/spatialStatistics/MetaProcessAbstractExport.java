@@ -11,7 +11,6 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.implement.UserDefineType.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
@@ -234,17 +233,16 @@ public class MetaProcessAbstractExport extends MetaProcess {
 			time = String.valueOf((System.currentTimeMillis() - startTime) / 1000.0);
 			printExportInfo(result, time);
 			((ExportSettingGPX) exportSetting).removeExportSteppedListener(exportListener);
-		} else if(exportSetting instanceof ExportSettingExcel) {
+		} else if (exportSetting instanceof ExportSettingExcel) {
 			((ExportSettingExcel) exportSetting).addExportSteppedListener(exportListener);
 			UserDefineExportResult result = ((ExportSettingExcel) exportSetting).run();
 			time = String.valueOf((System.currentTimeMillis() - startTime) / 1000.0);
 			printExportInfo(result, time);
 			((ExportSettingExcel) exportSetting).removeExportSteppedListener(exportListener);
-		}else {
+		} else {
 			DataExport dataExport = new DataExport();
 			dataExport.getExportSettings().add(exportSetting);
 			try {
-				fireRunning(new RunningEvent(this, 0, "start"));
 				dataExport.addExportSteppedListener(exportListener);
 
 				ExportResult result = dataExport.run();
@@ -252,11 +250,9 @@ public class MetaProcessAbstractExport extends MetaProcess {
 				if (succeedSettings.length > 0) {
 					isSuccessful = true;
 					time = String.valueOf((System.currentTimeMillis() - startTime) / 1000);
-					fireRunning(new RunningEvent(this, 100, "finished"));
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_FormExport_OutPutInfoTwo"),
 							selectDataset.getName() + "@" + selectDataset.getDatasource().getAlias(), targetPath, time));
 				} else {
-					fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ExportFailed")));
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_FormExport_OutPutInfoOne"), selectDataset.getName() + "@" + selectDataset.getDatasource().getAlias()));
 				}
 			} catch (Exception e) {
@@ -285,9 +281,6 @@ public class MetaProcessAbstractExport extends MetaProcess {
 					String failDatasetAlis = getDatasetAlis(result.getFail());
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(failExportInfo, failDatasetAlis));
 				}
-				fireRunning(new RunningEvent(this, 100, "finished"));
-			} else {
-				fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ExportFailed")));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

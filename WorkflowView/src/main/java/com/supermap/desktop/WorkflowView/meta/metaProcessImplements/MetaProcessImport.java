@@ -414,20 +414,17 @@ public class MetaProcessImport extends MetaProcess {
 		long time;
 		if (importSetting instanceof ImportSettingSimpleJson) {
 			if (null == ((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem() && null == ((ParameterFile) (sourceImportParameters.get(1)).parameter).getSelectedItem()) {
-				fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
 				return isSuccessful;
 			}
 		} else {
 			if (null == ((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem()) {
-				fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
 				return isSuccessful;
 			}
 		}
 
 		if (importSetting instanceof ImportSettingGPX) {
-			fireRunning(new RunningEvent(this, 0, "start"));
 			importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem().toString());
 			final Datasource datasource = ((ParameterDatasource) resultImportParameters.get(0).parameter).getSelectedItem();
 			importSetting.setTargetDatasource(datasource);
@@ -441,12 +438,10 @@ public class MetaProcessImport extends MetaProcess {
 				time = endTime - startTime;
 				printMessage(result, time);
 			} else {
-				fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
 			}
 			((ImportSettingGPX) importSetting).removeImportSteppedListener(this.importStepListener);
 		} else if (importSetting instanceof ImportSettingExcel) {
-			fireRunning(new RunningEvent(this, 0, "start"));
 			importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem().toString());
 			final Datasource datasource = ((ParameterDatasource) resultImportParameters.get(0).parameter).getSelectedItem();
 			importSetting.setTargetDatasource(datasource);
@@ -465,7 +460,6 @@ public class MetaProcessImport extends MetaProcess {
 						updateDatasource(tempResult.getSuccess());
 						printMessage(tempResult, time);
 					} else {
-						fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
 						Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
 					}
 				}
@@ -474,7 +468,6 @@ public class MetaProcessImport extends MetaProcess {
 
 //		} else if (importSetting instanceof ImportSettingSimpleJson) {
 //			// SimpleJson有两种导入模式，因此单开一个else if-yuanR2017.9.1
-//			fireRunning(new RunningEvent(this, 0, "start"));
 //			// 判断选择的导入模式：文件/文件夹
 //			if (parameterRadioButtonFileSelectType.getSelectedItem().equals(parameterRadioButtonFileSelectType.getItemAt(0))) {
 //				importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(1)).parameter).getSelectedItem().toString());
@@ -497,7 +490,6 @@ public class MetaProcessImport extends MetaProcess {
 			ImportSetting newImportSetting = new ImportSettingCreator().create(importType);
 			DataImport dataImport = ImportSettingSetter.setParameter(newImportSetting, sourceImportParameters, resultImportParameters, paramParameters);
 			try {
-				fireRunning(new RunningEvent(this, 0, "start"));
 				dataImport.addImportSteppedListener(this.importStepListener);
 				ImportResult result = dataImport.run();
 				isSuccessful = getCommonResult(isSuccessful, startTime, result);
@@ -521,7 +513,6 @@ public class MetaProcessImport extends MetaProcess {
 			time = endTime - startTime;
 			printMessage(result, time);
 		} else {
-			fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ImportFailed"));
 		}
 		return isSuccessful;
@@ -579,7 +570,6 @@ public class MetaProcessImport extends MetaProcess {
 		}
 		Dataset dataset = datasource.getDatasets().get(succeedSetting.getTargetDatasetName());
 		this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
-		fireRunning(new RunningEvent(this, 100, "finished"));
 	}
 
 	@Override

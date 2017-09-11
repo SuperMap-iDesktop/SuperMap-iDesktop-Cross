@@ -6,7 +6,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 
 /**
@@ -46,17 +45,14 @@ public class MetaProcessCalculateAspect extends MetaProcessCalTerrain {
 		boolean isSuccessful = false;
 		DatasetGrid datasetGridResult = null;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 			// 这个进度监听有问题，无法生效，先用fireRunning代替-yuanR存疑2017.8.29
 //			CalculationTerrain.addSteppedListener(steppedListener);
 			datasetGridResult = CalculationTerrain.calculateAspect(datasetGrid, parameterSaveDataset.getResultDatasource(), parameterSaveDataset.getDatasetName());
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(datasetGridResult);
 			isSuccessful = datasetGridResult != null;
-
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
-			fireRunning(new RunningEvent(this, 100, "finish"));
 //			CalculationTerrain.removeSteppedListener(steppedListener);
 		}
 		return isSuccessful;

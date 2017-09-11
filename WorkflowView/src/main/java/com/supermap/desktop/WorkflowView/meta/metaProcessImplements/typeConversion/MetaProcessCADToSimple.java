@@ -8,17 +8,13 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
-import com.supermap.desktop.process.parameters.ParameterPanels.ParameterSaveDatasetTablePanel;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.RecordsetUtilities;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -40,7 +36,7 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 		inputDataset = new ParameterSingleDataset(DatasetType.CAD);
 		saveDatasetTable = new ParameterSaveDatasetTable();
 
-		ArrayList<DatasetTypes> datasetTypes=new ArrayList<>();
+		ArrayList<DatasetTypes> datasetTypes = new ArrayList<>();
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.CAD);
 		if (dataset != null) {
 			inputDatasource.setSelectedItem(dataset.getDatasource());
@@ -85,7 +81,6 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 		Recordset recordsetResult = null;
 
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 
 			DatasetVector src = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
@@ -94,8 +89,8 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 				src = (DatasetVector) inputDataset.getSelectedDataset();
 			}
 			DatasetVectorInfo[] datasetVectorInfos = new DatasetVectorInfo[saveDatasetTable.getCount()];
-			for (int i=0;i<datasetVectorInfos.length;i++) {
-				datasetVectorInfos[i]=new DatasetVectorInfo();
+			for (int i = 0; i < datasetVectorInfos.length; i++) {
+				datasetVectorInfos[i] = new DatasetVectorInfo();
 				datasetVectorInfos[i].setName(saveDatasetTable.getResultDatasource().getDatasets().getAvailableDatasetName(saveDatasetTable.getDatasetNames()[i]));
 				datasetVectorInfos[i].setType(saveDatasetTable.getDatasetTypes()[i]);
 				DatasetVector resultDataset = saveDatasetTable.getResultDatasource().getDatasets().create(datasetVectorInfos[i]);
@@ -135,7 +130,6 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 					saveDatasetTable.getResultDatasource().getDatasets().delete(resultDataset.getName());
 				}
 			}
-			fireRunning(new RunningEvent(this, 100, "finish"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -159,7 +153,7 @@ public class MetaProcessCADToSimple extends MetaProcessTypeConversion {
 		return ProcessProperties.getString("String_Title_CADToSimple");
 	}
 
-	private boolean convert(Recordset recordset, Geometry geometry, Map<String, Object> value,DatasetType datasetType) {
+	private boolean convert(Recordset recordset, Geometry geometry, Map<String, Object> value, DatasetType datasetType) {
 		boolean isConvert = false;
 		GeometryType geometryType = geometry.getType();
 

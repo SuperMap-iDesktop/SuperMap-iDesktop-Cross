@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 /**
  * Created by highsad on 2017/1/5.
+ * 将进度条提示信息的设置在此基类中实现，不额外设置时，显示默认值-yuanR2017.9.11
  */
 public abstract class AbstractProcess implements IProcess {
 
@@ -27,6 +28,10 @@ public abstract class AbstractProcess implements IProcess {
 	private Inputs inputs = new Inputs(this);
 	private Outputs outputs = new Outputs(this);
 	private int serialID = 0;
+
+	protected static String RUNNINGMESSAGE = ProcessProperties.getString("String_Running");
+	protected static String COMPLETEDMESSAGE = ProcessProperties.getString("String_Completed");
+	protected static String FAILEDMESSAGE = ProcessProperties.getString("String_Failed");
 
 	private ArrayList<IReadyChecker<IProcess>> processReadyCheckerList = new ArrayList<>();
 
@@ -78,11 +83,14 @@ public abstract class AbstractProcess implements IProcess {
 			// 运行前，必要参数值是否异常判断-yuanR2017.9.8
 			if (isReady()) {
 				setStatus(RunningStatus.RUNNING);
+				fireRunning(new RunningEvent(this, 0, RUNNINGMESSAGE));
 				isSuccessful = execute();
 
 				if (isSuccessful) {
+					fireRunning(new RunningEvent(this, 100, COMPLETEDMESSAGE));
 					setStatus(RunningStatus.COMPLETED);
 				} else if (!isCancelled()) {
+					fireRunning(new RunningEvent(this, 0, FAILEDMESSAGE));
 					setStatus(RunningStatus.EXCEPTION);
 				}
 			} else {
