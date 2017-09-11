@@ -24,12 +24,10 @@ public class NewMessageBus {
 	private IResponse response;
 	private volatile boolean stop = false;
 	private volatile int percent = 0;
-	private IUpdateProgress updateProgress;
 	private IOpenServerMap openMap;
 
-	public NewMessageBus(IResponse response, IUpdateProgress updateProgress, IOpenServerMap openMap) {
+	public NewMessageBus(IResponse response, IOpenServerMap openMap) {
 		this.response = response;
-		this.updateProgress = updateProgress;
 		this.openMap = openMap;
 	}
 
@@ -56,10 +54,9 @@ public class NewMessageBus {
 			result = JSON.parseObject(queryInfo, JobItemResultResponse.class);
 		}
 		if (null != result && "FAILED".equals(result.state.runState)) {
-			this.updateProgress.updateProgress(100, "0", "Failed");
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_IServerBuildFailed"));
 			stop = true;
-			return success;
+			return false;
 		} else if (null != result) {
 			if (null != result.setting.serviceInfo && null != result.setting.serviceInfo.targetServiceInfos) {
 				//获取iserver服务发布地址,并打开到地图，如果存在已经打开的地图则将iserver服务上的地图打开到当前地图
@@ -74,7 +71,6 @@ public class NewMessageBus {
 				if (!StringUtilities.isNullOrEmpty(serviceAddress)) {
 					success = true;
 					Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_IServerBuildSuccess"));
-					this.updateProgress.updateProgress(100, "0", "Finished");
 					//获取查询iserver的结果
 					stop = true;
 					String datasourceName = "";
@@ -109,11 +105,6 @@ public class NewMessageBus {
 						}
 					}
 				}
-			} else {
-				if (percent <= 99) {
-					this.updateProgress.updateProgress(new Random().nextInt(99), "", "Running");
-				}
-				Thread.sleep(100);
 			}
 		}
 		return success;

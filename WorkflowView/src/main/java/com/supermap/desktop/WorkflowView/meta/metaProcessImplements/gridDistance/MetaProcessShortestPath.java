@@ -117,6 +117,7 @@ public class MetaProcessShortestPath extends MetaProcessGridAnalyst {
 			}
 		}
 		this.parameterRadioButton.setSelectedItem(parameterDataNodeCell);
+		this.resultDataset.setSelectedItem("result_shortestPath");
 	}
 
 	private void initParameterConstraint() {

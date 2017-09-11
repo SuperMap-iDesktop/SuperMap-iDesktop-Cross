@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
@@ -74,18 +75,18 @@ public abstract class AbstractProcess implements IProcess {
 		boolean isSuccessful = false;
 
 		try {
-//			if (this.status != RunningStatus.NORMAL) {
-//				return false;
-//			}
-			// TODO: 2017/8/10 运行前判断？？
-			boolean ready = isReady();
-			setStatus(RunningStatus.RUNNING);
-			isSuccessful = execute();
+			// 运行前，必要参数值是否异常判断-yuanR2017.9.8
+			if (isReady()) {
+				setStatus(RunningStatus.RUNNING);
+				isSuccessful = execute();
 
-			if (isSuccessful) {
-				setStatus(RunningStatus.COMPLETED);
-			} else if (!isCancelled()) {
-				setStatus(RunningStatus.EXCEPTION);
+				if (isSuccessful) {
+					setStatus(RunningStatus.COMPLETED);
+				} else if (!isCancelled()) {
+					setStatus(RunningStatus.EXCEPTION);
+				}
+			} else {
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ParameterError"));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -99,6 +100,7 @@ public abstract class AbstractProcess implements IProcess {
 		if (!isReadyHook()) {
 			return false;
 		}
+		// 参数是否准备就续-yuanR
 		if (!getParameters().isReady()) {
 			return false;
 		}

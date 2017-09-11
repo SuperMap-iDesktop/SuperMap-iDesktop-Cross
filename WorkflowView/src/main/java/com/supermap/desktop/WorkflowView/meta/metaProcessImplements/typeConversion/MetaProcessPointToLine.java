@@ -36,6 +36,7 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
 		inputDataset = new ParameterSingleDataset(DatasetType.POINT);
 		outputData = new ParameterSaveDataset();
 		comboBoxConnect = new ParameterFieldComboBox(ProcessProperties.getString("String_ConnectionField"));
+		comboBoxConnect.setRequisite(true);
 
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT);
 		if (dataset != null) {
@@ -93,7 +94,7 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 
-			DatasetVector src = null;
+			DatasetVector src;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
 			} else {

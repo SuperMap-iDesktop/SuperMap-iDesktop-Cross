@@ -303,12 +303,12 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 			this.smSpinnerMinColorTransparence.setValue(getLayerPropertyModel().getMinColorTransparence());
 			this.smSpinnerFuzzyDegree.setValue(getLayerPropertyModel().getFuzzyDegree() * 100);
 			this.smSpinnerIntensity.setValue(getLayerPropertyModel().getIntensity() * 100);
-			this.labelSystemMaximumLeftCenter.setText(DoubleUtilities.toString(getLayerPropertyModel().getSystemMinValue(),POINT_NUM));
-			this.labelSystemMaximumRightCenter.setText(DoubleUtilities.toString(getLayerPropertyModel().getSystemMaxValue(),POINT_NUM));
-			this.labelCurrentViewMaximumLeftCenter.setText(DoubleUtilities.toString(getLayerPropertyModel().getCurrentViewMinValue(),POINT_NUM));
-			this.labelCurrentViewMaximumRightCenter.setText(DoubleUtilities.toString(getLayerPropertyModel().getCurrentViewMaxValue(),POINT_NUM));
-			this.waringTextFieldCustomMinValue.setText(DoubleUtilities.toString(getLayerPropertyModel().getCustomMinValue(),POINT_NUM));
-			this.waringTextFieldCustomMaxValue.setText(DoubleUtilities.toString(getLayerPropertyModel().getCustomMaxValue(),POINT_NUM));
+			this.labelSystemMaximumLeftCenter.setText(DoubleUtilities.toString(getLayerPropertyModel().getSystemMinValue(), POINT_NUM));
+			this.labelSystemMaximumRightCenter.setText(DoubleUtilities.toString(getLayerPropertyModel().getSystemMaxValue(), POINT_NUM));
+			this.labelCurrentViewMaximumLeftCenter.setText(DoubleUtilities.toString(getLayerPropertyModel().getCurrentViewMinValue(), POINT_NUM));
+			this.labelCurrentViewMaximumRightCenter.setText(DoubleUtilities.toString(getLayerPropertyModel().getCurrentViewMaxValue(), POINT_NUM));
+			this.waringTextFieldCustomMinValue.setText(DoubleUtilities.toString(getLayerPropertyModel().getCustomMinValue(), POINT_NUM));
+			this.waringTextFieldCustomMaxValue.setText(DoubleUtilities.toString(getLayerPropertyModel().getCustomMaxValue(), POINT_NUM));
 			fillWeightField(getLayerPropertyModel().getFieldInfos(), getLayerPropertyModel().getWeightField());
 			resetRadioButtonGroup();
 			this.getModifiedLayerPropertyModel().getFormMap().getMapControl().getMap().removeDrawingListener(this.mapDrawingListener);
@@ -390,15 +390,15 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 	}
 
 	private void resetRadioButtonGroup() {
-		if (getLayerPropertyModel().getMaximumState() == 2) {
+		if (getLayerPropertyModel().getMaximumState() == LayerHeatmapPropertyModel.CUSTOMVIEW) {
 			this.radioButtonCustomMaximum.setSelected(true);
 			this.waringTextFieldCustomMaxValue.setEnabled(true);
 			this.waringTextFieldCustomMinValue.setEnabled(true);
-		} else if (getLayerPropertyModel().getMaximumState() == 1) {
+		} else if (getLayerPropertyModel().getMaximumState() == LayerHeatmapPropertyModel.SYSTEMVIEW) {
 			this.radioButtonSystemMaximum.setSelected(true);
 			this.waringTextFieldCustomMaxValue.setEnabled(false);
 			this.waringTextFieldCustomMinValue.setEnabled(false);
-		} else if (getLayerPropertyModel().getMaximumState() == 0) {
+		} else if (getLayerPropertyModel().getMaximumState() == LayerHeatmapPropertyModel.CURRENTVIEW) {
 			this.radioButtonCurrentViewMaximum.setSelected(true);
 			this.waringTextFieldCustomMaxValue.setEnabled(false);
 			this.waringTextFieldCustomMinValue.setEnabled(false);
@@ -626,7 +626,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 			getModifiedLayerPropertyModel().setCurrentViewMaxValue(Double.valueOf(this.labelCurrentViewMaximumRightCenter.getText()));
 			this.waringTextFieldCustomMaxValue.setEnabled(this.radioButtonCustomMaximum.isSelected());
 			this.waringTextFieldCustomMinValue.setEnabled(this.radioButtonCustomMaximum.isSelected());
-			getModifiedLayerPropertyModel().setMaximumState(0);
+			getModifiedLayerPropertyModel().setMaximumState(LayerHeatmapPropertyModel.CURRENTVIEW);
 			//getModifiedLayerPropertyModel().setCurrentView(true);
 			checkChanged();
 		}
@@ -638,7 +638,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 			getModifiedLayerPropertyModel().setSystemMaxValue(Double.valueOf(this.labelSystemMaximumRightCenter.getText()));
 			this.waringTextFieldCustomMaxValue.setEnabled(this.radioButtonCustomMaximum.isSelected());
 			this.waringTextFieldCustomMinValue.setEnabled(this.radioButtonCustomMaximum.isSelected());
-			getModifiedLayerPropertyModel().setMaximumState(1);
+			getModifiedLayerPropertyModel().setMaximumState(LayerHeatmapPropertyModel.SYSTEMVIEW);
 			checkChanged();
 		}
 	}
@@ -649,7 +649,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 			this.waringTextFieldCustomMinValue.setEnabled(this.radioButtonCustomMaximum.isSelected());
 			getModifiedLayerPropertyModel().setCustomMinValue(Double.valueOf(this.waringTextFieldCustomMinValue.getText()));
 			getModifiedLayerPropertyModel().setCustomMaxValue(Double.valueOf(this.waringTextFieldCustomMaxValue.getText()));
-			getModifiedLayerPropertyModel().setMaximumState(2);
+			getModifiedLayerPropertyModel().setMaximumState(LayerHeatmapPropertyModel.CUSTOMVIEW);
 			checkChanged();
 		}
 	}
@@ -657,7 +657,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 	private void minValueChange() {
 		if (this.radioButtonCustomMaximum.isSelected()) {
 			getModifiedLayerPropertyModel().setCustomMinValue(Double.valueOf(this.waringTextFieldCustomMinValue.getText()));
-			getModifiedLayerPropertyModel().setMaximumState(2);
+			getModifiedLayerPropertyModel().setMaximumState(LayerHeatmapPropertyModel.CUSTOMVIEW);
 			checkChanged();
 		}
 	}
@@ -665,7 +665,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 	private void maxValueChange() {
 		if (this.radioButtonCustomMaximum.isSelected()) {
 			getModifiedLayerPropertyModel().setCustomMaxValue(Double.valueOf(this.waringTextFieldCustomMaxValue.getText()));
-			getModifiedLayerPropertyModel().setMaximumState(2);
+			getModifiedLayerPropertyModel().setMaximumState(LayerHeatmapPropertyModel.CUSTOMVIEW);
 			checkChanged();
 		}
 	}

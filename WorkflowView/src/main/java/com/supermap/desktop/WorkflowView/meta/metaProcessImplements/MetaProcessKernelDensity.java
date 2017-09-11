@@ -18,6 +18,7 @@ import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
 
 import java.util.concurrent.CancellationException;
@@ -98,7 +99,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 				parameterInputDataType,
 				parameterCombineAlaysis
 		);
-		parameters.getOutputs().addData("KernelDensityResult", ProcessOutputResultProperties.getString("String_KernelsDensityAnalysisResult"),Type.UNKOWN);
+		parameters.getOutputs().addData("KernelDensityResult", ProcessOutputResultProperties.getString("String_KernelsDensityAnalysisResult"), Type.UNKOWN);
 	}
 
 	@Override
@@ -113,9 +114,9 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
 	@Override
 	public boolean execute() {
-		boolean isSuccess;
+		boolean isSuccessful;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
+			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
 			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
@@ -137,50 +138,26 @@ public class MetaProcessKernelDensity extends MetaProcess {
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				CursorUtilities.setDefaultCursor();
-				NewMessageBus messageBus = new NewMessageBus(response, new IUpdateProgress() {
-					@Override
-					public boolean isCancel() {
-						return false;
-					}
-
-					@Override
-					public void setCancel(boolean isCancel) {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, String remainTime, String message) throws CancellationException {
-						fireRunning(new RunningEvent(MetaProcessKernelDensity.this, percent, message));
-					}
-
-					@Override
-					public void updateProgress(String message, int percent, String currentMessage) throws CancellationException {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
-
-					}
-
-					@Override
-					public void updateProgress(int percent, String recentTask, int totalPercent, String message) throws CancellationException {
-
-					}
-				}, DefaultOpenServerMap.INSTANCE);
-				isSuccess = messageBus.run();
+				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);
+				isSuccessful = messageBus.run();
 			} else {
-				fireRunning(new RunningEvent(this, 100, "Failed"));
-				isSuccess = false;
+				isSuccessful = false;
 			}
-			parameters.getOutputs().getData("KernelDensityResult").setValue("");// // TODO: 2017/5/26
+
+			parameters.getOutputs().getData("KernelDensityResult").setValue(""); // TODO: 2017/5/26
 		} catch (Exception e) {
+			isSuccessful = false;
 			Application.getActiveApplication().getOutput().output(e.getMessage());
-			return false;
-		}finally {
+		} finally {
 			CursorUtilities.setDefaultCursor();
 		}
-		return isSuccess;
+
+		if (isSuccessful) {
+			fireRunning(new RunningEvent(this, 100, CoreProperties.getString("String_Message_Succeed")));
+		} else {
+			fireRunning(new RunningEvent(this, 0, CoreProperties.getString("String_Message_Failed")));
+		}
+		return isSuccessful;
 	}
 
 	@Override

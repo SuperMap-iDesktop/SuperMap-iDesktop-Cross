@@ -127,7 +127,7 @@ public class MetaProcessCostPathLine extends MetaProcessGridAnalyst {
 		comboBoxSmoothMethod.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (comboBoxSmoothMethod.getSelectedData().equals(SmoothMethod.BSPLINE)||comboBoxSmoothMethod.getSelectedData().equals(SmoothMethod.POLISH)) {
+				if (comboBoxSmoothMethod.getSelectedData().equals(SmoothMethod.BSPLINE) || comboBoxSmoothMethod.getSelectedData().equals(SmoothMethod.POLISH)) {
 					numberSmoothDegree.setEnabled(true);
 					numberSmoothDegree.setMinValue(2);
 					numberSmoothDegree.setMaxValue(10);
@@ -216,7 +216,7 @@ public class MetaProcessCostPathLine extends MetaProcessGridAnalyst {
 			isSuccessful = pathLineResult != null;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+		} finally {
 			DistanceAnalyst.removeSteppedListener(steppedListener);
 		}
 

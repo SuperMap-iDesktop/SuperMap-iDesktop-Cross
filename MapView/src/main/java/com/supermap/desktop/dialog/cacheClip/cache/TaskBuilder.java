@@ -73,6 +73,9 @@ public class TaskBuilder {
 
 				workspace = new Workspace();
 				ds = workspace.getDatasources().create(info);
+				if (null == ds) {
+					ds = workspace.getDatasources().open(info);
+				}
 			}
 
 			CacheWriter writer = new CacheWriter();
@@ -126,6 +129,9 @@ public class TaskBuilder {
 				if (canudb > 0) {
 					//Create dataset and it's field
 					String datasetName = "L" + datasetCaption + "_S" + Math.round(1 / scale);
+					if (null != ds.getDatasets().get(datasetName)) {
+						continue;
+					}
 					DatasetVectorInfo datasetInfo = new DatasetVectorInfo(datasetName, DatasetType.REGION);
 					DatasetVector dataset = ds.getDatasets().create(datasetInfo);
 

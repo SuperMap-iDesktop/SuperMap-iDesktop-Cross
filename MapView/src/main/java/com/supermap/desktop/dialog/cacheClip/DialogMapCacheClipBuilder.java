@@ -21,6 +21,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
+import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
@@ -81,7 +82,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private ActionListener buildListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			switch (cmdType){
+			switch (cmdType) {
 				case ResumeProcessClip:
 					resume();
 					break;
@@ -397,9 +398,10 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		} else {
 			sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + ".sci");
 		}
-		validateScales();
-		setMapCacheBuilderValueBeforeRun();
-		splitCahceAndDoBuild(cachePath, sciPath);
+		if (validateScales()) {
+			setMapCacheBuilderValueBeforeRun();
+			splitCahceAndDoBuild(cachePath, sciPath);
+		}
 	}
 
 	private void splitCahceAndDoBuild(String cachePath, String sciPath) {
@@ -470,6 +472,8 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
 				return true;
 			}
+		}else{
+			return true;
 		}
 		return false;
 	}
@@ -521,6 +525,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		try {
 			double[] outputScalevalues;
 			HashMap<Double, String> scaleNames = new HashMap<>();
+			double[] defaultScales = firstStepPane.mapCacheBuilder.getOutputScales();
 			if (firstStepPane.addScaleDropDown.isEnabled()) {
 				outputScalevalues = new double[firstStepPane.currentMapCacheScale.size()];
 				for (int i = 0; i < outputScalevalues.length; i++) {

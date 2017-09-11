@@ -85,7 +85,7 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 		Recordset recordsetInput = null;
 		try {
 			fireRunning(new RunningEvent(MetaProcessTextToField.this, 0, "start"));
-			DatasetVector src = null;
+			DatasetVector src;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
 			} else {
