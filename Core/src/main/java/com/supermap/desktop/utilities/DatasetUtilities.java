@@ -562,13 +562,53 @@ public class DatasetUtilities {
 	}
 
 	/**
-	 * 默认获得非只读数据
-	 * yuanR2017.9.11
-	 *
 	 * @param datasetTypes
 	 * @return
 	 */
 	public static Dataset getDefaultDataset(DatasetType... datasetTypes) {
+		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
+			Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
+			if (activeDatasets.length > 0) {
+				for (Dataset activeDataset : activeDatasets) {
+					if (ArrayUtilities.isArrayContains(datasetTypes, activeDataset.getType())) {
+						return activeDataset;
+					}
+				}
+			}
+			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
+			if (activeDatasources.length > 0) {
+				for (Datasource activeDatasource : activeDatasources) {
+					Datasets datasets = activeDatasource.getDatasets();
+					for (int i = 0; i < datasets.getCount(); i++) {
+						if (ArrayUtilities.isArrayContains(datasetTypes, datasets.get(i).getType())) {
+							return datasets.get(i);
+						}
+					}
+				}
+			}
+			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+			for (int i = 0; i < datasources.getCount(); i++) {
+				Datasource datasource = datasources.get(i);
+				Datasets datasets = datasource.getDatasets();
+				for (int j = 0; j < datasets.getCount(); j++) {
+					if (ArrayUtilities.isArrayContains(datasetTypes, datasets.get(j).getType())) {
+						return datasets.get(j);
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 *
+	 * 默认获得非只读数据
+	 * yuanR2017.9.12
+	 *
+	 * @param datasetTypes
+	 * @return
+	 */
+	public static Dataset getDefaultNotReadOnlyDataset(DatasetType... datasetTypes) {
 		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
 			Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
 			if (activeDatasets.length > 0) {
