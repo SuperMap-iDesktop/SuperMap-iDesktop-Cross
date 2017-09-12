@@ -11,16 +11,9 @@ import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessG
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -160,7 +153,6 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 	public boolean childExecute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(MetaProcessCreateDistanceRaster.this, 0, "start"));
 
 			DistanceAnalystParameter distanceAnalystParameter = new DistanceAnalystParameter();
 			String distanceDatasetName = this.resultDistanceDataset.getSelectedItem().toString();
@@ -179,7 +171,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 			DatasetGrid cost = null;
 			if (this.getParameters().getInputs().getData(COST_DATA).getValue() != null) {
 				cost = (DatasetGrid) this.getParameters().getInputs().getData(COST_DATA).getValue();
-			} else if(costDataset.getSelectedItem()!=null) {
+			} else if (costDataset.getSelectedItem() != null) {
 				cost = (DatasetGrid) costDataset.getSelectedItem();
 			}
 			DistanceAnalyst.addSteppedListener(steppedListener);
@@ -192,8 +184,12 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 			distanceAnalystParameter.setCellSize(Double.valueOf(this.parameterNumberResolvingPower.getSelectedItem().toString()));
 			DistanceAnalystResult distanceAnalystResult = null;
 			if (cost != null) {
-				distanceAnalystParameter.setCostGrid(cost);
-				distanceAnalystResult = DistanceAnalyst.costDistance(distanceAnalystParameter);
+				try {
+					distanceAnalystParameter.setCostGrid(cost);
+					distanceAnalystResult = DistanceAnalyst.costDistance(distanceAnalystParameter);
+				} catch (Exception e) {
+					throw new Exception(ProcessProperties.getString("String_CreateDistanceRasterFailed"));
+				}
 			} else {
 				distanceAnalystResult = DistanceAnalyst.straightDistance(distanceAnalystParameter);
 			}
@@ -202,10 +198,9 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 			this.getParameters().getOutputs().getData(OUTPUT_DATA_DIRECTION).setValue(distanceAnalystResult.getDirectionDatasetGrid());
 			this.getParameters().getOutputs().getData(OUTPUT_DATA_ALLOCATION).setValue(distanceAnalystResult.getAllocationDatasetGrid());
 			isSuccessful = distanceAnalystResult.getDistanceDatasetGrid() != null && distanceAnalystResult.getDirectionDatasetGrid() != null && distanceAnalystResult.getAllocationDatasetGrid() != null;
-			fireRunning(new RunningEvent(MetaProcessCreateDistanceRaster.this, 100, "finished"));
 
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
 			DistanceAnalyst.removeSteppedListener(steppedListener);
 		}

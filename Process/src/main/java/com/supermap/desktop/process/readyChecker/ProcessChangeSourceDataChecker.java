@@ -4,6 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.IReadyChecker;
+import com.supermap.desktop.process.core.ReadyEvent;
 import com.supermap.desktop.process.core.Workflow;
 
 import java.text.MessageFormat;
@@ -15,7 +16,8 @@ import java.util.Vector;
  */
 public class ProcessChangeSourceDataChecker<E extends Workflow> implements IReadyChecker<E> {
 	@Override
-	public boolean isReady(Workflow workflow) {
+	public boolean isReady(ReadyEvent<E> readyEvent) {
+		Workflow workflow = readyEvent.getSourceData();
 		ArrayList<String> changeSourceDataProcessNames = new ArrayList<>();
 		Vector<IProcess> processes = workflow.getProcesses();
 		for (IProcess process : processes) {

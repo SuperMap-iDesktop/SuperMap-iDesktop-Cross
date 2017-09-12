@@ -36,9 +36,9 @@ public interface IProcess {
 
 	boolean run();
 
-	boolean isReady();
+	boolean isReady(ReadyEvent readyEvent);
 
-	boolean checkReadyState();
+	boolean checkReadyState(ReadyEvent readyEvent);
 
 	void cancel();
 

@@ -5,6 +5,7 @@ import com.supermap.analyst.spatialanalyst.DistanceAnalyst;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
+import com.supermap.data.Datasets;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -12,16 +13,10 @@ import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessG
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterRadioButton;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -111,10 +106,12 @@ public class MetaProcessShortestPath extends MetaProcessGridAnalyst {
 			this.directionDatasource.setSelectedItem(dataset.getDatasource());
 			this.distanceDataset.setDatasource(dataset.getDatasource());
 			this.directionDataset.setDatasource(dataset.getDatasource());
-			if (dataset.getType() == DatasetType.GRID) {
-				this.distanceDataset.setSelectedItem(dataset);
-				this.directionDataset.setSelectedItem(dataset);
-			}
+			this.distanceDataset.setSelectedItem(getDefaultDataset(dataset, new String[]{"Distance", "distance"}));
+			this.directionDataset.setSelectedItem(getDefaultDataset(dataset, new String[]{"Direction", "direction"}));
+//			if (dataset.getType() == DatasetType.GRID) {
+//				this.distanceDataset.setSelectedItem(dataset);
+//				this.directionDataset.setSelectedItem(dataset);
+//			}
 		}
 		this.parameterRadioButton.setSelectedItem(parameterDataNodeCell);
 		this.resultDataset.setSelectedItem("result_shortestPath");
@@ -136,11 +133,28 @@ public class MetaProcessShortestPath extends MetaProcessGridAnalyst {
 		directionConstraint.constrained(this.directionDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 	}
 
+	private Dataset getDefaultDataset(Dataset srcDataset, String[] characterKeys) {
+		Dataset dataset = srcDataset;
+		try {
+			Datasets datasets = srcDataset.getDatasource().getDatasets();
+			for (int i = 0; i < datasets.getCount(); i++) {
+				for (int j = 0; j < characterKeys.length; j++) {
+					if (datasets.get(i).getName().indexOf(characterKeys[j]) != -1) {
+						dataset = datasets.get(i);
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return dataset;
+	}
+
 	@Override
 	public boolean childExecute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(MetaProcessShortestPath.this, 0, "start"));
 
 			String datasetName = resultDataset.getDatasetName();
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
@@ -175,7 +189,6 @@ public class MetaProcessShortestPath extends MetaProcessGridAnalyst {
 			DatasetGrid result = DistanceAnalyst.costPath(src, distance, direction, computeType, this.resultDataset.getResultDatasource(), datasetName);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
-			fireRunning(new RunningEvent(MetaProcessShortestPath.this, 100, "finished"));
 
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

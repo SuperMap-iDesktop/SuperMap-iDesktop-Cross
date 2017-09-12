@@ -11,18 +11,10 @@ import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessG
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.PixelFormatUtilities;
@@ -121,7 +113,6 @@ public class MetaProcessStreamGrid extends MetaProcessGridAnalyst {
 	public boolean childExecute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 			DatasetGrid src;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetGrid) parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -138,7 +129,6 @@ public class MetaProcessStreamGrid extends MetaProcessGridAnalyst {
 					resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(resultDataset.getDatasetName()));
 			isSuccessful = result != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
-			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

@@ -14,7 +14,6 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -250,7 +249,6 @@ public class MetaProcessBuffer extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 
-		fireRunning(new RunningEvent(this, 0, "start"));
 		DatasetVector datasetVector;
 		if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
 				&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
@@ -313,7 +311,6 @@ public class MetaProcessBuffer extends MetaProcess {
 		try {
 			isSuccessful = BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
-			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 			// 删除新建的数据集

@@ -8,13 +8,13 @@ import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -156,7 +156,6 @@ public class MetaProcessVectorResample extends MetaProcess {
 		boolean isSuccessful = false;
 		DatasetVector sourceDatasetVector = null;
 		try {
-			fireRunning(new RunningEvent(MetaProcessVectorResample.this, 0, "start"));
 			if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
 					&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
 				sourceDatasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
@@ -181,8 +180,11 @@ public class MetaProcessVectorResample extends MetaProcess {
 
 			sourceDatasetVector.addSteppedListener(this.steppedListener);
 			isSuccessful = sourceDatasetVector.resample(resampleInformation, true, isSaveSmallGeometry);
+
+			if (isSuccessful) {
+				MapUtilities.refreshIfDatasetOpened(sourceDatasetVector);
+			}
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(sourceDatasetVector);
-			fireRunning(new RunningEvent(MetaProcessVectorResample.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

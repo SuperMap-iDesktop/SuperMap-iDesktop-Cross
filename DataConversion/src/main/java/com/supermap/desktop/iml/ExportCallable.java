@@ -78,7 +78,7 @@ public class ExportCallable extends UpdateProgressCallable {
 							break;
 						}
 						((ExportSettingGPX) tempExportSetting).removeExportSteppedListener(progress);
-					}else if(tempExportSetting instanceof ExportSettingExcel) {
+					} else if (tempExportSetting instanceof ExportSettingExcel) {
 						((ExportSettingExcel) tempExportSetting).addExportSteppedListener(progress);
 						startTime = System.currentTimeMillis();
 						UserDefineExportResult result = ((ExportSettingExcel) tempExportSetting).run();
@@ -126,6 +126,12 @@ public class ExportCallable extends UpdateProgressCallable {
 				result = filePath + File.separator + fileName + ".x";
 			} else {
 				result = filePath + fileName + ".x";
+			}
+		} else if (FileType.SimpleJson == fileType || FileType.GEOJSON == fileType) {
+			if (!filePath.endsWith(File.separator)) {
+				result = filePath + File.separator + fileName + ".json";
+			} else {
+				result = filePath + fileName + ".json";
 			}
 		} else {
 			if (!filePath.endsWith(File.separator)) {

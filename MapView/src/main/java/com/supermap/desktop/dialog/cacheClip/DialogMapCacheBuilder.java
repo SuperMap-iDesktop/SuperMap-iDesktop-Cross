@@ -1412,7 +1412,7 @@ public class DialogMapCacheBuilder extends SmDialog {
 		}
 		SmFileChoose tempfileChooser = new SmFileChoose("ExportScale");
 		tempfileChooser.setSelectedFile(new File(MapViewProperties.getString("String_Scales") + ".xml"));
-		int state = tempfileChooser.showSaveDialog(null);
+		int state = tempfileChooser.showDefaultDialog();
 		if (state == JFileChooser.APPROVE_OPTION) {
 			filePath = tempfileChooser.getFilePath();
 		}

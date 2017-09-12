@@ -660,5 +660,44 @@ public class MapUtilities {
 		return geometry;
 	}
 
+	/**
+	 * 当前地图子窗口中，如果打开了指定的数据集，则刷新地图
+	 *
+	 * @param dataset
+	 */
+	public static void refreshIfDatasetOpened(Dataset dataset) {
+		if (Application.getActiveApplication() == null) {
+			return;
+		}
 
+		if (Application.getActiveApplication().getMainFrame() == null) {
+			return;
+		}
+
+		IFormManager manager = Application.getActiveApplication().getMainFrame().getFormManager();
+		if (manager == null || manager.getCount() == 0) {
+			return;
+		}
+
+		boolean needRefresh = false;
+		for (int i = 0; i < manager.getCount(); i++) {
+			if (manager.get(i) instanceof IFormMap) {
+				IFormMap formMap = (IFormMap) manager.get(i);
+				Map map = formMap.getMapControl().getMap();
+
+				for (int j = 0; j < map.getLayers().getCount(); j++) {
+					Layer layer = map.getLayers().get(j);
+
+					if (layer.getDataset() == dataset) {
+						needRefresh = true;
+						break;
+					}
+				}
+
+				if (needRefresh) {
+					map.refresh();
+				}
+			}
+		}
+	}
 }

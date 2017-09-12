@@ -7,18 +7,13 @@ import com.supermap.desktop.lbs.Interface.IServerService;
 import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.lbs.params.JobResultResponse;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
-import com.supermap.desktop.progress.Interface.IUpdateProgress;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
-
-import java.util.concurrent.CancellationException;
 
 /**
  * Created by xie on 2017/2/10.
@@ -114,7 +109,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 		boolean isSuccessful = false;
 
 		try {
-			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
 			IServerService service = parameterIServerLogin.login();
 			//热度图分析功能
 			CommonSettingCombine filePath = new CommonSettingCombine("filePath", parameterHDFSPath.getSelectedItem().toString());
@@ -146,7 +140,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);
-				fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
 				isSuccessful = messageBus.run();
 			} else {
 				isSuccessful = false;
@@ -157,12 +150,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 		} catch (Exception e) {
 			isSuccessful = false;
 			Application.getActiveApplication().getOutput().output(e.getMessage());
-		}
-
-		if (isSuccessful) {
-			fireRunning(new RunningEvent(this, 100, CoreProperties.getString("String_Message_Succeed")));
-		} else {
-			fireRunning(new RunningEvent(this, 0, CoreProperties.getString("String_Message_Failed")));
 		}
 		return isSuccessful;
 	}

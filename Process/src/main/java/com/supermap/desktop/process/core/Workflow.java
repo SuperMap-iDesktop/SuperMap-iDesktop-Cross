@@ -384,8 +384,9 @@ public class Workflow implements IWorkflow {
 	@Override
 	public boolean isReady() {
 		boolean result = true;
+		ReadyEvent<Workflow> workflowReadyEvent = new ReadyEvent<>(this, true);
 		for (IReadyChecker<Workflow> readyChecker : readyCheckers) {
-			result = result && readyChecker.isReady(this);
+			result = result && readyChecker.isReady(workflowReadyEvent);
 		}
 		return result;
 	}

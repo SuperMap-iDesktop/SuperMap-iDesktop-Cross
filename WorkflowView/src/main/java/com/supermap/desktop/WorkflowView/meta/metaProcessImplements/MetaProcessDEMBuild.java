@@ -4,13 +4,7 @@ import com.supermap.analyst.spatialanalyst.TerrainBuilder;
 import com.supermap.analyst.spatialanalyst.TerrainBuilderParameter;
 import com.supermap.analyst.spatialanalyst.TerrainInterpolateType;
 import com.supermap.analyst.spatialanalyst.TerrainStatisticType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.EncodeType;
-import com.supermap.data.PixelFormat;
-import com.supermap.data.Rectangle2D;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -19,26 +13,12 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterFieldComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilities.DatasetUtilities;
-import com.supermap.desktop.utilities.EncodeTypeUtilities;
-import com.supermap.desktop.utilities.PixelFormatUtilities;
-import com.supermap.desktop.utilities.TerrainInterpolateTypeUtilities;
-import com.supermap.desktop.utilities.TerrainStatisticTypeUtilities;
+import com.supermap.desktop.utilities.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -311,6 +291,7 @@ public class MetaProcessDEMBuild extends MetaProcess {
 					isDatasetLine = ((DatasetVector) evt.getNewValue()).getType() == DatasetType.LINE;
 					textNumResampleTolerance.setEnabled(isDatasetLine && isInterpolateTypeTIN);
 				}
+				comboBoxSourceField.setSelectedItem("SmUserID");
 			}
 		});
 		comboBoxInterpolateType.addPropertyListener(new PropertyChangeListener() {
@@ -338,7 +319,6 @@ public class MetaProcessDEMBuild extends MetaProcess {
 		boolean isSuccessful = false;
 
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 
 			TerrainBuilderParameter terrainBuilderParameter = new TerrainBuilderParameter();
 
@@ -409,7 +389,6 @@ public class MetaProcessDEMBuild extends MetaProcess {
 
 			TerrainBuilder.addSteppedListener(steppedListener);
 
-			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

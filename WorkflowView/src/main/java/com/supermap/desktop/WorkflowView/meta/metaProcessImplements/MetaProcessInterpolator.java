@@ -100,7 +100,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 				double x = bounds.getWidth() / 500;
 				double y = bounds.getHeight() / 500;
 				double resolution = x > y ? y : x;
-				parameterResolution.setSelectedItem(""+resolution);
+				parameterResolution.setSelectedItem("" + resolution);
 				if (resolution != 0) {
 					int rows = (int) Math.abs(bounds.getHeight() / resolution);
 					int columns = (int) Math.abs(bounds.getWidth() / resolution);
@@ -172,13 +172,13 @@ public class MetaProcessInterpolator extends MetaProcess {
 
 		parameterPower = new ParameterNumber(CommonProperties.getString("String_Power"));
 		parameterPower.setSelectedItem(2);
-		parameterPower.setInterval(1,100);
+		parameterPower.setInterval(1, 100);
 		parameterTension = new ParameterNumber(CommonProperties.getString("String_Tension"));
 		parameterTension.setSelectedItem(40);
 		parameterTension.setMinValue(0);
 		parameterSmooth = new ParameterNumber(CommonProperties.getString("String_Smooth"));
 		parameterSmooth.setSelectedItem(0.1);
-		parameterSmooth.setInterval(0,1);
+		parameterSmooth.setInterval(0, 1);
 		ParameterDataNode spherical = new ParameterDataNode(CommonProperties.getString("String_VariogramMode_Spherical"), VariogramMode.SPHERICAL);
 		parameterVariogramMode = new ParameterComboBox().setDescribe(CommonProperties.getString("String_VariogramMode"));
 		parameterVariogramMode.setItems(new ParameterDataNode(CommonProperties.getString("String_VariogramMode_Exponential"), VariogramMode.EXPONENTIAL),
@@ -242,7 +242,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 			double x = bounds.getWidth() / 500;
 			double y = bounds.getHeight() / 500;
 			double resolution = x > y ? y : x;
-			parameterResolution.setSelectedItem(""+resolution);
+			parameterResolution.setSelectedItem("" + resolution);
 			if (resolution != 0) {
 				int rows = (int) Math.abs(bounds.getHeight() / resolution);
 				int columns = (int) Math.abs(bounds.getWidth() / resolution);
@@ -293,7 +293,6 @@ public class MetaProcessInterpolator extends MetaProcess {
 		boolean isSuccessful = false;
 
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 			InterpolationParameter interpolationParameter = null;
 			if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.IDW)) {
 				interpolationParameter = new InterpolationIDWParameter();
@@ -343,7 +342,6 @@ public class MetaProcessInterpolator extends MetaProcess {
 					targetDatasource, datasetName, (PixelFormat) parameterPixelType.getSelectedData());
 			this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(dataset);
 			isSuccessful = dataset != null;
-			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

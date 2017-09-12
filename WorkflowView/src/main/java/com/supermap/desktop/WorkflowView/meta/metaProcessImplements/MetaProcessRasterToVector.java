@@ -11,7 +11,6 @@ import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -238,7 +237,6 @@ public class MetaProcessRasterToVector extends MetaProcess {
 
 		try {
 
-			fireRunning(new RunningEvent(MetaProcessRasterToVector.this, 0, "start"));
 			ConversionAnalystParameter analystParameter = new ConversionAnalystParameter();
 
 			String datasetName = resultDataset.getDatasetName();
@@ -290,7 +288,6 @@ public class MetaProcessRasterToVector extends MetaProcess {
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
 
-			fireRunning(new RunningEvent(MetaProcessRasterToVector.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

@@ -11,7 +11,6 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -63,7 +62,7 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 	public MetaProcessVectorToRaster() {
 		initParameters();
 		initParametersState();
-		initParameterConstrint();
+		initParameterConstraint();
 		registerListener();
 	}
 
@@ -146,7 +145,7 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		this.comboBoxPixelFormat.setRequisite(true);
 	}
 
-	private void initParameterConstrint() {
+	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(this.sourceDatasource, ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(this.sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
@@ -206,7 +205,6 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		boolean isSuccessful = false;
 
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 
 			ConversionAnalystParameter conversionParameter = new ConversionAnalystParameter();
 			String datasetName = this.resultDataset.getDatasetName();
@@ -253,7 +251,6 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDatasetGrid);
 			isSuccessful = resultDatasetGrid != null;
 
-			fireRunning(new RunningEvent(MetaProcessVectorToRaster.this, 100, "finished"));
 
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

@@ -11,7 +11,6 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -70,10 +69,10 @@ public class MetaProcessGridResample extends MetaProcess {
 		sourceCombine.addParameters(sourceDatasource, sourceDataset);
 		ParameterCombine infoCombine = new ParameterCombine();
 		infoCombine.setDescribe(ProcessProperties.getString("String_GroupBox_SourceInfo"));
-		infoCombine.addParameters(textFieldSourceXPixel,textFieldSourceYPixel,textFieldSourceRow,textFieldSourceColumn);
+		infoCombine.addParameters(textFieldSourceXPixel, textFieldSourceYPixel, textFieldSourceRow, textFieldSourceColumn);
 		ParameterCombine settingCombine = new ParameterCombine();
 		settingCombine.setDescribe(ProcessProperties.getString("String_setParameter"));
-		settingCombine.addParameters(comboBoxMethod,numberPixel,textFieldRow,textFieldColumn);
+		settingCombine.addParameters(comboBoxMethod, numberPixel, textFieldRow, textFieldColumn);
 		ParameterCombine resultCombine = new ParameterCombine();
 		resultCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		resultCombine.addParameters(resultDataset);
@@ -91,16 +90,16 @@ public class MetaProcessGridResample extends MetaProcess {
 	}
 
 	private void initParametersState() {
-		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.GRID,DatasetType.IMAGE);
+		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.GRID, DatasetType.IMAGE);
 		if (dataset != null) {
 			sourceDatasource.setSelectedItem(dataset.getDatasource());
 			sourceDataset.setSelectedItem(dataset);
 			this.resultDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_gridResample"));
 			updateCellSize(dataset);
 		}
-		comboBoxMethod.setItems(new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.BILINEAR),ResampleMode.BILINEAR),
-				new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.CUBIC),ResampleMode.CUBIC),
-				new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.NEAREST),ResampleMode.NEAREST));
+		comboBoxMethod.setItems(new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.BILINEAR), ResampleMode.BILINEAR),
+				new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.CUBIC), ResampleMode.CUBIC),
+				new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.NEAREST), ResampleMode.NEAREST));
 		textFieldSourceXPixel.setEnabled(false);
 		textFieldSourceYPixel.setEnabled(false);
 		textFieldSourceRow.setEnabled(false);
@@ -148,7 +147,6 @@ public class MetaProcessGridResample extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(this, 0, "start"));
 			Dataset src = null;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (Dataset) parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -161,7 +159,6 @@ public class MetaProcessGridResample extends MetaProcess {
 			Dataset result = GeneralizeAnalyst.resample(src, cellSize, mode, resultDataset.getResultDatasource(), resultDataset.getDatasetName());
 			isSuccessful = result != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
-			fireRunning(new RunningEvent(this,100,"finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

@@ -12,7 +12,6 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
@@ -151,7 +150,6 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
-			fireRunning(new RunningEvent(MetaProcessRarefyPoints.this, 0, "start"));
 
 			String datasetName = saveDataset.getDatasetName();
 			datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
@@ -179,8 +177,6 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 					statisticsFields, this.saveDataset.getResultDatasource(), datasetName, isRandomSaveRerefyPoints, isSaveOriginField);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
-			fireRunning(new RunningEvent(MetaProcessRarefyPoints.this, 100, "finished"));
-
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
