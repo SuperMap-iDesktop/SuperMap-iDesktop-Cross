@@ -17,6 +17,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -64,13 +65,13 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 		sourceCombine.addParameters(sourceDatasource, sourceDataset);
 		ParameterCombine settingCombine = new ParameterCombine();
 		settingCombine.setDescribe(ProcessProperties.getString("String_setParameter"));
-		settingCombine.addParameters(comboBoxField, numberRadius, numberTop, numberLeft, numberBottom, numberRight, numberCellSize);
+		settingCombine.addParameters(comboBoxField, numberRadius, numberLeft, numberBottom, numberRight, numberTop, numberCellSize);
 		ParameterCombine resultCombine = new ParameterCombine();
 		resultCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		resultCombine.addParameters(resultDataset);
 
 		parameters.setParameters(sourceCombine, settingCombine, resultCombine);
-		this.parameters.addInputParameters(INPUT_DATA, new DatasetTypes("", DatasetTypes.POINT.getValue() | DatasetTypes.LINE.getValue()), sourceCombine);
+		this.parameters.addInputParameters(INPUT_DATA, new DatasetTypes("",DatasetTypes.POINT.getValue()|DatasetTypes.LINE.getValue()), sourceCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
 				ProcessOutputResultProperties.getString("String_KernelsDensityAnalysisResult"),
 				DatasetTypes.GRID, resultCombine);
@@ -92,7 +93,8 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 		numberTop.setSelectedItem(0);
 		numberBottom.setSelectedItem(0);
 		numberRadius.setSelectedItem(0);
-		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.LINE);
+		numberRadius.setMinValue(0);
+		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT,DatasetType.LINE);
 		if (dataset != null) {
 			sourceDatasource.setSelectedItem(dataset.getDatasource());
 			sourceDataset.setSelectedItem(dataset);
@@ -100,9 +102,10 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 			updateBound(dataset);
 		}
 		comboBoxField.setFieldType(fieldType);
-		resultDataset.setDefaultDatasetName("result_kernelDensity");
+		comboBoxField.setShowSystemField(true);
+		resultDataset.setSelectedItem("result_kernelDensity");
 		numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem()));
-		numberRight.setMaxValue(Double.parseDouble(numberRight.getSelectedItem()));
+		numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem()));
 		numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem()));
 		numberBottom.setMaxValue(Double.parseDouble(numberTop.getSelectedItem()));
 	}
@@ -113,14 +116,14 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof Dataset) {
 					updateBound((Dataset) evt.getNewValue());
-					comboBoxField.setSelectedItem("SmUserID");
+					comboBoxField.setSelectedItem("SmID");
 				}
 			}
 		});
 		numberBottom.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem().toString()));
+				numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem()));
 			}
 		});
 		numberTop.addPropertyListener(new PropertyChangeListener() {
@@ -145,19 +148,22 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 
 	private void updateBound(Dataset dataset) {
 		Rectangle2D rectangle2D = dataset.getBounds();
-		numberBottom.setSelectedItem(rectangle2D.getBottom());
-		numberLeft.setSelectedItem(rectangle2D.getLeft());
-		numberRight.setSelectedItem(rectangle2D.getRight());
-		numberTop.setSelectedItem(rectangle2D.getTop());
+		numberTop.setMinValue(rectangle2D.getBottom());
+		numberBottom.setMaxValue(rectangle2D.getTop());
+		numberLeft.setMaxValue(rectangle2D.getRight());
+		numberRight.setMinValue(rectangle2D.getLeft());
+		numberBottom.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getBottom()));
+		numberLeft.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getLeft()));
+		numberRight.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getRight()));
+		numberTop.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getTop()));
 		Double x = rectangle2D.getWidth() / 500;
 		Double y = rectangle2D.getHeight() / 500;
 		Double cellSize = x > y ? y : x;
-		numberCellSize.setSelectedItem(cellSize);
-		if (dataset.getType().equals(DatasetType.POINT)) {
-
-		} else {
-			numberRadius.setSelectedItem(rectangle2D.getWidth() / 30);
-		}
+		numberCellSize.setSelectedItem(DoubleUtilities.getFormatString(cellSize));
+		double maxRadius = rectangle2D.getWidth() > rectangle2D.getHeight() ? rectangle2D.getWidth() : rectangle2D.getHeight();
+		numberRadius.setSelectedItem(DoubleUtilities.getFormatString(maxRadius/30));
+		numberRadius.setMaxValue(maxRadius);
+		numberCellSize.setMaxValue(maxRadius);
 	}
 
 	@Override
