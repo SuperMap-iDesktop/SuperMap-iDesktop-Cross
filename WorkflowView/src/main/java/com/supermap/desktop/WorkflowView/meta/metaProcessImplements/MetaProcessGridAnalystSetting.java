@@ -12,6 +12,7 @@ import com.supermap.desktop.process.parameter.ipls.ParameterGridAnalystSetting;
  */
 public class MetaProcessGridAnalystSetting extends MetaProcess {
 
+
 	private ParameterGridAnalystSetting parameterGridAnalystSetting;
 
 	public MetaProcessGridAnalystSetting() {
@@ -21,6 +22,10 @@ public class MetaProcessGridAnalystSetting extends MetaProcess {
 	}
 
 	@Override
+	protected String getCOMPLETED_MESSAGE() {
+		return WorkflowViewProperties.getString("String_SetGridAnalystSetSuccess");
+	}
+	@Override
 	public String getTitle() {
 		return ProcessProperties.getString("String_Setting_Title");
 	}
@@ -29,8 +34,6 @@ public class MetaProcessGridAnalystSetting extends MetaProcess {
 	public boolean execute() {
 		parameterGridAnalystSetting.run();
 		getOutputs().getData("GridAnalystSetting").setValue(parameterGridAnalystSetting.getResult());
-		COMPLETEDMESSAGE = WorkflowViewProperties.getString("String_SetGridAnalystSetSuccess");
-//		fireRunning(new RunningEvent(this, 100, WorkflowViewProperties.getString("String_SetGridAnalystSetSuccess")));
 		return true;
 	}
 
