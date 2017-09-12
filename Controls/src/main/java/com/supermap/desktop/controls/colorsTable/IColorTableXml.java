@@ -5,7 +5,7 @@ import com.supermap.data.ColorDictionary;
 /**
  * Created by lixiaoyao on 2017/3/8.
  */
-public interface ColorTableXmlInterface {
+public interface IColorTableXml {
     /**
      * 建立XML文档
      * @param fileName 文件全路径名称
