@@ -293,7 +293,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 			int selectRow = tableExport.getSelectedRow();
 			String filePath = tableExport.getValueAt(selectRow, COLUMN_FILEPATH).toString();
 			SmFileChoose tempfileChooser = LocalFileUtilities.createExportFileChooser(filePath);
-			int state = tempfileChooser.showSaveDialog(null);
+			int state = tempfileChooser.showDefaultDialog();
 			if (state == JFileChooser.APPROVE_OPTION) {
 				String directories = tempfileChooser.getFilePath();
 				if (FileUtilities.isFilePath(directories)) {
