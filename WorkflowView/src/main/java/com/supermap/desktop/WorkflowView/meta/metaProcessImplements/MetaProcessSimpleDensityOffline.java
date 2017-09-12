@@ -66,7 +66,7 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 		sourceCombine.addParameters(sourceDatasource, sourceDataset);
 		ParameterCombine settingCombine = new ParameterCombine();
 		settingCombine.setDescribe(ProcessProperties.getString("String_setParameter"));
-		settingCombine.addParameters(comboBoxField, numberTop, numberLeft, numberBottom, numberRight, numberCellSize, shapeType);
+		settingCombine.addParameters(comboBoxField, numberLeft, numberBottom, numberRight, numberTop, numberCellSize, shapeType);
 		ParameterCombine resultCombine = new ParameterCombine();
 		resultCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		resultCombine.addParameters(resultDataset);
@@ -105,7 +105,7 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 		}
 		comboBoxField.setFieldType(fieldType);
 		comboBoxField.setShowSystemField(true);
-		resultDataset.setDefaultDatasetName("result_simpleDensity");
+		resultDataset.setSelectedItem("result_simpleDensity");
 		numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem()));
 		numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem()));
 		numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem()));
@@ -118,7 +118,7 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof Dataset) {
 					updateBound((Dataset) evt.getNewValue());
-					comboBoxField.setSelectedItem("SmUserID");
+					comboBoxField.setSelectedItem("SmID");
 				}
 			}
 		});
