@@ -43,13 +43,13 @@ public class FileTypeLocale {
 			"shp", "tab", "mif", "kml", "kmz", "wat", "wal", "wap", "wan",
 			"csv", "bmp", "jpg", "jpeg", "jp2", "jpk", "png", "gif", "img", "raw", "sit",
 			"tif", "tiff", "b", "wor", "osgb", "bip", "bil", "bsq", "sid", "dem",
-			"e00", "3ds", "x", "vct", "dbf", "gjb", "dgn", "ecw", "simplejson", "geojson", "json", "gpx", "xls", "xlsx"};
+			"e00", "3ds", "x", "vct", "dbf", "gjb", "dgn", "ecw", "json", "gpx", "xls", "xlsx"};
 	// linux系统匹配的文件类型
 	private static final String[] extensionsNewForLinux = {"grd", "txt",
 			"shp", "tab", "mif", "kml", "kmz", "csv", "bmp", "jpg", "jpeg", "jp2", "jpk", "ecw",
 			"png", "gif", "img", "raw", "sit", "tif", "tiff",
 			"bip", "bil", "bsq", "dem", "e00", "wor", "vct", "ecw",
-			"3ds", "simplejson", "geojson", "json", "gpx", "xls", "xlsx"};
+			"3ds", "json", "gpx", "xls", "xlsx"};
 
 	public static String[] getDescriptionnew() {
 		return descriptionNew;
@@ -119,8 +119,6 @@ public class FileTypeLocale {
 	public static final String FBX_STRING = ".fbx";
 	public static final String PRJ_STRING = ".prj";
 	public static final String XML_STRING = ".xml";
-	public static final String GEOJSON_STRING = ".geojson";
-	public static final String SIMPLEJSON_STRING = ".simplejson";
 	public static final String JSON_STRING = ".json";
 	public static final String GPX_STRING = ".gpx";
 }

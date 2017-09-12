@@ -171,7 +171,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 			DatasetGrid cost = null;
 			if (this.getParameters().getInputs().getData(COST_DATA).getValue() != null) {
 				cost = (DatasetGrid) this.getParameters().getInputs().getData(COST_DATA).getValue();
-			} else if(costDataset.getSelectedItem()!=null) {
+			} else if (costDataset.getSelectedItem() != null) {
 				cost = (DatasetGrid) costDataset.getSelectedItem();
 			}
 			DistanceAnalyst.addSteppedListener(steppedListener);
@@ -184,8 +184,12 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 			distanceAnalystParameter.setCellSize(Double.valueOf(this.parameterNumberResolvingPower.getSelectedItem().toString()));
 			DistanceAnalystResult distanceAnalystResult = null;
 			if (cost != null) {
-				distanceAnalystParameter.setCostGrid(cost);
-				distanceAnalystResult = DistanceAnalyst.costDistance(distanceAnalystParameter);
+				try {
+					distanceAnalystParameter.setCostGrid(cost);
+					distanceAnalystResult = DistanceAnalyst.costDistance(distanceAnalystParameter);
+				} catch (Exception e) {
+					throw new Exception(ProcessProperties.getString("String_CreateDistanceRasterFailed"));
+				}
 			} else {
 				distanceAnalystResult = DistanceAnalyst.straightDistance(distanceAnalystParameter);
 			}
@@ -196,7 +200,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 			isSuccessful = distanceAnalystResult.getDistanceDatasetGrid() != null && distanceAnalystResult.getDirectionDatasetGrid() != null && distanceAnalystResult.getAllocationDatasetGrid() != null;
 
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
 			DistanceAnalyst.removeSteppedListener(steppedListener);
 		}
