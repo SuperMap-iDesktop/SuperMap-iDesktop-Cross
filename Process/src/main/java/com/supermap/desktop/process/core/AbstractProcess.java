@@ -12,6 +12,7 @@ import com.supermap.desktop.process.loader.IProcessLoader;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.event.EventListenerList;
 import java.text.MessageFormat;
@@ -30,9 +31,21 @@ public abstract class AbstractProcess implements IProcess {
 	private Outputs outputs = new Outputs(this);
 	private int serialID = 0;
 
-	protected static String RUNNINGMESSAGE = ProcessProperties.getString("String_Running");
-	protected static String COMPLETEDMESSAGE = ProcessProperties.getString("String_Completed");
-	protected static String FAILEDMESSAGE = ProcessProperties.getString("String_Failed");
+	protected String RUNNING_MESSAGE = ProcessProperties.getString("String_Running");
+	protected String COMPLETED_MESSAGE = ProcessProperties.getString("String_Completed");
+	protected String FAILED_MESSAGE = ProcessProperties.getString("String_Failed");
+
+	protected String getRUNNING_MESSAGE() {
+		return RUNNING_MESSAGE;
+	}
+
+	protected String getCOMPLETED_MESSAGE() {
+		return COMPLETED_MESSAGE;
+	}
+
+	protected String getFAILED_MESSAGE() {
+		return FAILED_MESSAGE;
+	}
 
 	private ArrayList<IReadyChecker<IProcess>> processReadyCheckerList = new ArrayList<>();
 
@@ -70,7 +83,6 @@ public abstract class AbstractProcess implements IProcess {
 	}
 
 	protected void workflowChanged(Workflow oldWorkflow, Workflow workflow) {
-
 	}
 
 	@Override
@@ -84,21 +96,27 @@ public abstract class AbstractProcess implements IProcess {
 			// 运行前，必要参数值是否异常判断-yuanR2017.9.8
 			if (isReady(new ReadyEvent(this, true))) {
 				setStatus(RunningStatus.RUNNING);
-				fireRunning(new RunningEvent(this, 0, RUNNINGMESSAGE));
+				fireRunning(new RunningEvent(this, 0,
+						StringUtilities.isNullOrEmptyString(getRUNNING_MESSAGE()) ? RUNNING_MESSAGE : getRUNNING_MESSAGE()
+				));
 				isSuccessful = execute();
 
 				if (isSuccessful) {
-					fireRunning(new RunningEvent(this, 100, COMPLETEDMESSAGE));
+					fireRunning(new RunningEvent(this, 100,
+							StringUtilities.isNullOrEmptyString(getCOMPLETED_MESSAGE()) ? COMPLETED_MESSAGE : getCOMPLETED_MESSAGE()
+					));
 					setStatus(RunningStatus.COMPLETED);
 				} else if (!isCancelled()) {
-					fireRunning(new RunningEvent(this, 0, FAILEDMESSAGE));
+					fireRunning(new RunningEvent(this, 0,
+							StringUtilities.isNullOrEmptyString(getFAILED_MESSAGE()) ? FAILED_MESSAGE : getFAILED_MESSAGE()
+					));
 					setStatus(RunningStatus.EXCEPTION);
 				}
 			} else {
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ParameterError"));
 			}
 		} catch (Exception e) {
-			fireRunning(new RunningEvent(this, 0, FAILEDMESSAGE));
+			fireRunning(new RunningEvent(this, 0, FAILED_MESSAGE));
 			Application.getActiveApplication().getOutput().output(e);
 			setStatus(RunningStatus.EXCEPTION);
 		}
