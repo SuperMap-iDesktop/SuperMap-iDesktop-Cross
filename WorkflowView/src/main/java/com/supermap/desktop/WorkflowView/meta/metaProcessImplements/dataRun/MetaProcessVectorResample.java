@@ -148,6 +148,7 @@ public class MetaProcessVectorResample extends MetaProcess {
 			this.parameterIsTopologyPreprocess.setSelectedItem((datasetType.equals(DatasetType.REGION) && !this.dataset.getSelectedItem().isReadOnly()));
 			this.parameterIsSaveSmallGeometry.setEnabled(datasetType.equals(DatasetType.REGION) && !this.dataset.getSelectedItem().isReadOnly());
 			this.parameterIsTopologyPreprocess.setEnabled(datasetType.equals(DatasetType.REGION) && !this.dataset.getSelectedItem().isReadOnly());
+			parameterVertexTolerance.setEnabled(Boolean.valueOf(parameterIsTopologyPreprocess.getSelectedItem()));
 		}
 	}
 

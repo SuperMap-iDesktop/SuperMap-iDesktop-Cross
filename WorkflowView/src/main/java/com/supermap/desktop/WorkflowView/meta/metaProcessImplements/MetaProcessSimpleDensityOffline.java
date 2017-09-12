@@ -18,6 +18,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -103,6 +104,7 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 			updateBound(dataset);
 		}
 		comboBoxField.setFieldType(fieldType);
+		comboBoxField.setShowSystemField(true);
 		resultDataset.setSelectedItem("result_simpleDensity");
 		numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem().toString()));
 		numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem().toString()));
@@ -152,14 +154,14 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 		numberBottom.setMaxValue(rectangle2D.getTop());
 		numberLeft.setMaxValue(rectangle2D.getRight());
 		numberRight.setMinValue(rectangle2D.getLeft());
-		numberBottom.setSelectedItem(rectangle2D.getBottom());
-		numberLeft.setSelectedItem(rectangle2D.getLeft());
-		numberRight.setSelectedItem(rectangle2D.getRight());
-		numberTop.setSelectedItem(rectangle2D.getTop());
+		numberBottom.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getBottom()));
+		numberLeft.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getLeft()));
+		numberRight.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getRight()));
+		numberTop.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getTop()));
 		Double x = rectangle2D.getWidth() / 500;
 		Double y = rectangle2D.getHeight() / 500;
 		Double cellSize = x > y ? y : x;
-		numberCellSize.setSelectedItem(cellSize);
+		numberCellSize.setSelectedItem(DoubleUtilities.getFormatString(cellSize));
 	}
 
 	@Override
