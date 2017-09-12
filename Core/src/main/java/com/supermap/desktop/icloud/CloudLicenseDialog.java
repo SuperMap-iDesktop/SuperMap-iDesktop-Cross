@@ -218,12 +218,6 @@ public class CloudLicenseDialog extends JDialog {
         this.labelFindPassword.addMouseListener(this.findPasswordListener);
         this.buttonClose.addActionListener(this.closeListener);
         this.buttonLogin.addActionListener(this.loginListener);
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                CloudLicenseDialog.this.dispose();
-            }
-        });
     }
 
     private void removeEvents() {

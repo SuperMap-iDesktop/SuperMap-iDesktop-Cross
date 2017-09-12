@@ -42,11 +42,21 @@ public class MetaProcessSetProjection extends MetaProcess {
 	private ParameterCombine parameterCombineCoordInfo;
 	private PrjCoordSys prj;
 
+	@Override
+	protected String getCOMPLETED_MESSAGE() {
+		return ProcessProperties.getString("String_setProjectionSuccessed");
+	}
+
+	@Override
+	protected String getFAILED_MESSAGE() {
+		return ProcessProperties.getString("String_setProjectionFailed");
+	}
 
 	public MetaProcessSetProjection() {
 		initParameters();
 		initComponentState();
 		registerEvents();
+
 	}
 
 	private void initParameters() {
@@ -201,8 +211,6 @@ public class MetaProcessSetProjection extends MetaProcess {
 		} catch (Exception e) {
 			ret = false;
 		}
-		COMPLETEDMESSAGE = ProcessProperties.getString("String_setProjectionSuccessed");
-		FAILEDMESSAGE = ProcessProperties.getString("String_setProjectionFailed");
 		return ret;
 	}
 
@@ -210,6 +218,5 @@ public class MetaProcessSetProjection extends MetaProcess {
 	public boolean isChangeSourceData() {
 		return true;
 	}
-
 
 }
