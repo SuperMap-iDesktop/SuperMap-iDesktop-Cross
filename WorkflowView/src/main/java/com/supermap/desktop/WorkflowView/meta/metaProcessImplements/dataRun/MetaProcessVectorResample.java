@@ -99,6 +99,12 @@ public class MetaProcessVectorResample extends MetaProcess {
 		}
 		this.parameterResampleType.setSelectedItem(ResampleType.RTBEND);
 		this.parameterVertexTolerance.setEnabled(false);
+
+		this.parameterResampleTolerance.setUnit(ProcessProperties.getString("String_Label_meter"));
+		this.parameterVertexTolerance.setUnit(ProcessProperties.getString("String_Label_meter"));
+		this.parameterResampleTolerance.setSelectedItem(10);
+		this.parameterVertexTolerance.setSelectedItem(10);
+
 		reloadValue();
 	}
 
@@ -137,18 +143,11 @@ public class MetaProcessVectorResample extends MetaProcess {
 		Dataset datasetSelectedDataset = (Dataset) this.dataset.getSelectedItem();
 		if (datasetSelectedDataset != null) {
 			DatasetType datasetType = datasetSelectedDataset.getType();
-			String unit = ProcessProperties.getString(datasetType.equals(DatasetType.LINE) ? "String_Label_degree" : "String_Label_meter");
-			this.parameterResampleTolerance.setUnit(unit);
-			this.parameterVertexTolerance.setUnit(unit);
-			String value = datasetType.equals(DatasetType.LINE) ? "0.0001" : "10";
-			this.parameterResampleTolerance.setSelectedItem(value);
-			this.parameterVertexTolerance.setSelectedItem(value);
-
 			this.parameterIsSaveSmallGeometry.setSelectedItem((datasetType.equals(DatasetType.REGION) && !this.dataset.getSelectedItem().isReadOnly()));
 			this.parameterIsTopologyPreprocess.setSelectedItem((datasetType.equals(DatasetType.REGION) && !this.dataset.getSelectedItem().isReadOnly()));
 			this.parameterIsSaveSmallGeometry.setEnabled(datasetType.equals(DatasetType.REGION) && !this.dataset.getSelectedItem().isReadOnly());
 			this.parameterIsTopologyPreprocess.setEnabled(datasetType.equals(DatasetType.REGION) && !this.dataset.getSelectedItem().isReadOnly());
-			parameterVertexTolerance.setEnabled(Boolean.valueOf(parameterIsTopologyPreprocess.getSelectedItem()));
+			this.parameterVertexTolerance.setEnabled(Boolean.valueOf(this.parameterIsTopologyPreprocess.getSelectedItem()));
 		}
 	}
 

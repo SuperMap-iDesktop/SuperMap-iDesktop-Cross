@@ -107,12 +107,18 @@ public class ParameterNumber extends ParameterTextField {
 	}
 
 
+	/**
+	 * 将范围显示方式，设置为整形
+	 * yuanR2017.9.12
+	 *
+	 * @return
+	 */
 	private String getRangeDescribe() {
 		StringBuilder stringBuffer = new StringBuilder();
 		stringBuffer.append(isIncludeMin() && isMinValueEnable ? "[" : "(");
-		stringBuffer.append(isMinValueEnable ? String.valueOf(minValue) : "-∞");
+		stringBuffer.append(isMinValueEnable ? DoubleUtilities.toString(minValue, 0) : "-∞");
 		stringBuffer.append(", ");
-		stringBuffer.append(isMaxValueEnable ? String.valueOf(maxValue) : "+∞");
+		stringBuffer.append(isMaxValueEnable ? DoubleUtilities.toString(maxValue, 0) : "+∞");
 		stringBuffer.append(isIncludeMax() && isMaxValueEnable ? "]" : ")");
 		return stringBuffer.toString();
 	}
@@ -147,7 +153,7 @@ public class ParameterNumber extends ParameterTextField {
 		isIncludeMax = includeMax;
 	}
 
-	public void setInterval(int min,int max) {
+	public void setInterval(int min, int max) {
 		minValue = min;
 		maxValue = max;
 	}
