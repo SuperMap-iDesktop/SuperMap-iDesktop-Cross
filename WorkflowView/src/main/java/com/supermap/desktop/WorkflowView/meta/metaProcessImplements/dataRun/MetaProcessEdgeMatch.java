@@ -82,6 +82,7 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 		union.setTip(ProcessProperties.getString("String_EdgeMatchUnionTip"));
 
 		linkDatasource = new ParameterDatasourceConstrained();
+		linkDatasource.setReadOnlyNeeded(false);
 		linkDatasetName = new ParameterTextField(ControlsProperties.getString("String_Label_ResultDataset"));
 		isLinkDataset = new ParameterCheckBox(ProcessProperties.getString("String_EdgeMatch_OutputDatasetLink"));
 		isLinkDataset.setTip(ProcessProperties.getString("String_EdgeMatchOutputDatasetLinkTip"));

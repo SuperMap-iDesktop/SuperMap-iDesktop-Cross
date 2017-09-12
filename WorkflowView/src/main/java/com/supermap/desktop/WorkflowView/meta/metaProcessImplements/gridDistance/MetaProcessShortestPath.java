@@ -67,8 +67,6 @@ public class MetaProcessShortestPath extends MetaProcessGridAnalyst {
 		this.parameterDataNodeZone = new ParameterDataNode(ProcessProperties.getString("String_ComputeType_Zone"), null);
 		this.parameterRadioButton.setItems(new ParameterDataNode[]{parameterDataNodeCell, parameterDataNodeAll, parameterDataNodeZone});
 		this.resultDataset = new ParameterSaveDataset();
-		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_TargetData"));
@@ -96,12 +94,12 @@ public class MetaProcessShortestPath extends MetaProcessGridAnalyst {
 	}
 
 	private void initParametersState() {
+		this.resultDataset.setDefaultDatasetName("result_shortestPath");
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.GRID);
 		if (dataset != null) {
 			this.sourceDatasource.setSelectedItem(dataset.getDatasource());
 			this.sourceDataset.setSelectedItem(dataset);
 			this.resultDataset.setResultDatasource(dataset.getDatasource());
-			this.resultDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_shortestPath"));
 			this.distanceDatasource.setSelectedItem(dataset.getDatasource());
 			this.directionDatasource.setSelectedItem(dataset.getDatasource());
 			this.distanceDataset.setDatasource(dataset.getDatasource());
@@ -114,7 +112,6 @@ public class MetaProcessShortestPath extends MetaProcessGridAnalyst {
 //			}
 		}
 		this.parameterRadioButton.setSelectedItem(parameterDataNodeCell);
-		this.resultDataset.setSelectedItem("result_shortestPath");
 	}
 
 	private void initParameterConstraint() {

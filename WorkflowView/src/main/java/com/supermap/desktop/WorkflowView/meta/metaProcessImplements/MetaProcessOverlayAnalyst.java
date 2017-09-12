@@ -90,6 +90,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		parameterSourceDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
 		parameterOverlayDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
 		parameterResultDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
+		parameterResultDatasource.setReadOnlyNeeded(false);
 		parameterSaveDataset.setDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
 		parameterTolerance.setDescribe(CommonProperties.getString("String_Label_Tolerance"));
 

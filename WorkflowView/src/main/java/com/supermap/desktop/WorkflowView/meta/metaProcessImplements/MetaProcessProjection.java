@@ -57,16 +57,17 @@ public class MetaProcessProjection extends MetaProcess {
 	}
 
 	private void initParameters() {
-		parameterDatasource = new ParameterDatasourceConstrained();
-		parameterDataset = new ParameterSingleDataset();
-		parameterDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-
+		this.parameterDatasource = new ParameterDatasourceConstrained();
+		this.parameterDataset = new ParameterSingleDataset();
+		this.parameterDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
+		// 不支持可读
+		this.parameterDatasource.setReadOnlyNeeded(false);
 
 		ParameterCombine parameterCombineSource = new ParameterCombine();
 		parameterCombineSource.setDescribe(SOURCE_PANEL_DESCRIPTION);
-		parameterCombineSource.addParameters(parameterDatasource, parameterDataset);
+		parameterCombineSource.addParameters(this.parameterDatasource, this.parameterDataset);
 
-		parameterMode.setItems(
+		this.parameterMode.setItems(
 				new ParameterDataNode(CoordSysTransMethodProperties.getString(CoordSysTransMethodProperties.GeocentricTranslation), CoordSysTransMethod.MTH_GEOCENTRIC_TRANSLATION),
 				new ParameterDataNode(CoordSysTransMethodProperties.getString(CoordSysTransMethodProperties.Molodensky), CoordSysTransMethod.MTH_MOLODENSKY),
 				new ParameterDataNode(CoordSysTransMethodProperties.getString(CoordSysTransMethodProperties.MolodenskyAbridged), CoordSysTransMethod.MTH_MOLODENSKY_ABRIDGED),
@@ -77,54 +78,54 @@ public class MetaProcessProjection extends MetaProcess {
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
 		parameterCombineSetting.setDescribe(SETTING_PANEL_DESCRIPTION);
 		ParameterCombine parameterCombine = new ParameterCombine(ParameterCombine.HORIZONTAL);
-		parameterCombine.addParameters(parameterMode, parameterProjection);
+		parameterCombine.addParameters(this.parameterMode, this.parameterProjection);
 		parameterCombine.setWeightIndex(0);
-		parameterCombineSetting.addParameters(parameterCombine, parameterScaleDifference);
+		parameterCombineSetting.addParameters(parameterCombine, this.parameterScaleDifference);
 
 		ParameterCombine parameterCombineRotation = new ParameterCombine();
 		parameterCombineRotation.setDescribe(ControlsProperties.getString("String_Rotation"));
-		parameterCombineRotation.addParameters(parameterTextFieldAngleX, parameterTextFieldAngleY, parameterTextFieldAngleZ);
+		parameterCombineRotation.addParameters(this.parameterTextFieldAngleX, this.parameterTextFieldAngleY, this.parameterTextFieldAngleZ);
 
 		ParameterCombine parameterOffset = new ParameterCombine();
 		parameterOffset.setDescribe(ControlsProperties.getString("String_Offset"));
-		parameterOffset.addParameters(parameterTextFieldOffsetX, parameterTextFieldOffsetY, parameterTextFieldOffsetZ);
+		parameterOffset.addParameters(this.parameterTextFieldOffsetX, this.parameterTextFieldOffsetY, this.parameterTextFieldOffsetZ);
 
 		parameters.setParameters(parameterCombineSource, parameterCombineSetting, parameterCombineRotation, parameterOffset);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.DATASET, parameterCombineSource);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
 				ProcessOutputResultProperties.getString("String_TransParamsSettingResult"),
-				DatasetTypes.DATASET, parameterDataset);
+				DatasetTypes.DATASET, this.parameterDataset);
 	}
 
 	private void initParameterState() {
 		Dataset defaultDataset = DatasetUtilities.getDefaultDataset();
 		if (defaultDataset != null) {
-			parameterDatasource.setSelectedItem(defaultDataset.getDatasource());
-			parameterDataset.setSelectedItem(defaultDataset);
+			this.parameterDatasource.setSelectedItem(defaultDataset.getDatasource());
+			this.parameterDataset.setSelectedItem(defaultDataset);
 		}
-		parameterScaleDifference.setEnabled(false);
-		parameterTextFieldAngleX.setEnabled(false);
-		parameterTextFieldAngleY.setEnabled(false);
-		parameterTextFieldAngleZ.setEnabled(false);
+		this.parameterScaleDifference.setEnabled(false);
+		this.parameterTextFieldAngleX.setEnabled(false);
+		this.parameterTextFieldAngleY.setEnabled(false);
+		this.parameterTextFieldAngleZ.setEnabled(false);
 
-		parameterScaleDifference.setSelectedItem("0");
-		parameterTextFieldOffsetX.setSelectedItem("0");
-		parameterTextFieldOffsetY.setSelectedItem("0");
-		parameterTextFieldOffsetZ.setSelectedItem("0");
-		parameterTextFieldAngleX.setSelectedItem("0");
-		parameterTextFieldAngleY.setSelectedItem("0");
-		parameterTextFieldAngleZ.setSelectedItem("0");
+		this.parameterScaleDifference.setSelectedItem("0");
+		this.parameterTextFieldOffsetX.setSelectedItem("0");
+		this.parameterTextFieldOffsetY.setSelectedItem("0");
+		this.parameterTextFieldOffsetZ.setSelectedItem("0");
+		this.parameterTextFieldAngleX.setSelectedItem("0");
+		this.parameterTextFieldAngleY.setSelectedItem("0");
+		this.parameterTextFieldAngleZ.setSelectedItem("0");
 	}
 
 	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-		equalDatasourceConstraint.constrained(parameterDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(parameterDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.parameterDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.parameterDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
 	}
 
 	private void initParameterListeners() {
-		parameterMode.addPropertyListener(new PropertyChangeListener() {
+		this.parameterMode.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getPropertyName().equals(ParameterComboBox.comboBoxValue)) {
@@ -136,7 +137,7 @@ public class MetaProcessProjection extends MetaProcess {
 				}
 			}
 		});
-		parameterProjection.setActionListener(new ActionListener() {
+		this.parameterProjection.setActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JDialogPrjCoordSysSettings jDialogPrjCoordSysSettings = new JDialogPrjCoordSysSettings();
@@ -164,23 +165,23 @@ public class MetaProcessProjection extends MetaProcess {
 				src = (Dataset) this.parameterDataset.getSelectedItem();
 			}
 			// 当未设置投影时，给定原数据集投影,防止参数为空报错-yuanR2017.9.6
-			if (prjCoordSys == null) {
-				prjCoordSys = src.getPrjCoordSys();
+			if (this.prjCoordSys == null) {
+				this.prjCoordSys = src.getPrjCoordSys();
 			}
 			fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
-			CoordSysTransMethod method = (CoordSysTransMethod) parameterMode.getSelectedData();
+			CoordSysTransMethod method = (CoordSysTransMethod) this.parameterMode.getSelectedData();
 
 			CoordSysTransParameter coordSysTransParameter = new CoordSysTransParameter();
-			coordSysTransParameter.setScaleDifference(Double.valueOf((String) parameterScaleDifference.getSelectedItem()));
-			coordSysTransParameter.setRotateX(Double.valueOf(this.parameterTextFieldAngleX.getSelectedItem().toString()) / 60 / 60 / 180 * Math.PI);
-			coordSysTransParameter.setRotateY(Double.valueOf(this.parameterTextFieldAngleY.getSelectedItem().toString()) / 60 / 60 / 180 * Math.PI);
-			coordSysTransParameter.setRotateZ(Double.valueOf(this.parameterTextFieldAngleZ.getSelectedItem().toString()) / 60 / 60 / 180 * Math.PI);
-			coordSysTransParameter.setTranslateX(Double.valueOf((String) parameterTextFieldOffsetX.getSelectedItem()));
-			coordSysTransParameter.setTranslateY(Double.valueOf((String) parameterTextFieldOffsetY.getSelectedItem()));
-			coordSysTransParameter.setTranslateZ(Double.valueOf((String) parameterTextFieldOffsetZ.getSelectedItem()));
-			CoordSysTranslator.convert(src, prjCoordSys, coordSysTransParameter, method);
+			coordSysTransParameter.setScaleDifference(Double.valueOf((String) this.parameterScaleDifference.getSelectedItem()));
+			coordSysTransParameter.setRotateX(Double.valueOf(this.parameterTextFieldAngleX.getSelectedItem()) / 60 / 60 / 180 * Math.PI);
+			coordSysTransParameter.setRotateY(Double.valueOf(this.parameterTextFieldAngleY.getSelectedItem()) / 60 / 60 / 180 * Math.PI);
+			coordSysTransParameter.setRotateZ(Double.valueOf(this.parameterTextFieldAngleZ.getSelectedItem()) / 60 / 60 / 180 * Math.PI);
+			coordSysTransParameter.setTranslateX(Double.valueOf((String) this.parameterTextFieldOffsetX.getSelectedItem()));
+			coordSysTransParameter.setTranslateY(Double.valueOf((String) this.parameterTextFieldOffsetY.getSelectedItem()));
+			coordSysTransParameter.setTranslateZ(Double.valueOf((String) this.parameterTextFieldOffsetZ.getSelectedItem()));
+			CoordSysTranslator.convert(src, this.prjCoordSys, coordSysTransParameter, method);
 			isSuccessful = true;
-			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
+			getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

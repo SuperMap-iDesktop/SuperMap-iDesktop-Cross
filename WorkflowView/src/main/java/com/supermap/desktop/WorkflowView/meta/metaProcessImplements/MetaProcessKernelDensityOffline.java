@@ -50,7 +50,7 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 
 	private void initParameters() {
 		sourceDatasource = new ParameterDatasourceConstrained();
-		sourceDataset = new ParameterSingleDataset(DatasetType.POINT,DatasetType.LINE);
+		sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE);
 		resultDataset = new ParameterSaveDataset();
 		comboBoxField = new ParameterFieldComboBox(ProcessProperties.getString("String_DensityAnalyst_DensityField"));
 		numberCellSize = new ParameterNumber(ProcessProperties.getString("String_Resolution"));

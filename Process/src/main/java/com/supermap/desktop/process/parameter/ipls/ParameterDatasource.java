@@ -24,7 +24,8 @@ public class ParameterDatasource extends AbstractParameter implements ISelection
 	@ParameterField(name = DATASOURCE_FIELD_NAME)
 	private Datasource datasource;
 	private String describe = CommonProperties.getString(CommonProperties.Label_Datasource);
-	private boolean isReadOnlyNeeded;
+	// 默认需要只读数据-yuanR2017.9.12
+	private boolean isReadOnlyNeeded = true;
 
 	public ParameterDatasource() {
 		this.addValueLegalListener(new ParameterValueLegalListener() {
@@ -52,11 +53,11 @@ public class ParameterDatasource extends AbstractParameter implements ISelection
 	}
 
 	public boolean isReadOnlyNeeded() {
-		return isReadOnlyNeeded;
+		return this.isReadOnlyNeeded;
 	}
 
 	public void setReadOnlyNeeded(boolean readOnlyNeeded) {
-		isReadOnlyNeeded = readOnlyNeeded;
+		this.isReadOnlyNeeded = readOnlyNeeded;
 	}
 
 	protected Object isDatasourceSelected(Datasource parameterValue) {
@@ -76,19 +77,19 @@ public class ParameterDatasource extends AbstractParameter implements ISelection
 	public void setSelectedItem(Object value) {
 		if (value instanceof Datasource) {
 			Datasource oldValue = this.datasource;
-			datasource = (Datasource) value;
-			firePropertyChangeListener(new PropertyChangeEvent(this, DATASOURCE_FIELD_NAME, oldValue, datasource));
+			this.datasource = (Datasource) value;
+			firePropertyChangeListener(new PropertyChangeEvent(this, this.DATASOURCE_FIELD_NAME, oldValue, this.datasource));
 		}
 	}
 
 
 	@Override
 	public Datasource getSelectedItem() {
-		return datasource;
+		return this.datasource;
 	}
 
 	public String getDescribe() {
-		return describe;
+		return this.describe;
 	}
 
 	public void setDescribe(String describe) {

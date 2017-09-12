@@ -37,41 +37,42 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 
 
 	private void initParameters() {
-		datasource = new ParameterDatasourceConstrained();
-		dataset = new ParameterSingleDataset(DatasetType.LINE, DatasetType.REGION);
-		parameterTextFieldSmoothness = new ParameterNumber(ProcessProperties.getString("String_Label_Smoothness"));
-		parameterTextFieldSmoothness.setMaxBit(0);
-		parameterTextFieldSmoothness.setMinValue(2);
-		parameterTextFieldSmoothness.setMaxValue(10);
-		parameterTextFieldSmoothness.setRequisite(true);
+		this.datasource = new ParameterDatasourceConstrained();
+		this.datasource.setReadOnlyNeeded(false);
+		this.dataset = new ParameterSingleDataset(DatasetType.LINE, DatasetType.REGION);
+		this.parameterTextFieldSmoothness = new ParameterNumber(ProcessProperties.getString("String_Label_Smoothness"));
+		this.parameterTextFieldSmoothness.setMaxBit(0);
+		this.parameterTextFieldSmoothness.setMinValue(2);
+		this.parameterTextFieldSmoothness.setMaxValue(10);
+		this.parameterTextFieldSmoothness.setRequisite(true);
 
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
-		parameterCombineSourceData.addParameters(datasource, dataset);
+		parameterCombineSourceData.addParameters(this.datasource, this.dataset);
 		parameterCombineSourceData.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
 
 		ParameterCombine parameterCombineParameter = new ParameterCombine();
 		parameterCombineParameter.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		parameterCombineParameter.addParameters(parameterTextFieldSmoothness);
+		parameterCombineParameter.addParameters(this.parameterTextFieldSmoothness);
 
-		parameters.setParameters(parameterCombineSourceData, parameterCombineParameter);
+		this.parameters.setParameters(parameterCombineSourceData, parameterCombineParameter);
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_LinePolygonSmooth"), DatasetTypes.LINE_POLYGON_VECTOR, parameterCombineSourceData);
 	}
 
 	private void initComponentState() {
-		parameterTextFieldSmoothness.setSelectedItem("2");
+		this.parameterTextFieldSmoothness.setSelectedItem("2");
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
 		if (datasetVector != null) {
-			datasource.setSelectedItem(datasetVector.getDatasource());
-			dataset.setSelectedItem(datasetVector);
+			this.datasource.setSelectedItem(datasetVector.getDatasource());
+			this.dataset.setSelectedItem(datasetVector);
 		}
 	}
 
 	private void initParameterConstraint() {
 
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	@Override
@@ -84,10 +85,10 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 					&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
 				datasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
 			} else {
-				datasetVector = (DatasetVector) dataset.getSelectedItem();
+				datasetVector = (DatasetVector) this.dataset.getSelectedItem();
 			}
 
-			int smoothness = Integer.valueOf(((String) parameterTextFieldSmoothness.getSelectedItem()));
+			int smoothness = Integer.valueOf(((String) this.parameterTextFieldSmoothness.getSelectedItem()));
 
 			datasetVector.addSteppedListener(this.steppedListener);
 			isSuccessful = datasetVector.smooth(smoothness, true);
@@ -106,7 +107,7 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 
 	@Override
 	public IParameters getParameters() {
-		return parameters;
+		return this.parameters;
 	}
 
 	@Override

@@ -94,10 +94,7 @@ public class MetaProcessComputeDistance extends MetaProcess {
 		ParameterCombine setting = new ParameterCombine();
 		setting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
 		setting.addParameters(comboBoxComputeMethod, new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(checkBoxMin, checkBoxMax), textNumMax, textNumMin);
-
 		resultDataset = new ParameterSaveDataset();
-		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 		ParameterCombine resultData = new ParameterCombine();
 		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		resultData.addParameters(resultDataset);
@@ -151,7 +148,7 @@ public class MetaProcessComputeDistance extends MetaProcess {
 		textNumMax.setIsIncludeMin(false);
 		textNumMin.setSelectedItem(0);
 		textNumMin.setMinValue(0);
-		resultDataset.setSelectedItem("result_computeDistance");
+		resultDataset.setDefaultDatasetName("result_computeDistance");
 		expressionSource.setAnchor(GridBagConstraints.EAST);
 		expressionProximity.setAnchor(GridBagConstraints.EAST);
 	}
@@ -160,13 +157,13 @@ public class MetaProcessComputeDistance extends MetaProcess {
 		checkBoxMax.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				textNumMax.setEnabled(Boolean.parseBoolean(checkBoxMax.getSelectedItem().toString()));
+				textNumMax.setEnabled(Boolean.parseBoolean(checkBoxMax.getSelectedItem()));
 			}
 		});
 		checkBoxMin.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				textNumMin.setEnabled(Boolean.parseBoolean(checkBoxMin.getSelectedItem().toString()));
+				textNumMin.setEnabled(Boolean.parseBoolean(checkBoxMin.getSelectedItem()));
 			}
 		});
 		expressionSource.addPropertyListener(new PropertyChangeListener() {

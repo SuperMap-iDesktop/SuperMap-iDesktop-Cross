@@ -107,8 +107,8 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 			sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
 			dataset.setSelectedItem(defaultDataset);
 			saveDataset.setResultDatasource(defaultDataset.getDatasource());
-			saveDataset.setSelectedItem("result_aggregatePoints");
 		}
+		saveDataset.setDefaultDatasetName("result_aggregatePoints");
 
 		parameterNumberDistance.setSelectedItem(1000);
 		parameterComboBoxUnit.setSelectedItem(Unit.METER);

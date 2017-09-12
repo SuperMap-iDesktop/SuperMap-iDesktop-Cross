@@ -210,7 +210,7 @@ public class MetaProcessBuffer extends MetaProcess {
 			comboBoxFieldLeft.setFieldName((DatasetVector) datasetVector);
 			comboBoxFieldRight.setFieldName((DatasetVector) datasetVector);
 		}
-		parameterSaveDataset.setSelectedItem("result_buffer");
+		parameterSaveDataset.setDefaultDatasetName("result_buffer");
 		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
 		comboBoxFieldLeft.setFieldType(fieldType);
 		comboBoxFieldRight.setFieldType(fieldType);

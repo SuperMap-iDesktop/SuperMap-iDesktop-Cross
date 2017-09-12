@@ -46,8 +46,7 @@ public class MetaProcessThiessenPolygon extends MetaProcess {
 		sourceData.addParameters(sourceDatasource, sourceDataset);
 
 		resultDataset = new ParameterSaveDataset();
-		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
+
 		ParameterCombine resultData = new ParameterCombine();
 		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		resultData.addParameters(resultDataset);
@@ -69,7 +68,7 @@ public class MetaProcessThiessenPolygon extends MetaProcess {
 			sourceDatasource.setSelectedItem(datasetVector.getDatasource());
 			sourceDataset.setSelectedItem(datasetVector);
 		}
-		resultDataset.setSelectedItem("result_thiessen");
+		resultDataset.setDefaultDatasetName("result_thiessen");
 	}
 
 	@Override

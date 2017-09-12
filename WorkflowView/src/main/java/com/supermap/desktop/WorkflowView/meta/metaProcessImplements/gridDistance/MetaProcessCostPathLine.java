@@ -94,13 +94,13 @@ public class MetaProcessCostPathLine extends MetaProcessGridAnalyst {
 		numberOriginY.setSelectedItem(0.0);
 		numberTargetX.setSelectedItem(0.0);
 		numberTargetY.setSelectedItem(0.0);
+		resultDataset.setDefaultDatasetName("result_costPathLine");
 		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
 		if (datasetGrid != null) {
 			costDatasources.setSelectedItem(datasetGrid.getDatasource());
 			costDataset.setSelectedItem(datasetGrid);
 			updateCoordinate(datasetGrid);
 		}
-		resultDataset.setSelectedItem("result_costPathLine");
 		comboBoxSmoothMethod.setItems(new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_NONE"), SmoothMethod.NONE),
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_BSLine"), SmoothMethod.BSPLINE),
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_POLISH"), SmoothMethod.POLISH));

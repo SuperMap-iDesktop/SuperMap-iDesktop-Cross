@@ -55,14 +55,14 @@ public abstract class MetaProcessCenterLine extends MetaProcess {
 		this.parameterNumberMinWidth.setRequisite(true);
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
-		sourceData.addParameters(sourceDatasource, dataset);
+		sourceData.addParameters(this.sourceDatasource, this.dataset);
 		ParameterCombine targetData = new ParameterCombine();
 		targetData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-		targetData.addParameters(saveDataset);
+		targetData.addParameters(this.saveDataset);
 		ParameterCombine paramSet = new ParameterCombine();
 		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
-		paramSet.addParameters(parameterNumberMaxWidth);
-		paramSet.addParameters(parameterNumberMinWidth);
+		paramSet.addParameters(this.parameterNumberMaxWidth);
+		paramSet.addParameters(this.parameterNumberMinWidth);
 
 		this.parameters.setParameters(sourceData, paramSet, targetData);
 		if (getSonDatasetType() == DatasetType.LINE) {
@@ -70,30 +70,28 @@ public abstract class MetaProcessCenterLine extends MetaProcess {
 		} else if (getSonDatasetType() == DatasetType.REGION) {
 			this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.REGION, sourceData);
 		}
-		this.parameters.addOutputParameters(OUTPUT_DATA,ProcessOutputResultProperties.getString("String_Result_CenterLine"), DatasetTypes.LINE, targetData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_CenterLine"), DatasetTypes.LINE, targetData);
 	}
 
 	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
-		DatasourceConstraint.getInstance().constrained(saveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(this.saveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void initParametersState() {
 		Dataset defaultDataset = DatasetUtilities.getDefaultDataset(getSonDatasetType());
 		if (defaultDataset != null) {
-			sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
+			this.sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
 			if (defaultDataset.getType() == getSonDatasetType()) {
-				dataset.setSelectedItem(defaultDataset);
+				this.dataset.setSelectedItem(defaultDataset);
 			}
-			saveDataset.setResultDatasource(defaultDataset.getDatasource());
-			saveDataset.setSelectedItem(defaultDataset.getDatasource().getDatasets().getAvailableDatasetName(getResultDatasetName()));
+			this.saveDataset.setResultDatasource(defaultDataset.getDatasource());
 		}
+		this.saveDataset.setDefaultDatasetName(getResultDatasetName());
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.saveDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 		this.parameterNumberMaxWidth.setSelectedItem("30");
 		this.parameterNumberMaxWidth.setMinValue(0);
 		this.parameterNumberMaxWidth.setIsIncludeMin(false);
@@ -107,18 +105,18 @@ public abstract class MetaProcessCenterLine extends MetaProcess {
 		boolean isSuccessful = false;
 		try {
 
-			Double maxWidth = Double.valueOf(parameterNumberMaxWidth.getSelectedItem());
-			Double minWidth = Double.valueOf(parameterNumberMinWidth.getSelectedItem());
+			Double maxWidth = Double.valueOf(this.parameterNumberMaxWidth.getSelectedItem());
+			Double minWidth = Double.valueOf(this.parameterNumberMinWidth.getSelectedItem());
 			if (Double.compare(maxWidth, minWidth) == -1 || Double.compare(maxWidth, minWidth) == 0 || Double.compare(maxWidth, 0) != 1 || Double.compare(minWidth, 0) == -1) {
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_MinWidthShouldSmallerThanMaxWidth"));
 			} else {
-				String datasetName = saveDataset.getDatasetName();
-				datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
+				String datasetName = this.saveDataset.getDatasetName();
+				datasetName = this.saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 				DatasetVector src = null;
 				if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
 					src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 				} else {
-					src = (DatasetVector) dataset.getSelectedItem();
+					src = (DatasetVector) this.dataset.getSelectedItem();
 				}
 
 				Recordset recordset = src.getRecordset(false, CursorType.STATIC);

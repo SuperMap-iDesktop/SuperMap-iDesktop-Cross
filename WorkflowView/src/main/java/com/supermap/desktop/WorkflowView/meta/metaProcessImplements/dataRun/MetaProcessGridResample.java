@@ -90,11 +90,11 @@ public class MetaProcessGridResample extends MetaProcess {
 	}
 
 	private void initParametersState() {
+		this.resultDataset.setDefaultDatasetName("result_gridResample");
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.GRID, DatasetType.IMAGE);
 		if (dataset != null) {
 			sourceDatasource.setSelectedItem(dataset.getDatasource());
 			sourceDataset.setSelectedItem(dataset);
-			this.resultDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_gridResample"));
 			updateCellSize(dataset);
 		}
 		comboBoxMethod.setItems(new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.BILINEAR), ResampleMode.BILINEAR),
