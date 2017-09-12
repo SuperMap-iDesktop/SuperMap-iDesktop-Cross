@@ -237,14 +237,14 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			}
 
 			private void change() {
-				try {
-					textFieldInnerRadius.setMaxValue(Double.valueOf(textFieldOuterRadius.getText()));
-				} catch (Exception e) {
-
-				}
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldInnerRadius.getText())) {
 					isSelectingItem = true;
 					resetNeighbourShape();
+					try {
+						textFieldOuterRadius.setMinValue(Double.valueOf(textFieldInnerRadius.getText()));
+					} catch (Exception e) {
+
+					}
 					isSelectingItem = false;
 				}
 			}
@@ -266,14 +266,14 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			}
 
 			private void change() {
-				try {
-					textFieldOuterRadius.setMinValue(Double.valueOf(textFieldInnerRadius.getText()));
-				} catch (Exception e) {
-
-				}
 				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textFieldOuterRadius.getText())) {
 					isSelectingItem = true;
 					resetNeighbourShape();
+					try {
+						textFieldInnerRadius.setMaxValue(Double.valueOf(textFieldOuterRadius.getText()));
+					} catch (Exception e) {
+
+					}
 					isSelectingItem = false;
 				}
 			}

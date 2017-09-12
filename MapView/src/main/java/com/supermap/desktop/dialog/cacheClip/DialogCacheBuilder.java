@@ -765,28 +765,36 @@ public class DialogCacheBuilder extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		if (args.length > 2) {
-			String workspacePath = args[2];
-			String mapName = args[3];
-			String cachePath = args[4];
-//			String updateSciPath = args[5];
-			DialogCacheBuilder dialogMapCacheBuilder = getDialog(args[0], args[1]);
-			if (!"null".equals(workspacePath)) {
-				dialogMapCacheBuilder.fileChooserWorkspacePath.setPath(workspacePath);
+		if (args.length == 5) {
+			DialogCacheBuilder dialogMapCacheBuilder = setParameters(args);
+			dialogMapCacheBuilder.setVisible(true);
+		} else if (args.length > 5) {
+			DialogCacheBuilder dialogMapCacheBuilder = setParameters(args);
+			String updateSciPath = args[5];
+			if (!"null".equals(updateSciPath)) {
+				dialogMapCacheBuilder.updateSciPath = updateSciPath;
 			}
-			if (!"null".equals(mapName)) {
-				dialogMapCacheBuilder.textFieldMapName.setText(mapName);
-			}
-			if (!"null".equals(cachePath)) {
-				dialogMapCacheBuilder.fileChooserCachePath.setPath(cachePath);
-			}
-//			if (!"null".equals(updateSciPath)) {
-//				dialogMapCacheBuilder.updateSciPath = updateSciPath;
-//			}
 			dialogMapCacheBuilder.setVisible(true);
 		} else {
 			getDialog(args[0], args[1]).setVisible(true);
 		}
+	}
+
+	private static DialogCacheBuilder setParameters(String[] args) {
+		DialogCacheBuilder dialogMapCacheBuilder = getDialog(args[0], args[1]);
+		String workspacePath = args[2];
+		String mapName = args[3];
+		String cachePath = args[4];
+		if (!"null".equals(workspacePath)) {
+			dialogMapCacheBuilder.fileChooserWorkspacePath.setPath(workspacePath);
+		}
+		if (!"null".equals(mapName)) {
+			dialogMapCacheBuilder.textFieldMapName.setText(mapName);
+		}
+		if (!"null".equals(cachePath)) {
+			dialogMapCacheBuilder.fileChooserCachePath.setPath(cachePath);
+		}
+		return dialogMapCacheBuilder;
 	}
 
 	private static DialogCacheBuilder getDialog(String operationType, String locale) {

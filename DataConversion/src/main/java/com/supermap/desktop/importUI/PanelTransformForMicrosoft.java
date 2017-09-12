@@ -229,40 +229,46 @@ public class PanelTransformForMicrosoft extends PanelTransform {
 		temp = null;
 		if (!(this.importSetting instanceof ImportSettingExcel)) {
 			String[][] data = getData();
-			String[] tempValues = data[0];
-			for (int i = 0, tempLength = tempValues.length; i < tempLength; i++) {
-				tempValues[i] = tempValues[i].replace("\"", "");
+			if (null != data) {
+				String[] tempValues = data[0];
+				for (int i = 0, tempLength = tempValues.length; i < tempLength; i++) {
+					tempValues[i] = tempValues[i].replace("\"", "");
+				}
+				String[] indexX = tempValues;
+				int length = getData().length;
+				String[][] tableValues = new String[length - 1][];
+				for (int i = 1; i < length; i++) {
+					tableValues[i - 1] = data[i];
+				}
+				DefaultTableModel model = new DefaultTableModel(tableValues, indexX);
+				this.tablePreviewCSV.setModel(model);
+				this.tablePreviewCSV.setRowHeight(23);
+				//设置表头宽度
+				this.tablePreviewCSV.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+				this.tablePreviewCSV.getTableHeader().setPreferredSize(
+						new Dimension(this.tablePreviewCSV.getTableHeader().getPreferredSize().width, 30));
+				this.scrollPanePreviewCSV.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+				DefaultComboBoxModel comboBoxModelWkt = new DefaultComboBoxModel(indexX);
+				DefaultComboBoxModel comboBoxModelX = new DefaultComboBoxModel(indexX);
+				DefaultComboBoxModel comboBoxModelY = new DefaultComboBoxModel(indexX);
+				this.comboBoxWKT.setModel(comboBoxModelWkt);
+				this.comboBoxX.setModel(comboBoxModelX);
+				this.comboBoxY.setModel(comboBoxModelY);
+				String[] indexZ = new String[indexX.length + 1];
+				for (int i = 0, lengthZ = indexZ.length; i < lengthZ; i++) {
+					indexZ[i] = i == 0 ? "" : indexX[i - 1];
+				}
+				this.comboBoxZ.setModel(new DefaultComboBoxModel(indexZ));
+				setComboboxStepSize(comboBoxWKT, comboBoxX, comboBoxY, comboBoxZ);
+				data = null;
+				tempValues = null;
+				tableValues = null;
+				indexX = null;
+				indexZ = null;
+				comboBoxModelWkt = null;
+				comboBoxModelX = null;
+				comboBoxModelY = null;
 			}
-			String[] indexX = tempValues;
-			int length = getData().length;
-			String[][] tableValues = new String[length - 1][];
-			for (int i = 1; i < length; i++) {
-				tableValues[i - 1] = data[i];
-			}
-			DefaultTableModel model = new DefaultTableModel(tableValues, indexX);
-			this.tablePreviewCSV.setModel(model);
-			this.tablePreviewCSV.setRowHeight(23);
-			//设置表头宽度
-			this.tablePreviewCSV.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			this.tablePreviewCSV.getTableHeader().setPreferredSize(
-					new Dimension(this.tablePreviewCSV.getTableHeader().getPreferredSize().width, 30));
-			this.scrollPanePreviewCSV.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-			DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel(indexX);
-			this.comboBoxWKT.setModel(comboBoxModel);
-			this.comboBoxX.setModel(comboBoxModel);
-			this.comboBoxY.setModel(comboBoxModel);
-			String[] indexZ = new String[indexX.length + 1];
-			for (int i = 0, lengthZ = indexZ.length; i < lengthZ; i++) {
-				indexZ[i] = i == 0 ? "" : indexX[i - 1];
-			}
-			this.comboBoxZ.setModel(new DefaultComboBoxModel(indexZ));
-			setComboboxStepSize(comboBoxWKT, comboBoxX, comboBoxY, comboBoxZ);
-			data = null;
-			tempValues = null;
-			tableValues = null;
-			indexX = null;
-			indexZ = null;
-			comboBoxModel = null;
 		}
 	}
 

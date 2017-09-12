@@ -123,8 +123,8 @@ public class MetaProcessISOPoint extends MetaProcess {
 			double baseValue = Double.valueOf(datumValue.getSelectedItem());
 			double lineDistance = Double.valueOf(interval.getSelectedItem());
 			double dRemain = baseValue % lineDistance;
-			double maxIsoValue = (int) ((maxValue - dRemain) / lineDistance) * lineDistance + dRemain;
-			double minIsoValue = (int) ((minValue - dRemain) / lineDistance) * lineDistance + dRemain;
+			double maxIsoValue = Math.round((maxValue - dRemain) / lineDistance) * lineDistance + dRemain;
+			double minIsoValue = Math.ceil((minValue - dRemain) / lineDistance) * lineDistance + dRemain;
 			int isoCount = (int) ((maxIsoValue - minIsoValue) / lineDistance) + 1;
 			maxISOLine.setSelectedItem(DoubleUtilities.getFormatString(maxIsoValue));
 			minISOLine.setSelectedItem(DoubleUtilities.getFormatString(minIsoValue));
@@ -146,8 +146,8 @@ public class MetaProcessISOPoint extends MetaProcess {
 			double baseValue = Double.valueOf(datumValue.getSelectedItem());
 			double lineDistance = Double.valueOf(interval.getSelectedItem());
 			double dRemain = baseValue % lineDistance;
-			double maxIsoValue = (int) ((maxValue - dRemain) / lineDistance) * lineDistance + dRemain;
-			double minIsoValue = (int) ((minValue - dRemain) / lineDistance) * lineDistance + dRemain;
+			double maxIsoValue = Math.round((maxValue - dRemain) / lineDistance) * lineDistance + dRemain;
+			double minIsoValue = Math.ceil((minValue - dRemain) / lineDistance) * lineDistance + dRemain;
 			int isoCount = (int) ((maxIsoValue - minIsoValue) / lineDistance) + 1;
 			maxISOLine.setSelectedItem(DoubleUtilities.getFormatString(maxIsoValue));
 			minISOLine.setSelectedItem(DoubleUtilities.getFormatString(minIsoValue));

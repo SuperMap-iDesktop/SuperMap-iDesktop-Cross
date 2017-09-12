@@ -683,7 +683,7 @@ public class MapUtilities {
 		for (int i = 0; i < manager.getCount(); i++) {
 			if (manager.get(i) instanceof IFormMap) {
 				IFormMap formMap = (IFormMap) manager.get(i);
-				Map map = formMap.getMapControl().getMap();
+				final Map map = formMap.getMapControl().getMap();
 
 				for (int j = 0; j < map.getLayers().getCount(); j++) {
 					Layer layer = map.getLayers().get(j);
@@ -695,7 +695,17 @@ public class MapUtilities {
 				}
 
 				if (needRefresh) {
-					map.refresh();
+
+					if (SwingUtilities.isEventDispatchThread()) {
+						map.refresh();
+					} else {
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								map.refresh();
+							}
+						});
+					}
 				}
 			}
 		}
