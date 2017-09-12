@@ -46,13 +46,13 @@ public class MetaProcessRasterReclass extends MetaProcess {
 
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
-		sourceData.addParameters(sourceDatasource, dataset);
+		sourceData.addParameters(this.sourceDatasource, this.dataset);
 		ParameterCombine parameterSetting = new ParameterCombine();
 		parameterSetting.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
 		parameterSetting.addParameters(this.parameterRasterReclass);
 		ParameterCombine targetData = new ParameterCombine();
 		targetData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-		targetData.addParameters(saveDataset);
+		targetData.addParameters(this.saveDataset);
 
 		this.parameters.setParameters(sourceData, parameterSetting, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
@@ -61,28 +61,26 @@ public class MetaProcessRasterReclass extends MetaProcess {
 
 	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
-		equalDatasetConstraint.constrained(dataset, ParameterSingleDataset.DATASET_FIELD_NAME);
-		equalDatasetConstraint.constrained(parameterRasterReclass, ParameterRasterReclass.FIELD_DATASET);
+		equalDatasetConstraint.constrained(this.dataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		equalDatasetConstraint.constrained(this.parameterRasterReclass, ParameterRasterReclass.FIELD_DATASET);
 
-		DatasourceConstraint.getInstance().constrained(saveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(this.saveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void initParametersState() {
+		this.saveDataset.setDefaultDatasetName("result_Reclass");
 		Dataset defaultDataset = DatasetUtilities.getDefaultDataset(DatasetType.GRID);
 		if (defaultDataset != null) {
 			this.sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
 			this.dataset.setSelectedItem(defaultDataset);
 			this.saveDataset.setResultDatasource(defaultDataset.getDatasource());
-			this.saveDataset.setSelectedItem(defaultDataset.getDatasource().getDatasets().getAvailableDatasetName("result_Reclass"));
 			this.parameterRasterReclass.setDataset((DatasetGrid) defaultDataset);
 		}
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.saveDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 	}
 
 	@Override
@@ -90,13 +88,13 @@ public class MetaProcessRasterReclass extends MetaProcess {
 		boolean isSuccessful = false;
 		try {
 
-			String datasetName = saveDataset.getDatasetName();
-			datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
+			String datasetName = this.saveDataset.getDatasetName();
+			datasetName = this.saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 			DatasetGrid src = null;
 			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetGrid) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 			} else {
-				src = (DatasetGrid) dataset.getSelectedItem();
+				src = (DatasetGrid) this.dataset.getSelectedItem();
 			}
 
 			GeneralizeAnalyst.addSteppedListener(steppedListener);
@@ -115,7 +113,7 @@ public class MetaProcessRasterReclass extends MetaProcess {
 
 	@Override
 	public IParameters getParameters() {
-		return parameters;
+		return this.parameters;
 	}
 
 	@Override

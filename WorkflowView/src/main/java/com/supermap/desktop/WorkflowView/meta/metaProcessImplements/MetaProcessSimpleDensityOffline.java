@@ -85,8 +85,8 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 		equalDatasetConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
 		equalDatasetConstraint.constrained(comboBoxField, ParameterFieldComboBox.DATASET_FIELD_NAME);
 		EqualDatasetConstraint equalDatasetConstraint1 = new EqualDatasetConstraint();
-		equalDatasetConstraint1.constrained(sourceDataset,ParameterSingleDataset.DATASET_FIELD_NAME);
-		equalDatasetConstraint1.constrained(shapeType,ParameterShapeType.DATASET_FIELD_NAME);
+		equalDatasetConstraint1.constrained(sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		equalDatasetConstraint1.constrained(shapeType, ParameterShapeType.DATASET_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(resultDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
@@ -103,11 +103,11 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 			updateBound(dataset);
 		}
 		comboBoxField.setFieldType(fieldType);
-		resultDataset.setSelectedItem("result_simpleDensity");
-		numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem().toString()));
-		numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem().toString()));
-		numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem().toString()));
-		numberBottom.setMaxValue(Double.parseDouble(numberTop.getSelectedItem().toString()));
+		resultDataset.setDefaultDatasetName("result_simpleDensity");
+		numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem()));
+		numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem()));
+		numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem()));
+		numberBottom.setMaxValue(Double.parseDouble(numberTop.getSelectedItem()));
 	}
 
 	private void registerListener() {
@@ -123,25 +123,25 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 		numberBottom.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem().toString()));
+				numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem()));
 			}
 		});
 		numberTop.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				numberBottom.setMaxValue(Double.parseDouble(numberTop.getSelectedItem().toString()));
+				numberBottom.setMaxValue(Double.parseDouble(numberTop.getSelectedItem()));
 			}
 		});
 		numberRight.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem().toString()));
+				numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem()));
 			}
 		});
 		numberLeft.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem().toString()));
+				numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem()));
 			}
 		});
 	}
@@ -179,12 +179,12 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 				src = (DatasetVector) sourceDataset.getSelectedItem();
 			}
 			DensityAnalyst.addSteppedListener(steppedListener);
-			double top = Double.parseDouble(numberTop.getSelectedItem().toString());
-			double bottom = Double.parseDouble(numberBottom.getSelectedItem().toString());
-			double right = Double.parseDouble(numberRight.getSelectedItem().toString());
-			double left = Double.parseDouble(numberLeft.getSelectedItem().toString());
+			double top = Double.parseDouble(numberTop.getSelectedItem());
+			double bottom = Double.parseDouble(numberBottom.getSelectedItem());
+			double right = Double.parseDouble(numberRight.getSelectedItem());
+			double left = Double.parseDouble(numberLeft.getSelectedItem());
 			densityAnalystParameter.setBounds(new Rectangle2D(left, bottom, right, top));
-			densityAnalystParameter.setResolution(Double.parseDouble(numberCellSize.getSelectedItem().toString()));
+			densityAnalystParameter.setResolution(Double.parseDouble(numberCellSize.getSelectedItem()));
 			densityAnalystParameter.setSearchNeighbourhood((NeighbourShape) shapeType.getSelectedItem());
 			DatasetGrid result = DensityAnalyst.pointDensity(densityAnalystParameter, src, comboBoxField.getFieldName(),
 					resultDataset.getResultDatasource(), resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(resultDataset.getDatasetName()));

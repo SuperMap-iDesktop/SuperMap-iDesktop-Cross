@@ -21,6 +21,7 @@ import java.beans.PropertyChangeListener;
 
 /**
  * 提取等值线/面
+ *
  * @author XiaJT
  */
 public abstract class MetaProcessISO extends MetaProcessGridAnalyst {
@@ -57,18 +58,15 @@ public abstract class MetaProcessISO extends MetaProcessGridAnalyst {
 	}
 
 	protected void initParametersState() {
+		saveDataset.setDefaultDatasetName(getDefaultResultName());
 		Dataset defaultDatasetGrid = DatasetUtilities.getDefaultDatasetGrid();
 		if (defaultDatasetGrid != null) {
 			sourceDatasource.setSelectedItem(defaultDatasetGrid.getDatasource());
 			dataset.setSelectedItem(defaultDatasetGrid);
 			saveDataset.setResultDatasource(defaultDatasetGrid.getDatasource());
-			saveDataset.setSelectedItem(defaultDatasetGrid.getDatasource().getDatasets().getAvailableDatasetName(getDefaultResultName()));
-		} else {
-			saveDataset.setSelectedItem(getDefaultResultName());
 		}
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.saveDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
+
 		if (null != dataset.getSelectedItem() && dataset.getSelectedItem() instanceof DatasetGrid) {
 			maxGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMaxValue());
 			minGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMinValue());

@@ -40,35 +40,33 @@ public abstract class MetaProcessCalTerrain extends MetaProcessGridAnalyst {
 
 	private void initParameters() {
 		ParameterCombine parameterCombineSourceDataset = new ParameterCombine();
-		parameterCombineSourceDataset.addParameters(datasource, sourceDataset);
+		parameterCombineSourceDataset.addParameters(this.datasource, this.sourceDataset);
 		parameterCombineSourceDataset.setDescribe(CommonProperties.getString("String_ColumnHeader_SourceData"));
 
-		parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.GRID, parameterCombineSourceDataset);
-		parameters.setParameters(parameterCombineSourceDataset);
+		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.GRID, parameterCombineSourceDataset);
+		this.parameters.setParameters(parameterCombineSourceDataset);
 
-		parameterCombineResultDataset.addParameters(parameterSaveDataset);
-		parameterCombineResultDataset.setDescribe(CommonProperties.getString("String_ResultSet"));
+		this.parameterCombineResultDataset.addParameters(this.parameterSaveDataset);
+		this.parameterCombineResultDataset.setDescribe(CommonProperties.getString("String_ResultSet"));
 	}
 
 	private void initParameterConstraint() {
-		DatasourceConstraint.getInstance().constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		DatasourceConstraint.getInstance().constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-		DatasourceConstraint.getInstance().constrained(parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(this.datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(this.sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(this.parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void initComponentState() {
+		this.parameterSaveDataset.setDefaultDatasetName(getDefaultResultName());
 		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
 		if (datasetGrid != null) {
-			datasource.setSelectedItem(datasetGrid.getDatasource());
-			sourceDataset.setSelectedItem(datasetGrid);
-			parameterSaveDataset.setResultDatasource(datasetGrid.getDatasource());
-			parameterSaveDataset.setSelectedItem(datasetGrid.getDatasource().getDatasets().getAvailableDatasetName(getDefaultResultName()));
-		} else {
-			parameterSaveDataset.setSelectedItem(getDefaultResultName());
+			this.datasource.setSelectedItem(datasetGrid.getDatasource());
+			this.sourceDataset.setSelectedItem(datasetGrid);
+			this.parameterSaveDataset.setResultDatasource(datasetGrid.getDatasource());
 		}
 	}
 
@@ -78,15 +76,15 @@ public abstract class MetaProcessCalTerrain extends MetaProcessGridAnalyst {
 		boolean isSuccessful = false;
 		DatasetGrid datasetGrid;
 
-		if (parameters.getInputs().getData(INPUT_SOURCE_DATASET) != null &&
-				parameters.getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
-			datasetGrid = (DatasetGrid) parameters.getInputs().getData(INPUT_SOURCE_DATASET).getValue();
+		if (this.parameters.getInputs().getData(INPUT_SOURCE_DATASET) != null &&
+				this.parameters.getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
+			datasetGrid = (DatasetGrid) this.parameters.getInputs().getData(INPUT_SOURCE_DATASET).getValue();
 		} else {
-			datasetGrid = (DatasetGrid) sourceDataset.getSelectedItem();
+			datasetGrid = (DatasetGrid) this.sourceDataset.getSelectedItem();
 		}
 		try {
 			// 运行之前，确保结果数据集名称正确-yuanR2017.9.7
-			parameterSaveDataset.setDatasetName(datasetGrid.getDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()));
+			this.parameterSaveDataset.setSelectedItem(datasetGrid.getDatasource().getDatasets().getAvailableDatasetName(this.parameterSaveDataset.getDatasetName()));
 			isSuccessful = doWork(datasetGrid);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());

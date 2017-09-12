@@ -59,14 +59,14 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 		parameterCombineSource.setDescribe(CommonProperties.getString("String_ColumnHeader_SourceData"));
 
 		parameterSaveDataset = new ParameterSaveDataset();
-		parameterSaveDataset.setSelectedItem(resultName);
+		parameterSaveDataset.setDefaultDatasetName(resultName);
 		ParameterCombine parameterCombineResult = new ParameterCombine();
 		parameterCombineResult.addParameters(parameterSaveDataset);
 		parameterCombineResult.setDescribe(CommonProperties.getString("String_ResultSet"));
 
 		parameters.setParameters(parameterCombineSource, measureParameter, parameterCombineResult);
 		parameters.addInputParameters(INPUT_SOURCE_DATASET, getKey().equals(MetaKeys.LINEAR_DIRECTIONAL_MEAN) ? DatasetTypes.LINE : DatasetTypes.SIMPLE_VECTOR, parameterCombineSource);
-		parameters.addOutputParameters(OUTPUT_DATASET,outputName, DatasetTypes.VECTOR, parameterCombineResult);
+		parameters.addOutputParameters(OUTPUT_DATASET, outputName, DatasetTypes.VECTOR, parameterCombineResult);
 	}
 
 	private void initParameterConstraint() {

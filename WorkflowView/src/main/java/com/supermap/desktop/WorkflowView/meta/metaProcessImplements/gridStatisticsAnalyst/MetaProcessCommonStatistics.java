@@ -84,7 +84,7 @@ public class MetaProcessCommonStatistics extends MetaProcessGridAnalyst {
 			sourceDataset.setSelectedItem(datasetGrid);
 			commonStatisticCombine.setDataset(datasetGrid);
 		}
-		resultDataset.setSelectedItem("result_commonStatistics");
+		resultDataset.setDefaultDatasetName("result_commonStatistics");
 		checkBoxIgnore.setSelectedItem(true);
 		comboBoxCompareType.setItems(new ParameterDataNode("<", StatisticsCompareType.LESS),
 				new ParameterDataNode("<=", StatisticsCompareType.LESS_OR_EQUAL),
@@ -119,7 +119,7 @@ public class MetaProcessCommonStatistics extends MetaProcessGridAnalyst {
 				src = (DatasetGrid) sourceDataset.getSelectedItem();
 			}
 			StatisticsCompareType type = (StatisticsCompareType) comboBoxCompareType.getSelectedData();
-			boolean isIgnore = Boolean.parseBoolean(checkBoxIgnore.getSelectedItem().toString());
+			boolean isIgnore = Boolean.parseBoolean(checkBoxIgnore.getSelectedItem());
 			String datasetName = resultDataset.getDatasetName();
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 			StatisticsAnalyst.addSteppedListener(steppedListener);

@@ -53,8 +53,6 @@ public class MetaProcessThinRaster extends MetaProcess {
 		sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 
 		resultDataset = new ParameterSaveDataset();
-		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 
 		textFieldNoValue = new ParameterNumber(CommonProperties.getString("String_Label_NoData"));
 		textFieldNoValueTolerance = new ParameterNumber(CommonProperties.getString("String_Label_NoValueTolerance"));
@@ -101,7 +99,7 @@ public class MetaProcessThinRaster extends MetaProcess {
 			}
 		}
 
-		resultDataset.setSelectedItem("result_thinRaster");
+		resultDataset.setDefaultDatasetName("result_thinRaster");
 		//textFieldNoValue.setSelectedItem("-9999");
 		textFieldNoValue.setRequisite(true);
 		textFieldNoValueTolerance.setSelectedItem("0");

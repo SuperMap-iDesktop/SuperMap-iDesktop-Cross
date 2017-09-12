@@ -57,6 +57,7 @@ public class MetaProcessZonalStatistics extends MetaProcessGridAnalyst {
 		zonalDatasource = new ParameterDatasourceConstrained();
 		zonalDataset = new ParameterSingleDataset(DatasetType.GRID, DatasetType.REGION);
 		resultDatasource = new ParameterDatasourceConstrained();
+		resultDatasource.setReadOnlyNeeded(false);
 		resultDatasetGrid = new ParameterTextField(ProcessProperties.getString("String_Label_StatisticResult_Grid"));
 		resultTable = new ParameterTextField(ProcessProperties.getString("String_Label_StatisticResult_Tabular"));
 		comboBoxZonalField = new ParameterFieldComboBox(ProcessProperties.getString("String_Label_StatisticField"));
@@ -176,7 +177,7 @@ public class MetaProcessZonalStatistics extends MetaProcessGridAnalyst {
 					return false;
 				}
 			}
-			boolean isIgnore = Boolean.parseBoolean(checkBoxIgnore.getSelectedItem().toString());
+			boolean isIgnore = Boolean.parseBoolean(checkBoxIgnore.getSelectedItem());
 			ZonalStatisticsAnalystParameter zonalStatisticsAnalystParameter = new ZonalStatisticsAnalystParameter();
 
 			GridStatisticsMode mode = (GridStatisticsMode) comboBoxStatisticMode.getSelectedData();

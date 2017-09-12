@@ -92,19 +92,17 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 	}
 
 	private void initParametersState() {
+		this.saveDataset.setDefaultDatasetName("result_RarefyPoints");
 		Dataset defaultDataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT);
 		if (defaultDataset != null) {
 			this.sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
 			this.dataset.setSelectedItem(defaultDataset);
 			this.saveDataset.setResultDatasource(defaultDataset.getDatasource());
-			this.saveDataset.setSelectedItem(defaultDataset.getDatasource().getDatasets().getAvailableDatasetName("result_RarefyPoints"));
 			this.parameterNumberRadius.setUnit(defaultDataset.getPrjCoordSys().getCoordUnit().toString());
 			this.statisticsFieldGroupForRarefyPoints.setDataset((DatasetVector) defaultDataset);
 			updateTextRadius(defaultDataset.getPrjCoordSys());
 		}
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.saveDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 		this.parameterNumberRadius.setMinValue(0);
 		this.parameterNumberRadius.setIsIncludeMin(false);
 		this.checkBoxRandomSaveRerefyPoints.setSelectedItem(true);

@@ -51,12 +51,16 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 		Datasource selectedDatasource = datasourceComboBox.getSelectedDatasource();
 		if (selectedDatasource != null) {
 			String text = textFieldDataset.getText();
-			String availableDatasetName = selectedDatasource.getDatasets().getAvailableDatasetName(text);
-			if (!availableDatasetName.equals(text)) {
-				isSelectingItem = true;
-				textFieldDataset.setText(availableDatasetName);
-				parameterSaveDataset.setDatasetName(availableDatasetName);
-				isSelectingItem = false;
+			if (StringUtilities.isNullOrEmptyString(text)) {
+				text = parameterSaveDataset.getDefaultDatasetName();
+			} else {
+				String availableDatasetName = selectedDatasource.getDatasets().getAvailableDatasetName(text);
+				if (!availableDatasetName.equals(text)) {
+					isSelectingItem = true;
+					textFieldDataset.setText(availableDatasetName);
+					parameterSaveDataset.setSelectedItem(availableDatasetName);
+					isSelectingItem = false;
+				}
 			}
 		}
 	}
@@ -65,8 +69,8 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 	public ParameterSaveDatasetPanel(IParameter parameterSaveDataset) {
 		super(parameterSaveDataset);
 		this.parameterSaveDataset = (ParameterSaveDataset) parameterSaveDataset;
-		labelDatasource = new JLabel(CommonProperties.getString(CommonProperties.Label_Datasource));
-		labelDataset = new JLabel(CommonProperties.getString(CommonProperties.Label_Dataset));
+		labelDatasource = new JLabel(CommonProperties.getString("String_TargetDatasource"));
+		labelDataset = new JLabel(CommonProperties.getString("String_TargetDataset"));
 		datasourceComboBox = new DatasourceComboBox();
 		textFieldDataset = new SmTextFieldLegit();
 		textFieldDataset.setSmTextFieldLegit(new ISmTextFieldLegit() {
@@ -84,7 +88,7 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 				boolean isLegit = ((Datasource) datasourceComboBox.getSelectedItem()).getDatasets().isAvailableDatasetName(textFieldValue);
 				if (isLegit) {
 					isSelectingItem = true;
-					ParameterSaveDatasetPanel.this.parameterSaveDataset.setDatasetName(textFieldValue);
+					ParameterSaveDatasetPanel.this.parameterSaveDataset.setSelectedItem(textFieldValue);
 					isSelectingItem = false;
 				}
 				return isLegit;
@@ -104,9 +108,9 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 		if (datasourceComboBox.getSelectedItem() != this.parameterSaveDataset.getResultDatasource()) {
 			this.parameterSaveDataset.setResultDatasource((Datasource) datasourceComboBox.getSelectedItem());
 		}
-		if (this.parameterSaveDataset.getDatasetName() != null && !this.parameterSaveDataset.getDatasetName().equals(textFieldDataset.getText())) {
-			this.parameterSaveDataset.setDatasetName(textFieldDataset.getText());
-		}
+//		if (this.parameterSaveDataset.getDatasetName() != null && !this.parameterSaveDataset.getDatasetName().equals(textFieldDataset.getText())) {
+//			this.parameterSaveDataset.setDatasetName(textFieldDataset.getText());
+//		}
 	}
 
 	private void initLayout() {
@@ -123,7 +127,6 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 	}
 
 	private void initListener() {
-
 		datasourceComboBox.addItemListener(itemListener);
 	}
 
@@ -133,14 +136,14 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 		if (parameterSaveDataset.getResultDatasource() != null) {
 			datasourceComboBox.setSelectedItem(parameterSaveDataset.getResultDatasource());
 		}
-		String datasetName = parameterSaveDataset.getDatasetName();
-		if (!StringUtilities.isNullOrEmpty(datasetName)) {
-			Datasource datasource = datasourceComboBox.getSelectedDatasource();
-			if (datasource != null) {
-				datasetName = datasource.getDatasets().getAvailableDatasetName(datasetName);
-			}
-			textFieldDataset.setText(datasetName);
+		String defaultDatasetName = parameterSaveDataset.getDefaultDatasetName();
+		Datasource datasource = datasourceComboBox.getSelectedDatasource();
+		if (datasource != null) {
+			defaultDatasetName = datasource.getDatasets().getAvailableDatasetName(defaultDatasetName);
+			// 将正确的数据集名称赋值给datasetName-yuanR2017.9.12
+			parameterSaveDataset.setSelectedItem(defaultDatasetName);
 		}
+		textFieldDataset.setText(defaultDatasetName);
 		isSelectingItem = false;
 	}
 

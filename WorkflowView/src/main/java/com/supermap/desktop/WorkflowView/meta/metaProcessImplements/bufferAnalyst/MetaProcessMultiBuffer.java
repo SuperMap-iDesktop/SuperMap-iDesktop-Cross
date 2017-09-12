@@ -148,10 +148,8 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 		if (datasetVector != null) {
 			datasource.setSelectedItem(datasetVector.getDatasource());
 			dataset.setSelectedItem(datasetVector);
-			parameterSaveDataset.setSelectedItem(datasource.getSelectedItem().getDatasets().getAvailableDatasetName("result_multiBuffer"));
-		} else {
-			parameterSaveDataset.setSelectedItem("result_multiBuffer");
 		}
+		parameterSaveDataset.setDefaultDatasetName("result_multiBuffer");
 	}
 
 	private void initParameterConstraint() {

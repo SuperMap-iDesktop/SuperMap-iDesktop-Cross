@@ -186,15 +186,14 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 	}
 
 	private void initParametersState() {
+		resultDataset.setDefaultDatasetName("result_DEMPastLine");
 		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
 		if (datasetGrid != null) {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
 			resultDataset.setResultDatasource(datasetGrid.getDatasource());
-			resultDataset.setSelectedItem(datasetGrid.getDatasource().getDatasets().getAvailableDatasetName("result_DEMPastLine"));
 		}
 		parameterPathLineSmoothDegree.setEnabled(false);
-		resultDataset.setSelectedItem("result_DEMPastLine");
 	}
 
 	private void initParameterConstrint() {
@@ -327,8 +326,7 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 		Transferable clipTf = sysClip.getContents(null);
 		if (clipTf.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 			try {
-				String ret = (String) clipTf.getTransferData(DataFlavor.stringFlavor);
-				return ret;
+				return (String) clipTf.getTransferData(DataFlavor.stringFlavor);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
