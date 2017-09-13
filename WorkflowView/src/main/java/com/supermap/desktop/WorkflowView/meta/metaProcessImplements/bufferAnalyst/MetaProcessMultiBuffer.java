@@ -59,7 +59,6 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 		initParameterConstraint();
 		initComponentState();
 		registerListener();
-		initRequisite();
 	}
 
 	private void initParameters() {
@@ -110,10 +109,12 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 		parameterUnionBuffer = new ParameterCheckBox(ProcessProperties.getString("String_UnionBufferItem"));
 		parameterRingBuffer = new ParameterCheckBox(ProcessProperties.getString("String_CreateRingBuffer"));
 		parameterRetainAttribute = new ParameterCheckBox(ProcessProperties.getString("String_RetainAttribute"));
+
 		parameterTextFieldSemicircleLineSegment = new ParameterNumber(ProcessProperties.getString("Label_SemicircleLineSegment"));
 		parameterTextFieldSemicircleLineSegment.setMaxBit(0);
 		parameterTextFieldSemicircleLineSegment.setMinValue(4);
 		parameterTextFieldSemicircleLineSegment.setMaxValue(200);
+		parameterTextFieldSemicircleLineSegment.setRequisite(true);
 
 		ParameterCombine parameterCombineParameter = new ParameterCombine();
 		parameterCombineParameter.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
@@ -133,13 +134,14 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 				parameterCombineParameter,
 				parameterCombineResult
 		);
-		parameterCombineSourceData.setRequisite(true);
+
 		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.SIMPLE_VECTOR, parameterCombineSourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATASET, ProcessOutputResultProperties.getString("String_MultiBufferResult"), DatasetTypes.REGION, parameterCombineResult);
 	}
 
 	private void initComponentState() {
 		parameterRadiusUnit.setSelectedItem(BufferRadiusUnit.Meter);
+		parameterRetainAttribute.setSelectedItem(true);
 		parameterTextFieldSemicircleLineSegment.setSelectedItem("100");
 		radioButtonFlatOrRound.setSelectedItem(radioButtonFlatOrRound.getItemAt(0));
 		comboBoxBufferLeftOrRight.setSelectedItem(comboBoxBufferLeftOrRight.getItemAt(0));
@@ -186,14 +188,6 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 				}
 			}
 		});
-	}
-
-	private void initRequisite() {
-		parameterRadiusUnit.setRequisite(true);
-		parameterUnionBuffer.setRequisite(true);
-		parameterRingBuffer.setRequisite(true);
-		parameterRetainAttribute.setRequisite(true);
-		parameterTextFieldSemicircleLineSegment.setRequisite(true);
 	}
 
 	/**

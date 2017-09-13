@@ -252,6 +252,8 @@ public class DefaultParameters implements IParameters {
 	@Override
 	public void addOutputParameters(String name, Type type, IParameter... parameters) {
 		this.process.getOutputs().addData(name, type);
+		// 仿照addInputParameters（），给输出的数据，增加parameters，满足运行前的参数是否合法判断-yuanR2017.9.12
+		this.process.getOutputs().getData(name).addParameters(parameters);
 	}
 
 	@Override
@@ -264,6 +266,8 @@ public class DefaultParameters implements IParameters {
 	@Override
 	public void addOutputParameters(String name, String text, Type type, IParameter... parameters) {
 		this.process.getOutputs().addData(name, text, type);
+		// 仿照addInputParameters（），给输出的数据，增加parameters，满足运行前的参数是否合法判断-yuanR2017.9.12
+		this.process.getOutputs().getData(name).addParameters(parameters);
 	}
 
 	@Override
