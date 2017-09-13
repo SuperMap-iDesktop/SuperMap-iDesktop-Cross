@@ -34,22 +34,6 @@ public interface IFormManager {
 
 	void showChildForm(IForm childForm);
 
-	void addFormShownListener(FormShownListener listener);
-
-	void removeFormShownListener(FormShownListener listener);
-
-	void addFormClosingListener(FormClosingListener listener);
-
-	void removeFormClosingListener(FormClosingListener listener);
-
-	void addFormClosedListener(FormClosedListener listener);
-
-	void removeFormClosedListener(FormClosedListener listener);
-
-	void addActiveFormChangedListener(ActiveFormChangedListener listener);
-
-	void removeActiveFormChangedListener(ActiveFormChangedListener listener);
-
 	/**
 	 * 关闭指定的子窗体。
 	 *
@@ -82,4 +66,20 @@ public interface IFormManager {
 	boolean saveAll(boolean notify);
 
 	boolean isContain(IForm form);
+
+	void addFormShownListener(FormShownListener listener);
+
+	void removeFormShownListener(FormShownListener listener);
+
+	void addFormClosingListener(FormClosingListener listener);
+
+	void removeFormClosingListener(FormClosingListener listener);
+
+	void addFormClosedListener(FormClosedListener listener);
+
+	void removeFormClosedListener(FormClosedListener listener);
+
+	void addActiveFormChangedListener(ActiveFormChangedListener listener);
+
+	void removeActiveFormChangedListener(ActiveFormChangedListener listener);
 }
