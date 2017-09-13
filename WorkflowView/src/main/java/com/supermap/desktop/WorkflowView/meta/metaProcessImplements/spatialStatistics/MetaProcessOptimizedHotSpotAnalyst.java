@@ -91,6 +91,10 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 		parameterSingleDatasetBounding.setDescribe(ProcessProperties.getString("String_BoundingPolygons_Dataset"));
 		parameterDatasourceAggregating.setDescribe(ProcessProperties.getString("String_AggregatingPolygons_Datasource"));
 		parameterSingleDatasetAggregating.setDescribe(ProcessProperties.getString("String_AggregatingPolygons_Dataset"));
+		parameterDatasourceBounding.setDatasourceRequisite(false);
+		parameterSingleDatasetBounding.setDatasetRequisite(false);
+		parameterDatasourceAggregating.setDatasourceRequisite(false);
+		parameterSingleDatasetAggregating.setDatasetRequisite(false);
 
 		ParameterCombine parameterCombineResult = new ParameterCombine();
 		parameterCombineResult.addParameters(parameterSaveDataset);
@@ -130,10 +134,17 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 	 * yuanR2017.9.12
 	 */
 	private void reload() {
-		parameterDatasourceBounding.setEnabled(parameterComboBox.getSelectedData().equals(AggregationMethod.NETWORKPOLYGONS) && StringUtilities.isNullOrEmptyString(parameterFieldComboBox.getSelectedItem()));
-		parameterSingleDatasetBounding.setEnabled(parameterComboBox.getSelectedData().equals(AggregationMethod.NETWORKPOLYGONS) && StringUtilities.isNullOrEmptyString(parameterFieldComboBox.getSelectedItem()));
-		parameterDatasourceAggregating.setEnabled(parameterComboBox.getSelectedData().equals(AggregationMethod.AGGREGATIONPOLYGONS) && StringUtilities.isNullOrEmptyString(parameterFieldComboBox.getSelectedItem()));
-		parameterSingleDatasetAggregating.setEnabled(parameterComboBox.getSelectedData().equals(AggregationMethod.AGGREGATIONPOLYGONS) && StringUtilities.isNullOrEmptyString(parameterFieldComboBox.getSelectedItem()));
+		Boolean isNullField = StringUtilities.isNullOrEmptyString(parameterFieldComboBox.getSelectedItem());
+		parameterDatasourceBounding.setEnabled(parameterComboBox.getSelectedData().equals(AggregationMethod.NETWORKPOLYGONS) && isNullField);
+		parameterSingleDatasetBounding.setEnabled(parameterComboBox.getSelectedData().equals(AggregationMethod.NETWORKPOLYGONS) && isNullField);
+		parameterDatasourceAggregating.setEnabled(parameterComboBox.getSelectedData().equals(AggregationMethod.AGGREGATIONPOLYGONS) && isNullField);
+		parameterSingleDatasetAggregating.setEnabled(parameterComboBox.getSelectedData().equals(AggregationMethod.AGGREGATIONPOLYGONS) && isNullField);
+		if (!isNullField) {
+			parameterComboBox.setSelectedItem(AggregationMethod.SNAPNEARBYPOINTS);
+			parameterSingleDataset.setDatasetTypes(DatasetType.REGION, DatasetType.LINE, DatasetType.POINT);
+		} else {
+			parameterSingleDataset.setDatasetTypes(DatasetType.POINT);
+		}
 	}
 
 	private void initParameterConstraint() {
@@ -177,17 +188,14 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 			datasetVector = (DatasetVector) parameterSingleDataset.getSelectedItem();
 		}
 		OptimizedParameter optimizedParameter = new OptimizedParameter();
-		optimizedParameter.setAggregationMethod(AggregationMethod.SNAPNEARBYPOINTS);
+		optimizedParameter.setAggregationMethod((AggregationMethod) parameterComboBox.getSelectedData());
 		if (parameterSingleDatasetAggregating.isEnabled()) {
 			optimizedParameter.setAggregatingPolygons((DatasetVector) parameterSingleDatasetAggregating.getSelectedItem());
-			optimizedParameter.setAggregationMethod(AggregationMethod.AGGREGATIONPOLYGONS);
 		}
 		if (parameterSingleDatasetBounding.isEnabled()) {
 			optimizedParameter.setBoundingPolygons((DatasetVector) parameterSingleDatasetBounding.getSelectedItem());
-			optimizedParameter.setAggregationMethod(AggregationMethod.NETWORKPOLYGONS);
 		}
 		optimizedParameter.setAssessmentFieldName(parameterFieldComboBox.getFieldName());
-
 		try {
 
 			ClusteringDistributions.addSteppedListener(steppedListener);

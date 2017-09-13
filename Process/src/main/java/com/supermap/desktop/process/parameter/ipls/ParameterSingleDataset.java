@@ -34,19 +34,22 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 		}
 	};
 
-	public ParameterSingleDataset(DatasetType... datasetTypes) {
-		this.datasetTypes = datasetTypes;
+	private boolean isDatasetRequisite = true;
+
+	public void setDatasetRequisite(boolean isRequisite) {
+		this.isDatasetRequisite = isRequisite;
 	}
 
 	/**
-	 * 默认数据源为必要参数
-	 * yuanR
-	 *
 	 * @return
 	 */
 	@Override
 	public boolean isRequisite() {
-		return true;
+		return this.isDatasetRequisite;
+	}
+
+	public ParameterSingleDataset(DatasetType... datasetTypes) {
+		this.datasetTypes = datasetTypes;
 	}
 
 	@Override
