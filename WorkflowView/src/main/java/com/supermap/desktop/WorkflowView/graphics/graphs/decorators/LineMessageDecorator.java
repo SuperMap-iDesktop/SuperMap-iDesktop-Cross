@@ -1,7 +1,6 @@
 package com.supermap.desktop.WorkflowView.graphics.graphs.decorators;
 
 import com.supermap.desktop.WorkflowView.graphics.GraphCanvas;
-import com.supermap.desktop.WorkflowView.graphics.GraphicsUtil;
 import com.supermap.desktop.WorkflowView.graphics.connection.LineGraph;
 import com.supermap.desktop.WorkflowView.graphics.graphs.IGraph;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -44,13 +43,15 @@ public class LineMessageDecorator extends AbstractDecorator {
 
 	@Override
 	public boolean contains(Point point) {
-		Rectangle bounds = getBounds();
-
-		if (GraphicsUtil.isRegionValid(bounds)) {
-			return bounds.contains(point);
-		} else {
-			return true;
-		}
+		// 2017/9/12  线的包含已经处理，这里处理message的包含就行，后面做Message显示时加上
+		return false;
+//		Rectangle bounds = getBounds();
+//
+//		if (GraphicsUtil.isRegionValid(bounds)) {
+//			return bounds.contains(point);
+//		} else {
+//			return true;
+//		}
 	}
 
 	private Point getBasePoint() {
