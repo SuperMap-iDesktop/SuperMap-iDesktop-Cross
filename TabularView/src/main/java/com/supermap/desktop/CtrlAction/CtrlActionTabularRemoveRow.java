@@ -51,7 +51,7 @@ public class CtrlActionTabularRemoveRow extends CtrlAction {
 
 			FormTabular formTabular = (FormTabular) activeForm;
 
-			if (formTabular.getSelectedRow() == -1 || formTabular.getRecordset().isEmpty() || (formTabular.getSelectedRows().length == formTabular.getRowCount() && formTabular.getRowCount() != 1)) {
+			if (formTabular.getSelectedRow() == -1 || formTabular.getRecordset().isEmpty()) {
 				result = false;
 			}
 			Dataset dataset = formTabular.getDataset();
