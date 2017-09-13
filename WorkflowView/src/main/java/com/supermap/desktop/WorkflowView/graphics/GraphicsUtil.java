@@ -603,4 +603,27 @@ public class GraphicsUtil {
 	public static boolean contains(Rectangle2D r1, Rectangle2D r2) {
 		return r2.getX() >= r1.getX() && r2.getY() >= r1.getY() && r2.getX() + Math.max(0.0D, r2.getWidth()) <= r1.getX() + Math.max(0.0D, r1.getWidth()) && r2.getY() + Math.max(0.0D, r2.getHeight()) <= r1.getY() + Math.max(0.0D, r1.getHeight());
 	}
+
+	public static double pointToLineLength(Point point, Point lineStartPoint, Point lineEndPoint) {
+		double x = point.x;
+		double y = point.y;
+		double x1 = lineStartPoint.x;
+		double y1 = lineStartPoint.y;
+		double x2 = lineEndPoint.x;
+		double y2 = lineEndPoint.y;
+		double cross = (x2 - x1) * (x - x1) + (y2 - y1) * (y - y1);
+		if (cross <= 0) {
+			return Math.sqrt((x - x1) * (x - x1) + (y - y1) * (y - y1));
+		}
+
+		double d2 = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+		if (cross >= d2) {
+			return Math.sqrt((x - x2) * (x - x2) + (y - y2) * (y - y2));
+		}
+
+		double r = cross / d2;
+		double px = x1 + (x2 - x1) * r;
+		double py = y1 + (y2 - y1) * r;
+		return Math.sqrt((x - px) * (x - px) + (py - y1) * (py - y1));
+	}
 }

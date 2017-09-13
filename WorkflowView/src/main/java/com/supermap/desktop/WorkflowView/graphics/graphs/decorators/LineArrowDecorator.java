@@ -29,12 +29,16 @@ public class LineArrowDecorator extends AbstractDecorator {
 	@Override
 	public boolean contains(Point point) {
 		GeneralPath arrow = getArrowPath();
-
-		if (arrow != null) {
-			return arrow.contains(point.getX(), point.getY());
-		} else {
-			return true;
+		LineGraph line = getDecoratedLine();
+		if (line != null && line.getPointCount() > 1) {
+			Point endPoint = line.getPoint(line.getPointCount() - 1);
+			Point[] arrowVertexes = GraphicsUtil.computeArrow(line.getPoint(line.getPointCount() - 2), endPoint);
+			if (arrowVertexes.length != 0) {
+				int length = 2;
+				return GraphicsUtil.pointToLineLength(point, arrowVertexes[0], endPoint) <= length || GraphicsUtil.pointToLineLength(point, arrowVertexes[1], endPoint) <= length;
+			}
 		}
+		return false;
 	}
 
 	@Override
