@@ -28,7 +28,6 @@ public class LineArrowDecorator extends AbstractDecorator {
 
 	@Override
 	public boolean contains(Point point) {
-		GeneralPath arrow = getArrowPath();
 		LineGraph line = getDecoratedLine();
 		if (line != null && line.getPointCount() > 1) {
 			Point endPoint = line.getPoint(line.getPointCount() - 1);
