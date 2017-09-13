@@ -90,6 +90,8 @@ public class MetaProcessISOPoint extends MetaProcess {
 			fields.setFieldName((DatasetVector) datasetVector);
 			if (datasetVector.getType().equals(DatasetType.POINT3D)) {
 				fields.setEnabled(false);
+				fields.setShowSystemField(true);
+				fields.setSelectedItem("SmZ");
 			}
 			reloadValue();
 		}
@@ -265,9 +267,11 @@ public class MetaProcessISOPoint extends MetaProcess {
 				}
 				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
 					fields.setEnabled(true);
+					fields.setShowSystemField(false);
 					fields.setSelectedItem("SmUserID");
 					if (((DatasetVector) evt.getNewValue()).getType().equals(DatasetType.POINT3D)) {
 						fields.setEnabled(false);
+						fields.setShowSystemField(true);
 						fields.setSelectedItem("SmZ");
 					}
 				}
@@ -331,8 +335,9 @@ public class MetaProcessISOPoint extends MetaProcess {
 			}
 			DatasetVector result = null;
 			if (src.getType().equals(DatasetType.POINT)) {
-				result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, fields.getFieldName(),
-						targetDataset.getResultDatasource(), targetDataset.getDatasetName(), Double.valueOf(resolution.getSelectedItem()), null);
+				result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, fields.getFieldName(), targetDataset.getResultDatasource(),
+						targetDataset.getResultDatasource().getDatasets().getAvailableDatasetName(targetDataset.getDatasetName()),
+						Double.valueOf(resolution.getSelectedItem()), null);
 			} else {
 				Point3Ds point3Ds = new Point3Ds();
 				Recordset recordset = src.getRecordset(false, CursorType.DYNAMIC);
@@ -344,7 +349,8 @@ public class MetaProcessISOPoint extends MetaProcess {
 				}
 				if (point3Ds.getCount() > 0) {
 					result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, point3Ds, targetDataset.getResultDatasource(),
-							targetDataset.getDatasetName(), Double.valueOf(resolution.getSelectedItem()), null);
+							targetDataset.getResultDatasource().getDatasets().getAvailableDatasetName(targetDataset.getDatasetName()),
+							Double.valueOf(resolution.getSelectedItem()), null);
 				}
 			}
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
