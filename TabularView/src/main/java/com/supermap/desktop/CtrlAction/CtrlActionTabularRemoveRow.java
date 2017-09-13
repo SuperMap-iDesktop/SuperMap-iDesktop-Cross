@@ -51,7 +51,8 @@ public class CtrlActionTabularRemoveRow extends CtrlAction {
 
 			FormTabular formTabular = (FormTabular) activeForm;
 
-			if (formTabular.getSelectedRow() == -1 || formTabular.getRecordset().isEmpty() || (formTabular.getSelectedRows().length == formTabular.getRowCount() && formTabular.getRowCount() != 1)) {
+			// 无论以何种方式选中数据，选中了行，就可以删除。by-xiaJT
+			if (formTabular.getSelectedRow() == -1 || formTabular.getRecordset().isEmpty()) {
 				result = false;
 			}
 			Dataset dataset = formTabular.getDataset();
