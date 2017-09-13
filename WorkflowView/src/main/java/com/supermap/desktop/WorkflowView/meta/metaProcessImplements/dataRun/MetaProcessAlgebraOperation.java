@@ -52,10 +52,7 @@ public class MetaProcessAlgebraOperation extends MetaProcess {
 		ParameterCombine setting = new ParameterCombine();
 		setting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
 		setting.addParameters(this.comboBoxPixelFormat, this.checkBoxCompress, this.checkBoxIgnoreNoValueCell, this.textAreaExpression, this.buttonExpression);
-
 		this.resultDataset = new ParameterSaveDataset();
-		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 		ParameterCombine resultData = new ParameterCombine();
 		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		resultData.addParameters(resultDataset);
@@ -75,7 +72,7 @@ public class MetaProcessAlgebraOperation extends MetaProcess {
 		this.textAreaExpression.setEnabled(false);
 		this.textAreaExpression.setLineWrap(true);
 		this.textAreaExpression.setWrapStyleWord(true);
-		this.resultDataset.setSelectedItem("result_AlgebraOperation");
+		this.resultDataset.setDefaultDatasetName("result_AlgebraOperation");
 	}
 
 	private void registerListener() {

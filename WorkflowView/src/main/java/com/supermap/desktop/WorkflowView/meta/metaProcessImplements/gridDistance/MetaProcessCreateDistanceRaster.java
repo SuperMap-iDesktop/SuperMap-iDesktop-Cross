@@ -61,6 +61,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 		this.parameterNumberMaxDistance = new ParameterNumber(ProcessProperties.getString("String_MaxDistance"));
 		this.parameterNumberResolvingPower = new ParameterNumber(ProcessProperties.getString("String_Resolution"));
 		this.resultDatasource = new ParameterDatasource();
+		this.resultDatasource.setReadOnlyNeeded(false);
 		this.resultDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		this.resultDistanceDataset = new ParameterTextField(ProcessProperties.getString("String_Distance_Dataset"));
 		this.resultDirectionDataset = new ParameterTextField(ProcessProperties.getString("String_Direction_Dataset"));
@@ -155,11 +156,11 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 		try {
 
 			DistanceAnalystParameter distanceAnalystParameter = new DistanceAnalystParameter();
-			String distanceDatasetName = this.resultDistanceDataset.getSelectedItem().toString();
+			String distanceDatasetName = this.resultDistanceDataset.getSelectedItem();
 			distanceDatasetName = this.resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(distanceDatasetName);
-			String directionDatasetName = this.resultDirectionDataset.getSelectedItem().toString();
+			String directionDatasetName = this.resultDirectionDataset.getSelectedItem();
 			directionDatasetName = this.resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(directionDatasetName);
-			String allocationDatasetName = this.resultAllocationDataset.getSelectedItem().toString();
+			String allocationDatasetName = this.resultAllocationDataset.getSelectedItem();
 			allocationDatasetName = this.resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(allocationDatasetName);
 
 			Dataset src = null;
@@ -171,7 +172,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 			DatasetGrid cost = null;
 			if (this.getParameters().getInputs().getData(COST_DATA).getValue() != null) {
 				cost = (DatasetGrid) this.getParameters().getInputs().getData(COST_DATA).getValue();
-			} else if(costDataset.getSelectedItem()!=null) {
+			} else if (costDataset.getSelectedItem() != null) {
 				cost = (DatasetGrid) costDataset.getSelectedItem();
 			}
 			DistanceAnalyst.addSteppedListener(steppedListener);
@@ -180,12 +181,16 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 			distanceAnalystParameter.setAllocationGridName(allocationDatasetName);
 			distanceAnalystParameter.setSourceDataset(src);
 			distanceAnalystParameter.setTargetDatasource(this.resultDatasource.getSelectedItem());
-			distanceAnalystParameter.setMaxDistance(Double.valueOf(this.parameterNumberMaxDistance.getSelectedItem().toString()));
-			distanceAnalystParameter.setCellSize(Double.valueOf(this.parameterNumberResolvingPower.getSelectedItem().toString()));
+			distanceAnalystParameter.setMaxDistance(Double.valueOf(this.parameterNumberMaxDistance.getSelectedItem()));
+			distanceAnalystParameter.setCellSize(Double.valueOf(this.parameterNumberResolvingPower.getSelectedItem()));
 			DistanceAnalystResult distanceAnalystResult = null;
 			if (cost != null) {
-				distanceAnalystParameter.setCostGrid(cost);
-				distanceAnalystResult = DistanceAnalyst.costDistance(distanceAnalystParameter);
+				try {
+					distanceAnalystParameter.setCostGrid(cost);
+					distanceAnalystResult = DistanceAnalyst.costDistance(distanceAnalystParameter);
+				} catch (Exception e) {
+					throw new Exception(ProcessProperties.getString("String_CreateDistanceRasterFailed"));
+				}
 			} else {
 				distanceAnalystResult = DistanceAnalyst.straightDistance(distanceAnalystParameter);
 			}
@@ -196,7 +201,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 			isSuccessful = distanceAnalystResult.getDistanceDatasetGrid() != null && distanceAnalystResult.getDirectionDatasetGrid() != null && distanceAnalystResult.getAllocationDatasetGrid() != null;
 
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
 			DistanceAnalyst.removeSteppedListener(steppedListener);
 		}

@@ -12,6 +12,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.utilities.DatasetUtilities;
+
 /**
  * Created By Chens on 2017/8/29 0029
  */
@@ -61,12 +62,12 @@ public abstract class MetaProcessHydrology extends MetaProcessGridAnalyst {
 	}
 
 	private void initParametersState() {
+		resultDataset.setDefaultDatasetName(getResultName());
 		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
 		if (datasetGrid != null) {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
 		}
-		resultDataset.setSelectedItem(getResultName());
 	}
 
 	protected void initField() {

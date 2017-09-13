@@ -96,7 +96,7 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
 		this.textFieldRowCount = new JTextField();
 		this.textFieldColumnCount = new JTextField();
 		this.comboBoxCodeType = new JComboBox();
-		this.warningProviderDataSet = new WarningOrHelpProvider(MapViewProperties.getString("String_OutputImageDataset_D atasetNameIsInvalid"), true);
+		this.warningProviderDataSet = new WarningOrHelpProvider(MapViewProperties.getString("String_OutputImageDataset_DatasetNameIsInvalid"), true);
 		this.warningProviderResolution = new WarningOrHelpProvider(MapViewProperties.getString("String_OutputImageDataset_ResoltionIsNotEmpty"), true);
 
 		this.panelOutPutRangeSetting = new PanelGroupBoxViewBounds(this, MapViewProperties.getString("String_OutputImageDataset_OutPutRange"), map);

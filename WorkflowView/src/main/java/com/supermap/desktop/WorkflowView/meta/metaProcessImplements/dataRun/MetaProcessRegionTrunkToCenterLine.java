@@ -40,10 +40,10 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
-		sourceData.addParameters(sourceDatasource, dataset);
+		sourceData.addParameters(this.sourceDatasource, this.dataset);
 		ParameterCombine targetData = new ParameterCombine();
 		targetData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-		targetData.addParameters(saveDataset);
+		targetData.addParameters(this.saveDataset);
 		this.parameters.setParameters(sourceData, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.REGION, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_CenterLine"), DatasetTypes.LINE, targetData);
@@ -58,16 +58,15 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 	}
 
 	private void initParametersState() {
+		this.saveDataset.setDefaultDatasetName("result_RegionTrunkToCenterLine");
 		Dataset defaultDataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
 		if (defaultDataset != null) {
-			sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
-			dataset.setSelectedItem(defaultDataset);
-			saveDataset.setResultDatasource(defaultDataset.getDatasource());
-			saveDataset.setSelectedItem(defaultDataset.getDatasource().getDatasets().getAvailableDatasetName("result_RegionTrunkToCenterLine"));
+			this.sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
+			this.dataset.setSelectedItem(defaultDataset);
+			this.saveDataset.setResultDatasource(defaultDataset.getDatasource());
 		}
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.saveDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
+
 	}
 
 	private void initParametersListener() {
@@ -79,13 +78,13 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 		boolean isSuccessful = false;
 		try {
 
-			String datasetName = saveDataset.getDatasetName();
-			datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
+			String datasetName = this.saveDataset.getDatasetName();
+			datasetName = this.saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 			DatasetVector src = null;
 			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 			} else {
-				src = (DatasetVector) dataset.getSelectedItem();
+				src = (DatasetVector) this.dataset.getSelectedItem();
 			}
 
 			Recordset recordset = src.getRecordset(false, CursorType.STATIC);
@@ -104,7 +103,7 @@ public class MetaProcessRegionTrunkToCenterLine extends MetaProcess {
 
 	@Override
 	public IParameters getParameters() {
-		return parameters;
+		return this.parameters;
 	}
 
 	@Override

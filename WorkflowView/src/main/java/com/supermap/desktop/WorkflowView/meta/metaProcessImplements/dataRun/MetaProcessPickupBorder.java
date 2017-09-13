@@ -47,13 +47,13 @@ public class MetaProcessPickupBorder extends MetaProcess {
 
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
-		sourceData.addParameters(sourceDatasource, dataset);
+		sourceData.addParameters(this.sourceDatasource, this.dataset);
 		ParameterCombine targetData = new ParameterCombine();
 		targetData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-		targetData.addParameters(saveDataset);
+		targetData.addParameters(this.saveDataset);
 		ParameterCombine paramSet = new ParameterCombine();
 		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
-		paramSet.addParameters(isPreProcessed);
+		paramSet.addParameters(this.isPreProcessed);
 		this.parameters.setParameters(sourceData, paramSet, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.REGION, sourceData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.LINE, sourceData);
@@ -62,25 +62,24 @@ public class MetaProcessPickupBorder extends MetaProcess {
 
 	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
-		DatasourceConstraint.getInstance().constrained(saveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(this.saveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void initParametersState() {
+		this.saveDataset.setDefaultDatasetName("result_PickupBorder");
 		Dataset defaultDataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION, DatasetType.LINE);
 		if (defaultDataset != null) {
-			sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
+			this.sourceDatasource.setSelectedItem(defaultDataset.getDatasource());
 			if (defaultDataset.getType() == DatasetType.REGION || defaultDataset.getType() == DatasetType.LINE) {
-				dataset.setSelectedItem(defaultDataset);
+				this.dataset.setSelectedItem(defaultDataset);
 			}
-			saveDataset.setResultDatasource(defaultDataset.getDatasource());
-			saveDataset.setSelectedItem(defaultDataset.getDatasource().getDatasets().getAvailableDatasetName("result_PickupBorder"));
+			this.saveDataset.setResultDatasource(defaultDataset.getDatasource());
 		}
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.saveDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
+
 	}
 
 	private void initParametersListener() {
@@ -93,8 +92,8 @@ public class MetaProcessPickupBorder extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
-			String datasetName = saveDataset.getDatasetName();
-			datasetName = saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
+			String datasetName = this.saveDataset.getDatasetName();
+			datasetName = this.saveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 			DatasetVector src = null;
 			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();

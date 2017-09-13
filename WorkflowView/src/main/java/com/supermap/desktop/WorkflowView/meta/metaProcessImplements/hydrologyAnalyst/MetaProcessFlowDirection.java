@@ -78,6 +78,7 @@ public class MetaProcessFlowDirection extends MetaProcessGridAnalyst {
 		if (datasetGrid != null) {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
+			resultDatasource.setSelectedItem(datasetGrid.getDatasource());
 		}
 		directionGrid.setSelectedItem("result_directionGrid");
 		dropGrid.setSelectedItem("result_dropGrid");

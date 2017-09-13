@@ -54,12 +54,13 @@ public class MetaProcessCalculateHillShade extends MetaProcessCalTerrain {
 
 		parameterAltitudeAngle.setMinValue(0);
 		parameterAltitudeAngle.setIsIncludeMin(true);
-		parameterAltitudeAngle.setMaxValue(360);
+		parameterAltitudeAngle.setMaxValue(90);
 		parameterAltitudeAngle.setMaxBit(22);
 		parameterAltitudeAngle.setSelectedItem(45);
 
 		parameterZFactor.setMinValue(0);
 		parameterZFactor.setIsIncludeMin(false);
+		parameterZFactor.setMaxValue(10000);
 		parameterZFactor.setMaxBit(22);
 		parameterZFactor.setSelectedItem(1);
 

@@ -70,8 +70,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 
 		resultDataset = new ParameterSaveDataset();
-		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
+
 		comboBoxType = new ParameterComboBox(ProcessProperties.getString("string_label_lblDatasetType"));
 
 		comboBoxSmoothMethod = new ParameterComboBox(CommonProperties.getString("String_SmoothMethod"));
@@ -138,7 +137,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 			}
 		}
 
-		resultDataset.setSelectedItem("result_gridToVector");
+		resultDataset.setDefaultDatasetName("result_gridToVector");
 		comboBoxType.setItems(new ParameterDataNode(CommonProperties.getString("String_Item_Point"), DatasetType.POINT),
 				new ParameterDataNode(CommonProperties.getString("String_Item_Line"), DatasetType.LINE),
 				new ParameterDataNode(CommonProperties.getString("String_Item_Region"), DatasetType.REGION));
@@ -264,12 +263,12 @@ public class MetaProcessRasterToVector extends MetaProcess {
 				}
 			}
 			if (gridDatasetSetting.isEnabled()) {
-				analystParameter.setBackOrNoValue(Math.round(Double.valueOf(textFieldNoValue.getSelectedItem().toString())));
-				analystParameter.setBackOrNoValueTolerance(Double.valueOf(textFieldNoValueTolerance.getSelectedItem().toString()));
-				analystParameter.setValueFieldName(textFieldGridField.getSelectedItem().toString());
+				analystParameter.setBackOrNoValue(Math.round(Double.valueOf(textFieldNoValue.getSelectedItem())));
+				analystParameter.setBackOrNoValueTolerance(Double.valueOf(textFieldNoValueTolerance.getSelectedItem()));
+				analystParameter.setValueFieldName(textFieldGridField.getSelectedItem());
 				if (textFieldGridValue.isEnabled()) {
-					analystParameter.setSpecifiedValue((long) Integer.valueOf(textFieldGridValue.getSelectedItem().toString()));
-					analystParameter.setSpecifiedValueTolerance(Double.valueOf(textFieldGridValueTolerance.getSelectedItem().toString()));
+					analystParameter.setSpecifiedValue((long) Integer.valueOf(textFieldGridValue.getSelectedItem()));
+					analystParameter.setSpecifiedValueTolerance(Double.valueOf(textFieldGridValueTolerance.getSelectedItem()));
 				}
 			}
 			if (imageDatasetSetting.isEnabled()) {
@@ -279,7 +278,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 					//System.out.println((long) ((Color) comboBoxBackColor.getSelectedItem()).getRGB());
 					analystParameter.setBackOrNoValue(comboBoxBackColor.getColorABGR());
 				}
-				analystParameter.setBackOrNoValueTolerance(Double.valueOf(textFieldColorTolerance.getSelectedItem().toString()));
+				analystParameter.setBackOrNoValueTolerance(Double.valueOf(textFieldColorTolerance.getSelectedItem()));
 			}
 
 			ConversionAnalyst.addSteppedListener(steppedListener);

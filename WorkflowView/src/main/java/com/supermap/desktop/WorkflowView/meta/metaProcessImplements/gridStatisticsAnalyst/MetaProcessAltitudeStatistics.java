@@ -46,8 +46,6 @@ public class MetaProcessAltitudeStatistics extends MetaProcessGridAnalyst {
 		this.gridDataset = new ParameterSingleDataset(DatasetType.GRID);
 		this.gridDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 		this.resultDataset = new ParameterSaveDataset();
-		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 
 		ParameterCombine pointData = new ParameterCombine();
 		pointData.setDescribe(INTPUT_DATA_POINT);
@@ -68,12 +66,12 @@ public class MetaProcessAltitudeStatistics extends MetaProcessGridAnalyst {
 	}
 
 	private void initParametersState() {
+		this.resultDataset.setDefaultDatasetName("result_AltitudeStatistics");
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT);
 		if (dataset != null) {
 			this.pointDatasource.setSelectedItem(dataset.getDatasource());
 			this.pointDataset.setSelectedItem(dataset);
 			this.resultDataset.setResultDatasource(dataset.getDatasource());
-			this.resultDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_AltitudeStatistics"));
 			Dataset datasetGrid = DatasetUtilities.getDefaultDataset(DatasetType.GRID);
 			this.gridDatasource.setSelectedItem(datasetGrid.getDatasource());
 			this.gridDataset.setSelectedItem(datasetGrid);

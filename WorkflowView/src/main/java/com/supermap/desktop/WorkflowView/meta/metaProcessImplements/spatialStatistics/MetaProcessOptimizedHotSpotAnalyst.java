@@ -49,8 +49,6 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 	}
 
 	private void initParameters() {
-		parameterSaveDataset.setSelectedItem("result_optimizedHotSpot");
-
 		parameterComboBox.addItem(new ParameterDataNode("AggregationPolygons", AggregationMethod.AGGREGATIONPOLYGONS));
 		parameterComboBox.addItem(new ParameterDataNode("NetworkPolygons", AggregationMethod.NETWORKPOLYGONS));
 		parameterComboBox.addItem(new ParameterDataNode("SnapNearByPoints", AggregationMethod.SNAPNEARBYPOINTS));
@@ -88,6 +86,7 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 	}
 
 	private void initParameterState() {
+		parameterSaveDataset.setDefaultDatasetName("result_optimizedHotSpot");
 		DatasetVector defaultDatasetVector = DatasetUtilities.getDefaultDatasetVector();
 		if (defaultDatasetVector != null) {
 			parameterDatasource.setSelectedItem(defaultDatasetVector.getDatasource());

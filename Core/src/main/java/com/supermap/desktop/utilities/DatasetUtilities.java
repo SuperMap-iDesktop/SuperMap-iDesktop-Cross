@@ -562,9 +562,6 @@ public class DatasetUtilities {
 	}
 
 	/**
-	 * 默认获得非只读数据
-	 * yuanR2017.9.11
-	 *
 	 * @param datasetTypes
 	 * @return
 	 */
@@ -574,11 +571,7 @@ public class DatasetUtilities {
 			if (activeDatasets.length > 0) {
 				for (Dataset activeDataset : activeDatasets) {
 					if (ArrayUtilities.isArrayContains(datasetTypes, activeDataset.getType())) {
-						if (activeDataset.isReadOnly()) {
-							continue;
-						} else {
-							return activeDataset;
-						}
+						return activeDataset;
 					}
 				}
 			}
@@ -588,12 +581,7 @@ public class DatasetUtilities {
 					Datasets datasets = activeDatasource.getDatasets();
 					for (int i = 0; i < datasets.getCount(); i++) {
 						if (ArrayUtilities.isArrayContains(datasetTypes, datasets.get(i).getType())) {
-							if (datasets.get(i).isReadOnly()) {
-								// 当前激活的数据源下的数据集为只读，那当前数据源都为只读-yuanR2017.9.11
-								break;
-							} else {
-								return datasets.get(i);
-							}
+							return datasets.get(i);
 						}
 					}
 				}
@@ -604,12 +592,7 @@ public class DatasetUtilities {
 				Datasets datasets = datasource.getDatasets();
 				for (int j = 0; j < datasets.getCount(); j++) {
 					if (ArrayUtilities.isArrayContains(datasetTypes, datasets.get(j).getType())) {
-						if (datasets.get(i).isReadOnly()) {
-							// 当数据源下的数据集为只读，那当前数据源都为只读-yuanR2017.9.11
-							break;
-						} else {
-							return datasets.get(j);
-						}
+						return datasets.get(j);
 					}
 				}
 			}

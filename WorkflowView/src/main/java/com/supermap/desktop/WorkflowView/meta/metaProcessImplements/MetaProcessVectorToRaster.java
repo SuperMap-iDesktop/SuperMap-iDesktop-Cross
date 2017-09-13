@@ -47,22 +47,22 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 	// 结果数据
 	private ParameterSaveDataset resultDataset;
 	private ParameterCombine resultData;
-	ParameterDataNode parameterDataNodeSingle = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.SINGLE), PixelFormat.SINGLE);
-	ParameterDataNode parameterDataNodeDouble = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.DOUBLE), PixelFormat.DOUBLE);
-	ParameterDataNode parameterDataNodeBit8 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT8), PixelFormat.BIT8);
-	ParameterDataNode parameterDataNodeBit16 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT16), PixelFormat.BIT16);
-	ParameterDataNode parameterDataNodeBit32 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT32), PixelFormat.BIT32);
-	ParameterDataNode parameterDataNodeBit64 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT64), PixelFormat.BIT64);
-	ParameterDataNode parameterDataNodeUbit1 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT1), PixelFormat.UBIT1);
-	ParameterDataNode parameterDataNodeUbit4 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT4), PixelFormat.UBIT4);
-	ParameterDataNode parameterDataNodeUbit8 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT8), PixelFormat.UBIT8);
-	ParameterDataNode parameterDataNodeUbit16 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT16), PixelFormat.UBIT16);
-	ParameterDataNode parameterDataNodeUbit32 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT32), PixelFormat.UBIT32);
+	private ParameterDataNode parameterDataNodeSingle = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.SINGLE), PixelFormat.SINGLE);
+	private ParameterDataNode parameterDataNodeDouble = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.DOUBLE), PixelFormat.DOUBLE);
+	private ParameterDataNode parameterDataNodeBit8 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT8), PixelFormat.BIT8);
+	private ParameterDataNode parameterDataNodeBit16 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT16), PixelFormat.BIT16);
+	private ParameterDataNode parameterDataNodeBit32 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT32), PixelFormat.BIT32);
+	private ParameterDataNode parameterDataNodeBit64 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT64), PixelFormat.BIT64);
+	private ParameterDataNode parameterDataNodeUbit1 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT1), PixelFormat.UBIT1);
+	private ParameterDataNode parameterDataNodeUbit4 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT4), PixelFormat.UBIT4);
+	private ParameterDataNode parameterDataNodeUbit8 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT8), PixelFormat.UBIT8);
+	private ParameterDataNode parameterDataNodeUbit16 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT16), PixelFormat.UBIT16);
+	private ParameterDataNode parameterDataNodeUbit32 = new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT32), PixelFormat.UBIT32);
 
 	public MetaProcessVectorToRaster() {
 		initParameters();
 		initParametersState();
-		initParameterConstrint();
+		initParameterConstraint();
 		registerListener();
 	}
 
@@ -78,8 +78,6 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		this.boundaryDataset.setDescribe(CommonProperties.getString("String_BoundaryDataset"));
 
 		this.resultDataset = new ParameterSaveDataset();
-		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 
 		this.comboBoxValueField = new ParameterFieldComboBox(CommonProperties.getString("String_m_labelGridValueFieldText"));
 		this.boundaryDataset = new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
@@ -139,13 +137,13 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		this.textCellSize.setMinValue(0);
 		this.textCellSize.setIsIncludeMin(false);
 		this.comboBoxPixelFormat.setSelectedItem(parameterDataNodeBit32);
-		this.resultDataset.setSelectedItem("result_vectorToGrid");
+		this.resultDataset.setDefaultDatasetName("result_vectorToGrid");
 		this.comboBoxValueField.setRequisite(true);
 		this.textCellSize.setRequisite(true);
 		this.comboBoxPixelFormat.setRequisite(true);
 	}
 
-	private void initParameterConstrint() {
+	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(this.sourceDatasource, ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(this.sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
@@ -220,7 +218,7 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 			conversionParameter.setTargetDatasetName(datasetName);
 			conversionParameter.setPixelFormat((PixelFormat) this.comboBoxPixelFormat.getSelectedData());
 			conversionParameter.setValueFieldName((String) this.comboBoxValueField.getSelectedItem());
-			conversionParameter.setCellSize(Double.valueOf(this.textCellSize.getSelectedItem().toString()));
+			conversionParameter.setCellSize(Double.valueOf(this.textCellSize.getSelectedItem()));
 
 			DatasetVector srcBoundary = null;
 			if (parameters.getInputs().getData(BOUNDARY_DATA).getValue() != null) {

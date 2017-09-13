@@ -126,8 +126,6 @@ public class MetaProcessDEMBuild extends MetaProcess {
 		resultSetting.addParameters(comboBoxEncodeType, comboBoxPixelFormat, textFieldCellSize, textFieldRowCount, textFieldColumnCount, textFieldSizeOf);
 
 		resultDataset = new ParameterSaveDataset();
-		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 		ParameterCombine resultData = new ParameterCombine();
 		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		resultData.addParameters(resultDataset);
@@ -178,7 +176,7 @@ public class MetaProcessDEMBuild extends MetaProcess {
 			double x = bounds.getWidth() / 500;
 			double y = bounds.getHeight() / 500;
 			double cellSize = x > y ? y : x;
-			textFieldCellSize.setSelectedItem(""+cellSize);
+			textFieldCellSize.setSelectedItem("" + cellSize);
 			textFieldRowCount.setSelectedItem((int) (bounds.getHeight() / cellSize));
 			textFieldColumnCount.setSelectedItem((int) (bounds.getWidth() / cellSize));
 		}
@@ -187,7 +185,7 @@ public class MetaProcessDEMBuild extends MetaProcess {
 		textNumZFactor.setMinValue(0);
 		textNumZFactor.setIsIncludeMin(false);
 
-		resultDataset.setSelectedItem("result_DEMBuild");
+		resultDataset.setDefaultDatasetName("result_DEMBuild");
 
 		comboBoxEncodeType.setItems(new ParameterDataNode(EncodeTypeUtilities.toString(EncodeType.NONE), EncodeType.NONE),
 				new ParameterDataNode(EncodeTypeUtilities.toString(EncodeType.SGL), EncodeType.SGL),
@@ -282,8 +280,8 @@ public class MetaProcessDEMBuild extends MetaProcess {
 				} else if (comboBoxPixelFormat.getSelectedData() == PixelFormat.DOUBLE) {
 					pixelFormatByte = 64;
 				}
-				int row = Integer.valueOf(textFieldRowCount.getSelectedItem().toString());
-				int column = Integer.valueOf(textFieldColumnCount.getSelectedItem().toString());
+				int row = Integer.valueOf(textFieldRowCount.getSelectedItem());
+				int column = Integer.valueOf(textFieldColumnCount.getSelectedItem());
 				double sizeOf = (row * column * pixelFormatByte) / (8 * 1024 * 1024) + 0.000005;
 				sizeOf = Math.round(sizeOf * 100000) / 100000;
 				textFieldSizeOf.setSelectedItem(sizeOf);
@@ -291,6 +289,7 @@ public class MetaProcessDEMBuild extends MetaProcess {
 					isDatasetLine = ((DatasetVector) evt.getNewValue()).getType() == DatasetType.LINE;
 					textNumResampleTolerance.setEnabled(isDatasetLine && isInterpolateTypeTIN);
 				}
+				comboBoxSourceField.setSelectedItem("SmUserID");
 			}
 		});
 		comboBoxInterpolateType.addPropertyListener(new PropertyChangeListener() {

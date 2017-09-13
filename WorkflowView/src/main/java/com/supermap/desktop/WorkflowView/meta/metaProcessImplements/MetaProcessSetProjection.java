@@ -42,44 +42,56 @@ public class MetaProcessSetProjection extends MetaProcess {
 	private ParameterCombine parameterCombineCoordInfo;
 	private PrjCoordSys prj;
 
+	@Override
+	protected String getCOMPLETED_MESSAGE() {
+		return ProcessProperties.getString("String_setProjectionSuccessed");
+	}
+
+	@Override
+	protected String getFAILED_MESSAGE() {
+		return ProcessProperties.getString("String_setProjectionFailed");
+	}
 
 	public MetaProcessSetProjection() {
 		initParameters();
 		initComponentState();
 		registerEvents();
+
 	}
 
 	private void initParameters() {
-		datasource = new ParameterDatasourceConstrained();
-		parameterSingleDataset = new ParameterSingleDataset();
+		this.datasource = new ParameterDatasourceConstrained();
+		// 不支持可读
+		this.datasource.setReadOnlyNeeded(false);
+		this.parameterSingleDataset = new ParameterSingleDataset();
 		Dataset defaultDataset = DatasetUtilities.getDefaultDataset();
 		if (defaultDataset != null) {
-			parameterSingleDataset.setSelectedItem(defaultDataset);
-			datasource.setSelectedItem(defaultDataset.getDatasource());
+			this.parameterSingleDataset.setSelectedItem(defaultDataset);
+			this.datasource.setSelectedItem(defaultDataset.getDatasource());
 		}
-		datasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
-		parameterCombineSourceData = new ParameterCombine();
-		parameterCombineSourceData.addParameters(datasource, parameterSingleDataset);
-		parameterCombineSourceData.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
-		coordSysName = new ParameterTextField(ControlsProperties.getString("String_Message_CoordSysName"));
-		coordSysName.setEnabled(false);
-		coordUnit = new ParameterTextField(ControlsProperties.getString("String_ProjectionInfoControl_LabelGeographyUnit"));
-		coordUnit.setEnabled(false);
-		textAreaCoordInfo = new ParameterTextArea();
-		textAreaCoordInfo.setEnabled(false);
-		parameterButton = new ParameterButton(ControlsProperties.getString("String_ProjectionInfoControl_ButtonResetProjectionInfo"));
-		parameterCombineCoordInfo = new ParameterCombine();
-		parameterCombineCoordInfo.setDescribe(ControlsProperties.getString("String_ProjectionInfoControl_LabelProjectionInfo"));
-		parameterCombineCoordInfo.addParameters(coordSysName, coordUnit, textAreaCoordInfo, new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterButton));
-		this.parameters.setParameters(parameterCombineSourceData, parameterCombineCoordInfo);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.DATASET, parameterCombineSourceData);
+		this.datasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
+		this.parameterCombineSourceData = new ParameterCombine();
+		this.parameterCombineSourceData.addParameters(this.datasource, this.parameterSingleDataset);
+		this.parameterCombineSourceData.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
+		this.coordSysName = new ParameterTextField(ControlsProperties.getString("String_Message_CoordSysName"));
+		this.coordSysName.setEnabled(false);
+		this.coordUnit = new ParameterTextField(ControlsProperties.getString("String_ProjectionInfoControl_LabelGeographyUnit"));
+		this.coordUnit.setEnabled(false);
+		this.textAreaCoordInfo = new ParameterTextArea();
+		this.textAreaCoordInfo.setEnabled(false);
+		this.parameterButton = new ParameterButton(ControlsProperties.getString("String_ProjectionInfoControl_ButtonResetProjectionInfo"));
+		this.parameterCombineCoordInfo = new ParameterCombine();
+		this.parameterCombineCoordInfo.setDescribe(ControlsProperties.getString("String_ProjectionInfoControl_LabelProjectionInfo"));
+		this.parameterCombineCoordInfo.addParameters(this.coordSysName, this.coordUnit, this.textAreaCoordInfo, new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(this.parameterButton));
+		this.parameters.setParameters(this.parameterCombineSourceData, this.parameterCombineCoordInfo);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.DATASET, this.parameterCombineSourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
 				ProcessOutputResultProperties.getString("String_ResetProjectionResult"),
-				DatasetTypes.DATASET, parameterSingleDataset);
+				DatasetTypes.DATASET, this.parameterSingleDataset);
 		//Add Constraint
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(parameterSingleDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.parameterSingleDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
 	}
 
@@ -114,14 +126,14 @@ public class MetaProcessSetProjection extends MetaProcess {
 				}
 			}
 			if (null != prjCoordSys) {
-				coordSysName.setSelectedItem(prjCoordSys.getName());
-				coordUnit.setSelectedItem(prjCoordSys.getCoordUnit());
-				textAreaCoordInfo.setSelectedItem(PrjCoordSysUtilities.getDescription(prjCoordSys));
+				this.coordSysName.setSelectedItem(prjCoordSys.getName());
+				this.coordUnit.setSelectedItem(prjCoordSys.getCoordUnit());
+				this.textAreaCoordInfo.setSelectedItem(PrjCoordSysUtilities.getDescription(prjCoordSys));
 			}
 		} else {
-			coordSysName.setSelectedItem("");
-			coordUnit.setSelectedItem("");
-			textAreaCoordInfo.setSelectedItem("");
+			this.coordSysName.setSelectedItem("");
+			this.coordUnit.setSelectedItem("");
+			this.textAreaCoordInfo.setSelectedItem("");
 		}
 	}
 
@@ -158,12 +170,12 @@ public class MetaProcessSetProjection extends MetaProcess {
 
 	@Override
 	public IParameterPanel getComponent() {
-		return parameters.getPanel();
+		return this.parameters.getPanel();
 	}
 
 	@Override
 	public IParameters getParameters() {
-		return parameters;
+		return this.parameters;
 	}
 
 	@Override
@@ -189,10 +201,10 @@ public class MetaProcessSetProjection extends MetaProcess {
 				src = (Dataset) this.parameterSingleDataset.getSelectedItem();
 			}
 			fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
-			if (prj != null) {
-				src.setPrjCoordSys(prj);
-				String prjCoorSysInfo = PrjCoordSysUtilities.getDescription(prj);
-				textAreaCoordInfo.setSelectedItem(prjCoorSysInfo);
+			if (this.prj != null) {
+				src.setPrjCoordSys(this.prj);
+				String prjCoorSysInfo = PrjCoordSysUtilities.getDescription(this.prj);
+				this.textAreaCoordInfo.setSelectedItem(prjCoorSysInfo);
 				this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(src);
 			} else {
 				// 没有主动选择，则视为维持原投影不变
@@ -201,8 +213,6 @@ public class MetaProcessSetProjection extends MetaProcess {
 		} catch (Exception e) {
 			ret = false;
 		}
-		COMPLETEDMESSAGE = ProcessProperties.getString("String_setProjectionSuccessed");
-		FAILEDMESSAGE = ProcessProperties.getString("String_setProjectionFailed");
 		return ret;
 	}
 
@@ -210,6 +220,5 @@ public class MetaProcessSetProjection extends MetaProcess {
 	public boolean isChangeSourceData() {
 		return true;
 	}
-
 
 }

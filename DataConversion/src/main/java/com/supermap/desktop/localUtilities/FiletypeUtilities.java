@@ -98,10 +98,6 @@ public class FiletypeUtilities {
 			fileType = DataConversionProperties.getString("String_FormImport_ArcGIS");
 		} else if (fileType.equalsIgnoreCase(FileTypeLocale.GPX_STRING)) {
 			fileType = DataConversionProperties.getString("String_FormImport_GPX");
-		} else if (fileType.equalsIgnoreCase(FileTypeLocale.GEOJSON_STRING)) {
-			fileType = DataConversionProperties.getString("String_FormImport_GEOJSON");
-		} else if (fileType.equalsIgnoreCase(FileTypeLocale.SIMPLEJSON_STRING)) {
-			fileType = DataConversionProperties.getString("String_FormImport_SIMPLEJSON");
 		} else if (fileType.equalsIgnoreCase(FileTypeLocale.JSON_STRING)) {
 			// 对于GeoJson和SimpleJson，文件类型都可以为".json",不同在于simpleJson同目录下有xxx.meta文件
 			// 判断是否存在xxx.mate文件-yuanR2017.9.4

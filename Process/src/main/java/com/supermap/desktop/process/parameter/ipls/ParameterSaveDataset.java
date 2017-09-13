@@ -10,6 +10,10 @@ import com.supermap.desktop.properties.CommonProperties;
 
 /**
  * @author XiaJT
+ * 重构：
+ * 结果数据集结果名称的设置较为混乱，进行优化-yuanR2017.9.12
+ * 优化思路：1、增加默认名称属性，开出默认名称的设置方法，主要负责初始化时对结果数据名称的修改
+ * 2、去除外部对结果数据集名称的修改，改变的监听放在类的内部实现
  */
 public class ParameterSaveDataset extends AbstractParameter implements ISelectionParameter {
 
@@ -20,8 +24,7 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 	private Datasource resultDatasource;
 	@ParameterField(name = DATASET_FIELD_NAME)
 	private String datasetName;
-	private String datasourceDescribe;
-	private String datasetDescribe;
+	private String defaultDatasetName = "defaultResultDataName";
 
 
 	public ParameterSaveDataset() {
@@ -64,7 +67,7 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 
 	@Override
 	public String getDescribe() {
-		return CommonProperties.getString("String_TargetDataset");
+		return CommonProperties.getString("String_Label_ResultDataset");
 	}
 
 	public Datasource getResultDatasource() {
@@ -81,23 +84,16 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 		return datasetName;
 	}
 
-	public void setDatasetName(String datasetName) {
-		this.datasetName = datasetName;
+//	public void setDatasetName(String datasetName) {
+//		this.datasetName = datasetName;
+//	}
+
+	public String getDefaultDatasetName() {
+		return defaultDatasetName;
 	}
 
-	public void setDatasourceDescribe(String datasourceDescribe) {
-		this.datasourceDescribe = datasourceDescribe;
+	public void setDefaultDatasetName(String defaultDatasetName) {
+		this.defaultDatasetName = defaultDatasetName;
 	}
 
-	public String getDatasourceDescribe() {
-		return datasourceDescribe;
-	}
-
-	public String getDatasetDescribe() {
-		return datasetDescribe;
-	}
-
-	public void setDatasetDescribe(String datasetDescribe) {
-		this.datasetDescribe = datasetDescribe;
-	}
 }

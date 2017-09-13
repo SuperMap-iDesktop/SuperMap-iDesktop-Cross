@@ -14,6 +14,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -98,6 +99,12 @@ public class MetaProcessVectorResample extends MetaProcess {
 		}
 		this.parameterResampleType.setSelectedItem(ResampleType.RTBEND);
 		this.parameterVertexTolerance.setEnabled(false);
+
+		this.parameterResampleTolerance.setUnit(ProcessProperties.getString("String_Label_meter"));
+		this.parameterVertexTolerance.setUnit(ProcessProperties.getString("String_Label_meter"));
+		this.parameterResampleTolerance.setSelectedItem(10);
+		this.parameterVertexTolerance.setSelectedItem(10);
+
 		reloadValue();
 	}
 
@@ -136,17 +143,11 @@ public class MetaProcessVectorResample extends MetaProcess {
 		Dataset datasetSelectedDataset = (Dataset) this.dataset.getSelectedItem();
 		if (datasetSelectedDataset != null) {
 			DatasetType datasetType = datasetSelectedDataset.getType();
-			String unit = ProcessProperties.getString(datasetType.equals(DatasetType.LINE) ? "String_Label_degree" : "String_Label_meter");
-			this.parameterResampleTolerance.setUnit(unit);
-			this.parameterVertexTolerance.setUnit(unit);
-			String value = datasetType.equals(DatasetType.LINE) ? "0.0001" : "10";
-			this.parameterResampleTolerance.setSelectedItem(value);
-			this.parameterVertexTolerance.setSelectedItem(value);
-
 			this.parameterIsSaveSmallGeometry.setSelectedItem((datasetType.equals(DatasetType.REGION) && !this.dataset.getSelectedItem().isReadOnly()));
 			this.parameterIsTopologyPreprocess.setSelectedItem((datasetType.equals(DatasetType.REGION) && !this.dataset.getSelectedItem().isReadOnly()));
 			this.parameterIsSaveSmallGeometry.setEnabled(datasetType.equals(DatasetType.REGION) && !this.dataset.getSelectedItem().isReadOnly());
 			this.parameterIsTopologyPreprocess.setEnabled(datasetType.equals(DatasetType.REGION) && !this.dataset.getSelectedItem().isReadOnly());
+			this.parameterVertexTolerance.setEnabled(Boolean.valueOf(this.parameterIsTopologyPreprocess.getSelectedItem()));
 		}
 	}
 
@@ -179,6 +180,10 @@ public class MetaProcessVectorResample extends MetaProcess {
 
 			sourceDatasetVector.addSteppedListener(this.steppedListener);
 			isSuccessful = sourceDatasetVector.resample(resampleInformation, true, isSaveSmallGeometry);
+
+			if (isSuccessful) {
+				MapUtilities.refreshIfDatasetOpened(sourceDatasetVector);
+			}
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(sourceDatasetVector);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

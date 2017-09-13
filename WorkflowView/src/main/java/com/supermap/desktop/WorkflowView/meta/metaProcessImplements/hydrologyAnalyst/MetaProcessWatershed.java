@@ -75,7 +75,7 @@ public class MetaProcessWatershed extends MetaProcessHydrology {
 				if (pointsDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetGrid) {
 					textAreaSQL.setEnabled(false);
 					buttonSQL.setEnabled(false);
-				} else {
+				} else if(pointsDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector){
 					textAreaSQL.setEnabled(true);
 					buttonSQL.setEnabled(true);
 					buttonSQL.setSelectDataset((Dataset) evt.getNewValue());

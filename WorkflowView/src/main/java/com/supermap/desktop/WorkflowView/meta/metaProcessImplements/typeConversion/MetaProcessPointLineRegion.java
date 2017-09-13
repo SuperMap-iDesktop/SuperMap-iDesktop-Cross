@@ -46,7 +46,7 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(inputType);
 		outputData = new ParameterSaveDataset();
-		outputData.setSelectedItem(getOutputName());
+		outputData.setDefaultDatasetName(getOutputName());
 
 		Dataset dataset = DatasetUtilities.getDefaultDataset(inputType);
 		if (dataset != null) {

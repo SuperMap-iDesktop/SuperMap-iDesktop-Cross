@@ -80,8 +80,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 
 	private void initParametersState() {
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		this.targetDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.targetDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
+		this.targetDataset.setDefaultDatasetName("result_ISOPoint");
 		Dataset datasetVector = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.POINT3D);
 		if (datasetVector != null) {
 			sourceDatasource.setSelectedItem(datasetVector.getDatasource());
@@ -124,8 +123,8 @@ public class MetaProcessISOPoint extends MetaProcess {
 			double baseValue = Double.valueOf(datumValue.getSelectedItem());
 			double lineDistance = Double.valueOf(interval.getSelectedItem());
 			double dRemain = baseValue % lineDistance;
-			double maxIsoValue = (int) ((maxValue - dRemain) / lineDistance) * lineDistance + dRemain;
-			double minIsoValue = (int) ((minValue - dRemain) / lineDistance) * lineDistance + dRemain;
+			double maxIsoValue = Math.round((maxValue - dRemain) / lineDistance) * lineDistance + dRemain;
+			double minIsoValue = Math.ceil((minValue - dRemain) / lineDistance) * lineDistance + dRemain;
 			int isoCount = (int) ((maxIsoValue - minIsoValue) / lineDistance) + 1;
 			maxISOLine.setSelectedItem(DoubleUtilities.getFormatString(maxIsoValue));
 			minISOLine.setSelectedItem(DoubleUtilities.getFormatString(minIsoValue));
@@ -147,8 +146,8 @@ public class MetaProcessISOPoint extends MetaProcess {
 			double baseValue = Double.valueOf(datumValue.getSelectedItem());
 			double lineDistance = Double.valueOf(interval.getSelectedItem());
 			double dRemain = baseValue % lineDistance;
-			double maxIsoValue = (int) ((maxValue - dRemain) / lineDistance) * lineDistance + dRemain;
-			double minIsoValue = (int) ((minValue - dRemain) / lineDistance) * lineDistance + dRemain;
+			double maxIsoValue = Math.round((maxValue - dRemain) / lineDistance) * lineDistance + dRemain;
+			double minIsoValue = Math.ceil((minValue - dRemain) / lineDistance) * lineDistance + dRemain;
 			int isoCount = (int) ((maxIsoValue - minIsoValue) / lineDistance) + 1;
 			maxISOLine.setSelectedItem(DoubleUtilities.getFormatString(maxIsoValue));
 			minISOLine.setSelectedItem(DoubleUtilities.getFormatString(minIsoValue));
@@ -260,6 +259,9 @@ public class MetaProcessISOPoint extends MetaProcess {
 					isSelectChanged = true;
 					reloadValue();
 					isSelectChanged = false;
+				}
+				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
+					fields.setSelectedItem("SmUserID");
 				}
 			}
 		});

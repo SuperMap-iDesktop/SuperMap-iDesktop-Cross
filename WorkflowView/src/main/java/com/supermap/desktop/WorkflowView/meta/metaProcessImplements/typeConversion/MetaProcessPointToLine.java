@@ -43,7 +43,7 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
 			inputDataset.setSelectedItem(dataset);
 			comboBoxConnect.setFieldName((DatasetVector) dataset);
 		}
-		outputData.setSelectedItem("result_PointToLine");
+		outputData.setDefaultDatasetName("result_PointToLine");
 
 		ParameterCombine inputCombine = new ParameterCombine();
 		inputCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));

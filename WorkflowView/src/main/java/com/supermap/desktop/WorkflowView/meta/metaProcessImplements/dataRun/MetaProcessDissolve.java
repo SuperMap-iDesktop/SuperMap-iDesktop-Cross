@@ -76,8 +76,6 @@ public class MetaProcessDissolve extends MetaProcess {
 		this.fieldsDissolve = new ParameterFieldGroup(ProcessProperties.getString("String_DissolveFields"));
 		this.statisticsFieldGroup = new ParameterSimpleStatisticsFieldGroup(ProcessProperties.getString("String_StatisticsField"));
 		this.resultDataset = new ParameterSaveDataset();
-		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
@@ -108,7 +106,6 @@ public class MetaProcessDissolve extends MetaProcess {
 			this.sourceDatasource.setSelectedItem(dataset.getDatasource());
 			this.sourceDataset.setSelectedItem(dataset);
 			this.resultDataset.setResultDatasource(dataset.getDatasource());
-			this.resultDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_Dissolve"));
 			this.numberDissolveTolerance.setUnit(dataset.getPrjCoordSys().getCoordUnit().toString());
 			//BigDecimal temp = new BigDecimal(Double.valueOf(DatasetUtilities.getDefaultTolerance((DatasetVector)sourceDataset).getNodeSnap()));
 			this.numberDissolveTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance((DatasetVector) dataset).getNodeSnap());
@@ -116,6 +113,7 @@ public class MetaProcessDissolve extends MetaProcess {
 			this.statisticsFieldGroup.setDataset((DatasetVector) dataset);
 			this.textSQLExpression.setSelectDataset(dataset);
 		}
+		this.resultDataset.setDefaultDatasetName("result_Dissolve");
 
 		ParameterDataNode parameterDataNodeOnlyMultipart = new ParameterDataNode(ProcessProperties.getString("String_Dissolve_Mode_OnlyMultiPart"), DissolveType.ONLYMULTIPART);
 		ParameterDataNode parameterDataNodeOnlySingle = new ParameterDataNode(ProcessProperties.getString("String_Dissolve_Mode_Single"), DissolveType.SINGLE);

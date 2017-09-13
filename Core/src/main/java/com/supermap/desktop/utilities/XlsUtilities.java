@@ -47,7 +47,7 @@ public class XlsUtilities {
 			FileInputStream in = new FileInputStream(file);
 			br = new BufferedReader(new InputStreamReader(in, "GBK"));
 			String line = "";
-			while ((line = br.readLine()) != null) {
+			for (int i = 5; ((line = br.readLine()) != null) && (i >= 0); i--) {
 				result.add(line);
 			}
 		} catch (Exception e) {

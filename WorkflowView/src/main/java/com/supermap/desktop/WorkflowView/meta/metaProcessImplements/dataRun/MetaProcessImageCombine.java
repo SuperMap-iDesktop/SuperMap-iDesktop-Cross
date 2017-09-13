@@ -53,8 +53,6 @@ public class MetaProcessImageCombine extends MetaProcess {
 		this.blueDataset = new ParameterSingleDataset(DatasetType.IMAGE);
 		this.blueDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 		this.resultDataset = new ParameterSaveDataset();
-		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 
 		ParameterCombine redData = new ParameterCombine();
 		redData.setDescribe(INPUT_RED_DATA);
@@ -77,12 +75,12 @@ public class MetaProcessImageCombine extends MetaProcess {
 	}
 
 	private void initParametersState() {
+		this.resultDataset.setDefaultDatasetName("result_ImageCombine");
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.IMAGE);
 		if (dataset != null) {
 			this.redDatasource.setSelectedItem(dataset.getDatasource());
 			this.redDataset.setSelectedItem(dataset);
 			this.resultDataset.setResultDatasource(dataset.getDatasource());
-			this.resultDataset.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_ImageCombine"));
 			this.greenDatasource.setSelectedItem(dataset.getDatasource());
 			this.greenDataset.setSelectedItem(dataset);
 			this.blueDatasource.setSelectedItem(dataset.getDatasource());

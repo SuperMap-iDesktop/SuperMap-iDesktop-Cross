@@ -776,7 +776,7 @@ public class LayerGridParamColorTableDialog extends SmDialog {
 			for (int i = 0; i < colorsWithKeysTableModel.getRowCount(); i++) {
 				colorDictionary.setColor(colorsWithKeysTableModel.getKeys().get(i), colorsWithKeysTableModel.getColors().get(i));
 			}
-			if (colorTableXml.createXml(filePath, colorDictionary)) {
+			if (colorTableXml.createXMLBySax(filePath, colorDictionary)) {
 				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_DialogColorTableExportSucess") + filePath);
 			} else {
 				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_DialogColorTableExportFailed"));
