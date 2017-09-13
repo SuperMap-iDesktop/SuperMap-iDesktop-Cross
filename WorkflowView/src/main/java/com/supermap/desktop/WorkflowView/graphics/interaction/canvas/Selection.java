@@ -1,7 +1,10 @@
 package com.supermap.desktop.WorkflowView.graphics.interaction.canvas;
 
-import com.supermap.desktop.WorkflowView.graphics.events.*;
 import com.supermap.desktop.WorkflowView.graphics.GraphCanvas;
+import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovedEvent;
+import com.supermap.desktop.WorkflowView.graphics.events.GraphRemovedListener;
+import com.supermap.desktop.WorkflowView.graphics.events.GraphSelectChangedListener;
+import com.supermap.desktop.WorkflowView.graphics.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.WorkflowView.graphics.graphs.IGraph;
 
 import javax.swing.event.EventListenerList;
@@ -14,7 +17,7 @@ import java.util.Vector;
 public abstract class Selection extends CanvasActionAdapter implements GraphRemovedListener {
 	public final static Point UNKOWN_POINT = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
-	private GraphCanvas canvas;
+	protected GraphCanvas canvas;
 	private EventListenerList list = new EventListenerList();
 	protected Vector<IGraph> selectedItems = new Vector<>();
 
