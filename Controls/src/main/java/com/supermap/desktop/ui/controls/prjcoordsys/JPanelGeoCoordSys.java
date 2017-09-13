@@ -11,7 +11,7 @@ import com.supermap.desktop.ui.controls.comboBox.JSearchComboBox;
 import com.supermap.desktop.ui.controls.comboBox.SearchItemValueGetter;
 import com.supermap.desktop.utilities.EnumComparator;
 import com.supermap.desktop.utilities.PrjCoordSysTypeUtilities;
-import com.supermap.desktop.utilities.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -69,7 +69,7 @@ public class JPanelGeoCoordSys extends JPanel {
 					geoCoordSys.setName(PrjCoordSysTypeUtilities.getDescribe(((GeoCoordSysType) selectedItem).name()));
 					lock = false;
 				} else {
-					if (StringUtilties.isNullOrEmptyString(selectedItem)) {
+					if (StringUtilities.isNullOrEmptyString(selectedItem)) {
 						return;
 					}
 					if (selectedItem instanceof String) {
@@ -103,7 +103,7 @@ public class JPanelGeoCoordSys extends JPanel {
 					geoCoordSys.getGeoDatum().setName(PrjCoordSysTypeUtilities.getDescribe(((GeoDatumType) selectedItem).name()));
 					lockGeo = false;
 				} else {
-					if (StringUtilties.isNullOrEmptyString(selectedItem)) {
+					if (StringUtilities.isNullOrEmptyString(selectedItem)) {
 						return;
 					}
 					geoCoordSys.getGeoDatum().setType(GeoDatumType.DATUM_USER_DEFINED);
@@ -133,7 +133,7 @@ public class JPanelGeoCoordSys extends JPanel {
 					geoCoordSys.getGeoDatum().getGeoSpheroid().setName(PrjCoordSysTypeUtilities.getDescribe(((GeoSpheroidType) selectedItem).name()));
 					lockAxis = false;
 				} else {
-					if (StringUtilties.isNullOrEmptyString(selectedItem)) {
+					if (StringUtilities.isNullOrEmptyString(selectedItem)) {
 						return;
 					}
 					geoCoordSys.getGeoDatum().getGeoSpheroid().setType(GeoSpheroidType.SPHEROID_USER_DEFINED);
@@ -166,7 +166,7 @@ public class JPanelGeoCoordSys extends JPanel {
 
 					lockCenter = false;
 				} else {
-					if (StringUtilties.isNullOrEmptyString(selectedItem)) {
+					if (StringUtilities.isNullOrEmptyString(selectedItem)) {
 						return;
 					}
 					geoCoordSys.getGeoPrimeMeridian().setType(GeoPrimeMeridianType.PRIMEMERIDIAN_USER_DEFINED);
@@ -234,7 +234,7 @@ public class JPanelGeoCoordSys extends JPanel {
 		textFieldAxis.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
 					return false;
 				}
 				try {
@@ -256,7 +256,7 @@ public class JPanelGeoCoordSys extends JPanel {
 		textFieldFlatten.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
 					return false;
 				}
 				try {
@@ -286,7 +286,7 @@ public class JPanelGeoCoordSys extends JPanel {
 		textFieldLongitude.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
 					return false;
 				}
 				try {

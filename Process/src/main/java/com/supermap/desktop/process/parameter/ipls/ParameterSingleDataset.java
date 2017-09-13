@@ -38,6 +38,16 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 		this.datasetTypes = datasetTypes;
 	}
 
+	/**
+	 * 默认数据源为必要参数
+	 * yuanR
+	 *
+	 * @return
+	 */
+	@Override
+	public boolean isRequisite() {
+		return true;
+	}
 
 	@Override
 	public void setSelectedItem(Object item) {

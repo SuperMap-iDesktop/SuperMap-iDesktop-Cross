@@ -864,7 +864,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		// private void setMinFontWidth() {
 		// if (!textFieldMinFontWidth.getText().isEmpty()) {
 		// String minFontWidth = textFieldMinFontWidth.getText();
-		// if (StringUtilties.isNumber(minFontWidth) && minFontWidth.length() <= 8) {
+		// if (StringUtilities.isNumber(minFontWidth) && minFontWidth.length() <= 8) {
 		// int minTextWidth = Integer.parseInt(minFontWidth);
 		// themeLabel.setMinTextWidth(minTextWidth);
 		// }
@@ -880,7 +880,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		// private void setMaxFontWidth() {
 		// if (!textFieldMaxFontWidth.getText().isEmpty()) {
 		// String maxFontWidth = textFieldMaxFontWidth.getText();
-		// if (StringUtilties.isNumber(maxFontWidth) && maxFontWidth.length() <= 8) {
+		// if (StringUtilities.isNumber(maxFontWidth) && maxFontWidth.length() <= 8) {
 		// int maxTextWidth = Integer.parseInt(maxFontWidth);
 		// themeLabel.setMaxTextWidth(maxTextWidth);
 		// }
