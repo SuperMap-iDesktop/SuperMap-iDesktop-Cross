@@ -97,9 +97,9 @@ public class MetaProcessGridResample extends MetaProcess {
 			sourceDataset.setSelectedItem(dataset);
 			updateCellSize(dataset);
 		}
-		comboBoxMethod.setItems(new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.BILINEAR), ResampleMode.BILINEAR),
+		comboBoxMethod.setItems(new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.NEAREST), ResampleMode.NEAREST),
 				new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.CUBIC), ResampleMode.CUBIC),
-				new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.NEAREST), ResampleMode.NEAREST));
+				new ParameterDataNode(ResampleModeUtilities.toString(ResampleMode.BILINEAR), ResampleMode.BILINEAR));
 		textFieldSourceXPixel.setEnabled(false);
 		textFieldSourceYPixel.setEnabled(false);
 		textFieldSourceRow.setEnabled(false);

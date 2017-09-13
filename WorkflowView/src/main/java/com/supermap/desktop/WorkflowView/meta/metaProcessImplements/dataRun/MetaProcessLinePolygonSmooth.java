@@ -49,6 +49,7 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
 		parameterCombineSourceData.addParameters(this.datasource, this.dataset);
 		parameterCombineSourceData.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
+		parameterCombineSourceData.setRequisite(true);
 
 		ParameterCombine parameterCombineParameter = new ParameterCombine();
 		parameterCombineParameter.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
