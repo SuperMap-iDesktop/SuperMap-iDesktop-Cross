@@ -2,10 +2,14 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
+import com.supermap.desktop.WorkflowView.WorkflowViewProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -15,9 +19,12 @@ import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
+import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 /**
  * Created by yuanR on 2017/7/18.
@@ -163,11 +170,27 @@ public class MetaProcessVectorResample extends MetaProcess {
 				sourceDatasetVector = (DatasetVector) this.dataset.getSelectedItem();
 			}
 
+			IFormMap[] forms = MapUtilities.getFormsDatasetOpened(sourceDatasetVector);
+			if (forms != null && forms.length > 0) {
+				SmOptionPane optionPane = new SmOptionPane();
+				String mapNames = "";
+
+				for (int i = 0; i < forms.length; i++) {
+					if (StringUtilities.isNullOrEmpty(mapNames)) {
+						mapNames = forms[i].getText();
+					} else {
+						mapNames += ",\"" + forms[i].getText() + "\"";
+					}
+				}
+				optionPane.showMessageDialog(MessageFormat.format(WorkflowViewProperties.getString("String_DataOpenedMessage"), mapNames));
+				return false;
+			}
+
 			ResampleType resampleType = (ResampleType) this.parameterResampleType.getSelectedData();
-			double tolerance = Double.valueOf((String) this.parameterResampleTolerance.getSelectedItem());
-			Boolean isSaveSmallGeometry = "true".equalsIgnoreCase((String) this.parameterIsSaveSmallGeometry.getSelectedItem());
-			Boolean isTopologyPreprocess = "true".equalsIgnoreCase((String) this.parameterIsTopologyPreprocess.getSelectedItem());
-			double vertexTolerance = Double.valueOf((String) this.parameterVertexTolerance.getSelectedItem());
+			double tolerance = Double.valueOf(this.parameterResampleTolerance.getSelectedItem());
+			Boolean isSaveSmallGeometry = "true".equalsIgnoreCase(this.parameterIsSaveSmallGeometry.getSelectedItem());
+			Boolean isTopologyPreprocess = "true".equalsIgnoreCase(this.parameterIsTopologyPreprocess.getSelectedItem());
+			double vertexTolerance = Double.valueOf(this.parameterVertexTolerance.getSelectedItem());
 
 			ResampleInformation resampleInformation = new ResampleInformation();
 			resampleInformation.setResampleType(resampleType);
@@ -180,10 +203,6 @@ public class MetaProcessVectorResample extends MetaProcess {
 
 			sourceDatasetVector.addSteppedListener(this.steppedListener);
 			isSuccessful = sourceDatasetVector.resample(resampleInformation, true, isSaveSmallGeometry);
-
-			if (isSuccessful) {
-				MapUtilities.refreshIfDatasetOpened(sourceDatasetVector);
-			}
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(sourceDatasetVector);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

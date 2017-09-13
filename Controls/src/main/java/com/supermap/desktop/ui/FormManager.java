@@ -200,7 +200,7 @@ public class FormManager extends MdiPane implements IFormManager {
 
 			MdiPage page = getPage((FormBaseChild) childForm);
 			if (page == null) {
-				add((IForm) childForm);
+				add(childForm);
 			} else {
 				activePage(page);
 			}
