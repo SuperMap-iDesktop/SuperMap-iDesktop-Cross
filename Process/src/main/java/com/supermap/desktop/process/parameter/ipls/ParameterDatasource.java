@@ -27,6 +27,16 @@ public class ParameterDatasource extends AbstractParameter implements ISelection
 	// 默认需要只读数据-yuanR2017.9.12
 	private boolean isReadOnlyNeeded = true;
 
+	/**
+	 * 默认数据源为必要参数
+	 * yuanR
+	 * @return
+	 */
+	@Override
+	public boolean isRequisite() {
+		return true;
+	}
+
 	public ParameterDatasource() {
 		this.addValueLegalListener(new ParameterValueLegalListener() {
 			@Override

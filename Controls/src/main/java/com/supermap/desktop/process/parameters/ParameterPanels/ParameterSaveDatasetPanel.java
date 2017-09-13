@@ -55,12 +55,10 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 				text = parameterSaveDataset.getDefaultDatasetName();
 			} else {
 				String availableDatasetName = selectedDatasource.getDatasets().getAvailableDatasetName(text);
-				if (!availableDatasetName.equals(text)) {
-					isSelectingItem = true;
-					textFieldDataset.setText(availableDatasetName);
-					parameterSaveDataset.setSelectedItem(availableDatasetName);
-					isSelectingItem = false;
-				}
+				isSelectingItem = true;
+				textFieldDataset.setText(availableDatasetName);
+				parameterSaveDataset.setSelectedItem(availableDatasetName);
+				isSelectingItem = false;
 			}
 		}
 	}
