@@ -424,25 +424,42 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 			Rectangle2D bounds = dataset.getBounds();
 			double max = bounds.getWidth() > bounds.getHeight() ? bounds.getWidth() : bounds.getHeight();
 			double min = bounds.getWidth() < bounds.getHeight() ? bounds.getWidth() : bounds.getHeight();
+			boolean isPrjEarth = dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
+			boolean isVector = dataset instanceof DatasetVector;
+			boolean isUnitMap = unitType.equals(NeighbourUnitType.MAP);
 			if (comboBoxShapeType.getSelectedItem().equals(RECTANGLE)) {
-				textFieldWidth.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getWidth()/20:"3"));
-				textFieldHeight.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?bounds.getHeight()/20:"3"));
+				textFieldWidth.setText("" + ((isUnitMap && (isVector || isPrjEarth)) ? bounds.getWidth() / 20 : "3"));
+				textFieldHeight.setText("" + ((isUnitMap && (isVector || isPrjEarth) ? bounds.getHeight() / 20 : "3")));
 			} else if (comboBoxShapeType.getSelectedItem().equals(CIRCLE)) {
-				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?max/20:"3"));
+				textFieldRadius.setText("" + ((isUnitMap && (isVector || isPrjEarth)) ? max / 20 : "3"));
 			} else if (comboBoxShapeType.getSelectedItem().equals(ANNULUS)) {
-				String inner = "" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? min / 20 : "1");
-				String outer = "" + ((unitType.equals(NeighbourUnitType.MAP) && dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) ? max / 20 : "3");
+				String inner = "" + ((isUnitMap && (isVector || isPrjEarth)) ? min / 20 : "1");
+				String outer = "" + ((isUnitMap && (isVector || isPrjEarth)) ? max / 20 : "3");
 				textFieldInnerRadius.setMaxValue(Double.parseDouble(outer));
 				textFieldOuterRadius.setMinValue(Double.parseDouble(inner));
 				textFieldInnerRadius.setText(inner);
 				textFieldOuterRadius.setText(outer);
 			} else {
-				textFieldRadius.setText(""+((unitType.equals(NeighbourUnitType.MAP)&&dataset.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE))?max/20:"3"));
+				textFieldRadius.setText("" + ((isUnitMap && (isVector || isPrjEarth)) ? max / 20 : "3"));
 				textFieldStartAngle.setText("0");
 				textFieldEndAngle.setText("360");
 			}
+			if (!isVector) {
+				textFieldWidth.setMaxValue(getMaxRange());
+				textFieldHeight.setMaxValue(getMaxRange());
+				textFieldOuterRadius.setMaxValue(getMaxRange());
+				textFieldRadius.setMaxValue(getMaxRange());
+			}
 		}
 		resetNeighbourShape();
+	}
+
+	private double getMaxRange() {
+		if (dataset != null && dataset instanceof DatasetGrid) {
+			DatasetGrid datasetGrid = (DatasetGrid) dataset;
+			return comboBoxUnitType.getSelectedItem().equals(UNIT_TYPE_CELL) ? Math.min(datasetGrid.getWidth(), datasetGrid.getHeight()) / 2 : Math.min(datasetGrid.getBounds().getWidth(), datasetGrid.getBounds().getHeight())/2;
+		}
+		return 0;
 	}
 
 	@Override

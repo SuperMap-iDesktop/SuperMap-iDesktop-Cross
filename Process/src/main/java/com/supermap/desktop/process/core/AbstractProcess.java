@@ -9,8 +9,11 @@ import com.supermap.desktop.process.events.StatusChangeEvent;
 import com.supermap.desktop.process.events.StatusChangeListener;
 import com.supermap.desktop.process.loader.DefaultProcessLoader;
 import com.supermap.desktop.process.loader.IProcessLoader;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
+import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -31,9 +34,9 @@ public abstract class AbstractProcess implements IProcess {
 	private Outputs outputs = new Outputs(this);
 	private int serialID = 0;
 
-	protected String RUNNING_MESSAGE = ProcessProperties.getString("String_Running");
-	protected String COMPLETED_MESSAGE = ProcessProperties.getString("String_Completed");
-	protected String FAILED_MESSAGE = ProcessProperties.getString("String_Failed");
+	private String RUNNING_MESSAGE = ProcessProperties.getString("String_Running");
+	private String COMPLETED_MESSAGE = ProcessProperties.getString("String_Completed");
+	private String FAILED_MESSAGE = ProcessProperties.getString("String_Failed");
 
 	protected String getRUNNING_MESSAGE() {
 		return RUNNING_MESSAGE;
@@ -91,16 +94,14 @@ public abstract class AbstractProcess implements IProcess {
 	@Override
 	public synchronized final boolean run() {
 		boolean isSuccessful = false;
-
 		try {
-			// 运行前，必要参数值是否异常判断-yuanR2017.9.8
-			if (isReady(new ReadyEvent(this, true))) {
+			// 运行前，必要参数值是否异常判断(包括源数据、结果数据、必填参数)-yuanR2017.9.12
+			if (isInputDataReady() && isOutputDataReady() && isReady(new ReadyEvent(this, true))) {
 				setStatus(RunningStatus.RUNNING);
 				fireRunning(new RunningEvent(this, 0,
 						StringUtilities.isNullOrEmptyString(getRUNNING_MESSAGE()) ? RUNNING_MESSAGE : getRUNNING_MESSAGE()
 				));
 				isSuccessful = execute();
-
 				if (isSuccessful) {
 					fireRunning(new RunningEvent(this, 100,
 							StringUtilities.isNullOrEmptyString(getCOMPLETED_MESSAGE()) ? COMPLETED_MESSAGE : getCOMPLETED_MESSAGE()
@@ -121,6 +122,48 @@ public abstract class AbstractProcess implements IProcess {
 			setStatus(RunningStatus.EXCEPTION);
 		}
 		return isSuccessful;
+	}
+
+	/**
+	 * 源数据是否存在
+	 * yuanR2017.9.12
+	 *
+	 * @return
+	 */
+	public final boolean isInputDataReady() {
+		Boolean isInPutDataReady = true;
+		// 运行前，源数据和结果数据是否为空异常判断-yuanR2017.9.13
+		InputData[] inputData = this.getParameters().getInputs().getDatas();
+		for (int i = 0; i < inputData.length; i++) {
+			ArrayList<IParameter> iParameters = inputData[i].getParameters();
+			for (int j = 0; j < iParameters.size(); j++) {
+				if (!iParameters.get(j).isReady()) {
+					return false;
+				}
+			}
+		}
+		return isInPutDataReady;
+	}
+
+	/**
+	 * 结果数据是否存在
+	 * yuanR2017.9.12
+	 *
+	 * @return
+	 */
+	public final boolean isOutputDataReady() {
+		Boolean isOutPutDataReady = true;
+		// 运行前，源数据和结果数据是否为空异常判断-yuanR2017.9.13
+		OutputData[] outputData = this.getParameters().getOutputs().getDatas();
+		for (int i = 0; i < outputData.length; i++) {
+			ArrayList<IParameter> iParameters = outputData[i].getParameters();
+			for (int j = 0; j < iParameters.size(); j++) {
+				if (!iParameters.get(j).isReady()) {
+					return false;
+				}
+			}
+		}
+		return isOutPutDataReady;
 	}
 
 	@Override

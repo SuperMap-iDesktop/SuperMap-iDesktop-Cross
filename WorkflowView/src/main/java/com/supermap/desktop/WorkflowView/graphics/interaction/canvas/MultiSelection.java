@@ -1,14 +1,15 @@
 package com.supermap.desktop.WorkflowView.graphics.interaction.canvas;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.WorkflowView.graphics.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.WorkflowView.graphics.GraphCanvas;
 import com.supermap.desktop.WorkflowView.graphics.GraphicsUtil;
+import com.supermap.desktop.WorkflowView.graphics.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.WorkflowView.graphics.graphs.IGraph;
 import com.supermap.desktop.WorkflowView.graphics.graphs.decorators.SelectedDecoratorFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 /**
@@ -233,7 +234,7 @@ public class MultiSelection extends Selection {
 	 * @param graphs
 	 */
 	private void selectItems(IGraph[] graphs) {
-		if (graphs != null & graphs.length > 0) {
+		if (graphs != null && graphs.length > 0) {
 			cleanSelection();
 
 			for (int i = 0; i < graphs.length; i++) {
@@ -272,4 +273,11 @@ public class MultiSelection extends Selection {
 	}
 
 
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_A && e.isControlDown()) {
+			IGraph[] graphs = canvas.getGraphStorage().getGraphs();
+			selectItems(graphs);
+		}
+	}
 }

@@ -88,6 +88,9 @@ public class MetaProcessISOPoint extends MetaProcess {
 			targetDataset.setResultDatasource(datasetVector.getDatasource());
 			targetDataset.setSelectedItem(datasetVector.getDatasource().getDatasets().getAvailableDatasetName("result_ISOPoint"));
 			fields.setFieldName((DatasetVector) datasetVector);
+			if (datasetVector.getType().equals(DatasetType.POINT3D)) {
+				fields.setEnabled(false);
+			}
 			reloadValue();
 		}
 		ParameterDataNode selectedInterpolateType = new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_IDW"), TerrainInterpolateType.IDW);
@@ -118,7 +121,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 					break;
 				}
 			}
-			int dSpan = (int) getDefaultInterval(maxValue, minValue);
+			double dSpan = getDefaultInterval(maxValue, minValue);
 			interval.setSelectedItem(dSpan);
 			double baseValue = Double.valueOf(datumValue.getSelectedItem());
 			double lineDistance = Double.valueOf(interval.getSelectedItem());
@@ -261,7 +264,12 @@ public class MetaProcessISOPoint extends MetaProcess {
 					isSelectChanged = false;
 				}
 				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
+					fields.setEnabled(true);
 					fields.setSelectedItem("SmUserID");
+					if (((DatasetVector) evt.getNewValue()).getType().equals(DatasetType.POINT3D)) {
+						fields.setEnabled(false);
+						fields.setSelectedItem("SmZ");
+					}
 				}
 			}
 		});
@@ -321,8 +329,24 @@ public class MetaProcessISOPoint extends MetaProcess {
 			} else {
 				src = (DatasetVector) sourceDataset.getSelectedItem();
 			}
-			DatasetVector result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, fields.getFieldName(),
-					targetDataset.getResultDatasource(), targetDataset.getDatasetName(), Double.valueOf(resolution.getSelectedItem()), null);
+			DatasetVector result = null;
+			if (src.getType().equals(DatasetType.POINT)) {
+				result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, fields.getFieldName(),
+						targetDataset.getResultDatasource(), targetDataset.getDatasetName(), Double.valueOf(resolution.getSelectedItem()), null);
+			} else {
+				Point3Ds point3Ds = new Point3Ds();
+				Recordset recordset = src.getRecordset(false, CursorType.DYNAMIC);
+				while (!recordset.isEOF()) {
+					GeoPoint3D geoPoint3D = (GeoPoint3D) recordset.getGeometry();
+					point3Ds.add(new Point3D(geoPoint3D.getX(), geoPoint3D.getY(), geoPoint3D.getZ()));
+					geoPoint3D.dispose();
+					recordset.moveNext();
+				}
+				if (point3Ds.getCount() > 0) {
+					result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, point3Ds, targetDataset.getResultDatasource(),
+							targetDataset.getDatasetName(), Double.valueOf(resolution.getSelectedItem()), null);
+				}
+			}
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = (result != null);
 		} catch (Exception e) {

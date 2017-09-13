@@ -1,6 +1,14 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
-import com.supermap.data.conversion.*;
+import com.supermap.data.conversion.ExportSetting;
+import com.supermap.data.conversion.ExportSettingBMP;
+import com.supermap.data.conversion.ExportSettingGIF;
+import com.supermap.data.conversion.ExportSettingJPG;
+import com.supermap.data.conversion.ExportSettingPNG;
+import com.supermap.data.conversion.ExportSettingSIT;
+import com.supermap.data.conversion.ExportSettingTIF;
+import com.supermap.data.conversion.ExportSteppedEvent;
+import com.supermap.data.conversion.ExportSteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStatistics.MetaProcessAbstractExport;
@@ -8,7 +16,11 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterFile;
+import com.supermap.desktop.process.parameter.ipls.ParameterPassword;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
@@ -152,16 +164,16 @@ public class MetaProcessExportGrid extends MetaProcessAbstractExport {
 	protected void setExportSettingInfo(boolean isOverwrite) {
 		super.setExportSettingInfo(isOverwrite);
 		if (exportSetting instanceof ExportSettingJPG) {
-			((ExportSettingJPG) exportSetting).setCompression(Integer.valueOf(compressionRatio.getSelectedItem().toString()));
-			((ExportSettingJPG) exportSetting).setWorldFilePath(prjFile.getSelectedItem().toString());
+			((ExportSettingJPG) exportSetting).setCompression(Integer.valueOf(compressionRatio.getSelectedItem()));
+			((ExportSettingJPG) exportSetting).setWorldFilePath(prjFile.getSelectedItem());
 		} else if (exportSetting instanceof ExportSettingBMP) {
-			((ExportSettingBMP) exportSetting).setWorldFilePath(prjFile.getSelectedItem().toString());
+			((ExportSettingBMP) exportSetting).setWorldFilePath(prjFile.getSelectedItem());
 		} else if (exportSetting instanceof ExportSettingGIF) {
-			((ExportSettingGIF) exportSetting).setWorldFilePath(prjFile.getSelectedItem().toString());
+			((ExportSettingGIF) exportSetting).setWorldFilePath(prjFile.getSelectedItem());
 		} else if (exportSetting instanceof ExportSettingPNG) {
-			((ExportSettingPNG) exportSetting).setWorldFilePath(prjFile.getSelectedItem().toString());
+			((ExportSettingPNG) exportSetting).setWorldFilePath(prjFile.getSelectedItem());
 		} else if (exportSetting instanceof ExportSettingTIF) {
-			((ExportSettingTIF) exportSetting).setExportAsTile(Boolean.valueOf(checkBoxTFW.getSelectedItem().toString()));
+			((ExportSettingTIF) exportSetting).setExportAsTile(Boolean.valueOf(checkBoxTFW.getSelectedItem()));
 		} else if (exportSetting instanceof ExportSettingSIT) {
 			((ExportSettingSIT) exportSetting).setPassword(this.password.getSelectedItem().toString());
 		}

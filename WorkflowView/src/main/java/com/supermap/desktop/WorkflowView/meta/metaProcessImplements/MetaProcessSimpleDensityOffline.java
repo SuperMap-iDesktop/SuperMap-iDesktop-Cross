@@ -105,6 +105,7 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 		}
 		comboBoxField.setFieldType(fieldType);
 		comboBoxField.setShowSystemField(true);
+		comboBoxField.setSelectedItem("SmID");
 		resultDataset.setSelectedItem("result_simpleDensity");
 		numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem()));
 		numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem()));
@@ -150,14 +151,14 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 
 	private void updateBound(Dataset dataset) {
 		Rectangle2D rectangle2D = dataset.getBounds();
-		numberTop.setMinValue(rectangle2D.getBottom());
-		numberBottom.setMaxValue(rectangle2D.getTop());
-		numberLeft.setMaxValue(rectangle2D.getRight());
-		numberRight.setMinValue(rectangle2D.getLeft());
 		numberBottom.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getBottom()));
 		numberLeft.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getLeft()));
 		numberRight.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getRight()));
 		numberTop.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getTop()));
+		numberTop.setMinValue(rectangle2D.getBottom());
+		numberBottom.setMaxValue(rectangle2D.getTop());
+		numberLeft.setMaxValue(rectangle2D.getRight());
+		numberRight.setMinValue(rectangle2D.getLeft());
 		Double x = rectangle2D.getWidth() / 500;
 		Double y = rectangle2D.getHeight() / 500;
 		Double cellSize = x > y ? y : x;
