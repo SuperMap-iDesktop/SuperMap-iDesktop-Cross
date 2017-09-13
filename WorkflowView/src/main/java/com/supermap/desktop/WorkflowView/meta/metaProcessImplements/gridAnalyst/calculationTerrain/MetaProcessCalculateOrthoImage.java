@@ -40,6 +40,7 @@ public class MetaProcessCalculateOrthoImage extends MetaProcessCalTerrain {
 		parameterColorNoColor.setRequisite(true);
 		parameterColorsTable = new ParameterColorsTable(ProcessProperties.getString("String_Label_ColorTable"));
 		parameterColorsTable.setRequisite(true);
+		parameterColorsTable.setSelectedItem(new Colors());
 //		parameterColorsTable.setActionListener(new ActionListener() {
 //			@Override
 //			public void actionPerformed(ActionEvent e) {
