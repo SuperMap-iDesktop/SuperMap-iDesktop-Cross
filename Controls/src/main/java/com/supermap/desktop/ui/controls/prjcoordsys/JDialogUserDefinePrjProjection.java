@@ -18,7 +18,7 @@ import com.supermap.desktop.ui.controls.comboBox.JSearchComboBox;
 import com.supermap.desktop.ui.controls.comboBox.SearchItemValueGetter;
 import com.supermap.desktop.utilities.EnumComparator;
 import com.supermap.desktop.utilities.PrjCoordSysTypeUtilities;
-import com.supermap.desktop.utilities.StringUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -163,7 +163,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 					comboBoxName.setSelectedItem(describe);
 					lock = false;
 				} else {
-					if (StringUtilties.isNullOrEmptyString(selectedItem)) {
+					if (StringUtilities.isNullOrEmptyString(selectedItem)) {
 						return;
 					}
 					prjCoordSys.setName(selectedItem instanceof String ? (String) selectedItem : ((PrjCoordSysType) selectedItem).name());
@@ -262,7 +262,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 		fieldLegit = new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
 					return false;
 				}
 				try {
@@ -286,7 +286,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 		textFieldScaleFactor.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (StringUtilties.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue) || textFieldValue.contains("d")) {
 					return false;
 				}
 				try {

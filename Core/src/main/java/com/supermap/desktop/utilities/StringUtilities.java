@@ -19,10 +19,12 @@ public class StringUtilities {
 		if (obj == null) {
 			return true;
 		}
-		if ("".equals(obj)) {
+
+		if (!(obj instanceof String)) {
 			return true;
 		}
-		if (isTrimString(obj.toString())) {
+
+		if (isTrimString((String) obj)) {
 			return true;
 		}
 
@@ -235,12 +237,12 @@ public class StringUtilities {
 	 */
 	public static boolean isContain(String searchString, String inputString) {
 
-		if (StringUtilties.isNullOrEmpty(searchString)) {
+		if (isNullOrEmpty(searchString)) {
 			// 为空始终显示
 			return true;
 		}
 
-		if (StringUtilties.isNullOrEmpty(inputString)) {
+		if (isNullOrEmpty(inputString)) {
 			return true;
 		}
 

@@ -25,8 +25,10 @@ import com.supermap.mapping.Map;
 import com.supermap.mapping.ThemeLabel;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.MapControl;
+import org.apache.commons.lang.NullArgumentException;
 
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -679,8 +681,9 @@ public class MapUtilities {
 			return;
 		}
 
-		boolean needRefresh = false;
 		for (int i = 0; i < manager.getCount(); i++) {
+			boolean needRefresh = false;
+
 			if (manager.get(i) instanceof IFormMap) {
 				IFormMap formMap = (IFormMap) manager.get(i);
 				final Map map = formMap.getMapControl().getMap();
@@ -703,6 +706,129 @@ public class MapUtilities {
 							@Override
 							public void run() {
 								map.refresh();
+							}
+						});
+					}
+				}
+			}
+		}
+	}
+
+	public static boolean isDatasetOpened(Dataset dataset) {
+		boolean isDatasetOpened = false;
+
+		if (Application.getActiveApplication() == null) {
+			return false;
+		}
+
+		if (Application.getActiveApplication().getMainFrame() == null) {
+			return false;
+		}
+
+		final IFormManager manager = Application.getActiveApplication().getMainFrame().getFormManager();
+		if (manager == null || manager.getCount() == 0) {
+			return false;
+		}
+
+		for (int i = manager.getCount() - 1; i >= 0; i--) {
+			if (manager.get(i) instanceof IFormMap) {
+				final IFormMap formMap = (IFormMap) manager.get(i);
+				final Map map = formMap.getMapControl().getMap();
+
+				for (int j = 0; j < map.getLayers().getCount(); j++) {
+					Layer layer = map.getLayers().get(j);
+
+					if (layer.getDataset() == dataset) {
+						isDatasetOpened = true;
+						break;
+					}
+				}
+
+				if (isDatasetOpened) {
+					break;
+				}
+			}
+		}
+		return isDatasetOpened;
+	}
+
+	public static IFormMap[] getFormsDatasetOpened(Dataset dataset) {
+		ArrayList<IFormMap> forms = new ArrayList<>();
+
+		if (Application.getActiveApplication() == null) {
+			return new IFormMap[0];
+		}
+
+		if (Application.getActiveApplication().getMainFrame() == null) {
+			return new IFormMap[0];
+		}
+
+		final IFormManager manager = Application.getActiveApplication().getMainFrame().getFormManager();
+		if (manager == null || manager.getCount() == 0) {
+			return new IFormMap[0];
+		}
+
+		for (int i = manager.getCount() - 1; i >= 0; i--) {
+			if (manager.get(i) instanceof IFormMap) {
+				boolean isDatasetOpened = false;
+				final IFormMap formMap = (IFormMap) manager.get(i);
+				final Map map = formMap.getMapControl().getMap();
+
+				for (int j = 0; j < map.getLayers().getCount(); j++) {
+					Layer layer = map.getLayers().get(j);
+
+					if (layer.getDataset() == dataset) {
+						isDatasetOpened = true;
+						break;
+					}
+				}
+
+				if (isDatasetOpened) {
+					forms.add(formMap);
+				}
+			}
+		}
+		return forms.toArray(new IFormMap[forms.size()]);
+	}
+
+	public static void closeIfDatasetOpened(Dataset dataset) {
+		if (Application.getActiveApplication() == null) {
+			return;
+		}
+
+		if (Application.getActiveApplication().getMainFrame() == null) {
+			return;
+		}
+
+		final IFormManager manager = Application.getActiveApplication().getMainFrame().getFormManager();
+		if (manager == null || manager.getCount() == 0) {
+			return;
+		}
+
+		for (int i = manager.getCount() - 1; i >= 0; i--) {
+			boolean needClose = false;
+
+			if (manager.get(i) instanceof IFormMap) {
+				final IFormMap formMap = (IFormMap) manager.get(i);
+				final Map map = formMap.getMapControl().getMap();
+
+				for (int j = 0; j < map.getLayers().getCount(); j++) {
+					Layer layer = map.getLayers().get(j);
+
+					if (layer.getDataset() == dataset) {
+						needClose = true;
+						break;
+					}
+				}
+
+				if (needClose) {
+					if (SwingUtilities.isEventDispatchThread()) {
+						manager.close(formMap);
+					} else {
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								manager.close(formMap);
 							}
 						});
 					}
