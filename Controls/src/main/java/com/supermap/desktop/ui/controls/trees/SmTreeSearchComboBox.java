@@ -53,4 +53,9 @@ public class SmTreeSearchComboBox<T extends TreeNode> extends JSearchComboBox<T>
 			model.updateModel((String) anObject);
 		}
 	}
+
+	@Override
+	public void configureEditor(ComboBoxEditor anEditor, Object anItem) {
+		// 会导致输入->触发赋值导致后面的输入不生效
+	}
 }
