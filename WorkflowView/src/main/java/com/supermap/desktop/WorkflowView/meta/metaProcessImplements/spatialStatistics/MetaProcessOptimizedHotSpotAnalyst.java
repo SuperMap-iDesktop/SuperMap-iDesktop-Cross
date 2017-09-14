@@ -70,8 +70,7 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 		parameterFieldComboBox.setDescribe(ProcessProperties.getString("String_AssessmentField"));
 
 		parameterComboBox.setDescribe(ProcessProperties.getString("String_AggregationMethod"));
-
-
+		
 		ParameterCombine parameterCombineSource = new ParameterCombine();
 		parameterCombineSource.addParameters(parameterDatasource);
 		parameterCombineSource.addParameters(parameterSingleDataset);
@@ -91,10 +90,6 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 		parameterSingleDatasetBounding.setDescribe(ProcessProperties.getString("String_BoundingPolygons_Dataset"));
 		parameterDatasourceAggregating.setDescribe(ProcessProperties.getString("String_AggregatingPolygons_Datasource"));
 		parameterSingleDatasetAggregating.setDescribe(ProcessProperties.getString("String_AggregatingPolygons_Dataset"));
-		parameterDatasourceBounding.setDatasourceRequisite(false);
-		parameterSingleDatasetBounding.setDatasetRequisite(false);
-		parameterDatasourceAggregating.setDatasourceRequisite(false);
-		parameterSingleDatasetAggregating.setDatasetRequisite(false);
 
 		ParameterCombine parameterCombineResult = new ParameterCombine();
 		parameterCombineResult.addParameters(parameterSaveDataset);
