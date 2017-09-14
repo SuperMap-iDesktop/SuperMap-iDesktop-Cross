@@ -105,6 +105,7 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 
 	public void setDefaultDatasetName(String defaultDatasetName) {
 		this.defaultDatasetName = defaultDatasetName;
+		this.datasetName = defaultDatasetName;
 	}
 
 }
