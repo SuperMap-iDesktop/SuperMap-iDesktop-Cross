@@ -34,10 +34,23 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 		}
 	};
 
+	private boolean isDatasetRequisite = true;
+
+	public void setDatasetRequisite(boolean isRequisite) {
+		this.isDatasetRequisite = isRequisite;
+	}
+
+	/**
+	 * @return
+	 */
+	@Override
+	public boolean isRequisite() {
+		return this.isDatasetRequisite;
+	}
+
 	public ParameterSingleDataset(DatasetType... datasetTypes) {
 		this.datasetTypes = datasetTypes;
 	}
-
 
 	@Override
 	public void setSelectedItem(Object item) {
