@@ -95,7 +95,7 @@ public abstract class AbstractProcess implements IProcess {
 	public synchronized final boolean run() {
 		boolean isSuccessful = false;
 		try {
-			// 运行前，必要参数值是否异常判断(包括源数据、结果数据、必填参数)-yuanR2017.9.12
+			//	运行前，必要参数值是否异常判断(包括源数据、结果数据、必填参数)-yuanR2017.9.12
 			if (isInputDataReady() && isOutputDataReady() && isReady(new ReadyEvent(this, true))) {
 				setStatus(RunningStatus.RUNNING);
 				fireRunning(new RunningEvent(this, 0,
@@ -131,19 +131,19 @@ public abstract class AbstractProcess implements IProcess {
 	 *
 	 * @return
 	 */
-	public final boolean isInputDataReady() {
+	private final boolean isInputDataReady() {
 		Boolean isInPutDataReady = true;
 		// 运行前，源数据和结果数据是否为空异常判断-yuanR2017.9.13
 		InputData[] inputData = this.getParameters().getInputs().getDatas();
-		for (int i = 0; i < inputData.length; i++) {
-			ArrayList<IParameter> iParameters = inputData[i].getParameters();
-			for (int j = 0; j < iParameters.size(); j++) {
-				if (!iParameters.get(j).isReady()) {
+		for (InputData anInputData : inputData) {
+			ArrayList<IParameter> iParameters = anInputData.getParameters();
+			for (IParameter iParameter : iParameters) {
+				if (!iParameter.isReady()) {
 					return false;
 				}
 			}
 		}
-		return isInPutDataReady;
+		return true;
 	}
 
 	/**
@@ -152,19 +152,19 @@ public abstract class AbstractProcess implements IProcess {
 	 *
 	 * @return
 	 */
-	public final boolean isOutputDataReady() {
-		Boolean isOutPutDataReady = true;
+	private final boolean isOutputDataReady() {
+//		Boolean isOutPutDataReady = true;
 		// 运行前，源数据和结果数据是否为空异常判断-yuanR2017.9.13
 		OutputData[] outputData = this.getParameters().getOutputs().getDatas();
-		for (int i = 0; i < outputData.length; i++) {
-			ArrayList<IParameter> iParameters = outputData[i].getParameters();
-			for (int j = 0; j < iParameters.size(); j++) {
-				if (!iParameters.get(j).isReady()) {
+		for (OutputData anOutputData : outputData) {
+			ArrayList<IParameter> iParameters = anOutputData.getParameters();
+			for (IParameter iParameter : iParameters) {
+				if (!iParameter.isReady()) {
 					return false;
 				}
 			}
 		}
-		return isOutPutDataReady;
+		return true;
 	}
 
 	@Override
