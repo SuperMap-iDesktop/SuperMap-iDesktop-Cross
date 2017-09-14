@@ -276,8 +276,10 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 				this.resultDataset.getResultDatasource().getDatasets().delete(resultDatasetName);
 			}
 		} finally {
-			resultRecordset.close();
-			resultRecordset.dispose();
+			if(resultRecordset!=null){
+				resultRecordset.close();
+				resultRecordset.dispose();
+			}
 			DistanceAnalyst.removeSteppedListener(this.steppedListener);
 		}
 		return isSuccessful;

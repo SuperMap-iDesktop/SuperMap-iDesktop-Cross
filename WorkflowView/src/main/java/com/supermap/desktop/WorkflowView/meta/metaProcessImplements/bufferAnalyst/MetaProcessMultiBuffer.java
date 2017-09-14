@@ -16,7 +16,6 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.MultiBufferRadioList.ParameterMultiBufferRadioList;
-import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -45,7 +44,7 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 	private ParameterComboBox comboBoxBufferLeftOrRight;
 	// 缓冲半径列表
 	private ParameterMultiBufferRadioList parameterMultiBufferRadioList;
-	private ParameterEnum parameterRadiusUnit;
+	private ParameterComboBox parameterRadiusUnit;
 	// 参数设置
 	private ParameterCheckBox parameterUnionBuffer;
 	private ParameterCheckBox parameterRingBuffer;
@@ -62,18 +61,6 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 	}
 
 	private void initParameters() {
-
-		String[] parameterDataNodes = new String[]{CommonProperties.getString("String_DistanceUnit_Kilometer"),
-				CommonProperties.getString("String_DistanceUnit_Meter"),
-				CommonProperties.getString("String_DistanceUnit_Decimeter"),
-				CommonProperties.getString("String_DistanceUnit_Centimeter"),
-				CommonProperties.getString("String_DistanceUnit_Millimeter"),
-				CommonProperties.getString("String_DistanceUnit_Foot"),
-				CommonProperties.getString("String_DistanceUnit_Inch"),
-				CommonProperties.getString("String_DistanceUnit_Mile"),
-				CommonProperties.getString("String_DistanceUnit_Yard"),
-		};
-		String[] values = new String[]{"KiloMeter", "Meter", "DeciMeter", "CentiMeter", "MiliMeter", "Foot", "Inch", "Mile", "Yard"};
 
 		// 源数据
 		datasource = new ParameterDatasourceConstrained();
@@ -99,7 +86,17 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 
 		// 半径列表
 		parameterMultiBufferRadioList = new ParameterMultiBufferRadioList();
-		parameterRadiusUnit = new ParameterEnum(new EnumParser(BufferRadiusUnit.class, values, parameterDataNodes)).setDescribe(ProcessProperties.getString("Label_BufferRadius"));
+
+		parameterRadiusUnit = new ParameterComboBox(ProcessProperties.getString("Label_BufferRadius"));
+		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), BufferRadiusUnit.KiloMeter));
+		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), BufferRadiusUnit.Meter));
+		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Decimeter"), BufferRadiusUnit.DeciMeter));
+		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Centimeter"), BufferRadiusUnit.CentiMeter));
+		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Millimeter"), BufferRadiusUnit.MiliMeter));
+		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Foot"), BufferRadiusUnit.Foot));
+		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Inch"), BufferRadiusUnit.Inch));
+		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Mile"), BufferRadiusUnit.Mile));
+		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Yard"), BufferRadiusUnit.Yard));
 		parameterRadiusUnit.setRequisite(true);
 
 		ParameterCombine parameterCombineRadioList = new ParameterCombine();

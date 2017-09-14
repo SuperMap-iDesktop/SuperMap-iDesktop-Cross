@@ -18,7 +18,6 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
-import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -36,7 +35,7 @@ public class MetaProcessBuffer extends MetaProcess {
 
 	private ParameterDatasourceConstrained datasource;
 	private ParameterSingleDataset dataset;
-	private ParameterEnum parameterBufferRange;
+	private ParameterComboBox parameterBufferRange;
 	private ParameterRadioButton radioButtonFlatOrRound;
 	private ParameterCheckBox checkBoxBufferLeft;//左缓冲
 	private ParameterCheckBox checkBoxBufferRight;//右缓冲
@@ -86,22 +85,20 @@ public class MetaProcessBuffer extends MetaProcess {
 	}
 
 	private void initParameters() {
+		parameterBufferRange = new ParameterComboBox(ProcessProperties.getString("Label_BufferRadius"));
+		parameterBufferRange.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), BufferRadiusUnit.KiloMeter));
+		parameterBufferRange.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), BufferRadiusUnit.Meter));
+		parameterBufferRange.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Decimeter"), BufferRadiusUnit.DeciMeter));
+		parameterBufferRange.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Centimeter"), BufferRadiusUnit.CentiMeter));
+		parameterBufferRange.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Millimeter"), BufferRadiusUnit.MiliMeter));
+		parameterBufferRange.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Foot"), BufferRadiusUnit.Foot));
+		parameterBufferRange.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Inch"), BufferRadiusUnit.Inch));
+		parameterBufferRange.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Mile"), BufferRadiusUnit.Mile));
+		parameterBufferRange.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Yard"), BufferRadiusUnit.Yard));
 
-		String[] parameterDataNodes = new String[]{CommonProperties.getString("String_DistanceUnit_Kilometer"),
-				CommonProperties.getString("String_DistanceUnit_Meter"),
-				CommonProperties.getString("String_DistanceUnit_Decimeter"),
-				CommonProperties.getString("String_DistanceUnit_Centimeter"),
-				CommonProperties.getString("String_DistanceUnit_Millimeter"),
-				CommonProperties.getString("String_DistanceUnit_Foot"),
-				CommonProperties.getString("String_DistanceUnit_Inch"),
-				CommonProperties.getString("String_DistanceUnit_Mile"),
-				CommonProperties.getString("String_DistanceUnit_Yard"),
-		};
-		String[] values = new String[]{"KiloMeter", "Meter", "DeciMeter", "CentiMeter", "MiliMeter", "Foot", "Inch", "Mile", "Yard"};
 		datasource = new ParameterDatasourceConstrained();
 		dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.NETWORK);
 		datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		parameterBufferRange = new ParameterEnum(new EnumParser(BufferRadiusUnit.class, values, parameterDataNodes)).setDescribe(ProcessProperties.getString("Label_BufferRadius"));
 
 		radioButtonFlatOrRound = new ParameterRadioButton();
 		ParameterDataNode gound = new ParameterDataNode(ProcessProperties.getString("String_CheckBox_BufferRound"), BUFFER_ROUND);
