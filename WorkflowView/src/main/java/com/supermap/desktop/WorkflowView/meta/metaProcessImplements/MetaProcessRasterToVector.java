@@ -3,18 +3,29 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.ConversionAnalyst;
 import com.supermap.analyst.spatialanalyst.ConversionAnalystParameter;
 import com.supermap.analyst.spatialanalyst.SmoothMethod;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetImage;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
-import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterColor;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -27,7 +38,7 @@ import java.beans.PropertyChangeListener;
  * Created by Chen on 2017/6/30 0030.
  * 栅格矢量化
  */
-public class MetaProcessRasterToVector extends MetaProcess {
+public class MetaProcessRasterToVector extends MetaProcessGridAnalyst {
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String OUTPUT_DATA = "ExtractResult";
 
@@ -231,7 +242,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean childExecute() {
 		boolean isSuccessful = false;
 
 		try {
