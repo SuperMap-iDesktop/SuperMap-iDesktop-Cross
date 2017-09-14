@@ -331,7 +331,7 @@ public class DefaultParameters implements IParameters {
 	}
 
 	private boolean isParameterReady(IParameter parameter, boolean isParentRequisite) {
-		if (parameter instanceof ISelectionParameter) {
+		if (parameter instanceof ISelectionParameter || parameter instanceof ParameterSwitch) {
 			if ((isParentRequisite || parameter.isRequisite()) && !parameter.isReady()) {
 				return false;
 			}

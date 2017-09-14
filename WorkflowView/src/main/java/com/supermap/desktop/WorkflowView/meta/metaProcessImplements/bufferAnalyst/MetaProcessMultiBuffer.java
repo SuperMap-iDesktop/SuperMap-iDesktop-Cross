@@ -100,6 +100,7 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 		// 半径列表
 		parameterMultiBufferRadioList = new ParameterMultiBufferRadioList();
 		parameterRadiusUnit = new ParameterEnum(new EnumParser(BufferRadiusUnit.class, values, parameterDataNodes)).setDescribe(ProcessProperties.getString("Label_BufferRadius"));
+		parameterRadiusUnit.setRequisite(true);
 
 		ParameterCombine parameterCombineRadioList = new ParameterCombine();
 		parameterCombineRadioList.setDescribe(ProcessProperties.getString("String_Title_BufferRadioList"));

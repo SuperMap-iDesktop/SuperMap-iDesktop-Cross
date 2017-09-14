@@ -114,6 +114,7 @@ public abstract class AbstractProcess implements IProcess {
 					setStatus(RunningStatus.EXCEPTION);
 				}
 			} else {
+				setStatus(RunningStatus.EXCEPTION);
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ParameterError"));
 			}
 		} catch (Exception e) {

@@ -21,7 +21,6 @@ import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
-import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.WorkflowView.meta.loader.InterpolatorProcessLoader;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
@@ -54,7 +53,7 @@ import java.text.MessageFormat;
 /**
  * Created by xie on 2017/2/16.
  */
-public class MetaProcessInterpolator extends MetaProcess {
+public class MetaProcessInterpolator extends MetaProcessGridAnalyst {
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String OUTPUT_DATA = "InterpolateResult";
 
@@ -287,7 +286,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 	}
 
 	@Override
-	public boolean execute() {
+	public boolean childExecute() {
 		boolean isSuccessful = false;
 
 		try {
@@ -347,6 +346,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 		}
 		return isSuccessful;
 	}
+
 
 	@Override
 	public Class<? extends IProcessLoader> getLoader() {
