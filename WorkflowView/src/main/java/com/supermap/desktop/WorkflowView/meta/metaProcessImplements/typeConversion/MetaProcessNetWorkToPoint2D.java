@@ -42,7 +42,7 @@ public class MetaProcessNetWorkToPoint2D extends MetaProcessTypeConversion {
 			inputDataset.setSelectedItem(dataset);
 		}
 
-		outputData.setSelectedItem("result_networkToPoint2D");
+		outputData.setDefaultDatasetName("result_networkToPoint2D");
 
 		ParameterCombine inputCombine = new ParameterCombine();
 		inputCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));

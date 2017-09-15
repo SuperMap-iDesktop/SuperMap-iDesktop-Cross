@@ -51,8 +51,10 @@ public class LabelSettingDialog extends SmDialog {
 		this.textStylePanel.setUnityVisible(true);
 		this.textStylePanel.initTextBasicPanel();
 		this.textStylePanel.initCheckBoxState();
-		this.textStylePanel.enabled(true);
-
+		//this.textStylePanel.enabled(true);
+		this.textStylePanel.setAlign(false);
+		this.textStylePanel.setFontHeight(false);
+		this.textStylePanel.setRotationAngl(false);
 		this.okSmButton.setText(ControlsProperties.getString("String_Button_Ok"));
 		this.cancelSmButton.setText(ControlsProperties.getString("String_BatchAddColorTableCancelButton"));
 		GroupLayout groupLayout = new GroupLayout(getContentPane());

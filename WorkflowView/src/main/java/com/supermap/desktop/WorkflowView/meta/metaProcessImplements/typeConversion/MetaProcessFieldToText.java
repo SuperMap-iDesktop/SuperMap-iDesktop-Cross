@@ -47,7 +47,7 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 			fieldComboBox.setSelectedItem(((DatasetVector) dataset).getFieldInfos().get(0));
 		}
 		fieldComboBox.setShowSystemField(true);
-		outputData.setSelectedItem("result_fieldToText");
+		outputData.setDefaultDatasetName("result_fieldToText");
 
 		ParameterCombine inputCombine = new ParameterCombine();
 		inputCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));

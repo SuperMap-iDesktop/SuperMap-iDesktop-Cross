@@ -159,4 +159,9 @@ public class MetaProcessEliminate extends MetaProcess {
 		}
 		numberTolerance.setSelectedItem(result);
 	}
+
+	@Override
+	public boolean isChangeSourceData() {
+		return true;
+	}
 }

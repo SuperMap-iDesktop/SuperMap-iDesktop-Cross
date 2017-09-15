@@ -33,8 +33,8 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 	private final static String INPUT_SOURCE_DATASET = CommonProperties.getString("String_GroupBox_SourceData");
 	private final static String OUTPUT_DATASET = "MultiBufferResult";
 
-	public static final int BUFFERTYPE_ROUND = 0;
-	public static final int BUFFERTYPE_FLAT = 1;
+	private static final int BUFFERTYPE_ROUND = 0;
+	private static final int BUFFERTYPE_FLAT = 1;
 
 	// 缓冲数据
 	private ParameterDatasourceConstrained datasource;
@@ -63,66 +63,66 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 	private void initParameters() {
 
 		// 源数据
-		datasource = new ParameterDatasourceConstrained();
-		dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
-		datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
+		this.datasource = new ParameterDatasourceConstrained();
+		this.dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
+		this.datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
-		parameterCombineSourceData.addParameters(datasource, dataset);
+		parameterCombineSourceData.addParameters(this.datasource, this.dataset);
 		parameterCombineSourceData.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
 
 		// 类型-只对线数据集有效
-		radioButtonFlatOrRound = new ParameterRadioButton();
+		this.radioButtonFlatOrRound = new ParameterRadioButton();
 		ParameterDataNode round = new ParameterDataNode(ProcessProperties.getString("String_CheckBox_BufferRound"), BUFFERTYPE_ROUND);
 		ParameterDataNode flat = new ParameterDataNode(ProcessProperties.getString("String_CheckBox_BufferFlat"), BUFFERTYPE_FLAT);
-		radioButtonFlatOrRound.setItems(new ParameterDataNode[]{round, flat});
-		comboBoxBufferLeftOrRight = new ParameterComboBox(ProcessProperties.getString("Label_LineBufferDirection"));
-		comboBoxBufferLeftOrRight.addItem(new ParameterDataNode(ProcessProperties.getString("String_CheckBox_Left"), true));
-		comboBoxBufferLeftOrRight.addItem(new ParameterDataNode(ProcessProperties.getString("String_CheckBox_Right"), false));
+		this.radioButtonFlatOrRound.setItems(new ParameterDataNode[]{round, flat});
+		this.comboBoxBufferLeftOrRight = new ParameterComboBox(ProcessProperties.getString("Label_LineBufferDirection"));
+		this.comboBoxBufferLeftOrRight.addItem(new ParameterDataNode(ProcessProperties.getString("String_CheckBox_Left"), true));
+		this.comboBoxBufferLeftOrRight.addItem(new ParameterDataNode(ProcessProperties.getString("String_CheckBox_Right"), false));
 
 		ParameterCombine parameterCombineBufferType = new ParameterCombine();
-		parameterCombineBufferType.addParameters(radioButtonFlatOrRound, comboBoxBufferLeftOrRight);
+		parameterCombineBufferType.addParameters(this.radioButtonFlatOrRound, this.comboBoxBufferLeftOrRight);
 		parameterCombineBufferType.setDescribe(ProcessProperties.getString("String_Title_BufferType"));
 
 		// 半径列表
-		parameterMultiBufferRadioList = new ParameterMultiBufferRadioList();
+		this.parameterMultiBufferRadioList = new ParameterMultiBufferRadioList();
 
-		parameterRadiusUnit = new ParameterComboBox(ProcessProperties.getString("Label_BufferRadius"));
-		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), BufferRadiusUnit.KiloMeter));
-		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), BufferRadiusUnit.Meter));
-		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Decimeter"), BufferRadiusUnit.DeciMeter));
-		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Centimeter"), BufferRadiusUnit.CentiMeter));
-		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Millimeter"), BufferRadiusUnit.MiliMeter));
-		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Foot"), BufferRadiusUnit.Foot));
-		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Inch"), BufferRadiusUnit.Inch));
-		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Mile"), BufferRadiusUnit.Mile));
-		parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Yard"), BufferRadiusUnit.Yard));
-		parameterRadiusUnit.setRequisite(true);
+		this.parameterRadiusUnit = new ParameterComboBox(ProcessProperties.getString("Label_BufferRadius"));
+		this.parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), BufferRadiusUnit.KiloMeter));
+		this.parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), BufferRadiusUnit.Meter));
+		this.parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Decimeter"), BufferRadiusUnit.DeciMeter));
+		this.parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Centimeter"), BufferRadiusUnit.CentiMeter));
+		this.parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Millimeter"), BufferRadiusUnit.MiliMeter));
+		this.parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Foot"), BufferRadiusUnit.Foot));
+		this.parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Inch"), BufferRadiusUnit.Inch));
+		this.parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Mile"), BufferRadiusUnit.Mile));
+		this.parameterRadiusUnit.addItem(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Yard"), BufferRadiusUnit.Yard));
+		this.parameterRadiusUnit.setRequisite(true);
 
 		ParameterCombine parameterCombineRadioList = new ParameterCombine();
 		parameterCombineRadioList.setDescribe(ProcessProperties.getString("String_Title_BufferRadioList"));
-		parameterCombineRadioList.addParameters(parameterMultiBufferRadioList, parameterRadiusUnit);
+		parameterCombineRadioList.addParameters(this.parameterMultiBufferRadioList, this.parameterRadiusUnit);
 
 		// 参数
-		parameterUnionBuffer = new ParameterCheckBox(ProcessProperties.getString("String_UnionBufferItem"));
-		parameterRingBuffer = new ParameterCheckBox(ProcessProperties.getString("String_CreateRingBuffer"));
-		parameterRetainAttribute = new ParameterCheckBox(ProcessProperties.getString("String_RetainAttribute"));
+		this.parameterUnionBuffer = new ParameterCheckBox(ProcessProperties.getString("String_UnionBufferItem"));
+		this.parameterRingBuffer = new ParameterCheckBox(ProcessProperties.getString("String_CreateRingBuffer"));
+		this.parameterRetainAttribute = new ParameterCheckBox(ProcessProperties.getString("String_RetainAttribute"));
 
-		parameterTextFieldSemicircleLineSegment = new ParameterNumber(ProcessProperties.getString("Label_SemicircleLineSegment"));
-		parameterTextFieldSemicircleLineSegment.setMaxBit(0);
-		parameterTextFieldSemicircleLineSegment.setMinValue(4);
-		parameterTextFieldSemicircleLineSegment.setMaxValue(200);
-		parameterTextFieldSemicircleLineSegment.setRequisite(true);
+		this.parameterTextFieldSemicircleLineSegment = new ParameterNumber(ProcessProperties.getString("Label_SemicircleLineSegment"));
+		this.parameterTextFieldSemicircleLineSegment.setMaxBit(0);
+		this.parameterTextFieldSemicircleLineSegment.setMinValue(4);
+		this.parameterTextFieldSemicircleLineSegment.setMaxValue(200);
+		this.parameterTextFieldSemicircleLineSegment.setRequisite(true);
 
 		ParameterCombine parameterCombineParameter = new ParameterCombine();
 		parameterCombineParameter.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		parameterCombineParameter.addParameters(parameterUnionBuffer, parameterRingBuffer, parameterRetainAttribute, parameterTextFieldSemicircleLineSegment);
+		parameterCombineParameter.addParameters(this.parameterUnionBuffer, this.parameterRingBuffer, this.parameterRetainAttribute, this.parameterTextFieldSemicircleLineSegment);
 
 		// 结果
-		parameterSaveDataset = new ParameterSaveDataset();
+		this.parameterSaveDataset = new ParameterSaveDataset();
 
 		ParameterCombine parameterCombineResult = new ParameterCombine();
-		parameterCombineResult.addParameters(parameterSaveDataset);
+		parameterCombineResult.addParameters(this.parameterSaveDataset);
 		parameterCombineResult.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 
 		parameters.setParameters(
@@ -138,30 +138,30 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 	}
 
 	private void initComponentState() {
-		parameterRadiusUnit.setSelectedItem(BufferRadiusUnit.Meter);
-		parameterRetainAttribute.setSelectedItem(true);
-		parameterTextFieldSemicircleLineSegment.setSelectedItem("100");
-		radioButtonFlatOrRound.setSelectedItem(radioButtonFlatOrRound.getItemAt(0));
-		comboBoxBufferLeftOrRight.setSelectedItem(comboBoxBufferLeftOrRight.getItemAt(0));
-		comboBoxBufferLeftOrRight.setEnabled(false);
+		this.parameterRadiusUnit.setSelectedItem(BufferRadiusUnit.Meter);
+		this.parameterRetainAttribute.setSelectedItem(true);
+		this.parameterTextFieldSemicircleLineSegment.setSelectedItem("100");
+		this.radioButtonFlatOrRound.setSelectedItem(this.radioButtonFlatOrRound.getItemAt(0));
+		this.comboBoxBufferLeftOrRight.setSelectedItem(this.comboBoxBufferLeftOrRight.getItemAt(0));
+		this.comboBoxBufferLeftOrRight.setEnabled(false);
 		Dataset datasetVector = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 		if (datasetVector != null) {
-			datasource.setSelectedItem(datasetVector.getDatasource());
-			dataset.setSelectedItem(datasetVector);
+			this.datasource.setSelectedItem(datasetVector.getDatasource());
+			this.dataset.setSelectedItem(datasetVector);
 		}
-		parameterSaveDataset.setDefaultDatasetName("result_multiBuffer");
+		this.parameterSaveDataset.setDefaultDatasetName("result_multiBuffer");
 	}
 
 	private void initParameterConstraint() {
-		DatasourceConstraint.getInstance().constrained(parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(this.parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void registerListener() {
-		dataset.addPropertyListener(new PropertyChangeListener() {
+		this.dataset.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (dataset.getSelectedDataset() != null) {
@@ -170,7 +170,7 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 			}
 		});
 
-		radioButtonFlatOrRound.addPropertyListener(new PropertyChangeListener() {
+		this.radioButtonFlatOrRound.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getPropertyName().equals(ParameterRadioButton.RADIO_BUTTON_VALUE)) {
@@ -178,7 +178,7 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 				}
 			}
 		});
-		parameterUnionBuffer.addPropertyListener(new PropertyChangeListener() {
+		this.parameterUnionBuffer.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getPropertyName().equals(ParameterCheckBox.PARAMETER_CHECK_BOX_VALUE)) {
@@ -189,14 +189,13 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 	}
 
 	/**
-	 * 缓冲类型面板是否可用
+	 * 	缓冲类型面板是否可用
 	 * 只对线数据集有效
-	 *
 	 * @param bufferTypePanelEnabled
 	 */
-	public void setBufferTypePanelEnabled(Boolean bufferTypePanelEnabled) {
-		comboBoxBufferLeftOrRight.setEnabled(bufferTypePanelEnabled);
-		radioButtonFlatOrRound.setEnabled(bufferTypePanelEnabled);
+	private void setBufferTypePanelEnabled(Boolean bufferTypePanelEnabled) {
+		this.comboBoxBufferLeftOrRight.setEnabled(bufferTypePanelEnabled);
+		this.radioButtonFlatOrRound.setEnabled(bufferTypePanelEnabled);
 	}
 
 	@Override
@@ -217,21 +216,21 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 		try {
 
 			// 源数据
-			DatasetVector sourceDatasetVector = null;
+			DatasetVector sourceDatasetVector;
 			if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
 					&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
 				sourceDatasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
 			} else {
-				sourceDatasetVector = (DatasetVector) dataset.getSelectedItem();
+				sourceDatasetVector = (DatasetVector) this.dataset.getSelectedItem();
 			}
 			// 线缓冲类型
-			int bufferType = (Integer) ((ParameterDataNode) radioButtonFlatOrRound.getSelectedItem()).getData();
+			int bufferType = (Integer) ((ParameterDataNode) this.radioButtonFlatOrRound.getSelectedItem()).getData();
 			boolean isLeft = false;
 			if (bufferType == BUFFERTYPE_FLAT) {
-				isLeft = (Boolean) comboBoxBufferLeftOrRight.getSelectedData();
+				isLeft = (Boolean) this.comboBoxBufferLeftOrRight.getSelectedData();
 			}
 			//缓冲半径列表
-			ArrayList<Double> radioLists = parameterMultiBufferRadioList.getRadioLists();
+			ArrayList<Double> radioLists = this.parameterMultiBufferRadioList.getRadioLists();
 			double[] radioListResult = null;
 			if (radioLists != null && radioLists.size() > 0) {
 				// 还有待优化-yuanR存疑2017.8.31
@@ -242,34 +241,32 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 
 				// 去重
 				Set<Double> set = new HashSet<>();
-				for (int i = 0; i < radioLists.size(); i++) {
-					set.add(radioLists.get(i));
-				}
-				Double[] radioListDouble = (Double[]) set.toArray(new Double[set.size()]);
+				set.addAll(radioLists);
+				Double[] radioListDouble = set.toArray(new Double[set.size()]);
 				radioListResult = new double[radioListDouble.length];
 				for (int i = 0; i < radioListDouble.length; i++) {
 					radioListResult[i] = radioListDouble[i];
 				}
 			}
 
-			BufferRadiusUnit radiusUnit = (BufferRadiusUnit) parameterRadiusUnit.getSelectedData();
+			BufferRadiusUnit radiusUnit = (BufferRadiusUnit) this.parameterRadiusUnit.getSelectedData();
 			// 参数面板属性
-			boolean isUnion = "true".equalsIgnoreCase((String) parameterUnionBuffer.getSelectedItem());
-			boolean isRing = "true".equalsIgnoreCase((String) parameterRingBuffer.getSelectedItem());
-			boolean isAttributeRetained = "true".equalsIgnoreCase((String) parameterRetainAttribute.getSelectedItem());
-			int semicircleLineSegment = Integer.valueOf(((String) parameterTextFieldSemicircleLineSegment.getSelectedItem()));
+			boolean isUnion = "true".equalsIgnoreCase(this.parameterUnionBuffer.getSelectedItem());
+			boolean isRing = "true".equalsIgnoreCase(this.parameterRingBuffer.getSelectedItem());
+			boolean isAttributeRetained = "true".equalsIgnoreCase(this.parameterRetainAttribute.getSelectedItem());
+			int semicircleLineSegment = Integer.valueOf(this.parameterTextFieldSemicircleLineSegment.getSelectedItem());
 			// 结果面板属性
-			resultDatasource = parameterSaveDataset.getResultDatasource();
-			resultName = resultDatasource.getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName());
+			resultDatasource = this.parameterSaveDataset.getResultDatasource();
+			resultName = resultDatasource.getDatasets().getAvailableDatasetName(this.parameterSaveDataset.getDatasetName());
 
 			// 创建一个新的数据集用于接受多重缓冲分析结果
-//			BufferAnalyst.addSteppedListener(this.steppedListener);
 			DatasetVectorInfo vectorInfo = new DatasetVectorInfo();
 			vectorInfo.setName(resultName);
 			vectorInfo.setType(DatasetType.REGION);
 			DatasetVector resultDataset = resultDatasource.getDatasets().create(vectorInfo);
 			resultDataset.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
 
+			BufferAnalyst.addSteppedListener(this.steppedListener);
 			if (sourceDatasetVector.getType().equals(DatasetType.LINE) && bufferType == BUFFERTYPE_FLAT) {
 				isSuccessful = BufferAnalyst.createLineOneSideMultiBuffer(
 						sourceDatasetVector, resultDataset,
@@ -289,7 +286,7 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 				resultDatasource.getDatasets().delete(resultName);
 			}
 		} finally {
-//			BufferAnalyst.removeSteppedListener(this.steppedListener);
+			BufferAnalyst.removeSteppedListener(this.steppedListener);
 		}
 		return isSuccessful;
 	}

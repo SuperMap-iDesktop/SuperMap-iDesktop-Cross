@@ -95,6 +95,9 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
     private boolean isTextStyleSet;
     private boolean isSetFontSize;
     private boolean isSetFontHeight;
+    private boolean isShowAlign=true;
+    private boolean isShowFontHeight=true;
+    private boolean isShowRotationAngl=true;
     protected double UNIT_CONVERSION = 10;
     private final double pow = 2;
 
@@ -159,6 +162,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
                 resetBGColorEnabled();
                 boolean isOpare = checkBoxBGOpaque.isSelected();
                 checkBoxOutline.setEnabled(isOpare);
+                spinnerOutLineWidth.setEnabled(isOpare);
                 textStyleTypeMap.put(TextStyleType.BACKOPAQUE, !isOpare);
                 fireTextStyleChanged(TextStyleType.BACKOPAQUE);
                 return;
@@ -548,6 +552,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
             this.checkBoxOutline.setSelected(textStyle.getOutline());
             this.checkBoxBGOpaque.setSelected(!textStyle.getBackOpaque());
             this.checkBoxOutline.setEnabled(!textStyle.getBackOpaque());
+            this.spinnerOutLineWidth.setEnabled(!textStyle.getBackOpaque() &&this.checkBoxOutline.isSelected());
             this.spinnerInclinationAngl.setEnabled(textStyle.getItalic());
         }
     }
@@ -918,7 +923,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.checkBoxOutline.setEnabled(enabled);
         this.checkBoxShadow.setEnabled(enabled);
         this.checkBoxStrickout.setEnabled(enabled);
-        this.checkBoxUnderline.setEnabled(enabled);
+        this.checkBoxUnderline.setEnabled(enabled );
         this.labelStringAlignment.setEnabled(enabled);
         this.comboBoxStringAlignment.setEnabled(enabled);
         resetBGColorEnabled();
@@ -1026,6 +1031,28 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
     @Override
     public void setTextStyleSet(boolean isTextStyleSet) {
         this.isTextStyleSet = isTextStyleSet;
+    }
+
+    @Override
+    public void setAlign(boolean isShowAlign){
+        this.isShowAlign=isShowAlign;
+        this.labelAlign.setVisible(this.isShowAlign);
+        this.comboBoxAlign.setVisible(this.isShowAlign);
+    }
+
+    @Override
+    public void setFontHeight(boolean isShowFontHeight){
+        this.isSetFontHeight=isShowFontHeight;
+        this.labelFontHeight.setVisible(this.isSetFontHeight);
+        this.spinnerFontHeight.setVisible(this.isSetFontHeight);
+        this.labelFontHeightUnity.setVisible(this.isSetFontHeight);
+    }
+
+    @Override
+    public void setRotationAngl(boolean isShowRotationAngl){
+        this.isShowRotationAngl=isShowRotationAngl;
+        this.labelRotationAngl.setVisible(this.isShowRotationAngl);
+        this.spinnerRotationAngl.setVisible(this.isShowRotationAngl);
     }
 
     @Override

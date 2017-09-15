@@ -2,7 +2,6 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.WorkflowViewProperties;
@@ -21,7 +20,6 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
@@ -226,5 +224,10 @@ public class MetaProcessVectorResample extends MetaProcess {
 	@Override
 	public String getKey() {
 		return MetaKeys.VECTOR_RESAMPLE;
+	}
+
+	@Override
+	public boolean isChangeSourceData() {
+		return true;
 	}
 }

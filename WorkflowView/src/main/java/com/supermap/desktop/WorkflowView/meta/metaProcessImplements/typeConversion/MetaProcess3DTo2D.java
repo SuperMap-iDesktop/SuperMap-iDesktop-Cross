@@ -43,7 +43,7 @@ public abstract class MetaProcess3DTo2D extends MetaProcessTypeConversion {
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(inputType);
 		outputData = new ParameterSaveDataset();
-		outputData.setSelectedItem(getOutputName());
+		outputData.setDefaultDatasetName(getOutputName());
 
 		Dataset dataset = DatasetUtilities.getDefaultDataset(inputType);
 		if (dataset != null) {
@@ -63,7 +63,7 @@ public abstract class MetaProcess3DTo2D extends MetaProcessTypeConversion {
 		if (outputType.equals(DatasetType.REGION)) {
 			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Region_Dataset"), datasetTypeToTypes(outputType), outputCombine);
 		} else if (outputType.equals(DatasetType.LINE)) {
-			parameters.addOutputParameters(OUTPUT_DATA,ProcessOutputResultProperties.getString("String_Result_Line_Dataset"), datasetTypeToTypes(outputType), outputCombine);
+			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Line_Dataset"), datasetTypeToTypes(outputType), outputCombine);
 		} else if (outputType.equals(DatasetType.POINT)) {
 			parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_Point_Dataset"), datasetTypeToTypes(outputType), outputCombine);
 		}
@@ -75,7 +75,7 @@ public abstract class MetaProcess3DTo2D extends MetaProcessTypeConversion {
 
 	protected abstract String getOutputResultName();
 
-	protected HashMap<String, Object> mergePropertyData(DatasetVector des, FieldInfos srcFieldInfos, Map<String, Object> properties,double zValue) {
+	protected HashMap<String, Object> mergePropertyData(DatasetVector des, FieldInfos srcFieldInfos, Map<String, Object> properties, double zValue) {
 		HashMap<String, Object> results = new HashMap<>();
 		FieldInfos desFieldInfos = des.getFieldInfos();
 
@@ -145,7 +145,7 @@ public abstract class MetaProcess3DTo2D extends MetaProcessTypeConversion {
 					IGeometry geometry = null;
 					try {
 						geometry = DGeometryFactory.create(recordsetInput.getGeometry());
-						convert(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput),recordsetResult, geometry);
+						convert(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput), recordsetResult, geometry);
 					} finally {
 						if (geometry != null) {
 							geometry.dispose();

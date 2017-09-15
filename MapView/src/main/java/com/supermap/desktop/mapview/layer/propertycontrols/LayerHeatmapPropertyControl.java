@@ -6,6 +6,7 @@ import com.supermap.desktop.DefaultValues;
 import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
+import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerHeatmapPropertyModel;
 import com.supermap.desktop.ui.SMSpinner;
@@ -101,8 +102,9 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 		this.textFieldKernelRadius = new SmTextFieldLegit();
 		this.labelWeightField = new JLabel("WeightField:");
 		this.comboBoxWeightField = new JComboBox();
+		this.comboBoxWeightField.setUI(new DefaultComboBoxUI());
 		this.labelColorScheme = new JLabel("ColorScheme:");
-		this.colorsComboBox = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Grid_DEM"));
+		this.colorsComboBox = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Map_GridAggregation"));
 		this.labelMaxColor = new JLabel("MaxColor:");
 		this.componentDropDownMaxColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
 		this.labelMinColor = new JLabel("MinColor:");
@@ -413,6 +415,9 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 			}
 			try {
 				Integer integer = Integer.valueOf(textFieldValue);
+				if(integer<1 ||integer>50){
+					return false;
+				}
 			} catch (Exception e) {
 				return false;
 			}
