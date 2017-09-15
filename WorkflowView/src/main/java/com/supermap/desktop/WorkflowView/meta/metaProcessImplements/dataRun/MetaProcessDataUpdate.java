@@ -135,4 +135,9 @@ public class MetaProcessDataUpdate extends MetaProcess {
 	public String getTitle() {
 		return ProcessProperties.getString("String_RasterDataUpdate");
 	}
+
+	@Override
+	public boolean isChangeSourceData() {
+		return true;
+	}
 }
