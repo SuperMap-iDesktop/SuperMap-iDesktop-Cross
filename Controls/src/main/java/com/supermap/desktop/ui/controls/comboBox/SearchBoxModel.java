@@ -5,7 +5,6 @@ package com.supermap.desktop.ui.controls.comboBox;
  */
 
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.desktop.utilities.StringUtilties;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -52,7 +51,7 @@ public class SearchBoxModel<T> extends AbstractListModel<T>
 		resetSearchData();
 //lets find any items which start with the string the user typed, and add it to the popup list
 //here you would usually get your items from a database, or some other storage...
-		if (!StringUtilties.isNullOrEmpty(inputString)) {
+		if (!StringUtilities.isNullOrEmpty(inputString)) {
 			for (int i = searchData.size() - 1; i >= 0; i--) {
 				String searchString = searchItemValueGetter.getSearchString(searchData.get(i));
 				if (searchString != null && !StringUtilities.isContain(searchString, inputString)) {
@@ -72,7 +71,6 @@ public class SearchBoxModel<T> extends AbstractListModel<T>
 //		if (searchData.size() != 0)
 //			comboBox.setSelectedIndex(0);
 	}
-
 
 
 	private void resetSearchData() {
@@ -177,7 +175,7 @@ public class SearchBoxModel<T> extends AbstractListModel<T>
 		String str = comboBoxEditor.getItem().toString();
 		for (int i = 0; i < searchData.size(); i++) {
 			String searchString = searchItemValueGetter.getSearchString(searchData.get(i));
-			if (!StringUtilties.isNullOrEmpty(searchString) && searchString.equals(str)) {
+			if (!StringUtilities.isNullOrEmpty(searchString) && searchString.equals(str)) {
 				return i;
 			}
 		}

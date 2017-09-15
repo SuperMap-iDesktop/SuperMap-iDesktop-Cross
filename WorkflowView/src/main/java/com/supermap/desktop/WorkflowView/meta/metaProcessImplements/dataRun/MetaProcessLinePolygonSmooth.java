@@ -3,10 +3,13 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.dataRun;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
+import com.supermap.desktop.WorkflowView.WorkflowViewProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -15,6 +18,9 @@ import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+
+import java.text.MessageFormat;
 
 /**
  * Created by yuanR on 2017/7/18.
@@ -49,6 +55,7 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
 		parameterCombineSourceData.addParameters(this.datasource, this.dataset);
 		parameterCombineSourceData.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
+		parameterCombineSourceData.setRequisite(true);
 
 		ParameterCombine parameterCombineParameter = new ParameterCombine();
 		parameterCombineParameter.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
@@ -88,14 +95,26 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 				datasetVector = (DatasetVector) this.dataset.getSelectedItem();
 			}
 
-			int smoothness = Integer.valueOf(((String) this.parameterTextFieldSmoothness.getSelectedItem()));
+			IFormMap[] forms = MapUtilities.getFormsDatasetOpened(datasetVector);
+			if (forms != null && forms.length > 0) {
+				SmOptionPane optionPane = new SmOptionPane();
+				String mapNames = "";
+
+				for (int i = 0; i < forms.length; i++) {
+					if (StringUtilities.isNullOrEmpty(mapNames)) {
+						mapNames = forms[i].getText();
+					} else {
+						mapNames += ",\"" + forms[i].getText() + "\"";
+					}
+				}
+				optionPane.showMessageDialog(MessageFormat.format(WorkflowViewProperties.getString("String_DataOpenedMessage"), mapNames));
+				return false;
+			}
+
+			int smoothness = Integer.valueOf((this.parameterTextFieldSmoothness.getSelectedItem()));
 
 			datasetVector.addSteppedListener(this.steppedListener);
 			isSuccessful = datasetVector.smooth(smoothness, true);
-
-			if (isSuccessful) {
-				MapUtilities.refreshIfDatasetOpened(datasetVector);
-			}
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(datasetVector);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

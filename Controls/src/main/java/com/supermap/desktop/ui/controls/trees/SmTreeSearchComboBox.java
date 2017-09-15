@@ -28,7 +28,9 @@ public class SmTreeSearchComboBox<T extends TreeNode> extends JSearchComboBox<T>
 		this.setRenderer(new ListCellRenderer<T>() {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends T> list, T value, int index, boolean isSelected, boolean cellHasFocus) {
-				return tree.getCellRenderer().getTreeCellRendererComponent(tree, value, isSelected, true, true, tree.getRowForPath(JTreeUIUtilities.getPath(value)), cellHasFocus);
+				Component rendererComponent = tree.getCellRenderer().getTreeCellRendererComponent(tree, value, isSelected, true, true, tree.getRowForPath(JTreeUIUtilities.getPath(value)), cellHasFocus);
+
+				return rendererComponent;
 			}
 		});
 	}
@@ -50,5 +52,10 @@ public class SmTreeSearchComboBox<T extends TreeNode> extends JSearchComboBox<T>
 		} else if (anObject instanceof String) {
 			model.updateModel((String) anObject);
 		}
+	}
+
+	@Override
+	public void configureEditor(ComboBoxEditor anEditor, Object anItem) {
+		// 会导致输入->触发赋值导致后面的输入不生效
 	}
 }

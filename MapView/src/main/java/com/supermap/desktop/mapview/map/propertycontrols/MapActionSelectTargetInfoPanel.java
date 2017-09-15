@@ -34,7 +34,7 @@ public class MapActionSelectTargetInfoPanel extends JPanel {
 		this.setBackground(new Color(255, 255, 255, 220));
 
 		this.labelSelectTargetInfo = new JLabel("Select one or more geoRegion.");
-		this.labelSelectTargetInfo.setText(text);
+		this.labelSelectTargetInfo.setText(this.text);
 
 		this.setLayout(new GridBagLayout());
 		this.add(this.labelSelectTargetInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));

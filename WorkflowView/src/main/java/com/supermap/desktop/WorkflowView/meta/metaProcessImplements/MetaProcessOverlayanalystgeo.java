@@ -11,6 +11,7 @@ import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.lbs.params.JobResultResponse;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
@@ -47,6 +48,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 	}
 
 	private void initComponents() {
+		parameterIServerLogin.setInputDataType(this.parameterInputDataType);
 		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
 		parameterTextFieldAddress.setRequisite(true);
 		parameterDataBaseName.setDefaultWarningValue("supermap");
@@ -83,7 +85,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 		parameters.addParameters(parameterIServerLogin, parameterInputDataType, parameterCombineOverlay, parameterCombineSetting);
 		parameters.addInputParameters("overlay", Type.UNKOWN, parameterCombineOverlay);// 缺少对应的类型
-		parameters.addOutputParameters("OverlayResult", ProcessOutputResultProperties.getString("String_VectorAnalysisResult"), BasicTypes.STRING, null);
+		parameters.addOutputParameters("OverlayResult", ProcessOutputResultProperties.getString("String_VectorAnalysisResult"), BasicTypes.STRING);
 	}
 
 	private void initComponentState() {
@@ -115,6 +117,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful;
 		try {
+			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
 			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
@@ -127,7 +130,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input, analyst);
-			JobResultResponse response = service.queryResult(MetaKeys.OVERLAYANALYSTGEO, commonSettingCombine.getFinalJSon());
+			JobResultResponse response = parameterIServerLogin.getService().queryResult(MetaKeys.OVERLAYANALYSTGEO, commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);

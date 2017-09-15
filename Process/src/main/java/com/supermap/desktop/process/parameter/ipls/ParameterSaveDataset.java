@@ -27,6 +27,17 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 	private String defaultDatasetName = "defaultResultDataName";
 
 
+	/**
+	 * 默认结果数据为必要参数
+	 * yuanR
+	 *
+	 * @return
+	 */
+	@Override
+	public boolean isRequisite() {
+		return true;
+	}
+
 	public ParameterSaveDataset() {
 		Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
 		if (activeDatasources.length > 0) {
@@ -94,6 +105,7 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 
 	public void setDefaultDatasetName(String defaultDatasetName) {
 		this.defaultDatasetName = defaultDatasetName;
+		this.datasetName = defaultDatasetName;
 	}
 
 }

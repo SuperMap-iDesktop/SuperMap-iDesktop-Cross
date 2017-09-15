@@ -39,7 +39,7 @@ public class MetaProcessSimpleToCAD extends MetaProcessTypeConversion {
 			inputDatasource.setSelectedItem(dataset.getDatasource());
 			inputDataset.setSelectedItem(dataset);
 		}
-		outputData.setSelectedItem("result_simpleToCAD");
+		outputData.setDefaultDatasetName("result_simpleToCAD");
 
 		ParameterCombine inputCombine = new ParameterCombine();
 		inputCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));

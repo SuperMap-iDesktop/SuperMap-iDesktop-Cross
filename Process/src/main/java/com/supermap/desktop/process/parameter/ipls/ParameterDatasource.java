@@ -26,6 +26,21 @@ public class ParameterDatasource extends AbstractParameter implements ISelection
 	private String describe = CommonProperties.getString(CommonProperties.Label_Datasource);
 	// 默认需要只读数据-yuanR2017.9.12
 	private boolean isReadOnlyNeeded = true;
+//	private boolean isDatasourceRequisite = true;
+//
+//	public void setDatasourceRequisite(boolean isRequisite) {
+//		this.isDatasourceRequisite = isRequisite;
+//	}
+//	/**
+//	 * 默认数据源为必要参数
+//	 * yuanR
+//	 *
+//	 * @return
+//	 */
+//	@Override
+//	public boolean isRequisite() {
+//		return this.isDatasourceRequisite;
+//	}
 
 	public ParameterDatasource() {
 		this.addValueLegalListener(new ParameterValueLegalListener() {

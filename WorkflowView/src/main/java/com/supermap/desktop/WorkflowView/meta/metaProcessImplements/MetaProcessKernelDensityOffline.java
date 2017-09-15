@@ -71,7 +71,7 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 		resultCombine.addParameters(resultDataset);
 
 		parameters.setParameters(sourceCombine, settingCombine, resultCombine);
-		this.parameters.addInputParameters(INPUT_DATA, new DatasetTypes("",DatasetTypes.POINT.getValue()|DatasetTypes.LINE.getValue()), sourceCombine);
+		this.parameters.addInputParameters(INPUT_DATA, new DatasetTypes("", DatasetTypes.POINT.getValue() | DatasetTypes.LINE.getValue()), sourceCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
 				ProcessOutputResultProperties.getString("String_KernelsDensityAnalysisResult"),
 				DatasetTypes.GRID, resultCombine);
@@ -94,7 +94,7 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 		numberBottom.setSelectedItem(0);
 		numberRadius.setSelectedItem(0);
 		numberRadius.setMinValue(0);
-		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT,DatasetType.LINE);
+		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.LINE);
 		if (dataset != null) {
 			sourceDatasource.setSelectedItem(dataset.getDatasource());
 			sourceDataset.setSelectedItem(dataset);
@@ -103,7 +103,8 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 		}
 		comboBoxField.setFieldType(fieldType);
 		comboBoxField.setShowSystemField(true);
-		resultDataset.setSelectedItem("result_kernelDensity");
+		comboBoxField.setSelectedItem("SmID");
+		resultDataset.setDefaultDatasetName("result_kernelDensity");
 		numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem()));
 		numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem()));
 		numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem()));
@@ -148,20 +149,20 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 
 	private void updateBound(Dataset dataset) {
 		Rectangle2D rectangle2D = dataset.getBounds();
-		numberTop.setMinValue(rectangle2D.getBottom());
-		numberBottom.setMaxValue(rectangle2D.getTop());
-		numberLeft.setMaxValue(rectangle2D.getRight());
-		numberRight.setMinValue(rectangle2D.getLeft());
 		numberBottom.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getBottom()));
 		numberLeft.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getLeft()));
 		numberRight.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getRight()));
 		numberTop.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getTop()));
+		numberTop.setMinValue(rectangle2D.getBottom());
+		numberBottom.setMaxValue(rectangle2D.getTop());
+		numberLeft.setMaxValue(rectangle2D.getRight());
+		numberRight.setMinValue(rectangle2D.getLeft());
 		Double x = rectangle2D.getWidth() / 500;
 		Double y = rectangle2D.getHeight() / 500;
 		Double cellSize = x > y ? y : x;
 		numberCellSize.setSelectedItem(DoubleUtilities.getFormatString(cellSize));
 		double maxRadius = rectangle2D.getWidth() > rectangle2D.getHeight() ? rectangle2D.getWidth() : rectangle2D.getHeight();
-		numberRadius.setSelectedItem(DoubleUtilities.getFormatString(maxRadius/30));
+		numberRadius.setSelectedItem(DoubleUtilities.getFormatString(maxRadius / 30));
 		numberRadius.setMaxValue(maxRadius);
 		numberCellSize.setMaxValue(maxRadius);
 	}

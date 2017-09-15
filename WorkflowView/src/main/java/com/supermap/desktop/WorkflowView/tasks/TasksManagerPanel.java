@@ -206,7 +206,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		setPanelTitle(this.panelWaiting, MessageFormat.format(TITLE_PATTERN, TITLE_WAITING, this.panelWaiting.getComponentCount()));
 		setPanelTitle(this.panelReady, MessageFormat.format(TITLE_PATTERN, TITLE_READY, this.panelReady.getComponentCount()));
 		setPanelTitle(this.panelRunning, MessageFormat.format(TITLE_PATTERN, TITLE_RUNNING, this.panelRunning.getComponentCount()));
-		setPanelTitle(this.panelWarning, MessageFormat.format(TITLE_PATTERN, TITLE_WARNING, this.panelRunning.getComponentCount()));
+		setPanelTitle(this.panelWarning, MessageFormat.format(TITLE_PATTERN, TITLE_WARNING, this.panelWarning.getComponentCount()));
 	}
 
 	private void setPanelTitle(JPanel panel, String title) {

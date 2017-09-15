@@ -43,6 +43,7 @@ public class SmTreeSearchComboBoxModel<T extends TreeNode> extends SearchBoxMode
 		if (getSize() > 0) {
 			this.comboBox.showPopup();
 		}
+		fireContentsChanged(comboBox, 0, getSize());
 	}
 
 	private void searchInChinese(String keyWord) {

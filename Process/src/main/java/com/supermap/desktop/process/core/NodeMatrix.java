@@ -93,7 +93,7 @@ public class NodeMatrix<T extends Object> {
 		for (Map.Entry<T, ArrayList<IRelation<T>>> entry :
 				relations.entrySet()) {
 			ArrayList<IRelation<T>> relationCollection = entry.getValue();
-			for (int j = relationCollection.size(); j > 0; j--) {
+			for (int j = relationCollection.size() - 1; j >= 0; j--) {
 				removeRelation(relationCollection.get(j));
 			}
 		}

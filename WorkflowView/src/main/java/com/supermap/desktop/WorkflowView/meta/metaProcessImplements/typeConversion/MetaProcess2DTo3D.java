@@ -75,14 +75,14 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 		settingCombine.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
 
 		if (inputType.equals(DatasetType.POINT)) {
-			outputData.setSelectedItem("result_point2DTo3D");
+			outputData.setDefaultDatasetName("result_point2DTo3D");
 			settingCombine.addParameters(comboBoxZ);
 		} else if (inputType.equals(DatasetType.LINE)) {
-			outputData.setSelectedItem("result_line2DTo3D");
+			outputData.setDefaultDatasetName("result_line2DTo3D");
 			settingCombine.addParameters(comboBoxFrom);
 			settingCombine.addParameters(comboBoxTo);
 		} else if (inputType.equals(DatasetType.REGION)) {
-			outputData.setSelectedItem("result_region2DTo3D");
+			outputData.setDefaultDatasetName("result_region2DTo3D");
 			settingCombine.addParameters(comboBoxZ);
 		}
 		parameters.setParameters(inputCombine, settingCombine, outputCombine);

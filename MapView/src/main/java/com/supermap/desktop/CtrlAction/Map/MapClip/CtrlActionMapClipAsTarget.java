@@ -96,7 +96,7 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 		final MapControl activeMapControl = activeForm.getMapControl();
 		activeMapControl.setAction(Action.SELECT);
 		activeMapControl.setLayout(null);
-		activeMapControl.add(panelSelectTargetInfo);
+		activeMapControl.add(this.panelSelectTargetInfo);
 
 		final MouseMotionListener mouseMotionListener = new MouseAdapter() {
 			@Override
@@ -204,12 +204,12 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 			recordset.dispose();
 		}
 		if (isChanged) {
-			geoRegion = geoClipRegion;
+			this.geoRegion = geoClipRegion;
 			// 当获得GeoRegion后，弹出地图裁剪对话框
 			Layer layer = layers.get(layerChangeID);
 			Recordset recordset = layer.getSelection().toRecordset();
 			if (!isMutiObjectClip || selectedGeoregions.size() <= 1) {  //选择的对象如果跨图层或者选择对象的个数小于1，则不支持多对象拆分裁剪操作
-				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion, recordset);
+				DialogMapClip dialogMapClip = new DialogMapClip(this.geoRegion, recordset);
 				dialogMapClip.showDialog();
 			} else {
 				FieldInfos fieldInfos = recordset.getFieldInfos();
@@ -228,7 +228,7 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 						t = t + 1;
 					}
 				}
-				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion, true, fieldCaptions, recordset, selectedGeoregions);
+				DialogMapClip dialogMapClip = new DialogMapClip(this.geoRegion, true, fieldCaptions, recordset, selectedGeoregions);
 				dialogMapClip.showDialog();
 			}
 		}
