@@ -109,7 +109,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 		boolean isSuccessful = false;
 
 		try {
-			IServerService service = parameterIServerLogin.login();
 			//热度图分析功能
 			CommonSettingCombine filePath = new CommonSettingCombine("filePath", parameterHDFSPath.getSelectedItem().toString());
 			CommonSettingCombine xIndex = new CommonSettingCombine("xIndex", parameterTextFieldXIndex.getSelectedItem().toString());
@@ -136,7 +135,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 			commonSettingCombine.add(input, output, drawing);
 			String finalJSon = commonSettingCombine.getFinalJSon();
 			finalJSon = finalJSon.replaceAll("\"" + parameterServiceAddress.getSelectedItem().toString() + "\"", "[\"" + parameterServiceAddress.getSelectedItem().toString() + "\"]");
-			JobResultResponse response = service.queryResult(MetaKeys.HEAT_MAP, finalJSon);
+			JobResultResponse response = parameterIServerLogin.getService().queryResult(MetaKeys.HEAT_MAP, finalJSon);
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);

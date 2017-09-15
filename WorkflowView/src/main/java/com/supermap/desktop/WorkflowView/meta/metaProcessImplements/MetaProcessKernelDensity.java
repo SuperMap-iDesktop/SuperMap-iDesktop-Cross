@@ -42,6 +42,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	}
 
 	private void initComponents() {
+		parameterIServerLogin.setInputDataType(this.parameterInputDataType);
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_KernelDensity"), "1");
 		parameterComboBoxAnalyseType.setRequisite(true);
@@ -130,7 +131,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input, analyst);
-			JobResultResponse response = service.queryResult(MetaKeys.KERNEL_DENSITY, commonSettingCombine.getFinalJSon());
+			JobResultResponse response = parameterIServerLogin.getService().queryResult(MetaKeys.KERNEL_DENSITY, commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				CursorUtilities.setDefaultCursor();

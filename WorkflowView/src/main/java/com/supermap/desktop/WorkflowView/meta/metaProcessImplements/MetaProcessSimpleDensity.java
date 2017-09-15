@@ -41,6 +41,7 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 	}
 
 	private void initComponents() {
+		parameterIServerLogin.setInputDataType(this.parameterInputDataType);
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_SimplePointDensity"), "0");
 		parameterComboBoxAnalyseType.setRequisite(true);
@@ -129,7 +130,7 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input, analyst);
-			JobResultResponse response = service.queryResult(MetaKeys.SIMPLE_DENSITY, commonSettingCombine.getFinalJSon());
+			JobResultResponse response = parameterIServerLogin.getService().queryResult(MetaKeys.SIMPLE_DENSITY, commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				CursorUtilities.setDefaultCursor();

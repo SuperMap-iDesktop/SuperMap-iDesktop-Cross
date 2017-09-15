@@ -60,6 +60,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	}
 
 	private void initComponents() {
+		parameterIServerLogin.setInputDataType(this.parameterInputDataType);
 		parameterTextFieldAddress.setRequisite(true);
 		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
 		parameterDataBaseName.setRequisite(true);
@@ -94,8 +95,8 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 
 	private void initComponentState() {
 		parameterInputDataType.parameterDataInputWay.removeAllItems();
-		parameterInputDataType.parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PGDataBase"), "2"));
-		parameterInputDataType.parameterSwitch.switchParameter("1");
+		parameterInputDataType.parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_BigDataStore"), "3"),new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PG"), "2"));
+		parameterInputDataType.parameterSwitch.switchParameter("3");
 		parameterInputDataType.setSupportDatasetType(DatasetType.LINE, DatasetType.REGION);
 		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
 		if (defaultBigDataStoreDataset != null && (DatasetType.LINE == defaultBigDataStoreDataset.getType() || DatasetType.REGION == defaultBigDataStoreDataset.getType())) {
@@ -230,7 +231,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 			}
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input, analyst, type);
-			JobResultResponse response = service.queryResult(MetaKeys.SUMMARY_REGION, commonSettingCombine.getFinalJSon());
+			JobResultResponse response = parameterIServerLogin.getService().queryResult(MetaKeys.SUMMARY_REGION, commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);

@@ -38,6 +38,7 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 	}
 
 	private void initParameters() {
+		parameterIServerLogin.setInputDataType(this.parameterInputDataType);
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_GridRegionAggregationType"), "SUMMARYMESH");
 		parameterAggregationType.setRequisite(true);
 		parameterAggregationType.setItems(parameterDataNode);
@@ -89,7 +90,6 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 		boolean isSuccessful;
 		try {
 			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
-			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
 			CommonSettingCombine fields = new CommonSettingCombine("fields", parameterWeightIndex.getSelectedItem().toString());
@@ -103,7 +103,7 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 			CommonSettingCombine type = new CommonSettingCombine("type", parameterAggregationType.getSelectedData().toString());
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input, analyst, type);
-			JobResultResponse response = service.queryResult(MetaKeys.GRIDREGION_AGGREGATION, commonSettingCombine.getFinalJSon());
+			JobResultResponse response = parameterIServerLogin.getService().queryResult(MetaKeys.GRIDREGION_AGGREGATION, commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);
