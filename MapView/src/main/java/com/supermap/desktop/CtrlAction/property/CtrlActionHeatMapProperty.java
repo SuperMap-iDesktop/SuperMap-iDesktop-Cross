@@ -12,6 +12,7 @@ import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.layer.propertycontrols.LayerPropertyContainer;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilities.ColorUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGridAggregation;
 import com.supermap.mapping.LayerHeatmap;
@@ -60,15 +61,11 @@ public class CtrlActionHeatMapProperty extends CtrlAction {
 			}
 			ColorsComboBox colorsComboBox = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Map_GridAggregation"));
 
-			java.awt.Color color = java.awt.Color.WHITE;
 			java.awt.Color maxColor = colorsComboBox.getSelectedItem().get(0);
-			LayerHeatmap layerHeatmap = ((IFormMap) activeForm).getMapControl().getMap().getLayers().AddHeatmap(result.getDataset(), 20, maxColor, color);
-
-//			System.out.println(layerHeatmap.getIsUserDef());
-//			System.out.println(layerHeatmap.getInternalMaxValue());
-//			System.out.println(layerHeatmap.getInternalMinValue());
-//			System.out.println(layerHeatmap.getMaxValue());
-//			System.out.println(layerHeatmap.getMinValue());
+			java.awt.Color minColor = colorsComboBox.getSelectedItem().get(colorsComboBox.getSelectedItem().getCount() - 1);
+			maxColor = ColorUtilities.resetColor(maxColor, 10);
+			minColor = ColorUtilities.resetColor(minColor, 100);
+			LayerHeatmap layerHeatmap = ((IFormMap) activeForm).getMapControl().getMap().getLayers().AddHeatmap(result.getDataset(), 20, maxColor, minColor);
 
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override

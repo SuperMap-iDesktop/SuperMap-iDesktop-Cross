@@ -11,6 +11,7 @@ import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.layer.propertycontrols.LayerPropertyContainer;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilities.ColorUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGridAggregation;
 import com.supermap.mapping.LayerHeatmap;
@@ -60,29 +61,15 @@ public class CtrlActionGridAggregationProperty extends CtrlAction {
 			}
 			ColorsComboBox colorsComboBox = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Map_GridAggregation"));
 
-			java.awt.Color color = java.awt.Color.WHITE;
+
 			java.awt.Color maxColor = colorsComboBox.getSelectedItem().get(0);
-//			System.out.println("maxcolor");
-//			System.out.println(maxColor);
-
-//			System.out.println(colorsComboBox.getSelectedItem().getCount());
-			LayerGridAggregation layerGridAggregation = ((IFormMap) activeForm).getMapControl().getMap().getLayers().AddGridAggregation(result.getDataset(), maxColor, color);
-//			GeoStyle lineStyle=new GeoStyle();
-//			lineStyle.setLineColor(Color.WHITE);
-//			lineStyle.setLineWidth(0);
-//			layerGridAggregation.setGridLineStyle(lineStyle);
-//			layerGridAggregation.updateData();
-//			if (layerGridAggregation.getGridLineStyle()==null){
-//				System.out.println("lineStyle is null");
-//			}
-
-//			TextStyle textStyle=new TextStyle();
-//			textStyle.setBackColor(Color.BLACK);
-//			layerGridAggregation.setGridLabelStyle(textStyle);
-//			layerGridAggregation.updateData();
-//			if (layerGridAggregation.getGridLabelStyle()==null){
-//				System.out.println("textStyle is null");
-//			}
+			java.awt.Color minColor = colorsComboBox.getSelectedItem().get(colorsComboBox.getSelectedItem().getCount() - 1);
+			maxColor = ColorUtilities.resetColor(maxColor, 20);
+			minColor = ColorUtilities.resetColor(minColor, 40);
+			LayerGridAggregation layerGridAggregation = ((IFormMap) activeForm).getMapControl().getMap().getLayers().AddGridAggregation(result.getDataset(), maxColor, minColor);
+			layerGridAggregation.setGridWidth(60);
+			layerGridAggregation.setGridHeight(60);
+			layerGridAggregation.updateData();
 
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override

@@ -44,6 +44,27 @@ public interface ITextStyle extends IGeoTextStyle {
 	void setTextStyleSet(boolean isTextStyleSet);
 
 	/**
+	 * 是否显示对齐
+	 *
+	 * @param isShowAlign
+	 */
+	void setAlign(boolean isShowAlign);
+
+	/**
+	 * 是否显示字高
+	 *
+	 * @param isShowFontHeight
+	 */
+	void setFontHeight(boolean isShowFontHeight);
+
+	/**
+	 * 是否显示旋转角度
+	 *
+	 * @param isShowRotationAngl
+	 */
+	void setRotationAngl(boolean isShowRotationAngl);
+
+	/**
 	 * 初始化界面
 	 */
 	void initTextBasicPanel();
