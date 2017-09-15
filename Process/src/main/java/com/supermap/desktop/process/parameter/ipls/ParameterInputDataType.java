@@ -27,14 +27,18 @@ public class ParameterInputDataType extends ParameterCombine {
 	private ParameterDefaultValueTextField parameterSpark = new ParameterDefaultValueTextField(ProcessProperties.getString("String_numSlices"));
 
 	private ParameterBigDatasourceDatasource parameterSourceDatasource = new ParameterBigDatasourceDatasource();
-	private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset();
+	public static ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset();
 	private ParameterComboBox parameterDatasetType1 = new ParameterComboBox(ProcessProperties.getString("String_DatasetType"));
 	private ParameterTextField parameterEngineType = new ParameterTextField(ProcessProperties.getString("String_EngineType"));
 	private ParameterDefaultValueTextField parameterDataBaseName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_DataBaseName"));
 	private ParameterDefaultValueTextField parameterTextFieldAddress = new ParameterDefaultValueTextField(CoreProperties.getString("String_Server"));
 	private ParameterDefaultValueTextField parameterTextFieldUserName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_UserName"));
 	private ParameterPassword parameterTextFieldPassword = new ParameterPassword(ProcessProperties.getString("String_PassWord"));
+
+	public ParameterComboBox bigDataStoreName = new ParameterComboBox(ProcessProperties.getString("String_DatasetName"));
+	public ParameterTextField bigDataStoreType = new ParameterTextField(ProcessProperties.getString("String_DatasetType"));
 	public ParameterSwitch parameterSwitch = new ParameterSwitch();
+
 	public ParameterInputDataType() {
 		super();
 		initComponents();
@@ -43,8 +47,8 @@ public class ParameterInputDataType extends ParameterCombine {
 	}
 
 	private void initComponents() {
-		parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_CSVFile"), "0"),
-				new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PGDataBase"), "2"));
+		parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_CSVFile"), "0"),new ParameterDataNode(ProcessProperties.getString("String_BigDataStore"), "3"),
+				new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PG"), "2"));
 		//csv文件
 		parameterHDFSPath.setSelectedItem("hdfs://192.168.20.189:9000/data/newyork_taxi_2013-01_14k.csv");
 		ParameterCombine parameterCombine = new ParameterCombine();
@@ -89,9 +93,13 @@ public class ParameterInputDataType extends ParameterCombine {
 				parameterSourceDataset,
 				parameterDatasetType1);
 
+		//BigDataStore
+		ParameterCombine parameterCombine3 = new ParameterCombine();
+		parameterCombine3.addParameters(bigDataStoreName, bigDataStoreType);
 		parameterSwitch.add("0", parameterCombine);
 		parameterSwitch.add("1", parameterCombine1);
 		parameterSwitch.add("2", parameterCombine2);
+		parameterSwitch.add("3", parameterCombine3);
 		parameterDataInputWay.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -100,10 +108,30 @@ public class ParameterInputDataType extends ParameterCombine {
 						parameterSwitch.switchParameter("0");
 					} else if (parameterDataInputWay.getSelectedData().toString().equals("1")) {
 						parameterSwitch.switchParameter("1");
-					} else {
+					} else if (parameterDataInputWay.getSelectedData().toString().equals("2")) {
 						parameterSwitch.switchParameter("2");
+					} else {
+						parameterSwitch.switchParameter("3");
 					}
 
+				}
+			}
+		});
+		bigDataStoreType.setEnabled(false);
+		bigDataStoreName.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (null != (((ParameterComboBox) evt.getSource()).getSelectedItem())) {
+					String datasetTypeName = ((ParameterDataNode) (((ParameterComboBox) evt.getSource())).getSelectedItem()).getData().toString();
+					if (datasetTypeName.equals("POINT")) {
+						bigDataStoreType.setSelectedItem(DatasetTypeUtilities.toString(DatasetType.POINT));
+					}
+					if (datasetTypeName.equals("LINE")) {
+						bigDataStoreType.setSelectedItem(DatasetTypeUtilities.toString(DatasetType.LINE));
+					}
+					if (datasetTypeName.equals("REGION")) {
+						bigDataStoreType.setSelectedItem(DatasetTypeUtilities.toString(DatasetType.REGION));
+					}
 				}
 			}
 		});
@@ -130,6 +158,9 @@ public class ParameterInputDataType extends ParameterCombine {
 		if (parameterDataInputWay.getSelectedData().toString().equals("0")) {
 			CommonSettingCombine filePath = new CommonSettingCombine("filePath", parameterHDFSPath.getSelectedItem().toString());
 			input.add(filePath);
+		} else if (parameterDataInputWay.getSelectedData().toString().equals("3")) {
+			CommonSettingCombine datasetName = new CommonSettingCombine("datasetName", ((ParameterDataNode)bigDataStoreName.getSelectedItem()).getDescribe());
+			input.add(datasetName);
 		} else if (parameterDataInputWay.getSelectedData().toString().equals("1")) {
 			CommonSettingCombine type = new CommonSettingCombine("type", parameterDataSourceType.getSelectedItem().toString());
 			CommonSettingCombine url = new CommonSettingCombine("url", parameterDataSourcePath.getSelectedItem().toString());
@@ -140,7 +171,6 @@ public class ParameterInputDataType extends ParameterCombine {
 			input.add(datasetInfo, numSlices);
 		} else {
 			Dataset sourceDataset = parameterSourceDataset.getSelectedDataset();
-			//CommonSettingCombine dataSourceName = new CommonSettingCombine("dataSourceName", parameterSourceDatasource.getSelectedItem().getAlias());
 			CommonSettingCombine name = new CommonSettingCombine("name", sourceDataset.getName());
 			CommonSettingCombine type = new CommonSettingCombine("type", (String) parameterDatasetType1.getSelectedData());
 			CommonSettingCombine engineType = new CommonSettingCombine("engineType", parameterEngineType.getSelectedItem().toString());
@@ -163,8 +193,8 @@ public class ParameterInputDataType extends ParameterCombine {
 			parameterDatasetType1.addItem(new ParameterDataNode(DatasetTypeUtilities.toString(datasetType), datasetType.name()));
 		}
 		parameterSourceDataset.setDatasetTypes(datasetTypes);
-
 	}
+
 }
 
 

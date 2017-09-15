@@ -48,6 +48,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 	}
 
 	private void initComponents() {
+		parameterIServerLogin.setInputDataType(this.parameterInputDataType);
 		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
 		parameterTextFieldAddress.setRequisite(true);
 		parameterDataBaseName.setDefaultWarningValue("supermap");
@@ -84,7 +85,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 		parameters.addParameters(parameterIServerLogin, parameterInputDataType, parameterCombineOverlay, parameterCombineSetting);
 		parameters.addInputParameters("overlay", Type.UNKOWN, parameterCombineOverlay);// 缺少对应的类型
-		parameters.addOutputParameters("OverlayResult", ProcessOutputResultProperties.getString("String_VectorAnalysisResult"), BasicTypes.STRING, null);
+		parameters.addOutputParameters("OverlayResult", ProcessOutputResultProperties.getString("String_VectorAnalysisResult"), BasicTypes.STRING);
 	}
 
 	private void initComponentState() {
@@ -129,7 +130,7 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input, analyst);
-			JobResultResponse response = service.queryResult(MetaKeys.OVERLAYANALYSTGEO, commonSettingCombine.getFinalJSon());
+			JobResultResponse response = parameterIServerLogin.getService().queryResult(MetaKeys.OVERLAYANALYSTGEO, commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);

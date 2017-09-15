@@ -48,6 +48,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 	}
 
 	private void initComponents() {
+		parameterIServerLogin.setInputDataType(this.parameterInputDataType);
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_PolygonAggregationType"), "SUMMARYREGION");
 		parameterAggregationType.setRequisite(true);
 		parameterAggregationType.setItems(parameterDataNode);
@@ -136,7 +137,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input, analyst, type);
 
-			JobResultResponse response = service.queryResult(MetaKeys.POLYGON_AGGREGATION, commonSettingCombine.getFinalJSon());
+			JobResultResponse response = parameterIServerLogin.getService().queryResult(MetaKeys.POLYGON_AGGREGATION, commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);
