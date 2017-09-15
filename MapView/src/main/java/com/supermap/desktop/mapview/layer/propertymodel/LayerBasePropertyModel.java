@@ -107,7 +107,7 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 
 	/**
 	 * 使用指定 model 的数据设置自己的属性 子类必须重写这个方法
-	 * 
+	 *
 	 * @param model
 	 */
 	@Override
@@ -131,7 +131,7 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 
 	/**
 	 * 子类必须重写这个方法
-	 * 
+	 *
 	 * @param model
 	 * @return
 	 */
@@ -192,7 +192,7 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 
 	/**
 	 * 根据指定的图层初始化数据
-	 * 
+	 *
 	 * @param layers
 	 * @param formMap
 	 */
@@ -235,7 +235,7 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 		this.minVisibleScale = 0.0;
 		this.maxVisibleScale = 0.0;
 
-		if (getLayers() != null && getLayers().length > 0 && getLayers()[0]!=null && !getLayers()[0].isDisposed()) {
+		if (getLayers() != null && getLayers().length > 0 && getLayers()[0] != null && !getLayers()[0].isDisposed()) {
 			this.isVisible = getLayers()[0].isVisible();
 			this.isEditable = getLayers()[0].isEditable();
 			this.isSelectable = getLayers()[0].isSelectable();
@@ -261,6 +261,7 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 	}
 
 	// @formatter:off
+
 	/**
 	 * 检查属性是否可用的过程，大致是，先初始化一个临时 HashMap，所有允许修改的属性都初始化为 true， 然后根据指定的算法得到最终的可用值，再与 PropertyModel 本身存储的 PropertyEnabled 进行比对。
 	 * 有一些情况需要注意。
@@ -271,11 +272,11 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 	 * 5--如果属性的可用状态与 PropertyModel 某些固定属性值相关，那么就需要考虑在固定属性值改变的时候如何获得正确的可用状态。
 	 * 6--往往与固定属性值相关的可用状态，在操作过程中都是会改变的，而相反，则仅在 PropertyModel 初始化拿到图层集合的时候就确定，之后不会再改变。
 	 * 7--如果属性的可用状态仅和 PropertyModel 某些固定属性值的设置相关，而与图层的图层类型、图层的数据集类型什么的无关，这种情况属性是否可用的判断无需对图层做遍历，
-	 *     只用关联属性是否可用、关联属性的值即可确定属性可用状态。在关联属性值改变的时候检查可用状态，并发送事件。
+	 * 只用关联属性是否可用、关联属性的值即可确定属性可用状态。在关联属性值改变的时候检查可用状态，并发送事件。
 	 * 8--如果属性的可用状态与 PropertyModel 某些固定属性值的设置相关，又与图层的状态（图层的类型、图层绑定的数据集类型等）相关，那么在做
-	 *     遍历的时候，需要使用一个临时 HashMap（所有属性都初始化为 true，不允许编辑的特殊属性除外），来进行运算。在遍历结束之后，再与 PropertyModel 的 PropertyEabled
-	 *     进行匹配。如果不使用临时 HashMap，而直接使用 PropertyEnabled 来进行遍历运算，由于需要使用 enabled=enabled && expression 这样的表达式，那么一旦关联的属性在某个
-	 *     时候值改变导致属性可用状态变成了 false，在之后的操作中，不论怎么改，都无法再可用了。
+	 * 遍历的时候，需要使用一个临时 HashMap（所有属性都初始化为 true，不允许编辑的特殊属性除外），来进行运算。在遍历结束之后，再与 PropertyModel 的 PropertyEabled
+	 * 进行匹配。如果不使用临时 HashMap，而直接使用 PropertyEnabled 来进行遍历运算，由于需要使用 enabled=enabled && expression 这样的表达式，那么一旦关联的属性在某个
+	 * 时候值改变导致属性可用状态变成了 false，在之后的操作中，不论怎么改，都无法再可用了。
 	 */
 	// @formatter:on
 	private void checkPropertyEnbled() {
@@ -303,6 +304,10 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 					boolean isDatasetNull = layer.getDataset() == null;
 
 					boolean isDatasetVector = !isDatasetNull && layer.getDataset() instanceof DatasetVector;
+					//热力图和网格图可选择和可捕捉不可用
+					boolean isHeatmap = layer instanceof LayerHeatmap;
+
+					boolean isAggregation = layer instanceof LayerGridAggregation;
 
 					// 只读数据源下的数据集以及只读数据集不可编辑
 					boolean isReadOnly = !isDatasetNull && (layer.getDataset().getDatasource().isReadOnly() || layer.getDataset().isReadOnly());
@@ -313,11 +318,11 @@ public class LayerBasePropertyModel extends LayerPropertyModel {
 					// 标签、统计、等级符号专题图，不可选择，不可编辑，不可捕捉
 					boolean isInvalidThemeLayer = layer.getTheme() != null
 							&& (layer.getTheme().getType() == ThemeType.LABEL || layer.getTheme().getType() == ThemeType.GRADUATEDSYMBOL || layer.getTheme()
-									.getType() == ThemeType.GRAPH);
+							.getType() == ThemeType.GRAPH);
 
 					isEditableEnabled = isEditableEnabled && isVisibleSettingsValue && isDatasetVector && !isReadOnly && !isCanEditLayer && !isInvalidThemeLayer;
-					isSelectableEnabled = isSelectableEnabled && isVisibleSettingsValue && isDatasetVector && !isInvalidThemeLayer;
-					isSnapableEnabled = isSnapableEnabled && isVisibleSettingsValue && isDatasetVector && !isInvalidThemeLayer;
+					isSelectableEnabled = isSelectableEnabled && isVisibleSettingsValue && isDatasetVector && !isInvalidThemeLayer && !isHeatmap && !isAggregation;
+					isSnapableEnabled = isSnapableEnabled && isVisibleSettingsValue && isDatasetVector && !isInvalidThemeLayer && !isHeatmap && !isAggregation;
 					transparenceEnabled = transparenceEnabled && !(layer instanceof LayerGroup);
 				}
 

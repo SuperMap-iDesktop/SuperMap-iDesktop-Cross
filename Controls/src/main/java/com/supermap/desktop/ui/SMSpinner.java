@@ -29,6 +29,8 @@ public class SMSpinner extends JSpinner implements DocumentListener {
 
 		if (getEditor() instanceof DefaultEditor) {
 			DefaultEditor editor = (DefaultEditor) getEditor();
+			JTextField text = editor.getTextField();
+			text.setHorizontalAlignment(JTextField.LEFT);
 			editor.getTextField().getDocument().addDocumentListener(this);
 		}
 	}
@@ -77,7 +79,8 @@ public class SMSpinner extends JSpinner implements DocumentListener {
 				}
 			} catch (ParseException e1) {
 				try {
-					this.setValue(lastValue);
+					editor.getTextField().setValue(lastValue);
+					//this.setValue(lastValue);
 				} catch (Exception e) {
 					//ignore
 				}
@@ -94,12 +97,20 @@ public class SMSpinner extends JSpinner implements DocumentListener {
 
 		// 记录更新之前光标位置到末尾的位置差
 		int preCaretToEnd = editor.getTextField().getText().length() - editor.getTextField().getCaretPosition();
-
 		updateEdit();
 
 		// 设置光标所处的位置
 		if (editor.getTextField().getText().length() - preCaretToEnd >= 0) {
 			editor.getTextField().setCaretPosition(editor.getTextField().getText().length() - preCaretToEnd);
 		}
+
+		// When you click arrow buttons, the cursor goes to the front of the text,
+		// and actually you need to set the cursor behind the text. So, with the following code.
+		//However, this will cause the cursor to flash, so far there is no good solution, so for the time being.
+		if (editor.getTextField().getCaretPosition()==0 && (editor.getTextField().getCaretPosition()!=editor.getTextField().getText().length()-1
+		|| editor.getTextField().getText().length()==1)){
+			editor.getTextField().setCaretPosition(editor.getTextField().getText().length());
+		}
 	}
+
 }

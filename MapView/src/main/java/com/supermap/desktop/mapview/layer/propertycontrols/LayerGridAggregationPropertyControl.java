@@ -9,6 +9,7 @@ import com.supermap.desktop.DefaultValues;
 import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
+import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerGridAggregationPropertyModel;
 import com.supermap.desktop.ui.SMSpinner;
@@ -91,8 +92,10 @@ public class LayerGridAggregationPropertyControl extends AbstractLayerPropertyCo
 		this.setBorder(BorderFactory.createTitledBorder("parameterSetting"));
 		this.labelGridField = new JLabel("GridField");
 		this.comboBoxGridField = new JComboBox();
+		this.comboBoxGridField.setUI(new DefaultComboBoxUI());
 		this.labelGridType = new JLabel("GridType");
 		this.comboBoxGridType = new JComboBox();
+		this.comboBoxGridType.setUI(new DefaultComboBoxUI());
 		this.labelLength = new JLabel("Length");
 		this.textFieldLength = new SmTextFieldLegit();
 		this.labelPixel = new JLabel("Pixel");
@@ -116,7 +119,7 @@ public class LayerGridAggregationPropertyControl extends AbstractLayerPropertyCo
 		this.labelBorderTransparence = new JLabel("BorderTransparence");
 		this.smSpinnerLineColorTransparence = new SMSpinner(new SpinnerNumberModel(0, 0, 100, 1));
 		this.labelBoderWidth = new JLabel("BoderWidth");
-		this.smSpinnerLineWidth = new SMSpinner(new SpinnerNumberModel(0, 0, 20, 1));
+		this.smSpinnerLineWidth = new SMSpinner(new SpinnerNumberModel(0.1, 0.1, 20, 1));
 		this.buttonSetingLabel.setEnabled(false);
 		this.dataCellNULL = new DataCell();
 		this.dataCellSolidLine = new DataCell();
@@ -496,7 +499,7 @@ public class LayerGridAggregationPropertyControl extends AbstractLayerPropertyCo
 			} else {
 				this.lineStyle = new GeoStyle();
 				this.lineStyle.setLineColor(Color.WHITE);
-				this.lineStyle.setLineWidth(0);
+				this.lineStyle.setLineWidth(0.1);
 				this.componentDropDownLineColor.setColor(this.lineStyle.getLineColor());
 				this.smSpinnerLineColorTransparence.setValue((int) Math.round((1.0 - this.lineStyle.getLineColor().getAlpha() / 255.0) * 100));
 				this.smSpinnerLineWidth.setValue(this.lineStyle.getLineWidth());
@@ -602,11 +605,12 @@ public class LayerGridAggregationPropertyControl extends AbstractLayerPropertyCo
 		if (this.componentDropDownLineColor.getColor() == null) {
 			this.componentDropDownLineColor.setColor(Color.WHITE);
 		}
+		this.componentDropDownLineColor.setColor(resetColor(this.componentDropDownLineColor.getColor(), (int) this.smSpinnerLineColorTransparence.getValue()));
 		this.lineStyle.setLineColor(this.componentDropDownLineColor.getColor());
-		int temp = (int) Math.round((1.0 - this.componentDropDownLineColor.getColor().getAlpha() / 255.0) * 100);
-		this.smSpinnerLineColorTransparence.removeChangeListener(this.changeListenerLineColorTransparence);
-		this.smSpinnerLineColorTransparence.setValue(temp);
-		this.smSpinnerLineColorTransparence.addChangeListener(this.changeListenerLineColorTransparence);
+//		int temp = (int) Math.round((1.0 - this.componentDropDownLineColor.getColor().getAlpha() / 255.0) * 100);
+//		this.smSpinnerLineColorTransparence.removeChangeListener(this.changeListenerLineColorTransparence);
+//		this.smSpinnerLineColorTransparence.setValue(temp);
+//		this.smSpinnerLineColorTransparence.addChangeListener(this.changeListenerLineColorTransparence);
 		lineStyleChange();
 	}
 
