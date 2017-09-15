@@ -1,22 +1,11 @@
 package com.supermap.desktop.ui.controls.datasetChoose;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
-import com.supermap.data.Layouts;
-import com.supermap.data.Maps;
-import com.supermap.data.Scenes;
-import com.supermap.data.Workspace;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.DatasetTypeComboBox;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
-import com.supermap.desktop.ui.controls.TextFieldSearch;
-import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -26,26 +15,10 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.event.*;
+import javax.swing.tree.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -232,12 +205,12 @@ public class DatasetChooser extends SmDialog {
 		JScrollPane scrollPaneTable = new JScrollPane();
 		GroupLayout gl_panelTable = new GroupLayout(panelTable);
 		gl_panelTable.setHorizontalGroup(
-			gl_panelTable.createParallelGroup(Alignment.LEADING)
-				.addComponent(scrollPaneTable, GroupLayout.PREFERRED_SIZE, 424, Short.MAX_VALUE)
+				gl_panelTable.createParallelGroup(Alignment.LEADING)
+						.addComponent(scrollPaneTable, GroupLayout.PREFERRED_SIZE, 424, Short.MAX_VALUE)
 		);
 		gl_panelTable.setVerticalGroup(
-			gl_panelTable.createParallelGroup(Alignment.LEADING)
-				.addComponent(scrollPaneTable, GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
+				gl_panelTable.createParallelGroup(Alignment.LEADING)
+						.addComponent(scrollPaneTable, GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
 		);
 		//@formatter:on
 		this.buttonOk.addActionListener(new CommonButtonAction());
@@ -428,6 +401,9 @@ public class DatasetChooser extends SmDialog {
 			if (this.workspaceTree.getLastSelectedPathComponent() != null) {
 				TreeNodeData userObject = (TreeNodeData) ((DefaultMutableTreeNode) this.workspaceTree.getLastSelectedPathComponent()).getUserObject();
 				if (userObject == null) {
+					return;
+				}
+				if (null == currentDatasetChoose) {
 					return;
 				}
 				currentDatasetChoose.initializeTableInfo(userObject.getData());

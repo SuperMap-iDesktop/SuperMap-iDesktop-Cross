@@ -106,7 +106,7 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 		comboBoxField.setFieldType(fieldType);
 		comboBoxField.setShowSystemField(true);
 		comboBoxField.setSelectedItem("SmID");
-		resultDataset.setSelectedItem("result_simpleDensity");
+		resultDataset.setDefaultDatasetName("result_simpleDensity");
 		numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem()));
 		numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem()));
 		numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem()));

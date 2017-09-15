@@ -33,6 +33,7 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 		inputDatasource = new ParameterDatasourceConstrained();
 		inputDataset = new ParameterSingleDataset(DatasetType.POINTEPS, DatasetType.LINEEPS, DatasetType.REGIONEPS);
 		outputData = new ParameterSaveDataset();
+		outputData.setDefaultDatasetName("result_EPSToSimple");
 
 		ParameterCombine inputCombine = new ParameterCombine();
 		inputCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
@@ -53,11 +54,11 @@ public class MetaProcessEPSToSimple extends MetaProcessTypeConversion {
 			inputDatasource.setSelectedItem(dataset.getDatasource());
 			inputDataset.setSelectedItem(dataset);
 			if (dataset.getType().equals(DatasetType.POINTEPS)) {
-				outputData.setSelectedItem("result_pointEPSToSimple");
+				outputData.setDefaultDatasetName("result_pointEPSToSimple");
 			} else if (dataset.getType().equals(DatasetType.LINEEPS)) {
-				outputData.setSelectedItem("result_lineEPSToSimple");
+				outputData.setDefaultDatasetName("result_lineEPSToSimple");
 			} else if (dataset.getType().equals(DatasetType.REGIONEPS)) {
-				outputData.setSelectedItem("result_regionEPSToSimple");
+				outputData.setDefaultDatasetName("result_regionEPSToSimple");
 			}
 		}
 	}
