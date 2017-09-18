@@ -4,6 +4,8 @@ import com.supermap.data.Rectangle2D;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.core.Time;
+import com.supermap.desktop.core.TimeType;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.mapping.ImageType;
@@ -30,7 +32,7 @@ public class MapOutputPictureProgressCallable extends UpdateProgressCallable {
 		@Override
 		public void stepped(SteppedEvent arg0) {
 			try {
-				updateProgress(arg0.getPercent(), String.valueOf(arg0.getRemainTime()), arg0.getMessage());
+				updateProgress(arg0.getPercent(), Time.toString(arg0.getRemainTime(), TimeType.SECOND), arg0.getMessage());
 			} catch (CancellationException e) {
 				arg0.setCancel(true);
 			}

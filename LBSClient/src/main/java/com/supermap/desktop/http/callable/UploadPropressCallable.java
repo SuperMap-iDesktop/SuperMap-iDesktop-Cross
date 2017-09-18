@@ -3,9 +3,11 @@ package com.supermap.desktop.http.callable;
 import com.supermap.Interface.ILBSTask;
 import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.core.Time;
+import com.supermap.desktop.core.TimeType;
 import com.supermap.desktop.http.upload.UploadUtils;
-import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.lbs.FileInfo;
+import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.utilities.ManagerXMLParser;
 
 import java.util.concurrent.CancellationException;
@@ -29,7 +31,7 @@ public class UploadPropressCallable extends UpdateProgressCallable {
 			try {
 				ILBSTask fileManager = (ILBSTask) getUpdate();
 				if (event != null && event.getDownloadInfo() != null && event.getDownloadInfo().equals(fileManager.getFileInfo())) {
-					updateProgress(event.getProgress(), String.valueOf(event.getRemainTime()), event.getDownloadInfo().getFileName());
+					updateProgress(event.getProgress(), Time.toString(event.getRemainTime(), TimeType.SECOND), event.getDownloadInfo().getFileName());
 				}
 			} catch (CancellationException e) {
 			}

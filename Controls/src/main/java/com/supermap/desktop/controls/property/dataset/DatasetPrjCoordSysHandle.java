@@ -1,17 +1,12 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import com.supermap.data.CoordSysTransMethod;
-import com.supermap.data.CoordSysTransParameter;
-import com.supermap.data.CoordSysTranslator;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.PrjCoordSysHandle;
 import com.supermap.desktop.controls.utilities.WorkspaceTreeManagerUIUtilities;
+import com.supermap.desktop.core.Time;
+import com.supermap.desktop.core.TimeType;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
@@ -61,7 +56,7 @@ public class DatasetPrjCoordSysHandle extends PrjCoordSysHandle {
 
 		private void setSteppedListenerStepped(SteppedEvent arg0) {
 			try {
-				updateProgress(arg0.getPercent(), String.valueOf(arg0.getRemainTime()), arg0.getMessage());
+				updateProgress(arg0.getPercent(), Time.toString(arg0.getRemainTime(), TimeType.SECOND), arg0.getMessage());
 			} catch (CancellationException e) {
 				if (dataset instanceof DatasetVector) {
 					int result = UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_Warning_DatasetPrjCoordSysTranslatorCancel"));

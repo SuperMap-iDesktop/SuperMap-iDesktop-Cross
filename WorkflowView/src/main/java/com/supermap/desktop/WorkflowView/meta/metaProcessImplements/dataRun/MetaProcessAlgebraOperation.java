@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 /**
  * Created by lixiaoyao on 2017/8/29.
+ * 栅格代数运算
  */
 public class MetaProcessAlgebraOperation extends MetaProcess {
 	private final static String OUTPUT_DATA = "AlgebraOperationResult";
