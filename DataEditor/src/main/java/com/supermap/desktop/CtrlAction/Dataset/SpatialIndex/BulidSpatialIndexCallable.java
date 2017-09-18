@@ -1,5 +1,7 @@
 package com.supermap.desktop.CtrlAction.Dataset.SpatialIndex;
 
+import com.supermap.desktop.core.Time;
+import com.supermap.desktop.core.TimeType;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 
@@ -43,7 +45,7 @@ public class BulidSpatialIndexCallable extends UpdateProgressCallable {
 	private String getRemainTime(int i, long startTime) {
 		long currentTimeMillis = System.currentTimeMillis();
 		long remainTime = (currentTimeMillis - startTime) / i * (totalSize - i);
-		return String.valueOf(remainTime / 1000);
+		return Time.toString(remainTime, TimeType.MILLISECOND);
 	}
 
 }
