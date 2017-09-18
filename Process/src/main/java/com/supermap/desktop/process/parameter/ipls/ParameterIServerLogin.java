@@ -8,10 +8,14 @@ import com.supermap.desktop.lbs.params.IServerLoginInfo;
 import com.supermap.desktop.lbs.params.QueryDatasetNamesResult;
 import com.supermap.desktop.lbs.params.QueryDatasetTypeResult;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.parameter.interfaces.IConGetter;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.utilities.StringUtilities;
 import org.apache.http.impl.client.CloseableHttpClient;
 
+import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -47,41 +51,73 @@ public class ParameterIServerLogin extends ParameterCombine {
 		parameterTextFieldAddress.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				service = (IServerServiceImpl) login();
-				if (null != IServerLoginInfo.client && null != evt.getNewValue()) {
-					String newValue = evt.getNewValue().toString();
-					String datasetsURL = service.HTTP_STR + newValue + DATASETS_URL;
-					String resultDatasets = service.query(datasetsURL);
-					QueryDatasetNamesResult queryDatasetNamesResult = JSON.parseObject(resultDatasets, QueryDatasetNamesResult.class);
-					ParameterDataNode parameterDataNode = null;
-					DatasetType[] datasetTypes = ParameterInputDataType.parameterSourceDataset.getDatasetTypes();
-					if (null == inputDataType) {
-						return;
-					}
-					for (int i = 0, size = queryDatasetNamesResult.datasetNames.size(); i < size; i++) {
-						String resultDataset = service.query(service.HTTP_STR + newValue + DATASETS_URL + "/" + queryDatasetNamesResult.datasetNames.get(i));
-						QueryDatasetTypeResult queryDatasetTypeResult = JSON.parseObject(resultDataset, QueryDatasetTypeResult.class);
-						String datasetType = queryDatasetTypeResult.DatasetInfo.type;
-						for (int j = 0; j < datasetTypes.length; j++) {
-							if (datasetTypes[j].name().equalsIgnoreCase(datasetType)) {
-								parameterDataNode = new ParameterDataNode(queryDatasetNamesResult.datasetNames.get(i), datasetType);
-								inputDataType.bigDataStoreName.addItem(parameterDataNode);
-							}
-						}
-					}
-					inputDataType.bigDataStoreName.setSelectedItem(parameterDataNode);
-				}
-
+				loginAndInitInputDataType();
+			}
+		});
+		parameterTextFieldUserName.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				loginAndInitInputDataType();
+			}
+		});
+		parameterTextFieldPassword.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				loginAndInitInputDataType();
 			}
 		});
 	}
 
+	private void loginAndInitInputDataType() {
+		boolean result = login();
+		if (!result) {
+			removeAllDatasets();
+			return;
+		}
+		if (null != IServerLoginInfo.client && null != parameterTextFieldAddress.getSelectedItem()) {
+			removeAllDatasets();
+			String ipAndPort = parameterTextFieldAddress.getSelectedItem().toString();
+			String datasetsURL = service.HTTP_STR + ipAndPort + DATASETS_URL;
+			String resultDatasets = service.query(datasetsURL);
+			QueryDatasetNamesResult queryDatasetNamesResult = JSON.parseObject(resultDatasets, QueryDatasetNamesResult.class);
+			ParameterDataNode parameterDataNode = null;
+			DatasetType[] datasetTypes = ParameterInputDataType.parameterSourceDataset.getDatasetTypes();
+			if (null == inputDataType) {
+				return;
+			}
+			for (int i = 0, size = queryDatasetNamesResult.datasetNames.size(); i < size; i++) {
+				String resultDataset = service.query(service.HTTP_STR + ipAndPort + DATASETS_URL + "/" + queryDatasetNamesResult.datasetNames.get(i));
+				QueryDatasetTypeResult queryDatasetTypeResult = JSON.parseObject(resultDataset, QueryDatasetTypeResult.class);
+				String datasetType = queryDatasetTypeResult.DatasetInfo.type;
+				for (int j = 0; j < datasetTypes.length; j++) {
+					if (datasetTypes[j].name().equalsIgnoreCase(datasetType)) {
+						//DataCell
+						parameterDataNode = new ParameterDataNode(queryDatasetNamesResult.datasetNames.get(i), datasetType);
+						inputDataType.bigDataStoreName.addItem(parameterDataNode);
+					}
+				}
+			}
+			inputDataType.bigDataStoreName.setSelectedItem(parameterDataNode);
+		}
+	}
 
-	public synchronized IServerService login() {
+	private void removeAllDatasets() {
+		if (inputDataType.bigDataStoreName.getItems().size() > 0) {
+			inputDataType.bigDataStoreName.removeAllItems();
+		}
+	}
+
+
+	public synchronized boolean login() {
+		boolean result = false;
 		String username = (String) parameterTextFieldUserName.getSelectedItem();
 		String password = (String) parameterTextFieldPassword.getSelectedItem();
-		IServerService service = new IServerServiceImpl();
 		String serviceInfo = (String) parameterTextFieldAddress.getSelectedItem();
+		if (StringUtilities.isNullOrEmpty(serviceInfo) || StringUtilities.isNullOrEmpty(username)
+				|| StringUtilities.isNullOrEmpty(password)) {
+			return result;
+		}
+		service = new IServerServiceImpl();
 		if (serviceInfo.contains(":") && serviceInfo.split(":").length > 1) {
 			IServerLoginInfo.ipAddr = serviceInfo.split(":")[0];
 			IServerLoginInfo.port = serviceInfo.split(":")[1];
@@ -90,11 +126,10 @@ public class ParameterIServerLogin extends ParameterCombine {
 		IServerLoginInfo.password = password;
 		CloseableHttpClient client = service.login(username, password);
 		if (null != client) {
+			result = true;
 			IServerLoginInfo.client = client;
-		} else {
-			//throw new RuntimeException(ProcessProperties.getString("String_LoginFailed"));
 		}
-		return service;
+		return result;
 	}
 
 	public IServerService getService() {

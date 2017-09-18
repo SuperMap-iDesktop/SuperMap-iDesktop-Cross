@@ -193,7 +193,6 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 				return false;
 			}
 			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
-			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
 			parameterInputDataType.initSourceInput(input);

@@ -42,7 +42,7 @@ public class ParameterFilePanel extends SwingPanel {
 
 		SmFileChoose fileChoose = null;
 		if (!SmFileChoose.isModuleExist(this.parameterFile.getModuleName())) {
-			SmFileChoose.addNewNode(this.parameterFile.getFilters(), "", this.parameterFile.getTitle(), this.parameterFile.getModuleName(), this.parameterFile.getType());
+			SmFileChoose.addNewNode(this.parameterFile.getFilters(), "", this.parameterFile.getTitle(), this.parameterFile.getModuleName(), this.parameterFile.getModuleType());
 		}
 
 		fileChoose = new SmFileChoose(this.parameterFile.getModuleName());

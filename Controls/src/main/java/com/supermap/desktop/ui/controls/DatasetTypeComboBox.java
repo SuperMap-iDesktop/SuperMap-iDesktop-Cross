@@ -21,7 +21,7 @@ import java.util.List;
  * 默认构造不含“所有数据集类型”项的ComboBox，item存储对象为数据集类型以及其字符串
  * 数据集类型数组构造
  * 数据集类型字符串数组构造（需保证数据集类型名称正确）
- * <p>
+ * <p>\
  * 提供的可获得的参数：
  * SelectedDatasetTypes、SelectedDatasetTypeName
  *

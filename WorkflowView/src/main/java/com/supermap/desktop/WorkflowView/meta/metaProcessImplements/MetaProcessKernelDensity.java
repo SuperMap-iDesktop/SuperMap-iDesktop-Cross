@@ -114,7 +114,6 @@ public class MetaProcessKernelDensity extends MetaProcess {
 		boolean isSuccessful;
 		try {
 			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
-			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
 			CommonSettingCombine method = new CommonSettingCombine("method", (String) parameterComboBoxAnalyseType.getSelectedData());
