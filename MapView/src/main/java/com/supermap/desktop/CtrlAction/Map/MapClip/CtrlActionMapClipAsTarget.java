@@ -10,6 +10,7 @@ import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.map.propertycontrols.MapActionSelectTargetInfoPanel;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
@@ -34,7 +35,7 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 		super(caller, formClass);
 	}
 
-	private MapActionSelectTargetInfoPanel panelSelectTargetInfo = new MapActionSelectTargetInfoPanel("");
+	private MapActionSelectTargetInfoPanel panelSelectTargetInfo = new MapActionSelectTargetInfoPanel(MapViewProperties.getString("String_SelectOneOrMoreRegion"));
 	private transient GeoRegion geoRegion;
 	private static final int SEGMENTCOUNT = 50;
 

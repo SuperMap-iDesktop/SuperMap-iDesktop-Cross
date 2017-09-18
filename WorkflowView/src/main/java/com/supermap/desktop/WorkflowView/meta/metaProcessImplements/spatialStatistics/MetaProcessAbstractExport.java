@@ -34,6 +34,7 @@ import com.supermap.desktop.process.parameter.ipls.ParameterFile;
 import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -111,7 +112,7 @@ public class MetaProcessAbstractExport extends MetaProcess {
 		});
 	}
 
-	protected void registEvents() {
+	protected void registerEvents() {
 		removeEvents();
 		this.dataset.addPropertyListener(chooseDatasetListener);
 		this.supportType.addPropertyListener(resetExportsettingListener);
@@ -132,7 +133,7 @@ public class MetaProcessAbstractExport extends MetaProcess {
 		EqualDatasourceConstraint constraint = new EqualDatasourceConstraint();
 		constraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		constraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-//		this.chooseDataset = new ParameterDatasetChooser();
+		Dataset dataset = DatasetUtilities.getDefaultDataset();
 		this.supportType = new ParameterComboBox(ProcessProperties.getString("String_ExportType"));
 		this.supportType.setEnabled(false);
 		this.targetName = new ParameterTextField(ProcessProperties.getString("String_TargetName"));
@@ -147,7 +148,7 @@ public class MetaProcessAbstractExport extends MetaProcess {
 		//输出为文件路径，没有控件能对应
 		this.parameters.addOutputParameters(OUTPUT_DATA,
 				MessageFormat.format(ProcessOutputResultProperties.getString("String_OutputResult"), OUTPUT_DATA_TYPE),
-				BasicTypes.STRING, null);
+				BasicTypes.STRING, basicCombine);
 	}
 
 	protected void resetDataset() {

@@ -133,10 +133,10 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 				for (int i = 0; i < fieldInfos.getCount(); i++) {
 					FieldInfo fieldInfo = fieldInfos.get(i);
 					if (!isShowSystemField && !fieldInfo.isSystemField() && (fieldTypes == null || ArrayUtilities.isArrayContains(fieldTypes, fieldInfo.getType()))) {
-						this.fieldName = fieldInfo.getCaption();
+						this.fieldName = fieldInfo.getName();
 						break;
 					} else if (isShowSystemField && (fieldTypes == null || ArrayUtilities.isArrayContains(fieldTypes, fieldInfo.getType()))) {
-						this.fieldName = fieldInfo.getCaption();
+						this.fieldName = fieldInfo.getName();
 						break;
 					}
 				}

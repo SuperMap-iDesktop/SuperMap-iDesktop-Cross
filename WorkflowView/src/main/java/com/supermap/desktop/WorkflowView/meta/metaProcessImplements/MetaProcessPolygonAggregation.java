@@ -122,7 +122,6 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 		boolean isSuccessful;
 		try {
 			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
-			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
 			Dataset dataset = parameterSingleDataset.getSelectedDataset();

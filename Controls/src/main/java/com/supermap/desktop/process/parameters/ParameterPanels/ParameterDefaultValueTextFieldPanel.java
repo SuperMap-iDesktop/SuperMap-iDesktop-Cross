@@ -63,7 +63,7 @@ public class ParameterDefaultValueTextFieldPanel extends SwingPanel implements I
 	private void initListeners() {
 		textField.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyPressed(KeyEvent e) {
+			public void keyReleased(KeyEvent e) {
 				if (!isSelectingItem && e.getKeyCode() == KeyEvent.VK_ENTER) {
 					isSelectingItem = true;
 					parameterTextField.setSelectedItem(textField.getText());

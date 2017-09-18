@@ -31,7 +31,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 	private ParameterIServerLogin parameterIServerLogin = new ParameterIServerLogin();
-	ParameterInputDataType parameterInputDataType = new ParameterInputDataType();
+	private ParameterInputDataType parameterInputDataType = new ParameterInputDataType();
 	private ParameterBigDatasourceDatasource parameterOverlayDatasource;
 	private ParameterSingleDataset parameterOverlayDataset;
 	private ParameterComboBox parameterOverlayTypeComboBox;
@@ -118,7 +118,6 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 		boolean isSuccessful;
 		try {
 			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
-			IServerService service = parameterIServerLogin.login();
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
 			Dataset overlayDataset = parameterOverlayDataset.getSelectedDataset();
