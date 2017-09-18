@@ -278,34 +278,34 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Assistant" target="1.5" />
-      <module name="Controls" target="1.5" />
-      <module name="Core" target="1.5" />
-      <module name="DataConversion" target="1.5" />
-      <module name="DataEditor" target="1.5" />
-      <module name="DataProcess" target="1.5" />
-      <module name="DataTopology" target="1.5" />
-      <module name="DataView" target="1.5" />
-      <module name="Frame" target="1.5" />
-      <module name="iDesktop" target="1.5" />
+      <module name="Assistant" target="1.7" />
+      <module name="Controls" target="1.7" />
+      <module name="Core" target="1.7" />
+      <module name="DataConversion" target="1.7" />
+      <module name="DataEditor" target="1.7" />
+      <module name="DataProcess" target="1.7" />
+      <module name="DataTopology" target="1.7" />
+      <module name="DataView" target="1.7" />
+      <module name="Frame" target="1.7" />
+      <module name="iDesktop" target="1.7" />
       <module name="idesktop.cross" target="1.5" />
-      <module name="LayoutEditor" target="1.5" />
-      <module name="LayoutView" target="1.5" />
-      <module name="LBSClient" target="1.5" />
-      <module name="MapEditor" target="1.5" />
-      <module name="MapView" target="1.5" />
+      <module name="LayoutEditor" target="1.7" />
+      <module name="LayoutView" target="1.7" />
+      <module name="LBSClient" target="1.7" />
+      <module name="MapEditor" target="1.7" />
+      <module name="MapView" target="1.7" />
       <module name="MyPlugin" target="1.7" />
-      <module name="NetServices" target="1.5" />
+      <module name="NetServices" target="1.7" />
       <module name="Process" target="1.7" />
-      <module name="RealspaceEditor" target="1.5" />
-      <module name="RealspaceEffect" target="1.5" />
-      <module name="RealspaceView" target="1.5" />
-      <module name="SpatialAnalyst" target="1.5" />
+      <module name="RealspaceEditor" target="1.7" />
+      <module name="RealspaceEffect" target="1.7" />
+      <module name="RealspaceView" target="1.7" />
+      <module name="SpatialAnalyst" target="1.7" />
       <module name="SuperMap iDesktop Cross" target="1.5" />
-      <module name="TabularView" target="1.5" />
-      <module name="UserConferenceDemo" target="1.5" />
-      <module name="UserExperience" target="1.5" />
-      <module name="WorkflowView" target="1.5" />
+      <module name="TabularView" target="1.7" />
+      <module name="UserConferenceDemo" target="1.7" />
+      <module name="UserExperience" target="1.7" />
+      <module name="WorkflowView" target="1.7" />
     </bytecodeTargetLevel>
   </component>
   <component name="CopyrightManager" default="" />
@@ -553,6 +553,8 @@
       </envs>
       <method>
         <option name="Make" enabled="false" />
+        <option name="MakeProject" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="package" />
       </method>
     </configuration>
     <configuration default="false" name="iDesktop Startup Linux" type="Application" factoryName="Application" singleton="true">
