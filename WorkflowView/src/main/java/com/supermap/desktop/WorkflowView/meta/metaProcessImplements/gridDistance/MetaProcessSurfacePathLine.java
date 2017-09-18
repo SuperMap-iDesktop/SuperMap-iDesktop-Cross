@@ -279,10 +279,16 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 
 		if (clipBoard.contains("X:") && clipBoard.contains("Y:")) {
 			String sourceX = clipBoard.substring(clipBoard.indexOf("X:"), clipBoard.indexOf("Y:"));
-			String sourceY = clipBoard.substring(clipBoard.indexOf("Y:"));
+			String sourceY;
+			if (clipBoard.contains(ControlsProperties.getString("String_Label_LongitudeValue"))) {
+				sourceY = clipBoard.substring(clipBoard.indexOf("Y:"), clipBoard.indexOf(ControlsProperties.getString("String_Label_LongitudeValue")));
+			} else {
+				sourceY = clipBoard.substring(clipBoard.indexOf("Y:"));
+			}
 
 			sourceX = (sourceX.replace("X:", "")).replace(",", "");
-			sourceY = (sourceY.replace("Y:", "")).replace(",", "");
+			// 为了和.net互通-yuanR2017.9.18
+			sourceY = ((sourceY.replace("Y:", "")).replace(",", "")).replace("   ", "");
 
 			if (StringUtilities.isNumber(sourceX) && StringUtilities.isNumber(sourceY)) {
 				this.parameterSourcePointX.setSelectedItem(sourceX);
@@ -321,11 +327,16 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 		if (clipBoard.contains("X:") && clipBoard.contains("Y:")) {
 
 			String targetX = clipBoard.substring(clipBoard.indexOf("X:"), clipBoard.indexOf("Y:"));
-			String targetY = clipBoard.substring(clipBoard.indexOf("Y:"));
+			String targetY;
+			if (clipBoard.contains(ControlsProperties.getString("String_Label_LongitudeValue"))) {
+				targetY = clipBoard.substring(clipBoard.indexOf("Y:"), clipBoard.indexOf(ControlsProperties.getString("String_Label_LongitudeValue")));
+			} else {
+				targetY = clipBoard.substring(clipBoard.indexOf("Y:"));
+			}
 
 			targetX = (targetX.replace("X:", "")).replace(",", "");
-			targetY = (targetY.replace("Y:", "")).replace(",", "");
-
+			// 为了和.net互通-yuanR2017.9.18
+			targetY = (targetY.replace("Y:", "")).replace(",", "").replace("   ", "");
 			if (StringUtilities.isNumber(targetX) && StringUtilities.isNumber(targetY)) {
 				this.parameterTargetPointX.setSelectedItem(targetX);
 				this.parameterTargetPointY.setSelectedItem(targetY);
