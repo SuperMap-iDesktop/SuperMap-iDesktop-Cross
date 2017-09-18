@@ -351,7 +351,7 @@ public class DockbarManager implements IDockbarManager {
 		}
 	}
 
-	private boolean isDisplay(Dockable dockable) {
+	public boolean isDisplay(Dockable dockable) {
 		return DockingManager.isDocked(dockable) || DockingManager.isMinimized(dockable);
 	}
 

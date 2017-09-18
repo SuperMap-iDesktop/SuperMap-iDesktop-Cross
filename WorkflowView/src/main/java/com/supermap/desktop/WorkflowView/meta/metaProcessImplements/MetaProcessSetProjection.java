@@ -20,6 +20,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.PrjCoordSysUtilities;
+import com.supermap.desktop.utilities.PropertyManagerUtilities;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -144,6 +145,9 @@ public class MetaProcessSetProjection extends MetaProcess {
 			JDialogPrjCoordSysSettings dialogPrjCoordSysSettings = new JDialogPrjCoordSysSettings();
 			if (dialogPrjCoordSysSettings.showDialog() == DialogResult.OK) {
 				prj = dialogPrjCoordSysSettings.getPrjCoordSys();
+				coordSysName.setSelectedItem(prj.getName());
+				coordUnit.setSelectedItem(prj.getCoordUnit());
+				textAreaCoordInfo.setSelectedItem(PrjCoordSysUtilities.getDescription(prj));
 			}
 		}
 	};
@@ -206,6 +210,7 @@ public class MetaProcessSetProjection extends MetaProcess {
 				String prjCoorSysInfo = PrjCoordSysUtilities.getDescription(this.prj);
 				this.textAreaCoordInfo.setSelectedItem(prjCoorSysInfo);
 				this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(src);
+				PropertyManagerUtilities.refreshPropertyManager();
 			} else {
 				// 没有主动选择，则视为维持原投影不变
 				this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(src);

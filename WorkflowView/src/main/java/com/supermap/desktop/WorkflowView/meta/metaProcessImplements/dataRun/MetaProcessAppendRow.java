@@ -38,7 +38,7 @@ public class MetaProcessAppendRow extends MetaProcess {
 	public MetaProcessAppendRow() {
 		initParameters();
 		initParameterConstraint();
-		registerListner();
+		registerListener();
 	}
 
 	private void initParameters() {
@@ -52,6 +52,7 @@ public class MetaProcessAppendRow extends MetaProcess {
 		this.chooseTable = new ParameterDatasetChooseTable();
 		Dataset dataset = DatasetUtilities.getDefaultDatasetVector();
 		if (null != dataset) {
+			this.datasource.setSelectedItem(dataset.getDatasource());
 			this.dataset.setSelectedItem(dataset);
 			this.chooseTable.setDataset(dataset);
 		}
@@ -79,7 +80,7 @@ public class MetaProcessAppendRow extends MetaProcess {
 		equalDataset.constrained(this.chooseTable, ParameterDatasetChooseTable.DATASET_FIELD_NAME);
 	}
 
-	private void registerListner() {
+	private void registerListener() {
 		this.chooseTable.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {

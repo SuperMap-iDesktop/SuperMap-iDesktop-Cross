@@ -12,12 +12,13 @@ import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.DefaultValueTextField;
-import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
@@ -60,30 +61,23 @@ public class ParameterDefaultValueTextFieldPanel extends SwingPanel implements I
 	}
 
 	private void initListeners() {
-		textField.getDocument().addDocumentListener(new DocumentListener() {
+		textField.addKeyListener(new KeyAdapter() {
 			@Override
-			public void insertUpdate(DocumentEvent e) {
-				updateSelectedValue(e);
+			public void keyReleased(KeyEvent e) {
+				if (!isSelectingItem && e.getKeyCode() == KeyEvent.VK_ENTER) {
+					isSelectingItem = true;
+					parameterTextField.setSelectedItem(textField.getText());
+					isSelectingItem = false;
+				}
 			}
-
+		});
+		textField.addFocusListener(new FocusAdapter() {
 			@Override
-			public void removeUpdate(DocumentEvent e) {
-				updateSelectedValue(e);
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				updateSelectedValue(e);
-			}
-
-			private void updateSelectedValue(DocumentEvent e) {
-				if (!isSelectingItem && !StringUtilities.isNullOrEmpty(textField.getText())) {
-					try {
-						isSelectingItem = true;
-						parameterTextField.setSelectedItem(textField.getText());
-					} finally {
-						isSelectingItem = false;
-					}
+			public void focusLost(FocusEvent e) {
+				if (!isSelectingItem) {
+					isSelectingItem = true;
+					parameterTextField.setSelectedItem(textField.getText());
+					isSelectingItem = false;
 				}
 			}
 		});

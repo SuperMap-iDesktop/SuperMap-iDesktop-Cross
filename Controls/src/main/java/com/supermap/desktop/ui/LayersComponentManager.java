@@ -172,7 +172,9 @@ public class LayersComponentManager extends JComponent {
 						popupMenu = this.layerVectorThemeOtherPopupMenu;
 					}
 				} else if (layer.getDataset() != null) {
-					if (layer.getDataset().getType() == DatasetType.CAD) {
+					if (layer instanceof LayerHeatmap || layer instanceof LayerGridAggregation){
+						popupMenu=this.layerHeatmapAndAggregation;
+					}else if (layer.getDataset().getType() == DatasetType.CAD) {
 						popupMenu = this.layerVectorCADPopupMenu;
 					} else if (layer.getDataset().getType() == DatasetType.TEXT) {
 						popupMenu = this.layerTextPopupMenu;
@@ -565,6 +567,16 @@ public class LayersComponentManager extends JComponent {
 		return this.layer3DMapPopupMenu;
 	}
 
+	private JPopupMenu layerHeatmapAndAggregation=null;
+
+	/**
+	 * 获取热力图或网格图的右键菜单。
+	 *
+	 * @return
+	 */
+	public JPopupMenu getLayerHeatmapAndAggregationPopupMenu() {
+		return this.layerHeatmapAndAggregation;
+	}
 
 	public JPopupMenu getLayerWMSPopupMenu() {
 		return layerWMSPopupMenu;
@@ -607,6 +619,7 @@ public class LayersComponentManager extends JComponent {
 				this.layer3DPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.LayersControlManager.ContextMenuLayer3D");
 				this.layer3DMapPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.LayersControlManager.ContextMenuLayer3DMap");
 				this.layerWMSPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.LayersControlManager.ContextMenuLayerWMS");
+				this.layerHeatmapAndAggregation=(JPopupMenu)manager.get("SuperMap.Desktop.UI.LayersControlManager.ContextMenuHeatmapAndAggregation");
 				this.isContextMenuBuilded = true;
 			}
 		} catch (Exception ex) {

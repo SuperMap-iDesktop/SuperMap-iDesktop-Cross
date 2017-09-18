@@ -71,7 +71,7 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 		resultCombine.addParameters(resultDataset);
 
 		parameters.setParameters(sourceCombine, settingCombine, resultCombine);
-		this.parameters.addInputParameters(INPUT_DATA, new DatasetTypes("",DatasetTypes.POINT.getValue()|DatasetTypes.LINE.getValue()), sourceCombine);
+		this.parameters.addInputParameters(INPUT_DATA, new DatasetTypes("", DatasetTypes.POINT.getValue() | DatasetTypes.LINE.getValue()), sourceCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
 				ProcessOutputResultProperties.getString("String_KernelsDensityAnalysisResult"),
 				DatasetTypes.GRID, resultCombine);
@@ -94,7 +94,7 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 		numberBottom.setSelectedItem(0);
 		numberRadius.setSelectedItem(0);
 		numberRadius.setMinValue(0);
-		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT,DatasetType.LINE);
+		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.LINE);
 		if (dataset != null) {
 			sourceDatasource.setSelectedItem(dataset.getDatasource());
 			sourceDataset.setSelectedItem(dataset);
@@ -104,7 +104,7 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 		comboBoxField.setFieldType(fieldType);
 		comboBoxField.setShowSystemField(true);
 		comboBoxField.setSelectedItem("SmID");
-		resultDataset.setSelectedItem("result_kernelDensity");
+		resultDataset.setDefaultDatasetName("result_kernelDensity");
 		numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem()));
 		numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem()));
 		numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem()));
@@ -162,7 +162,7 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 		Double cellSize = x > y ? y : x;
 		numberCellSize.setSelectedItem(DoubleUtilities.getFormatString(cellSize));
 		double maxRadius = rectangle2D.getWidth() > rectangle2D.getHeight() ? rectangle2D.getWidth() : rectangle2D.getHeight();
-		numberRadius.setSelectedItem(DoubleUtilities.getFormatString(maxRadius/30));
+		numberRadius.setSelectedItem(DoubleUtilities.getFormatString(maxRadius / 30));
 		numberRadius.setMaxValue(maxRadius);
 		numberCellSize.setMaxValue(maxRadius);
 	}

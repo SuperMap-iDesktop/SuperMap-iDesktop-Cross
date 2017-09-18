@@ -222,5 +222,11 @@
     </orderEntry>
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:mongo-java-driver:3.0.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:bson:3.0.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.poi:poi-ooxml:3.11" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.poi:poi:3.11" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.poi:poi-ooxml-schemas:3.11" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.xmlbeans:xmlbeans:2.6.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: stax:stax-api:1.0.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.belerweb:pinyin4j:2.5.1" level="project" />
   </component>
 </module>

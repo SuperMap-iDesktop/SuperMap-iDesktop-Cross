@@ -5,6 +5,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.PrjCoordSysHandle;
 import com.supermap.desktop.controls.utilities.WorkspaceTreeManagerUIUtilities;
+import com.supermap.desktop.core.Time;
+import com.supermap.desktop.core.TimeType;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
@@ -186,7 +188,7 @@ public class DatasourcePrjCoordSysHandle extends PrjCoordSysHandle {
 			public void stepped(SteppedEvent arg0) {
 				try {
 					int totalPercent = (int) ((100 * this.i + arg0.getPercent()) / count);
-					updateProgressTotal(arg0.getPercent(), totalPercent, String.valueOf(arg0.getRemainTime()), arg0.getMessage());
+					updateProgressTotal(arg0.getPercent(), totalPercent, Time.toString(arg0.getRemainTime(), TimeType.SECOND), arg0.getMessage());
 				} catch (CancellationException e) {
 					arg0.setCancel(true);
 					datasource.getDatasets().get(i).removeSteppedListener(this);

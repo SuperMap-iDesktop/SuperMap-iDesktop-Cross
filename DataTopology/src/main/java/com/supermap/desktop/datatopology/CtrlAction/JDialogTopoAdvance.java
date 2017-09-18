@@ -177,11 +177,11 @@ public class JDialogTopoAdvance extends SmDialog {
 
         this.panelToleranceSetting.add(this.labelUndershootsTolerance, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(0, 10, 5, 5));
         this.panelToleranceSetting.add(this.textFieldUndershootsTolerance, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(60, 0).setInsets(0, 0, 5, 10));
-        this.panelToleranceSetting.add(this.labelUndershootsToleranceUnit, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(10, 0, 5, 10));
+        this.panelToleranceSetting.add(this.labelUndershootsToleranceUnit, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(0, 0, 5, 10));
 
         this.panelToleranceSetting.add(this.labelVertexTolerance, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(0, 10, 10, 5));
         this.panelToleranceSetting.add(this.textFieldVertexTorance, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(60, 0).setInsets(0, 0, 10, 10));
-        this.panelToleranceSetting.add(this.labelVertexToleranceUnit, new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(10, 0, 5, 10));
+        this.panelToleranceSetting.add(this.labelVertexToleranceUnit, new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(0, 0, 5, 10));
 
         // @formatter:on
 	}
@@ -201,17 +201,12 @@ public class JDialogTopoAdvance extends SmDialog {
 	private void initComboBoxItem() {
 		try {
 			if (null != targetDataset) {
-//                this.comboBoxNotCutting = new DatasetComboBox(new Dataset[0]);
 				this.comboBoxNotCutting = new DatasetComboBox();
-//				DataCell item = new DataCell();
-//				item.setPreferredSize(new Dimension(20, 18));
-//				comboBoxNotCutting.addItem(item);
+				comboBoxNotCutting.setShowNullValue(true);
+				comboBoxNotCutting.addItem(null);
 				for (int i = 0; i < targetDataset.getDatasource().getDatasets().getCount(); i++) {
 					Dataset tempDataset = targetDataset.getDatasource().getDatasets().get(i);
 					if (tempDataset.getType() == DatasetType.POINT) {
-//						DataCell cell = new DataCell();
-//						cell.initDatasetType(tempDataset);
-//						this.comboBoxNotCutting.addItem(cell);
 						this.comboBoxNotCutting.addItem(tempDataset);
 					}
 				}

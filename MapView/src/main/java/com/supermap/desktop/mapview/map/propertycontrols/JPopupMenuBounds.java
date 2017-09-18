@@ -190,9 +190,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 
 	private void initComponents() {
 		Dimension dimension = new Dimension(200, 20);
-
-		this.panelSelectTargetInfo = new MapActionSelectTargetInfoPanel("");
-
+		this.panelSelectTargetInfo = new MapActionSelectTargetInfoPanel(MapViewProperties.getString("String_SelectOneOrMoreRegion"));
 		this.menuItemSelectTarget = new JMenuItem("SelcetTarget");
 		this.menuItemSelectRectangle = new JMenuItem("SelectRectangle");
 		this.menuItemSelectPolygon = new JMenuItem("SelectPolygon");

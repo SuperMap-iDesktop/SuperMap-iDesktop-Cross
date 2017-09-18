@@ -176,4 +176,9 @@ public class MetaProcessDEMLake extends MetaProcess {
 	public String getTitle() {
 		return ProcessProperties.getString("String_DEMLake");
 	}
+
+	@Override
+	public boolean isChangeSourceData() {
+		return true;
+	}
 }

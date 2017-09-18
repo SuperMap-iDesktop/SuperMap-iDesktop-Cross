@@ -9,6 +9,7 @@ import com.supermap.desktop.lbs.Interface.IServerService;
 import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.lbs.params.JobResultResponse;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -41,6 +42,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	}
 
 	private void initComponents() {
+		parameterIServerLogin.setInputDataType(this.parameterInputDataType);
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_KernelDensity"), "1");
 		parameterComboBoxAnalyseType.setRequisite(true);
@@ -111,7 +113,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful;
 		try {
-			IServerService service = parameterIServerLogin.login();
+			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
 			CommonSettingCombine method = new CommonSettingCombine("method", (String) parameterComboBoxAnalyseType.getSelectedData());
@@ -128,7 +130,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input, analyst);
-			JobResultResponse response = service.queryResult(MetaKeys.KERNEL_DENSITY, commonSettingCombine.getFinalJSon());
+			JobResultResponse response = parameterIServerLogin.getService().queryResult(MetaKeys.KERNEL_DENSITY, commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				CursorUtilities.setDefaultCursor();

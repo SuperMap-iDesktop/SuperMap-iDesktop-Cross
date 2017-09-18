@@ -208,8 +208,9 @@ public class OutputFrame extends JScrollPane implements IOutput {
 			IFormMain formMain = Application.getActiveApplication().getMainFrame();
 			IDockbar outputDockBar = ((DockbarManager) formMain.getDockbarManager())
 					.getOutputFrame();
-			if (outputDockBar != null) {
-				//setvisible注释后输出框口的停靠位置不对，不注释每次弹出了两次（不是很明显）
+
+			// 当输出窗口出于关闭状态时，输出消息不再弹出输出窗口
+			if (outputDockBar != null && ((DockbarManager) formMain.getDockbarManager()).isDisplay(((Dockbar) outputDockBar).getView())) {
 				outputDockBar.setVisible(true);
 				DockingManager.display(((Dockbar) outputDockBar).getView());
 			}

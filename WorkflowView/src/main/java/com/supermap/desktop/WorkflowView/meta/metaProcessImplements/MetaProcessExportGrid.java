@@ -1,5 +1,6 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
+import com.supermap.data.DatasetGrid;
 import com.supermap.data.conversion.ExportSetting;
 import com.supermap.data.conversion.ExportSettingBMP;
 import com.supermap.data.conversion.ExportSettingGIF;
@@ -55,13 +56,17 @@ public class MetaProcessExportGrid extends MetaProcessAbstractExport {
 	public MetaProcessExportGrid() {
 		this.OUTPUT_DATA_TYPE = ControlsProperties.getString("String_Grid");
 		initParameters();
-		registEvents();
+		registerEvents();
 	}
 
 	protected void initParameters() {
 		super.initParameters();
 		this.dataset.setDatasetTypes(DatasetTypeUtilities.getDatasetTypeGrid());
-		this.dataset.setSelectedItem(DatasetUtilities.getDefaultDatasetGrid());
+		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
+		if (datasetGrid != null) {
+			this.datasource.setSelectedItem(datasetGrid.getDatasource());
+			this.dataset.setSelectedItem(datasetGrid);
+		}
 		String module = "ExportGrid_OutPutDirectories";
 		if (!SmFileChoose.isModuleExist(module)) {
 			SmFileChoose.addNewNode("", System.getProperty("user.dir"), ProcessProperties.getString("String_Export"),

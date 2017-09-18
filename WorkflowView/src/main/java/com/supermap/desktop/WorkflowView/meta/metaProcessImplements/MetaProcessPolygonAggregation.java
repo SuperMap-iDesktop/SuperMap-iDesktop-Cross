@@ -12,6 +12,7 @@ import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.lbs.params.JobResultResponse;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -47,6 +48,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 	}
 
 	private void initComponents() {
+		parameterIServerLogin.setInputDataType(this.parameterInputDataType);
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_PolygonAggregationType"), "SUMMARYREGION");
 		parameterAggregationType.setRequisite(true);
 		parameterAggregationType.setItems(parameterDataNode);
@@ -119,7 +121,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful;
 		try {
-			IServerService service = parameterIServerLogin.login();
+			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
 			Dataset dataset = parameterSingleDataset.getSelectedDataset();
@@ -134,7 +136,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input, analyst, type);
 
-			JobResultResponse response = service.queryResult(MetaKeys.POLYGON_AGGREGATION, commonSettingCombine.getFinalJSon());
+			JobResultResponse response = parameterIServerLogin.getService().queryResult(MetaKeys.POLYGON_AGGREGATION, commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				NewMessageBus messageBus = new NewMessageBus(response, DefaultOpenServerMap.INSTANCE);

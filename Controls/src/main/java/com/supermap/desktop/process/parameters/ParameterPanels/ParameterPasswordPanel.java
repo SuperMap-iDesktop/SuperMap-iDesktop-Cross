@@ -1,6 +1,5 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
-import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -12,9 +11,11 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
@@ -63,36 +64,28 @@ public class ParameterPasswordPanel extends SwingPanel implements IParameterPane
 				}
 			}
 		});
-		passwordField.getDocument().addDocumentListener(new DocumentListener() {
+		passwordField.addKeyListener(new KeyAdapter() {
 			@Override
-			public void insertUpdate(DocumentEvent e) {
-				valueChanged();
+			public void keyReleased(KeyEvent e) {
+				if (!isSelectingItem && e.getKeyCode() == KeyEvent.VK_ENTER) {
+					isSelectingItem = true;
+					parameterPassword.setSelectedItem(String.valueOf(passwordField.getPassword()));
+					isSelectingItem = false;
+				}
 			}
-
+		});
+		passwordField.addFocusListener(new FocusAdapter() {
 			@Override
-			public void removeUpdate(DocumentEvent e) {
-				valueChanged();
+			public void focusLost(FocusEvent e) {
+				if (!isSelectingItem) {
+					isSelectingItem = true;
+					parameterPassword.setSelectedItem(String.valueOf(passwordField.getPassword()));
+					isSelectingItem = false;
+				}
 			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				valueChanged();
-			}
-
-
 		});
 	}
 
-	private void valueChanged() {
-		try {
-			isSelectingItem = true;
-			parameterPassword.setSelectedItem(new String(passwordField.getPassword()));
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-		} finally {
-			isSelectingItem = false;
-		}
-	}
 	/**
 	 * @return
 	 */
