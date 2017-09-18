@@ -26,7 +26,6 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 		initParameters();
 		initParameterConstraint();
 		initParametersState();
-
 	}
 
 	private void initParameters() {
@@ -65,8 +64,6 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
 		equalDatasetConstraint.constrained(inputDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
 		equalDatasetConstraint.constrained(parameterFieldComboBox, ParameterFieldComboBox.DATASET_FIELD_NAME);
-
-
 	}
 
 	private void initParametersState() {
