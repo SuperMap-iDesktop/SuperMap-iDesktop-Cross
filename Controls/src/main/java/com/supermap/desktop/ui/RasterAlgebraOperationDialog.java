@@ -1,21 +1,19 @@
 package com.supermap.desktop.ui;
 
-import com.supermap.analyst.spatialanalyst.MathAnalyst;
 import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.data.PixelFormat;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilities.PixelFormatUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 
 /**
  * Created by lixiaoyao on 2017/8/29.
@@ -25,10 +23,10 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 	// 参与查询的数据
 	private JScrollPane scrollPaneWorkspaceTree = new JScrollPane();
 	private WorkspaceTree workspaceTree;
+	private JScrollPane scrollPaneOperationString = new JScrollPane();
 	private JTextArea textAreaOperationString = new JTextArea();
 	private JPanel panelFunction = new JPanel();
 	private JPanel panelOperators = new JPanel();
-	private JPanel panelSetting = new JPanel();
 	private JLabel labelBasicMathFunction;
 	private JLabel labelTriangleFunction;
 	private JLabel labelSeniorMathFunction;
@@ -53,28 +51,18 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 	private JButton jButtonMultiply;
 	private JButton jButtonSubtract;
 	private JButton jButtonPlus;
-	private JButton jButtonImport = new JButton();
-	private JButton jButtonExport = new JButton();
-	private JLabel labelPixelFormat;
-	private JComboBox comboBoxPixelFormat;
-	private JCheckBox checkBoxCompress;
-	private JCheckBox checkBoxIngoreNoValueCell;
 	private SmButton buttonOK = new SmButton();
 	private SmButton buttonClear = new SmButton();
 	private SmButton buttonClose = new SmButton();
 	private String preExpression = "";
 	private PixelFormat prePixelFormat = null;
-	private boolean isZip = false;
-	private boolean isIgnoreNoValue = false;
+	private boolean isFirstClickTree=false;
 
-	public RasterAlgebraOperationDialog(String preExpression, PixelFormat prePixelFormat, boolean isZip, boolean isIgnoreNoValue) {
+	public RasterAlgebraOperationDialog(String preExpression) {
 		super();
 		this.preExpression = preExpression;
-		this.prePixelFormat = prePixelFormat;
-		this.isZip = isZip;
-		this.isIgnoreNoValue = isIgnoreNoValue;
 		this.setTitle(ControlsProperties.getString("String_RasterAlgebraOperationDialogTitle"));
-		this.setSize(new Dimension(820, 460));
+		this.setSize(new Dimension(620, 400));
 		initComponents();
 		initLayout();
 		initComponentsState();
@@ -113,20 +101,15 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 		this.labelTriangleFunction = new JLabel(ControlsProperties.getString("String_TriangleFunction"));
 		this.labelSeniorMathFunction = new JLabel(ControlsProperties.getString("String_SeniorMathFunction"));
 		this.labelOtherFunction = new JLabel(ControlsProperties.getString("String_OtherFunction"));
-		this.labelPixelFormat = new JLabel(CommonProperties.getString("String_PixelFormat"));
-		this.comboBoxPixelFormat = new JComboBox();
-		this.checkBoxCompress = new JCheckBox(ControlsProperties.getString("String_DatasetCompress"));
-		this.checkBoxIngoreNoValueCell = new JCheckBox(ControlsProperties.getString("String_IgnoreNoValueRasterCell"));
 		initWorkspaceTree();
-		this.textAreaOperationString.setMinimumSize(new Dimension(550, 180));
-		this.panelSelectSearchData.setMinimumSize(new Dimension(200, 365));
+		this.textAreaOperationString.setMinimumSize(new Dimension(550, 160));
+		this.panelSelectSearchData.setMinimumSize(new Dimension(200, 305));
 	}
 
 	private void initLayout() {
 		initPanelSelectSearchData();
 		initPanelFunction();
 		initPanelOperators();
-		initPanelSetting();
 
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setAutoCreateContainerGaps(true);
@@ -140,11 +123,9 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 										.addGroup(groupLayout.createSequentialGroup()
 												.addComponent(this.panelFunction)
 												.addComponent(this.panelOperators)
-												.addComponent(this.panelSetting))
-										.addComponent(this.textAreaOperationString)))
+										)
+										.addComponent(this.scrollPaneOperationString)))
 						.addGroup(groupLayout.createSequentialGroup()
-								.addComponent(this.jButtonImport)
-								.addComponent(this.jButtonExport)
 								.addGap(200, 200, Short.MAX_VALUE)
 								.addComponent(this.buttonOK)
 								.addComponent(this.buttonClear)
@@ -158,17 +139,15 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 								.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 										.addComponent(this.panelFunction)
 										.addComponent(this.panelOperators)
-										.addComponent(this.panelSetting))
-								.addComponent(this.textAreaOperationString)))
+								)
+								.addComponent(this.scrollPaneOperationString, 160, 160, Short.MAX_VALUE)))
 				.addContainerGap(10, 10)
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(this.jButtonImport)
-						.addComponent(this.jButtonExport)
 						.addComponent(this.buttonOK)
 						.addComponent(this.buttonClear)
 						.addComponent(this.buttonClose))
 		);
-
+		this.scrollPaneOperationString.setViewportView(this.textAreaOperationString);
 		getContentPane().setLayout(groupLayout);
 	}
 
@@ -215,39 +194,6 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 		this.panelOperators.add(this.jButtonNot, new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
 	}
 
-	private void initPanelSetting() {
-		this.panelSetting.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_FormEdgeCount_Text")));
-		GroupLayout groupLayout = new GroupLayout(this.panelSetting);
-		groupLayout.setAutoCreateContainerGaps(true);
-		groupLayout.setAutoCreateGaps(true);
-
-		groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
-				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-								.addComponent(this.labelPixelFormat)
-								.addGap(10, 10, 10)
-								.addComponent(this.comboBoxPixelFormat))
-						.addComponent(this.checkBoxCompress)
-						.addComponent(this.checkBoxIngoreNoValueCell))
-		);
-
-		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-						.addComponent(this.labelPixelFormat)
-						.addComponent(this.comboBoxPixelFormat, 20, 20, 20))
-				.addContainerGap(10, Short.MAX_VALUE)
-				.addComponent(this.checkBoxCompress)
-				.addContainerGap(10, Short.MAX_VALUE)
-				.addComponent(this.checkBoxIngoreNoValueCell)
-		);
-
-		this.panelSetting.setLayout(groupLayout);
-//		this.panelSetting.add(this.labelPixelFormat, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-//		this.panelSetting.add(this.comboBoxPixelFormat, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-//		this.panelSetting.add(this.checkBoxCompress, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-//		this.panelSetting.add(this.checkBoxIngoreNoValueCell, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-	}
-
 	private void initComponentsState() {
 		this.jComboBoxBasicMathFunction.setModel(new DefaultComboBoxModel<String>(new String[]{"abs()",
 				"mod(,)", "floor()"}));
@@ -258,27 +204,17 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 				"pow(,)", "sqrt()", "ln()", "log()"}));
 		this.jComboBoxOtherFunction.setModel(new DefaultComboBoxModel<String>(new String[]{"Con(,,)",
 				"IsNull()", "Pick(,,)"}));
-		this.comboBoxPixelFormat.setModel(new DefaultComboBoxModel<String>(new String[]{PixelFormatUtilities.toString(PixelFormat.SINGLE),
-				PixelFormatUtilities.toString(PixelFormat.DOUBLE), PixelFormatUtilities.toString(PixelFormat.BIT8),
-				PixelFormatUtilities.toString(PixelFormat.BIT16), PixelFormatUtilities.toString(PixelFormat.BIT32),
-				PixelFormatUtilities.toString(PixelFormat.BIT64), PixelFormatUtilities.toString(PixelFormat.UBIT1),
-				PixelFormatUtilities.toString(PixelFormat.UBIT4), PixelFormatUtilities.toString(PixelFormat.UBIT8),
-				PixelFormatUtilities.toString(PixelFormat.UBIT16), PixelFormatUtilities.toString(PixelFormat.UBIT32)}));
 		this.textAreaOperationString.setLineWrap(true);
 		this.textAreaOperationString.setWrapStyleWord(true);
-		if (this.prePixelFormat == null) {
-			this.comboBoxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(PixelFormat.UBIT32));
-		} else {
-			this.comboBoxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(this.prePixelFormat));
-		}
-		this.checkBoxCompress.setSelected(this.isZip);
-		this.checkBoxIngoreNoValueCell.setSelected(this.isIgnoreNoValue);
 		this.textAreaOperationString.setText(this.preExpression);
+		if (StringUtilities.isNullOrEmpty(this.preExpression)){
+			this.isFirstClickTree=true;
+		}
 	}
 
 	private void initResources() {
-		this.jButtonImport.setText(ControlsProperties.getString("string_button_import"));
-		this.jButtonExport.setText(ControlsProperties.getString("String_Button_Export"));
+//		this.jButtonImport.setText(ControlsProperties.getString("string_button_import"));
+//		this.jButtonExport.setText(ControlsProperties.getString("String_Button_Export"));
 		this.buttonOK.setText(ControlsProperties.getString("String_Button_Ok"));
 		this.buttonClear.setText(ControlsProperties.getString("String_GeometryPropertyStyle3DControl_buttonClearMarkerIconFile"));
 		this.buttonClose.setText(ControlsProperties.getString("String_Button_Cancel"));
@@ -343,8 +279,8 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 		this.jComboBoxTriangleFunction.addActionListener(this.functionComboBoxActionListener);
 		this.jComboBoxSeniorMathFunction.addActionListener(this.functionComboBoxActionListener);
 		this.jComboBoxOtherFunction.addActionListener(this.functionComboBoxActionListener);
-		this.jButtonExport.addActionListener(this.buttonExportActionListener);
-		this.jButtonImport.addActionListener(this.buttonImportActionListener);
+//		this.jButtonExport.addActionListener(this.buttonExportActionListener);
+//		this.jButtonImport.addActionListener(this.buttonImportActionListener);
 		this.buttonOK.addActionListener(this.buttonDefaultActionListener);
 		this.buttonClear.addActionListener(this.buttonDefaultActionListener);
 		this.buttonClose.addActionListener(this.buttonDefaultActionListener);
@@ -372,8 +308,8 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 		this.jComboBoxTriangleFunction.removeActionListener(this.functionComboBoxActionListener);
 		this.jComboBoxSeniorMathFunction.removeActionListener(this.functionComboBoxActionListener);
 		this.jComboBoxOtherFunction.removeActionListener(this.functionComboBoxActionListener);
-		this.jButtonExport.removeActionListener(this.buttonExportActionListener);
-		this.jButtonImport.removeActionListener(this.buttonImportActionListener);
+//		this.jButtonExport.removeActionListener(this.buttonExportActionListener);
+//		this.jButtonImport.removeActionListener(this.buttonImportActionListener);
 		this.buttonOK.removeActionListener(this.buttonDefaultActionListener);
 		this.buttonClear.removeActionListener(this.buttonDefaultActionListener);
 		this.buttonClose.removeActionListener(this.buttonDefaultActionListener);
@@ -389,6 +325,7 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 					DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
 					Object data = ((TreeNodeData) selNode.getUserObject()).getData();
 					if (data != null && data instanceof Dataset) {
+						changePixFormat((Dataset) data);
 						textAreaOperationString.requestFocusInWindow();
 						setExpressionSentenceText(textAreaOperationString, "[" + ((Dataset) data).getDatasource().getAlias() + "." + ((Dataset) data).getName() + "]", "datasetName");
 					}
@@ -401,20 +338,6 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 
 	private ActionListener functionComboBoxActionListener = new LocalComboboxAction();
 
-	private ActionListener buttonExportActionListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			exportXML();
-		}
-	};
-
-	private ActionListener buttonImportActionListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			importXML();
-		}
-	};
-
 	private ActionListener buttonDefaultActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -423,11 +346,19 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 				RasterAlgebraOperationDialog.this.dispose();
 			} else if (e.getSource().equals(buttonClear)) {
 				textAreaOperationString.setText("");
+				isFirstClickTree=true;
 			} else if (e.getSource().equals(buttonClose)) {
 				RasterAlgebraOperationDialog.this.dispose();
 			}
 		}
 	};
+
+	private void changePixFormat(Dataset dataset) {
+		if (this.isFirstClickTree) {
+			this.prePixelFormat=((DatasetGrid) dataset).getPixelFormat();
+			this.isFirstClickTree=false;
+		}
+	}
 
 	private void buttonOperator_Click(String operatorString) {
 		this.textAreaOperationString.requestFocusInWindow();
@@ -467,75 +398,12 @@ public class RasterAlgebraOperationDialog extends SmDialog {
 		textArea.requestFocusInWindow();
 	}
 
-	private void exportXML() {
-		String moduleName = "ExportRasterAlgebraExpression";
-		if (!SmFileChoose.isModuleExist(moduleName)) {
-			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_RasterAlgebraExpression"), "xml");
-			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-					ControlsProperties.getString("String_SaveAsFile"), moduleName, "SaveOne");
-		}
-		SmFileChoose smFileChoose = new SmFileChoose(moduleName);
-		smFileChoose.setSelectedFile(new File("GridMathAnalystInfo.xml"));
-		int state = smFileChoose.showDefaultDialog();
-		String filePath = "";
-		if (state == JFileChooser.APPROVE_OPTION) {
-			filePath = smFileChoose.getFilePath();
-			File oleFile = new File(filePath);
-			filePath = filePath.substring(0, filePath.lastIndexOf(".")) + ".xml";
-			File NewFile = new File(filePath);
-			oleFile.renameTo(NewFile);
-			if (oleFile.isFile() && oleFile.exists()) {
-				oleFile.delete();
-			}
-			if (MathAnalyst.toXMLFile(filePath, this.textAreaOperationString.getText(), null, PixelFormatUtilities.valueOf(this.comboBoxPixelFormat.getSelectedItem().toString())
-					, this.checkBoxCompress.isSelected(), this.checkBoxIngoreNoValueCell.isSelected())) {
-				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_RasterAlgebraExpressionExportSuccess") + filePath);
-			} else {
-				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_RasterAlgebraExpressionExportFailed"));
-			}
-		}
-	}
-
-	private void importXML() {
-		String moduleName = "InputRasterAlgebraExpression";
-		if (!SmFileChoose.isModuleExist(moduleName)) {
-			String fileFilters = SmFileChoose.createFileFilter(ControlsProperties.getString("String_RasterAlgebraExpression"), "xml");
-			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-					ControlsProperties.getString("String_OpenRasterAlgebraExpressionFile"), moduleName, "OpenMany");
-		}
-		SmFileChoose smFileChoose = new SmFileChoose(moduleName);
-		int state = smFileChoose.showDefaultDialog();
-		String filePath = "";
-		if (state == JFileChooser.APPROVE_OPTION) {
-			filePath = smFileChoose.getFilePath();
-			RasterAlgebraExpressionXml rasterAlgebraExpressionXml = new RasterAlgebraExpressionXml();
-			rasterAlgebraExpressionXml.parserXml(filePath);
-			if (rasterAlgebraExpressionXml.isImportResult()) {
-				this.textAreaOperationString.setText(rasterAlgebraExpressionXml.getExpression());
-				this.comboBoxPixelFormat.setSelectedItem(PixelFormatUtilities.toString(rasterAlgebraExpressionXml.getPixelFormat()));
-				this.checkBoxCompress.setSelected(rasterAlgebraExpressionXml.isZip());
-				this.checkBoxIngoreNoValueCell.setSelected(rasterAlgebraExpressionXml.isIgnoreNoValue());
-				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_RasterAlgebraExpressionInputSuccess") + filePath);
-			} else {
-				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_RasterAlgebraExpressionInputFailed"));
-			}
-		}
-	}
-
 	public String getExpression() {
 		return this.textAreaOperationString.getText();
 	}
 
 	public PixelFormat getPixelFormat() {
-		return PixelFormatUtilities.valueOf(this.comboBoxPixelFormat.getSelectedItem().toString());
-	}
-
-	public boolean isZip() {
-		return this.checkBoxCompress.isSelected();
-	}
-
-	public boolean isIgnoreNoValue() {
-		return this.checkBoxIngoreNoValueCell.isSelected();
+		return this.prePixelFormat;
 	}
 
 	class LocalMouseAdapter extends MouseAdapter {
