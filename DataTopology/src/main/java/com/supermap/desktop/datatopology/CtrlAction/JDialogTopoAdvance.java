@@ -177,11 +177,11 @@ public class JDialogTopoAdvance extends SmDialog {
 
         this.panelToleranceSetting.add(this.labelUndershootsTolerance, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(0, 10, 5, 5));
         this.panelToleranceSetting.add(this.textFieldUndershootsTolerance, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(60, 0).setInsets(0, 0, 5, 10));
-        this.panelToleranceSetting.add(this.labelUndershootsToleranceUnit, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(10, 0, 5, 10));
+        this.panelToleranceSetting.add(this.labelUndershootsToleranceUnit, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(0, 0, 5, 10));
 
         this.panelToleranceSetting.add(this.labelVertexTolerance, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(0, 10, 10, 5));
         this.panelToleranceSetting.add(this.textFieldVertexTorance, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(60, 0).setInsets(0, 0, 10, 10));
-        this.panelToleranceSetting.add(this.labelVertexToleranceUnit, new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(10, 0, 5, 10));
+        this.panelToleranceSetting.add(this.labelVertexToleranceUnit, new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(0, 0, 5, 10));
 
         // @formatter:on
 	}

@@ -74,7 +74,6 @@ public class DialogCacheBuilder extends JFrame {
 	private Thread updateThread;
 	private String locale;
 	private CacheProperties cacheProperties;
-	private static String updateSciPath;
 
 	private static Object resultLock = new Object();
 
@@ -215,29 +214,27 @@ public class DialogCacheBuilder extends JFrame {
 	};
 
 	private void resetPathInfo() {
-		String sciFilePath = getCacheSci();
-		if (null != updateSciPath && cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip) {
-			sciFilePath = updateSciPath;
-		}
-		if (null != sciFilePath) {
-			MapCacheBuilder builder = new MapCacheBuilder();
-			boolean result = builder.fromConfigFile(sciFilePath);
+		ArrayList<String> sciFilePath = getCacheSci();
+		MapCacheBuilder builder = new MapCacheBuilder();
+		CopyOnWriteArrayList<String> captions = new CopyOnWriteArrayList<>();
+		boolean result;
+		for (int i = 0, sciSize = sciFilePath.size(); i < sciSize; i++) {
+			result = builder.fromConfigFile(sciFilePath.get(i));
 			if (result) {
-				progressBarTotal.setValue(0);
 				HashMap<Double, String> allScaleCaptions = new HashMap<>(builder.getOutputScaleCaptions());
-				if (StringUtilities.isNullOrEmpty(textFieldMapName.getText())) {
-					textFieldMapName.setText(builder.getCacheName());
-				}
 				Set<Double> scales = allScaleCaptions.keySet();
 				ArrayList<Double> scaleList = new ArrayList<>();
 				scaleList.addAll(scales);
 				Collections.sort(scaleList);
-				CopyOnWriteArrayList<String> tempCaptions = new CopyOnWriteArrayList<>();
 				for (double scale : scaleList) {
-					tempCaptions.add(String.valueOf(Math.round(1 / scale)));
+					captions.add(String.valueOf(Math.round(1 / scale)));
 				}
-				setCaptions(tempCaptions);
 			}
+		}
+		setCaptions(captions);
+		progressBarTotal.setValue(0);
+		if (StringUtilities.isNullOrEmpty(textFieldMapName.getText())) {
+			textFieldMapName.setText(builder.getCacheName());
 		}
 	}
 
@@ -423,15 +420,15 @@ public class DialogCacheBuilder extends JFrame {
 		}
 	}
 
-	public String getCacheSci() {
-		String result = null;
+	public ArrayList<String> getCacheSci() {
+		ArrayList<String> result = new ArrayList<>();
 		if (null != CacheUtilities.getCachePath(fileChooserCachePath.getPath())) {
 			File cachePath = new File(CacheUtilities.getCachePath(fileChooserCachePath.getPath()));
 			File[] scis = cachePath.listFiles();
 			if (null != scis) {
 				for (int i = 0; i < scis.length; i++) {
 					if (scis[i].getName().endsWith(".sci")) {
-						result = scis[i].getAbsolutePath();
+						result.add(scis[i].getAbsolutePath());
 					}
 				}
 			}
@@ -768,13 +765,6 @@ public class DialogCacheBuilder extends JFrame {
 		if (args.length == 5) {
 			DialogCacheBuilder dialogMapCacheBuilder = setParameters(args);
 			dialogMapCacheBuilder.setVisible(true);
-		} else if (args.length > 5) {
-			DialogCacheBuilder dialogMapCacheBuilder = setParameters(args);
-			String updateSciPath = args[5];
-			if (!"null".equals(updateSciPath)) {
-				dialogMapCacheBuilder.updateSciPath = updateSciPath;
-			}
-			dialogMapCacheBuilder.setVisible(true);
 		} else {
 			getDialog(args[0], args[1]).setVisible(true);
 		}
@@ -810,7 +800,7 @@ public class DialogCacheBuilder extends JFrame {
 	}
 
 	private void killProcess() {
-		System.exit(1);
+//		System.exit(1);
 	}
 
 }

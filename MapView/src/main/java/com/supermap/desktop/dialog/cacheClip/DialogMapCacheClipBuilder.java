@@ -1,9 +1,6 @@
 package com.supermap.desktop.dialog.cacheClip;
 
-import com.supermap.data.GeoRegion;
-import com.supermap.data.Geometrist;
-import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
+import com.supermap.data.*;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
 import com.supermap.data.processing.MapTilingMode;
@@ -12,7 +9,6 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
-import com.supermap.desktop.dialog.cacheClip.cache.LogWriter;
 import com.supermap.desktop.dialog.cacheClip.cache.TaskBuilder;
 import com.supermap.desktop.mapview.MapCache.CacheProgressCallable;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -21,6 +17,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
@@ -34,10 +31,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,7 +64,8 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private JButton buttonStep;
 	public JButton buttonOk;
 	private JButton buttonCancel;
-	public static final String CacheTask = "CacheTask";
+	public static String CacheTask = "CacheTask";
+	private String updateSciName;
 
 	private ActionListener cancelListener = new ActionListener() {
 		@Override
@@ -95,7 +91,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					multiProcessBuilder();
 					break;
 				case MultiUpdateProcessClip:
-					multiProcessBuilder();
+					multiProcessUpdateBuilder();
 					break;
 				default:
 					break;
@@ -233,8 +229,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		//检查缓存路径是否可用
 		boolean result = true;
 		try {
-			if (cmdType == MultiUpdateProcessClip || cmdType == SingleUpdateProcessClip
-					|| cmdType == ResumeProcessClip) {
+			if (cmdType == SingleUpdateProcessClip || cmdType == ResumeProcessClip) {
 				return result;
 			}
 			String cacheRoot = firstStepPane.fileChooserControlFileCache.getPath();
@@ -378,13 +373,152 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		}
 	}
 
+	private void multiProcessUpdateBuilder() {
+		if (null == mapCacheBuilder.getMap()) {
+			mapCacheBuilder.setMap(MapUtilities.getActiveMap() == null ? CacheUtilities.getWorkspaceSelectedMap() : MapUtilities.getActiveMap());
+		}
+		if (validateFixedScales()) {
+			boolean hasDifferentBounds = false;
+			boolean hasNewScales = false;
+			if (hasDifferentBounds()) {
+				this.mapCacheBuilder.setBounds(nextStepPane.cacheRangeBounds);
+				hasDifferentBounds = true;
+			}
+			if (hasNewScales()) {
+				hasNewScales = true;
+			}
+			if (!hasDifferentBounds && !hasNewScales) {
+				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DonotNeedUpdate"));
+				return;
+			}
+
+			String sciPath = getUpdateSci();
+			//将更新的sci合并到原sci中
+			MapCacheBuilder tempMapCacheBuilder = new MapCacheBuilder();
+			tempMapCacheBuilder.fromConfigFile(firstStepPane.getSciPath());
+			tempMapCacheBuilder.mergeConfigFile(sciPath);
+			boolean result = mapCacheBuilder.toConfigFile(sciPath);
+			if (result) {
+				splitAndStartCacheBuilder(firstStepPane.fileChooserControlFileCache.getPath(), sciPath, updateSciName);
+			}
+			if (this.checkBoxAutoClosed.isSelected()) {
+				dispose();
+				this.mapCacheBuilder.dispose();
+			}
+
+		}
+	}
+
+
+	public String getUpdateSci() {
+		File parentPath = new File(firstStepPane.getSciPath()).getParentFile();
+
+		String[] updateFilePaths = parentPath.list(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.contains("update");
+			}
+		});
+		//设置更新的目录
+		if (null == updateFilePaths || updateFilePaths.length == 0) {
+			updateSciName = "update";
+		} else if (updateFilePaths.length == 1) {
+			updateSciName = "update_1";
+		} else {
+			String updateFile = updateFilePaths[updateFilePaths.length - 1];
+			if (updateFile.contains("_")) {
+				String newIndex = String.valueOf(Integer.valueOf(updateFile.split("_")[1]) + 1);
+				updateSciName = "update" + "_" + newIndex;
+			}
+		}
+		//创建文件夹
+		File updateDirectory = new File(parentPath.getParent() + File.separator + updateSciName);
+		if (!updateDirectory.exists()) {
+			updateDirectory.mkdirs();
+		}
+
+		return parentPath.getAbsolutePath() + File.separator + this.mapCacheBuilder.getCacheName() + "_" + updateSciName + ".sci";
+	}
+
+	private boolean hasNewScales() {
+		boolean result = false;
+		double[] sourceScales = this.mapCacheBuilder.getOutputScales();
+		ArrayList<Double> newScales = new ArrayList<>();
+		ArrayList<Double> sourceArray = new ArrayList<>();
+		for (int i = 0, length = sourceScales.length; i < length; i++) {
+			sourceArray.add(sourceScales[i]);
+		}
+		double[] newScaleValues = null;
+		HashMap<Double, String> scaleNames = new HashMap<>();
+
+		if (firstStepPane.addScaleDropDown.isEnabled()) {
+			//本地抛分
+			for (int i = 0, size = firstStepPane.currentMapCacheScale.size(); i < size; i++) {
+				newScales.add(firstStepPane.currentMapCacheScale.get(i));
+			}
+
+		} else {
+			//全球抛分
+			ArrayList<Integer> selectedIndex = new ArrayList<>();
+			for (int i = 0; i < firstStepPane.globalSplitTable.getRowCount(); i++) {
+				MultipleCheckboxItem multipleCheckboxItem = (MultipleCheckboxItem) firstStepPane.globalSplitTable.getValueAt(i, firstStepPane.COLUMN_INDEX);
+				if (multipleCheckboxItem.getSelected()) {
+					selectedIndex.add(i);
+				}
+			}
+			for (int i = 0; i < selectedIndex.size(); i++) {
+				newScales.add(firstStepPane.globalScaleSortKeys[selectedIndex.get(i)]);
+			}
+		}
+		for (int i = newScales.size() - 1; i >= 0; i--) {
+			for (int j = 0, size1 = sourceArray.size(); j < size1; j++) {
+				if (newScales.get(i) - sourceArray.get(j) == 0.0) {
+					newScales.remove(i);
+				}
+			}
+		}
+		if (newScales.size() > 0) {
+			result = true;
+			newScaleValues = new double[newScales.size()];
+			DecimalFormat numberFormat = new DecimalFormat("#");
+			for (int i = 0, length = newScales.size(); i < length; i++) {
+				newScaleValues[i] = newScales.get(i);
+				scaleNames.put(newScales.get(i), numberFormat.format(1 / newScales.get(i)));
+			}
+			this.mapCacheBuilder.setOutputScales(newScaleValues);
+			this.mapCacheBuilder.setOutputScaleCaptions(scaleNames);
+		}
+		return result;
+	}
+
+	private boolean hasDifferentBounds() {
+		boolean result = false;
+		Rectangle2D sourceBounds = this.mapCacheBuilder.getBounds();
+		Rectangle2D newBounds = nextStepPane.cacheRangeBounds;
+		if (!DoubleUtilities.equals(sourceBounds.getBottom(), newBounds.getBottom(), 8)
+				&& !DoubleUtilities.equals(sourceBounds.getLeft(), newBounds.getLeft(), 8)
+				&& !DoubleUtilities.equals(sourceBounds.getRight(), newBounds.getRight(), 8)
+				&& !DoubleUtilities.equals(sourceBounds.getTop(), newBounds.getTop(), 8)) {
+			result = true;
+		}
+		return result;
+	}
+
+
 	private void multiProcessBuilder() {
 		if (!validateCacheFolderSave()) {
 			return;
 		}
-		if (cmdType == MultiUpdateProcessClip && null == mapCacheBuilder.getMap()) {
-			mapCacheBuilder.setMap(MapUtilities.getActiveMap() == null ? CacheUtilities.getWorkspaceSelectedMap() : MapUtilities.getActiveMap());
+		if (validateFixedScales()) {
+			setOutputScalesInfo();
+			setMapCacheBuilderBasicInfo();
+			multiProcessSplit();
 		}
+	}
+
+
+	private void multiProcessSplit() {
+		//多进程拆分前设置参数
 		String cachePath = firstStepPane.fileChooserControlFileCache.getPath();
 		String sciPath = "";
 		sciPath = CacheUtilities.replacePath(cachePath, firstStepPane.textFieldCacheName.getText());
@@ -397,14 +531,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		} else {
 			sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + ".sci");
 		}
-		if (validateFixedScales()) {
-			setMapCacheBuilderValueBeforeRun();
-			splitCahceAndDoBuild(cachePath, sciPath);
-		}
-	}
-
-	private void splitCahceAndDoBuild(String cachePath, String sciPath) {
-		boolean result = true;
+		boolean result;
 		//SaveType==MongoType,build some cache for creating a database
 		this.buttonOk.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
@@ -412,36 +539,48 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			result = mapCacheBuilder.createMongoDB();
 			if (!new File(sciPath).exists()) {
 				new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_ErrorForMongoInfo"));
+			} else {
+				//将文件重命名并赋值给sciPath
+				File mongoSciFile = new File(sciPath);
+				mongoSciFile.renameTo(new File(mongoSciFile.getParentFile(), mapCacheBuilder.getCacheName() + ".sci"));
+				sciPath = CacheUtilities.replacePath(mongoSciFile.getParent(), mapCacheBuilder.getCacheName() + ".sci");
 			}
 		} else {
 			result = mapCacheBuilder.toConfigFile(sciPath);
 		}
 		if (result) {
-			String[] params = {sciPath, CacheUtilities.replacePath(cachePath, CacheTask), tasksSize, canudb};
-			boolean buildTaskResult = TaskBuilder.buildSci(params);
-			if (!buildTaskResult) {
-				this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-				return;
-			}
-			this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-			dispose();
-			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetCachePath"), cachePath));
-			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheExecute"));
-			if (nextStepPane.checkBoxClipOnThisComputer.isSelected()) {
-				String mapName = this.mapCacheBuilder.getCacheName();
-				if (null != this.mapCacheBuilder.getMap()) {
-					mapName = this.mapCacheBuilder.getMap().getName();
-				}
-				String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi", "zh-CN",
-						Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), mapName, cachePath};
-				CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
-			}
+			splitAndStartCacheBuilder(cachePath, sciPath, CacheTask);
 		}
 		if (this.checkBoxAutoClosed.isSelected()) {
 			dispose();
 			this.mapCacheBuilder.dispose();
 		}
 		return;
+	}
+
+	private boolean splitAndStartCacheBuilder(String cachePath, String sciPath, String cacheTask) {
+		//拆分总sci并启动执行任务界面
+		String[] params = {sciPath, CacheUtilities.replacePath(cachePath, cacheTask), tasksSize, canudb};
+		boolean buildTaskResult = TaskBuilder.buildSci(params);
+		if (!buildTaskResult) {
+			this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			return true;
+		}
+		this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		dispose();
+		Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetCachePath"), cachePath));
+		Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCacheExecute"));
+		if (nextStepPane.checkBoxClipOnThisComputer.isSelected()) {
+			String mapName = this.mapCacheBuilder.getCacheName();
+			if (null != this.mapCacheBuilder.getMap()) {
+				mapName = this.mapCacheBuilder.getMap().getName();
+			}
+			String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi", "zh-CN",
+					Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), mapName, cachePath};
+//			CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
+			DialogCacheBuilder.main(tempParams);
+		}
+		return false;
 	}
 
 	private boolean validateFixedScales() {
@@ -484,7 +623,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			}
 			mapCacheBuilder.setMap(map);
 		}
-		setMapCacheBuilderValueBeforeRun();
+		setMapCacheBuilderBasicInfo();
 		boolean result;
 		long startTime = System.currentTimeMillis();
 		Date currentTime = new Date();
@@ -516,34 +655,9 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		this.nextStepPane.dispose();
 	}
 
-	public MapCacheBuilder setMapCacheBuilderValueBeforeRun() {
+	public MapCacheBuilder setMapCacheBuilderBasicInfo() {
 		try {
-			double[] outputScalevalues;
-			HashMap<Double, String> scaleNames = new HashMap<>();
-			double[] defaultScales = firstStepPane.mapCacheBuilder.getOutputScales();
-			if (firstStepPane.addScaleDropDown.isEnabled()) {
-				outputScalevalues = new double[firstStepPane.currentMapCacheScale.size()];
-				for (int i = 0; i < outputScalevalues.length; i++) {
-					outputScalevalues[i] = firstStepPane.currentMapCacheScale.get(i);
-					String scaleTitleName = String.valueOf(firstStepPane.localSplitTable.getValueAt(i, firstStepPane.COLUMN_TITLE)).trim();
-					scaleNames.put(outputScalevalues[i], scaleTitleName);
-				}
-			} else {
-				ArrayList<Integer> selectedIndex = new ArrayList<>();
-				for (int i = 0; i < firstStepPane.globalSplitTable.getRowCount(); i++) {
-					MultipleCheckboxItem multipleCheckboxItem = (MultipleCheckboxItem) firstStepPane.globalSplitTable.getValueAt(i, firstStepPane.COLUMN_INDEX);
-					if (multipleCheckboxItem.getSelected()) {
-						selectedIndex.add(i);
-					}
-				}
-				outputScalevalues = new double[selectedIndex.size()];
-				for (int i = 0; i < selectedIndex.size(); i++) {
-					outputScalevalues[i] = firstStepPane.globalScaleSortKeys[selectedIndex.get(i)];
-					scaleNames.put(firstStepPane.globalScaleSortKeys[selectedIndex.get(i)], firstStepPane.globalSplitScale.get(firstStepPane.globalScaleSortKeys[selectedIndex.get(i)]));
-				}
-			}
-			this.mapCacheBuilder.setOutputScales(outputScalevalues);
-			this.mapCacheBuilder.setOutputScaleCaptions(scaleNames);
+			//为mapCacheBuilder设置除了缓存比例尺及比例尺对应信息以外的信息
 			this.mapCacheBuilder.setVersion(MapCacheVersion.VERSION_50);
 			this.mapCacheBuilder.setCacheName(firstStepPane.textFieldCacheName.getText());
 			this.mapCacheBuilder.setOutputFolder(firstStepPane.fileChooserControlFileCache.getPath());
@@ -608,8 +722,38 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		return mapCacheBuilder;
 	}
 
+	private void setOutputScalesInfo() {
+		//设置缓存比例尺及比例尺对应信息
+		double[] outputScalevalues;
+		HashMap<Double, String> scaleNames = new HashMap<>();
+		if (firstStepPane.addScaleDropDown.isEnabled()) {
+			outputScalevalues = new double[firstStepPane.currentMapCacheScale.size()];
+			for (int i = 0; i < outputScalevalues.length; i++) {
+				outputScalevalues[i] = firstStepPane.currentMapCacheScale.get(i);
+				String scaleTitleName = String.valueOf(firstStepPane.localSplitTable.getValueAt(i, firstStepPane.COLUMN_TITLE)).trim();
+				scaleNames.put(outputScalevalues[i], scaleTitleName);
+			}
+		} else {
+			ArrayList<Integer> selectedIndex = new ArrayList<>();
+			for (int i = 0; i < firstStepPane.globalSplitTable.getRowCount(); i++) {
+				MultipleCheckboxItem multipleCheckboxItem = (MultipleCheckboxItem) firstStepPane.globalSplitTable.getValueAt(i, firstStepPane.COLUMN_INDEX);
+				if (multipleCheckboxItem.getSelected()) {
+					selectedIndex.add(i);
+				}
+			}
+			outputScalevalues = new double[selectedIndex.size()];
+			for (int i = 0; i < selectedIndex.size(); i++) {
+				outputScalevalues[i] = firstStepPane.globalScaleSortKeys[selectedIndex.get(i)];
+				scaleNames.put(firstStepPane.globalScaleSortKeys[selectedIndex.get(i)], firstStepPane.globalSplitScale.get(firstStepPane.globalScaleSortKeys[selectedIndex.get(i)]));
+			}
+		}
+		this.mapCacheBuilder.setOutputScales(outputScalevalues);
+		this.mapCacheBuilder.setOutputScaleCaptions(scaleNames);
+	}
+
 	public void setComponentsEnabled(boolean enabled) {
 		this.firstStepPane.setComponentsEnabled(enabled);
 		this.nextStepPane.setComponentsEnabled(enabled);
 	}
+
 }
