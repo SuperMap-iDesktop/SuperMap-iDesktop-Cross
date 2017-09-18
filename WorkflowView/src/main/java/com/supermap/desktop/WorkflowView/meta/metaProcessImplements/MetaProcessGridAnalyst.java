@@ -15,7 +15,7 @@ import com.supermap.desktop.process.parameter.ipls.ParameterGridAnalystSetting;
  */
 public abstract class MetaProcessGridAnalyst extends MetaProcess {
 
-	private ParameterGridAnalystSetting parameterGridAnalystSetting;
+	protected ParameterGridAnalystSetting parameterGridAnalystSetting;
 
 	public MetaProcessGridAnalyst() {
 		parameterGridAnalystSetting = new ParameterGridAnalystSetting();
