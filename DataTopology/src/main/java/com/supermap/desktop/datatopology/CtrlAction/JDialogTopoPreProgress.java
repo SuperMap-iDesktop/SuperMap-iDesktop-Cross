@@ -188,7 +188,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 				return backUpValue;
 			}
 		});
-		textFieldTolerance.setText("0");
+		textFieldTolerance.setText("1");
 		textFieldTolerance.setColumns(10);
 
 		comboBoxConsultDataset = new DatasetComboBox();
@@ -247,6 +247,8 @@ public class JDialogTopoPreProgress extends SmDialog {
 		table.setModel(tableModel);
 		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setCellRenderer(new CommonListCellRenderer());
 		table.getColumnModel().getColumn(COLUMN_INDEX_DATASOURCE).setCellRenderer(new CommonListCellRenderer());
+		table.getColumnModel().getColumn(COLUMN_INDEX_COUNT).setMaxWidth(40);
+		table.setRowHeight(20);
 		toolBar.add(buttonAdd);
 		toolBar.add(buttonSelectAll);
 		toolBar.add(buttonInvertSelect);
