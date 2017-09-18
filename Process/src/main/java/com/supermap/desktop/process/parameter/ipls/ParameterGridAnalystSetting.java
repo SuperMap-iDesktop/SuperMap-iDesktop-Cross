@@ -44,6 +44,13 @@ public class ParameterGridAnalystSetting extends ParameterCombine implements IEn
 	private GridAnalystSettingInstance gridAnalystSettingInstance;
 	private boolean isSelectedItem = false;
 	private PropertyChangeListener gridAnalystSettingListener;
+	private ParameterCombine parameterCombineResultBounds;
+	private ParameterCombine parameterCombineClipBounds;
+	private ParameterCombine parameterCombineCellSize;
+
+	private boolean isResultBoundsCustomOnly;
+	private boolean isCellSizeCustomOnly;
+
 
 	public ParameterGridAnalystSetting() {
 		gridAnalystSettingInstance = GridAnalystSettingInstance.getInstance();
@@ -75,7 +82,7 @@ public class ParameterGridAnalystSetting extends ParameterCombine implements IEn
 	}
 
 	private void initLayouts() {
-		ParameterCombine parameterCombineResultBounds = new ParameterCombine();
+		parameterCombineResultBounds = new ParameterCombine();
 		parameterCombineResultBounds.setDescribe(ProcessProperties.getString("String_Setting_Bounds"));
 		parameterSwitchResultBounds.add("bounds", parameterBounds);
 		ParameterCombine parameterCombineResultBoundsDataset = new ParameterCombine();
@@ -83,11 +90,11 @@ public class ParameterGridAnalystSetting extends ParameterCombine implements IEn
 		parameterSwitchResultBoundsDataset.add("dataset", parameterCombineResultBoundsDataset);
 		parameterCombineResultBounds.addParameters(parameterComboBoxResultBounds, parameterSwitchResultBoundsDataset, parameterSwitchResultBounds);
 
-		ParameterCombine parameterCombineClipSize = new ParameterCombine();
-		parameterCombineClipSize.setDescribe(ProcessProperties.getString("String_Setting_ClipBounds"));
-		parameterCombineClipSize.addParameters(parameterDatasource, parameterDataset);
+		parameterCombineClipBounds = new ParameterCombine();
+		parameterCombineClipBounds.setDescribe(ProcessProperties.getString("String_Setting_ClipBounds"));
+		parameterCombineClipBounds.addParameters(parameterDatasource, parameterDataset);
 
-		ParameterCombine parameterCombineCellSize = new ParameterCombine();
+		parameterCombineCellSize = new ParameterCombine();
 		parameterCombineCellSize.setDescribe(ProcessProperties.getString("String_Setting_DefaultCellSize"));
 		parameterSwitchCellSize.add("CustomCellSize", parameterCellSize);
 		ParameterCombine parameterCombineCellSizeDataset = new ParameterCombine();
@@ -95,7 +102,7 @@ public class ParameterGridAnalystSetting extends ParameterCombine implements IEn
 		parameterSwitchCellSizeDataset.add("dataset", parameterCombineCellSizeDataset);
 		parameterCombineCellSize.addParameters(parameterComboBoxCellSize, parameterSwitchCellSizeDataset, parameterSwitchCellSize);
 
-		this.addParameters(parameterCombineResultBounds, parameterCombineClipSize, parameterCombineCellSize);
+		this.addParameters(parameterCombineResultBounds, parameterCombineClipBounds, parameterCombineCellSize);
 	}
 
 	private void initListener() {
@@ -270,7 +277,15 @@ public class ParameterGridAnalystSetting extends ParameterCombine implements IEn
 		isSelectedItem = true;
 		try {
 			Object resultBounds = gridAnalystSettingInstance.getResultBounds();
-			if (resultBounds == BoundsType.INTERSECTION || resultBounds == BoundsType.UNION) {
+			if (isResultBoundsCustomOnly) {
+				parameterComboBoxResultBounds.setSelectedItem(BoundsType.CUSTOM);
+				parameterBounds.setEnabled(true);
+				parameterSwitchResultBoundsDataset.switchParameter(((IParameter) null));
+				parameterSwitchResultBounds.switchParameter("bounds");
+				if (resultBounds instanceof Rectangle2D) {
+					parameterBounds.setSelectedItem(resultBounds);
+				}
+			} else if ((resultBounds == BoundsType.INTERSECTION || resultBounds == BoundsType.UNION)) {
 				parameterComboBoxResultBounds.setSelectedItem(resultBounds);
 				parameterSwitchResultBounds.switchParameter(((IParameter) null));
 				parameterSwitchResultBoundsDataset.switchParameter(((IParameter) null));
@@ -280,14 +295,15 @@ public class ParameterGridAnalystSetting extends ParameterCombine implements IEn
 				parameterSwitchResultBounds.switchParameter("bounds");
 				parameterSwitchResultBoundsDataset.switchParameter(((IParameter) null));
 				parameterBounds.setSelectedItem(resultBounds);
-			} else if (resultBounds instanceof Dataset) {
-				parameterComboBoxResultBounds.setSelectedItem("");
-				parameterSwitchResultBounds.switchParameter("bounds");
-				parameterBounds.setEnabled(false);
-				parameterSwitchResultBoundsDataset.switchParameter("dataset");
-				parameterDatasourceResultBounds.setSelectedItem(((Dataset) resultBounds).getDatasource());
-				parameterDatasourceResultBounds.setSelectedItem(resultBounds);
 			}
+//			else if (resultBounds instanceof Dataset) {
+//				parameterComboBoxResultBounds.setSelectedItem("");
+//				parameterSwitchResultBounds.switchParameter("bounds");
+//				parameterBounds.setEnabled(false);
+//				parameterSwitchResultBoundsDataset.switchParameter("dataset");
+//				parameterDatasourceResultBounds.setSelectedItem(((Dataset) resultBounds).getDatasource());
+//				parameterDatasourceResultBounds.setSelectedItem(resultBounds);
+//			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -316,7 +332,15 @@ public class ParameterGridAnalystSetting extends ParameterCombine implements IEn
 		isSelectedItem = true;
 		try {
 			Object cellSize = gridAnalystSettingInstance.getCellSize();
-			if (cellSize == CellSizeType.MAX || cellSize == CellSizeType.MIN) {
+			if (isCellSizeCustomOnly) {
+				parameterComboBoxCellSize.setSelectedItem(CellSizeType.CUSTOM);
+				if (cellSize instanceof Double) {
+					parameterCellSize.setSelectedItem(String.valueOf(cellSize));
+				}
+				parameterCellSize.setEnabled(true);
+				parameterSwitchCellSize.switchParameter("CustomCellSize");
+				parameterSwitchCellSizeDataset.switchParameter((IParameter) null);
+			} else if ((cellSize == CellSizeType.MAX || cellSize == CellSizeType.MIN)) {
 				parameterComboBoxCellSize.setSelectedItem(cellSize);
 				parameterSwitchCellSize.switchParameter(((IParameter) null));
 				parameterSwitchCellSizeDataset.switchParameter(((IParameter) null));
@@ -373,5 +397,58 @@ public class ParameterGridAnalystSetting extends ParameterCombine implements IEn
 		removeListeners();
 	}
 
+	public boolean isResultBoundsEnable() {
+		return parameterCombineResultBounds.isEnabled();
+	}
 
+	public void setResultBoundsEnable(boolean resultBoundsEnable) {
+		parameterCombineResultBounds.setEnabled(resultBoundsEnable);
+	}
+
+	public boolean isClipBoundsEnable() {
+		return parameterCombineClipBounds.isEnabled();
+	}
+
+	public void setClipBoundsEnable(boolean clipBoundsEnable) {
+		parameterCombineClipBounds.setEnabled(clipBoundsEnable);
+	}
+
+	public boolean isCellSizeEnable() {
+		return parameterCombineCellSize.isEnabled();
+	}
+
+	public void setCellSizeEnable(boolean isCellSizeEnable) {
+		parameterCombineCellSize.setEnabled(isCellSizeEnable);
+	}
+
+	public void setResultBoundsCustomOnly(boolean isResultBoundsCustomOnly) {
+		// 未做运行时修改，所以初始化一次后不能修改，有需求再做
+		if (this.isResultBoundsCustomOnly != isResultBoundsCustomOnly) {
+			this.isResultBoundsCustomOnly = isResultBoundsCustomOnly;
+			if (isResultBoundsCustomOnly) {
+				parameterComboBoxResultBounds.removeItem(parameterComboBoxResultBounds.getItemAt(0));
+				parameterComboBoxResultBounds.removeItem(parameterComboBoxResultBounds.getItemAt(1));
+				parameterComboBoxResultBounds.setSelectedItem(BoundsType.CUSTOM);
+			} else {
+				// 暂不存在
+			}
+		}
+	}
+
+//	public boolean isResultBoundsCustomOnly() {
+//		return isResultBoundsCustomOnly;
+//	}
+
+	public void setCellSizeCustomOnly(boolean isCellSizeCustomOnly) {
+		if (this.isCellSizeCustomOnly != isCellSizeCustomOnly) {
+			this.isCellSizeCustomOnly = isCellSizeCustomOnly;
+			if (isCellSizeCustomOnly) {
+				parameterComboBoxCellSize.removeItem(parameterComboBoxResultBounds.getItemAt(0));
+				parameterComboBoxCellSize.removeItem(parameterComboBoxResultBounds.getItemAt(1));
+				parameterComboBoxCellSize.setSelectedItem(CellSizeType.CUSTOM);
+			} else {
+				// 暂不存在
+			}
+		}
+	}
 }
