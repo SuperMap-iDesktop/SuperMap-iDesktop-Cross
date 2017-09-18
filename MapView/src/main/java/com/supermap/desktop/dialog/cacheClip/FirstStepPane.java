@@ -342,7 +342,7 @@ public class FirstStepPane extends JPanel implements IState {
 //		pathSetting.add(this.warningProviderCachePathIllegal, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
 		pathSetting.add(this.fileChooserControlFileCache, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
 		JPanel storeType = new JPanel();
-		storeType.setBorder(BorderFactory.createTitledBorder(MapViewProperties.getString("MapCache_OutputSetting")));
+		storeType.setBorder(BorderFactory.createTitledBorder(MapViewProperties.getString("MapCache_SaveSetting")));
 		storeType.setLayout(new GridBagLayout());
 		storeType.add(this.labelSaveType, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
 		storeType.add(this.comboBoxSaveType, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
