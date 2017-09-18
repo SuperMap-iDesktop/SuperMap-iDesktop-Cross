@@ -4,13 +4,7 @@ import com.supermap.analyst.spatialanalyst.DistanceAnalyst;
 import com.supermap.analyst.spatialanalyst.DistanceAnalystParameter;
 import com.supermap.analyst.spatialanalyst.PathLineResult;
 import com.supermap.analyst.spatialanalyst.SmoothMethod;
-import com.supermap.data.CursorType;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Point2D;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -22,21 +16,14 @@ import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterButton;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
-import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,9 +48,9 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 	private ParameterNumber parameterTargetPointX;
 	private ParameterNumber parameterTargetPointY;
 
-	// 复制，粘贴按钮
-	private ParameterButton parameterButtonCopy;
-	private ParameterButton parameterButtonPaste;
+	// 键入原点和目标点
+	private ParameterButton parameterInputSourcePoint;
+	private ParameterButton parameterInputTargetPoint;
 	//  光滑方法
 	private ParameterComboBox parameterPathLineSmoothMethod;
 	// 光滑系数
@@ -81,10 +68,10 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 	public ActionListener actionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand().equals(parameterButtonCopy.getDescribe())) {
-				copyParameter();
-			} else if (e.getActionCommand().equals(parameterButtonPaste.getDescribe())) {
-				pasteParameter();
+			if (e.getActionCommand().equals(parameterInputSourcePoint.getDescribe())) {
+				inputSourcePoint();
+			} else if (e.getActionCommand().equals(parameterInputTargetPoint.getDescribe())) {
+				inputTargetPoint();
 			}
 		}
 	};
@@ -118,14 +105,13 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 		parameterTargetPointX.setRequisite(true);
 		parameterTargetPointY.setRequisite(true);
 
-		// 复制、粘贴
-		parameterButtonCopy = new ParameterButton(ControlsProperties.getString("String_Copy"));
-		parameterButtonPaste = new ParameterButton(ControlsProperties.getString("String_Paste"));
+		parameterInputSourcePoint = new ParameterButton(ControlsProperties.getString("String_Label_InputSourcePoint"));
+		parameterInputTargetPoint = new ParameterButton(ControlsProperties.getString("String_Label_InputTargetPoint"));
 
-		parameterButtonCopy.setActionListener(actionListener);
-		parameterButtonPaste.setActionListener(actionListener);
+		parameterInputSourcePoint.setActionListener(actionListener);
+		parameterInputTargetPoint.setActionListener(actionListener);
 		ParameterCombine parameterCombineCopyPaste = new ParameterCombine(ParameterCombine.HORIZONTAL);
-		parameterCombineCopyPaste.addParameters(new ParameterCombine(), parameterButtonCopy, parameterButtonPaste);
+		parameterCombineCopyPaste.addParameters(new ParameterCombine(), parameterInputSourcePoint, parameterInputTargetPoint);
 		parameterCombineCopyPaste.setWeightIndex(0);
 
 		// 光滑方式
@@ -276,7 +262,7 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 				this.resultDataset.getResultDatasource().getDatasets().delete(resultDatasetName);
 			}
 		} finally {
-			if(resultRecordset!=null){
+			if (resultRecordset != null) {
 				resultRecordset.close();
 				resultRecordset.dispose();
 			}
@@ -286,34 +272,24 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 	}
 
 	/**
-	 * 粘贴参数
-	 * 从系统粘贴板获得最新的文本，当文本内容符合范围条件时，才进行粘贴，当不符合时，不做任何操作
+	 * 键入目标点
 	 */
-	private void pasteParameter() {
+	private void inputSourcePoint() {
 		String clipBoard = getSysClipboardText();
 
-		String labelSourcePointX = ControlsProperties.getString("String_SourcePointX");
-		String labelSourcePointY = ControlsProperties.getString("String_SourcePointY");
-		String labelTargetPointX = ControlsProperties.getString("String_TargetPointX");
-		String labelTargetPointY = ControlsProperties.getString("String_TargetPointY");
+		if (clipBoard.contains("X:") && clipBoard.contains("Y:")) {
+			String sourceX = clipBoard.substring(clipBoard.indexOf("X:"), clipBoard.indexOf("Y:"));
+			String sourceY = clipBoard.substring(clipBoard.indexOf("Y:"));
 
-		if (clipBoard.contains(labelSourcePointX) && clipBoard.contains(labelSourcePointY) && clipBoard.contains(labelTargetPointX) && clipBoard.contains(labelTargetPointY)) {
-			String sourceX = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_SourcePointX")), clipBoard.indexOf(ControlsProperties.getString("String_SourcePointY")));
-			String sourceY = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_SourcePointY")), clipBoard.indexOf(ControlsProperties.getString("String_TargetPointX")));
-			String targetX = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_TargetPointX")), clipBoard.indexOf(ControlsProperties.getString("String_TargetPointY")));
-			String targetY = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_TargetPointY")));
+			sourceX = (sourceX.replace("X:", "")).replace(",", "");
+			sourceY = (sourceY.replace("Y:", "")).replace(",", "");
 
-			sourceX = (sourceX.replace(labelSourcePointX, "")).replace(",", "");
-			sourceY = (sourceY.replace(labelSourcePointY, "")).replace(",", "");
-			targetX = (targetX.replace(labelTargetPointX, "")).replace(",", "");
-			targetY = (targetY.replace(labelTargetPointY, "")).replace(",", "");
-
-			if (StringUtilities.isNumber(sourceX) && StringUtilities.isNumber(sourceY) && StringUtilities.isNumber(targetX) && StringUtilities.isNumber(targetY)) {
+			if (StringUtilities.isNumber(sourceX) && StringUtilities.isNumber(sourceY)) {
 				this.parameterSourcePointX.setSelectedItem(sourceX);
 				this.parameterSourcePointY.setSelectedItem(sourceY);
-				this.parameterTargetPointX.setSelectedItem(targetX);
-				this.parameterTargetPointY.setSelectedItem(targetY);
 			}
+		} else {
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SourcePointGetFailed"));
 		}
 	}
 
@@ -337,33 +313,28 @@ public class MetaProcessSurfacePathLine extends MetaProcessGridAnalyst {
 	}
 
 	/**
-	 * 复制参数
+	 * 键入目标点
 	 */
-	private void copyParameter() {
-		if ((!StringUtilities.isNullOrEmpty((String) this.parameterSourcePointX.getSelectedItem()))
-				&& (!StringUtilities.isNullOrEmpty((String) this.parameterSourcePointY.getSelectedItem()))
-				&& (!StringUtilities.isNullOrEmpty((String) this.parameterTargetPointX.getSelectedItem()))
-				&& (!StringUtilities.isNullOrEmpty((String) this.parameterTargetPointY.getSelectedItem()))) {
-			String clipBoardTextSourcePointX = ControlsProperties.getString("String_SourcePointX") + (String) this.parameterSourcePointX.getSelectedItem();
-			String clipBoardTextSourcePointY = ControlsProperties.getString("String_SourcePointY") + (String) this.parameterSourcePointY.getSelectedItem();
-			String clipBoardTextTargetPointX = ControlsProperties.getString("String_TargetPointX") + (String) this.parameterTargetPointX.getSelectedItem();
-			String clipBoardTextTargetPointY = ControlsProperties.getString("String_TargetPointY") + (String) this.parameterTargetPointY.getSelectedItem();
-			// 调用windows复制功能，将值复制到剪贴板
-			setSysClipboardText(clipBoardTextSourcePointX + "," + clipBoardTextSourcePointY + "," + clipBoardTextTargetPointX + "," + clipBoardTextTargetPointY);
-			Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_MapBounds_Has_Been_Copied"));
+	private void inputTargetPoint() {
+		String clipBoard = getSysClipboardText();
+
+		if (clipBoard.contains("X:") && clipBoard.contains("Y:")) {
+
+			String targetX = clipBoard.substring(clipBoard.indexOf("X:"), clipBoard.indexOf("Y:"));
+			String targetY = clipBoard.substring(clipBoard.indexOf("Y:"));
+
+			targetX = (targetX.replace("X:", "")).replace(",", "");
+			targetY = (targetY.replace("Y:", "")).replace(",", "");
+
+			if (StringUtilities.isNumber(targetX) && StringUtilities.isNumber(targetY)) {
+				this.parameterTargetPointX.setSelectedItem(targetX);
+				this.parameterTargetPointY.setSelectedItem(targetY);
+			}
+		} else {
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_TargetPointGetFailed"));
 		}
 	}
 
-	/**
-	 * 调用windows的剪贴板
-	 *
-	 * @param coypText
-	 */
-	public static void setSysClipboardText(String coypText) {
-		Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
-		Transferable Text = new StringSelection(coypText);
-		clip.setContents(Text, null);
-	}
 
 	@Override
 	public IParameters getParameters() {
