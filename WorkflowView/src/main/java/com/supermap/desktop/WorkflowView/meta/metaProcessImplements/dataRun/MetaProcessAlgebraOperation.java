@@ -13,7 +13,12 @@ import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterButton;
+import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextArea;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.RasterAlgebraExpressionXml;
 import com.supermap.desktop.ui.RasterAlgebraOperationDialog;
@@ -64,6 +69,7 @@ public class MetaProcessAlgebraOperation extends MetaProcessGridAnalyst {
 	}
 
 	private void initParameters() {
+		initEnvironment();
 		this.comboBoxPixelFormat = new ParameterComboBox(CommonProperties.getString("String_PixelFormat"));
 		this.checkBoxCompress = new ParameterCheckBox(ControlsProperties.getString("String_DatasetCompress"));
 		this.checkBoxIgnoreNoValueCell = new ParameterCheckBox(ControlsProperties.getString("String_IgnoreNoValueRasterCell"));
@@ -86,6 +92,10 @@ public class MetaProcessAlgebraOperation extends MetaProcessGridAnalyst {
 
 		this.parameters.setParameters(setting, resultData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_AlgebraOperationResult"), DatasetTypes.GRID, resultData);
+	}
+
+	private void initEnvironment() {
+		parameterGridAnalystSetting.setCellSizeEnable(false);
 	}
 
 	private void initParameterConstraint() {

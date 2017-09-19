@@ -119,6 +119,7 @@ public class MetaProcessInterpolator extends MetaProcessGridAnalyst {
 	}
 
 	private void initParameters() {
+		initEnvironment();
 		parameterDatasource = new ParameterDatasourceConstrained();
 		parameterDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameterDataset = new ParameterSingleDataset(DatasetType.POINT);
@@ -223,6 +224,11 @@ public class MetaProcessInterpolator extends MetaProcessGridAnalyst {
 		this.parameters.addOutputParameters(OUTPUT_DATA,
 				MessageFormat.format(ProcessOutputResultProperties.getString("String_Result"), getTitle()),
 				DatasetTypes.GRID, targetCombine);
+	}
+
+	private void initEnvironment() {
+		parameterGridAnalystSetting.setResultBoundsCustomOnly(true);
+		parameterGridAnalystSetting.setClipBoundsEnable(false);
 	}
 
 	private void initParameterStates() {

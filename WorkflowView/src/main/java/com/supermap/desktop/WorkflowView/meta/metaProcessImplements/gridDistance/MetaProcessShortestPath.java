@@ -26,6 +26,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
+ * 计算最短距离
  * Created by lixiaoyao on 2017/8/7.
  */
 public class MetaProcessShortestPath extends MetaProcessGridAnalyst {
@@ -100,7 +101,7 @@ public class MetaProcessShortestPath extends MetaProcessGridAnalyst {
 	}
 
 	private void initEnvironment() {
-
+		parameterGridAnalystSetting.setClipBoundsEnable(true);
 	}
 
 	private void initParametersState() {

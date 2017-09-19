@@ -3,7 +3,11 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridDistanc
 import com.supermap.analyst.spatialanalyst.DistanceAnalyst;
 import com.supermap.analyst.spatialanalyst.DistanceAnalystParameter;
 import com.supermap.analyst.spatialanalyst.DistanceAnalystResult;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -13,7 +17,13 @@ import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -22,6 +32,7 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 
 /**
+ * 生成距离栅格
  * Created by lixiaoyao on 2017/8/7.
  */
 public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
@@ -50,6 +61,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 	}
 
 	private void initParameters() {
+		initEnvironment();
 		this.sourceDatasource = new ParameterDatasourceConstrained();
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		this.sourceDataset = new ParameterSingleDataset(DatasetType.GRID, DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
@@ -92,6 +104,10 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 		this.parameters.addOutputParameters(OUTPUT_DATA_ALLOCATION,
 				ProcessOutputResultProperties.getString("String_AllocationResult"),
 				DatasetTypes.GRID, this.resultAllocationDataset);
+	}
+
+	private void initEnvironment() {
+		parameterGridAnalystSetting.setClipBoundsEnable(false);
 	}
 
 	private void initParametersState() {

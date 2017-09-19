@@ -14,7 +14,14 @@ import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.PixelFormatUtilities;
@@ -41,6 +48,7 @@ public class MetaProcessStreamGrid extends MetaProcessGridAnalyst {
 	}
 
 	private void initParameters() {
+		initEnvironment();
 		sourceDatasource = new ParameterDatasourceConstrained();
 		sourceDataset = new ParameterSingleDataset(DatasetType.GRID);
 		resultDataset = new ParameterSaveDataset();
@@ -64,6 +72,10 @@ public class MetaProcessStreamGrid extends MetaProcessGridAnalyst {
 		parameters.setParameters(sourceCombine, settingCombine, resultCombine);
 		parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceCombine);
 		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_StreamGrid"), DatasetTypes.GRID, resultCombine);
+	}
+
+	private void initEnvironment() {
+		parameterGridAnalystSetting.setCellSizeEnable(false);
 	}
 
 	private void initParameterConstraint() {
