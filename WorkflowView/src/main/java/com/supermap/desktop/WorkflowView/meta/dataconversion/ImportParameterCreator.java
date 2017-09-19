@@ -425,7 +425,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			chooseFile.methodName = "";
 			String moduleName = "ImportPrjFileFromProcess";
 			if (!SmFileChoose.isModuleExist(moduleName)) {
-				String fileFilters = SmFileChoose.bulidFileFilters(
+				String fileFilters = SmFileChoose.buildFileFilters(
 						SmFileChoose.createFileFilter(ProcessProperties.getString("String_ImportPrjFiles"), "prj", "xml"),
 						SmFileChoose.createFileFilter(ProcessProperties.getString("String_ImportPrjFileShape"), "prj"),
 						SmFileChoose.createFileFilter(ProcessProperties.getString("String_ImportPrjFileXml"), "xml"));

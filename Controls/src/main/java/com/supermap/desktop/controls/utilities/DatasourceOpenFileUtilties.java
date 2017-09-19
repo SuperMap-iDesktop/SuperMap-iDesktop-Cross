@@ -87,7 +87,7 @@ public class DatasourceOpenFileUtilties {
 					|| getTypedSupportFileExtensions(EngineType.VECTORFILE).length <= 0 ? null : SmFileChoose.createFileFilter(VectorDescribe,
 					getTypedSupportFileExtensions(EngineType.VECTORFILE));
 
-			String fileFiltersString = SmFileChoose.bulidFileFilters(fileFilterAll, fileFilterUdb, fileFilterImagePlugin, fileFilterVector);
+			String fileFiltersString = SmFileChoose.buildFileFilters(fileFilterAll, fileFilterUdb, fileFilterImagePlugin, fileFilterVector);
 			SmFileChoose.addNewNode(fileFiltersString, CommonProperties.getString("String_DefaultFilePath"),
 					ControlsProperties.getString("String_Title_DatasoursesOpenFile"), "DatasourceOpenFile", "OpenMany");
 		}
