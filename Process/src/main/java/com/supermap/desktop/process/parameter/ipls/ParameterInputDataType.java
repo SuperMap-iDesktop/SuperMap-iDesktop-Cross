@@ -1,19 +1,23 @@
 package com.supermap.desktop.process.parameter.ipls;
 
 import com.supermap.data.*;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.ProcessResources;
-import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IConGetter;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 
 /**
  * Created by caolp on 2017-07-27.
@@ -24,28 +28,34 @@ public class ParameterInputDataType extends ParameterCombine {
 
 	private ParameterTextField parameterDataSourceType = new ParameterTextField(ProcessProperties.getString("String_DataSourceType"));
 	private ParameterFile parameterDataSourcePath = new ParameterFile(ProcessProperties.getString("String_DataSourcePath"));
-	private ParameterComboBox parameterDatasetName = new ParameterComboBox(ProcessProperties.getString("String_DatasetName"));
-	//	private ParameterDefaultValueTextField parameterDatasetName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_DatasetName"));
-//	private ParameterComboBox parameterDatasetType = new ParameterComboBox(ProcessProperties.getString("String_DatasetType"));
+	private ParameterComboBox parameterDatasetName = new ParameterComboBox(CommonProperties.getString("String_Dataset"));
+	private ParameterTextField parameterDatasetName1 = new ParameterTextField(ProcessProperties.getString("String_DatasetName"));
+	private ParameterComboBox parameterDatasetType = new ParameterComboBox(ProcessProperties.getString("String_DatasetType"));
 	private ParameterDefaultValueTextField parameterSpark = new ParameterDefaultValueTextField(ProcessProperties.getString("String_numSlices"));
+	private ParameterSwitch parameterSwitchUDB = new ParameterSwitch();
+	private ParameterCombine parameterCombineDatasetInfo = new ParameterCombine();
 
-	private ParameterBigDatasourceDatasource parameterSourceDatasource = new ParameterBigDatasourceDatasource();
-	public static ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset();
-	//	private ParameterComboBox parameterDatasetType1 = new ParameterComboBox(ProcessProperties.getString("String_DatasetType"));
+	public ParameterComboBox parameterSourceDataset = new ParameterComboBox(CommonProperties.getString("String_Dataset"));
 	private ParameterTextField parameterEngineType = new ParameterTextField(ProcessProperties.getString("String_EngineType"));
 	private ParameterDefaultValueTextField parameterDataBaseName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_DataBaseName"));
 	private ParameterDefaultValueTextField parameterTextFieldAddress = new ParameterDefaultValueTextField(CoreProperties.getString("String_Server"));
 	private ParameterDefaultValueTextField parameterTextFieldUserName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_UserName"));
 	private ParameterPassword parameterTextFieldPassword = new ParameterPassword(ProcessProperties.getString("String_PassWord"));
+	private ParameterButton parameterButton = new ParameterButton(CommonProperties.getString("String_Button_Open"));
+	private static final int OVERLAY_ANALYST_GEO = 0;
+	private static final int SINGLE_QUERY = 1;
+	private static final int POLYGON_AGGREGATION = 2;
+	private static final int SUMMARY_REGION = 3;
 
-	public ParameterComboBox bigDataStoreName = new ParameterComboBox(ProcessProperties.getString("String_DatasetName"));
+	public ParameterComboBox bigDataStoreName = new ParameterComboBox(CommonProperties.getString("String_Dataset"));
 	public ParameterSwitch parameterSwitch = new ParameterSwitch();
+	public DatasetType[] supportDatasetType;
+	private Boolean bool = false;
+	private ParameterCombine parameterCombine1;
 
 	public ParameterInputDataType() {
 		super();
 		initComponents();
-		initParameterState();
-		initConstraint();
 		registerEvents();
 	}
 
@@ -58,6 +68,9 @@ public class ParameterInputDataType extends ParameterCombine {
 						parameterSwitch.switchParameter("0");
 					} else if (parameterDataInputWay.getSelectedData().toString().equals("1")) {
 						parameterSwitch.switchParameter("1");
+						if (true) {
+							parameterCombine1.removeParameter(parameterSpark);
+						}
 					} else if (parameterDataInputWay.getSelectedData().toString().equals("2")) {
 						parameterSwitch.switchParameter("2");
 					} else {
@@ -71,34 +84,98 @@ public class ParameterInputDataType extends ParameterCombine {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (!StringUtilities.isNullOrEmpty(evt.getNewValue().toString())) {
+					if (!new File(evt.getNewValue().toString()).exists()) {
+						parameterSwitchUDB.switchParameter("1");
+					} else {
+						DatasourceConnectionInfo connectionInfo = new DatasourceConnectionInfo();
+						connectionInfo.setServer(evt.getNewValue().toString());
+						connectionInfo.setEngineType(EngineType.UDB);
+						Workspace workspace = new Workspace();
+
+						Datasource datasource = null;
+						try {
+							datasource = workspace.getDatasources().open(connectionInfo);
+						} catch (Exception e) {
+							if (parameterSwitchUDB.getCurrentParameter().equals(parameterCombineDatasetInfo)) {
+								parameterSwitchUDB.switchParameter("0");
+							}
+							Application.getActiveApplication().getOutput().output(CoreProperties.getString("String_OpenDatasourceFaild"));
+						}
+						if (null != datasource) {
+							if (parameterSwitchUDB.getCurrentParameter().equals(parameterCombineDatasetInfo)) {
+								parameterSwitchUDB.switchParameter("0");
+							}
+							Datasets datasets = datasource.getDatasets();
+							if (parameterDatasetName.getItems().size() > 0) {
+								parameterDatasetName.removeAllItems();
+							}
+							ParameterDataNode datasetNode = null;
+							for (int i = 0, size = datasets.getCount(); i < size; i++) {
+								for (int j = 0, length = supportDatasetType.length; j < length; j++) {
+									if (datasets.get(i).getType() == supportDatasetType[j]) {
+										datasetNode = new ParameterDataNode(datasets.get(i).getName(), datasets.get(i).getType().name());
+										parameterDatasetName.addItem(datasetNode);
+									}
+								}
+							}
+							parameterDatasetName.setSelectedItem(datasetNode);
+							datasource.close();
+							datasource = null;
+							workspace.close();
+							workspace = null;
+						}
+					}
+				}
+			}
+		});
+		parameterButton.setActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String pgServer = parameterTextFieldAddress.getSelectedItem().toString();
+				String pgDatabase = parameterDataBaseName.getSelectedItem().toString();
+				String pgUsername = parameterTextFieldUserName.getSelectedItem().toString();
+				String pgPassword = parameterTextFieldPassword.getSelectedItem().toString();
+				if (!StringUtilities.isNullOrEmpty(pgServer) && !StringUtilities.isNullOrEmpty(pgDatabase)
+						&& !StringUtilities.isNullOrEmpty(pgUsername) && !StringUtilities.isNullOrEmpty(pgPassword)) {
 					DatasourceConnectionInfo connectionInfo = new DatasourceConnectionInfo();
-					connectionInfo.setServer(evt.getNewValue().toString());
-					connectionInfo.setEngineType(EngineType.UDB);
+					connectionInfo.setServer(pgServer);
+					connectionInfo.setDatabase(pgDatabase);
+					connectionInfo.setUser(pgUsername);
+					connectionInfo.setPassword(pgPassword);
+					connectionInfo.setEngineType(EngineType.POSTGRESQL);
 					Workspace workspace = new Workspace();
-					Datasource datasource = workspace.getDatasources().open(connectionInfo);
+					Datasource datasource = null;
+					try {
+						datasource = workspace.getDatasources().open(connectionInfo);
+					} catch (Exception ex) {
+						if (parameterSourceDataset.getItems().size() > 0) {
+							parameterSourceDataset.removeAllItems();
+						}
+						Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_OpenDatasetDatasourceFaild"));
+					}
 					if (null != datasource) {
 						Datasets datasets = datasource.getDatasets();
-						if (parameterDatasetName.getItems().size() > 0) {
-							parameterDatasetName.removeAllItems();
+						if (parameterSourceDataset.getItems().size() > 0) {
+							parameterSourceDataset.removeAllItems();
 						}
 						ParameterDataNode datasetNode = null;
 						for (int i = 0, size = datasets.getCount(); i < size; i++) {
-							for (int j = 0, length = parameterSourceDataset.getDatasetTypes().length; j < length; j++) {
-								if (datasets.get(i).getType() == parameterSourceDataset.getDatasetTypes()[j]) {
+							for (int j = 0, length = supportDatasetType.length; j < length; j++) {
+								if (datasets.get(i).getType() == supportDatasetType[j]) {
 									datasetNode = new ParameterDataNode(datasets.get(i).getName(), datasets.get(i).getType().name());
-									parameterDatasetName.addItem(datasetNode);
+									parameterSourceDataset.addItem(datasetNode);
 								}
 							}
 						}
-						parameterDatasetName.setSelectedItem(datasetNode);
+						parameterSourceDataset.setSelectedItem(datasetNode);
+						datasource.close();
+						datasource = null;
+						workspace.close();
+						workspace = null;
 					}
-
-					datasource.close();
-					datasource = null;
-					workspace.close();
-					workspace = null;
 				}
 			}
+
 		});
 	}
 
@@ -117,20 +194,23 @@ public class ParameterInputDataType extends ParameterCombine {
 		parameterDataSourcePath.addExtension(ProcessProperties.getString("String_UDBFileFilterName"), "udb");
 		parameterDataSourcePath.setModuleType("OpenOne");
 		parameterDatasetName.setRequisite(true);
-//		parameterDatasetName.setDefaultWarningValue("newyorkPoint_P");
+		parameterCombineDatasetInfo.addParameters(parameterDatasetName1, parameterDatasetType);
+
+		parameterSwitchUDB.add("0", parameterDatasetName);
+		parameterSwitchUDB.add("1", parameterCombineDatasetInfo);
 		parameterSpark.setRequisite(true);
 		parameterSpark.setDefaultWarningValue("36");
-		ParameterCombine parameterCombine1 = new ParameterCombine();
+		parameterCombine1 = new ParameterCombine();
 		parameterCombine1.addParameters(
 				parameterDataSourcePath,
-				parameterDatasetName,
-//				parameterDatasetType,
+				parameterSwitchUDB,
 				parameterSpark);
+
 		//pg数据库
-		parameterSourceDatasource.setRequisite(true);
-		parameterSourceDatasource.setDescribe(ProcessProperties.getString("String_DataSourceName"));
 		parameterSourceDataset.setRequisite(true);
 		parameterSourceDataset.setDescribe(ProcessProperties.getString("String_DatasetName"));
+		ParameterCombine parameterOpenPG = new ParameterCombine(ParameterCombine.HORIZONTAL);
+		parameterOpenPG.addParameters(parameterSourceDataset, parameterButton);
 		parameterEngineType.setSelectedItem("POSTGRESQL");
 		parameterEngineType.setEnabled(false);
 		parameterTextFieldAddress.setRequisite(true);
@@ -147,9 +227,7 @@ public class ParameterInputDataType extends ParameterCombine {
 				parameterDataBaseName,
 				parameterTextFieldUserName,
 				parameterTextFieldPassword,
-				parameterSourceDatasource,
-				parameterSourceDataset
-//				,parameterDatasetType1
+				parameterOpenPG
 		);
 
 		//BigDataStore
@@ -175,26 +253,12 @@ public class ParameterInputDataType extends ParameterCombine {
 		};
 		bigDataStoreName.setIConGetter(getter);
 		parameterDatasetName.setIConGetter(getter);
+		parameterSourceDataset.setIConGetter(getter);
 		parameterSwitch.add("0", parameterCombine);
 		parameterSwitch.add("1", parameterCombine1);
 		parameterSwitch.add("2", parameterCombine2);
 		parameterSwitch.add("3", parameterCombine3);
 		this.addParameters(parameterDataInputWay, parameterSwitch);
-		this.setDescribe(ProcessProperties.getString("String_FileInputPath"));
-	}
-
-	private void initConstraint() {
-		EqualDatasourceConstraint equalSourceDatasource = new EqualDatasourceConstraint();
-		equalSourceDatasource.constrained(parameterSourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalSourceDatasource.constrained(parameterSourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-	}
-
-	private void initParameterState() {
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
-		if (defaultBigDataStoreDataset != null) {
-			parameterSourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
-			parameterSourceDataset.setSelectedItem(defaultBigDataStoreDataset);
-		}
 	}
 
 	public void initSourceInput(CommonSettingCombine input) {
@@ -208,16 +272,23 @@ public class ParameterInputDataType extends ParameterCombine {
 		} else if (parameterDataInputWay.getSelectedData().toString().equals("1")) {
 			CommonSettingCombine type = new CommonSettingCombine("type", parameterDataSourceType.getSelectedItem().toString());
 			CommonSettingCombine url = new CommonSettingCombine("url", parameterDataSourcePath.getSelectedItem().toString());
-			ParameterDataNode datasetNode = (ParameterDataNode) parameterDatasetName.getSelectedItem();
-			CommonSettingCombine datasetName = new CommonSettingCombine("datasetName", datasetNode.getDescribe());
-			CommonSettingCombine datasetType = new CommonSettingCombine("datasetType", datasetNode.getData().toString());
+			CommonSettingCombine datasetName = null;
+			CommonSettingCombine datasetType = null;
+			if (parameterSwitchUDB.getCurrentParameter().equals(parameterCombineDatasetInfo)) {
+				datasetName = new CommonSettingCombine("datasetName", parameterDatasetName1.getSelectedItem().toString());
+				datasetType = new CommonSettingCombine("datasetType", parameterDatasetType.getSelectedData().toString());
+			} else {
+				ParameterDataNode datasetNode = (ParameterDataNode) parameterDatasetName.getSelectedItem();
+				datasetName = new CommonSettingCombine("datasetName", datasetNode.getDescribe());
+				datasetType = new CommonSettingCombine("datasetType", datasetNode.getData().toString());
+			}
 			CommonSettingCombine numSlices = new CommonSettingCombine("numSlices", parameterSpark.getSelectedItem().toString());
 			datasetInfo.add(type, url, datasetName, datasetType);
 			input.add(datasetInfo, numSlices);
 		} else {
-			Dataset sourceDataset = parameterSourceDataset.getSelectedDataset();
-			CommonSettingCombine name = new CommonSettingCombine("name", sourceDataset.getName());
-			CommonSettingCombine type = new CommonSettingCombine("type", sourceDataset.getType().name());
+			ParameterDataNode sourceDataset = (ParameterDataNode) parameterSourceDataset.getSelectedItem();
+			CommonSettingCombine name = new CommonSettingCombine("name", sourceDataset.getDescribe());
+			CommonSettingCombine type = new CommonSettingCombine("type", sourceDataset.getData().toString());
 			CommonSettingCombine engineType = new CommonSettingCombine("engineType", parameterEngineType.getSelectedItem().toString());
 			CommonSettingCombine server = new CommonSettingCombine("server", parameterTextFieldAddress.getSelectedItem().toString());
 			CommonSettingCombine dataBase = new CommonSettingCombine("dataBase", parameterDataBaseName.getSelectedItem().toString());
@@ -230,16 +301,66 @@ public class ParameterInputDataType extends ParameterCombine {
 		}
 	}
 
-	public void setSupportDatasetType(DatasetType... datasetTypes) {
-//		parameterDatasetType.removeAllItems();
-//		parameterDatasetType1.removeAllItems();
-		for (DatasetType datasetType : datasetTypes) {
-//			parameterDatasetType.addItem(new ParameterDataNode(DatasetTypeUtilities.toString(datasetType), datasetType.name()));
-//			parameterDatasetType1.addItem(new ParameterDataNode(DatasetTypeUtilities.toString(datasetType), datasetType.name()));
+	public void initAnalystInput(CommonSettingCombine analyst, int m) {
+		String datasetBigDataStore = null;
+		String datasetPG = null;
+		switch (m) {
+			case OVERLAY_ANALYST_GEO:
+				datasetBigDataStore = "datasetOverlay";
+				datasetPG = "inputOverlay";
+				break;
+			case SINGLE_QUERY:
+				datasetBigDataStore = "datasetQuery";
+				datasetPG = "inputQuery";
+				break;
+			case POLYGON_AGGREGATION:
+				datasetBigDataStore = "regionDatasource";
+				datasetPG = "regionDatasource";
+				break;
+			case SUMMARY_REGION:
+				datasetBigDataStore = "regionDatasource";
+				datasetPG = "regionDatasource";
+				break;
 		}
-		parameterSourceDataset.setDatasetTypes(datasetTypes);
+		if (parameterDataInputWay.getSelectedData().toString().equals("3")) {
+			//HDFS
+			CommonSettingCombine datasetOverlayCombine = new CommonSettingCombine(datasetBigDataStore, ((ParameterDataNode) bigDataStoreName.getSelectedItem()).getDescribe());
+			analyst.add(datasetOverlayCombine);
+		} else if (parameterDataInputWay.getSelectedData().toString().equals("1")) {
+			//udb
+			String inputOverlayStr = null;
+			if (parameterSwitchUDB.getCurrentParameter().equals(parameterCombineDatasetInfo)) {
+				inputOverlayStr = "{\\\"type\\\":\\\"udb\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + parameterDataSourcePath.getSelectedItem().toString() + "\\\",\\\"datasetNames\\\":[\\\"" + parameterDatasetName1.getSelectedItem().toString() + "\\\"],\\\"attributeFilter\\\":null}]}";
+			} else {
+				ParameterDataNode datasetNode = (ParameterDataNode) parameterDatasetName.getSelectedItem();
+				inputOverlayStr = "{\\\"type\\\":\\\"udb\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + parameterDataSourcePath.getSelectedItem().toString() + "\\\",\\\"datasetNames\\\":[\\\"" + datasetNode.getDescribe() + "\\\"],\\\"attributeFilter\\\":null}]}";
+			}
+			CommonSettingCombine inputOverlayCombine = new CommonSettingCombine(datasetPG, inputOverlayStr);
+			analyst.add(inputOverlayCombine);
+		} else {
+			//pg
+			ParameterDataNode sourceDataset = (ParameterDataNode) parameterSourceDataset.getSelectedItem();
+			String inputOverlayStr = "{\\\"type\\\":\\\"pg\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + parameterTextFieldAddress.getSelectedItem() + "\\\",\\\"datasetNames\\\":[\\\"" + sourceDataset.getDescribe() + "\\\"],\\\"database\\\":\\\"" + parameterDataBaseName.getSelectedItem() + "\\\",\\\"user\\\":\\\"" + parameterTextFieldUserName.getSelectedItem() + "\\\",\\\"password\\\":\\\"" + parameterTextFieldPassword.getSelectedItem() + "\\\"}]}";
+			CommonSettingCombine inputOverlayCombine = new CommonSettingCombine(datasetPG, inputOverlayStr);
+			analyst.add(inputOverlayCombine);
+		}
 	}
 
+	public void setSupportDatasetType(DatasetType... datasetTypes) {
+		parameterDatasetType.removeAllItems();
+		for (DatasetType datasetType : datasetTypes) {
+			parameterDatasetType.addItem(new ParameterDataNode(DatasetTypeUtilities.toString(datasetType), datasetType.name()));
+		}
+		supportDatasetType = datasetTypes;
+	}
+
+	public Boolean getBool() {
+		return bool;
+	}
+
+	public void setBool(Boolean bool) {
+		this.bool = bool;
+	}
 }
 
 

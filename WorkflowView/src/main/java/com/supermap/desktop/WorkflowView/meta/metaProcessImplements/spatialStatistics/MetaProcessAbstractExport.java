@@ -147,7 +147,7 @@ public class MetaProcessAbstractExport extends MetaProcess {
 		//输出为文件路径，没有控件能对应
 		this.parameters.addOutputParameters(OUTPUT_DATA,
 				MessageFormat.format(ProcessOutputResultProperties.getString("String_OutputResult"), OUTPUT_DATA_TYPE),
-				BasicTypes.STRING, null);
+				BasicTypes.STRING);
 	}
 
 	protected void resetDataset() {
