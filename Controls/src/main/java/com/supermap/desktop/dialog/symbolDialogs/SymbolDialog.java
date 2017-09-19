@@ -168,7 +168,7 @@ public abstract class SymbolDialog extends SmDialog {
 	 */
 	private void initComponent() {
 		if (!SystemPropertyUtilities.isWindows()) {
-			labelSearch.setForeground(Color.white);
+			labelSearch.setForeground(new JMenuBar().getForeground());
 		}
 		panelPreview = new SymbolPreViewPanel(getSymbolType());
 		initPanelWorkspaceResources();
