@@ -3,6 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 import com.supermap.data.Charset;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -65,13 +66,17 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 	public MetaProcessExportVector() {
 		this.OUTPUT_DATA_TYPE = ControlsProperties.getString("String_Vector");
 		initParameters();
-		registEvents();
+		registerEvents();
 	}
 
 	protected void initParameters() {
 		super.initParameters();
 		this.dataset.setDatasetTypes(DatasetTypeUtilities.getDatasetTypeVector());
-		this.dataset.setSelectedItem(DatasetUtilities.getDefaultDatasetVector());
+		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
+		if (datasetVector != null) {
+			this.datasource.setSelectedItem(datasetVector.getDatasource());
+			this.dataset.setSelectedItem(datasetVector);
+		}
 		String module = "ExportVector_OutPutDirectories";
 		if (!SmFileChoose.isModuleExist(module)) {
 			SmFileChoose.addNewNode("", System.getProperty("user.dir"), ProcessProperties.getString("String_Export"),
@@ -217,8 +222,8 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 	}
 
 	@Override
-	protected void registEvents() {
-		super.registEvents();
+	protected void registerEvents() {
+		super.registerEvents();
 		this.sqlExpression.addPropertyListener(this.sqlExpressionChangedListener);
 	}
 

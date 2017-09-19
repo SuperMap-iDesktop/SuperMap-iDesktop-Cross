@@ -46,6 +46,7 @@ public class MetaProcessFlowDirection extends MetaProcessGridAnalyst {
 		checkBoxCreateDrop = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_CreateDrop"));
 		checkBoxForceOut = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_ForceOut"));
 		resultDatasource = new ParameterDatasource();
+		resultDatasource.setReadOnlyNeeded(false);
 		directionGrid = new ParameterTextField(ProcessProperties.getString("String_Label_DirectionGrid"));
 		dropGrid = new ParameterTextField(ProcessProperties.getString("String_Label_DropGrid"));
 

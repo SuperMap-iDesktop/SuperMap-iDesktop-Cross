@@ -4,6 +4,8 @@ import com.supermap.data.*;
 import com.supermap.data.topology.TopologyPreprocessOptions;
 import com.supermap.data.topology.TopologyValidator;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.core.Time;
+import com.supermap.desktop.core.TimeType;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
@@ -44,7 +46,7 @@ public class TopoPregressCallable extends UpdateProgressCallable {
 				TopologyValidator.addSteppedListener(percentListener);
 				long startTime = System.currentTimeMillis();
 				boolean topologyPreprocessResult = TopologyValidator.preprocess(datasets, precisionOrders, options, tolerance);
-				String time = String.valueOf((System.currentTimeMillis() - startTime)/1000.0);
+				String time = String.valueOf((System.currentTimeMillis() - startTime) / 1000.0);
 				String topologyPreprocessInfo = "";
 				if (topologyPreprocessResult) {
 					topologyPreprocessInfo = MessageFormat.format(DataTopologyProperties.getString("String_Message_PreprogressSuccess"), time);
@@ -69,7 +71,7 @@ public class TopoPregressCallable extends UpdateProgressCallable {
 		@Override
 		public void stepped(SteppedEvent arg0) {
 			try {
-				updateProgress(arg0.getPercent(), String.valueOf(arg0.getRemainTime()), arg0.getMessage());
+				updateProgress(arg0.getPercent(), Time.toString(arg0.getRemainTime(), TimeType.SECOND), arg0.getMessage());
 			} catch (CancellationException e) {
 				arg0.setCancel(true);
 			}

@@ -53,7 +53,9 @@ public class TaskBuilder {
 
 			if (canudb > 0) {
 				String datasourceName = "check";
-				String checkPath = CacheUtilities.replacePath(args[1], "check");
+				String taskPath = args[1];
+				File taskFile = new File(taskPath);
+				String checkPath = taskPath.contains("update") ? taskFile.getParentFile() + File.separator + "CacheTask" + File.separator + "check" : CacheUtilities.replacePath(args[1], "check");
 				String datasourcePath = CacheUtilities.replacePath(checkPath, datasourceName + ".udb");
 				File datasourceFile = new File(datasourcePath);
 //				if (datasourceFile.exists()) {
@@ -129,22 +131,34 @@ public class TaskBuilder {
 				if (canudb > 0) {
 					//Create dataset and it's field
 					String datasetName = "L" + datasetCaption + "_S" + Math.round(1 / scale);
-					if (null != ds.getDatasets().get(datasetName)) {
-						continue;
-					}
-					DatasetVectorInfo datasetInfo = new DatasetVectorInfo(datasetName, DatasetType.REGION);
-					DatasetVector dataset = ds.getDatasets().create(datasetInfo);
 
+					DatasetVectorInfo datasetInfo = new DatasetVectorInfo(datasetName, DatasetType.REGION);
+					DatasetVector dataset = null;
+					if (null != ds.getDatasets().get(datasetName)) {
+						dataset = (DatasetVector) ds.getDatasets().get(datasetName);
+					} else {
+						dataset = ds.getDatasets().create(datasetInfo);
+					}
 					FieldInfo fieldInfoGroup = new FieldInfo("tiletype", FieldType.INT32);
 					FieldInfo fieldInfoRow = new FieldInfo("tilerow", FieldType.INT32);
 					FieldInfo fieldInfoCol = new FieldInfo("tilecol", FieldType.INT32);
 					FieldInfo fieldInfotype = new FieldInfo("errortype", FieldType.INT32);
 					FieldInfo fieldInfodesc = new FieldInfo("errordesc", FieldType.TEXT);
-					dataset.getFieldInfos().add(fieldInfoGroup);
-					dataset.getFieldInfos().add(fieldInfoRow);
-					dataset.getFieldInfos().add(fieldInfoCol);
-					dataset.getFieldInfos().add(fieldInfotype);
-					dataset.getFieldInfos().add(fieldInfodesc);
+					if (null != dataset.getFieldInfos().get("tiletype")) {
+						dataset.getFieldInfos().add(fieldInfoGroup);
+					}
+					if (null != dataset.getFieldInfos().get("tilerow")) {
+						dataset.getFieldInfos().add(fieldInfoRow);
+					}
+					if (null != dataset.getFieldInfos().get("tilecol")) {
+						dataset.getFieldInfos().add(fieldInfoCol);
+					}
+					if (null != dataset.getFieldInfos().get("errortype")) {
+						dataset.getFieldInfos().add(fieldInfotype);
+					}
+					if (null != dataset.getFieldInfos().get("errordesc")) {
+						dataset.getFieldInfos().add(fieldInfodesc);
+					}
 
 					recordset = dataset.getRecordset(false, CursorType.DYNAMIC);
 					editor = recordset.getBatch();
