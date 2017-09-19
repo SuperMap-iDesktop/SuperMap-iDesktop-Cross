@@ -85,7 +85,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterAnalystDataType.parameterSwitch.switchParameter("3");
 		parameterAnalystDataType.setBool(true);
 		parameterInputDataType.setSupportDatasetType(DatasetType.LINE, DatasetType.REGION);
-		parameterAnalystDataType.setSupportDatasetType(DatasetType.LINE, DatasetType.REGION);
+		parameterAnalystDataType.setSupportDatasetType(DatasetType.REGION);
 		parameterIServerLogin.setDataType(parameterInputDataType.supportDatasetType);
 		parameterIServerLogin.setAnalystDatasetTypes(parameterAnalystDataType.supportDatasetType);
 	}

@@ -322,7 +322,7 @@ public class CacheUtilities {
 			String[] updateFiles = new File(cachePath).list(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
-					return name.contains("update");
+					return name.contains("Update");
 				}
 			});
 

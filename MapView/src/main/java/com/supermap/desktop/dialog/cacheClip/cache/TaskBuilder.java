@@ -55,7 +55,7 @@ public class TaskBuilder {
 				String datasourceName = "check";
 				String taskPath = args[1];
 				File taskFile = new File(taskPath);
-				String checkPath = taskPath.contains("update") ? taskFile.getParentFile() + File.separator + "CacheTask" + File.separator + "check" : CacheUtilities.replacePath(args[1], "check");
+				String checkPath = taskPath.contains("Update") ? taskFile.getParentFile() + File.separator + "CacheTask" + File.separator + "check" : CacheUtilities.replacePath(args[1], "check");
 				String datasourcePath = CacheUtilities.replacePath(checkPath, datasourceName + ".udb");
 				File datasourceFile = new File(datasourcePath);
 //				if (datasourceFile.exists()) {
