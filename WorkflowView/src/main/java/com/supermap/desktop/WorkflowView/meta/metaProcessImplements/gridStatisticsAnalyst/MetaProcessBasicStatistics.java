@@ -14,14 +14,7 @@ import com.supermap.desktop.process.parameter.definedClass.StatisticsCollection;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.CommonTypes;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
-import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.ipls.ParameterHistogram;
-import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
-import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
+import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
@@ -37,11 +30,7 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
-	private ParameterTextField textFieldMin;
-	private ParameterTextField textFieldMax;
-	private ParameterTextField textFieldAvg;
-	private ParameterTextField textFieldStd;
-	private ParameterTextField textFieldVar;
+	private ParameterTextArea textAreaResult;
 	private ParameterCheckBox checkBoxShow;
 	private ParameterNumber numberGroupCount;
 	private ParameterHistogram histogram;
@@ -65,11 +54,7 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 	private void initParameters() {
 		sourceDatasource = new ParameterDatasourceConstrained();
 		sourceDataset = new ParameterSingleDataset(DatasetType.GRID);
-		textFieldMax = new ParameterTextField(ProcessProperties.getString("String_Label_MaxValue"));
-		textFieldMin = new ParameterTextField(ProcessProperties.getString("String_Label_MinValue"));
-		textFieldAvg = new ParameterTextField(ProcessProperties.getString("String_Label_Mean"));
-		textFieldStd = new ParameterTextField(ProcessProperties.getString("String_Label_StandardDeviation"));
-		textFieldVar = new ParameterTextField(ProcessProperties.getString("String_Label_Variance"));
+		textAreaResult = new ParameterTextArea();
 		checkBoxShow = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_CreateHistogram"));
 		numberGroupCount = new ParameterNumber(ProcessProperties.getString("String_Label_GroupCount"));
 		histogram = new ParameterHistogram();
@@ -79,7 +64,7 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 		sourceCombine.addParameters(sourceDatasource, sourceDataset);
 		ParameterCombine resultCombine = new ParameterCombine();
 		resultCombine.setDescribe(ProcessProperties.getString("String_GroupBox_StatisticsResult"));
-		resultCombine.addParameters(textFieldMax, textFieldMin, textFieldAvg, textFieldStd, textFieldVar, checkBoxShow, numberGroupCount, histogram);
+		resultCombine.addParameters(textAreaResult,checkBoxShow, numberGroupCount, histogram);
 
 		parameters.setParameters(sourceCombine, resultCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceCombine);
@@ -92,16 +77,7 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
 			sourceDataset.setSelectedItem(datasetGrid);
 		}
-		textFieldMax.setSelectedItem(0);
-		textFieldMin.setSelectedItem(0);
-		textFieldAvg.setSelectedItem(0);
-		textFieldStd.setSelectedItem(0);
-		textFieldVar.setSelectedItem(0);
-		textFieldMax.setEnabled(false);
-		textFieldMin.setEnabled(false);
-		textFieldAvg.setEnabled(false);
-		textFieldStd.setEnabled(false);
-		textFieldVar.setEnabled(false);
+		textAreaResult.setEnabled(false);
 		numberGroupCount.setSelectedItem(5);
 		numberGroupCount.setMinValue(1);
 		numberGroupCount.setMaxBit(-1);
@@ -147,11 +123,11 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 			double mean = basicStatisticsAnalystResult.getMean();
 			double std = basicStatisticsAnalystResult.getStandardDeviation();
 			double var = Math.pow(std, 2);
-			textFieldMax.setSelectedItem(max);
-			textFieldMin.setSelectedItem(min);
-			textFieldAvg.setSelectedItem(mean);
-			textFieldStd.setSelectedItem(std);
-			textFieldVar.setSelectedItem(var);
+			textAreaResult.setSelectedItem(ProcessProperties.getString("String_Result_MaxValue")+max+"\n"+
+			                               ProcessProperties.getString("String_Result_MinValue")+min+"\n"+
+			                               ProcessProperties.getString("String_Result_Mean")+mean+"\n"+
+			                               ProcessProperties.getString("String_Result_StandardDeviation")+std+"\n"+
+			                               ProcessProperties.getString("String_Result_Variance")+var);
 			StatisticsCollection statisticsCollection = new StatisticsCollection(max, min, mean, std, var);
 			if (Boolean.valueOf(checkBoxShow.getSelectedItem().toString())) {
 				int groupCount = Integer.parseInt(numberGroupCount.getSelectedItem().toString());
