@@ -828,6 +828,20 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	@Override
 	public boolean doStatisticAnalust(StatisticMode statisticMode, String successMessage) {
 		int selectColumn = jTableTabular.getSelectedColumn();
+		// 进行统计分析时，需要判断下是否进行了隐藏系统字段,确保分析的列数正确-yuanR2017.9.19
+		if (GlobalParameters.isTabularHiddenSystemField()) {
+			int fieldInfoCount = recordset.getDataset().getFieldInfos().getCount();
+			for (int i = 0; i < fieldInfoCount; i++) {
+				// 当为非系统字段时，跳入判断，此时的selectColumn表示目标字段在非系统字段中的顺序
+				if (!recordset.getDataset().getFieldInfos().get(i).isSystemField()) {
+					selectColumn--;
+					if (selectColumn == -1) {
+						selectColumn = i;
+						break;
+					}
+				}
+			}
+		}
 		if (!TabularStatisticUtilties.isStatisticsSupportType(recordset, selectColumn)) {
 			TabularStatisticUtilties.updataStatisticsResult(TabularViewProperties.getString("String_Output_ColumnNotStatistic"));
 			return false;
@@ -859,6 +873,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			statisticRecordset.close();
 			statisticRecordset.dispose();
 		}
+
 		String columnType = getSelectColumnType(selectColumn);
 		String caption = getColumnCaption(selectColumn);
 		TabularStatisticUtilties.updataStatisticsResult(MessageFormat.format(successMessage, columnType, caption, result));
