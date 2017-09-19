@@ -48,15 +48,13 @@ public class MetaProcessNetWorkToLine extends MetaProcessPointLineRegion {
 						return false;
 					}
 				}
+				return true;
 			} catch (UnsupportedOperationException e) {
 				// 此时返回false-yuanR2017.9.19
 				return false;
 			} finally {
 				if (geoLine != null) {
 					geoLine.dispose();
-					return true;
-				} else {
-					return false;
 				}
 			}
 		} else {

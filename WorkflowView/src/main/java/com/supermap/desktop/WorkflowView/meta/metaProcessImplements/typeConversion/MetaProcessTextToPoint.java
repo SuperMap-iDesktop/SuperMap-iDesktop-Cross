@@ -55,15 +55,13 @@ public class MetaProcessTextToPoint extends MetaProcessPointLineRegion {
 					}
 					geoPoint.dispose();
 				}
+				return true;
 			} catch (UnsupportedOperationException e) {
 				// 此时返回false-yuanR2017.9.19
 				return false;
 			} finally {
 				if (geoText != null) {
 					geoText.dispose();
-					return true;
-				} else {
-					return false;
 				}
 			}
 		} else {

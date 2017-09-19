@@ -41,6 +41,8 @@ public class MetaProcessRegionToLine extends MetaProcessPointLineRegion {
 				geoLine = ((ILineConvertor) geometry).convertToLine(120);
 				if (!recordset.addNew(geoLine, value)) {
 					return false;
+				} else {
+					return true;
 				}
 			} catch (UnsupportedOperationException e) {
 				// 此时返回false-yuanR2017.9.19
@@ -48,9 +50,6 @@ public class MetaProcessRegionToLine extends MetaProcessPointLineRegion {
 			} finally {
 				if (geoLine != null) {
 					geoLine.dispose();
-					return true;
-				} else {
-					return false;
 				}
 			}
 		} else {

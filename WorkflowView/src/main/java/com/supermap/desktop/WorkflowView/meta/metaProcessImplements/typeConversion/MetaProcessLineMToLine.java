@@ -48,14 +48,12 @@ public class MetaProcessLineMToLine extends MetaProcessPointLineRegion {
 						return false;
 					}
 				}
+				return true;
 			} catch (UnsupportedOperationException e) {
 				return false;
 			} finally {
 				if (geoLine != null) {
 					geoLine.dispose();
-					return true;
-				} else {
-					return false;
 				}
 			}
 		} else {

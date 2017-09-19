@@ -51,15 +51,13 @@ public class MetaProcessRegionToPoint extends MetaProcessPointLineRegion {
 					}
 					geoPoint.dispose();
 				}
+				return true;
 			} catch (UnsupportedOperationException e) {
 				// 此时返回false-yuanR2017.9.19
 				return false;
 			} finally {
 				if (geoRegion != null) {
 					geoRegion.dispose();
-					return true;
-				} else {
-					return false;
 				}
 			}
 		} else {
