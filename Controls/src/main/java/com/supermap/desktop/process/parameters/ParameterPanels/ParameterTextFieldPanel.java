@@ -43,23 +43,7 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
 		textField.setToolTipText(this.parameterTextField.getToolTip());
 		this.smTextFieldLegit = ((ParameterTextField) parameterTextField).getSmTextFieldLegit();
-		textField.setSmTextFieldLegit(new ISmTextFieldLegit() {
-			@Override
-			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (smTextFieldLegit == null || smTextFieldLegit.isTextFieldValueLegit(textFieldValue)) {
-					isSelectingItem = true;
-					((ParameterTextField) parameterTextField).setSelectedItem(textFieldValue);
-					isSelectingItem = false;
-					return true;
-				}
-				return false;
-			}
 
-			@Override
-			public String getLegitValue(String currentValue, String backUpValue) {
-				return smTextFieldLegit == null ? currentValue : smTextFieldLegit.getLegitValue(currentValue, backUpValue);
-			}
-		});
 		initLayout();
 		initListeners();
 	}
@@ -112,6 +96,23 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 					parameterTextField.setSelectedItem(ParameterTextFieldPanel.this.textField.getBackUpValue());
 					isSelectingItem = false;
 				}
+			}
+		});
+		textField.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (!isSelectingItem && (smTextFieldLegit == null || smTextFieldLegit.isTextFieldValueLegit(textFieldValue))) {
+					isSelectingItem = true;
+					parameterTextField.setSelectedItem(textFieldValue);
+					isSelectingItem = false;
+					return true;
+				}
+				return false;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return smTextFieldLegit == null ? currentValue : smTextFieldLegit.getLegitValue(currentValue, backUpValue);
 			}
 		});
 	}

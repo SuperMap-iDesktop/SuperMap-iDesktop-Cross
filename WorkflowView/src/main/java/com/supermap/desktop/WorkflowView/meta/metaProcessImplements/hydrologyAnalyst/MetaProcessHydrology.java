@@ -5,18 +5,22 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.WorkflowView.meta.metaProcessImplements.MetaProcessGridAnalyst;
+import com.supermap.desktop.WorkflowView.meta.MetaProcess;
 import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * Created By Chens on 2017/8/29 0029
  */
-public abstract class MetaProcessHydrology extends MetaProcessGridAnalyst {
+public abstract class MetaProcessHydrology extends MetaProcess {
 	protected String INPUT_DATA = SOURCE_PANEL_DESCRIPTION;
 	protected String OUTPUT_DATA;
 
@@ -81,7 +85,7 @@ public abstract class MetaProcessHydrology extends MetaProcessGridAnalyst {
 	protected abstract String getOutputText();
 
 	@Override
-	public boolean childExecute() {
+	public boolean execute() {
 		boolean isSuccessful = false;
 		try {
 			DatasetGrid src = null;
