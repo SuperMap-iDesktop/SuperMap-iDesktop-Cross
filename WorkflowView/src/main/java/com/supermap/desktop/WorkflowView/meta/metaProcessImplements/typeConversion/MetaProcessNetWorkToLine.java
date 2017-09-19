@@ -33,22 +33,35 @@ public class MetaProcessNetWorkToLine extends MetaProcessPointLineRegion {
 	}
 
 	@Override
-	protected  String getOutputResultName(){
+	protected String getOutputResultName() {
 		return ProcessOutputResultProperties.getString("String_NetworkToLineResult");
 	}
 
 	@Override
 	protected boolean convert(Recordset recordset, IGeometry geometry, Map<String, Object> value) {
-		boolean isConverted = false;
-
 		if (geometry instanceof ILineFeature) {
-			GeoLine geoLine = (GeoLine) geometry.getGeometry();
-			for (int i = 0; i < geoLine.getPartCount(); i++) {
-				isConverted = recordset.addNew(geoLine, value);
+			GeoLine geoLine = null;
+			try {
+				geoLine = (GeoLine) geometry.getGeometry();
+				for (int i = 0; i < geoLine.getPartCount(); i++) {
+					if (!recordset.addNew(geoLine, value)) {
+						return false;
+					}
+				}
+			} catch (UnsupportedOperationException e) {
+				// 此时返回false-yuanR2017.9.19
+				return false;
+			} finally {
+				if (geoLine != null) {
+					geoLine.dispose();
+					return true;
+				} else {
+					return false;
+				}
 			}
-			geoLine.dispose();
+		} else {
+			return false;
 		}
-		return isConverted;
 	}
 
 	@Override

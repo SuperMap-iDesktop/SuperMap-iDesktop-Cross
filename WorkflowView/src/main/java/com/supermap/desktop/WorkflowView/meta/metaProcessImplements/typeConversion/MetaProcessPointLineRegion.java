@@ -83,57 +83,65 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 		return parameters;
 	}
 
+	/**
+	 * 点线面互转执行优化，当生成失败时，确保删除新创建的数据集-yuanR2017.9.19
+	 *
+	 * @return
+	 */
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
 		Recordset recordsetResult = null;
+		Recordset recordsetInput = null;
+
+
+		DatasetVector src = null;
+		if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
+			src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
+		} else {
+			src = (DatasetVector) inputDataset.getSelectedDataset();
+		}
+
+		DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
+		datasetVectorInfo.setName(outputData.getResultDatasource().getDatasets().getAvailableDatasetName(outputData.getDatasetName()));
+		datasetVectorInfo.setType(outputType);
+		DatasetVector resultDataset = outputData.getResultDatasource().getDatasets().create(datasetVectorInfo);
+		resultDataset.setPrjCoordSys(src.getPrjCoordSys());
+
+		for (int i = 0; i < src.getFieldInfos().getCount(); i++) {
+			FieldInfo fieldInfo = src.getFieldInfos().get(i);
+			if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().equals("smuserid")) {
+				resultDataset.getFieldInfos().add(fieldInfo);
+			}
+		}
 		try {
-
-			DatasetVector src = null;
-			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
-				src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
-			} else {
-				src = (DatasetVector) inputDataset.getSelectedDataset();
-			}
-
-			DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
-			datasetVectorInfo.setName(outputData.getResultDatasource().getDatasets().getAvailableDatasetName(outputData.getDatasetName()));
-			datasetVectorInfo.setType(outputType);
-			DatasetVector resultDataset = outputData.getResultDatasource().getDatasets().create(datasetVectorInfo);
-
-			resultDataset.setPrjCoordSys(src.getPrjCoordSys());
-			for (int i = 0; i < src.getFieldInfos().getCount(); i++) {
-				FieldInfo fieldInfo = src.getFieldInfos().get(i);
-				if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().equals("smuserid")) {
-					resultDataset.getFieldInfos().add(fieldInfo);
-				}
-			}
-
 			recordsetResult = resultDataset.getRecordset(false, CursorType.DYNAMIC);
+			recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
 			recordsetResult.addSteppedListener(steppedListener);
 
 			recordsetResult.getBatch().setMaxRecordCount(2000);
 			recordsetResult.getBatch().begin();
 
-			Recordset recordsetInput = src.getRecordset(false, CursorType.DYNAMIC);
 			while (!recordsetInput.isEOF()) {
 				IGeometry geometry = null;
 				try {
 					geometry = DGeometryFactory.create(recordsetInput.getGeometry());
 					Map<String, Object> value = mergePropertyData(resultDataset, recordsetInput.getFieldInfos(), RecordsetUtilities.getFieldValuesIgnoreCase(recordsetInput));
-					convert(recordsetResult, geometry, value);
+					isSuccessful = convert(recordsetResult, geometry, value);
+
 				} finally {
 					if (geometry != null) {
 						geometry.dispose();
 					}
+					if (!isSuccessful) {
+						break;
+					}
 				}
 				recordsetInput.moveNext();
 			}
-			recordsetResult.getBatch().update();
-			isSuccessful = recordsetResult != null;
-			recordsetInput.close();
-			recordsetInput.dispose();
 			if (isSuccessful) {
+				// 转换成功时，在进行批量更新-yuanR
+				recordsetResult.getBatch().update();
 				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
 			} else {
 				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
@@ -141,13 +149,16 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
+			if (recordsetInput != null) {
+				recordsetInput.close();
+				recordsetInput.dispose();
+			}
 			if (recordsetResult != null) {
 				recordsetResult.removeSteppedListener(steppedListener);
 				recordsetResult.close();
 				recordsetResult.dispose();
 			}
 		}
-
 		return isSuccessful;
 	}
 

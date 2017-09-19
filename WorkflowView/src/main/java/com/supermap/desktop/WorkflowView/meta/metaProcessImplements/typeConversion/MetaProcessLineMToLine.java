@@ -33,21 +33,34 @@ public class MetaProcessLineMToLine extends MetaProcessPointLineRegion {
 	}
 
 	@Override
-	protected  String getOutputResultName(){
+	protected String getOutputResultName() {
 		return ProcessOutputResultProperties.getString("String_LineMToLineResult");
 	}
 
 	@Override
 	protected boolean convert(Recordset recordset, IGeometry geometry, Map<String, Object> value) {
-		boolean isConverted = false;
 		if (geometry.getGeometry() instanceof GeoLineM) {
-			GeoLine geoLine = ((GeoLineM) geometry.getGeometry()).convertToLine();
-			for (int i = 0; i < geoLine.getPartCount(); i++) {
-				isConverted = recordset.addNew(geoLine, value);
+			GeoLine geoLine = null;
+			try {
+				geoLine = ((GeoLineM) geometry.getGeometry()).convertToLine();
+				for (int i = 0; i < geoLine.getPartCount(); i++) {
+					if (!recordset.addNew(geoLine, value)) {
+						return false;
+					}
+				}
+			} catch (UnsupportedOperationException e) {
+				return false;
+			} finally {
+				if (geoLine != null) {
+					geoLine.dispose();
+					return true;
+				} else {
+					return false;
+				}
 			}
-			geoLine.dispose();
+		} else {
+			return false;
 		}
-		return isConverted;
 	}
 
 	@Override
