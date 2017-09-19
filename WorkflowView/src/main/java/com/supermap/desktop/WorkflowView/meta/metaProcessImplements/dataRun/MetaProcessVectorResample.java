@@ -58,6 +58,7 @@ public class MetaProcessVectorResample extends MetaProcess {
 	private void initParameters() {
 		// 源数据集
 		this.datasource = new ParameterDatasourceConstrained();
+		this.datasource.setReadOnlyNeeded(false);
 		this.dataset = new ParameterSingleDataset(DatasetType.LINE, DatasetType.REGION);
 
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();

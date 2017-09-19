@@ -32,7 +32,8 @@ import java.beans.PropertyChangeListener;
  */
 public class MetaProcessSummaryRegion extends MetaProcess {
 	private ParameterIServerLogin parameterIServerLogin = new ParameterIServerLogin();
-	ParameterInputDataType parameterInputDataType = new ParameterInputDataType();
+	private ParameterInputDataType parameterInputDataType = new ParameterInputDataType();
+	private ParameterInputDataType parameterAnalystDataType = new ParameterInputDataType();
 	private ParameterComboBox parameterSummaryType = new ParameterComboBox(ProcessProperties.getString("String_summaryType"));
 	private ParameterComboBox parameterMeshType = new ParameterComboBox(ProcessProperties.getString("String_MeshType"));
 	private ParameterDefaultValueTextField parameterBounds = new ParameterDefaultValueTextField(ProcessProperties.getString("String_AnalystBounds"));
@@ -56,26 +57,20 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		initComponents();
 		initComponentState();
 		initComponentLayout();
-		initConstraint();
 	}
 
 	private void initComponents() {
+		//设置输入数据
+		parameterInputDataType.setDescribe(ProcessProperties.getString("String_FileInputPath"));
 		parameterIServerLogin.setInputDataType(this.parameterInputDataType);
-		parameterTextFieldAddress.setRequisite(true);
-		parameterTextFieldAddress.setDefaultWarningValue("192.168.15.248");
-		parameterDataBaseName.setRequisite(true);
-		parameterDataBaseName.setDefaultWarningValue("supermap");
-		parameterTextFieldUserName.setRequisite(true);
-		parameterTextFieldUserName.setDefaultWarningValue("postgres");
-		parameterTextFieldPassword.setRequisite(true);
-		parameterTextFieldPassword.setSelectedItem("supermap");
+		//设置分析数据
+		parameterIServerLogin.setAnalystDataType(this.parameterAnalystDataType);
 		parameterSummaryType.setRequisite(true);
 		parameterSummaryType.setItems(new ParameterDataNode(ProcessProperties.getString("String_summaryMesh"), "SUMMARYMESH"), new ParameterDataNode(ProcessProperties.getString("String_summaryRegion"), "SUMMARYREGION"));
 		parameterMeshType.setRequisite(true);
 		parameterMeshType.setItems(new ParameterDataNode(ProcessProperties.getString("String_QuadrilateralMesh"), "0"), new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1"));
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
 		parameterStatisticMode.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
-		parameterStatisticMode1.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
 		parameterMeshSize.setDefaultWarningValue("100");
 		parameterMeshSize.setRequisite(true);
 		parameterMeshSizeUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
@@ -87,22 +82,18 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterStandardFields.setSelectedItem(false);
 		parameterWeightedFields.setSelectedItem(false);
 		parametersumShape.setSelectedItem(true);
-		parameterBigDatasourceDatasource.setRequisite(true);
-		parameterBigDatasourceDatasource.setDescribe(ControlsProperties.getString("String_Label_ResultDatasource"));
-		parameterSingleDataset.setRequisite(true);
-		parameterSingleDataset.setDescribe(ProcessProperties.getString("String_RegionDataset"));
 	}
 
 	private void initComponentState() {
-		parameterInputDataType.parameterDataInputWay.removeAllItems();
-		parameterInputDataType.parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_BigDataStore"), "3"),new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PG"), "2"));
-		parameterInputDataType.parameterSwitch.switchParameter("3");
+		parameterAnalystDataType.parameterDataInputWay.removeAllItems();
+		parameterAnalystDataType.parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_BigDataStore"), "3"),
+				new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PG"), "2"));
+		parameterAnalystDataType.parameterSwitch.switchParameter("3");
+		parameterAnalystDataType.setBool(true);
 		parameterInputDataType.setSupportDatasetType(DatasetType.LINE, DatasetType.REGION);
-		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
-		if (defaultBigDataStoreDataset != null && (DatasetType.LINE == defaultBigDataStoreDataset.getType() || DatasetType.REGION == defaultBigDataStoreDataset.getType())) {
-			parameterBigDatasourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
-			parameterSingleDataset.setSelectedItem(defaultBigDataStoreDataset);
-		}
+		parameterAnalystDataType.setSupportDatasetType(DatasetType.LINE, DatasetType.REGION);
+		parameterIServerLogin.setDataType(parameterInputDataType.supportDatasetType);
+		parameterIServerLogin.setAnalystDatasetTypes(parameterAnalystDataType.supportDatasetType);
 	}
 
 	private void initComponentLayout() {
@@ -111,12 +102,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		final ParameterCombine parameterCombine = new ParameterCombine();
 		parameterCombine.addParameters(parameterMeshType, parameterBounds, parameterMeshSize, parameterMeshSizeUnit);
 		final ParameterCombine parameterCombine1 = new ParameterCombine();
-		parameterCombine1.addParameters(parameterTextFieldAddress,
-				parameterDataBaseName,
-				parameterTextFieldUserName,
-				parameterTextFieldPassword,
-				parameterBigDatasourceDatasource,
-				parameterSingleDataset,
+		parameterCombine1.addParameters(parameterAnalystDataType,
 				parameterBounds);
 		final ParameterSwitch parameterSwitch = new ParameterSwitch();
 		parameterSwitch.add("0", parameterCombine);
@@ -172,13 +158,6 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameters.getOutputs().addData("SummaryRegionResult", ProcessOutputResultProperties.getString("String_BoundsAnalysisResult"), Type.UNKOWN);
 	}
 
-	private void initConstraint() {
-		EqualDatasourceConstraint equalSourceDatasource = new EqualDatasourceConstraint();
-		equalSourceDatasource.constrained(parameterBigDatasourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalSourceDatasource.constrained(parameterSingleDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-	}
-
-
 	@Override
 	public String getTitle() {
 		return ProcessProperties.getString("String_SummaryRegion");
@@ -217,10 +196,8 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 					analyst.add(weightedFields, weightedStatisticModes);
 				}
 			} else {
-				Dataset dataset = parameterSingleDataset.getSelectedDataset();
-				String regionDatasourceStr = "{\\\"type\\\":\\\"pg\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + parameterTextFieldAddress.getSelectedItem() + "\\\",\\\"datasetNames\\\":[\\\"" + dataset.getName() + "\\\"],\\\"database\\\":\\\"" + parameterDataBaseName.getSelectedItem() + "\\\",\\\"user\\\":\\\"" + parameterTextFieldUserName.getSelectedItem() + "\\\",\\\"password\\\":\\\"" + parameterTextFieldPassword.getSelectedItem() + "\\\"}]}";
-				CommonSettingCombine regionDatasource = new CommonSettingCombine("regionDatasource", regionDatasourceStr);
-				analyst.add(regionDatasource, bounds, standardSummaryFields, weightedSummaryFields, sumShape);
+				parameterAnalystDataType.initAnalystInput(analyst, 3);
+				analyst.add(bounds, standardSummaryFields, weightedSummaryFields, sumShape);
 				if (parameterStandardFields.getSelectedItem().toString().equals("true")) {
 					analyst.add(standardFields, standardStatisticModes);
 				}

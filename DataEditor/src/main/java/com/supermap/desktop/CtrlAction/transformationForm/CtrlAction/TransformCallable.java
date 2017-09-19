@@ -1,15 +1,10 @@
 package com.supermap.desktop.CtrlAction.transformationForm.CtrlAction;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetImage;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
-import com.supermap.data.Transformation;
-import com.supermap.data.TransformationMode;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAddObjectBean;
+import com.supermap.desktop.core.Time;
+import com.supermap.desktop.core.TimeType;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -65,7 +60,7 @@ public class TransformCallable extends UpdateProgressCallable {
 			public void stepped(SteppedEvent arg0) {
 				int totalPercent = (arg0.getPercent() + 100 * finishedCount) / totleSize;
 				try {
-					updateProgressTotal(arg0.getPercent(), totalPercent, String.valueOf(arg0.getRemainTime()), arg0.getMessage());
+					updateProgressTotal(arg0.getPercent(), totalPercent, Time.toString(arg0.getRemainTime(), TimeType.SECOND), arg0.getMessage());
 				} catch (CancellationException e) {
 					isCancel = true;
 					arg0.setCancel(true);

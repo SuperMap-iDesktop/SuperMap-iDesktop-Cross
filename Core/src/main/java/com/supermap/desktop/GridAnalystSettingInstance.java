@@ -9,6 +9,7 @@ import com.supermap.analyst.spatialanalyst.GridAnalystSetting;
 import com.supermap.analyst.spatialanalyst.MathAnalyst;
 import com.supermap.analyst.spatialanalyst.TerrainAnalystSetting;
 import com.supermap.data.CursorType;
+import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoRegion;
 import com.supermap.data.Geometrist;
@@ -177,7 +178,11 @@ public class GridAnalystSettingInstance {
 		}
 		isChanged = true;
 		Object oldValue = this.resultBounds;
-		this.resultBounds = resultBounds;
+		if (resultBounds instanceof Dataset) {
+			this.resultBounds = ((Dataset) resultBounds).getBounds();
+		} else {
+			this.resultBounds = resultBounds;
+		}
 	}
 
 	public void setCellSize(Object cellSize) {

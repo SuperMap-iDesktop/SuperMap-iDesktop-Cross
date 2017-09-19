@@ -30,6 +30,10 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 	private boolean isDescriptionVisible = true;
 	// 添加是否为必填参数属性，默认为非必填
 	private boolean isRequisite = false;
+	// For custom Parameter, there are many components, some of which are available and some are unavailable.
+	// The current implementation initialization is either available or unavailable.
+	// Therefore, the new variable is used as a flag to determine whether the Panel need to be reset.
+	private boolean isComplexParameter=false;
 
 	@Override
 	public void addPanelPropertyChangedListener(PanelPropertyChangedListener panelPropertyChangedListener) {
@@ -298,5 +302,15 @@ public abstract class AbstractParameter implements IParameter, Irequisite {
 			return !StringUtilities.isNullOrEmptyString(item);
 		}
 		return true;
+	}
+
+	@Override
+	public boolean isComplexParameter() {
+		return this.isComplexParameter;
+	}
+
+	@Override
+	public void setComplexParameter(boolean complexParameter) {
+		this.isComplexParameter = complexParameter;
 	}
 }

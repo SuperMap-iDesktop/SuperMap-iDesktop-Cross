@@ -22,6 +22,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 /**
@@ -45,6 +46,7 @@ public class MetaProcessDataUpdate extends MetaProcess {
 	private void initParameters() {
 		this.sourceDatasource = new ParameterDatasourceConstrained();
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
+		this.sourceDatasource.setReadOnlyNeeded(false);
 		this.sourceDataset = new ParameterSingleDataset(DatasetType.GRID, DatasetType.IMAGE);
 		this.sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 		this.chooseTable = new ParameterDatasetChooseTable();
@@ -54,11 +56,7 @@ public class MetaProcessDataUpdate extends MetaProcess {
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_TargetData"));
 		sourceData.addParameters(this.sourceDatasource, this.sourceDataset);
 
-		ParameterCombine setting = new ParameterCombine();
-		setting.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
-		setting.addParameters(this.chooseTable);
-
-		this.parameters.setParameters(sourceData, setting);
+		this.parameters.setParameters(sourceData, this.chooseTable);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.ALL_RASTER, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA,
 				ProcessOutputResultProperties.getString("String_DataUpdateResult"),
@@ -72,6 +70,7 @@ public class MetaProcessDataUpdate extends MetaProcess {
 			this.sourceDataset.setSelectedItem(dataset);
 			this.chooseTable.setDataset(dataset);
 		}
+		chooseTable.setComplexParameter(true);
 	}
 
 	private void initParameterConstraint() {
@@ -106,8 +105,21 @@ public class MetaProcessDataUpdate extends MetaProcess {
 		try {
 			Dataset dataset = this.sourceDataset.getSelectedItem();
 			ArrayList<Dataset> datasets = (ArrayList<Dataset>) this.chooseTable.getSelectedItem();
-			boolean isGrid = (dataset.getType() == DatasetType.GRID) ? true : false;
+			boolean isGrid = (dataset.getType() == DatasetType.GRID);
 			for (int i = 0; i < datasets.size(); i++) {
+				if (!dataset.getBounds().hasIntersection(datasets.get(i).getBounds())) {
+					Application.getActiveApplication().getOutput().output(
+							MessageFormat.format(ProcessProperties.getString("String_DataUpdateInvalidBounds"),
+									datasets.get(i).getDatasource().getAlias(), datasets.get(i).getName()));
+					continue;
+				} else if (isGrid) {
+					if (!((DatasetGrid) dataset).getPixelFormat().equals(((DatasetGrid) datasets.get(i)).getPixelFormat())) {
+						Application.getActiveApplication().getOutput().output(
+								MessageFormat.format(ProcessProperties.getString("String_DataUpdatePixFormatIsNotEqual"),
+										datasets.get(i).getDatasource().getAlias(), datasets.get(i).getName()));
+						continue;
+					}
+				}
 				if (isGrid) {
 					((DatasetGrid) dataset).update((DatasetGrid) datasets.get(i));
 				} else {
@@ -115,6 +127,7 @@ public class MetaProcessDataUpdate extends MetaProcess {
 				}
 			}
 			isSuccessful = dataset != null;
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}

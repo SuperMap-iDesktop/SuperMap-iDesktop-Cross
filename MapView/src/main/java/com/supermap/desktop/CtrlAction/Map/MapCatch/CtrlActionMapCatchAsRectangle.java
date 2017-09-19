@@ -10,17 +10,18 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.map.propertycontrols.MapActionSelectTargetInfoPanel;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
-import com.supermap.ui.*;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
+import com.supermap.mapping.TrackingLayer;
+import com.supermap.ui.Action;
+import com.supermap.ui.MapControl;
 
 import java.awt.*;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,20 +38,75 @@ public class CtrlActionMapCatchAsRectangle extends CtrlAction {
 		super(caller, formClass);
 	}
 
-	private MapControl activeMapControl;
+	private transient MapActionSelectTargetInfoPanel panelSelectTargetInfo = new MapActionSelectTargetInfoPanel("");
+	private transient MapControl mapControl;
+	private IFormMap formMap;
 
-	private MapActionSelectTargetInfoPanel panelSelectTargetInfo;
+	private static final String PICKUPCOORDINATE_TAG = "PickupCoordinate";
 
-	private transient ArrayList<GeoPoint> geoPoints;
+	private MouseAdapter mouseAdapter = new MouseAdapter() {
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (e.getButton() == MouseEvent.BUTTON3) {
+				overPickup();
+//				copyParameter();
+			} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
+				addPickup(e);
+			}
+		}
+	};
+
+	private transient MouseMotionListener mouseMotionListener = new MouseAdapter() {
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			MapControl activeMapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
+			Point point = e.getPoint();
+			Point2D point2D = activeMapControl.getMap().pixelToMap(point);
+			panelSelectTargetInfo.setShowedText("X:" + point2D.x + ",Y:" + point2D.y);
+			panelSelectTargetInfo.setLocation(point.x + 15, point.y + 20);
+			panelSelectTargetInfo.setVisible(true);
+			panelSelectTargetInfo.updateUI();
+		}
+	};
+
+	private KeyAdapter keyAdapter = new KeyAdapter() {
+		@Override
+		public void keyReleased(KeyEvent e) {
+			if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+				TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
+				for (int count = trackingLayer.getCount() - 1; count >= 0; count--) {
+					if (trackingLayer.getTag(count).startsWith(PICKUPCOORDINATE_TAG)) {
+						trackingLayer.remove(count);
+					}
+				}
+				mapControl.getMap().refreshTrackingLayer();
+				mapControl.removeKeyListener(keyAdapter);
+			}
+		}
+	};
+
+	private MapClosedListener mapClosedListener = new MapClosedListener() {
+
+		@Override
+		public void mapClosed(MapClosedEvent arg0) {
+			overPickup();
+		}
+	};
 
 	@Override
 	public void run() {
 		super.run();
-		this.activeMapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
-		this.panelSelectTargetInfo = new MapActionSelectTargetInfoPanel("");
-		this.geoPoints = new ArrayList<>();
-		setAction();
+		try {
+			this.formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			if (null != this.formMap) {
+				this.mapControl = this.formMap.getMapControl();
+				startPickup();
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
 	}
+
 
 	@Override
 	public boolean enable() {
@@ -82,61 +138,46 @@ public class CtrlActionMapCatchAsRectangle extends CtrlAction {
 		return result;
 	}
 
-
 	/**
-	 * 设置Action事件
+	 * 开始捕捉
 	 */
-	private void setAction() {
-		this.activeMapControl.setTrackMode(TrackMode.TRACK);
-		this.activeMapControl.setAction(Action.CREATEPOINT);
-
-		this.activeMapControl.setLayout(null);
-		this.activeMapControl.addMouseListener(this.controlMouseListener);
-		this.activeMapControl.addMouseMotionListener(this.mouseMotionListener);
-		this.activeMapControl.addTrackedListener(this.trackedListener);
-		this.activeMapControl.add(this.panelSelectTargetInfo);
+	private void startPickup() {
+		this.mapControl.setAction(Action.SELECT);
+		this.mapControl.add(this.panelSelectTargetInfo);
+		addListener();
+		this.mapControl.setLayout(null);
 	}
 
-	private transient MouseMotionListener mouseMotionListener = new MouseAdapter() {
-		@Override
-		public void mouseMoved(MouseEvent e) {
-			Point point = e.getPoint();
-			Point2D point2D = activeMapControl.getMap().pixelToMap(point);
-			panelSelectTargetInfo.setShowedText("X:" + point2D.x + ",Y:" + point2D.y);
-			panelSelectTargetInfo.setLocation(point.x + 15, point.y + 20);
-			panelSelectTargetInfo.setVisible(true);
-			panelSelectTargetInfo.updateUI();
-		}
-	};
-
 	/**
-	 * 拾取结束监听
+	 * 结束捕捉
 	 */
-	private transient MouseListener controlMouseListener = new MouseAdapter() {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON3) {
-				panelSelectTargetInfo.setVisible(false);
-				activeMapControl.removeMouseListener(controlMouseListener);
-				activeMapControl.removeMouseMotionListener(mouseMotionListener);
-				activeMapControl.removeTrackedListener(trackedListener);
-				exitEdit();
-				// 将拾取到的坐标复制到剪贴板上
-				copyParameter();
-			}
-		}
+	private void overPickup() {
+		this.formMap.showPopupMenu();
+		removeListener();
+		this.mapControl.setAction(Action.SELECT2);
+		this.mapControl.remove(this.panelSelectTargetInfo);
+	}
 
-	};
+	private void addListener() {
+		removeListener();
+		this.formMap.dontShowPopupMenu();
+		this.mapControl.addMouseMotionListener(this.mouseMotionListener);
+		this.mapControl.addKeyListener(this.keyAdapter);
+		this.mapControl.addMouseListener(this.mouseAdapter);
+		this.mapControl.getMap().addMapClosedListener(this.mapClosedListener);
+	}
+
+	private void removeListener() {
+		this.mapControl.removeMouseMotionListener(this.mouseMotionListener);
+		this.mapControl.removeMouseListener(this.mouseAdapter);
+		this.mapControl.getMap().removeMapClosedListener(this.mapClosedListener);
+	}
 
 	/**
 	 * 复制参数
 	 */
-	private void copyParameter() {
-		String text = "";
-		for (int i = 0; i < geoPoints.size(); i++) {
-			String label = MessageFormat.format(MapViewProperties.getString("String_Label_PointsCoordinate"), i + 1);
-			text = text + label + geoPoints.get(i).getX() + geoPoints.get(i).getY() + "\n";
-		}
+	private void copyParameter(GeoPoint geoPoint) {
+		String text = "X:" + geoPoint.getX() + ",Y:" + geoPoint.getY();
 		setSysClipboardText(text);
 	}
 
@@ -152,27 +193,42 @@ public class CtrlActionMapCatchAsRectangle extends CtrlAction {
 	}
 
 
-	private transient TrackedListener trackedListener = new TrackedListener() {
-
-		@Override
-		public void tracked(TrackedEvent arg0) {
-			abstractTracked(arg0);
-		}
-	};
-
-	private void abstractTracked(TrackedEvent arg0) {
-		if (arg0.getGeometry() != null) {
-			if (arg0.getGeometry() instanceof GeoPoint) {
-				this.geoPoints.add((GeoPoint) arg0.getGeometry().clone());
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_PickupCoordinateResult")
-						, geoPoints.size(), ((GeoPoint) arg0.getGeometry()).getX(), ((GeoPoint) arg0.getGeometry()).getY()));
-				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_PickupCoordinateSuccess"));
+	protected void addPickup(MouseEvent e) {
+		GeoPoint geoPoint = new GeoPoint(this.mapControl.getMap().pixelToMap(e.getPoint()));
+		GeoStyle geoStyle = new GeoStyle();
+		geoStyle.setLineColor(Color.RED);
+		geoStyle.setMarkerSize(new Size2D(3, 3));
+		geoPoint.setStyle(geoStyle);
+		TrackingLayer trackingLayer = this.mapControl.getMap().getTrackingLayer();
+		int geoCount = 0;
+		for (int i = 0; i < trackingLayer.getCount(); i++) {
+			if (trackingLayer.getTag(i).equals(PICKUPCOORDINATE_TAG + "Point")) {
+				geoCount++;
 			}
 		}
+		int pointCount = 1;
+		if (0 != geoCount) {
+			pointCount = 1 + geoCount;
+		}
+		// 在跟踪层上画点
+		Point2D point2DNumber = this.mapControl.getMap().pixelToMap(e.getPoint());
+		TextPart textPartNumber = new TextPart();
+		textPartNumber.setAnchorPoint(point2DNumber);
+		textPartNumber.setText(String.valueOf(pointCount));
+		// 在跟踪层上绘制数字
+		GeoText geoTextNumber = new GeoText(textPartNumber);
+		TextStyle textStyleNumber = new TextStyle();
+		textStyleNumber.setBold(true);
+		textStyleNumber.setAlignment(TextAlignment.TOPLEFT);
+		geoTextNumber.setTextStyle(textStyleNumber);
+
+		trackingLayer.add(geoPoint, PICKUPCOORDINATE_TAG + "Point");
+		trackingLayer.add(geoTextNumber, PICKUPCOORDINATE_TAG + "PointCount");
+
+		copyParameter(geoPoint);
+		Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_Label_PointsCoordinate"), pointCount) +
+				geoPoint.getX() + "," + geoPoint.getY());
+		Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_PickupCoordinateSuccess"));
 	}
 
-	private void exitEdit() {
-		activeMapControl.setAction(Action.SELECT2);
-		activeMapControl.setTrackMode(TrackMode.EDIT);
-	}
 }

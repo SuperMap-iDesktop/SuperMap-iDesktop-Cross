@@ -5,6 +5,8 @@ import com.supermap.data.DatasetImageCollection;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.core.Time;
+import com.supermap.desktop.core.TimeType;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 
@@ -26,7 +28,7 @@ public class DatasetImageCollectionSynchronizeCallable extends UpdateProgressCal
 		public void stepped(SteppedEvent arg0) {
 			int totalPercent = (arg0.getPercent() + 100 * completedCount) / totalDatasetCount;
 			try {
-				updateProgressTotal(arg0.getPercent(), totalPercent, String.valueOf(arg0.getRemainTime()), arg0.getMessage());
+				updateProgressTotal(arg0.getPercent(), totalPercent, Time.toString(arg0.getRemainTime(), TimeType.SECOND), arg0.getMessage());
 			} catch (CancellationException e) {
 				isCancel = true;
 				arg0.setCancel(true);
@@ -87,6 +89,6 @@ public class DatasetImageCollectionSynchronizeCallable extends UpdateProgressCal
 	private String getRemainTime(int i, long startTime) {
 		long currentTimeMillis = System.currentTimeMillis();
 		long remainTime = (currentTimeMillis - startTime) / i * (completedCount - i);
-		return String.valueOf(remainTime / 1000);
+		return Time.toString(remainTime, TimeType.MILLISECOND);
 	}
 }
