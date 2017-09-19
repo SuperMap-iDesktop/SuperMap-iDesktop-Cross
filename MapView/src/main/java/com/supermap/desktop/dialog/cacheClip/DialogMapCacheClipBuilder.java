@@ -419,19 +419,19 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		String[] updateFilePaths = parentPath.list(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.contains("update");
+				return name.contains("Update");
 			}
 		});
 		//设置更新的目录
 		if (null == updateFilePaths || updateFilePaths.length == 0) {
-			updateSciName = "update";
+			updateSciName = "Update";
 		} else if (updateFilePaths.length == 1) {
-			updateSciName = "update_1";
+			updateSciName = "Update_1";
 		} else if (updateFilePaths.length > 1) {
 			String updateFile = updateFilePaths[updateFilePaths.length - 1];
 			String index = updateFile.substring(updateFile.lastIndexOf("_") + 1, updateFile.lastIndexOf("."));
 			String newIndex = String.valueOf(Integer.valueOf(index) + 1);
-			updateSciName = "update" + "_" + newIndex;
+			updateSciName = "Update" + "_" + newIndex;
 		}
 		//创建文件夹
 		File updateDirectory = new File(parentPath.getParent() + File.separator + updateSciName);
