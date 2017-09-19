@@ -465,27 +465,6 @@ public class MetaProcessImport extends MetaProcess {
 				}
 			}
 			((ImportSettingExcel) importSetting).removeImportSteppedListener(importStepListener);
-
-//		} else if (importSetting instanceof ImportSettingSimpleJson) {
-//			// SimpleJson有两种导入模式，因此单开一个else if-yuanR2017.9.1
-//			// 判断选择的导入模式：文件/文件夹
-//			if (parameterRadioButtonFileSelectType.getSelectedItem().equals(parameterRadioButtonFileSelectType.getItemAt(0))) {
-//				importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(1)).parameter).getSelectedItem().toString());
-//			} else {
-//				importSetting.setSourceFilePath(((ParameterFile) (sourceImportParameters.get(0)).parameter).getSelectedItem().toString());
-//			}
-//			importSetting.setSourceFileCharset((Charset) ((ParameterCharset) sourceImportParameters.get(2).parameter).getSelectedData());
-//			final Datasource datasource = ((ParameterDatasource) resultImportParameters.get(0).parameter).getSelectedItem();
-//			importSetting.setTargetDatasource(datasource);
-//			importSetting.setTargetDatasetName(((ParameterTextField) resultImportParameters.get(1).parameter).getSelectedItem().toString());
-//			importSetting.setImportMode((ImportMode) ((ParameterEnum) resultImportParameters.get(2).parameter).getSelectedData());
-//			startTime = System.currentTimeMillis(); // 获取开始时间
-//			DataImport dataImport = new DataImport();
-//			dataImport.addImportSteppedListener(this.importStepListener);
-//			dataImport.getImportSettings().add(importSetting);
-//			ImportResult result = dataImport.run();
-//			isSuccessful = getCommonResult(isSuccessful, startTime, result);
-//			dataImport.removeImportSteppedListener(this.importStepListener);
 		} else {
 			ImportSetting newImportSetting = new ImportSettingCreator().create(importType);
 			DataImport dataImport = ImportSettingSetter.setParameter(newImportSetting, sourceImportParameters, resultImportParameters, paramParameters);

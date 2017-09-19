@@ -393,11 +393,14 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			}
 
 			String sciPath = getUpdateSci();
+
 			boolean result = mapCacheBuilder.toConfigFile(sciPath);
 			//将更新的sci合并到原sci中
+//			if (MapViewProperties.getString("MapCache_SaveType_MongoDB").equals(firstStepPane.comboBoxSaveType.getSelectedItem())) {
 			MapCacheBuilder tempMapCacheBuilder = new MapCacheBuilder();
 			tempMapCacheBuilder.fromConfigFile(firstStepPane.getSciPath());
 			tempMapCacheBuilder.mergeConfigFile(sciPath);
+//			}
 			if (result) {
 				splitAndStartCacheBuilder(firstStepPane.fileChooserControlFileCache.getPath(), sciPath, updateSciName);
 			}
@@ -424,12 +427,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			updateSciName = "update";
 		} else if (updateFilePaths.length == 1) {
 			updateSciName = "update_1";
-		} else {
+		} else if (updateFilePaths.length > 1) {
 			String updateFile = updateFilePaths[updateFilePaths.length - 1];
-			if (updateFile.contains("_")) {
-				String newIndex = String.valueOf(Integer.valueOf(updateFile.split("_")[1]) + 1);
-				updateSciName = "update" + "_" + newIndex;
-			}
+			String index = updateFile.substring(updateFile.lastIndexOf("_") + 1, updateFile.lastIndexOf("."));
+			String newIndex = String.valueOf(Integer.valueOf(index) + 1);
+			updateSciName = "update" + "_" + newIndex;
 		}
 		//创建文件夹
 		File updateDirectory = new File(parentPath.getParent() + File.separator + updateSciName);
