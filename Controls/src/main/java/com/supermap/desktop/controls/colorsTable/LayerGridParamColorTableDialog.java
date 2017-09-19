@@ -789,7 +789,7 @@ public class LayerGridParamColorTableDialog extends SmDialog {
 	private void inputColorTable() {
 		String moduleName = "InputColorsTable";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
-			String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ControlsProperties.getString("String_DialogColorTable"), "sctu"),
+			String fileFilters = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(ControlsProperties.getString("String_DialogColorTable"), "sctu"),
 					SmFileChoose.createFileFilter(ControlsProperties.getString("String_DialogColorTableSct"), "sct"));
 			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
 					ControlsProperties.getString("String_OpenColorTable"), moduleName, "OpenMany");

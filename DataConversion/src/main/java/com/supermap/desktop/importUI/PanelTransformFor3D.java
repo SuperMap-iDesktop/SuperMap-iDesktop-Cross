@@ -9,7 +9,6 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.FileTypeLocale;
-import com.supermap.desktop.localUtilities.LocalFileUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -164,7 +163,7 @@ public class PanelTransformFor3D extends PanelTransform {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (!SmFileChoose.isModuleExist("ImportPrjFile")) {
-                String fileFilters = SmFileChoose.bulidFileFilters(
+                String fileFilters = SmFileChoose.buildFileFilters(
                         SmFileChoose.createFileFilter(DataConversionProperties.getString("String_ImportPrjFiles"), "prj", "xml"),
                         SmFileChoose.createFileFilter(DataConversionProperties.getString("String_ImportPrjFileShape"), "prj"),
                         SmFileChoose.createFileFilter(DataConversionProperties.getString("String_ImportPrjFileXml"), "xml"));

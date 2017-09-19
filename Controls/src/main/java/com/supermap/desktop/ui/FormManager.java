@@ -454,7 +454,7 @@ public class FormManager extends MdiPane implements IFormManager {
 			final FrameMenuManager frameMenuManager = (FrameMenuManager) Application.getActiveApplication().getMainFrame().getFrameMenuManager();
 			final ToolbarManager toolbarManager = (ToolbarManager) Application.getActiveApplication().getMainFrame().getToolbarManager();
 
-			boolean needRefersh = false;
+			boolean needRefresh = false;
 			// 如果之前存在子窗口，则需要移除原来的子菜单和工具条
 			if (beforeType != WindowType.UNKNOWN) {
 				// 移除原子窗体的子菜单
@@ -462,7 +462,7 @@ public class FormManager extends MdiPane implements IFormManager {
 				// 移除原子窗体的子工具条
 				toolbarManager.removeChildToolbar(beforeType);
 
-				needRefersh = true;
+				needRefresh = true;
 			}
 
 			// 如果切换后存在子窗口，则需要添加子菜单和工具条
@@ -472,9 +472,9 @@ public class FormManager extends MdiPane implements IFormManager {
 				// 激活新子窗体的子工具条
 				toolbarManager.loadChildToolbar(activatedChildFormType);
 
-				needRefersh = true;
+				needRefresh = true;
 			}
-			if (needRefersh) {
+			if (needRefresh) {
 				frameMenuManager.getMenuBar().updateUI();
 				toolbarManager.getToolbarsContainer().repaint();
 			}

@@ -1328,7 +1328,7 @@ public class FirstStepPane extends JPanel implements IState {
 	private void importCacheConfigFile() {
 		String moduleName = "InputCacheConfigFile";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
-			String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci"));
+			String fileFilters = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci"));
 			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
 					ControlsProperties.getString("String_OpenColorTable"), moduleName, "OpenMany");
 		}
