@@ -5,6 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.ui.controls.CollectionDataset.DatasetInfo;
 import com.supermap.desktop.ui.controls.CollectionDataset.JDialogCreateCollectionDataset;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 
@@ -22,22 +23,21 @@ public class CtrlActionManageCollectionDataset extends CtrlAction {
 	@Override
 	protected void run() {
 		DatasetVector datasetVector = (DatasetVector) Application.getActiveApplication().getActiveDatasets()[0];
-		ArrayList<DatasetVector> datasetVectors = new ArrayList<>();
+		ArrayList<DatasetInfo> datasetInfos = new ArrayList<>();
 		ArrayList<CollectionDatasetInfo> collectionDatasetInfos = datasetVector.getCollectionDatasetInfos();
 		for (int i = 0; i < collectionDatasetInfos.size(); i++) {
 			CollectionDatasetInfo collectionDatasetInfo = collectionDatasetInfos.get(i);
-			DatasourceConnectionInfo connectionInfo = collectionDatasetInfo.getDatasourceConnectInfo();
-			if (null != connectionInfo) {
-				Datasource datasource = DatasourceUtilities.getDatasource(connectionInfo);
-				if (null != datasource) {
-					Dataset childDataset = datasource.getDatasets().get(collectionDatasetInfo.getDatasetName());
-					if (null != childDataset && childDataset instanceof DatasetVector) {
-						datasetVectors.add((DatasetVector) childDataset);
-					}
-				}
-			}
+			DatasourceConnectionInfo info = collectionDatasetInfo.getDatasourceConnectInfo();
+			DatasetInfo datasetInfo = new DatasetInfo();
+			datasetInfo.setName(collectionDatasetInfo.getDatasetName());
+			datasetInfo.setCapiton(collectionDatasetInfo.getDatasetName());
+			datasetInfo.setServer(info.getServer());
+			datasetInfo.setEngineType(info.getEngineType().name());
+			datasetInfo.setDatasourceAlias(info.getAlias());
+			datasetInfo.setUser(info.getUser());
+			datasetInfos.add(datasetInfo);
 		}
-		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0, datasetVector, datasetVectors.toArray(new DatasetVector[datasetVectors.size()]));
+		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0, datasetVector, datasetInfos);
 		createCollectionDataset.isSetDatasetCollectionCount(true);
 		createCollectionDataset.showDialog();
 	}
