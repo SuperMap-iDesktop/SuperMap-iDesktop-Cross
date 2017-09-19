@@ -41,8 +41,10 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 	}
 
 	private void initComponents() {
+		parameterInputDataType.setDescribe(ProcessProperties.getString("String_FileInputPath"));
 		parameterIServerLogin.setInputDataType(this.parameterInputDataType);
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
+		parameterIServerLogin.setDataType(parameterInputDataType.supportDatasetType);
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_SimplePointDensity"), "0");
 		parameterComboBoxAnalyseType.setRequisite(true);
 		parameterComboBoxAnalyseType.setItems(parameterDataNode);

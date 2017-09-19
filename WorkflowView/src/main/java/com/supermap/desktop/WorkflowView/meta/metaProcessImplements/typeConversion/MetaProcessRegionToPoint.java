@@ -10,60 +10,68 @@ import com.supermap.desktop.process.ProcessProperties;
 import java.util.Map;
 
 public class MetaProcessRegionToPoint extends MetaProcessPointLineRegion {
-    public MetaProcessRegionToPoint() {
-        super(DatasetType.REGION, DatasetType.POINT);
-    }
+	public MetaProcessRegionToPoint() {
+		super(DatasetType.REGION, DatasetType.POINT);
+	}
 
-    @Override
-    protected void initHook() {
-        OUTPUT_DATA="RegionToPointResult";
-    }
+	@Override
+	protected void initHook() {
+		OUTPUT_DATA = "RegionToPointResult";
+	}
 
-    @Override
-    protected String getOutputName() {
-        return "result_regionToPoint";
-    }
+	@Override
+	protected String getOutputName() {
+		return "result_regionToPoint";
+	}
 
-    @Override
-    protected  String getOutputResultName(){
-        return ProcessOutputResultProperties.getString("String_RegionToPointResult");
-    }
+	@Override
+	protected String getOutputResultName() {
+		return ProcessOutputResultProperties.getString("String_RegionToPointResult");
+	}
 
-    @Override
-    protected boolean convert(Recordset recordset, IGeometry geometry, Map<String, Object> value) {
-        boolean isConverted = true;
+	@Override
+	protected boolean convert(Recordset recordset, IGeometry geometry, Map<String, Object> value) {
+		if (geometry instanceof IRegionFeature) {
+			GeoRegion geoRegion = null;
+			try {
+				geoRegion = ((IRegionFeature) geometry).convertToRegion(120);
+				for (int i = 0; i < geoRegion.getPartCount(); i++) {
+					Point2Ds points = geoRegion.getPart(i);
+					double x = 0;
+					double y = 0;
+					for (int j = 0; j < points.getCount(); j++) {
+						x += points.getItem(j).getX();
+						y += points.getItem(j).getY();
+					}
+					x = x / points.getCount();
+					y = y / points.getCount();
+					GeoPoint geoPoint = new GeoPoint(x, y);
+					if (!recordset.addNew(geoPoint, value)) {
+						return false;
+					}
+					geoPoint.dispose();
+				}
+				return true;
+			} catch (UnsupportedOperationException e) {
+				// 此时返回false-yuanR2017.9.19
+				return false;
+			} finally {
+				if (geoRegion != null) {
+					geoRegion.dispose();
+				}
+			}
+		} else {
+			return false;
+		}
+	}
 
-        if (geometry instanceof IRegionFeature) {
-            GeoRegion geoRegion = ((IRegionFeature) geometry).convertToRegion(120);
+	@Override
+	public String getKey() {
+		return MetaKeys.CONVERSION_REGION_TO_POINT;
+	}
 
-            for (int i = 0; i < geoRegion.getPartCount(); i++) {
-                Point2Ds points = geoRegion.getPart(i);
-                double x = 0;
-                double y = 0;
-                for (int j = 0; j < points.getCount(); j++) {
-                    x += points.getItem(j).getX();
-                    y += points.getItem(j).getY();
-                }
-                x = x / points.getCount();
-                y = y / points.getCount();
-                GeoPoint geoPoint = new GeoPoint(x, y);
-                recordset.addNew(geoPoint, value);
-                geoPoint.dispose();
-            }
-            geoRegion.dispose();
-        } else {
-            isConverted = false;
-        }
-        return isConverted;
-    }
-
-    @Override
-    public String getKey() {
-        return MetaKeys.CONVERSION_REGION_TO_POINT;
-    }
-
-    @Override
-    public String getTitle() {
-        return ProcessProperties.getString("String_Title_RegionToPoint");
-    }
+	@Override
+	public String getTitle() {
+		return ProcessProperties.getString("String_Title_RegionToPoint");
+	}
 }
