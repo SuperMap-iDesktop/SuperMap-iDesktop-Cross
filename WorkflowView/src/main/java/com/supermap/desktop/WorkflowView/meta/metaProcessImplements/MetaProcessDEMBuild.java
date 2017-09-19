@@ -172,7 +172,7 @@ public class MetaProcessDEMBuild extends MetaProcess {
 			double height = sourceDataset.getSelectedItem().getBounds().getHeight() / 10;
 			double width = sourceDataset.getSelectedItem().getBounds().getWidth() / 10;
 			textNumResampleTolerance.setMaxValue(height > width ? width : height);
-			Rectangle2D bounds = ((DatasetVector) sourceDataset.getSelectedItem()).getBounds();
+			Rectangle2D bounds = sourceDataset.getSelectedItem().getBounds();
 			double x = bounds.getWidth() / 500;
 			double y = bounds.getHeight() / 500;
 			double cellSize = x > y ? y : x;

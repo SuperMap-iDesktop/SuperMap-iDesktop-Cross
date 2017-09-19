@@ -36,9 +36,9 @@ public class ParameterFilePanel extends SwingPanel {
 		super(parameterFile);
 		this.parameterFile = (ParameterFile) parameterFile;
 		if (this.parameterFile.getSelectedItem() != null) {
-			fileChooserControl.setPath(this.parameterFile.getSelectedItem().toString());
+			fileChooserControl.setPath(this.parameterFile.getSelectedItem());
 		}
-		fileChooserControl.setEnabled(((ParameterFile) parameterFile).isEnabled());
+		fileChooserControl.setEnabled(parameterFile.isEnabled());
 
 		SmFileChoose fileChoose = null;
 		if (!SmFileChoose.isModuleExist(this.parameterFile.getModuleName())) {

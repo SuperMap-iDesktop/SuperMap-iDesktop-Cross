@@ -1,17 +1,13 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
-import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.lbs.Interface.IServerService;
 import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.lbs.params.JobResultResponse;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -19,10 +15,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
-import com.supermap.desktop.utilities.DatasetUtilities;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -46,12 +39,6 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	private ParameterDefaultValueTextField parameterMeshSize = new ParameterDefaultValueTextField(ProcessProperties.getString("String_MeshSize"));
 	private ParameterComboBox parameterMeshSizeUnit = new ParameterComboBox(ProcessProperties.getString("String_MeshSizeUnit"));
 	private ParameterCheckBox parametersumShape = new ParameterCheckBox(ProcessProperties.getString("String_SumShape"));
-	private ParameterBigDatasourceDatasource parameterBigDatasourceDatasource = new ParameterBigDatasourceDatasource();
-	private ParameterSingleDataset parameterSingleDataset = new ParameterSingleDataset(DatasetType.LINE, DatasetType.REGION);
-	private ParameterDefaultValueTextField parameterDataBaseName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_DataBaseName"));
-	private ParameterDefaultValueTextField parameterTextFieldAddress = new ParameterDefaultValueTextField(CoreProperties.getString("String_Server"));
-	private ParameterDefaultValueTextField parameterTextFieldUserName = new ParameterDefaultValueTextField(ProcessProperties.getString("String_UserName"));
-	private ParameterPassword parameterTextFieldPassword = new ParameterPassword(ProcessProperties.getString("String_PassWord"));
 
 	public MetaProcessSummaryRegion() {
 		initComponents();
@@ -72,7 +59,6 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
 		parameterStatisticMode.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
 		parameterMeshSize.setDefaultWarningValue("100");
-		parameterMeshSize.setRequisite(true);
 		parameterMeshSizeUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Yard"), "Yard"),
@@ -82,16 +68,24 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterStandardFields.setSelectedItem(false);
 		parameterWeightedFields.setSelectedItem(false);
 		parametersumShape.setSelectedItem(true);
+		parameterFeildName.setRequisite(true);
+		parameterStatisticMode.setRequisite(true);
+		parameterFeildName1.setRequisite(true);
+		parameterStatisticMode1.setRequisite(true);
 	}
 
 	private void initComponentState() {
+		parameterInputDataType.parameterDataInputWay.removeAllItems();
+		parameterInputDataType.parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_BigDataStore"), "3"),
+				new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PG"), "2"));
+		parameterInputDataType.parameterSwitch.switchParameter("3");
 		parameterAnalystDataType.parameterDataInputWay.removeAllItems();
 		parameterAnalystDataType.parameterDataInputWay.setItems(new ParameterDataNode(ProcessProperties.getString("String_BigDataStore"), "3"),
 				new ParameterDataNode(ProcessProperties.getString("String_UDBFile"), "1"), new ParameterDataNode(ProcessProperties.getString("String_PG"), "2"));
 		parameterAnalystDataType.parameterSwitch.switchParameter("3");
 		parameterAnalystDataType.setBool(true);
 		parameterInputDataType.setSupportDatasetType(DatasetType.LINE, DatasetType.REGION);
-		parameterAnalystDataType.setSupportDatasetType(DatasetType.LINE, DatasetType.REGION);
+		parameterAnalystDataType.setSupportDatasetType(DatasetType.REGION);
 		parameterIServerLogin.setDataType(parameterInputDataType.supportDatasetType);
 		parameterIServerLogin.setAnalystDatasetTypes(parameterAnalystDataType.supportDatasetType);
 	}

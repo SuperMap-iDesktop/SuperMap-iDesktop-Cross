@@ -33,7 +33,7 @@ public class CtrlActionDatasourceNewFile extends CtrlAction {
 			String filePath = "";
 			String alias = "";
 			if (!SmFileChoose.isModuleExist("DatasourceNewFile")) {
-				String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(DataEditorProperties.getString("String_UDBFileFilterName"),
+				String fileFilters = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(DataEditorProperties.getString("String_UDBFileFilterName"),
 						DataEditorProperties.getString("String_UDBFileFilters")));
 				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
 						DataEditorProperties.getString("String_NewDatasourceFile"), "DatasourceNewFile", "SaveOne");

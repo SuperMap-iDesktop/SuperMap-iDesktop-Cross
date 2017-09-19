@@ -86,29 +86,29 @@ public class FileType {
 			String importModule = "MetaProcessImport" + importType;
 			if (!SmFileChoose.isModuleExist(importModule)) {
 				if ("MapGIS".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("String_filetype_mapgis"), "wat", "wan", "wal", "wap"));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("String_filetype_mapgis"), "wat", "wan", "wal", "wap"));
 				} else if ("B".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), "BIL", "b", "bil"), "b", "bil"));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), "BIL", "b", "bil"), "b", "bil"));
 				} else if ("GBDEM".equalsIgnoreCase(importType) || "GRD_DEM".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "DEM", "dem"), "dem"));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "DEM", "dem"), "dem"));
 				} else if ("LIDAR".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "LIDAR", "txt"), "txt"));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "LIDAR", "txt"), "txt"));
 				} else if ("GPS".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, importType.toLowerCase()), "gpx"));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, importType.toLowerCase()), "gpx"));
 				} else if ("EXCEL".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), "Microsoft Excel", "xls", "xlsx"), "xls", "xlsx"));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), "Microsoft Excel", "xls", "xlsx"), "xls", "xlsx"));
 				} else if ("TIF".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), importType, "tif", "tiff"), "tif", "tiff"));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), importType, "tif", "tiff"), "tif", "tiff"));
 				} else if ("JPG".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), importType, "jpg", "jpeg"), "jpg", "jpeg"));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), importType, "jpg", "jpeg"), "jpg", "jpeg"));
 				} else if ("JP2".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), importType, "jp2", "jpk"), "jp2", "jpk"));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), importType, "jp2", "jpk"), "jp2", "jpk"));
 				} else if ("GEOJSON".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, "json"), "json"));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, "json"), "json"));
 				} else if ("SIMPLEJSON".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, "json"), "json"));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, "json"), "json"));
 				} else {
-					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, importType.toLowerCase()), importType.toLowerCase()));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, importType.toLowerCase()), importType.toLowerCase()));
 				}
 				SmFileChoose.addNewNode(fileFilter, CommonProperties.getString("String_DefaultFilePath"),
 						ProcessProperties.getString("String_FileType"), importModule, "OpenOne");

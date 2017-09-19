@@ -586,7 +586,7 @@ public class DialogMapOutputPicture extends SmDialog {
 			moduleName = "MapOutputPictureLinux";
 			if (!SmFileChoose.isModuleExist(moduleName)) {
 				// 文件过滤器
-				String fileFilters = SmFileChoose.bulidFileFilters(
+				String fileFilters = SmFileChoose.buildFileFilters(
 						SmFileChoose.createFileFilter(ControlsProperties.getString("String_PNG_FileFilter"),
 								ControlsProperties.getString("String_PNG_Filters")),
 						SmFileChoose.createFileFilter(ControlsProperties.getString("String_JPG_FileFilter"),
@@ -607,7 +607,7 @@ public class DialogMapOutputPicture extends SmDialog {
 			moduleName = "MapOutputPictureWindows";
 			if (!SmFileChoose.isModuleExist(moduleName)) {
 				// 文件过滤器
-				String fileFilters = SmFileChoose.bulidFileFilters(
+				String fileFilters = SmFileChoose.buildFileFilters(
 						SmFileChoose.createFileFilter(ControlsProperties.getString("String_PNG_FileFilter"),
 								ControlsProperties.getString("String_PNG_Filters")),
 						SmFileChoose.createFileFilter(ControlsProperties.getString("String_JPG_FileFilter"),

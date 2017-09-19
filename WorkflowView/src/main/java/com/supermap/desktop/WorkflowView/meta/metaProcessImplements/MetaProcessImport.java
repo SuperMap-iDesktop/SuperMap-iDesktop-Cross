@@ -174,7 +174,7 @@ public class MetaProcessImport extends MetaProcess {
 					String fileName = (String) evt.getNewValue();
 					//set dataset name
 					String fileAlis = fileName.substring(fileName.lastIndexOf(File.separator) + 1, fileName.length());
-					if (fileAlis != null) {
+					if (fileAlis.length()>0) {
 						if (parameterResultDatasource != null && parameterResultDatasource.getSelectedItem() != null) {
 							fileAlis = parameterResultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(fileAlis);
 						}
@@ -191,7 +191,7 @@ public class MetaProcessImport extends MetaProcess {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (parameterChooseFile.getSelectedItem() != null) {
-				String filePath = parameterChooseFile.getSelectedItem().toString();
+				String filePath = parameterChooseFile.getSelectedItem();
 
 				// 设置投影信息
 				if (!StringUtilities.isNullOrEmpty(filePath)) {
@@ -291,6 +291,7 @@ public class MetaProcessImport extends MetaProcess {
 			parameterChooseFile = parameterCreator.getParameterChooseFile();
 			parameterChooseFile.addPropertyListener(this.fileValueListener);
 			parameterTextArea = parameterCreator.getParameterTextArea();
+			parameterTextArea.setEnabled(false);
 			parameterRadioButton = parameterCreator.getParameterSetRadioButton();
 			parameterRadioButton.addPropertyListener(new PropertyChangeListener() {
 				@Override
