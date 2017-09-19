@@ -142,7 +142,7 @@ public class JPanelWorkspaceSaveAsFile extends JPanel {
 	private void OpenFileAction() {
 		String moduleName = ControlsProperties.getString("String_SmFileChooseName_WorkpaceSaveAsFile");
 		if (!SmFileChoose.isModuleExist(moduleName)) {
-			String fileFilters = SmFileChoose.bulidFileFilters(
+			String fileFilters = SmFileChoose.buildFileFilters(
 					SmFileChoose.createFileFilter(ControlsProperties.getString("String_WorkspaceSMWUFilterName"),
 							ControlsProperties.getString("String_WorkspaceSMWUFilters")),
 					SmFileChoose.createFileFilter(ControlsProperties.getString("String_WorkspaceSXWUFilterName"),

@@ -88,7 +88,7 @@ public class SmFileChoose extends JFileChooser {
 		if (!file.exists()) {
 			try {
 				if (file.createNewFile()) {
-					FileUtilities.writeToFile(file, ControlsProperties.getString("String_InitRecntFileString"));
+					FileUtilities.writeToFile(file, ControlsProperties.getString("String_InitRecentFileString"));
 				}
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
@@ -105,9 +105,9 @@ public class SmFileChoose extends JFileChooser {
 
 	public static Node getLastPathsNode() {
 		getDocumentFileChoose();
-		NodeList docunmentStartUp = documentFileChoose.getChildNodes().item(0).getChildNodes();
-		for (int i = 0; i < docunmentStartUp.getLength(); i++) {
-			Node node = docunmentStartUp.item(i);
+		NodeList documentStartUp = documentFileChoose.getChildNodes().item(0).getChildNodes();
+		for (int i = 0; i < documentStartUp.getLength(); i++) {
+			Node node = documentStartUp.item(i);
 			if ((node != null && node.getNodeType() == Node.ELEMENT_NODE) && "LastFilePaths".equals(node.getNodeName())) {
 				lastPathsNode = node;
 				break;
@@ -151,7 +151,7 @@ public class SmFileChoose extends JFileChooser {
 		return fileFilter.toString();
 	}
 
-	public static String bulidFileFilters(String... fileFilters) {
+	public static String buildFileFilters(String... fileFilters) {
 		StringBuilder bufferFileFilter = new StringBuilder();
 		for (String fileFilter : fileFilters) {
 			if (fileFilter == null || fileFilter.length() <= 0) {

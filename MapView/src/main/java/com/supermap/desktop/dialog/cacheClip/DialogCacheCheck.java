@@ -156,7 +156,7 @@ public class DialogCacheCheck extends JFrame {
 		this.fileChooseCachePath.setFileChooser(fileChooserForCachePath);
 		String moduleNameForCheckBounds = "ChooseCheckBoundsFileForCheck";
 		if (!SmFileChoose.isModuleExist(moduleNameForCheckBounds)) {
-			String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(cacheProperties.getString("String_FileType_GeoJson"), "geojson"));
+			String fileFilters = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(cacheProperties.getString("String_FileType_GeoJson"), "geojson"));
 			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
 					moduleNameForCheckBounds, "OpenOne");
 		}

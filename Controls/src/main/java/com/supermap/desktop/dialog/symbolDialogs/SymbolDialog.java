@@ -417,7 +417,7 @@ public abstract class SymbolDialog extends SmDialog {
 
 	private SmFileChoose createFileChoose() {
 		if (!SmFileChoose.isModuleExist("ImportImageFile")) {
-			String fileFilters = SmFileChoose.bulidFileFilters(
+			String fileFilters = SmFileChoose.buildFileFilters(
 					SmFileChoose.createFileFilter(CommonProperties.getString("String_AllFilter"), "png", "jpg", "jpeg", "bmp", "ico"),
 					SmFileChoose.createFileFilter(CommonProperties.getString("String_ImageFilter"), "png", "jpg", "jpeg", "bmp"),
 					SmFileChoose.createFileFilter(CommonProperties.getString("String_IconFilter"), "ico"));
