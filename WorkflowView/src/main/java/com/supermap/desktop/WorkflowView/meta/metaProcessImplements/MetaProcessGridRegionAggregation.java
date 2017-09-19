@@ -38,7 +38,10 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 	}
 
 	private void initParameters() {
+		parameterInputDataType.setDescribe(ProcessProperties.getString("String_FileInputPath"));
 		parameterIServerLogin.setInputDataType(this.parameterInputDataType);
+		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
+		parameterIServerLogin.setDataType(parameterInputDataType.supportDatasetType);
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_GridRegionAggregationType"), "SUMMARYMESH");
 		parameterAggregationType.setRequisite(true);
 		parameterAggregationType.setItems(parameterDataNode);

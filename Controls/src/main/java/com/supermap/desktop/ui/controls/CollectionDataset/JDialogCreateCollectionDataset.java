@@ -59,7 +59,6 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	//修改数据集集合时用到
 	private DatasetVector datasetVector;
 	//存在的数据集集合
-	private DatasetVector[] selectedDatasetVectors;
 	private int collectionType;
 	//矢量数据集集合添加子数据集
 	private boolean isSetDatasetCollectionCount;
@@ -67,6 +66,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 	private boolean isSetImageCollectinCount;
 
 	private DatasetChooser datasetChooser;
+	private ArrayList<DatasetInfo> datasetInfos;
 
 	private ActionListener addDatasetListener = new ActionListener() {
 		@Override
@@ -140,12 +140,12 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		formProgress.doWork(new CreateCollectionCallable(JDialogCreateCollectionDataset.this));
 	}
 
-	public boolean hasDataset(DatasetVector datasetVector, Dataset dataset) {
+	public boolean hasDataset(DatasetVector datasetVector, String name) {
 
 		boolean result = false;
 		ArrayList<CollectionDatasetInfo> datasetInfos = datasetVector.getCollectionDatasetInfos();
 		for (int i = 0, size = datasetInfos.size(); i < size; i++) {
-			if (datasetInfos.get(i).getDatasetName().equals(dataset.getName())
+			if (datasetInfos.get(i).getDatasetName().equals(name)
 					&& null != DatasourceUtilities.getDatasource(datasetInfos.get(i).getDatasourceConnectInfo())) {
 				result = true;
 				break;
@@ -429,15 +429,11 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 						&& !DatasourceUtilities.isWebDatasource(datasource.getEngineType());
 			}
 		};
-		if (null == selectedDatasetVectors || selectedDatasetVectors.length == 0) {
-			DatasetType[] datasetTypes = DatasetTypeUtilities.getDatasetTypeVector();
-			if (null != this.datasetVector) {
-				datasetTypes = new DatasetType[]{this.datasetVector.GetSubCollectionDatasetType()};
-			}
-			datasetChooser.setSupportDatasetTypes(datasetTypes);
-		} else {
-			datasetChooser.setSupportDatasetTypes(new DatasetType[]{selectedDatasetVectors[0].getType()});
+		DatasetType[] datasetTypes = DatasetTypeUtilities.getDatasetTypeVector();
+		if (null != this.datasetVector) {
+			datasetTypes = new DatasetType[]{this.datasetVector.GetSubCollectionDatasetType()};
 		}
+		datasetChooser.setSupportDatasetTypes(datasetTypes);
 		datasetChooser.setSelectedDatasource(DatasourceUtilities.getDefaultResultDatasource());
 		if (datasetChooser.showDialog() == DialogResult.OK) {
 			addInfoToMainTable();
@@ -451,15 +447,20 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		try {
 			java.util.List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
 			for (int i = 0; i < selectedDatasets.size(); i++) {
-				if (null != datasetVector && hasDataset(datasetVector, selectedDatasets.get(i))) {
+				if (null != datasetVector && hasDataset(datasetVector, selectedDatasets.get(i).getName())) {
 					//需不需要添加已经存在的数据集？
 //					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_DatasetExistInCollection"), selectedDatasets.get(i).getName(), this.datasetVector.getName()));
 					continue;
 				}
 				DatasetInfo datasetInfo = new DatasetInfo();
-				datasetInfo.setDataset(selectedDatasets.get(i));
-				datasetInfo.setCapiton(selectedDatasets.get(i).getName());
-				datasetInfo.setName(selectedDatasets.get(i).getName());
+				Dataset selectDataset = selectedDatasets.get(i);
+				DatasourceConnectionInfo connectionInfo = selectDataset.getDatasource().getConnectionInfo();
+				datasetInfo.setCapiton(selectDataset.getName());
+				datasetInfo.setName(selectDataset.getName());
+				datasetInfo.setServer(connectionInfo.getServer());
+				datasetInfo.setEngineType(connectionInfo.getEngineType().name());
+				datasetInfo.setDatasourceAlias(connectionInfo.getAlias());
+				datasetInfo.setUser(connectionInfo.getUser());
 //				datasetInfo.setState(CommonProperties.getString("String_Append"));
 				tableModel.addRow(datasetInfo);
 			}
@@ -475,15 +476,15 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		this(collectionType, null, null);
 	}
 
-	public JDialogCreateCollectionDataset(int collectionType, DatasetVector datasetVector, DatasetVector[] datasetVectors) {
+	public JDialogCreateCollectionDataset(int collectionType, DatasetVector datasetVector, ArrayList<DatasetInfo> datasetInfos) {
 		super();
+		this.datasetInfos = datasetInfos;
 		this.datasetVector = datasetVector;
-		this.selectedDatasetVectors = datasetVectors;
 		this.collectionType = collectionType;
-		init(datasetVectors);
+		init();
 	}
 
-	public void init(DatasetVector[] datasetVectors) {
+	public void init() {
 		initComponents();
 		initResources();
 		registEvents();
@@ -505,28 +506,9 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		this.componentList.add(this.textFieldDatasetName);
 //		this.componentList.add(this.charsetComboBox);
 		this.setFocusTraversalPolicy(this.policy);
-		Dataset[] datasets = null;
-		if (null != datasetVectors) {
-			datasets = datasetVectors;
-		} else if (null != Application.getActiveApplication().getActiveDatasets()
-				&& Application.getActiveApplication().getActiveDatasets().length > 0) {
-			datasets = Application.getActiveApplication().getActiveDatasets();
-		}
-		if (null != datasets) {
+
+		if (null != datasetInfos) {
 			//有默认数据集数组则更新显示
-			ArrayList<DatasetInfo> datasetInfos = new ArrayList<>();
-			for (int i = 0; i < datasets.length; i++) {
-				DatasetInfo datasetInfo = new DatasetInfo();
-				datasetInfo.setDataset(datasets[i]);
-				datasetInfo.setCapiton(datasets[i].getName());
-				datasetInfo.setName(datasets[i].getName());
-//				if (null != datasetVector) {
-//					datasetInfo.setState(hasDataset(datasetVector, datasets[i]) ? CommonProperties.getString("String_Status_Exist") : CommonProperties.getString("String_Append"));
-//				} else {
-//					datasetInfo.setState(CommonProperties.getString("String_Append"));
-//				}
-				datasetInfos.add(datasetInfo);
-			}
 			tableModel.updateRows(datasetInfos);
 			if (tableModel.getRowCount() > 0) {
 				this.tableDatasetDisplay.addRowSelectionInterval(0, 0);

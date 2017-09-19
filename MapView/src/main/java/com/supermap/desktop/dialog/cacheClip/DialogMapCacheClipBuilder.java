@@ -9,6 +9,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
+import com.supermap.desktop.dialog.cacheClip.cache.LogWriter;
 import com.supermap.desktop.dialog.cacheClip.cache.TaskBuilder;
 import com.supermap.desktop.mapview.MapCache.CacheProgressCallable;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -64,7 +65,6 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private JButton buttonStep;
 	public JButton buttonOk;
 	private JButton buttonCancel;
-	public static String CacheTask = "CacheTask";
 	private String updateSciName;
 
 	private ActionListener cancelListener = new ActionListener() {
@@ -239,7 +239,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			}
 			String cacheName = firstStepPane.textFieldCacheName.getText();
 			String cachePath = CacheUtilities.replacePath(cacheRoot, cacheName);
-			String taskPath = CacheUtilities.replacePath(cacheRoot, CacheTask);
+			String taskPath = CacheUtilities.replacePath(cacheRoot, "CacheTask");
 			File cacheFile = new File(cachePath);
 			File taskFile = new File(taskPath);
 			if (cmdType == MultiProcessClip) {
@@ -393,11 +393,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			}
 
 			String sciPath = getUpdateSci();
+			boolean result = mapCacheBuilder.toConfigFile(sciPath);
 			//将更新的sci合并到原sci中
 			MapCacheBuilder tempMapCacheBuilder = new MapCacheBuilder();
 			tempMapCacheBuilder.fromConfigFile(firstStepPane.getSciPath());
 			tempMapCacheBuilder.mergeConfigFile(sciPath);
-			boolean result = mapCacheBuilder.toConfigFile(sciPath);
 			if (result) {
 				splitAndStartCacheBuilder(firstStepPane.fileChooserControlFileCache.getPath(), sciPath, updateSciName);
 			}
@@ -474,6 +474,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			for (int j = 0, size1 = sourceArray.size(); j < size1; j++) {
 				if (newScales.get(i) - sourceArray.get(j) == 0.0) {
 					newScales.remove(i);
+					break;
 				}
 			}
 		}
@@ -549,7 +550,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			result = mapCacheBuilder.toConfigFile(sciPath);
 		}
 		if (result) {
-			splitAndStartCacheBuilder(cachePath, sciPath, CacheTask);
+			splitAndStartCacheBuilder(cachePath, sciPath, "CacheTask");
 		}
 		if (this.checkBoxAutoClosed.isSelected()) {
 			dispose();
@@ -577,8 +578,8 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			}
 			String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi", "zh-CN",
 					Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), mapName, cachePath};
-//			CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
-			DialogCacheBuilder.main(tempParams);
+			CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
+//			DialogCacheBuilder.main(tempParams);
 		}
 		return false;
 	}

@@ -8,6 +8,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxTableModel;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
+import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
@@ -16,6 +17,8 @@ import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -127,6 +130,13 @@ public abstract class JPanelDatasetChoose extends JPanel {
 		}
 	};
 
+	private ListSelectionListener listSelectionListener=new ListSelectionListener() {
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			setButtonState();
+		}
+	};
+
 	public JPanelDatasetChoose(ArrayList<Dataset> datasets, String[] columnName, boolean[] enableColumn) {
 		this.datasets = datasets;
 		this.columnName = columnName;
@@ -139,6 +149,7 @@ public abstract class JPanelDatasetChoose extends JPanel {
 		initResources();
 		initLayout();
 		registerEvents();
+		setButtonState();
 	}
 
 	protected void registerEvents() {
@@ -151,6 +162,7 @@ public abstract class JPanelDatasetChoose extends JPanel {
 		this.buttonMoveUp.addActionListener(moveUpListener);
 		this.buttonMoveDown.addActionListener(moveDownListener);
 		this.buttonMoveLast.addActionListener(moveLastListener);
+		this.tableDatasetDisplay.getSelectionModel().addListSelectionListener(this.listSelectionListener);
 //		this.buttonRefresh.addActionListener(refreshListener);
 	}
 
@@ -164,6 +176,7 @@ public abstract class JPanelDatasetChoose extends JPanel {
 		this.buttonMoveUp.removeActionListener(moveUpListener);
 		this.buttonMoveDown.removeActionListener(moveDownListener);
 		this.buttonMoveLast.removeActionListener(moveLastListener);
+		this.tableDatasetDisplay.getSelectionModel().removeListSelectionListener(this.listSelectionListener);
 	}
 
 	protected void initResources() {
@@ -441,6 +454,11 @@ public abstract class JPanelDatasetChoose extends JPanel {
 	 * @return
 	 */
 	public ArrayList<Dataset> getDatasets() {
+		this.datasets.clear();
+		for (int i=0;i<tableModel.getRowCount();i++){
+			DataCell dataCell=(DataCell) tableModel.getValueAt(i,1);
+			this.datasets.add((Dataset)dataCell.getData());
+		}
 		return datasets;
 	}
 
