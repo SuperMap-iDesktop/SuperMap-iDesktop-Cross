@@ -40,7 +40,9 @@ public class SwingPanel extends DefaultParameterPanel {
     @Override
 	public Object getPanel() {
 		if (isFirstGetPanel) {
-			UICommonToolkit.setComponentEnabled(panel, parameter.isEnabled());
+			if (!parameter.isComplexParameter()) {
+				UICommonToolkit.setComponentEnabled(panel, parameter.isEnabled());
+			}
 			isFirstGetPanel = false;
 		}
 		return panel;
