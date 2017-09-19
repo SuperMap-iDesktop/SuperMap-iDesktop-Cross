@@ -79,4 +79,8 @@ public interface IParameter extends IAbstractParameter, Irequisite {
 	boolean isRequisite();
 
 	boolean isReady();
+
+	boolean isComplexParameter() ;
+
+	void setComplexParameter(boolean complexParameter);
 }

@@ -28,32 +28,33 @@ public class MetaProcessLineToRegion extends MetaProcessPointLineRegion {
 	}
 
 	@Override
-	protected  String getOutputResultName(){
+	protected String getOutputResultName() {
 		return ProcessOutputResultProperties.getString("String_LineToRegionResult");
 	}
 
 	@Override
 	protected boolean convert(Recordset recordset, IGeometry geometry, Map<String, Object> value) {
-		boolean isConverted = true;
 
 		if (geometry instanceof ILineFeature && geometry instanceof IRegionConvertor) {
 			GeoRegion geoRegion = null;
 			try {
 				geoRegion = ((IRegionConvertor) geometry).convertToRegion(120);
+				if (!recordset.addNew(geoRegion, value)) {
+					return false;
+				} else {
+					return true;
+				}
 			} catch (UnsupportedOperationException e) {
-//                Application.getActiveApplication().getOutput().output(e);
-			}
-
-			if (geoRegion != null) {
-				recordset.addNew(geoRegion, value);
-				geoRegion.dispose();
-			} else {
-				isConverted = false;
+				// 此时返回false-yuanR2017.9.19
+				return false;
+			} finally {
+				if (geoRegion != null) {
+					geoRegion.dispose();
+				}
 			}
 		} else {
-			isConverted = false;
+			return false;
 		}
-		return isConverted;
 	}
 
 	@Override

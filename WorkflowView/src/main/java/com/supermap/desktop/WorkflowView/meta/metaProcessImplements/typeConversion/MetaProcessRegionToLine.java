@@ -3,7 +3,6 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.typeConvers
 import com.supermap.data.DatasetType;
 import com.supermap.data.GeoLine;
 import com.supermap.data.Recordset;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
@@ -14,56 +13,57 @@ import com.supermap.desktop.process.ProcessProperties;
 import java.util.Map;
 
 public class MetaProcessRegionToLine extends MetaProcessPointLineRegion {
-    public MetaProcessRegionToLine() {
-        super(DatasetType.REGION, DatasetType.LINE);
-    }
+	public MetaProcessRegionToLine() {
+		super(DatasetType.REGION, DatasetType.LINE);
+	}
 
-    @Override
-    protected void initHook() {
-        OUTPUT_DATA="RegionToLineResult";
-    }
+	@Override
+	protected void initHook() {
+		OUTPUT_DATA = "RegionToLineResult";
+	}
 
-    @Override
-    protected String getOutputName() {
-        return "result_regionToLine";
-    }
+	@Override
+	protected String getOutputName() {
+		return "result_regionToLine";
+	}
 
-    @Override
-    protected  String getOutputResultName(){
-        return ProcessOutputResultProperties.getString("String_RegionToLineResult");
-    }
+	@Override
+	protected String getOutputResultName() {
+		return ProcessOutputResultProperties.getString("String_RegionToLineResult");
+	}
 
-    @Override
-    protected boolean convert(Recordset recordset, IGeometry geometry, Map<String, Object> value) {
-        boolean isConverted = true;
+	@Override
+	protected boolean convert(Recordset recordset, IGeometry geometry, Map<String, Object> value) {
 
-        if (geometry instanceof IRegionFeature && geometry instanceof ILineConvertor) {
-            GeoLine geoLine = null;
-            try {
-                geoLine = ((ILineConvertor) geometry).convertToLine(120);
-            } catch (UnsupportedOperationException e) {
-                Application.getActiveApplication().getOutput().output(e);
-            }
+		if (geometry instanceof IRegionFeature && geometry instanceof ILineConvertor) {
+			GeoLine geoLine = null;
+			try {
+				geoLine = ((ILineConvertor) geometry).convertToLine(120);
+				if (!recordset.addNew(geoLine, value)) {
+					return false;
+				} else {
+					return true;
+				}
+			} catch (UnsupportedOperationException e) {
+				// 此时返回false-yuanR2017.9.19
+				return false;
+			} finally {
+				if (geoLine != null) {
+					geoLine.dispose();
+				}
+			}
+		} else {
+			return false;
+		}
+	}
 
-            if (geoLine != null) {
-                recordset.addNew(geoLine, value);
-                geoLine.dispose();
-            } else {
-                isConverted = false;
-            }
-        } else {
-            isConverted = false;
-        }
-        return isConverted;
-    }
+	@Override
+	public String getKey() {
+		return MetaKeys.CONVERSION_REGION_TO_LINE;
+	}
 
-    @Override
-    public String getKey() {
-        return MetaKeys.CONVERSION_REGION_TO_LINE;
-    }
-
-    @Override
-    public String getTitle() {
-        return ProcessProperties.getString("String_Title_RegionToLine");
-    }
+	@Override
+	public String getTitle() {
+		return ProcessProperties.getString("String_Title_RegionToLine");
+	}
 }

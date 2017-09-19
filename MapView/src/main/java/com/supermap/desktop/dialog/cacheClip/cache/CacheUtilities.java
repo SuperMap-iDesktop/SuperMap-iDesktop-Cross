@@ -148,6 +148,13 @@ public class CacheUtilities {
 		return toolkit.createImage(path + "iDesktop_Cross_24.png");
 	}
 
+	/**
+	 * 有图标的信息提示框
+	 *
+	 * @param parent
+	 * @param message
+	 * @return
+	 */
 	public static int showMessageDialog(Component parent, String message) {
 		JOptionPane optionPane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
 		JDialog dialog = optionPane.createDialog(parent, GlobalParameters.getDesktopTitle());
@@ -156,12 +163,36 @@ public class CacheUtilities {
 		return (int) optionPane.getValue();
 	}
 
+	/**
+	 * 有图标的确认提示框
+	 *
+	 * @param parent
+	 * @param message
+	 * @return
+	 */
 	public static int showConfirmDialog(Component parent, String message) {
 		JOptionPane optionPane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION);
 		JDialog dialog = optionPane.createDialog(parent, GlobalParameters.getDesktopTitle());
 		dialog.setIconImage(getIconImage());
 		dialog.setVisible(true);
 		return (int) optionPane.getValue();
+	}
+
+	/**
+	 * 获取目录集合下的所有sci个数
+	 *
+	 * @param taskPaths
+	 * @return
+	 */
+	public static int getTaskSci(ArrayList<String> taskPaths) {
+		int taskSize = 0;
+		for (String taskPath : taskPaths) {
+			File taskFile = new File(taskPath);
+			if (taskFile.exists()) {
+				taskSize += taskFile.list().length;
+			}
+		}
+		return taskSize;
 	}
 
 	/**
@@ -278,6 +309,34 @@ public class CacheUtilities {
 		return !isWindows();
 	}
 
+	/**
+	 * 获取缓存目录下所有包含childPath的路径集合
+	 *
+	 * @param childPath
+	 * @param cachePath
+	 * @return
+	 */
+	public static ArrayList<String> getTaskPath(String childPath, String cachePath) {
+		ArrayList<String> result = new ArrayList<>();
+		if (null != cachePath) {
+			String[] updateFiles = new File(cachePath).list(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.contains("update");
+				}
+			});
+
+			String cacheTask = CacheUtilities.replacePath(cachePath, "CacheTask");
+			result.add(CacheUtilities.replacePath(cacheTask, childPath));
+			if (null != updateFiles) {
+				for (int i = 0, length = updateFiles.length; i < length; i++) {
+					String updateTask = CacheUtilities.replacePath(cachePath, updateFiles[i]);
+					result.add(CacheUtilities.replacePath(updateTask, childPath));
+				}
+			}
+		}
+		return result;
+	}
 
 	//List all sci file's name
 	public static FilenameFilter getFilter() {
@@ -289,6 +348,27 @@ public class CacheUtilities {
 		};
 	}
 
+	/**
+	 * 将sci的名字添加到集合中
+	 *
+	 * @param names
+	 * @param sciPath
+	 */
+	public static void addSciToArray(ArrayList<String> names, File sciPath) {
+		if (sciPath.exists()) {
+			String[] scis = sciPath.list(getFilter());
+			for (String sci : scis) {
+				names.add(sci);
+			}
+		}
+	}
+
+	/**
+	 * 获取缓存名称
+	 *
+	 * @param path
+	 * @return
+	 */
 	public static String getCachePath(String path) {
 		String result = null;
 		//获取缓存任务根路径
@@ -312,11 +392,70 @@ public class CacheUtilities {
 		return result;
 	}
 
+	/**
+	 * 判断任务是否完成
+	 *
+	 * @param taskPaths
+	 * @return
+	 */
+	public static boolean taskFinished(ArrayList<String> taskPaths) {
+		int finised = 0;
+		for (String taskPath : taskPaths) {
+			File taskFile = new File(taskPath);
+
+			if (taskFile.exists() && null != taskFile.list(getFilter())) {
+				finised = taskFile.list(getFilter()).length;
+			}
+			String doingPath = CacheUtilities.replacePath(taskFile.getParent(), "doing");
+			if (taskPath.contains("error")) {
+				doingPath = CacheUtilities.replacePath(taskFile.getParent(), "checking");
+			}
+			File doingFile = new File(doingPath);
+			if (doingFile.exists() && null != doingFile.list())
+				finised += doingFile.list().length;
+		}
+		return 0 == finised;
+	}
+
+
+	/**
+	 * 获取总的sci集合
+	 *
+	 * @param cachePath
+	 * @return
+	 */
+	public static ArrayList<String> getTotalCacheSci(String cachePath) {
+		ArrayList<String> result = new ArrayList<>();
+		if (null != CacheUtilities.getCachePath(cachePath)) {
+			File cacheFlie = new File(CacheUtilities.getCachePath(cachePath));
+			File[] scis = cacheFlie.listFiles();
+			if (null != scis) {
+				for (int i = 0; i < scis.length; i++) {
+					if (scis[i].getName().endsWith(".sci")) {
+						result.add(scis[i].getAbsolutePath());
+					}
+				}
+			}
+		}
+		return result;
+	}
+
 	public static void renameDoingFile(String doingPath, String taskPath) {
 		//实时检查doing目录下的文件是否加锁,如果文件已经加锁则表示有进程正在使用,否则表示为以前进程挂了没有处理的
 		File doingDirectory = new File(doingPath);
 		if (doingDirectory.exists() && hasSciFiles(doingDirectory)) {
 			renameFiles(taskPath, doingDirectory);
+		}
+	}
+
+	public static void renameFailedFiles(ArrayList<String> taskPaths, String failedPath) {
+		for (String taskDirectory : taskPaths) {
+			String parentStr = new File(taskDirectory).getParent();
+			File failedDirectory = new File(CacheUtilities.replacePath(parentStr, failedPath));
+			File[] failedSci = failedDirectory.listFiles();
+			for (int i = 0; i < failedSci.length; i++) {
+				failedSci[i].renameTo(new File(taskDirectory, failedSci[i].getName()));
+			}
 		}
 	}
 
