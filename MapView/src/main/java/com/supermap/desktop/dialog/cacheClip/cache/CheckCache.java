@@ -31,21 +31,12 @@ public class CheckCache {
 	private BufferedWriter errorWriter = null;
 	private int sciLength;
 	private static final int INDEX_CACHEROOT = 0;
-	private static final int INDEX_SCIPATH = 1;
 	//	private static final int INDEX_MERGETASKCOUNT = 2;
-	private static final int INDEX_ERROR2UDB = 2;
-	private static final int INDEX_BOUNDARYREGION = 3;
+	private static final int INDEX_ERROR2UDB = 1;
+	private static final int INDEX_BOUNDARYREGION = 2;
 
 	public void startProcess(int processCount, String[] params) {
 		try {
-//			if (0 == processCount) {
-//				main(params);
-//			} else {
-//				for (int i = 0; i < processCount; i++) {
-//					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.CHECK_CACEH);
-//					Thread.sleep(2000);
-//				}
-//			}
 			if (processCount > 0) {
 				for (int i = 0; i < processCount; i++) {
 					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.CHECK_CACEH);
@@ -75,69 +66,60 @@ public class CheckCache {
 
 	private void checkCache(String[] params) {
 		String cacheRoot = params[INDEX_CACHEROOT];
-		String scipath = params[INDEX_SCIPATH];
-//		int mergeTaskCount = 0;
-//		if (params.length > 2) {
-//			mergeTaskCount = Integer.valueOf(params[INDEX_MERGETASKCOUNT]);
-//		}
-		if (params.length > 2) {
+		if (params.length > 1) {
 			this.error2udb = Boolean.valueOf(params[INDEX_ERROR2UDB]);
 		}
-		if (params.length > 3) {
+		if (params.length > 2) {
 			this.boundaryRegion = Toolkit.GeoJsonToGemetry(params[INDEX_BOUNDARYREGION]);
 		}
-
-		ArrayList<String> sciNames = getSciFileList(scipath);
-
-		if (sciNames.size() == 0) {
-			System.out.println("sci file not found!");
+		ArrayList<String> sciPaths = CacheUtilities.getTaskPath("build", new File(cacheRoot).getParent());
+		if (sciPaths.size() == 0) {
+			LogWriter.getInstance(LogWriter.CHECK_CACEH).writelog("Cache file does not exist");
 			return;
 		}
 
 		this.boundaryCheck = boundaryRegion != null;
-		CacheWriter writer = new CacheWriter();
-		writer.FromConfigFile(sciNames.get(0));
-//		double anchorLeft = writer.getIndexBounds().getLeft();
-//		double anchorTop = writer.getIndexBounds().getTop();
-//		int tileSize = writer.getTileSize().value();
-		//Get sci files from sci directory
-		File sciPath = new File(scipath);
-		if (sciPath.exists()) {
-			File checkingDir = new File(CacheUtilities.replacePath(sciPath.getParent(), "checking"));
-			if (!checkingDir.exists()) {
-				checkingDir.mkdir();
-			}
-			do {
-				//Recalculate sci file length
-				String[] sciFileNames = sciPath.list(CacheUtilities.getFilter());
-				sciLength = sciFileNames.length;
 
-				CopyOnWriteArrayList<String> doingSciNames = new CopyOnWriteArrayList<>();
-				//Now give mergeSciCount sci files to every process if sciLength>mergeSciCount
-				int mergeSciCount = 3;
-				if (sciLength > mergeSciCount) {
-					//First step:Move mergeSciCount sci to doing directory
-					int success = 0;
-					for (int i = 0; success < mergeSciCount; i++) {
-						if (checkingSci(CacheUtilities.replacePath(scipath, sciFileNames[sciLength - 1 - i]), checkingDir, doingSciNames)) {
-							success++;
+		//Get sci files from sci directory
+		for (String sciPath : sciPaths) {
+			File sciFile = new File(sciPath);
+			if (sciFile.exists()) {
+				File checkingDir = new File(CacheUtilities.replacePath(sciFile.getParent(), "checking"));
+				if (!checkingDir.exists()) {
+					checkingDir.mkdir();
+				}
+				do {
+					//Recalculate sci file length
+					String[] sciFileNames = sciFile.list(CacheUtilities.getFilter());
+					sciLength = sciFileNames.length;
+
+					CopyOnWriteArrayList<String> doingSciNames = new CopyOnWriteArrayList<>();
+					//Now give mergeSciCount sci files to every process if sciLength>mergeSciCount
+					int mergeSciCount = 3;
+					if (sciLength > mergeSciCount) {
+						//First step:Move mergeSciCount sci to doing directory
+						int success = 0;
+						for (int i = 0; success < mergeSciCount; i++) {
+							if (checkingSci(CacheUtilities.replacePath(sciPath, sciFileNames[sciLength - 1 - i]), checkingDir, doingSciNames)) {
+								success++;
+							}
+						}
+
+					} else {
+						//First step:Move last sci file to doing directory
+						for (int i = sciLength - 1; i >= 0; i--) {
+							checkingSci(CacheUtilities.replacePath(sciPath, sciFileNames[i]), checkingDir, doingSciNames);
 						}
 					}
-
-				} else {
-					//First step:Move last sci file to doing directory
-					for (int i = sciLength - 1; i >= 0; i--) {
-						checkingSci(CacheUtilities.replacePath(scipath, sciFileNames[i]), checkingDir, doingSciNames);
+					//Second step:get sci file from doing dir and build cache
+					for (int i = 0; i < doingSciNames.size(); i++) {
+						String sciName = doingSciNames.get(i);
+						check(cacheRoot, sciName);
 					}
-				}
-				//Second step:get sci file from doing dir and build cache
-				for (int i = 0; i < doingSciNames.size(); i++) {
-					String sciName = doingSciNames.get(i);
-					check(cacheRoot, sciName);
-				}
-			} while (sciLength != 0);
-		} else {
-			LogWriter.getInstance(LogWriter.CHECK_CACEH).writelog("Build files does not exist");
+				} while (sciLength != 0);
+			} else {
+				LogWriter.getInstance(LogWriter.CHECK_CACEH).writelog(sciPath + "file does not exist");
+			}
 		}
 	}
 
@@ -515,51 +497,50 @@ public class CheckCache {
 	}
 
 	public boolean isSolidWhite(BufferedImage image) {
-		byte[] data = ((DataBufferByte)image.getData().getDataBuffer()).getData();
+		byte[] data = ((DataBufferByte) image.getData().getDataBuffer()).getData();
 		byte value = -1;
-		for(int i = 0; i < data.length; i++){
-			if(data[i] != value){
+		for (int i = 0; i < data.length; i++) {
+			if (data[i] != value) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	public boolean isBlockWhite(BufferedImage image){
-		byte[] data = ((DataBufferByte)image.getData().getDataBuffer()).getData();
+	public boolean isBlockWhite(BufferedImage image) {
+		byte[] data = ((DataBufferByte) image.getData().getDataBuffer()).getData();
 		byte value = -1;
 		int whiteStart = 0, index = 0, h, w, hh, indexhh, height = image.getHeight();
 		int widthByte = data.length / height;
-		for(h = 0; h < height; h++){
+		for (h = 0; h < height; h++) {
 			index = h * widthByte;
-			for(w = 0; w < widthByte; w++){
-				if(data[index + w] == value){
-					if(whiteStart == -1){
+			for (w = 0; w < widthByte; w++) {
+				if (data[index + w] == value) {
+					if (whiteStart == -1) {
 						whiteStart = w;
 					}
 					// 当连续白色超过指定值100个像素时，直接返回
-					else if((w - whiteStart) > 400){
+					else if ((w - whiteStart) > 400) {
 						return true;
 					}
 					// 当读到第一个像素白色时，判断垂直方向是否连续白色
-					else if((w - whiteStart) == 3){
-						for(hh = h + 1; hh < height; hh++){
+					else if ((w - whiteStart) == 3) {
+						for (hh = h + 1; hh < height; hh++) {
 							// 如果连续白色像素超过100个，则直接返回
-							if((hh - h) > 100){
+							if ((hh - h) > 100) {
 								return true;
 							}
 							indexhh = hh * widthByte + whiteStart;
 							// 如果水平四个byte值，任意不为255值则中断循环
-							if( data[indexhh] != value ||
+							if (data[indexhh] != value ||
 									data[indexhh + 1] != value ||
 									data[indexhh + 2] != value ||
-									data[indexhh + 3] != value){
+									data[indexhh + 3] != value) {
 								break;
 							}
 						}
 					}
-				}
-				else{
+				} else {
 					// 当不是连续白色时重置
 					whiteStart = -1;
 				}
@@ -702,13 +683,13 @@ public class CheckCache {
 
 		for (String name : errorNames) {
 
-			int indexFirst = name.indexOf("_");
-			int indexSecond = name.indexOf("_", indexFirst + 1);
+//			int indexFirst = name.indexOf("_");
+//			int indexSecond = name.indexOf("_", indexFirst + 1);
 			int indexThreed = name.indexOf("(");
 			int indexFour = name.indexOf(")");
-			String caption = name.substring(1, indexFirst);
-			int bigRow = Integer.valueOf(name.substring(indexFirst + 2, indexSecond));
-			int bigCol = Integer.valueOf(name.substring(indexSecond + 2, indexThreed));
+//			String caption = name.substring(1, indexFirst);
+//			int bigRow = Integer.valueOf(name.substring(indexFirst + 2, indexSecond));
+//			int bigCol = Integer.valueOf(name.substring(indexSecond + 2, indexThreed));
 			String datasetName = name.substring(indexThreed + 1, indexFour);
 
 			ArrayList<String> addLines = new ArrayList<String>();

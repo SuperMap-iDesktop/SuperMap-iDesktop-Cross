@@ -1,6 +1,5 @@
 package com.supermap.desktop.ui.controls.CollectionDataset;
 
-import com.supermap.data.DatasourceConnectionInfo;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.table.AbstractTableModel;
@@ -128,9 +127,8 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 				return datasetInfo.getName();
 			}
 			if (columnIndex == COLUMN_VECTOR_CONNECTIONINFO) {
-				DatasourceConnectionInfo connectionInfo = datasetInfo.getDataset().getDatasource().getConnectionInfo();
 				return MessageFormat.format(CommonProperties.getString("String_DatasourceConnectionInfoTip"),
-						connectionInfo.getServer(), connectionInfo.getEngineType(), connectionInfo.getAlias(), connectionInfo.getUser());
+						datasetInfo.getServer(), datasetInfo.getEngineType(), datasetInfo.getDatasourceAlias(), datasetInfo.getUser());
 			}
 		}
 		return "";
