@@ -308,14 +308,14 @@ public class MetaProcessBuffer extends MetaProcess {
 			isSuccessful = BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-			// 删除新建的数据集
-			// 如果失败了，删除新建的数据集
-			if (resultDatasource != null && resultName != null) {
-				resultDatasource.getDatasets().delete(resultName);
-			}
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			BufferAnalyst.removeSteppedListener(this.steppedListener);
+			// 如果失败了，删除新建的数据集
+			if (!isSuccessful && resultDatasource != null && resultName != null) {
+				resultDatasource.getDatasets().delete(resultName);
+			}
 		}
 		return isSuccessful;
 	}

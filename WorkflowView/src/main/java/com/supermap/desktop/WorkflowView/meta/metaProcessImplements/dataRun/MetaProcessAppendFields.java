@@ -136,25 +136,32 @@ public class MetaProcessAppendFields extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean result = false;
-		DatasetVector targetDatasetVector = (DatasetVector) targetDataset.getSelectedDataset();
-		String sourceLinked = sourceLinkedField.getFieldName();
-		String targetLinked = targetLinkedField.getFieldName();
-		DatasetVector sourceDatasetVector = (DatasetVector) sourceDataset.getSelectedDataset();
-		if (null != multiFieldSet.getDatasetFieldInfo()) {
-			String[] sourceFields = multiFieldSet.getDatasetFieldInfo().getSourceFields();
-			String[] targetFields = multiFieldSet.getDatasetFieldInfo().getTargetFields();
-			targetDatasetVector.addSteppedListener(this.steppedListener);
-			result = targetDatasetVector.appendFields(sourceDatasetVector, sourceLinked, targetLinked, sourceFields, targetFields);
-			if (result) {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsSuccess"), sourceDatasetVector.getName(), targetDatasetVector.getName()));
-				TabularUtilities.refreshTabularDatas(targetDatasetVector);
+		DatasetVector sourceDatasetVector = null;
+		try {
+			DatasetVector targetDatasetVector = (DatasetVector) targetDataset.getSelectedDataset();
+			String sourceLinked = sourceLinkedField.getFieldName();
+			String targetLinked = targetLinkedField.getFieldName();
+			sourceDatasetVector = (DatasetVector) sourceDataset.getSelectedDataset();
+			if (null != multiFieldSet.getDatasetFieldInfo()) {
+				String[] sourceFields = multiFieldSet.getDatasetFieldInfo().getSourceFields();
+				String[] targetFields = multiFieldSet.getDatasetFieldInfo().getTargetFields();
+				targetDatasetVector.addSteppedListener(this.steppedListener);
+				result = targetDatasetVector.appendFields(sourceDatasetVector, sourceLinked, targetLinked, sourceFields, targetFields);
+				if (result) {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsSuccess"), sourceDatasetVector.getName(), targetDatasetVector.getName()));
+					TabularUtilities.refreshTabularDatas(targetDatasetVector);
+				} else {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsFailed"), sourceDatasetVector.getName(), targetDatasetVector.getName()));
+				}
 			} else {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_AppendFieldsFailed"), sourceDatasetVector.getName(), targetDatasetVector.getName()));
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_AppendFieldsIsNull"));
 			}
-		} else {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_AppendFieldsIsNull"));
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			sourceDatasetVector.removeSteppedListener(this.steppedListener);
 		}
-		sourceDatasetVector.removeSteppedListener(this.steppedListener);
 		return result;
 	}
 

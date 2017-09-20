@@ -305,7 +305,8 @@ public class MetaProcessRasterToVector extends MetaProcessGridAnalyst {
 			isSuccessful = result != null;
 
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			ConversionAnalyst.removeSteppedListener(steppedListener);
 		}

@@ -110,6 +110,7 @@ public class MetaProcessCalculateHillShade extends MetaProcessCalTerrain {
 
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 //			CalculationTerrain.removeSteppedListener(steppedListener);
 		}

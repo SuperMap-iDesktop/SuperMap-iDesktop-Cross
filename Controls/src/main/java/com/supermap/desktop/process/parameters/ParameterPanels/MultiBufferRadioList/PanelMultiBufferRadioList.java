@@ -50,37 +50,38 @@ public class PanelMultiBufferRadioList extends JPanel {
 	}
 
 	private void initComponents() {
-		toolBar = new JToolBar();
-		buttonBatchAddRadio = new SmButton();
-		buttonBatchAddRadio.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/batchAdd.png"));
+		this.toolBar = new JToolBar();
+		this.toolBar.setFloatable(false);
+		this.buttonBatchAddRadio = new SmButton();
+		this.buttonBatchAddRadio.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/batchAdd.png"));
 
-		buttonInsert = new SmButton();
-		buttonInsert.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/insert.png"));
+		this.buttonInsert = new SmButton();
+		this.buttonInsert.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/insert.png"));
 
-		buttonSelectAll = new SmButton();
-		buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
+		this.buttonSelectAll = new SmButton();
+		this.buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 
-		buttonSelectInvert = new SmButton();
-		buttonSelectInvert.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
+		this.buttonSelectInvert = new SmButton();
+		this.buttonSelectInvert.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
 
-		buttonDelete = new SmButton();
-		buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
+		this.buttonDelete = new SmButton();
+		this.buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
 
-		buttonMoveUp = new SmButton();
-		buttonMoveUp.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/moveUp.png"));
+		this.buttonMoveUp = new SmButton();
+		this.buttonMoveUp.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/moveUp.png"));
 
-		buttonMoveDown = new SmButton();
-		buttonMoveDown.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/moveDown.png"));
+		this.buttonMoveDown = new SmButton();
+		this.buttonMoveDown.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/moveDown.png"));
 
-		tableRadioList = new JTable();
-		multiBufferRadioListTableModel = new MultiBufferRadioListTableModel(radioLists);
-		tableRadioList.setModel(multiBufferRadioListTableModel);
+		this.tableRadioList = new JTable();
+		this.multiBufferRadioListTableModel = new MultiBufferRadioListTableModel(this.radioLists);
+		this.tableRadioList.setModel(multiBufferRadioListTableModel);
 
 		// 设置列不可移动
-		tableRadioList.getTableHeader().setReorderingAllowed(false);
-		tableRadioList.setRowHeight(23);
+		this.tableRadioList.getTableHeader().setReorderingAllowed(false);
+		this.tableRadioList.setRowHeight(23);
 		// 设置列宽
-		TableColumn indexColumn = tableRadioList.getColumnModel().getColumn(MultiBufferRadioListTableModel.COLUMN_INDEX_INDEX);
+		TableColumn indexColumn = this.tableRadioList.getColumnModel().getColumn(MultiBufferRadioListTableModel.COLUMN_INDEX_INDEX);
 		indexColumn.setMinWidth(80);
 		indexColumn.setPreferredWidth(80);
 		indexColumn.setMaxWidth(150);
@@ -88,35 +89,36 @@ public class PanelMultiBufferRadioList extends JPanel {
 	}
 
 	private void initLayout() {
-		toolBar.add(buttonBatchAddRadio);
-		toolBar.add(buttonInsert);
-		toolBar.addSeparator();
-		toolBar.add(buttonSelectAll);
-		toolBar.add(buttonSelectInvert);
-		toolBar.addSeparator();
-		toolBar.add(buttonDelete);
-		toolBar.addSeparator();
-		toolBar.add(buttonMoveUp);
-		toolBar.add(buttonMoveDown);
+		this.toolBar.add(this.buttonBatchAddRadio);
+		this.toolBar.add(this.buttonInsert);
+		this.toolBar.addSeparator();
+		this.toolBar.add(this.buttonSelectAll);
+		this.toolBar.add(this.buttonSelectInvert);
+		this.toolBar.addSeparator();
+		this.toolBar.add(this.buttonDelete);
+		this.toolBar.addSeparator();
+		this.toolBar.add(this.buttonMoveUp);
+		this.toolBar.add(this.buttonMoveDown);
+
 
 		this.setLayout(new GridBagLayout());
-		this.add(toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-		this.add(new JScrollPane(tableRadioList), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 0, 0, 0));
+		this.add(this.toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(new JScrollPane(this.tableRadioList), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 0, 0, 0));
 	}
 
 	private void initResources() {
-		buttonBatchAddRadio.setToolTipText(ControlsProperties.getString("String_AddRange"));
-		buttonInsert.setToolTipText(ControlsProperties.getString("String_InsertDefaultValue"));
-		buttonSelectAll.setToolTipText(ControlsProperties.getString("String_SelectAll"));
-		buttonSelectInvert.setToolTipText(ControlsProperties.getString("String_SelectReverse"));
-		buttonDelete.setToolTipText(CommonProperties.getString("String_Delete"));
-		buttonMoveUp.setToolTipText(ControlsProperties.getString("String_MoveUp"));
-		buttonMoveDown.setToolTipText(ControlsProperties.getString("String_MoveDown"));
+		this.buttonBatchAddRadio.setToolTipText(ControlsProperties.getString("String_AddRange"));
+		this.buttonInsert.setToolTipText(ControlsProperties.getString("String_InsertDefaultValue"));
+		this.buttonSelectAll.setToolTipText(ControlsProperties.getString("String_SelectAll"));
+		this.buttonSelectInvert.setToolTipText(ControlsProperties.getString("String_SelectReverse"));
+		this.buttonDelete.setToolTipText(CommonProperties.getString("String_Delete"));
+		this.buttonMoveUp.setToolTipText(ControlsProperties.getString("String_MoveUp"));
+		this.buttonMoveDown.setToolTipText(ControlsProperties.getString("String_MoveDown"));
 	}
 
 	private void registerEvent() {
 
-		buttonBatchAddRadio.addActionListener(new ActionListener() {
+		this.buttonBatchAddRadio.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				BatchAddDailog batchAddColorTableDailog = new BatchAddDailog(10, 30, 3, (JFrame) Application.getActiveApplication().getMainFrame(), true);
@@ -131,7 +133,7 @@ public class PanelMultiBufferRadioList extends JPanel {
 			}
 		});
 
-		buttonInsert.addActionListener(new ActionListener() {
+		this.buttonInsert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// 插入操作其实就是，先新建一条数据，然后将选中行下的所有行整体向下移动一行
@@ -155,14 +157,14 @@ public class PanelMultiBufferRadioList extends JPanel {
 			}
 		});
 
-		buttonSelectAll.addActionListener(new ActionListener() {
+		this.buttonSelectAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				tableRadioList.selectAll();
 			}
 		});
 
-		buttonSelectInvert.addActionListener(new ActionListener() {
+		this.buttonSelectInvert.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int[] selectedRows = tableRadioList.getSelectedRows();
@@ -173,7 +175,7 @@ public class PanelMultiBufferRadioList extends JPanel {
 			}
 		});
 
-		buttonDelete.addActionListener(new ActionListener() {
+		this.buttonDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int[] selectedRows = tableRadioList.getSelectedRows();
@@ -194,7 +196,7 @@ public class PanelMultiBufferRadioList extends JPanel {
 			}
 		});
 
-		buttonMoveUp.addActionListener(new ActionListener() {
+		this.buttonMoveUp.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int[] selectedRows = tableRadioList.getSelectedRows();
@@ -212,7 +214,7 @@ public class PanelMultiBufferRadioList extends JPanel {
 			}
 		});
 
-		buttonMoveDown.addActionListener(new ActionListener() {
+		this.buttonMoveDown.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int[] selectedRows = tableRadioList.getSelectedRows();
@@ -229,7 +231,7 @@ public class PanelMultiBufferRadioList extends JPanel {
 			}
 		});
 
-		tableRadioList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		this.tableRadioList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				checkButtonStates();
@@ -241,12 +243,12 @@ public class PanelMultiBufferRadioList extends JPanel {
 	 * 设置各按钮是否可用
 	 */
 	private void checkButtonStates() {
-		int rowCount = tableRadioList.getRowCount();
-		int selectedRowCount = tableRadioList.getSelectedRowCount();
-		buttonDelete.setEnabled(selectedRowCount > 0);
-		buttonSelectAll.setEnabled(rowCount > 0);
-		buttonSelectInvert.setEnabled(rowCount > 0);
-		buttonMoveUp.setEnabled(selectedRowCount > 0 && !tableRadioList.isRowSelected(0));
-		buttonMoveDown.setEnabled(selectedRowCount > 0 && !tableRadioList.isRowSelected(rowCount - 1));
+		int rowCount = this.tableRadioList.getRowCount();
+		int selectedRowCount = this.tableRadioList.getSelectedRowCount();
+		this.buttonDelete.setEnabled(selectedRowCount > 0);
+		this.buttonSelectAll.setEnabled(rowCount > 0);
+		this.buttonSelectInvert.setEnabled(rowCount > 0);
+		this.buttonMoveUp.setEnabled(selectedRowCount > 0 && !this.tableRadioList.isRowSelected(0));
+		this.buttonMoveDown.setEnabled(selectedRowCount > 0 && !this.tableRadioList.isRowSelected(rowCount - 1));
 	}
 }

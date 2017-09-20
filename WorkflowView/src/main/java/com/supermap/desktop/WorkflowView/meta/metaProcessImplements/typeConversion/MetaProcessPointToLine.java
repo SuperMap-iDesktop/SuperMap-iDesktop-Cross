@@ -106,7 +106,6 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
 		Recordset recordsetResult = null;
 
 		try {
-
 			DatasetVector src;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
@@ -189,7 +188,8 @@ public class MetaProcessPointToLine extends MetaProcessTypeConversion {
 				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
 			}
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			if (recordsetResult != null) {
 				recordsetResult.removeSteppedListener(steppedListener);

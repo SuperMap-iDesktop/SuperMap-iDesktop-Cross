@@ -388,7 +388,8 @@ public class MetaProcessDEMBuild extends MetaProcess {
 			TerrainBuilder.addSteppedListener(steppedListener);
 
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			TerrainBuilder.removeSteppedListener(steppedListener);
 		}

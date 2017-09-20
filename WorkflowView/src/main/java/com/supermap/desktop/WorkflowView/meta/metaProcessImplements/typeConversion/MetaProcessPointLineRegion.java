@@ -147,7 +147,8 @@ public abstract class MetaProcessPointLineRegion extends MetaProcessTypeConversi
 				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
 			}
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			if (recordsetInput != null) {
 				recordsetInput.close();

@@ -205,7 +205,8 @@ public class MetaProcessVectorResample extends MetaProcess {
 			isSuccessful = sourceDatasetVector.resample(resampleInformation, true, isSaveSmallGeometry);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(sourceDatasetVector);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			sourceDatasetVector.removeSteppedListener(this.steppedListener);
 		}

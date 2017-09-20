@@ -230,7 +230,8 @@ public abstract class MetaProcessISO extends MetaProcess {
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			SurfaceAnalyst.removeSteppedListener(this.steppedListener);
 		}

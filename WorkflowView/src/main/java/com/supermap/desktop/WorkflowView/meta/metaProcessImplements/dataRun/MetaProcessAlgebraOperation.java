@@ -152,7 +152,7 @@ public class MetaProcessAlgebraOperation extends MetaProcessGridAnalyst {
 		RasterAlgebraOperationDialog rasterAlgebraOperationDialog = new RasterAlgebraOperationDialog(expressionConvert());
 		if (rasterAlgebraOperationDialog.showDialog() == DialogResult.OK) {
 			this.textAreaExpression.setSelectedItem(rasterAlgebraOperationDialog.getExpression());
-			if (rasterAlgebraOperationDialog.getPixelFormat()!=null) {
+			if (rasterAlgebraOperationDialog.getPixelFormat() != null) {
 				this.comboBoxPixelFormat.setSelectedItem(rasterAlgebraOperationDialog.getPixelFormat());
 			}
 		}
@@ -239,7 +239,8 @@ public class MetaProcessAlgebraOperation extends MetaProcessGridAnalyst {
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			MathAnalyst.removeSteppedListener(steppedListener);
 		}

@@ -93,6 +93,12 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 		comboBox.setRenderer(new ListCellRenderer<FieldInfo>() {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends FieldInfo> list, FieldInfo value, int index, boolean isSelected, boolean cellHasFocus) {
+				try {
+					value.getName();
+				} catch (Exception e) {
+					resetComboBoxItems(parameterFieldComboBox.getDataset());
+					return new JLabel();
+				}
 				JLabel jLabel = new JLabel();
 				if (value != null) {
 					jLabel.setText(value.getName());// 缺陷太多，先改回name

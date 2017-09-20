@@ -30,7 +30,6 @@ public class MetaProcessHighOrLowClustering extends MetaProcessAnalyzingPatterns
 
 	@Override
 	protected boolean doWork(DatasetVector datasetVector) {
-		;
 		AnalyzingPatterns.addSteppedListener(steppedListener);
 		AnalyzingPatternsResult analyzingPatternsResult = null;
 		try {
@@ -50,7 +49,8 @@ public class MetaProcessHighOrLowClustering extends MetaProcessAnalyzingPatterns
 			}
 //			parameterResult.setSelectedItem(result);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			AnalyzingPatterns.removeSteppedListener(steppedListener);
 		}

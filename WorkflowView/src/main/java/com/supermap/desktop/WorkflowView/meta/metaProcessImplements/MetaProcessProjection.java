@@ -156,13 +156,12 @@ public class MetaProcessProjection extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
-
+		Dataset src;
 		try {
-			Dataset src = null;
 			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
 				src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 			} else {
-				src = (Dataset) this.parameterDataset.getSelectedItem();
+				src = this.parameterDataset.getSelectedItem();
 			}
 			// 当未设置投影时，给定原数据集投影,防止参数为空报错-yuanR2017.9.6
 			if (this.prjCoordSys == null) {
@@ -172,18 +171,19 @@ public class MetaProcessProjection extends MetaProcess {
 			CoordSysTransMethod method = (CoordSysTransMethod) this.parameterMode.getSelectedData();
 
 			CoordSysTransParameter coordSysTransParameter = new CoordSysTransParameter();
-			coordSysTransParameter.setScaleDifference(Double.valueOf((String) this.parameterScaleDifference.getSelectedItem()));
+			coordSysTransParameter.setScaleDifference(Double.valueOf(this.parameterScaleDifference.getSelectedItem()));
 			coordSysTransParameter.setRotateX(Double.valueOf(this.parameterTextFieldAngleX.getSelectedItem()) / 60 / 60 / 180 * Math.PI);
 			coordSysTransParameter.setRotateY(Double.valueOf(this.parameterTextFieldAngleY.getSelectedItem()) / 60 / 60 / 180 * Math.PI);
 			coordSysTransParameter.setRotateZ(Double.valueOf(this.parameterTextFieldAngleZ.getSelectedItem()) / 60 / 60 / 180 * Math.PI);
-			coordSysTransParameter.setTranslateX(Double.valueOf((String) this.parameterTextFieldOffsetX.getSelectedItem()));
-			coordSysTransParameter.setTranslateY(Double.valueOf((String) this.parameterTextFieldOffsetY.getSelectedItem()));
-			coordSysTransParameter.setTranslateZ(Double.valueOf((String) this.parameterTextFieldOffsetZ.getSelectedItem()));
+			coordSysTransParameter.setTranslateX(Double.valueOf(this.parameterTextFieldOffsetX.getSelectedItem()));
+			coordSysTransParameter.setTranslateY(Double.valueOf(this.parameterTextFieldOffsetY.getSelectedItem()));
+			coordSysTransParameter.setTranslateZ(Double.valueOf(this.parameterTextFieldOffsetZ.getSelectedItem()));
 			CoordSysTranslator.convert(src, this.prjCoordSys, coordSysTransParameter, method);
 			isSuccessful = true;
 			getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 
 		}

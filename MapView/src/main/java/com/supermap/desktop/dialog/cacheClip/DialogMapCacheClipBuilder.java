@@ -588,6 +588,9 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 	private boolean validateFixedScales() {
 		boolean hasFixedScalesError = true;
+		if (!mapCacheBuilder.getMap().isVisibleScalesEnabled()) {
+			return hasFixedScalesError;
+		}
 		if (null != mapCacheBuilder.getMap().getVisibleScales() && 0 != mapCacheBuilder.getMap().getVisibleScales().length) {
 			//地图存在固定比例从时的处理方式
 			if (firstStepPane.addScaleDropDown.isEnabled()) {

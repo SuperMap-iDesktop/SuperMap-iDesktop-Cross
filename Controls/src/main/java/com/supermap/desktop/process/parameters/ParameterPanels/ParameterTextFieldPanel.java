@@ -39,6 +39,7 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		super(parameterTextField);
 		this.parameterTextField = (ParameterTextField) parameterTextField;
 		label.setText(getDescribe());
+		label.setToolTipText(this.parameterTextField.getDescribe());
 		label.setVisible(this.parameterTextField.isDescriptionVisible());
 		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
 		textField.setToolTipText(this.parameterTextField.getToolTip());
@@ -62,6 +63,8 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 			panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
 			panel.add(textField, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
 		}
+
+
 		// 判断是否添加提示按钮-yuanR2017.9.6
 
 		if (!StringUtilities.isNullOrEmpty(parameterTextField.getUnit())) {
@@ -77,7 +80,7 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 				if (!isSelectingItem && evt.getPropertyName().equals(AbstractParameter.PROPERTY_VALE)) {
 					try {
 						isSelectingItem = true;
-						ParameterTextFieldPanel.this.textField.setText(evt.getNewValue() == null ? null : evt.getNewValue().toString());
+						ParameterTextFieldPanel.this.textField.setText(evt.getNewValue() == null ? "" : evt.getNewValue().toString());
 						// 当值改变时，同时改变其值得单位-yuanR
 						if (!StringUtilities.isNullOrEmpty(parameterTextField.getUnit())) {
 							labelUnit.setText(parameterTextField.getUnit());
@@ -101,10 +104,12 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		textField.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (!isSelectingItem && (smTextFieldLegit == null || smTextFieldLegit.isTextFieldValueLegit(textFieldValue))) {
-					isSelectingItem = true;
-					parameterTextField.setSelectedItem(textFieldValue);
-					isSelectingItem = false;
+				if (smTextFieldLegit == null || smTextFieldLegit.isTextFieldValueLegit(textFieldValue)) {
+					if (!isSelectingItem) {
+						isSelectingItem = true;
+						parameterTextField.setSelectedItem(textFieldValue);
+						isSelectingItem = false;
+					}
 					return true;
 				}
 				return false;
