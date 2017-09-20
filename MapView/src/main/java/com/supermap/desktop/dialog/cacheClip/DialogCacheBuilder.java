@@ -213,7 +213,9 @@ public class DialogCacheBuilder extends JFrame {
 				scaleList.addAll(scales);
 				Collections.sort(scaleList);
 				for (double scale : scaleList) {
-					captions.add(String.valueOf(Math.round(1 / scale)));
+					if (!captions.contains(String.valueOf(Math.round(1 / scale)))) {
+						captions.add(String.valueOf(Math.round(1 / scale)));
+					}
 				}
 			}
 		}
@@ -449,9 +451,9 @@ public class DialogCacheBuilder extends JFrame {
 		} else {
 			CacheUtilities.showMessageDialog(DialogCacheBuilder.this, "No sci file");
 		}
-		buildCache = new BuildCache();
-		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
-//		BuildCache.main(params);
+//		buildCache = new BuildCache();
+//		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
+		BuildCache.main(params);
 	}
 
 

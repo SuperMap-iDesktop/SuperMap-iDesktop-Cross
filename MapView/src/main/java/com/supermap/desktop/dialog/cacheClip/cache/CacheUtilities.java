@@ -188,8 +188,8 @@ public class CacheUtilities {
 		int taskSize = 0;
 		for (String taskPath : taskPaths) {
 			File taskFile = new File(taskPath);
-			if (taskFile.exists()) {
-				taskSize += taskFile.list().length;
+			if (taskFile.exists() && null != taskFile.list(getFilter())) {
+				taskSize += taskFile.list(getFilter()).length;
 			}
 		}
 		return taskSize;
@@ -452,9 +452,11 @@ public class CacheUtilities {
 		for (String taskDirectory : taskPaths) {
 			String parentStr = new File(taskDirectory).getParent();
 			File failedDirectory = new File(CacheUtilities.replacePath(parentStr, failedPath));
-			File[] failedSci = failedDirectory.listFiles();
-			for (int i = 0; i < failedSci.length; i++) {
-				failedSci[i].renameTo(new File(taskDirectory, failedSci[i].getName()));
+			if (null != failedDirectory.listFiles()) {
+				File[] failedSci = failedDirectory.listFiles();
+				for (int i = 0; i < failedSci.length; i++) {
+					failedSci[i].renameTo(new File(taskDirectory, failedSci[i].getName()));
+				}
 			}
 		}
 	}

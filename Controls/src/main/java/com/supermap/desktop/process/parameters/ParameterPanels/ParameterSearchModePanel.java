@@ -1,9 +1,11 @@
 package com.supermap.desktop.process.parameters.ParameterPanels;
 
 import com.supermap.analyst.spatialanalyst.SearchMode;
+import com.supermap.data.Dataset;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -45,12 +47,14 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
     private boolean isSelectingItem = false;
     private ParameterSearchMode parameterSearchMode;
     private ParameterSearchModeInfo info;
+    private Dataset dataset;
 
 	public ParameterSearchModePanel(IParameter parameterSearchMode) {
 		super(parameterSearchMode);
 		this.parameterSearchMode = (ParameterSearchMode) parameterSearchMode;
 		this.info = (ParameterSearchModeInfo) this.parameterSearchMode.getSelectedItem();
-		initComponents();
+        this.dataset = ((ParameterSearchMode) parameterSearchMode).getDataset();
+        initComponents();
         initLayout();
         initListener();
     }
@@ -273,8 +277,10 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
             labelMaxPointCount.setVisible(false);
             textFieldMaxRadius.setVisible(true);
             textFieldMaxPointCount.setVisible(false);
-            textFieldMaxRadius.setText("32195");
-            textFieldSearchCount.setText("15");
+            double width = dataset.getBounds().getWidth();
+            double height = dataset.getBounds().getHeight();
+            textFieldMaxRadius.setText((int) ((width < height ? width : height) / 5) + "");
+            textFieldSearchCount.setText("5");
             textFieldSearchCount.setInterval(2,12);
         } else if (mode == SearchMode.QUADTREE) {
             radioSearchModelQuadTree.setSelected(true);
@@ -286,6 +292,14 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
             textFieldMaxPointCount.setText("20");
             textFieldSearchCount.setText("5");
             textFieldSearchCount.setMinValue(1);
+        }
+    }
+
+    @Override
+    public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
+        if (event.getFieldName().equals(ParameterSearchMode.DATASET_FIELD_NAME)) {
+            this.dataset = parameterSearchMode.getDataset();
+            radioChange(info.searchMode);
         }
     }
 }

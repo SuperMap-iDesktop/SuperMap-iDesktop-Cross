@@ -40,6 +40,16 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 		this.describe = describe;
 	}
 
+	/**
+	 * 对于字段选择控件，当不能选择空值得时候，默认为必填参数
+	 * yuanR
+	 * @return
+	 */
+	@Override
+	public boolean isRequisite() {
+		return !isShowNullValue;
+	}
+
 	@Override
 	public void setSelectedItem(Object item) {
 		String oldValue = this.fieldName;
@@ -106,7 +116,7 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 		return fieldTypes;
 	}
 
-	public void setDataset(DatasetVector dataset) {
+	private void setDataset(DatasetVector dataset) {
 		DatasetVector oldValue = this.dataset;
 		this.dataset = dataset;
 		firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELD_NAME, oldValue, this.dataset));

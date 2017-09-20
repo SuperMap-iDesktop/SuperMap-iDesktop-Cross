@@ -35,6 +35,17 @@ public class ImportSettingSetter {
 			return null;
 		}
 		Class importSettingClass = importSetting.getClass();
+		try {
+			Method[] methods = importSettingClass.getMethods();
+			for (Method method : methods) {
+				if (method.getName().equals("setImportEmptyDataset")) {
+					method.invoke(importSetting, true);
+					break;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		for (int i = 0; i < sourceInfo.size(); i++) {
 			if (sourceInfo.get(i).methodName == null) continue;
 			try {

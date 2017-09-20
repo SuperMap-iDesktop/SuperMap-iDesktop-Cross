@@ -92,7 +92,7 @@ public class TasksManager {
 			}
 		}
 	};
-	;
+	private boolean isCancel = false;
 
 	public TasksManager(Workflow workflow) {
 		this.workflow = workflow;
@@ -172,6 +172,7 @@ public class TasksManager {
 
 	public boolean run() {
 		try {
+			isCancel = false;
 			if (this.status == WORKFLOW_STATE_RUNNING) {
 				return false;
 			}
@@ -202,7 +203,7 @@ public class TasksManager {
 	}
 
 	public void cancel() {
-		// 待定
+		isCancel = true;
 	}
 
 	public void pause() {
@@ -267,7 +268,12 @@ public class TasksManager {
 				if (ready.size() > 0) {
 					for (int i = ready.size() - 1; i >= 0; i--) {
 						IProcess process = ready.get(i);
-						workersMap.get(process).execute();
+						if (!isCancel) {
+							workersMap.get(process).execute();
+						} else {
+							process.setStatus(RunningStatus.CANCELLED);
+							workersMap.get(process).cancel();
+						}
 					}
 				} else {
 					// TODO: 2017/8/9 ready已经没有了，但是waitting还有需要处理下
@@ -277,7 +283,7 @@ public class TasksManager {
 				if (taskStateManager.get(WORKER_STATE_WAITING).size() == 0 && ready.size() == 0 && taskStateManager.get(WORKER_STATE_RUNNING).size() == 0) {
 					scheduler.stop();
 					workflow.setEditable(true);
-
+					isCancel = false;
 					if (workflow.getProcessCount() == taskStateManager.get(WORKER_STATE_COMPLETED).size()) {
 						status = TasksManager.WORKFLOW_STATE_COMPLETED;
 					} else {

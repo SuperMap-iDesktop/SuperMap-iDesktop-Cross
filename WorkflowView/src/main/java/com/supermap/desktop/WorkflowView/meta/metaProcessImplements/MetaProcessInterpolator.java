@@ -45,6 +45,7 @@ import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.PixelFormatProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -95,11 +96,12 @@ public class MetaProcessInterpolator extends MetaProcessGridAnalyst {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (parameterDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
+				parameterInterpolatorFields.setSelectedItem("SmUserID");
 				Rectangle2D bounds = ((DatasetVector) evt.getNewValue()).getBounds();
 				double x = bounds.getWidth() / 500;
 				double y = bounds.getHeight() / 500;
 				double resolution = x > y ? y : x;
-				parameterResolution.setSelectedItem("" + resolution);
+				parameterResolution.setSelectedItem(DoubleUtilities.getFormatString(resolution));
 				if (resolution != 0) {
 					int rows = (int) Math.abs(bounds.getHeight() / resolution);
 					int columns = (int) Math.abs(bounds.getWidth() / resolution);
@@ -238,6 +240,7 @@ public class MetaProcessInterpolator extends MetaProcessGridAnalyst {
 			parameterDatasource.setSelectedItem(datasetVector.getDatasource());
 			parameterDataset.setSelectedItem(datasetVector);
 			parameterInterpolatorFields.setFieldName((DatasetVector) datasetVector);
+			searchMode.setDataset(datasetVector);
 
 			parameterInterpolatorFields.setFieldType(fieldType);
 
@@ -245,7 +248,7 @@ public class MetaProcessInterpolator extends MetaProcessGridAnalyst {
 			double x = bounds.getWidth() / 500;
 			double y = bounds.getHeight() / 500;
 			double resolution = x > y ? y : x;
-			parameterResolution.setSelectedItem("" + resolution);
+			parameterResolution.setSelectedItem(DoubleUtilities.getFormatString(resolution));
 			if (resolution != 0) {
 				int rows = (int) Math.abs(bounds.getHeight() / resolution);
 				int columns = (int) Math.abs(bounds.getWidth() / resolution);
@@ -263,6 +266,9 @@ public class MetaProcessInterpolator extends MetaProcessGridAnalyst {
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
 		equalDatasetConstraint.constrained(parameterDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
 		equalDatasetConstraint.constrained(parameterInterpolatorFields, ParameterFieldComboBox.DATASET_FIELD_NAME);
+		EqualDatasetConstraint equalDatasetConstraint1 = new EqualDatasetConstraint();
+		equalDatasetConstraint1.constrained(parameterDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		equalDatasetConstraint1.constrained(searchMode, ParameterSearchMode.DATASET_FIELD_NAME);
 	}
 
 	private void registerEvents() {

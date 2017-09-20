@@ -95,9 +95,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
     private boolean isTextStyleSet;
     private boolean isSetFontSize;
     private boolean isSetFontHeight;
-    private boolean isShowAlign=true;
-    private boolean isShowFontHeight=true;
-    private boolean isShowRotationAngl=true;
     protected double UNIT_CONVERSION = 10;
     private final double pow = 2;
 
@@ -1035,26 +1032,27 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
 
     @Override
     public void setAlign(boolean isShowAlign){
-        this.isShowAlign=isShowAlign;
-        this.labelAlign.setVisible(this.isShowAlign);
-        this.comboBoxAlign.setVisible(this.isShowAlign);
+        this.labelAlign.setVisible(isShowAlign);
+        this.comboBoxAlign.setVisible(isShowAlign);
     }
 
     @Override
     public void setFontHeight(boolean isShowFontHeight){
-        this.isSetFontHeight=isShowFontHeight;
-        this.labelFontHeight.setVisible(this.isSetFontHeight);
-        this.spinnerFontHeight.setVisible(this.isSetFontHeight);
-        this.labelFontHeightUnity.setVisible(this.isSetFontHeight);
+        this.labelFontHeight.setVisible(isShowFontHeight);
+        this.spinnerFontHeight.setVisible(isShowFontHeight);
+        this.labelFontHeightUnity.setVisible(isShowFontHeight);
     }
 
     @Override
     public void setRotationAngl(boolean isShowRotationAngl){
-        this.isShowRotationAngl=isShowRotationAngl;
-        this.labelRotationAngl.setVisible(this.isShowRotationAngl);
-        this.spinnerRotationAngl.setVisible(this.isShowRotationAngl);
+        this.labelRotationAngl.setVisible(isShowRotationAngl);
+        this.spinnerRotationAngl.setVisible(isShowRotationAngl);
     }
 
+    @Override
+    public void setFixedSize(boolean isEnabled){
+        this.checkBoxFixedSize.setEnabled(isEnabled);
+    }
     @Override
     public void initTextBasicPanel() {
         init();

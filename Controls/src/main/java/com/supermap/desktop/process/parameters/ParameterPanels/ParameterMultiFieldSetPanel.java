@@ -13,10 +13,10 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -66,9 +66,15 @@ public class ParameterMultiFieldSetPanel extends SwingPanel {
 				}
 			}
 		});
-		this.multiFieldsChooseTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		this.multiFieldsChooseTable.addMouseListener(new MouseAdapter() {
 			@Override
-			public void valueChanged(ListSelectionEvent e) {
+			public void mouseReleased(MouseEvent e) {
+				setFieldInfo();
+			}
+		});
+		this.multiFieldsChooseTable.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
 				setFieldInfo();
 			}
 		});
@@ -84,19 +90,21 @@ public class ParameterMultiFieldSetPanel extends SwingPanel {
 	}
 
 	private void setFieldInfo() {
-		if (!isSelectionChanged && multiFieldsChooseTable.getSelectedFieldsName().size() > 0) {
+		if (!isSelectionChanged) {
 			isSelectionChanged = true;
-			ArrayList<SmMultiFieldsChooseTable.Info> infos = multiFieldsChooseTable.getSelectedFieldsName();
-			int size = infos.size();
-			String[] sourceFields = new String[size];
-			String[] targetFields = new String[size];
-			for (int i = 0; i < size; i++) {
-				sourceFields[i] = infos.get(i).getSourceFieldName();
-				targetFields[i] = infos.get(i).getTargetFieldName();
+			int rowCount = this.multiFieldsChooseTable.getRowCount();
+			ArrayList<String> sourceFields = new ArrayList<>();
+			ArrayList<String> targetFields = new ArrayList<>();
+			for (int i = 0; i < rowCount; i++) {
+				boolean selected = (boolean) this.multiFieldsChooseTable.getValueAt(i, multiFieldsChooseTable.TABLE_COLUMN_CHECKABLE);
+				if (selected) {
+					sourceFields.add((String) this.multiFieldsChooseTable.getValueAt(i, multiFieldsChooseTable.TABLE_COLUMN_SOURCEFIELDNAME));
+					targetFields.add((String) this.multiFieldsChooseTable.getValueAt(i, multiFieldsChooseTable.TABLE_COLUMN_TARGETFIELDNAME));
+				}
 			}
 			ParameterMultiFieldSet.DatasetFieldInfo fieldInfo = new ParameterMultiFieldSet.DatasetFieldInfo();
-			fieldInfo.setSourceFields(sourceFields);
-			fieldInfo.setTargetFields(targetFields);
+			fieldInfo.setSourceFields(sourceFields.toArray(new String[sourceFields.size()]));
+			fieldInfo.setTargetFields(targetFields.toArray(new String[targetFields.size()]));
 			multiFieldSet.setDatasetFieldInfo(fieldInfo);
 			isSelectionChanged = false;
 		}

@@ -10,7 +10,6 @@ import com.supermap.desktop.ui.controls.CollectionDataset.JDialogCreateCollectio
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
-import com.supermap.desktop.utilities.DatasourceUtilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -138,7 +137,7 @@ public class VectorCollectionPropertyControl extends AbstractPropertyControl {
 			datasetInfo.setCapiton(collectionDatasetInfos.get(i).getDatasetName());
 			datasetInfo.setServer(info.getServer());
 			datasetInfo.setEngineType(info.getEngineType().name());
-			datasetInfo.setDatasourceAlias(info.getAlias());
+			datasetInfo.setDataBase(info.getDatabase());
 			datasetInfo.setUser(info.getUser());
 			datasetInfos.add(datasetInfo);
 		}

@@ -32,8 +32,8 @@ import java.util.Vector;
  * Panel for cache clipping(second step)
  */
 public class NextStepPane extends JPanel implements IState {
-	public Rectangle2D cacheRangeBounds;
-	public Rectangle2D indexRangeBounds;
+	private Rectangle2D cacheRangeBounds;
+	private Rectangle2D indexRangeBounds;
 	private boolean validCacheRangeBounds;
 	private boolean validIndexRangeBounds;
 	public MapCacheBuilder mapCacheBuilder;
@@ -104,7 +104,6 @@ public class NextStepPane extends JPanel implements IState {
 				if (rectangle2D != null) {
 					validCacheRangeBounds = true;
 					cacheRangeBounds = rectangle2D;
-					mapCacheBuilder.setBounds(cacheRangeBounds);
 				} else {
 					validCacheRangeBounds = false;
 				}
@@ -136,7 +135,6 @@ public class NextStepPane extends JPanel implements IState {
 				Rectangle2D rectangle2D = panelIndexRange.getRangeBound();
 				if (rectangle2D != null) {
 					indexRangeBounds = rectangle2D;
-					mapCacheBuilder.setIndexBounds(indexRangeBounds);
 					validIndexRangeBounds = true;
 				} else {
 					validIndexRangeBounds = false;
@@ -316,6 +314,9 @@ public class NextStepPane extends JPanel implements IState {
 //		this.add(this.panelMultiProcess, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
 		this.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		this.panelCacheRange.setPreferredSize(new Dimension(400, 300));
+		//矢量瓦片在java中还不支持先屏蔽了
+		this.labelTileType.setVisible(false);
+		this.comboBoxTileType.setVisible(false);
 	}
 
 	private void initComboboxState() {
@@ -337,8 +338,8 @@ public class NextStepPane extends JPanel implements IState {
 		this.comboBoxPixel.setSelectedItem("256*256");
 		this.checkBoxBackgroundTransparency.setEnabled(false);
 		this.checkBoxFullFillCacheImage.setEnabled(false);
-		this.mapCacheBuilder.setTileFormat(TileFormat.JPG);
-		this.mapCacheBuilder.setTileSize(TileSize.SIZE256);
+//		this.mapCacheBuilder.setTileFormat(TileFormat.JPG);
+//		this.mapCacheBuilder.setTileSize(TileSize.SIZE256);
 	}
 
 	public void resetComponentsInfo() {
@@ -433,11 +434,15 @@ public class NextStepPane extends JPanel implements IState {
 		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip
 				|| cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
 			this.panelIndexRange.setComponentsEnabled(false);
+			this.labelTileType.setEnabled(false);
+			this.comboBoxTileType.setEnabled(false);
 			this.labelImageType.setEnabled(false);
 			this.comboBoxImageType.setEnabled(false);
 			this.labelPixel.setEnabled(false);
 			this.comboBoxPixel.setEnabled(false);
 		} else {
+			this.labelTileType.setEnabled(true);
+			this.comboBoxTileType.setEnabled(true);
 			this.labelImageType.setEnabled(true);
 			this.comboBoxImageType.setEnabled(true);
 			this.labelPixel.setEnabled(true);

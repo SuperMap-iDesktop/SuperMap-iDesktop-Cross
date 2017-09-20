@@ -1,5 +1,6 @@
 package com.supermap.desktop.Action;
 
+import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -21,13 +22,19 @@ public class CtrlActionBufferAnalyst extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		boolean visible = true;
-		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
-		if (datasources.getCount() <= 0) {
-			visible = false;
+		boolean enable = false;
+		if (null != Application.getActiveApplication().getWorkspace().getDatasources() && Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
+			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+			for (int i = 0; i < datasources.getCount(); i++) {
+				Datasource tempDatasource = datasources.get(i);
+				if (!tempDatasource.isReadOnly()) {
+					enable = true;
+					break;
+				}
+			}
 		}
 
-		return visible;
+		return enable;
 	}
 
 

@@ -1,5 +1,8 @@
 package com.supermap.desktop.process.parameter.interfaces.datas;
 
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 
@@ -72,7 +75,23 @@ public class InputData implements IDataDescription, IValueProvider {
 
 	@Override
 	public Object getValue() {
-		return this.valueProvider == null ? null : this.valueProvider.getValue();
+		Object result = this.valueProvider == null ? null : this.valueProvider.getValue();
+		return getUnClosedResult(result);
+	}
+
+	private Object getUnClosedResult(Object result) {
+		try {
+			if (result instanceof Dataset) {
+				((Dataset) result).getName();
+			} else if (result instanceof Datasource) {
+				((Datasource) result).getAlias();
+			} else if (result instanceof Workspace) {
+				((Workspace) result).getCaption();
+			}
+		} catch (Exception e) {
+			return null;
+		}
+		return result;
 	}
 
 	public void removeParameters(IParameter... parameters) {

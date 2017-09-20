@@ -21,10 +21,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilities.DatasetUtilities;
-import com.supermap.desktop.utilities.DatasourceUtilities;
-import com.supermap.desktop.utilities.DoubleUtilities;
-import com.supermap.desktop.utilities.OverlayAnalystType;
+import com.supermap.desktop.utilities.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -238,7 +235,12 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 			}
 
 			info.targetDatasource = parameterResultDatasource.getSelectedItem();
-			info.targetDataset = parameterSaveDataset.getSelectedItem();
+			// 对叠加分析生成的数据集名称做一个限制-yuanR2017.9.20
+			if (StringUtilities.isNullOrEmptyString(parameterSaveDataset.getSelectedItem())) {
+				info.targetDataset = this.analystType.defaultResultName();
+			} else {
+				info.targetDataset = parameterSaveDataset.getSelectedItem();
+			}
 			OverlayAnalystParameter overlayAnalystParameter = new OverlayAnalystParameter();
 			if (parameterFieldSetDialog.getSourceFieldNames() != null) {
 				overlayAnalystParameter.setSourceRetainedFields(parameterFieldSetDialog.getSourceFieldNames());
@@ -297,6 +299,9 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 			e.printStackTrace();
 		} finally {
 			OverlayAnalyst.removeSteppedListener(this.steppedListener);
+			if (!isSuccessful) {
+				parameterResultDatasource.getSelectedItem().getDatasets().delete(parameterSaveDataset.getSelectedItem());
+			}
 		}
 		return isSuccessful;
 	}

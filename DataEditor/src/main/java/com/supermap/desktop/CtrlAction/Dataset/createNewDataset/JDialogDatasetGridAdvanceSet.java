@@ -10,6 +10,7 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.BlockSizeOptionUtilities;
 import com.supermap.desktop.utilities.PixelFormatUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
@@ -96,7 +97,11 @@ public class JDialogDatasetGridAdvanceSet extends SmDialog {
 		registerEvent();
 		this.setTitle(DataEditorProperties.getString("String_NewDatasetGrid"));
 		this.setModal(true);
-		setSize(750, 460);
+		if(SystemPropertyUtilities.isLinux()) {
+			setSize(750, 520);
+		}else{
+			setSize(750, 460);
+		}
 		this.setLocationRelativeTo(null);
 	}
 

@@ -78,7 +78,7 @@ public class GridAnalystSettingInstance {
 	public void run() {
 		if (isChanged) {
 			calculateValue();
-			if (clipBounds != null && clipBounds instanceof DatasetVector && clipBounds != currentDataset) {
+			if (clipBounds == null || clipBounds instanceof DatasetVector) {
 				currentDataset = (DatasetVector) clipBounds;
 			}
 			MathAnalyst.setAnalystSetting(gridAnalystSetting);
@@ -91,7 +91,7 @@ public class GridAnalystSettingInstance {
 	}
 
 	public void calculateValue() {
-		if (clipBounds != null && clipBounds instanceof DatasetVector && clipBounds != currentDataset) {
+		if (clipBounds == null || clipBounds instanceof DatasetVector) {
 			setSettingClipRegion();
 		}
 		if (resultBounds instanceof String) {
@@ -140,7 +140,10 @@ public class GridAnalystSettingInstance {
 		GeoRegion clipRegion;
 		Recordset recordset = null;
 		try {
-			if (clipBounds != null && clipBounds instanceof DatasetVector) {
+			if (clipBounds == null) {
+				gridAnalystSetting.setValidRegion(null);
+				terrainAnalystSetting.setValidRegion(null);
+			} else if (clipBounds instanceof DatasetVector) {
 				DatasetVector datasetVector = (DatasetVector) this.clipBounds;
 				recordset = datasetVector.getRecordset(false, CursorType.STATIC);
 				Geometry geometry = recordset.getGeometry();
@@ -196,11 +199,13 @@ public class GridAnalystSettingInstance {
 	}
 
 	public void setClipBounds(Object clipBounds) {
-		if ((clipBounds != null && !(clipBounds instanceof DatasetVector)) || clipBounds == this.clipBounds) {
+		if (clipBounds == this.clipBounds) {
 			return;
 		}
-		this.clipBounds = clipBounds;
-		isChanged = true;
+		if (clipBounds == null || clipBounds instanceof DatasetVector) {
+			this.clipBounds = clipBounds;
+			isChanged = true;
+		}
 	}
 
 	public Object getResultBounds() {
