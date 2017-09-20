@@ -65,6 +65,13 @@ public interface ITextStyle extends IGeoTextStyle {
 	void setRotationAngl(boolean isShowRotationAngl);
 
 	/**
+	 * 是否可用固定大小
+	 *
+	 * @param isEnabled
+	 */
+	void setFixedSize(boolean isEnabled);
+
+	/**
 	 * 初始化界面
 	 */
 	void initTextBasicPanel();
