@@ -9,7 +9,8 @@ import java.util.concurrent.ExecutionException;
  */
 public abstract class Worker<V extends Object> {
 	private IWorkerView<V> view;
-	protected volatile boolean isCancelled = false;
+	private volatile boolean isCancelled = false;
+	private volatile boolean isRunning = false;
 	private String title;
 	private SwingWorkerSub workerSub;
 
@@ -29,12 +30,24 @@ public abstract class Worker<V extends Object> {
 		this.view = view;
 	}
 
+	public boolean get() throws ExecutionException, InterruptedException {
+		if (this.workerSub == null) {
+			throw new IllegalArgumentException();
+		}
+
+		return this.workerSub.get() == null ? false : this.workerSub.get();
+	}
+
 	public void cancel() {
 		this.isCancelled = true;
 	}
 
 	public boolean isCancelled() {
 		return this.isCancelled;
+	}
+
+	public boolean isRunning() {
+		return isRunning;
 	}
 
 	public final void execute() {
@@ -53,6 +66,7 @@ public abstract class Worker<V extends Object> {
 		}
 
 		// 由于 SwingWorker 不支持重新执行，因此如果需要重复执行请构造一个新的 SwingWOrker
+		this.isRunning = true;
 		this.workerSub = new SwingWorkerSub();
 		this.workerSub.execute();
 	}
@@ -105,6 +119,7 @@ public abstract class Worker<V extends Object> {
 		@Override
 		protected void done() {
 			view.done();
+			isRunning = false;
 		}
 	}
 }
