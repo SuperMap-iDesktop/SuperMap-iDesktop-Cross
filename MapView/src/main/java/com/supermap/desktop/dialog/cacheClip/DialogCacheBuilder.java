@@ -451,9 +451,9 @@ public class DialogCacheBuilder extends JFrame {
 		} else {
 			CacheUtilities.showMessageDialog(DialogCacheBuilder.this, "No sci file");
 		}
-		buildCache = new BuildCache();
-		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
-//		BuildCache.main(params);
+//		buildCache = new BuildCache();
+//		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
+		BuildCache.main(params);
 	}
 
 
