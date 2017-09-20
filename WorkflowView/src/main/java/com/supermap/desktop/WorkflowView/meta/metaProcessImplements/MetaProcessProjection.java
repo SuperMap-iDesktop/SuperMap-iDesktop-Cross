@@ -1,6 +1,10 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
-import com.supermap.data.*;
+import com.supermap.data.CoordSysTransMethod;
+import com.supermap.data.CoordSysTransParameter;
+import com.supermap.data.CoordSysTranslator;
+import com.supermap.data.Dataset;
+import com.supermap.data.PrjCoordSys;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -13,7 +17,13 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterButton;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoordSysTransMethodProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -157,16 +167,17 @@ public class MetaProcessProjection extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 		Dataset src;
+		Object value = this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+		if (value != null && value instanceof Dataset) {
+			src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+		} else {
+			src = this.parameterDataset.getSelectedItem();
+		}
+		// 当未设置投影时，给定原数据集投影,防止参数为空报错-yuanR2017.9.6
+		if (this.prjCoordSys == null) {
+			this.prjCoordSys = src.getPrjCoordSys();
+		}
 		try {
-			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
-				src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
-			} else {
-				src = this.parameterDataset.getSelectedItem();
-			}
-			// 当未设置投影时，给定原数据集投影,防止参数为空报错-yuanR2017.9.6
-			if (this.prjCoordSys == null) {
-				this.prjCoordSys = src.getPrjCoordSys();
-			}
 			fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
 			CoordSysTransMethod method = (CoordSysTransMethod) this.parameterMode.getSelectedData();
 
@@ -178,9 +189,10 @@ public class MetaProcessProjection extends MetaProcess {
 			coordSysTransParameter.setTranslateX(Double.valueOf(this.parameterTextFieldOffsetX.getSelectedItem()));
 			coordSysTransParameter.setTranslateY(Double.valueOf(this.parameterTextFieldOffsetY.getSelectedItem()));
 			coordSysTransParameter.setTranslateZ(Double.valueOf(this.parameterTextFieldOffsetZ.getSelectedItem()));
-			CoordSysTranslator.convert(src, this.prjCoordSys, coordSysTransParameter, method);
-			isSuccessful = true;
-			getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
+			isSuccessful = CoordSysTranslator.convert(src, this.prjCoordSys, coordSysTransParameter, method);
+			if (isSuccessful) {
+				getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
+			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 			e.printStackTrace();

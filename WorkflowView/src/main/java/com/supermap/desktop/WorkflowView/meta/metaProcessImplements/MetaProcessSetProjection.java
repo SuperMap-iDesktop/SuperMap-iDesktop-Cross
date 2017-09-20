@@ -197,13 +197,13 @@ public class MetaProcessSetProjection extends MetaProcess {
 	public boolean execute() {
 		boolean ret = true;
 
+		Dataset src;
+		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
+			src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+		} else {
+			src = this.parameterSingleDataset.getSelectedItem();
+		}
 		try {
-			Dataset src = null;
-			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
-				src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
-			} else {
-				src = (Dataset) this.parameterSingleDataset.getSelectedItem();
-			}
 			fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
 			if (this.prj != null) {
 				src.setPrjCoordSys(this.prj);

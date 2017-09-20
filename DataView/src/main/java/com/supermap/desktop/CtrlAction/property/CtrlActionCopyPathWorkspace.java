@@ -37,10 +37,6 @@ public class CtrlActionCopyPathWorkspace extends CtrlAction {
 					Workspace workspace = (Workspace) nodeData.getData();
 					ClipBoardUtilties.setSysClipboardText(workspace.getConnectionInfo().getServer());
 				}
-//				else if (nodeData.getType() == NodeDataType.DATASOURCE) {
-//					Datasource tempDatasource = (Datasource) nodeData.getData();
-//					ClipBoardUtilties.setSysClipboardText(tempDatasource.getConnectionInfo().getServer());
-//				}
 				Application.getActiveApplication().getOutput().output(DataViewProperties.getString("String_CopyFilePath"));
 			}
 		} catch (Exception e) {
@@ -53,6 +49,9 @@ public class CtrlActionCopyPathWorkspace extends CtrlAction {
 		boolean enable = false;
 		try {
 			enable = this.isFileWorkspace();
+			if (Application.getActiveApplication().getWorkspace().getCaption().equals("UntitledWorkspace")){
+				enable=false;
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
