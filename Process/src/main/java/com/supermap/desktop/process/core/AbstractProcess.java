@@ -96,7 +96,7 @@ public abstract class AbstractProcess implements IProcess {
 		boolean isSuccessful = false;
 		try {
 			//	运行前，必要参数值是否异常判断(包括源数据、结果数据、必填参数)-yuanR2017.9.12
-			if (isInputDataReady() && isOutputDataReady() && isReady(new ReadyEvent(this, true))) {
+			if (isReady(new ReadyEvent(this, true))) {
 				setStatus(RunningStatus.RUNNING);
 				fireRunning(new RunningEvent(this, 0,
 						StringUtilities.isNullOrEmptyString(getRUNNING_MESSAGE()) ? RUNNING_MESSAGE : getRUNNING_MESSAGE()
@@ -131,15 +131,16 @@ public abstract class AbstractProcess implements IProcess {
 	 *
 	 * @return
 	 */
-	private final boolean isInputDataReady() {
-		Boolean isInPutDataReady = true;
+	private boolean isInputDataReady() {
 		// 运行前，源数据和结果数据是否为空异常判断-yuanR2017.9.13
 		InputData[] inputData = this.getParameters().getInputs().getDatas();
 		for (InputData anInputData : inputData) {
-			ArrayList<IParameter> iParameters = anInputData.getParameters();
-			for (IParameter iParameter : iParameters) {
-				if (!iParameter.isReady()) {
-					return false;
+			if (!anInputData.isBinded()) {
+				ArrayList<IParameter> iParameters = anInputData.getParameters();
+				for (IParameter iParameter : iParameters) {
+					if (!iParameter.isReady()) {
+						return false;
+					}
 				}
 			}
 		}
@@ -152,8 +153,7 @@ public abstract class AbstractProcess implements IProcess {
 	 *
 	 * @return
 	 */
-	private final boolean isOutputDataReady() {
-//		Boolean isOutPutDataReady = true;
+	private boolean isOutputDataReady() {
 		// 运行前，源数据和结果数据是否为空异常判断-yuanR2017.9.13
 		OutputData[] outputData = this.getParameters().getOutputs().getDatas();
 		for (OutputData anOutputData : outputData) {
@@ -170,6 +170,12 @@ public abstract class AbstractProcess implements IProcess {
 	@Override
 	public final boolean isReady(ReadyEvent readyEvent) {
 		if (!isReadyHook()) {
+			return false;
+		}
+		if (!isInputDataReady()) {
+			return false;
+		}
+		if (!isOutputDataReady()) {
 			return false;
 		}
 		// 参数是否准备就续-yuanR
