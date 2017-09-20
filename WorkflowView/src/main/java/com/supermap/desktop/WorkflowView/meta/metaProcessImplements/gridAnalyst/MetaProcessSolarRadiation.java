@@ -3,7 +3,12 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridAnalyst
 import com.supermap.analyst.spatialanalyst.SolarRadiation;
 import com.supermap.analyst.spatialanalyst.SolarRadiationParameter;
 import com.supermap.analyst.spatialanalyst.SolarRadiationResult;
-import com.supermap.data.*;
+import com.supermap.data.CoordSysTranslator;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -13,7 +18,12 @@ import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterTextField;
 import com.supermap.desktop.process.parameters.ParameterPanels.SolarRadiation.ParameterCheckboBoxAndTextField;
 import com.supermap.desktop.process.parameters.ParameterPanels.SolarRadiation.ParameterSolarRadiationAnalysisType;
 import com.supermap.desktop.properties.CommonProperties;
@@ -193,7 +203,7 @@ public class MetaProcessSolarRadiation extends MetaProcess {
 			this.getParameters().getOutputs().getData(OUTPUT_DATA_DURATION).setValue(solarRadiationResult.getDurationDatasetGrid());
 			isSuccessful = solarRadiationResult != null;
 		} catch (Exception e) {
-			if (e.getMessage().toString().indexOf("StartHour") != -1 || e.getMessage().toString().indexOf("StartDay") != -1) {
+			if (e.getMessage() != null && (e.getMessage().toString().indexOf("StartHour") != -1 || e.getMessage().toString().indexOf("StartDay") != -1)) {
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_StartTimeNotEqualEndTime"));
 			} else {
 				Application.getActiveApplication().getOutput().output(e);

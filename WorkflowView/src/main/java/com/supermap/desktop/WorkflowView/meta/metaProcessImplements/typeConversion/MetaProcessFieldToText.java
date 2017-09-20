@@ -98,7 +98,7 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 			resultDataset.setPrjCoordSys(src.getPrjCoordSys());
 			for (int i = 0; i < src.getFieldInfos().getCount(); i++) {
 				FieldInfo fieldInfo = src.getFieldInfos().get(i);
-				if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().equals("smuserid")) {
+				if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().contains("smuserid")) {
 					try {
 						resultDataset.getFieldInfos().add(fieldInfo);
 					} catch (Exception e) {
