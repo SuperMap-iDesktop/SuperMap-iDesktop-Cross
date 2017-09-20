@@ -232,6 +232,10 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 			}
 			//缓冲半径列表
 			ArrayList<Double> radioLists = this.parameterMultiBufferRadioList.getRadioLists();
+			if (radioLists.size() == 0) {
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_BufferRadiusListNull"));
+				return false;
+			}
 			double[] radioListResult = null;
 			if (radioLists != null && radioLists.size() > 0) {
 				// 还有待优化-yuanR存疑2017.8.31
