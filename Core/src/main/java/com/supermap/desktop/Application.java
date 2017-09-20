@@ -1,8 +1,33 @@
 package com.supermap.desktop;
 
-import com.supermap.data.*;
-import com.supermap.desktop.Interface.*;
-import com.supermap.desktop.event.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
+import com.supermap.data.Resources;
+import com.supermap.data.SymbolGroup;
+import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceClosingEvent;
+import com.supermap.data.WorkspaceClosingListener;
+import com.supermap.data.WorkspaceOpenedEvent;
+import com.supermap.data.WorkspaceOpenedListener;
+import com.supermap.desktop.Interface.ICtrlAction;
+import com.supermap.desktop.Interface.IDataEntry;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMain;
+import com.supermap.desktop.Interface.IOutput;
+import com.supermap.desktop.Interface.ISplashForm;
+import com.supermap.desktop.Interface.IWorkflow;
+import com.supermap.desktop.Interface.StringEntry;
+import com.supermap.desktop.event.ActiveDatasetsChangeEvent;
+import com.supermap.desktop.event.ActiveDatasetsChangeListener;
+import com.supermap.desktop.event.ActiveDatasourcesChangeEvent;
+import com.supermap.desktop.event.ActiveDatasourcesChangeListener;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormLoadedListener;
+import com.supermap.desktop.event.ResourcesChangedEvent;
+import com.supermap.desktop.event.ResourcesChangedListener;
+import com.supermap.desktop.event.WorkflowInitListener;
+import com.supermap.desktop.event.WorkflowsChangedEvent;
+import com.supermap.desktop.event.WorkflowsChangedListener;
 import com.supermap.desktop.implement.Output;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
@@ -10,7 +35,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.swing.event.EventListenerList;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EventObject;
+import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * 应用程序类，实现启动主窗口、插件管理和代码段编译执行等功能。
@@ -482,8 +511,8 @@ public class Application {
 		Element workflowsNode = XmlUtilities.findElementNodeByName(desktopInfoDoc, "Workflows");
 		Element[] workflowsArray = XmlUtilities.getChildElementNodesByName(workflowsNode, "WorkflowEntry");
 		for (Element element : workflowsArray) {
-			if (element.getAttribute("name").equals(workflowName)) {
-				workflowsNode.removeChild(element);
+			if (element.getAttribute("Name").equals(workflowName)) {
+				element.getParentNode().removeChild(element);
 				break;
 			}
 		}
