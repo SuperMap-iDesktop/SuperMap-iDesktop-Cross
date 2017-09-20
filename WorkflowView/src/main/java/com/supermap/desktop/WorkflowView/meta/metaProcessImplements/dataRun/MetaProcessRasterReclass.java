@@ -39,26 +39,22 @@ public class MetaProcessRasterReclass extends MetaProcess {
 		initParameters();
 		initParameterConstraint();
 		initParametersState();
-		//registerListener();
 	}
 
 	private void initParameters() {
 		this.sourceDatasource = new ParameterDatasourceConstrained();
 		this.dataset = new ParameterSingleDataset(DatasetType.GRID);
-		this.parameterRasterReclass = new ParameterRasterReclass();
+		this.parameterRasterReclass = new ParameterRasterReclass(CommonProperties.getString("String_FormEdgeCount_Text"));
 		this.saveDataset = new ParameterSaveDataset();
 
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
 		sourceData.addParameters(this.sourceDatasource, this.dataset);
-		ParameterCombine parameterSetting = new ParameterCombine();
-		parameterSetting.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
-		parameterSetting.addParameters(this.parameterRasterReclass);
 		ParameterCombine targetData = new ParameterCombine();
 		targetData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		targetData.addParameters(this.saveDataset);
 
-		this.parameters.setParameters(sourceData, parameterSetting, targetData);
+		this.parameters.setParameters(sourceData, this.parameterRasterReclass, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_ReclassResult"), DatasetTypes.GRID, targetData);
 	}
@@ -88,6 +84,7 @@ public class MetaProcessRasterReclass extends MetaProcess {
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		this.parameterRasterReclass.setComplexParameter(true);
 	}
+
 
 	@Override
 	public boolean execute() {

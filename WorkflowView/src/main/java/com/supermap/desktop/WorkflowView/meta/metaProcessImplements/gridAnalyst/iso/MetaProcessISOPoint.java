@@ -105,6 +105,9 @@ public class MetaProcessISOPoint extends MetaProcess {
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMethod_POLISH"), SmoothMethod.POLISH));
 		this.smoothMethod.setSelectedItem(selectedSmoothNode);
 		this.smoothness.setEnabled(false);
+		maxISOLine.setEnabled(false);
+		minISOLine.setEnabled(false);
+		isoLine.setEnabled(false);
 	}
 
 	private void reloadValue() {

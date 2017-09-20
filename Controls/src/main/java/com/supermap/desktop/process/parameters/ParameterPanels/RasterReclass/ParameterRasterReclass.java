@@ -15,8 +15,6 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterRasterReclass extends AbstractParameter implements IMultiSelectionParameter {
 	public static final String FIELD_DATASET="dataset";
-	public static final String MAPPING_TABLE="MappingTable";
-	public static final String PXIEL_FORMAT="PixelFormat";
 
 	@ParameterField(name = FIELD_DATASET)
 	private DatasetGrid dataset;
@@ -37,7 +35,7 @@ public class ParameterRasterReclass extends AbstractParameter implements IMultiS
 
 	@Override
 	public Object getSelectedItem() {
-		return null;
+		return getDataset();
 	}
 
 	@Override
@@ -67,7 +65,7 @@ public class ParameterRasterReclass extends AbstractParameter implements IMultiS
 	}
 
 	public DatasetGrid getDataset() {
-		return this.dataset;
+		return dataset;
 	}
 
 	public void setDataset(DatasetGrid dataset) {
