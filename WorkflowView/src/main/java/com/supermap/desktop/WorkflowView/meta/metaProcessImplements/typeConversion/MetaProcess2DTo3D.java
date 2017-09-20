@@ -201,7 +201,8 @@ public class MetaProcess2DTo3D extends MetaProcessTypeConversion {
 				outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
 			}
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			if (recordsetResult != null) {
 				recordsetResult.removeSteppedListener(steppedListener);

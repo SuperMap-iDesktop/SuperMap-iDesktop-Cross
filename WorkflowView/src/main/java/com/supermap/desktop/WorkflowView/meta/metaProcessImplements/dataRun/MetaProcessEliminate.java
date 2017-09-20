@@ -133,7 +133,8 @@ public class MetaProcessEliminate extends MetaProcess {
 			isSuccessful = Generalization.eliminate(src, regionTolerance, vertexTolerance, EliminateMode.ELIMINATE_BY_AREA, isDeleteSingleRegion);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			Generalization.removeSteppedListener(steppedListener);
 		}

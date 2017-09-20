@@ -127,7 +127,8 @@ public abstract class MetaProcessCenterLine extends MetaProcess {
 				isSuccessful = result != null;
 			}
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			Generalization.removeSteppedListener(steppedListener);
 		}

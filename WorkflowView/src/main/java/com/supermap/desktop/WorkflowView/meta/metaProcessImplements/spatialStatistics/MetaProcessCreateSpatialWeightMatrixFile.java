@@ -79,6 +79,7 @@ public class MetaProcessCreateSpatialWeightMatrixFile extends MetaProcessAnalyzi
 					parameterPatternsParameter.getPatternParameter());
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			WeightsUtilities.removeSteppedListener(steppedListener);
 		}

@@ -6,6 +6,7 @@ import com.supermap.analyst.spatialstatistics.IncrementalParameter;
 import com.supermap.analyst.spatialstatistics.IncrementalResult;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
@@ -51,6 +52,7 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		parameterDistanceMethod.addItem(new ParameterDataNode(ProcessProperties.getString("String_EUCLIDEAN"), DistanceMethod.EUCLIDEAN));
 
 		parameterFieldComboBox.setDescribe(ProcessProperties.getString("String_AssessmentField"));
+		parameterFieldComboBox.setFieldType(new FieldType[]{FieldType.INT32, FieldType.DOUBLE, FieldType.INT16, FieldType.SINGLE, FieldType.INT64});
 		parameterCheckBox.setDescribe(ProcessProperties.getString("String_Standardization"));
 		parameterTextFieldBeginDistance.setDescribe(ProcessProperties.getString("String_BeginDistance"));
 		parameterTextFieldBeginDistance.setUnit(ProcessProperties.getString("String_Label_meter"));
@@ -139,9 +141,7 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		incrementalParameter.setDistanceMethod((DistanceMethod) ((ParameterDataNode) parameterDistanceMethod.getSelectedItem()).getData());
 		try {
 			// 当选择的字段值全相等时，会抛异常-yuanR2017.9.5
-			// 当选择的字段类型为字符时，无法正常运行 -yuanR2017.9.5
 			// 当字段值较少时，会抛异常 -yuanR2017.9.5
-			// todo 建议组建修改yuanR2017.9.5
 			AnalyzingPatterns.addSteppedListener(steppedListener);
 			IncrementalResult[] incrementalResults = AnalyzingPatterns.incrementalAutoCorrelation(datasetVector, incrementalParameter);
 			isSuccessful = incrementalResults != null && incrementalResults.length > 0;
@@ -181,7 +181,8 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 				//  parameterResult.setSelectedItem(result);
 			}
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			AnalyzingPatterns.removeSteppedListener(steppedListener);
 		}

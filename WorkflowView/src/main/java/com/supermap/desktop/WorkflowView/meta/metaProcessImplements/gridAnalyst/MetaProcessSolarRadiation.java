@@ -157,8 +157,8 @@ public class MetaProcessSolarRadiation extends MetaProcess {
 			this.getParameters().getOutputs().getData(OUTPUT_DATA_DURATION).setValue(solarRadiationResult.getDurationDatasetGrid());
 			isSuccessful = solarRadiationResult != null;
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			SolarRadiation.removeSteppedListener(steppedListener);
 		}

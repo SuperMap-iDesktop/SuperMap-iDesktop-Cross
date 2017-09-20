@@ -218,6 +218,7 @@ public class MetaProcessCreateDistanceRaster extends MetaProcessGridAnalyst {
 
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			DistanceAnalyst.removeSteppedListener(steppedListener);
 		}

@@ -244,7 +244,8 @@ public class MetaProcessComputeDistance extends MetaProcess {
 			recordsetReference.dispose();
 
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			ProximityAnalyst.removeSteppedListener(steppedListener);
 		}

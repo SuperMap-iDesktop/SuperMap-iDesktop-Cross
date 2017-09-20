@@ -50,7 +50,8 @@ public abstract class MetaProcessGridAnalyst extends MetaProcess {
 				DistanceAnalyst.setAnalystSetting(oldGridAnalystSetting);
 				ConversionAnalyst.setAnalystSetting(oldGridAnalystSetting);
 			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(e);
+				Application.getActiveApplication().getOutput().output(e.getMessage());
+				e.printStackTrace();
 			} finally {
 				lock.writeLock().unlock();
 			}

@@ -128,7 +128,8 @@ public class MetaProcessSqlQuery extends MetaProcess {
 				}
 			}
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			if (resultRecord != null) {
 				resultRecord.close();
