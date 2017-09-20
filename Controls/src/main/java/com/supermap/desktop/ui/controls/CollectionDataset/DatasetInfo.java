@@ -12,9 +12,18 @@ public class DatasetInfo {
 	private String engineType;
 	private String dataBase;
 	private String user;
+	private String alias;
 
 	public DatasetInfo() {
 
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 
 	public String getServer() {
