@@ -233,10 +233,11 @@ public class TaskStateManager {
 			if (nextProcesses != null && nextProcesses.size() > 0) {
 				for (IProcess nextProcess :
 						nextProcesses) {
-					moveProcess(nextProcess, TasksManager.WORKER_STATE_CANCELLED);
+					handleCancelled(nextProcess);
 				}
 			}
 		}
+
 	}
 
 	private void handleWarning(IProcess process) {
