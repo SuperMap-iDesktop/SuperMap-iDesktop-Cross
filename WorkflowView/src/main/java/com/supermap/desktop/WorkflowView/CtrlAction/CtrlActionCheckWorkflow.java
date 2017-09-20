@@ -19,7 +19,7 @@ public class CtrlActionCheckWorkflow extends CtrlAction {
 	protected void run() {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm instanceof FormWorkflow) {
-			if (((FormWorkflow) activeForm).getWorkflow().isReady()) {
+			if (((FormWorkflow) activeForm).isEditable() && ((FormWorkflow) activeForm).getWorkflow().isReady()) {
 				Application.getActiveApplication().getOutput().output(WorkflowViewProperties.getString("String_WorkflowNoError"));
 			}
 		}
