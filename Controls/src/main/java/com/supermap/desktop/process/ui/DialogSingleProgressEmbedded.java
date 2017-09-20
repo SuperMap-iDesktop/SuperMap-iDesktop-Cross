@@ -46,6 +46,7 @@ public class DialogSingleProgressEmbedded extends SmDialog implements IWorkerVie
 	}
 
 	private void initializeComponents() {
+		setTitle(this.worker.getTitle());
 		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		this.progressBar = new RoundProgressBar();
 		this.labelMessage = new JLabel();
