@@ -20,6 +20,7 @@ import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
@@ -207,9 +208,14 @@ public class DefaultParameters implements IParameters {
 						buttonSetAsGlobalParameter.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
-								ArrayList<IParameter> parameters = extraParameters.get(ENVIRONMENT);
-								for (IParameter parameter : parameters) {
-									((IEnvironmentParameter) parameter).setAsGlobalEnvironment();
+								CursorUtilities.setWaitCursor();
+								try {
+									ArrayList<IParameter> parameters = extraParameters.get(ENVIRONMENT);
+									for (IParameter parameter : parameters) {
+										((IEnvironmentParameter) parameter).setAsGlobalEnvironment();
+									}
+								} finally {
+									CursorUtilities.setDefaultCursor();
 								}
 							}
 						});

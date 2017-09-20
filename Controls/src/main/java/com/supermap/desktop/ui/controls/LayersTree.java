@@ -188,7 +188,7 @@ public class LayersTree extends JTree {
 
 			int offset = x - this.getUI().getPathBounds(this, path).x;
 			/*
-		     * 修改为使用Render来计算点击的Icon类型 modified by gouyu 2010-12-24
+	         * 修改为使用Render来计算点击的Icon类型 modified by gouyu 2010-12-24
 			 */
 			result = ((LayersTreeCellRenderer) this.getCellRenderer()).getHitTestIconType(node, offset);
 		}
@@ -378,7 +378,7 @@ public class LayersTree extends JTree {
 		Theme theme = layer.getTheme();
 		if (layer instanceof LayerHeatmap) {
 			result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.HEAT_MAP));
-		} else if (layer instanceof LayerGridAggregation) {
+		}else if (layer instanceof LayerGridAggregation) {
 			result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.GRID_AGGREGATION));
 		} else if (theme == null) {
 			if (dataset == null) {
@@ -397,8 +397,6 @@ public class LayersTree extends JTree {
 					result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.DATASET_GRID_COLLECTION));
 				} else if (dataset.getType().equals(DatasetType.IMAGECOLLECTION)) {
 					result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.DATASET_IMAGE_COLLECTION));
-				} else if (dataset.getType().equals(DatasetType.VECTORCOLLECTION)) {
-					result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.DATASET_VECTOR_COLLECTION));
 				} else {
 					if (dataset.getType().equals(DatasetType.WMS)) {
 						result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER_WMS));
@@ -409,7 +407,6 @@ public class LayersTree extends JTree {
 							result.add(childNode);
 						}
 					}
-
 					if (result == null) {
 						result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER));
 					}

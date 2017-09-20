@@ -274,11 +274,12 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void setComponentsEnabled() {
-		this.buttonAdd.setEnabled(!this.datasetVector.isReadOnly());
-		this.buttonDelete.setEnabled(canRemove());
+		boolean buttonEnabled = datasetVector.getType() != DatasetType.VECTORCOLLECTION;
+		this.buttonAdd.setEnabled(buttonEnabled && !this.datasetVector.isReadOnly());
+		this.buttonDelete.setEnabled(buttonEnabled && canRemove());
 		this.checkBoxShowWarning.setEnabled(!this.datasetVector.isReadOnly());
-		this.buttonReset.setEnabled(!this.modifieds.isEmpty() || this.isCellValueChange);
-		this.buttonApply.setEnabled(!this.modifieds.isEmpty() || this.isCellValueChange);
+		this.buttonReset.setEnabled(buttonEnabled && (!this.modifieds.isEmpty() || this.isCellValueChange));
+		this.buttonApply.setEnabled(buttonEnabled && (!this.modifieds.isEmpty() || this.isCellValueChange));
 	}
 
 	private void buttonAddClicked() {
