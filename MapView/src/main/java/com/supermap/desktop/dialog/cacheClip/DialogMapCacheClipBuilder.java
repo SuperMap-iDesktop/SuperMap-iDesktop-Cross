@@ -643,6 +643,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			}
 			mapCacheBuilder.setMap(map);
 		}
+		setOutputScalesInfo();
 		setMapCacheBuilderBasicInfo();
 		boolean result;
 		long startTime = System.currentTimeMillis();
