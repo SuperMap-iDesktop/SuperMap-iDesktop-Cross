@@ -94,7 +94,7 @@ public class FileType {
 				} else if ("LIDAR".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "LIDAR", "txt"), "txt"));
 				} else if ("GPS".equalsIgnoreCase(importType)) {
-					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, importType.toLowerCase()), "gpx"));
+					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, "gpx"), "gpx"));
 				} else if ("EXCEL".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType1"), "Microsoft Excel", "xls", "xlsx"), "xls", "xlsx"));
 				} else if ("TIF".equalsIgnoreCase(importType)) {

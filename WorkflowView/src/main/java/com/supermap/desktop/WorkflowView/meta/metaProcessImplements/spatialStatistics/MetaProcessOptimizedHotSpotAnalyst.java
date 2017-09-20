@@ -5,7 +5,6 @@ import com.supermap.analyst.spatialstatistics.ClusteringDistributions;
 import com.supermap.analyst.spatialstatistics.OptimizedParameter;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -87,7 +86,7 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 		parameterSaveDataset = new ParameterSaveDataset();
 
 		parameterFieldComboBoxNotPoint = new ParameterFieldComboBox(ProcessProperties.getString("String_AssessmentField"));
-		parameterFieldComboBoxNotPoint.setFieldType(new FieldType[]{FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE});
+		parameterFieldComboBoxNotPoint.setFieldType(fieldType);
 
 		parameterComboBox = new ParameterComboBox(ProcessProperties.getString("String_AggregationMethod"));
 		parameterComboBox.addItem(new ParameterDataNode(ProcessProperties.getString("String_AGGREGATION"), AggregationMethod.AGGREGATIONPOLYGONS));
@@ -152,10 +151,7 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 		if (defaultDatasetVector != null) {
 			parameterDatasource.setSelectedItem(defaultDatasetVector.getDatasource());
 			parameterSingleDataset.setSelectedItem(defaultDatasetVector);
-
-			parameterFieldComboBoxNotPoint.setDataset(defaultDatasetVector);
 			parameterFieldComboBoxNotPoint.setFieldName(defaultDatasetVector);
-
 			parameterDatasourceBounding.setSelectedItem(defaultDatasetVector.getDatasource());
 			parameterDatasourceAggregating.setSelectedItem(defaultDatasetVector.getDatasource());
 			parameterSingleDatasetBounding.setSelectedItem(defaultDatasetVector);

@@ -80,7 +80,7 @@ public class MetaProcessDEMLake extends MetaProcess {
 		if (datasetRegion != null) {
 			lakeDatasource.setSelectedItem(datasetRegion.getDatasource());
 			lakeDataset.setSelectedItem(datasetRegion);
-			heightFieldComboBox.setDataset((DatasetVector) datasetRegion);
+			heightFieldComboBox.setFieldName((DatasetVector) datasetRegion);
 		}
 		heightFieldComboBox.setShowNullValue(true);
 

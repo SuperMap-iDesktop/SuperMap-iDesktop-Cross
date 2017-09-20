@@ -269,6 +269,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 		((TitledBorder) this.getBorder()).setTitle(MapViewProperties.getString("String_LayerHeatmap_ParameterSetting"));
 		this.panelMaximumSetting.setBorder(BorderFactory.createTitledBorder(MapViewProperties.getString("String_LayerHeatmap_MaxiumSetting")));
 		this.labelKernelRadius.setText(MapViewProperties.getString("String_LayerHeatmap_KernelRadius"));
+		this.labelKernelRadius.setToolTipText(ControlsProperties.getString("String_ValidRange") + "[1,50]");
 		this.labelWeightField.setText(MapViewProperties.getString("String_LayerHeatmap_WeightField"));
 		this.labelColorScheme.setText(MapViewProperties.getString("String_Label_ColorScheme"));
 		this.labelMaxColor.setText(MapViewProperties.getString("String_LayerHeatmap_MaxColor"));
@@ -415,7 +416,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 			}
 			try {
 				Integer integer = Integer.valueOf(textFieldValue);
-				if(integer<1 ||integer>50){
+				if (integer < 1 || integer > 50) {
 					return false;
 				}
 			} catch (Exception e) {
@@ -597,6 +598,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 
 	private void maxColorTransparenceChange() {
 		this.componentDropDownMaxColor.setColor(resetColor(this.componentDropDownMaxColor.getColor(), (int) this.smSpinnerMaxColorTransparence.getValue()));
+		this.componentDropDownMaxColor.repaint();
 		getModifiedLayerPropertyModel().setMaxColor(this.componentDropDownMaxColor.getColor());
 		getModifiedLayerPropertyModel().setMaxColorTransparence((int) Math.round((1.0 - this.componentDropDownMaxColor.getColor().getAlpha() / 255.0) * 100));
 		checkChanged();
@@ -604,6 +606,7 @@ public class LayerHeatmapPropertyControl extends AbstractLayerPropertyControl {
 
 	private void minColorTransparenceChange() {
 		this.componentDropDownMinColor.setColor(resetColor(this.componentDropDownMinColor.getColor(), (int) this.smSpinnerMinColorTransparence.getValue()));
+		this.componentDropDownMinColor.repaint();
 		getModifiedLayerPropertyModel().setMinColor(this.componentDropDownMinColor.getColor());
 		int temp = (int) Math.round((1.0 - this.componentDropDownMinColor.getColor().getAlpha() / 255.0) * 100);
 		getModifiedLayerPropertyModel().setMinColorTransparence(temp);
