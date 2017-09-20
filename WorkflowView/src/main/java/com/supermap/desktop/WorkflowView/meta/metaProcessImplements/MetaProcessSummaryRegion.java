@@ -58,7 +58,10 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterMeshType.setRequisite(true);
 		parameterMeshType.setItems(new ParameterDataNode(ProcessProperties.getString("String_QuadrilateralMesh"), "0"), new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1"));
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
-		parameterStatisticMode.setTipButtonMessage(ProcessProperties.getString("String_StatisticsModeTip"));
+		parameterFeildName.setTipButtonMessage(ProcessProperties.getString("String_FeildNameTip"));
+		parameterFeildName1.setTipButtonMessage(ProcessProperties.getString("String_FeildNameTip"));
+		parameterStatisticMode.setTipButtonMessage(ProcessProperties.getString("String_StatisticsModeSimpleTip"));
+		parameterStatisticMode1.setTipButtonMessage(ProcessProperties.getString("String_StatisticsModeSimpleTip"));
 		parameterMeshSize.setDefaultWarningValue("100");
 		parameterMeshSizeUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),
