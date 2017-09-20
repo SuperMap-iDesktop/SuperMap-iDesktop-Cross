@@ -52,7 +52,8 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		parameterDistanceMethod.addItem(new ParameterDataNode(ProcessProperties.getString("String_EUCLIDEAN"), DistanceMethod.EUCLIDEAN));
 
 		parameterFieldComboBox.setDescribe(ProcessProperties.getString("String_AssessmentField"));
-		parameterFieldComboBox.setFieldType(new FieldType[]{FieldType.INT32, FieldType.DOUBLE, FieldType.INT16, FieldType.SINGLE, FieldType.INT64});
+		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
+		parameterFieldComboBox.setFieldType(fieldType);
 		parameterCheckBox.setDescribe(ProcessProperties.getString("String_Standardization"));
 		parameterTextFieldBeginDistance.setDescribe(ProcessProperties.getString("String_BeginDistance"));
 		parameterTextFieldBeginDistance.setUnit(ProcessProperties.getString("String_Label_meter"));
@@ -134,14 +135,14 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 
 		IncrementalParameter incrementalParameter = new IncrementalParameter();
 		incrementalParameter.setAssessmentFieldName(parameterFieldComboBox.getFieldName());
-		incrementalParameter.setStandardization(Boolean.valueOf((String) parameterCheckBox.getSelectedItem()));
-		incrementalParameter.setBeginDistance(Double.valueOf((String) parameterTextFieldBeginDistance.getSelectedItem()));
-		incrementalParameter.setIncrementalNumber(Integer.valueOf((String) parameterTextFieldIncrementalNumber.getSelectedItem()));
-		incrementalParameter.setIncrementalDistance(Double.valueOf((String) parameterTextFieldIncrementalDistance.getSelectedItem()));
+		incrementalParameter.setStandardization(Boolean.valueOf(parameterCheckBox.getSelectedItem()));
+		incrementalParameter.setBeginDistance(Double.valueOf(parameterTextFieldBeginDistance.getSelectedItem()));
+		incrementalParameter.setIncrementalNumber(Integer.valueOf(parameterTextFieldIncrementalNumber.getSelectedItem()));
+		incrementalParameter.setIncrementalDistance(Double.valueOf(parameterTextFieldIncrementalDistance.getSelectedItem()));
 		incrementalParameter.setDistanceMethod((DistanceMethod) ((ParameterDataNode) parameterDistanceMethod.getSelectedItem()).getData());
+		// 当选择的字段值全相等时，会抛异常-yuanR2017.9.5
+		// 当字段值较少时，会抛异常 -yuanR2017.9.5
 		try {
-			// 当选择的字段值全相等时，会抛异常-yuanR2017.9.5
-			// 当字段值较少时，会抛异常 -yuanR2017.9.5
 			AnalyzingPatterns.addSteppedListener(steppedListener);
 			IncrementalResult[] incrementalResults = AnalyzingPatterns.incrementalAutoCorrelation(datasetVector, incrementalParameter);
 			isSuccessful = incrementalResults != null && incrementalResults.length > 0;

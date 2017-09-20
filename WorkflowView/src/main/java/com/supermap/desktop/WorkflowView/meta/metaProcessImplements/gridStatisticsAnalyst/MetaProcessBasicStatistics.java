@@ -1,5 +1,6 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst;
 
+import com.sun.org.glassfish.external.statistics.Statistic;
 import com.supermap.analyst.spatialanalyst.BasicStatisticsAnalystResult;
 import com.supermap.analyst.spatialanalyst.StatisticsAnalyst;
 import com.supermap.data.DatasetGrid;
@@ -31,32 +32,18 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
 	private ParameterTextArea textAreaResult;
-	private ParameterCheckBox checkBoxShow;
-	private ParameterNumber numberGroupCount;
 	private ParameterHistogram histogram;
 
 	public MetaProcessBasicStatistics() {
 		initParameters();
 		initParameterState();
 		initParameterConstraint();
-		initListener();
-	}
-
-	private void initListener() {
-		checkBoxShow.addPropertyListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				numberGroupCount.setEnabled(Boolean.parseBoolean(checkBoxShow.getSelectedItem().toString()));
-			}
-		});
 	}
 
 	private void initParameters() {
 		sourceDatasource = new ParameterDatasourceConstrained();
 		sourceDataset = new ParameterSingleDataset(DatasetType.GRID);
 		textAreaResult = new ParameterTextArea();
-		checkBoxShow = new ParameterCheckBox(ProcessProperties.getString("String_CheckBox_CreateHistogram"));
-		numberGroupCount = new ParameterNumber(ProcessProperties.getString("String_Label_GroupCount"));
 		histogram = new ParameterHistogram();
 
 		ParameterCombine sourceCombine = new ParameterCombine();
@@ -64,7 +51,7 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 		sourceCombine.addParameters(sourceDatasource, sourceDataset);
 		ParameterCombine resultCombine = new ParameterCombine();
 		resultCombine.setDescribe(ProcessProperties.getString("String_GroupBox_StatisticsResult"));
-		resultCombine.addParameters(textAreaResult,checkBoxShow, numberGroupCount, histogram);
+		resultCombine.addParameters(textAreaResult,histogram);
 
 		parameters.setParameters(sourceCombine, resultCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceCombine);
@@ -78,10 +65,6 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 			sourceDataset.setSelectedItem(datasetGrid);
 		}
 		textAreaResult.setEnabled(false);
-		numberGroupCount.setSelectedItem(5);
-		numberGroupCount.setMinValue(1);
-		numberGroupCount.setMaxBit(-1);
-		numberGroupCount.setEnabled(false);
 	}
 
 	private void initParameterConstraint() {
@@ -110,7 +93,7 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 		boolean isSuccessful = false;
 		try {
 			StatisticsAnalyst.addSteppedListener(steppedListener);
-			DatasetGrid src = null;
+			DatasetGrid src;
 			if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
 				src = (DatasetGrid) parameters.getInputs().getData(INPUT_DATA).getValue();
 			} else {
@@ -129,11 +112,9 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 			                               ProcessProperties.getString("String_Result_StandardDeviation")+std+"\n"+
 			                               ProcessProperties.getString("String_Result_Variance")+var);
 			StatisticsCollection statisticsCollection = new StatisticsCollection(max, min, mean, std, var);
-			if (Boolean.valueOf(checkBoxShow.getSelectedItem().toString())) {
-				int groupCount = Integer.parseInt(numberGroupCount.getSelectedItem().toString());
-				histogram.setSelectedItem(StatisticsAnalyst.createHistogram(src,groupCount));
+			if (histogram.isCreate()) {
+				histogram.setSelectedItem(StatisticsAnalyst.createHistogram(src,histogram.getGroupCount()));
 			}
-			isSuccessful = statisticsCollection != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(statisticsCollection);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
