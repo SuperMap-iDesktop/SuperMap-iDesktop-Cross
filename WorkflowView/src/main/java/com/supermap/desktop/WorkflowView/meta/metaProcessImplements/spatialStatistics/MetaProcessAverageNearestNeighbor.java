@@ -117,6 +117,7 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			AnalyzingPatterns.removeSteppedListener(steppedListener);
 		}

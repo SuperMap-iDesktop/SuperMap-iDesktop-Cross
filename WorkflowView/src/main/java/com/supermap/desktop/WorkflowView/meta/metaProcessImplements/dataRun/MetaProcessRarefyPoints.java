@@ -176,7 +176,8 @@ public class MetaProcessRarefyPoints extends MetaProcess {
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 			isSuccessful = result != null;
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			ProximityAnalyst.removeSteppedListener(steppedListener);
 		}

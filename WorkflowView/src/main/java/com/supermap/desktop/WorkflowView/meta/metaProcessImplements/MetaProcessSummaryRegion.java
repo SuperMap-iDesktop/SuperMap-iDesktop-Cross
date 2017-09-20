@@ -214,6 +214,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		} catch (Exception e) {
 			isSuccessful = false;
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			CursorUtilities.setDefaultCursor();
 		}
