@@ -61,7 +61,9 @@ public class NodeDataType extends Enum {
 
 	public static final NodeDataType WORKFLOW = new NodeDataType(1023, 1023);
 
-    public static final NodeDataType DATASET_VECTOR_ITEM = new NodeDataType(1024, 1024);
+    public static final NodeDataType DATASET_VECTOR_COLLECTION = new NodeDataType(1024, 1024);
+
+    public static final NodeDataType DATASET_VECTOR_ITEM = new NodeDataType(1025, 1025);
 
 
 	public static final NodeDataType SCREEN_LAYER3D = new NodeDataType(2001, 2001);
