@@ -2,7 +2,6 @@ package com.supermap.desktop.process.parameter.ipls;
 
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.interfaces.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -11,11 +10,12 @@ import java.beans.PropertyChangeEvent;
 /**
  * Created by xie on 2017/8/17.
  */
-public class ParameterDefaultValueTextField extends AbstractParameter implements ISelectionParameter {
+public class ParameterDefaultValueTextField extends ParameterTextField implements ISelectionParameter {
 	private String describe;
 	private String unit;
 	private Boolean isSetUnit = false;
-	private String toolTip;
+	// toolTip提示信息用tipButtonMessage代替-yuanR2017.9.20
+	//private String toolTip;
 	private String defaultWarningValue;
 
 	@ParameterField(name = PROPERTY_VALE)
@@ -43,7 +43,7 @@ public class ParameterDefaultValueTextField extends AbstractParameter implements
 	}
 
 	@Override
-	public Object getSelectedItem() {
+	public String getSelectedItem() {
 		return StringUtilities.isNullOrEmpty(value) ? (null == defaultWarningValue ? "" : defaultWarningValue) : value;
 	}
 
@@ -92,13 +92,13 @@ public class ParameterDefaultValueTextField extends AbstractParameter implements
 		return this.unit;
 	}
 
-	public String getToolTip() {
-		return toolTip;
-	}
+	//public String getToolTip() {
+	//	return toolTip;
+	//}
 
-	public void setToolTip(String toolTip) {
-		this.toolTip = toolTip;
-	}
+	//public void setToolTip(String toolTip) {
+	//	this.toolTip = toolTip;
+	//}
 
 	public Boolean getSetUnit() {
 		return isSetUnit;

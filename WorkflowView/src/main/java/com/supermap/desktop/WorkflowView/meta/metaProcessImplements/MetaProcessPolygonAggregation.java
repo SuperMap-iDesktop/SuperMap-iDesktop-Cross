@@ -45,8 +45,8 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 		parameterAggregationType.setRequisite(true);
 		parameterAggregationType.setItems(parameterDataNode);
 		parameterAggregationType.setSelectedItem(parameterDataNode);
-		parameterStaticModel.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
-		parameterWeightIndex.setToolTip(ProcessProperties.getString("String_WeightIndexTip"));
+		parameterStaticModel.setTipButtonMessage(ProcessProperties.getString("String_StatisticsModeTip"));
+		parameterWeightIndex.setTipButtonMessage(ProcessProperties.getString("String_WeightIndexTip"));
 	}
 
 	private void initComponentLayout() {
@@ -98,8 +98,8 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
 			parameterAnalystDataType.initAnalystInput(analyst, 2);
-			CommonSettingCombine fields = new CommonSettingCombine("fields", parameterWeightIndex.getSelectedItem().toString());
-			CommonSettingCombine statisticModes = new CommonSettingCombine("statisticModes", parameterStaticModel.getSelectedItem().toString());
+			CommonSettingCombine fields = new CommonSettingCombine("fields", parameterWeightIndex.getSelectedItem());
+			CommonSettingCombine statisticModes = new CommonSettingCombine("statisticModes", parameterStaticModel.getSelectedItem());
 			analyst.add(fields, statisticModes);
 
 			CommonSettingCombine type = new CommonSettingCombine("type", parameterAggregationType.getSelectedData().toString());
