@@ -6,7 +6,7 @@ import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.loader.IProcessGroup;
 import com.supermap.desktop.process.loader.IProcessLoader;
-import com.supermap.desktop.process.ui.SmDialogProcess;
+import com.supermap.desktop.process.ui.ProcessUtil;
 import com.supermap.desktop.ui.controls.comboBox.SearchItemValueGetter;
 
 import javax.swing.*;
@@ -93,8 +93,7 @@ public class ProcessTree extends JTree implements SearchItemValueGetter<DefaultM
 					if (userObject instanceof IProcessLoader) {
 						IProcess process = ((IProcessLoader) userObject).loadProcess();
 						if (process != null) {
-							SmDialogProcess smDialogProcess = new SmDialogProcess(process);
-							smDialogProcess.showDialog();
+							ProcessUtil.showDialogProcess(process);
 						}
 					}
 				}

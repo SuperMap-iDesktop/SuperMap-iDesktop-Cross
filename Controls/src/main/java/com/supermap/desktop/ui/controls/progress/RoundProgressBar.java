@@ -13,6 +13,8 @@ import java.util.TimerTask;
 public class RoundProgressBar extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	private static final Color DEFAULT_BACKGROUNDCOLOR = new Color(215, 215, 215);
+	private static final Color DEFAULT_FOREGROUNDCOLOR = new Color(39, 162, 223);
 
 	/**
 	 * mini progress
@@ -57,9 +59,9 @@ public class RoundProgressBar extends JPanel {
 		setMinimumProgress(0);
 		setMaximumProgress(100);
 		setProgress(0);
-		setBackgroundColor(new Color(209, 206, 200));
-		setForegroundColor(Color.green);
-		setDigitalColor(Color.black);
+		setBackgroundColor(DEFAULT_BACKGROUNDCOLOR);
+		setForegroundColor(DEFAULT_FOREGROUNDCOLOR);
+		setDigitalColor(Color.WHITE);
 	}
 
 	@Override

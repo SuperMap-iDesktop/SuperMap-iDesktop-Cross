@@ -214,59 +214,63 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 		boolean isSuccessful = false;
 		Datasource resultDatasource = null;
 		String resultName = null;
+
+		// 源数据
+		DatasetVector sourceDatasetVector;
+		if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
+				&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
+			sourceDatasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
+		} else {
+			sourceDatasetVector = (DatasetVector) this.dataset.getSelectedItem();
+		}
+		// 线缓冲类型
+		int bufferType = (Integer) ((ParameterDataNode) this.radioButtonFlatOrRound.getSelectedItem()).getData();
+		boolean isLeft = false;
+		if (bufferType == BUFFERTYPE_FLAT) {
+			isLeft = (Boolean) this.comboBoxBufferLeftOrRight.getSelectedData();
+		}
+		//缓冲半径列表
+		ArrayList<Double> radioLists = this.parameterMultiBufferRadioList.getRadioLists();
+		if (radioLists.size() == 0) {
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_BufferRadiusListNull"));
+			return false;
+		}
+		double[] radioListResult = null;
+		if (radioLists != null && radioLists.size() > 0) {
+			// 还有待优化-yuanR存疑2017.8.31
+			// 不支持负数，因此进行取绝对值处理-yuanR2017.8.31
+			for (int i = 0; i < radioLists.size(); i++) {
+				radioLists.set(i, Math.abs(radioLists.get(i)));
+			}
+
+			// 去重
+			Set<Double> set = new HashSet<>();
+			set.addAll(radioLists);
+			Double[] radioListDouble = set.toArray(new Double[set.size()]);
+			radioListResult = new double[radioListDouble.length];
+			for (int i = 0; i < radioListDouble.length; i++) {
+				radioListResult[i] = radioListDouble[i];
+			}
+		}
+
+		BufferRadiusUnit radiusUnit = (BufferRadiusUnit) this.parameterRadiusUnit.getSelectedData();
+		// 参数面板属性
+		boolean isUnion = "true".equalsIgnoreCase(this.parameterUnionBuffer.getSelectedItem());
+		boolean isRing = "true".equalsIgnoreCase(this.parameterRingBuffer.getSelectedItem());
+		boolean isAttributeRetained = "true".equalsIgnoreCase(this.parameterRetainAttribute.getSelectedItem());
+		int semicircleLineSegment = Integer.valueOf(this.parameterTextFieldSemicircleLineSegment.getSelectedItem());
+		// 结果面板属性
+		resultDatasource = this.parameterSaveDataset.getResultDatasource();
+		resultName = resultDatasource.getDatasets().getAvailableDatasetName(this.parameterSaveDataset.getDatasetName());
+
+		// 创建一个新的数据集用于接受多重缓冲分析结果
+		DatasetVectorInfo vectorInfo = new DatasetVectorInfo();
+		vectorInfo.setName(resultName);
+		vectorInfo.setType(DatasetType.REGION);
+		DatasetVector resultDataset = resultDatasource.getDatasets().create(vectorInfo);
+		resultDataset.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
+
 		try {
-
-			// 源数据
-			DatasetVector sourceDatasetVector;
-			if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
-					&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
-				sourceDatasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
-			} else {
-				sourceDatasetVector = (DatasetVector) this.dataset.getSelectedItem();
-			}
-			// 线缓冲类型
-			int bufferType = (Integer) ((ParameterDataNode) this.radioButtonFlatOrRound.getSelectedItem()).getData();
-			boolean isLeft = false;
-			if (bufferType == BUFFERTYPE_FLAT) {
-				isLeft = (Boolean) this.comboBoxBufferLeftOrRight.getSelectedData();
-			}
-			//缓冲半径列表
-			ArrayList<Double> radioLists = this.parameterMultiBufferRadioList.getRadioLists();
-			double[] radioListResult = null;
-			if (radioLists != null && radioLists.size() > 0) {
-				// 还有待优化-yuanR存疑2017.8.31
-				// 不支持负数，因此进行取绝对值处理-yuanR2017.8.31
-				for (int i = 0; i < radioLists.size(); i++) {
-					radioLists.set(i, Math.abs(radioLists.get(i)));
-				}
-
-				// 去重
-				Set<Double> set = new HashSet<>();
-				set.addAll(radioLists);
-				Double[] radioListDouble = set.toArray(new Double[set.size()]);
-				radioListResult = new double[radioListDouble.length];
-				for (int i = 0; i < radioListDouble.length; i++) {
-					radioListResult[i] = radioListDouble[i];
-				}
-			}
-
-			BufferRadiusUnit radiusUnit = (BufferRadiusUnit) this.parameterRadiusUnit.getSelectedData();
-			// 参数面板属性
-			boolean isUnion = "true".equalsIgnoreCase(this.parameterUnionBuffer.getSelectedItem());
-			boolean isRing = "true".equalsIgnoreCase(this.parameterRingBuffer.getSelectedItem());
-			boolean isAttributeRetained = "true".equalsIgnoreCase(this.parameterRetainAttribute.getSelectedItem());
-			int semicircleLineSegment = Integer.valueOf(this.parameterTextFieldSemicircleLineSegment.getSelectedItem());
-			// 结果面板属性
-			resultDatasource = this.parameterSaveDataset.getResultDatasource();
-			resultName = resultDatasource.getDatasets().getAvailableDatasetName(this.parameterSaveDataset.getDatasetName());
-
-			// 创建一个新的数据集用于接受多重缓冲分析结果
-			DatasetVectorInfo vectorInfo = new DatasetVectorInfo();
-			vectorInfo.setName(resultName);
-			vectorInfo.setType(DatasetType.REGION);
-			DatasetVector resultDataset = resultDatasource.getDatasets().create(vectorInfo);
-			resultDataset.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
-
 			BufferAnalyst.addSteppedListener(this.steppedListener);
 			if (sourceDatasetVector.getType().equals(DatasetType.LINE) && bufferType == BUFFERTYPE_FLAT) {
 				isSuccessful = BufferAnalyst.createLineOneSideMultiBuffer(
