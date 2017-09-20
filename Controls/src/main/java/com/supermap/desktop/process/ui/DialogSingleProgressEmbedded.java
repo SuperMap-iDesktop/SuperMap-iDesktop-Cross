@@ -6,19 +6,19 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.tasks.IWorkerView;
 import com.supermap.desktop.process.tasks.SingleProgress;
 import com.supermap.desktop.process.tasks.Worker;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.progress.RoundProgressBar;
 import org.apache.commons.lang.NullArgumentException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
  * 内嵌功能面板的进度条窗口，进度条在窗口底部进行显示
  * Created by highsad on 2017/9/20.
  */
-public class DialogSingleProgressEmbedded extends JDialog implements IWorkerView<SingleProgress> {
+public class DialogSingleProgressEmbedded extends SmDialog implements IWorkerView<SingleProgress> {
 	private RoundProgressBar progressBar;
 	private JLabel labelMessage;
 	private JLabel labelRemainTime;
@@ -41,7 +41,6 @@ public class DialogSingleProgressEmbedded extends JDialog implements IWorkerView
 		this.component = component;
 		this.worker = worker;
 		this.worker.setView(this);
-		addWindowListener(new WindowClosingHandler());
 		initializeComponents();
 		setLocationRelativeTo(null);
 	}
@@ -96,6 +95,17 @@ public class DialogSingleProgressEmbedded extends JDialog implements IWorkerView
 								.addComponent(this.labelMessage)
 								.addComponent(this.labelRemainTime)))
 				.addComponent(this.buttonRun, 23, 23, 23));
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (worker.isRunning()) {
+			isCancelledWhenClosing = true;
+			labelMessage.setText(ControlsProperties.getString("String_Canceling"));
+			labelRemainTime.setText("");
+			buttonRun.setProcedure(ButtonExecutor.CANCELLED);
+			worker.cancel();
+		}
 	}
 
 	public boolean isAutoClosed() {
@@ -169,21 +179,6 @@ public class DialogSingleProgressEmbedded extends JDialog implements IWorkerView
 		this.isCancelledWhenClosing = false;
 		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 	}
-
-	private class WindowClosingHandler extends WindowAdapter {
-
-		@Override
-		public void windowClosing(WindowEvent e) {
-			if (worker.isRunning()) {
-				isCancelledWhenClosing = true;
-				labelMessage.setText(ControlsProperties.getString("String_Canceling"));
-				labelRemainTime.setText("");
-				buttonRun.setProcedure(ButtonExecutor.CANCELLED);
-				worker.cancel();
-			}
-		}
-	}
-
 
 	private class RunHandler implements Runnable {
 
