@@ -60,9 +60,9 @@ public class Workflow implements IWorkflow {
 		this.processMatrix.addMatrixNodeRemovingListener(this.handler);
 		this.processMatrix.addMatrixNodeRemovedListener(this.handler);
 
-		this.readyCheckers.add(new ProcessChangeSourceDataChecker<>());
 		this.readyCheckers.add(new WorkflowProcessReadyChecker<>());
 		this.readyCheckers.add(new WorkflowRunnableChecker<>());
+		this.readyCheckers.add(new ProcessChangeSourceDataChecker<>());
 	}
 
 	@Override
