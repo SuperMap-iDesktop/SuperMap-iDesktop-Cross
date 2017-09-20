@@ -1,6 +1,10 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
-import com.supermap.data.*;
+import com.supermap.data.CoordSysTransMethod;
+import com.supermap.data.CoordSysTransParameter;
+import com.supermap.data.CoordSysTranslator;
+import com.supermap.data.Dataset;
+import com.supermap.data.PrjCoordSys;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -13,7 +17,13 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterButton;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterNumber;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoordSysTransMethodProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -157,7 +167,8 @@ public class MetaProcessProjection extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful = false;
 		Dataset src;
-		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
+		Object value = this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+		if (value != null && value instanceof Dataset) {
 			src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 		} else {
 			src = this.parameterDataset.getSelectedItem();
