@@ -161,8 +161,8 @@ public class SolarRadiationAnalysisTypePanel extends JPanel {
 		//this.calendar.set(Calendar.MONTH, 6);
 		this.calendar.set(Calendar.DAY_OF_YEAR, calculationDayCount(this.calendar.get(Calendar.YEAR), 6, 9, true));
 		this.calendarTextFieldEndDay.setValue(this.calendar.getTime());
-		this.labelDayInterval.setToolTipText(ControlsProperties.getString("String_ValidRange") + "[0,365]");
-		this.labelHourInterval.setToolTipText(ControlsProperties.getString("String_ValidRange") + "[0,24]");
+		this.labelDayInterval.setToolTipText(ControlsProperties.getString("String_ValidRange") + "(0,365]");
+		this.labelHourInterval.setToolTipText(ControlsProperties.getString("String_ValidRange") + "(0,24]");
 		this.solarRadiationParameter.setDayInterval(14);
 		this.solarRadiationParameter.setHourInterval(1);
 		hideComponent();
