@@ -279,7 +279,7 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
             textFieldMaxPointCount.setVisible(false);
             double width = dataset.getBounds().getWidth();
             double height = dataset.getBounds().getHeight();
-            textFieldMaxRadius.setText((int)((width>height?width:height)/5)+"");
+            textFieldMaxRadius.setText((int) ((width < height ? width : height) / 5) + "");
             textFieldSearchCount.setText("5");
             textFieldSearchCount.setInterval(2,12);
         } else if (mode == SearchMode.QUADTREE) {
@@ -299,6 +299,7 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
     public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
         if (event.getFieldName().equals(ParameterSearchMode.DATASET_FIELD_NAME)) {
             this.dataset = parameterSearchMode.getDataset();
+            radioChange(info.searchMode);
         }
     }
 }
