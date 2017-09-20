@@ -115,7 +115,6 @@ public abstract class AbstractProcess implements IProcess {
 				}
 			} else {
 				setStatus(RunningStatus.EXCEPTION);
-				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ParameterError"));
 			}
 		} catch (Exception e) {
 			fireRunning(new RunningEvent(this, 0, FAILED_MESSAGE));
@@ -139,6 +138,7 @@ public abstract class AbstractProcess implements IProcess {
 			ArrayList<IParameter> iParameters = anInputData.getParameters();
 			for (IParameter iParameter : iParameters) {
 				if (!iParameter.isReady()) {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_ParameterRequisiteUnFilled"), getTitle()));
 					return false;
 				}
 			}
@@ -160,6 +160,7 @@ public abstract class AbstractProcess implements IProcess {
 			ArrayList<IParameter> iParameters = anOutputData.getParameters();
 			for (IParameter iParameter : iParameters) {
 				if (!iParameter.isReady()) {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_ParameterRequisiteUnFilled"), getTitle()));
 					return false;
 				}
 			}

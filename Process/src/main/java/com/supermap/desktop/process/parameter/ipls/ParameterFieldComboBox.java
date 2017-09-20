@@ -40,6 +40,16 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 		this.describe = describe;
 	}
 
+	/**
+	 * 对于字段选择控件，当不能选择空值得时候，默认为必填参数
+	 * yuanR
+	 * @return
+	 */
+	@Override
+	public boolean isRequisite() {
+		return !isShowNullValue;
+	}
+
 	@Override
 	public void setSelectedItem(Object item) {
 		String oldValue = this.fieldName;

@@ -165,12 +165,6 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 			DatasetVector targetDataset;
 			targetDataset = (DatasetVector) this.targetDataset.getSelectedItem();
 
-			// 当数据集为空时，给出提示信息-yuanR2017.9.5
-			if (sourceDataset == null || targetDataset == null) {
-				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ParameterError"));
-				return false;
-			}
-
 			EdgeMatchParameter edgeMatchParameter = new EdgeMatchParameter();
 			edgeMatchParameter.setEdgeMatchMode((EdgeMatchMode) edgeMatchMode.getSelectedData());
 			edgeMatchParameter.setTolerance(Double.valueOf(edgeTolerance.getSelectedItem()));
