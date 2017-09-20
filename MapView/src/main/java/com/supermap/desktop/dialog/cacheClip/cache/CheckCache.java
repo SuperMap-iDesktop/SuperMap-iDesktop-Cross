@@ -643,10 +643,10 @@ public class CheckCache {
 		if (!scicheck.exists()) {
 			scicheck.mkdir();
 		}
-		File scierror = new File(CacheUtilities.replacePath(scicheck.getParent(), "failed"));
-		if (!scierror.exists()) {
-			scierror.mkdir();
-		}
+//		File scierror = new File(CacheUtilities.replacePath(scicheck.getParent(), "failed"));
+//		if (!scierror.exists()) {
+//			scierror.mkdir();
+//		}
 
 		return sciNames;
 	}

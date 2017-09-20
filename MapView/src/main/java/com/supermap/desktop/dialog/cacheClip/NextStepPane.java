@@ -335,8 +335,8 @@ public class NextStepPane extends JPanel implements IState {
 		this.comboBoxPixel.setSelectedItem("256*256");
 		this.checkBoxBackgroundTransparency.setEnabled(false);
 		this.checkBoxFullFillCacheImage.setEnabled(false);
-		this.mapCacheBuilder.setTileFormat(TileFormat.JPG);
-		this.mapCacheBuilder.setTileSize(TileSize.SIZE256);
+//		this.mapCacheBuilder.setTileFormat(TileFormat.JPG);
+//		this.mapCacheBuilder.setTileSize(TileSize.SIZE256);
 	}
 
 	public void resetComponentsInfo() {
@@ -431,11 +431,15 @@ public class NextStepPane extends JPanel implements IState {
 		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip
 				|| cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
 			this.panelIndexRange.setComponentsEnabled(false);
+			this.labelTileType.setEnabled(false);
+			this.comboBoxTileType.setEnabled(false);
 			this.labelImageType.setEnabled(false);
 			this.comboBoxImageType.setEnabled(false);
 			this.labelPixel.setEnabled(false);
 			this.comboBoxPixel.setEnabled(false);
 		} else {
+			this.labelTileType.setEnabled(true);
+			this.comboBoxTileType.setEnabled(true);
 			this.labelImageType.setEnabled(true);
 			this.comboBoxImageType.setEnabled(true);
 			this.labelPixel.setEnabled(true);

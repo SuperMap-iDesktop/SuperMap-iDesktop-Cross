@@ -276,7 +276,7 @@ public class ParameterInputDataType extends ParameterCombine {
 			CommonSettingCombine datasetType = null;
 			CommonSettingCombine type = new CommonSettingCombine("type", parameterDataSourceType.getSelectedItem().toString());
 			String udbPathStr = parameterDataSourcePath.getSelectedItem().toString();
-			String udbPath = udbPathStr.replaceAll("\\\\","\\\\\\\\");
+			String udbPath = udbPathStr.replaceAll("\\\\", "\\\\\\\\");
 			CommonSettingCombine url = new CommonSettingCombine("url", udbPath);
 			if (parameterSwitchUDB.getCurrentParameter().equals(parameterCombineDatasetInfo)) {
 				datasetName = new CommonSettingCombine("datasetName", parameterDatasetName1.getSelectedItem().toString());
@@ -334,7 +334,7 @@ public class ParameterInputDataType extends ParameterCombine {
 			//udb
 			String inputOverlayStr = null;
 			String udbPathStr = parameterDataSourcePath.getSelectedItem().toString();
-			String udbPath = udbPathStr.replaceAll("\\\\","//");
+			String udbPath = udbPathStr.replaceAll("\\\\", "//");
 			if (parameterSwitchUDB.getCurrentParameter().equals(parameterCombineDatasetInfo)) {
 				inputOverlayStr = "{\\\"type\\\":\\\"udb\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + udbPath + "\\\",\\\"datasetNames\\\":[\\\"" + parameterDatasetName1.getSelectedItem().toString() + "\\\"]}]}";
 			} else {

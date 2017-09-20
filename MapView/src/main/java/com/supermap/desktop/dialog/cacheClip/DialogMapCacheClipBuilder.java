@@ -1,10 +1,7 @@
 package com.supermap.desktop.dialog.cacheClip;
 
 import com.supermap.data.*;
-import com.supermap.data.processing.MapCacheBuilder;
-import com.supermap.data.processing.MapCacheVersion;
-import com.supermap.data.processing.MapTilingMode;
-import com.supermap.data.processing.StorageType;
+import com.supermap.data.processing.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;

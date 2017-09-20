@@ -107,10 +107,10 @@ public class SMSpinner extends JSpinner implements DocumentListener {
 		// When you click arrow buttons, the cursor goes to the front of the text,
 		// and actually you need to set the cursor behind the text. So, with the following code.
 		//However, this will cause the cursor to flash, so far there is no good solution, so for the time being.
-		if (editor.getTextField().getCaretPosition()==0 && (editor.getTextField().getCaretPosition()!=editor.getTextField().getText().length()-1
-		|| editor.getTextField().getText().length()==1)){
-			editor.getTextField().setCaretPosition(editor.getTextField().getText().length());
-		}
+//		if (editor.getTextField().getCaretPosition()==0 && (editor.getTextField().getCaretPosition()!=editor.getTextField().getText().length()-1
+//		|| editor.getTextField().getText().length()==1)){
+//			editor.getTextField().setCaretPosition(editor.getTextField().getText().length());
+//		}
 	}
 
 }
