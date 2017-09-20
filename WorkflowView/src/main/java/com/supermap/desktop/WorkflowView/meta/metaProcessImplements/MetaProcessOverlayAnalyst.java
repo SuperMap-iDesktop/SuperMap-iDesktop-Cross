@@ -297,6 +297,9 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 			e.printStackTrace();
 		} finally {
 			OverlayAnalyst.removeSteppedListener(this.steppedListener);
+			if (!isSuccessful) {
+				parameterResultDatasource.getSelectedItem().getDatasets().delete(parameterSaveDataset.getSelectedItem());
+			}
 		}
 		return isSuccessful;
 	}
