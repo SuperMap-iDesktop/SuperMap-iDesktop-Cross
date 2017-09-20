@@ -193,7 +193,15 @@ public class XlsUtilities {
 					row = sheet.getRow(j);
 					map.clear();
 					for (int k = 0; k < columnCount; k++) {
-						map.put(fieldNames.get(k), row.getCell(k).getRawValue());
+						if (row.getCell(k).getCellType()==XSSFCell.CELL_TYPE_STRING) {
+							map.put(fieldNames.get(k), row.getCell(k).getStringCellValue());
+						}else if(row.getCell(k).getCellType()==XSSFCell.CELL_TYPE_BOOLEAN){
+							map.put(fieldNames.get(k), row.getCell(k).getBooleanCellValue());
+						}else if(row.getCell(k).getCellType()==XSSFCell.CELL_TYPE_NUMERIC){
+							map.put(fieldNames.get(k), row.getCell(k).getNumericCellValue());
+						}else if(row.getCell(k).getCellType()==XSSFCell.CELL_TYPE_FORMULA){
+							map.put(fieldNames.get(k), row.getCell(k).getCellFormula());
+						}
 					}
 					boolean importResult = recordset.addNew(null, map);
 					if (importResult && null != importSettingExcel) {
