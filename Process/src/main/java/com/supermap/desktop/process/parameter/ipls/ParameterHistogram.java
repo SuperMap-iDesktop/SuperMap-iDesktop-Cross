@@ -15,6 +15,8 @@ import java.beans.PropertyChangeEvent;
 public class ParameterHistogram extends AbstractParameter implements ISelectionParameter {
 	@ParameterField(name = "value")
 	private GridHistogram selectedItem;
+	private int groupCount;
+	private boolean isCreate;
 
 	@Override
 	public String getDescribe() {
@@ -38,6 +40,22 @@ public class ParameterHistogram extends AbstractParameter implements ISelectionP
 	@Override
 	public Object getSelectedItem() {
 		return selectedItem;
+	}
+
+	public int getGroupCount() {
+		return groupCount;
+	}
+
+	public void setGroupCount(int groupCount) {
+		this.groupCount = groupCount;
+	}
+
+	public boolean isCreate() {
+		return isCreate;
+	}
+
+	public void setCreate(boolean create) {
+		isCreate = create;
 	}
 
 	@Override
