@@ -85,7 +85,6 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		if (defaultDatasetVector != null) {
 			datasource.setSelectedItem(defaultDatasetVector.getDatasource());
 			dataset.setSelectedItem(defaultDatasetVector);
-			parameterFieldComboBox.setDataset(defaultDatasetVector);
 			parameterFieldComboBox.setFieldName(defaultDatasetVector);
 		}
 		parameterTextFieldBeginDistance.setSelectedItem("0.0");

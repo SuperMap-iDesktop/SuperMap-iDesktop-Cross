@@ -4,6 +4,7 @@ import com.supermap.data.*;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
 import com.supermap.data.processing.MapTilingMode;
+import com.supermap.data.processing.StorageType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
@@ -381,7 +382,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			boolean hasDifferentBounds = false;
 			boolean hasNewScales = false;
 			if (hasDifferentBounds()) {
-				this.mapCacheBuilder.setBounds(nextStepPane.cacheRangeBounds);
+				this.mapCacheBuilder.setBounds(nextStepPane.panelCacheRange.getRangeBound());
 				hasDifferentBounds = true;
 			}
 			if (hasNewScales()) {
@@ -395,14 +396,25 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			String sciPath = getUpdateSci();
 
 			boolean result = mapCacheBuilder.toConfigFile(sciPath);
-			//将更新的sci合并到原sci中
-//			if (MapViewProperties.getString("MapCache_SaveType_MongoDB").equals(firstStepPane.comboBoxSaveType.getSelectedItem())) {
-			MapCacheBuilder tempMapCacheBuilder = new MapCacheBuilder();
-			tempMapCacheBuilder.fromConfigFile(firstStepPane.getSciPath());
-			tempMapCacheBuilder.mergeConfigFile(sciPath);
-//			}
+
 			if (result) {
 				splitAndStartCacheBuilder(firstStepPane.fileChooserControlFileCache.getPath(), sciPath, updateSciName);
+			}
+			//将更新的sci合并到原sci中
+			mapCacheBuilder.mergeConfigFile(firstStepPane.getSciPath());
+			if (mapCacheBuilder.getStorageType() == StorageType.MongoDB) {
+				boolean success = mapCacheBuilder.updateMongoDB();
+				File sourceSciFile = new File(firstStepPane.getSciPath());
+				if (sourceSciFile.exists()) {
+					sourceSciFile.delete();
+				}
+				String cacheName = firstStepPane.textFieldCacheName.getText();
+				String updateMongoSci = firstStepPane.fileChooserControlFileCache.getPath() + File.separator + cacheName + File.separator + cacheName + "_updated.sci";
+				if (success) {
+					new File(updateMongoSci).renameTo(new File(firstStepPane.getSciPath()));
+				}
+			} else {
+				mapCacheBuilder.toConfigFile(firstStepPane.getSciPath());
 			}
 			if (this.checkBoxAutoClosed.isSelected()) {
 				dispose();
@@ -497,7 +509,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private boolean hasDifferentBounds() {
 		boolean result = false;
 		Rectangle2D sourceBounds = this.mapCacheBuilder.getBounds();
-		Rectangle2D newBounds = nextStepPane.cacheRangeBounds;
+		Rectangle2D newBounds = nextStepPane.panelCacheRange.getRangeBound();
 		if (!DoubleUtilities.equals(sourceBounds.getBottom(), newBounds.getBottom(), 8)
 				&& !DoubleUtilities.equals(sourceBounds.getLeft(), newBounds.getLeft(), 8)
 				&& !DoubleUtilities.equals(sourceBounds.getRight(), newBounds.getRight(), 8)
@@ -601,7 +613,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					int count = 0;
 					for (int i = 0; i < this.mapCacheBuilder.getMap().getVisibleScales().length; i++) {
 						for (int j = 0; j < firstStepPane.currentMapCacheScale.size(); j++) {
-							if (Double.compare(this.mapCacheBuilder.getMap().getVisibleScales()[i], firstStepPane.currentMapCacheScale.get(j)) == 0) {
+							if (DoubleUtilities.equals(this.mapCacheBuilder.getMap().getVisibleScales()[i], firstStepPane.currentMapCacheScale.get(j))) {
 								count++;
 								break;
 							}
@@ -667,10 +679,10 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			this.mapCacheBuilder.setVersion(MapCacheVersion.VERSION_50);
 			this.mapCacheBuilder.setCacheName(firstStepPane.textFieldCacheName.getText());
 			this.mapCacheBuilder.setOutputFolder(firstStepPane.fileChooserControlFileCache.getPath());
-			this.mapCacheBuilder.setBounds(nextStepPane.cacheRangeBounds);
+			this.mapCacheBuilder.setBounds(nextStepPane.panelCacheRange.getRangeBound());
 			this.mapCacheBuilder.setIsDeleteLogFile(false);
 			if (this.mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
-				this.mapCacheBuilder.setIndexBounds(nextStepPane.indexRangeBounds);
+				this.mapCacheBuilder.setIndexBounds(nextStepPane.panelIndexRange.getRangeBound());
 			}
 			if (nextStepPane.smSpinnerImageCompressionRatio.isEnabled()) {
 				//modify

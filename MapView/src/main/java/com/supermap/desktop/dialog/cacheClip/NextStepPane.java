@@ -32,8 +32,8 @@ import java.util.Vector;
  * Panel for cache clipping(second step)
  */
 public class NextStepPane extends JPanel implements IState {
-	public Rectangle2D cacheRangeBounds;
-	public Rectangle2D indexRangeBounds;
+	private Rectangle2D cacheRangeBounds;
+	private Rectangle2D indexRangeBounds;
 	private boolean validCacheRangeBounds;
 	private boolean validIndexRangeBounds;
 	public MapCacheBuilder mapCacheBuilder;
@@ -104,7 +104,6 @@ public class NextStepPane extends JPanel implements IState {
 				if (rectangle2D != null) {
 					validCacheRangeBounds = true;
 					cacheRangeBounds = rectangle2D;
-					mapCacheBuilder.setBounds(cacheRangeBounds);
 				} else {
 					validCacheRangeBounds = false;
 				}
@@ -136,7 +135,6 @@ public class NextStepPane extends JPanel implements IState {
 				Rectangle2D rectangle2D = panelIndexRange.getRangeBound();
 				if (rectangle2D != null) {
 					indexRangeBounds = rectangle2D;
-					mapCacheBuilder.setIndexBounds(indexRangeBounds);
 					validIndexRangeBounds = true;
 				} else {
 					validIndexRangeBounds = false;

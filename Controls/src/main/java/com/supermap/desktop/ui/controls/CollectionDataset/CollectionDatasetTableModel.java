@@ -128,7 +128,7 @@ public class CollectionDatasetTableModel extends AbstractTableModel {
 			}
 			if (columnIndex == COLUMN_VECTOR_CONNECTIONINFO) {
 				return MessageFormat.format(CommonProperties.getString("String_DatasourceConnectionInfoTip"),
-						datasetInfo.getServer(), datasetInfo.getEngineType(), datasetInfo.getDatasourceAlias(), datasetInfo.getUser());
+						datasetInfo.getServer(), datasetInfo.getEngineType(), datasetInfo.getDataBase(), datasetInfo.getUser());
 			}
 		}
 		return "";

@@ -184,9 +184,9 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 				if (comboBox.getSelectedItem() == null) {
 					// 如果没有满意的选项则与当前已设置的值保持一致
 					// If there is no satisfactory option, it is consistent with the current set value
-
 					String fieldName = parameterFieldComboBox.getFieldName();
 					for (int i = 0; i < comboBox.getItemCount(); i++) {
+						// 空值情况
 						if (comboBox.getItemAt(i) == null) {
 							if (StringUtilities.isNullOrEmpty(fieldName)) {
 								comboBox.setSelectedIndex(i);
@@ -194,6 +194,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 							}
 							continue;
 						}
+						// 在切换数据集时，如果目标数据集中含有与当前选中的项相同的字段，则保持选中项-yuanR2017.9.20
 						if (comboBox.getItemAt(i).getName().equals(fieldName)) {
 							comboBox.setSelectedItem(fieldName);
 							break;
@@ -202,6 +203,11 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 							parameterFieldComboBox.setSelectedItem(comboBox.getItemAt(i));
 							break;
 						}
+					}
+					// 目标数据集字段中不含当前选中的项，此时赋值给控件第一个字段-yuanR2017.9.20
+					if (comboBox.getSelectedItem() == null) {
+						comboBox.setSelectedItem(comboBox.getItemAt(0).getName());
+						parameterFieldComboBox.setSelectedItem(comboBox.getItemAt(0));
 					}
 				}
 			} else {
