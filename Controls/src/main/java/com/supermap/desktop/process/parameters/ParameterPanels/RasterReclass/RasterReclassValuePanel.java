@@ -21,6 +21,8 @@ import com.supermap.desktop.utilities.StringUtilities;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -223,6 +225,7 @@ public class RasterReclassValuePanel extends JPanel {
 		this.buttonExport.addActionListener(this.exportListener);
 		this.buttonInverse.addActionListener(this.inverseListener);
 		this.table.getSelectionModel().addListSelectionListener(this.listSelectionListener);
+		this.rasterReclassModel.addTableModelListener(this.modelListener);
 		this.textFieldLegitNoValue.setSmTextFieldLegit(this.iSLegitNoValue);
 		this.textFieldLegitNoClass.setSmTextFieldLegit(this.iSLegitNoClass);
 		this.checkBoxNoValueCell.addActionListener(this.checkBoxListener);
@@ -243,6 +246,7 @@ public class RasterReclassValuePanel extends JPanel {
 		this.buttonExport.removeActionListener(this.exportListener);
 		this.buttonInverse.removeActionListener(this.inverseListener);
 		this.table.getSelectionModel().removeListSelectionListener(this.listSelectionListener);
+		this.rasterReclassModel.removeTableModelListener(this.modelListener);
 		this.checkBoxNoValueCell.removeActionListener(this.checkBoxListener);
 		this.checkBoxNoClassCell.removeActionListener(this.checkBoxListener);
 		this.radioButtonLeftOpen.removeActionListener(this.radioListener);
@@ -260,6 +264,9 @@ public class RasterReclassValuePanel extends JPanel {
 	private ActionListener defaultListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (table.isEditing()) {
+				table.getCellEditor().stopCellEditing();
+			}
 			setDataset(dataset);
 		}
 	};
@@ -285,10 +292,19 @@ public class RasterReclassValuePanel extends JPanel {
 		}
 	};
 
+	private TableModelListener modelListener = new TableModelListener() {
+		@Override
+		public void tableChanged(TableModelEvent e) {
+			getNewMappingTable();
+		}
+	};
+
 	private ActionListener combineListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			int oldSelectedRowIndex = table.getSelectedRow();
 			rasterReclassModel.combine(table.getSelectedRows());
+			table.setRowSelectionInterval(oldSelectedRowIndex, oldSelectedRowIndex);
 			getNewMappingTable();
 		}
 	};
@@ -296,7 +312,9 @@ public class RasterReclassValuePanel extends JPanel {
 	private ActionListener splitListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			int oldSelectedRowIndex = table.getSelectedRow();
 			rasterReclassModel.split(table.getSelectedRow());
+			table.setRowSelectionInterval(oldSelectedRowIndex, oldSelectedRowIndex);
 			getNewMappingTable();
 		}
 	};
@@ -383,16 +401,11 @@ public class RasterReclassValuePanel extends JPanel {
 	private ActionListener checkBoxListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (checkBoxNoValueCell.isSelected()) {
-				textFieldLegitNoValue.setEnabled(true);
-			} else {
-				textFieldLegitNoValue.setEnabled(false);
-			}
-			if (checkBoxNoClassCell.isSelected()) {
-				textFieldLegitNoClass.setEnabled(true);
-			} else {
-				textFieldLegitNoClass.setEnabled(false);
-			}
+			textFieldLegitNoValue.setEnabled(checkBoxNoValueCell.isSelected());
+			reclassMappingTable.setRetainNoValue(!checkBoxNoValueCell.isSelected());
+			textFieldLegitNoClass.setEnabled(checkBoxNoClassCell.isSelected());
+			reclassMappingTable.setRetainMissingValue(!checkBoxNoClassCell.isSelected());
+			currentMappingTableChange();
 		}
 	};
 
@@ -452,7 +465,7 @@ public class RasterReclassValuePanel extends JPanel {
 
 	/*
 	The following definition of ReclassMappingTable variables,
-	 re acquisition value is in order to solve the global variable this.reclassMappingTable
+	 reacquisition value is in order to solve the global variable this.reclassMappingTable
     to get to the ReclassSegmentType type is not correct, have not found the cause,
     being the first such treatment.
 	 */
@@ -581,7 +594,6 @@ public class RasterReclassValuePanel extends JPanel {
 		this.reclassMappingTable.setReclassType(ReclassType.RANGE);
 		this.reclassMappingTable.setRetainMissingValue(true);
 		this.reclassValueChange.reClassPixelFormat(ReclassPixelFormat.BIT32);
-		//this.buttonImport.setVisible(false);
 	}
 
 	public void addReclassValueChangeListener(ReclassValueChange reclassValueChange) {

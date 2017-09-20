@@ -30,6 +30,9 @@ public class ProcessWorker {
 		return this.process;
 	}
 
+	public boolean isCancelled() {
+		return this.worker.isCancelled;
+	}
 
 	public void execute() {
 		if (worker != null) {
@@ -59,7 +62,7 @@ public class ProcessWorker {
 		@Override
 		public void running(RunningEvent e) {
 			try {
-				if (worker.isCancelled()) {
+				if (isCancelled()) {
 					e.setCancel(true);
 				} else {
 					if (e.isIndeterminate()) {
