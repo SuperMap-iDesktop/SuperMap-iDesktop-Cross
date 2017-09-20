@@ -558,6 +558,7 @@ public class LayerGridAggregationPropertyControl extends AbstractLayerPropertyCo
 
 	private void maxColorTransparenceChange() {
 		this.componentDropDownMaxColor.setColor(resetColor(this.componentDropDownMaxColor.getColor(), (int) this.smSpinnerMaxColorTransparence.getValue()));
+		this.componentDropDownMaxColor.repaint();
 		getModifiedLayerPropertyModel().setMaxColor(this.componentDropDownMaxColor.getColor());
 		getModifiedLayerPropertyModel().setMaxColorTransparence((int) Math.round((1.0 - this.componentDropDownMaxColor.getColor().getAlpha() / 255.0) * 100));
 		checkChanged();
@@ -565,6 +566,7 @@ public class LayerGridAggregationPropertyControl extends AbstractLayerPropertyCo
 
 	private void minColorTransparenceChange() {
 		this.componentDropDownMinColor.setColor(resetColor(this.componentDropDownMinColor.getColor(), (int) this.smSpinnerMinColorTransparence.getValue()));
+		this.componentDropDownMinColor.repaint();
 		getModifiedLayerPropertyModel().setMinColor(this.componentDropDownMinColor.getColor());
 		int temp = (int) Math.round((1.0 - this.componentDropDownMinColor.getColor().getAlpha() / 255.0) * 100);
 		getModifiedLayerPropertyModel().setMinColorTransparence(temp);

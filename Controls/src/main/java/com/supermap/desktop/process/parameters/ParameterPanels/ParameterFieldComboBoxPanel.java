@@ -94,7 +94,9 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 			@Override
 			public Component getListCellRendererComponent(JList<? extends FieldInfo> list, FieldInfo value, int index, boolean isSelected, boolean cellHasFocus) {
 				try {
-					value.getName();
+					if (value != null) {
+						value.getName();
+					}
 				} catch (Exception e) {
 					resetComboBoxItems(parameterFieldComboBox.getDataset());
 					return new JLabel();
@@ -103,9 +105,10 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 				if (value != null) {
 					jLabel.setText(value.getName());// 缺陷太多，先改回name
 				} else {
-					jLabel.setText(" ");
+					jLabel.setText("");
 				}
 				jLabel.setOpaque(true);
+				jLabel.setPreferredSize(new Dimension(0,16));
 				if (isSelected) {
 					jLabel.setBackground(list.getSelectionBackground());
 					jLabel.setForeground(list.getSelectionForeground());
@@ -202,12 +205,11 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 							comboBox.setSelectedItem(comboBox.getItemAt(i).getName());
 							parameterFieldComboBox.setSelectedItem(comboBox.getItemAt(i));
 							break;
+						} else if (comboBox.getSelectedItem() == null && comboBox.getItemAt(0) != null) {
+							// 目标数据集字段中不含当前选中的项，此时赋值给控件第一个字段-yuanR2017.9.20
+							comboBox.setSelectedItem(comboBox.getItemAt(0).getName());
+							parameterFieldComboBox.setSelectedItem(comboBox.getItemAt(0));
 						}
-					}
-					// 目标数据集字段中不含当前选中的项，此时赋值给控件第一个字段-yuanR2017.9.20
-					if (comboBox.getSelectedItem() == null) {
-						comboBox.setSelectedItem(comboBox.getItemAt(0).getName());
-						parameterFieldComboBox.setSelectedItem(comboBox.getItemAt(0));
 					}
 				}
 			} else {

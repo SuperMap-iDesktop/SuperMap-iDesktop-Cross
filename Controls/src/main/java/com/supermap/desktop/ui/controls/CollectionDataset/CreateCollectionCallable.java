@@ -45,15 +45,16 @@ public class CreateCollectionCallable extends UpdateProgressCallable {
 			int collecionSize = vector.getCollectionDatasetCount();
 			int count = 0;
 			for (int i = 0; i < size; i++) {
-				if (null != vector && parent.hasDataset(vector,datasetInfos.get(i).getDataBase(), datasetInfos.get(i).getName())) {
+				if (null != vector && parent.hasDataset(vector, datasetInfos.get(i).getAlias(), datasetInfos.get(i).getName())) {
 					//需不需要添加已经存在的数据集？
 //					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_DatasetExistInCollection"), datasetInfos.get(i).getDataset().getName(), vector.getName()));
 					continue;
 				}
 //				if ((vector.GetSubCollectionDatasetType() == DatasetType.UNKNOWN) || (vector.GetSubCollectionDatasetType() == datasetInfos.get(i).getDataset().getType())) {
-				Datasource sourceDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasetInfos.get(i).getDataBase());
-				if (null==sourceDatasource){
+				Datasource sourceDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasetInfos.get(i).getAlias());
+				if (null == sourceDatasource) {
 					Application.getActiveApplication().getOutput().output(CoreProperties.getString("String_GetDatasourceFailed"));
+					continue;
 				}
 				Dataset dataset = DatasourceUtilities.getDataset(datasetInfos.get(i).getName(), sourceDatasource);
 				boolean result = vector.addCollectionDataset((DatasetVector) dataset);
@@ -73,7 +74,7 @@ public class CreateCollectionCallable extends UpdateProgressCallable {
 			//取消时异常
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			if (parent.checkBoxCloseDialog.isSelected()) {
+			if (!parent.checkBoxCloseDialog.isEnabled() || parent.checkBoxCloseDialog.isSelected()) {
 				parent.dispose();
 			}
 			SwingUtilities.invokeLater(new Runnable() {

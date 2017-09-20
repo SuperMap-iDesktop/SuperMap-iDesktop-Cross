@@ -1,6 +1,5 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridStatisticsAnalyst;
 
-import com.sun.org.glassfish.external.statistics.Statistic;
 import com.supermap.analyst.spatialanalyst.BasicStatisticsAnalystResult;
 import com.supermap.analyst.spatialanalyst.StatisticsAnalyst;
 import com.supermap.data.DatasetGrid;
@@ -18,9 +17,6 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 /**
  * Created By Chens on 2017/8/15 0015
