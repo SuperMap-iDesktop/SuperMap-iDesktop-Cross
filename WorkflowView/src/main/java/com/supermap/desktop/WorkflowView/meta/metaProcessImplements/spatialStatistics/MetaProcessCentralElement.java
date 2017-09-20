@@ -4,8 +4,9 @@ import com.supermap.analyst.spatialstatistics.SpatialMeasure;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
+import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * @author XiaJT
@@ -32,7 +33,8 @@ public class MetaProcessCentralElement extends MetaProcessSpatialMeasure {
 			DatasetVector result = SpatialMeasure.measureCentralElement(
 					datasetVector,
 					parameterSaveDataset.getResultDatasource(),
-					parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()),
+					DatasetUtilities.getAvailableDatasetName(parameterSaveDataset.getResultDatasource(),parameterSaveDataset.getDatasetName(),null)
+					,
 					measureParameter.getMeasureParameter());
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
 			isSuccessful = result != null;
