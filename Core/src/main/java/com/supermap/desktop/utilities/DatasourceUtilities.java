@@ -498,6 +498,7 @@ public class DatasourceUtilities {
 	 */
 	public static boolean isDatasourceOccupied(String datasourcePath) {
 		File file = new File(datasourcePath);
+		// TODO: 2017/9/20
 		return !file.renameTo(file);
 	}
 

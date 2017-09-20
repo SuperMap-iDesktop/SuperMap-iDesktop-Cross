@@ -56,7 +56,6 @@ public class MetaProcessNeighbourStatistics extends MetaProcess {
 		initParameters();
 		initParameterConstraint();
 		initParametersState();
-		registerListener();
 	}
 
 	private void initParameters() {
@@ -113,9 +112,6 @@ public class MetaProcessNeighbourStatistics extends MetaProcess {
 				new ParameterDataNode(GridStatisticsModeUtilities.getGridStatisticsModeName(GridStatisticsMode.MEDIAN), GridStatisticsMode.MEDIAN));
 		comboBoxStatisticMode.setSelectedItem(comboBoxStatisticMode.getItemAt(4));
 		checkBoxIgnore.setSelectedItem(true);
-	}
-
-	private void registerListener() {
 	}
 
 	@Override

@@ -114,8 +114,8 @@ public abstract class AbstractProcess implements IProcess {
 					setStatus(RunningStatus.EXCEPTION);
 				}
 			} else {
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_ParameterRequisiteUnFilled"), getTitle()));
 				setStatus(RunningStatus.EXCEPTION);
-				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_ParameterError"));
 			}
 		} catch (Exception e) {
 			fireRunning(new RunningEvent(this, 0, FAILED_MESSAGE));
@@ -174,9 +174,6 @@ public abstract class AbstractProcess implements IProcess {
 		}
 		// 参数是否准备就续-yuanR
 		if (!getParameters().isReady()) {
-			if (readyEvent.isOutputMessage()) {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(ProcessProperties.getString("String_ParameterRequisiteUnFilled"), getTitle()));
-			}
 			return false;
 		}
 		ReadyEvent<IProcess> childReadyEvent = new ReadyEvent<>((IProcess) this, readyEvent.isOutputMessage());

@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.ipls;
 
+import com.supermap.data.Dataset;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
@@ -15,7 +16,10 @@ public class ParameterSearchMode extends AbstractParameter implements ISelection
 
 	@ParameterField(name = "value")
 	private ParameterSearchModeInfo selectedItem;
-    boolean isQuadTree = false;
+    private boolean isQuadTree = false;
+	public static final String DATASET_FIELD_NAME = "Dataset";
+	@ParameterField(name = DATASET_FIELD_NAME)
+	private Dataset dataset;
 
 	@Override
 	public void setSelectedItem(Object item) {
@@ -54,4 +58,12 @@ public class ParameterSearchMode extends AbstractParameter implements ISelection
     public void setQuadTree(boolean quadTree) {
         isQuadTree = quadTree;
     }
+
+	public Dataset getDataset() {
+		return dataset;
+	}
+
+	public void setDataset(Dataset dataset) {
+		this.dataset = dataset;
+	}
 }
