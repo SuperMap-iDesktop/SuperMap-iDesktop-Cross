@@ -194,6 +194,7 @@ public class ParameterInputDataType extends ParameterCombine {
 		parameterDataSourcePath.addExtension(ProcessProperties.getString("String_UDBFileFilterName"), "udb");
 		parameterDataSourcePath.setModuleType("OpenOne");
 		parameterDatasetName.setRequisite(true);
+		parameterDatasetName1.setRequisite(true);
 		parameterCombineDatasetInfo.addParameters(parameterDatasetName1, parameterDatasetType);
 
 		parameterSwitchUDB.add("0", parameterDatasetName);
@@ -231,6 +232,7 @@ public class ParameterInputDataType extends ParameterCombine {
 		);
 
 		//BigDataStore
+		bigDataStoreName.setRequisite(true);
 		ParameterCombine parameterCombine3 = new ParameterCombine();
 		parameterCombine3.addParameters(bigDataStoreName);
 		IConGetter getter = new IConGetter() {
@@ -270,10 +272,12 @@ public class ParameterInputDataType extends ParameterCombine {
 			CommonSettingCombine datasetName = new CommonSettingCombine("datasetName", ((ParameterDataNode) bigDataStoreName.getSelectedItem()).getDescribe());
 			input.add(datasetName);
 		} else if (parameterDataInputWay.getSelectedData().toString().equals("1")) {
-			CommonSettingCombine type = new CommonSettingCombine("type", parameterDataSourceType.getSelectedItem().toString());
-			CommonSettingCombine url = new CommonSettingCombine("url", parameterDataSourcePath.getSelectedItem().toString());
 			CommonSettingCombine datasetName = null;
 			CommonSettingCombine datasetType = null;
+			CommonSettingCombine type = new CommonSettingCombine("type", parameterDataSourceType.getSelectedItem().toString());
+			String udbPathStr = parameterDataSourcePath.getSelectedItem().toString();
+			String udbPath = udbPathStr.replaceAll("\\\\","\\\\\\\\");
+			CommonSettingCombine url = new CommonSettingCombine("url", udbPath);
 			if (parameterSwitchUDB.getCurrentParameter().equals(parameterCombineDatasetInfo)) {
 				datasetName = new CommonSettingCombine("datasetName", parameterDatasetName1.getSelectedItem().toString());
 				datasetType = new CommonSettingCombine("datasetType", parameterDatasetType.getSelectedData().toString());
@@ -314,11 +318,11 @@ public class ParameterInputDataType extends ParameterCombine {
 				datasetPG = "inputQuery";
 				break;
 			case POLYGON_AGGREGATION:
-				datasetBigDataStore = "regionDatasource";
+				datasetBigDataStore = "regionDataset";
 				datasetPG = "regionDatasource";
 				break;
 			case SUMMARY_REGION:
-				datasetBigDataStore = "regionDatasource";
+				datasetBigDataStore = "regionDataset";
 				datasetPG = "regionDatasource";
 				break;
 		}
@@ -329,11 +333,13 @@ public class ParameterInputDataType extends ParameterCombine {
 		} else if (parameterDataInputWay.getSelectedData().toString().equals("1")) {
 			//udb
 			String inputOverlayStr = null;
+			String udbPathStr = parameterDataSourcePath.getSelectedItem().toString();
+			String udbPath = udbPathStr.replaceAll("\\\\","//");
 			if (parameterSwitchUDB.getCurrentParameter().equals(parameterCombineDatasetInfo)) {
-				inputOverlayStr = "{\\\"type\\\":\\\"udb\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + parameterDataSourcePath.getSelectedItem().toString() + "\\\",\\\"datasetNames\\\":[\\\"" + parameterDatasetName1.getSelectedItem().toString() + "\\\"],\\\"attributeFilter\\\":null}]}";
+				inputOverlayStr = "{\\\"type\\\":\\\"udb\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + udbPath + "\\\",\\\"datasetNames\\\":[\\\"" + parameterDatasetName1.getSelectedItem().toString() + "\\\"]}]}";
 			} else {
 				ParameterDataNode datasetNode = (ParameterDataNode) parameterDatasetName.getSelectedItem();
-				inputOverlayStr = "{\\\"type\\\":\\\"udb\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + parameterDataSourcePath.getSelectedItem().toString() + "\\\",\\\"datasetNames\\\":[\\\"" + datasetNode.getDescribe() + "\\\"],\\\"attributeFilter\\\":null}]}";
+				inputOverlayStr = "{\\\"type\\\":\\\"udb\\\",\\\"info\\\":[{\\\"server\\\":\\\"" + udbPath + "\\\",\\\"datasetNames\\\":[\\\"" + datasetNode.getDescribe() + "\\\"]}]}";
 			}
 			CommonSettingCombine inputOverlayCombine = new CommonSettingCombine(datasetPG, inputOverlayStr);
 			analyst.add(inputOverlayCombine);

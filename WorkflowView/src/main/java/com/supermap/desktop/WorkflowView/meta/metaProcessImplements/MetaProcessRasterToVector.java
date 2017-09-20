@@ -35,8 +35,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 /**
- * Created by Chen on 2017/6/30 0030.
  * 栅格矢量化
+ * Created by Chen on 2017/6/30 0030.
  */
 public class MetaProcessRasterToVector extends MetaProcessGridAnalyst {
 	private final static String INPUT_DATA = CommonProperties.getString("String_GroupBox_SourceData");
@@ -75,6 +75,7 @@ public class MetaProcessRasterToVector extends MetaProcessGridAnalyst {
 	}
 
 	private void initParameters() {
+		initEnvironment();
 		sourceDatasource = new ParameterDatasourceConstrained();
 		sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		sourceDataset = new ParameterSingleDataset(DatasetType.GRID, DatasetType.IMAGE);
@@ -124,6 +125,11 @@ public class MetaProcessRasterToVector extends MetaProcessGridAnalyst {
 		this.parameters.addOutputParameters(OUTPUT_DATA,
 				ProcessOutputResultProperties.getString("String_GridToVectorResult"),
 				DatasetTypes.SIMPLE_VECTOR, resultData);
+	}
+
+	private void initEnvironment() {
+		parameterGridAnalystSetting.setResultBoundsCustomOnly(true);
+		parameterGridAnalystSetting.setCellSizeCustomOnly(true);
 	}
 
 	private void initParametersState() {

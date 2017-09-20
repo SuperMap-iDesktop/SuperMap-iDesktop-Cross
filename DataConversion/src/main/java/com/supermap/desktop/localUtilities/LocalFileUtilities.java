@@ -44,7 +44,7 @@ public class LocalFileUtilities {
 	public static SmFileChoose createImportFileChooser() {
 		if (!SmFileChoose.isModuleExist("CommonFunction")) {
 			if (SystemPropertyUtilities.isWindows()) {
-				String fileFilters = SmFileChoose.bulidFileFilters(
+				String fileFilters = SmFileChoose.buildFileFilters(
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[0], FileTypeLocale.getExtensionsnew()),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[1], "dxf", "dwg"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[2], "shp", "grd", "txt", "e00", "dem", "dbf"),
@@ -64,7 +64,7 @@ public class LocalFileUtilities {
 				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
 						DataConversionProperties.getString("String_FileType"), "CommonFunction", "OpenMany");
 			} else {
-				String fileFilters = SmFileChoose.bulidFileFilters(
+				String fileFilters = SmFileChoose.buildFileFilters(
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[0], FileTypeLocale.getExtensionsnewforlinux()),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[1], "shp", "grd", "txt", "e00", "dem", "dbf"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[2], "tab", "mif", "wor"),

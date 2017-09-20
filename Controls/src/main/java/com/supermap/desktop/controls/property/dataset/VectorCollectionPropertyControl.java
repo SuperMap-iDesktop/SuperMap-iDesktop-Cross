@@ -5,6 +5,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.PropertyType;
+import com.supermap.desktop.ui.controls.CollectionDataset.DatasetInfo;
 import com.supermap.desktop.ui.controls.CollectionDataset.JDialogCreateCollectionDataset;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -127,22 +128,22 @@ public class VectorCollectionPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void buttonAddDatasetToCollection() {
-		ArrayList<DatasetVector> datasetVectors = new ArrayList<>();
+		ArrayList<DatasetInfo> datasetInfos = new ArrayList<>();
 		ArrayList<CollectionDatasetInfo> collectionDatasetInfos = this.datasetVector.getCollectionDatasetInfos();
-		for (int i = 0; i < collectionDatasetInfos.size(); i++) {
-			CollectionDatasetInfo collectionDatasetInfo = collectionDatasetInfos.get(i);
-			DatasourceConnectionInfo connectionInfo = collectionDatasetInfo.getDatasourceConnectInfo();
-			if (null != connectionInfo) {
-				Datasource datasource = DatasourceUtilities.getDatasource(connectionInfo);
-				if (null != datasource) {
-					Dataset childDataset = datasource.getDatasets().get(collectionDatasetInfo.getDatasetName());
-					if (null != childDataset && childDataset instanceof DatasetVector) {
-						datasetVectors.add((DatasetVector) childDataset);
-					}
-				}
-			}
+		DatasetInfo datasetInfo;
+		for (int i = 0,size = collectionDatasetInfos.size(); i <size ; i++) {
+			datasetInfo = new DatasetInfo();
+			DatasourceConnectionInfo info = collectionDatasetInfos.get(i).getDatasourceConnectInfo();
+			datasetInfo.setName(collectionDatasetInfos.get(i).getDatasetName());
+			datasetInfo.setCapiton(collectionDatasetInfos.get(i).getDatasetName());
+			datasetInfo.setServer(info.getServer());
+			datasetInfo.setEngineType(info.getEngineType().name());
+			datasetInfo.setDatasourceAlias(info.getAlias());
+			datasetInfo.setUser(info.getUser());
+			datasetInfos.add(datasetInfo);
 		}
-		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0, this.datasetVector, datasetVectors.toArray(new DatasetVector[datasetVectors.size()]));
+
+		JDialogCreateCollectionDataset createCollectionDataset = new JDialogCreateCollectionDataset(0, this.datasetVector, datasetInfos);
 		createCollectionDataset.isSetDatasetCollectionCount(true);
 		createCollectionDataset.showDialog();
 	}

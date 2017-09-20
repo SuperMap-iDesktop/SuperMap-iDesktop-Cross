@@ -51,6 +51,7 @@ public class MetaProcessThinRaster extends MetaProcessGridAnalyst {
 	}
 
 	private void initParameters() {
+		initEnvironment();
 		sourceDatasource = new ParameterDatasourceConstrained();
 		sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		sourceDataset = new ParameterSingleDataset(DatasetType.GRID, DatasetType.IMAGE);
@@ -81,6 +82,11 @@ public class MetaProcessThinRaster extends MetaProcessGridAnalyst {
 		this.parameters.addOutputParameters(OUTPUT_DATA,
 				ProcessOutputResultProperties.getString("String_ThinRasterResult"),
 				DatasetTypes.ALL_RASTER, resultData);
+	}
+
+	private void initEnvironment() {
+		parameterGridAnalystSetting.setResultBoundsCustomOnly(true);
+		parameterGridAnalystSetting.setCellSizeCustomOnly(true);
 	}
 
 	private void initParameterConstraint() {

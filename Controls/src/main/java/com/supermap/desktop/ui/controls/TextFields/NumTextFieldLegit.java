@@ -74,6 +74,7 @@ public class NumTextFieldLegit extends SmTextFieldLegit {
 				return backUpValue;
 			}
 		};
+		updateTooltip();
 	}
 
 	public NumTextFieldLegit() {
@@ -95,6 +96,7 @@ public class NumTextFieldLegit extends SmTextFieldLegit {
 	public void setMaxValue(double maxValue) {
 		isMaxValueEnable = true;
 		this.maxValue = maxValue;
+		updateTooltip();
 	}
 
 	public double getMinValue() {
@@ -104,6 +106,7 @@ public class NumTextFieldLegit extends SmTextFieldLegit {
 	public void setMinValue(double minValue) {
 		isMinValueEnable = true;
 		this.minValue = minValue;
+		updateTooltip();
 	}
 
 	public boolean isIncludeMin() {
@@ -112,6 +115,7 @@ public class NumTextFieldLegit extends SmTextFieldLegit {
 
 	public void setIncludeMin(boolean includeMin) {
 		isIncludeMin = includeMin;
+		updateTooltip();
 	}
 
 	public boolean isIncludeMax() {
@@ -120,11 +124,23 @@ public class NumTextFieldLegit extends SmTextFieldLegit {
 
 	public void setIncludeMax(boolean includeMax) {
 		isIncludeMax = includeMax;
+		updateTooltip();
 	}
 
 	public void setInterval(int min, int max) {
 		minValue = min;
 		maxValue = max;
+		updateTooltip();
+	}
+
+	public void updateTooltip() {
+		StringBuilder stringBuffer = new StringBuilder();
+		stringBuffer.append(isIncludeMin() && isMinValueEnable ? "[" : "(");
+		stringBuffer.append(isMinValueEnable ? DoubleUtilities.toString(minValue, 0) : "-∞");
+		stringBuffer.append(", ");
+		stringBuffer.append(isMaxValueEnable ? DoubleUtilities.toString(maxValue, 0) : "+∞");
+		stringBuffer.append(isIncludeMax() && isMaxValueEnable ? "]" : ")");
+		this.setToolTipText(stringBuffer.toString());
 	}
 }
 

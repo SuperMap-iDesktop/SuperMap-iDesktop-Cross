@@ -14,7 +14,11 @@ import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.process.parameters.ParameterPanels.RasterReclass.ParameterRasterReclass;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
@@ -54,6 +58,7 @@ public class MetaProcessRasterReclass extends MetaProcess {
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_ReclassResult"), DatasetTypes.GRID, targetData);
 	}
+
 
 	private void initParameterConstraint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();

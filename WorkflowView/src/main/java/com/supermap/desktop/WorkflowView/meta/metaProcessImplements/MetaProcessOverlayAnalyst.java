@@ -11,6 +11,7 @@ import com.supermap.desktop.WorkflowView.meta.loader.OverlayProcessLoader;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.ipls.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -27,6 +28,7 @@ import com.supermap.desktop.utilities.OverlayAnalystType;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
 /**
@@ -46,7 +48,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	private ParameterDatasourceConstrained parameterResultDatasource = new ParameterDatasourceConstrained();
 	private ParameterTextField parameterSaveDataset = new ParameterTextField();
 	private ParameterFieldSetDialog parameterFieldSetDialog = new ParameterFieldSetDialog();
-	private ParameterTextField parameterTolerance = new ParameterTextField();
+	private ParameterNumber parameterTolerance = new ParameterNumber();
 	private ParameterLabel parameterUnit = new ParameterLabel();
 
 	private SteppedListener steppedListener = new SteppedListener() {
@@ -65,7 +67,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (parameterSourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
-				parameterTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance((DatasetVector) evt.getNewValue()).getNodeSnap());
+				parameterTolerance.setSelectedItem(DoubleUtilities.getFormatString(DatasetUtilities.getDefaultTolerance((DatasetVector) evt.getNewValue()).getNodeSnap()));
 				parameterUnit.setSelectedItem(LengthUnit.convertForm(((DatasetVector) evt.getNewValue()).getPrjCoordSys().getCoordUnit()));
 			}
 		}
@@ -140,6 +142,9 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		EqualDatasetConstraint equalDatasetConstraint1 = new EqualDatasetConstraint();
 		equalDatasetConstraint1.constrained(parameterOverlayDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
 		equalDatasetConstraint1.constrained(parameterFieldSetDialog, ParameterFieldSetDialog.RESULT_DATASET_FIELD_NAME);
+
+		DatasourceConstraint.getInstance().constrained(parameterResultDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void initParameterStates() {
@@ -171,14 +176,16 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 			}
 			parameterSaveDataset.setSelectedItem(resultName);
 			if ((this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE) && datasetVector.getType() == DatasetType.REGION) {
-				parameterTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance(datasetVector).getNodeSnap());
+				parameterTolerance.setSelectedItem(DoubleUtilities.getFormatString(DatasetUtilities.getDefaultTolerance(datasetVector).getNodeSnap()));
 				parameterUnit.setDescribe(LengthUnit.convertForm(datasetVector.getPrjCoordSys().getCoordUnit()).toString());
 			}
 			if (this.analystType == OverlayAnalystType.CLIP || this.analystType == OverlayAnalystType.ERASE || this.analystType == OverlayAnalystType.INTERSECT || this.analystType == OverlayAnalystType.IDENTITY) {
-				parameterTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance(datasetVector).getNodeSnap());
+				parameterTolerance.setSelectedItem(DoubleUtilities.getFormatString(DatasetUtilities.getDefaultTolerance(datasetVector).getNodeSnap()));
 				parameterUnit.setDescribe(LengthUnit.convertForm(datasetVector.getPrjCoordSys().getCoordUnit()).toString());
 			}
-
+			parameterTolerance.setMinValue(0);
+			parameterTolerance.setIsIncludeMin(true);
+			parameterTolerance.setRequisite(true);
 		} else {
 			parameterTolerance.setSelectedItem("");
 			parameterUnit.setDescribe("");
@@ -214,7 +221,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 				info.sourceDataset = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
 				info.sourceDatatsource = info.sourceDataset.getDatasource();
 			} else {
-				info.sourceDatatsource = (Datasource) parameterSourceDatasource.getSelectedItem();
+				info.sourceDatatsource = parameterSourceDatasource.getSelectedItem();
 				info.sourceDataset = (DatasetVector) parameterSourceDataset.getSelectedItem();
 			}
 
@@ -222,7 +229,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 				info.overlayAnalystDataset = (DatasetVector) parameters.getInputs().getData(OVERLAY_DATA).getValue();
 				info.overlayAnalystDatasource = info.overlayAnalystDataset.getDatasource();
 			} else {
-				info.overlayAnalystDatasource = (Datasource) parameterOverlayDatasource.getSelectedItem();
+				info.overlayAnalystDatasource = parameterOverlayDatasource.getSelectedItem();
 				info.overlayAnalystDataset = (DatasetVector) parameterOverlayDataset.getSelectedItem();
 			}
 
@@ -231,14 +238,14 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 				return false;
 			}
 
-			info.targetDatasource = (Datasource) parameterResultDatasource.getSelectedItem();
-			info.targetDataset = (String) parameterSaveDataset.getSelectedItem();
+			info.targetDatasource = parameterResultDatasource.getSelectedItem();
+			info.targetDataset = parameterSaveDataset.getSelectedItem();
 			OverlayAnalystParameter overlayAnalystParameter = new OverlayAnalystParameter();
 			if (parameterFieldSetDialog.getSourceFieldNames() != null) {
 				overlayAnalystParameter.setSourceRetainedFields(parameterFieldSetDialog.getSourceFieldNames());
 				overlayAnalystParameter.setOperationRetainedFields(parameterFieldSetDialog.getResultFieldNames());
 			}
-			overlayAnalystParameter.setTolerance(DoubleUtilities.stringToValue(((String) parameterTolerance.getSelectedItem())));
+			overlayAnalystParameter.setTolerance(DoubleUtilities.stringToValue(parameterTolerance.getSelectedItem()));
 			info.analystParameter = overlayAnalystParameter;
 
 			if (null == info.sourceDataset || null == info.overlayAnalystDataset

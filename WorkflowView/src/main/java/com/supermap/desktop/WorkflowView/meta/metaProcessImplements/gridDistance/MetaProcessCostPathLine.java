@@ -172,13 +172,13 @@ public class MetaProcessCostPathLine extends MetaProcessGridAnalyst {
 			distanceAnalystParameter.setCostGrid(srcCost);
 			distanceAnalystParameter.setPathLineSmoothMethod((SmoothMethod) comboBoxSmoothMethod.getSelectedData());
 			if (numberSmoothDegree.isEnabled() && numberSmoothDegree.getSelectedItem() != null) {
-				distanceAnalystParameter.setPathLineSmoothDegree(Integer.parseInt(numberSmoothDegree.getSelectedItem().toString()));
+				distanceAnalystParameter.setPathLineSmoothDegree(Integer.parseInt(numberSmoothDegree.getSelectedItem()));
 			}
 
-			double originX = Double.parseDouble(numberOriginX.getSelectedItem().toString());
-			double originY = Double.parseDouble(numberOriginY.getSelectedItem().toString());
-			double targetX = Double.parseDouble(numberTargetX.getSelectedItem().toString());
-			double targetY = Double.parseDouble(numberTargetY.getSelectedItem().toString());
+			double originX = Double.parseDouble(numberOriginX.getSelectedItem());
+			double originY = Double.parseDouble(numberOriginY.getSelectedItem());
+			double targetX = Double.parseDouble(numberTargetX.getSelectedItem());
+			double targetY = Double.parseDouble(numberTargetY.getSelectedItem());
 			Point2D pointOrigin = new Point2D(originX, originY);
 			Point2D pointTarget = new Point2D(targetX, targetY);
 			PathLineResult pathLineResult = DistanceAnalyst.costPathLine(pointOrigin, pointTarget, distanceAnalystParameter);

@@ -199,6 +199,7 @@ public class GridAnalystSettingInstance {
 		if ((clipBounds != null && !(clipBounds instanceof DatasetVector)) || clipBounds == this.clipBounds) {
 			return;
 		}
+		this.clipBounds = clipBounds;
 		isChanged = true;
 	}
 
