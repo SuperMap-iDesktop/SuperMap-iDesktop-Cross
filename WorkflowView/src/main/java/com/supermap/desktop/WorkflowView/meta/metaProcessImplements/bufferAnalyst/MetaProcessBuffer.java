@@ -309,12 +309,10 @@ public class MetaProcessBuffer extends MetaProcess {
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-			// 删除新建的数据集
-			// 如果失败了，删除新建的数据集
-			if (resultDatasource != null && resultName != null) {
+		} finally {
+			if (!isSuccessful&&resultName!=null) {
 				resultDatasource.getDatasets().delete(resultName);
 			}
-		} finally {
 			BufferAnalyst.removeSteppedListener(this.steppedListener);
 		}
 		return isSuccessful;
