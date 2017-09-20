@@ -11,11 +11,9 @@ import com.supermap.desktop.properties.CoreProperties;
 /**
  * Created by highsad on 2017/6/22.
  */
-public class ProcessWorker {
-	public Worker<SingleProgress> worker;
+public class ProcessWorker extends Worker<SingleProgress> {
 	private IProcess process;
 	private RunningHandler runningHandler = new RunningHandler();
-	private IWorkerView view;
 
 	public ProcessWorker(IProcess process) {
 		if (process == null) {
@@ -30,33 +28,10 @@ public class ProcessWorker {
 		return this.process;
 	}
 
-	public boolean isCancelled() {
-		return this.worker.isCancelled;
+	@Override
+	protected boolean doWork() {
+		return this.process.run();
 	}
-
-	public void execute() {
-		if (worker != null) {
-			worker.cancel();
-		}
-		worker = new Worker<SingleProgress>() {
-			@Override
-			protected boolean doWork() {
-				return ProcessWorker.this.process.run();
-			}
-		};
-		worker.setTitle(process.getTitle());
-		worker.setView(view);
-		worker.execute();
-	}
-
-	public void setView(IWorkerView view) {
-		this.view = view;
-	}
-
-	public void cancel() {
-		worker.cancel();
-	}
-
 
 	private class RunningHandler implements RunningListener {
 		@Override
@@ -66,9 +41,9 @@ public class ProcessWorker {
 					e.setCancel(true);
 				} else {
 					if (e.isIndeterminate()) {
-						worker.update(new SingleProgress(e.getMessage()));
+						update(new SingleProgress(e.getMessage()));
 					} else {
-						worker.update(new SingleProgress(e.getProgress(), e.getMessage(), CoreProperties.getString("String_Remain") + ":" + Time.toString(e.getRemainTime(), TimeType.SECOND)));
+						update(new SingleProgress(e.getProgress(), e.getMessage(), CoreProperties.getString("String_Remain") + ":" + Time.toString(e.getRemainTime(), TimeType.SECOND)));
 					}
 				}
 			} catch (Exception e1) {

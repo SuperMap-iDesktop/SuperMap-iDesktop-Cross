@@ -346,7 +346,8 @@ public class MetaProcessInterpolator extends MetaProcessGridAnalyst {
 			this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(dataset);
 			isSuccessful = dataset != null;
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			Interpolator.removeSteppedListener(this.stepListener);
 		}

@@ -5,7 +5,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
-import com.supermap.desktop.lbs.Interface.IServerService;
 import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.lbs.params.JobResultResponse;
 import com.supermap.desktop.process.ProcessProperties;
@@ -54,8 +53,8 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
 		parameterResolution.setDefaultWarningValue("100");
 		parameterResolution.setRequisite(true);
-		parameterStaticModel.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
-		parameterWeightIndex.setToolTip(ProcessProperties.getString("String_WeightIndexTip"));
+		parameterStaticModel.setTipButtonMessage(ProcessProperties.getString("String_StatisticsModeTip"));
+		parameterWeightIndex.setTipButtonMessage(ProcessProperties.getString("String_WeightIndexTip"));
 		parameterInputDataType.setSupportDatasetType(DatasetType.POINT);
 	}
 
@@ -95,10 +94,10 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 			fireRunning(new RunningEvent(this, ProcessProperties.getString("String_Running")));
 			CommonSettingCombine input = new CommonSettingCombine("input", "");
 			parameterInputDataType.initSourceInput(input);
-			CommonSettingCombine fields = new CommonSettingCombine("fields", parameterWeightIndex.getSelectedItem().toString());
-			CommonSettingCombine statisticModes = new CommonSettingCombine("statisticModes", parameterStaticModel.getSelectedItem().toString());
-			CommonSettingCombine query = new CommonSettingCombine("query", parameterBounds.getSelectedItem().toString());
-			CommonSettingCombine resolution = new CommonSettingCombine("resolution", parameterResolution.getSelectedItem().toString());
+			CommonSettingCombine fields = new CommonSettingCombine("fields", parameterWeightIndex.getSelectedItem());
+			CommonSettingCombine statisticModes = new CommonSettingCombine("statisticModes", parameterStaticModel.getSelectedItem());
+			CommonSettingCombine query = new CommonSettingCombine("query", parameterBounds.getSelectedItem());
+			CommonSettingCombine resolution = new CommonSettingCombine("resolution", parameterResolution.getSelectedItem());
 			CommonSettingCombine meshType = new CommonSettingCombine("meshType", parameterMeshType.getSelectedData().toString());
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
 			analyst.add(fields, statisticModes, query, resolution, meshType);
@@ -120,6 +119,7 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 		} catch (Exception e) {
 			isSuccessful = false;
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		}
 
 		return isSuccessful;

@@ -217,8 +217,8 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
-		PathLineResult pathLineResult = null;
-		DatasetGrid datasetGrid = null;
+		PathLineResult pathLineResult;
+		DatasetGrid datasetGrid;
 		Recordset resultRecordset = null;
 		String resultDatasetName = null;
 		try {
@@ -231,18 +231,18 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 			// 原点以及目标点坐标值参数
 			Point2D sourcePoint = new Point2D();
 			Point2D targetPoint = new Point2D();
-			sourcePoint.setX(Double.valueOf((String) parameterSourcePointX.getSelectedItem()));
-			sourcePoint.setY(Double.valueOf((String) parameterSourcePointY.getSelectedItem()));
-			targetPoint.setX(Double.valueOf((String) parameterTargetPointX.getSelectedItem()));
-			targetPoint.setY(Double.valueOf((String) parameterTargetPointY.getSelectedItem()));
+			sourcePoint.setX(Double.valueOf(parameterSourcePointX.getSelectedItem()));
+			sourcePoint.setY(Double.valueOf(parameterSourcePointY.getSelectedItem()));
+			targetPoint.setX(Double.valueOf(parameterTargetPointX.getSelectedItem()));
+			targetPoint.setY(Double.valueOf(parameterTargetPointY.getSelectedItem()));
 
 			// 其他参数
 			DistanceAnalystParameter distanceAnalystParameter = new DistanceAnalystParameter();
 			distanceAnalystParameter.setSurfaceGrid(datasetGrid);
 			distanceAnalystParameter.setPathLineSmoothMethod((SmoothMethod) parameterPathLineSmoothMethod.getSelectedData());
-			distanceAnalystParameter.setPathLineSmoothDegree(Integer.valueOf((String) parameterPathLineSmoothDegree.getSelectedItem()));
-			distanceAnalystParameter.setMaxUpslopeDegree(Double.valueOf((String) parameterMaxUpslopeDegree.getSelectedItem()));
-			distanceAnalystParameter.setMaxUpslopeDegree(Double.valueOf((String) parameterMaxDownslopeDegree.getSelectedItem()));
+			distanceAnalystParameter.setPathLineSmoothDegree(Integer.valueOf(parameterPathLineSmoothDegree.getSelectedItem()));
+			distanceAnalystParameter.setMaxUpslopeDegree(Double.valueOf(parameterMaxUpslopeDegree.getSelectedItem()));
+			distanceAnalystParameter.setMaxUpslopeDegree(Double.valueOf(parameterMaxDownslopeDegree.getSelectedItem()));
 
 			// run
 			DistanceAnalyst.addSteppedListener(this.steppedListener);
@@ -266,15 +266,15 @@ public class MetaProcessSurfacePathLine extends MetaProcess {
 			} else {
 				isSuccessful = false;
 			}
-
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
+		} finally {
 			// 当结果数据集不为空，并且tree中存在结果数据集时，进行删除操作
-			if (!StringUtilities.isNullOrEmpty(resultDatasetName) &&
+			if (!isSuccessful && !StringUtilities.isNullOrEmpty(resultDatasetName) &&
 					!this.resultDataset.getResultDatasource().getDatasets().isAvailableDatasetName(resultDatasetName)) {
 				this.resultDataset.getResultDatasource().getDatasets().delete(resultDatasetName);
 			}
-		} finally {
 			if (resultRecordset != null) {
 				resultRecordset.close();
 				resultRecordset.dispose();

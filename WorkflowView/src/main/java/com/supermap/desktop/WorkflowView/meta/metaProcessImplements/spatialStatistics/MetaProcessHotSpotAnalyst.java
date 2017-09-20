@@ -54,6 +54,7 @@ public class MetaProcessHotSpotAnalyst extends MetaProcessAnalyzingPatterns {
 			isSuccessful = result != null;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			ClusteringDistributions.removeSteppedListener(steppedListener);
 		}

@@ -217,6 +217,8 @@ public class MetaProcessSetProjection extends MetaProcess {
 			}
 		} catch (Exception e) {
 			ret = false;
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		}
 		return ret;
 	}

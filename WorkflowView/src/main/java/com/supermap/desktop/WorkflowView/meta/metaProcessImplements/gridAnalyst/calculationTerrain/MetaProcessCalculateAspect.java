@@ -52,6 +52,7 @@ public class MetaProcessCalculateAspect extends MetaProcessCalTerrain {
 			isSuccessful = datasetGridResult != null;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 //			CalculationTerrain.removeSteppedListener(steppedListener);
 		}

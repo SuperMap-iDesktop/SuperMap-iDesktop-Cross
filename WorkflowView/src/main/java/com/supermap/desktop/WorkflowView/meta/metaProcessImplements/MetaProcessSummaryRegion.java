@@ -16,6 +16,7 @@ import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -57,7 +58,10 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterMeshType.setRequisite(true);
 		parameterMeshType.setItems(new ParameterDataNode(ProcessProperties.getString("String_QuadrilateralMesh"), "0"), new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1"));
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
-		parameterStatisticMode.setToolTip(ProcessProperties.getString("String_StatisticsModeTip"));
+		parameterFeildName.setTipButtonMessage(ProcessProperties.getString("String_FeildNameTip"));
+		parameterFeildName1.setTipButtonMessage(ProcessProperties.getString("String_FeildNameTip"));
+		parameterStatisticMode.setTipButtonMessage(ProcessProperties.getString("String_StatisticsModeSimpleTip"));
+		parameterStatisticMode1.setTipButtonMessage(ProcessProperties.getString("String_StatisticsModeSimpleTip"));
 		parameterMeshSize.setDefaultWarningValue("100");
 		parameterMeshSizeUnit.setItems(new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), "Meter"),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), "Kilometer"),
@@ -122,7 +126,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterStandardFields.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (parameterStandardFields.getSelectedItem().toString().equals("true")) {
+				if (parameterStandardFields.getSelectedItem().equals("true")) {
 					switchStandardFields.switchParameter("1");
 				} else {
 					switchStandardFields.switchParameter("0");
@@ -138,7 +142,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		parameterWeightedFields.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (parameterWeightedFields.getSelectedItem().toString().equals("true")) {
+				if (parameterWeightedFields.getSelectedItem().equals("true")) {
 					switchWeightedFields.switchParameter("1");
 				} else {
 					switchWeightedFields.switchParameter("0");
@@ -161,7 +165,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 	public boolean execute() {
 		boolean isSuccessful;
 		try {
-			if (parameterStandardFields.getSelectedItem().toString().equals("false") && parameterWeightedFields.getSelectedItem().toString().equals("false")) {
+			if (parameterStandardFields.getSelectedItem().equals("false") && parameterWeightedFields.getSelectedItem().toString().equals("false")) {
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SummaryRegionMessage"));
 				return false;
 			}
@@ -170,32 +174,32 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
 			parameterInputDataType.initSourceInput(input);
 			CommonSettingCombine type = new CommonSettingCombine("type", parameterSummaryType.getSelectedData().toString());
-			CommonSettingCombine bounds = new CommonSettingCombine("bounds", parameterBounds.getSelectedItem().toString());
-			CommonSettingCombine sumShape = new CommonSettingCombine("sumShape", parametersumShape.getSelectedItem().toString());
-			CommonSettingCombine standardSummaryFields = new CommonSettingCombine("standardSummaryFields", parameterStandardFields.getSelectedItem().toString());
-			CommonSettingCombine weightedSummaryFields = new CommonSettingCombine("weightedSummaryFields", parameterWeightedFields.getSelectedItem().toString());
-			CommonSettingCombine standardFields = new CommonSettingCombine("standardFields", parameterFeildName.getSelectedItem().toString());
-			CommonSettingCombine standardStatisticModes = new CommonSettingCombine("standardStatisticModes", parameterStatisticMode.getSelectedItem().toString());
-			CommonSettingCombine weightedFields = new CommonSettingCombine("weightedFields", parameterFeildName1.getSelectedItem().toString());
-			CommonSettingCombine weightedStatisticModes = new CommonSettingCombine("weightedStatisticModes", parameterStatisticMode1.getSelectedItem().toString());
+			CommonSettingCombine bounds = new CommonSettingCombine("bounds", parameterBounds.getSelectedItem());
+			CommonSettingCombine sumShape = new CommonSettingCombine("sumShape", parametersumShape.getSelectedItem());
+			CommonSettingCombine standardSummaryFields = new CommonSettingCombine("standardSummaryFields", parameterStandardFields.getSelectedItem());
+			CommonSettingCombine weightedSummaryFields = new CommonSettingCombine("weightedSummaryFields", parameterWeightedFields.getSelectedItem());
+			CommonSettingCombine standardFields = new CommonSettingCombine("standardFields", parameterFeildName.getSelectedItem());
+			CommonSettingCombine standardStatisticModes = new CommonSettingCombine("standardStatisticModes", parameterStatisticMode.getSelectedItem());
+			CommonSettingCombine weightedFields = new CommonSettingCombine("weightedFields", parameterFeildName1.getSelectedItem());
+			CommonSettingCombine weightedStatisticModes = new CommonSettingCombine("weightedStatisticModes", parameterStatisticMode1.getSelectedItem());
 			if (parameterSummaryType.getSelectedData().toString().equals("SUMMARYMESH")) {
 				CommonSettingCombine meshType = new CommonSettingCombine("meshType", parameterMeshType.getSelectedData().toString());
-				CommonSettingCombine resolution = new CommonSettingCombine("resolution", parameterMeshSize.getSelectedItem().toString());
+				CommonSettingCombine resolution = new CommonSettingCombine("resolution", parameterMeshSize.getSelectedItem());
 				CommonSettingCombine meshSizeUnit = new CommonSettingCombine("meshSizeUnit", parameterMeshSizeUnit.getSelectedData().toString());
 				analyst.add(meshType, bounds, standardSummaryFields, weightedSummaryFields, resolution, meshSizeUnit, sumShape);
-				if (parameterStandardFields.getSelectedItem().toString().equals("true")) {
+				if (parameterStandardFields.getSelectedItem().equals("true")) {
 					analyst.add(standardFields, standardStatisticModes);
 				}
-				if (parameterWeightedFields.getSelectedItem().toString().equals("true")) {
+				if (parameterWeightedFields.getSelectedItem().equals("true")) {
 					analyst.add(weightedFields, weightedStatisticModes);
 				}
 			} else {
 				parameterAnalystDataType.initAnalystInput(analyst, 3);
 				analyst.add(bounds, standardSummaryFields, weightedSummaryFields, sumShape);
-				if (parameterStandardFields.getSelectedItem().toString().equals("true")) {
+				if (parameterStandardFields.getSelectedItem().equals("true")) {
 					analyst.add(standardFields, standardStatisticModes);
 				}
-				if (parameterWeightedFields.getSelectedItem().toString().equals("true")) {
+				if (parameterWeightedFields.getSelectedItem().equals("true")) {
 					analyst.add(weightedFields, weightedStatisticModes);
 				}
 			}
@@ -214,6 +218,7 @@ public class MetaProcessSummaryRegion extends MetaProcess {
 		} catch (Exception e) {
 			isSuccessful = false;
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			CursorUtilities.setDefaultCursor();
 		}

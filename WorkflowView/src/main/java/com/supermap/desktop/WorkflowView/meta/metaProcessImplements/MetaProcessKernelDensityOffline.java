@@ -196,7 +196,8 @@ public class MetaProcessKernelDensityOffline extends MetaProcess {
 			isSuccessful = result != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			densityAnalystParameter.dispose();
 			DensityAnalyst.removeSteppedListener(steppedListener);

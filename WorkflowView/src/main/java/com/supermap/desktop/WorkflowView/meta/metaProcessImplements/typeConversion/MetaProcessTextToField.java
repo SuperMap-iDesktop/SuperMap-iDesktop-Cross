@@ -122,7 +122,8 @@ public class MetaProcessTextToField extends MetaProcessTypeConversion {
 			recordsetInput.getBatch().update();
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			if (recordsetInput != null) {
 				recordsetInput.removeSteppedListener(steppedListener);

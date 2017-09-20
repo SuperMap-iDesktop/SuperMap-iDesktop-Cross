@@ -198,7 +198,8 @@ public class MetaProcessCostPathLine extends MetaProcessGridAnalyst {
 			}
 			isSuccessful = pathLineResult != null;
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			DistanceAnalyst.removeSteppedListener(steppedListener);
 		}

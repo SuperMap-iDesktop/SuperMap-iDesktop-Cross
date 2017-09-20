@@ -186,7 +186,8 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 			isSuccessful = Generalization.edgeMatch(sourceDataset, targetDataset, edgeMatchParameter);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(targetDataset);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			Generalization.removeSteppedListener(this.steppedListener);
 		}

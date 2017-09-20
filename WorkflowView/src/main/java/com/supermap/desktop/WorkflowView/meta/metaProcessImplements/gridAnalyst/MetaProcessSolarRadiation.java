@@ -3,9 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.gridAnalyst
 import com.supermap.analyst.spatialanalyst.SolarRadiation;
 import com.supermap.analyst.spatialanalyst.SolarRadiationParameter;
 import com.supermap.analyst.spatialanalyst.SolarRadiationResult;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
@@ -20,6 +18,9 @@ import com.supermap.desktop.process.parameters.ParameterPanels.SolarRadiation.Pa
 import com.supermap.desktop.process.parameters.ParameterPanels.SolarRadiation.ParameterSolarRadiationAnalysisType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Created by lixiaoyao on 2017/9/7.
@@ -47,6 +48,7 @@ public class MetaProcessSolarRadiation extends MetaProcess {
 		initParameters();
 		initParametersState();
 		initParameterConstraint();
+		registerListener();
 	}
 
 	private void initParameters() {
@@ -54,7 +56,7 @@ public class MetaProcessSolarRadiation extends MetaProcess {
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		this.sourceDataset = new ParameterSingleDataset(DatasetType.GRID);
 		this.sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
-		this.solarRadiationAnalysisType = new ParameterSolarRadiationAnalysisType();
+		this.solarRadiationAnalysisType = new ParameterSolarRadiationAnalysisType(ProcessProperties.getString("String_AnalysisType"));
 		this.parameterNumberLatitude = new ParameterNumber(ProcessProperties.getString("String_AreaLatitude"));
 		this.parameterNumberTransmittance = new ParameterNumber(ProcessProperties.getString("String_Transmittance"));
 		this.parameterNumberZFactor = new ParameterNumber(ProcessProperties.getString("String_ZFactor"));
@@ -68,9 +70,6 @@ public class MetaProcessSolarRadiation extends MetaProcess {
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(ProcessProperties.getString("String_TerrainData"));
 		sourceData.addParameters(this.sourceDatasource, this.sourceDataset);
-		ParameterCombine typeSetting = new ParameterCombine();
-		typeSetting.setDescribe(ProcessProperties.getString("String_AnalysisType"));
-		typeSetting.addParameters(this.solarRadiationAnalysisType);
 		ParameterCombine radiationSetting = new ParameterCombine();
 		radiationSetting.setDescribe(ProcessProperties.getString("String_RadiationSetting"));
 		radiationSetting.addParameters(this.parameterNumberLatitude, this.parameterNumberTransmittance, this.parameterNumberZFactor);
@@ -78,13 +77,12 @@ public class MetaProcessSolarRadiation extends MetaProcess {
 		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		resultData.addParameters(this.resultDatasource, this.textFieldTotal, this.checkboBoxAndTextFieldDirection, this.checkboBoxAndTextFieldDiffuse, this.checkboBoxAndTextFieldDuration);
 
-		this.parameters.setParameters(sourceData, typeSetting, radiationSetting, resultData);
+		this.parameters.setParameters(sourceData, this.solarRadiationAnalysisType, radiationSetting, resultData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA_TOTAL, ProcessOutputResultProperties.getString("String_SolarRadiationTotal"), DatasetTypes.GRID, this.textFieldTotal);
 		this.parameters.addOutputParameters(OUTPUT_DATA_DIFFUSE, ProcessOutputResultProperties.getString("String_SolarRadiationDiffuse"), DatasetTypes.GRID, this.checkboBoxAndTextFieldDiffuse);
 		this.parameters.addOutputParameters(OUTPUT_DATA_DIRECTION, ProcessOutputResultProperties.getString("String_SolarRadiationDirection"), DatasetTypes.GRID, this.checkboBoxAndTextFieldDirection);
 		this.parameters.addOutputParameters(OUTPUT_DATA_DURATION, ProcessOutputResultProperties.getString("String_SolarRadiationDuration"), DatasetTypes.GRID, this.checkboBoxAndTextFieldDuration);
-
 	}
 
 	private void initParametersState() {
@@ -97,10 +95,13 @@ public class MetaProcessSolarRadiation extends MetaProcess {
 			this.checkboBoxAndTextFieldDirection.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_Direction"));
 			this.checkboBoxAndTextFieldDiffuse.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_Diffuse"));
 			this.checkboBoxAndTextFieldDuration.setSelectedItem(dataset.getDatasource().getDatasets().getAvailableDatasetName("result_Duration"));
+			changeLatitude((DatasetGrid)dataset);
 		}
-
-		this.parameterNumberLatitude.setSelectedItem(39.80375);
-		this.parameterNumberLatitude.setEnabled(false);
+		this.resultDatasource.setReadOnlyNeeded(false);
+		this.parameterNumberLatitude.setMinValue(-90);
+		this.parameterNumberLatitude.setMaxValue(90);
+		this.parameterNumberLatitude.setIsIncludeMin(true);
+		this.parameterNumberLatitude.setIncludeMax(true);
 		this.parameterNumberTransmittance.setSelectedItem(0.5);
 		this.parameterNumberZFactor.setSelectedItem(1);
 		this.parameterNumberTransmittance.setMinValue(0);
@@ -117,6 +118,41 @@ public class MetaProcessSolarRadiation extends MetaProcess {
 		equalDatasourceConstraint.constrained(this.sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
 		DatasourceConstraint.getInstance().constrained(this.resultDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+	}
+
+	private void registerListener() {
+		this.sourceDataset.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetGrid) {
+					changeLatitude((DatasetGrid) evt.getNewValue());
+				}
+			}
+		});
+
+	}
+
+	private void changeLatitude(DatasetGrid datasetGrid){
+		if (datasetGrid.getPrjCoordSys().getGeoCoordSys() != null) {
+			if (datasetGrid.getPrjCoordSys().getType() != PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE) {
+				Point2Ds point2Ds = new Point2Ds();
+				point2Ds.add(datasetGrid.getBounds().getCenter());
+				CoordSysTranslator.inverse(point2Ds, datasetGrid.getPrjCoordSys());
+				parameterNumberLatitude.setSelectedItem(point2Ds.getItem(0).getY());
+			} else {
+				parameterNumberLatitude.setSelectedItem(datasetGrid.getBounds().getCenter().getY());
+			}
+			parameterNumberLatitude.setEnabled(false);
+			//用户的数据集范围错误的时候允许自定义设置区域纬度
+			if (Double.valueOf(parameterNumberLatitude.getSelectedItem()) < -90 ||
+					Double.valueOf(parameterNumberLatitude.getSelectedItem()) > 90) {
+				parameterNumberLatitude.setEnabled(true);
+				parameterNumberLatitude.setSelectedItem(45);
+			}
+		} else {
+			parameterNumberLatitude.setEnabled(true);
+			parameterNumberLatitude.setSelectedItem(45);
+		}
 	}
 
 	@Override
@@ -157,8 +193,11 @@ public class MetaProcessSolarRadiation extends MetaProcess {
 			this.getParameters().getOutputs().getData(OUTPUT_DATA_DURATION).setValue(solarRadiationResult.getDurationDatasetGrid());
 			isSuccessful = solarRadiationResult != null;
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-
+			if (e.getMessage().toString().indexOf("StartHour") != -1 || e.getMessage().toString().indexOf("StartDay") != -1) {
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_StartTimeNotEqualEndTime"));
+			} else {
+				Application.getActiveApplication().getOutput().output(e);
+			}
 		} finally {
 			SolarRadiation.removeSteppedListener(steppedListener);
 		}
