@@ -48,6 +48,7 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 		}
 		if (!value.equals(this.value)) {
 			Object oldValue = this.value;
+			this.value = ((String) value);
 			firePropertyChangeListener(new PropertyChangeEvent(this, PROPERTY_VALE, oldValue, value));
 		}
 	}
