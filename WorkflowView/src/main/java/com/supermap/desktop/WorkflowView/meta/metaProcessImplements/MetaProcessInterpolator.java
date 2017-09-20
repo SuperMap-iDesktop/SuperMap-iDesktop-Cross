@@ -101,7 +101,7 @@ public class MetaProcessInterpolator extends MetaProcessGridAnalyst {
 				double x = bounds.getWidth() / 500;
 				double y = bounds.getHeight() / 500;
 				double resolution = x > y ? y : x;
-				parameterResolution.setSelectedItem("" + resolution);
+				parameterResolution.setSelectedItem(DoubleUtilities.getFormatString(resolution));
 				if (resolution != 0) {
 					int rows = (int) Math.abs(bounds.getHeight() / resolution);
 					int columns = (int) Math.abs(bounds.getWidth() / resolution);
