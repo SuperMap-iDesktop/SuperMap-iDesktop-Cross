@@ -314,6 +314,9 @@ public class NextStepPane extends JPanel implements IState {
 //		this.add(this.panelMultiProcess, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
 		this.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		this.panelCacheRange.setPreferredSize(new Dimension(400, 300));
+		//矢量瓦片在java中还不支持先屏蔽了
+		this.labelTileType.setVisible(false);
+		this.comboBoxTileType.setVisible(false);
 	}
 
 	private void initComboboxState() {

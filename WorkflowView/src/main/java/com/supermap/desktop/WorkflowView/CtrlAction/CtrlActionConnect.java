@@ -21,4 +21,9 @@ public class CtrlActionConnect extends CtrlAction {
 			((FormWorkflow) form).getCanvas().getConnector().connecting();
 		}
 	}
+
+	@Override
+	public boolean enable() {
+		return Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm() instanceof FormWorkflow;
+	}
 }

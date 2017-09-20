@@ -261,6 +261,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			setWorldFilePath.methodName = "setWorldFilePath";
 			ParameterFile worldFilePath = new ParameterFile(CommonProperties.getString("String_WorldFile"));
 			worldFilePath.setModuleName("WorldFile");
+			worldFilePath.setModuleType("OpenOne");
 			worldFilePath.addExtension(ProcessProperties.getString("string_filetype_tfw"), "tfw");
 			setWorldFilePath.parameter = worldFilePath;
 
@@ -317,6 +318,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			setWorldFilePath.methodName = "setWorldFilePath";
 			ParameterFile worldFilePath = new ParameterFile(CommonProperties.getString("String_WorldFile"));
 			worldFilePath.setModuleName("WorldFile");
+			worldFilePath.setModuleType("OpenOne");
 			worldFilePath.addExtension(ProcessProperties.getString("string_filetype_tfw"), "tfw");
 			setWorldFilePath.parameter = worldFilePath;
 

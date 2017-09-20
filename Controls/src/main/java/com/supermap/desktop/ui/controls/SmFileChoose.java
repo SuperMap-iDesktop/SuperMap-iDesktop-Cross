@@ -7,7 +7,11 @@ import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -418,7 +422,7 @@ public class SmFileChoose extends JFileChooser {
 			}
 			// 保存时文件已存在
 			if (fileExistFlag && "SaveOne".equals(moduleType)) {
-				int result = UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_RenameFile_Message"));
+				int result = UICommonToolkit.showConfirmDialog(MessageFormat.format(ControlsProperties.getString("String_RenameFile_Message"), file.getName()));
 				if (JOptionPane.OK_OPTION != result) {
 					return;
 				}

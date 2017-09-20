@@ -152,7 +152,7 @@ public class PanelTransformForImage extends PanelTransform {
             if (!SmFileChoose.isModuleExist("ImportPI")) {
                 String fileFilters = SmFileChoose.createFileFilter(DataConversionProperties.getString("string_filetype_tfw"), "tfw");
                 SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-                        DataConversionProperties.getString("String_Import"), "ImportPI", "OpenMany");
+                        DataConversionProperties.getString("String_Import"), "ImportPI", "OpenOne");
             }
             SmFileChoose fileChooser = new SmFileChoose("ImportPI");
 
