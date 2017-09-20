@@ -73,6 +73,7 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 		labelMessage = new JLabel("...");
 		labelRemaintime = new JLabel("...");
 		this.buttonRun = new ButtonExecutor(this.run, this.cancel);
+		this.buttonRun.setVisible(false);
 		ComponentUIUtilities.setName(labelTitle, "ProcessTask_labelTitle");
 		ComponentUIUtilities.setName(progressBar, "ProcessTask_progressBar");
 		ComponentUIUtilities.setName(labelMessage, "ProcessTask_labelMessage");
@@ -131,7 +132,7 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 	public void update(SingleProgress chunk) {
 
 		// 进入这个方法就表示已经开始运行，更新按钮状态
-		this.buttonRun.setProcedure(ButtonExecutor.RUNNING);
+//		this.buttonRun.setProcedure(ButtonExecutor.RUNNING);
 
 		if (chunk.isIndeterminate()) {
 			this.progressBar.updateProgressIndeterminate();

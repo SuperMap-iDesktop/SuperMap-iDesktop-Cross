@@ -17,10 +17,22 @@ import com.supermap.desktop.WorkflowView.graphics.interaction.canvas.Selection;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.*;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormDeactivatedListener;
+import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.FormShownListener;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.Workflow;
-import com.supermap.desktop.process.events.*;
+import com.supermap.desktop.process.events.RelationAddedEvent;
+import com.supermap.desktop.process.events.RelationAddedListener;
+import com.supermap.desktop.process.events.RelationRemovedEvent;
+import com.supermap.desktop.process.events.RelationRemovedListener;
+import com.supermap.desktop.process.events.WorkflowChangeEvent;
+import com.supermap.desktop.process.events.WorkflowChangeListener;
 import com.supermap.desktop.process.tasks.TasksManager;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -394,5 +406,15 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	@Override
 	public void run() {
 		getTasksManager().run();
+	}
+
+	public boolean isEditable() {
+		return workflow.isEditable();
+	}
+
+	public void stop() {
+		if (tasksManager.isExecuting()) {
+			tasksManager.cancel();
+		}
 	}
 }

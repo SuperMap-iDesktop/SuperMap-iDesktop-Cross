@@ -21,6 +21,7 @@ public class ProcessWorker extends Worker<SingleProgress> {
 		}
 
 		this.process = process;
+		setTitle(this.process.getTitle());
 		this.process.addRunningListener(this.runningHandler);
 	}
 
