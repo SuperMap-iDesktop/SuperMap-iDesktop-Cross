@@ -54,21 +54,21 @@ public class ParameterPatternsParameter extends ParameterCombine {
 	private void initParameters() {
 
 		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
-		parameterAssessmentFieldComboBox.setFieldType(fieldType);
-		parameterSelfWeightFieldComboBox.setFieldType(fieldType);
-		parameterAssessmentFieldComboBox.setDescribe(ProcessProperties.getString("String_AssessmentField"));
-		parameterComboBoxConceptModel.setDescribe(ProcessProperties.getString("String_ConceptModel"));
-		parameterDistanceMethod.setDescribe(ProcessProperties.getString("String_DistanceMethod"));
-		parameterTextFieldDistanceTolerance.setDescribe(ProcessProperties.getString("String_DistanceTolerance"));
-		parameterTextFieldDistanceTolerance.setTipButtonMessage(ProcessProperties.getString("String_DistanceToleranceTip"));
-		parameterTextFieldExponent.setDescribe(ProcessProperties.getString("String_Exponent"));
-		parameterCheckBoxFDRAdjusted.setDescribe(ProcessProperties.getString("String_FDRAdjusted"));
-		parameterFile.setDescribe(ProcessProperties.getString("String_Label_SWM"));
-		parameterTextFieldKNeighbors.setMinValue(1);
-		parameterTextFieldKNeighbors.setMaxBit(0);
+		this.parameterAssessmentFieldComboBox.setFieldType(fieldType);
+		this.parameterSelfWeightFieldComboBox.setFieldType(fieldType);
+		this.parameterAssessmentFieldComboBox.setDescribe(ProcessProperties.getString("String_AssessmentField"));
+		this.parameterComboBoxConceptModel.setDescribe(ProcessProperties.getString("String_ConceptModel"));
+		this.parameterDistanceMethod.setDescribe(ProcessProperties.getString("String_DistanceMethod"));
+		this.parameterTextFieldDistanceTolerance.setDescribe(ProcessProperties.getString("String_DistanceTolerance"));
+		this.parameterTextFieldDistanceTolerance.setTipButtonMessage(ProcessProperties.getString("String_DistanceToleranceTip"));
+		this.parameterTextFieldExponent.setDescribe(ProcessProperties.getString("String_Exponent"));
+		this.parameterCheckBoxFDRAdjusted.setDescribe(ProcessProperties.getString("String_FDRAdjusted"));
+		this.parameterFile.setDescribe(ProcessProperties.getString("String_Label_SWM"));
+		this.parameterTextFieldKNeighbors.setMinValue(1);
+		this.parameterTextFieldKNeighbors.setMaxBit(0);
 
-		parameterTextFieldExponent.setMinValue(0.0);
-		parameterTextFieldDistanceTolerance.setSmTextFieldLegit(new ISmTextFieldLegit() {
+		this.parameterTextFieldExponent.setMinValue(0.0);
+		this.parameterTextFieldDistanceTolerance.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
 				try {
@@ -99,13 +99,13 @@ public class ParameterPatternsParameter extends ParameterCombine {
 			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
 					CoreProperties.getString("String_Open"), modelName, "OpenOne");
 		}
-		parameterFile.setModuleName(modelName);
-		parameterFile.setRequisite(true);
+		this.parameterFile.setModuleName(modelName);
+		this.parameterFile.setRequisite(true);
 
-		parameterTextFieldKNeighbors.setDescribe(ProcessProperties.getString("String_KNeighbors"));
-		parameterSelfWeightFieldComboBox.setDescribe(ProcessProperties.getString("String_SelfWeightField"));
+		this.parameterTextFieldKNeighbors.setDescribe(ProcessProperties.getString("String_KNeighbors"));
+		this.parameterSelfWeightFieldComboBox.setDescribe(ProcessProperties.getString("String_SelfWeightField"));
 
-		parameterComboBoxConceptModel.setItems(
+		this.parameterComboBoxConceptModel.setItems(
 				new ParameterDataNode(ProcessProperties.getString("String_FIXEDDISTANCEBAND"), ConceptualizationModel.FIXEDDISTANCEBAND),
 				new ParameterDataNode(ProcessProperties.getString("String_CONTIGUITYEDGESNODE"), ConceptualizationModel.CONTIGUITYEDGESNODE),
 				new ParameterDataNode(ProcessProperties.getString("String_CONTIGUITYEDGESONLY"), ConceptualizationModel.CONTIGUITYEDGESONLY),
@@ -115,25 +115,25 @@ public class ParameterPatternsParameter extends ParameterCombine {
 				new ParameterDataNode(ProcessProperties.getString("String_SPATIALWEIGHTMATRIXFILE"), ConceptualizationModel.SPATIALWEIGHTMATRIXFILE),
 				new ParameterDataNode(ProcessProperties.getString("String_ZONEOFINDIFFERENCE"), ConceptualizationModel.ZONEOFINDIFFERENCE));
 
-		parameterDistanceMethod.setItems(new ParameterDataNode(ProcessProperties.getString("String_EUCLIDEAN"), DistanceMethod.EUCLIDEAN));
+		this.parameterDistanceMethod.setItems(new ParameterDataNode(ProcessProperties.getString("String_EUCLIDEAN"), DistanceMethod.EUCLIDEAN));
 		//new ParameterDataNode(ProcessProperties.getString("String_MANHATTAN"), DistanceMethod.MANHATTAN) 暂不支持这种距离方式
-		parameterCheckBoxStandardization.setDescribe(ProcessProperties.getString("String_Standardization"));
+		this.parameterCheckBoxStandardization.setDescribe(ProcessProperties.getString("String_Standardization"));
 
 
 		final ParameterSwitch parameterSwitchMain = new ParameterSwitch();
 		ParameterCombine parameterCombineInverseDistance = new ParameterCombine();
 		parameterCombineInverseDistance.setRebuildEveryTime(true);
-		parameterCombineInverseDistance.addParameters(parameterTextFieldDistanceTolerance, parameterTextFieldExponent);
+		parameterCombineInverseDistance.addParameters(this.parameterTextFieldDistanceTolerance, this.parameterTextFieldExponent);
 
 		ParameterCombine parameterCombineFixedDistanceBand = new ParameterCombine();
 		parameterCombineFixedDistanceBand.setRebuildEveryTime(true);
-		parameterCombineFixedDistanceBand.addParameters(parameterTextFieldDistanceTolerance);
+		parameterCombineFixedDistanceBand.addParameters(this.parameterTextFieldDistanceTolerance);
 
 		ParameterCombine parameterCombineKNeighbors = new ParameterCombine();
-		parameterCombineKNeighbors.addParameters(parameterTextFieldKNeighbors);
+		parameterCombineKNeighbors.addParameters(this.parameterTextFieldKNeighbors);
 
 		ParameterCombine parameterCombineFile = new ParameterCombine();
-		parameterCombineFile.addParameters(parameterFile);
+		parameterCombineFile.addParameters(this.parameterFile);
 
 		parameterSwitchMain.add("InverseDistance", parameterCombineInverseDistance);
 		parameterSwitchMain.add("FixedDistanceBand", parameterCombineFixedDistanceBand);
@@ -141,7 +141,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 		parameterSwitchMain.add("File", parameterCombineFile);
 		parameterSwitchMain.switchParameter((IParameter) null);
 
-		parameterComboBoxConceptModel.addPropertyListener(new PropertyChangeListener() {
+		this.parameterComboBoxConceptModel.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getPropertyName().equals(ParameterComboBox.comboBoxValue)) {
@@ -162,27 +162,27 @@ public class ParameterPatternsParameter extends ParameterCombine {
 			}
 		});
 
-		this.addParameters(parameterAssessmentFieldComboBox, parameterComboBoxConceptModel);
+		this.addParameters(this.parameterAssessmentFieldComboBox, this.parameterComboBoxConceptModel);
 		// 调整界面布局-yuanR2017.9.5
 		parameterSwitchMain.switchParameter("FixedDistanceBand");
-		this.addParameters(parameterSwitchMain, parameterDistanceMethod);
-		if (metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST) || metaKeys.equals(MetaKeys.OPTIMIZED_HOT_SPOT_ANALYST)) {
-			this.addParameters(parameterSelfWeightFieldComboBox);
+		this.addParameters(parameterSwitchMain, this.parameterDistanceMethod);
+		if (this.metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST) || this.metaKeys.equals(MetaKeys.OPTIMIZED_HOT_SPOT_ANALYST)) {
+			this.addParameters(this.parameterSelfWeightFieldComboBox);
 		} else {
-			this.addParameters(parameterCheckBoxStandardization);
+			this.addParameters(this.parameterCheckBoxStandardization);
 		}
-		if (metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST) || metaKeys.equals(MetaKeys.OPTIMIZED_HOT_SPOT_ANALYST) || metaKeys.equals(MetaKeys.CLUSTER_OUTLIER_ANALYST)) {
-			this.addParameters(parameterCheckBoxFDRAdjusted);
+		if (this.metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST) || this.metaKeys.equals(MetaKeys.OPTIMIZED_HOT_SPOT_ANALYST) || this.metaKeys.equals(MetaKeys.CLUSTER_OUTLIER_ANALYST)) {
+			this.addParameters(this.parameterCheckBoxFDRAdjusted);
 		}
 
 		this.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
 	}
 
 	private void initParameterState() {
-		parameterComboBoxConceptModel.setSelectedItem(ConceptualizationModel.FIXEDDISTANCEBAND);
-		parameterTextFieldDistanceTolerance.setSelectedItem("-1.0");
-		parameterTextFieldExponent.setSelectedItem("1.0");
-		parameterTextFieldKNeighbors.setSelectedItem("1");
+		this.parameterComboBoxConceptModel.setSelectedItem(ConceptualizationModel.FIXEDDISTANCEBAND);
+		this.parameterTextFieldDistanceTolerance.setSelectedItem("-1.0");
+		this.parameterTextFieldExponent.setSelectedItem("1.0");
+		this.parameterTextFieldKNeighbors.setSelectedItem("1");
 	}
 
 	public void setCurrentDataset(DatasetVector currentDataset) {
@@ -191,8 +191,8 @@ public class ParameterPatternsParameter extends ParameterCombine {
 	}
 
 	private void datasetChanged() {
-		parameterAssessmentFieldComboBox.setFieldName(currentDataset);
-		parameterSelfWeightFieldComboBox.setFieldName(currentDataset);
+		this.parameterAssessmentFieldComboBox.setFieldName(this.currentDataset);
+		this.parameterSelfWeightFieldComboBox.setFieldName(this.currentDataset);
 	}
 
 	private void initParameterConstraint() {
@@ -208,28 +208,28 @@ public class ParameterPatternsParameter extends ParameterCombine {
 
 	public PatternsParameter getPatternParameter() {
 		PatternsParameter patternsParameter = new PatternsParameter();
-		patternsParameter.setAssessmentFieldName(parameterAssessmentFieldComboBox.getFieldName());
-		ConceptualizationModel conceptualizationModel = (ConceptualizationModel) ((ParameterDataNode) parameterComboBoxConceptModel.getSelectedItem()).getData();
+		patternsParameter.setAssessmentFieldName(this.parameterAssessmentFieldComboBox.getFieldName());
+		ConceptualizationModel conceptualizationModel = (ConceptualizationModel) ((ParameterDataNode) this.parameterComboBoxConceptModel.getSelectedItem()).getData();
 		patternsParameter.setConceptModel(conceptualizationModel);
-		patternsParameter.setDistanceMethod((DistanceMethod) ((ParameterDataNode) parameterDistanceMethod.getSelectedItem()).getData());
+		patternsParameter.setDistanceMethod((DistanceMethod) ((ParameterDataNode) this.parameterDistanceMethod.getSelectedItem()).getData());
 		if (conceptualizationModel == ConceptualizationModel.INVERSEDISTANCE || conceptualizationModel == ConceptualizationModel.INVERSEDISTANCESQUARED
 				|| conceptualizationModel == ConceptualizationModel.ZONEOFINDIFFERENCE) {
-			patternsParameter.setDistanceTolerance(Double.valueOf((String) parameterTextFieldDistanceTolerance.getSelectedItem()));
-			patternsParameter.setExponent(Double.valueOf((String) parameterTextFieldExponent.getSelectedItem()));
+			patternsParameter.setDistanceTolerance(Double.valueOf(this.parameterTextFieldDistanceTolerance.getSelectedItem()));
+			patternsParameter.setExponent(Double.valueOf(this.parameterTextFieldExponent.getSelectedItem()));
 		} else if (conceptualizationModel == ConceptualizationModel.FIXEDDISTANCEBAND) {
-			patternsParameter.setDistanceTolerance(Double.valueOf((String) parameterTextFieldDistanceTolerance.getSelectedItem()));
+			patternsParameter.setDistanceTolerance(Double.valueOf(this.parameterTextFieldDistanceTolerance.getSelectedItem()));
 		} else if (conceptualizationModel == ConceptualizationModel.KNEARESTNEIGHBORS) {
-			patternsParameter.setKNeighbors(Integer.valueOf((String) parameterTextFieldKNeighbors.getSelectedItem()));
+			patternsParameter.setKNeighbors(Integer.valueOf(this.parameterTextFieldKNeighbors.getSelectedItem()));
 		} else if (conceptualizationModel == ConceptualizationModel.SPATIALWEIGHTMATRIXFILE) {
-			patternsParameter.setFilePath((String) parameterFile.getSelectedItem());
+			patternsParameter.setFilePath(this.parameterFile.getSelectedItem());
 		}
-		if (metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST) || metaKeys.equals(MetaKeys.CLUSTER_OUTLIER_ANALYST)) {
-			patternsParameter.setFDRAdjusted(Boolean.valueOf((String) parameterCheckBoxFDRAdjusted.getSelectedItem()));
+		if (this.metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST) || this.metaKeys.equals(MetaKeys.CLUSTER_OUTLIER_ANALYST)) {
+			patternsParameter.setFDRAdjusted(Boolean.valueOf(this.parameterCheckBoxFDRAdjusted.getSelectedItem()));
 		}
-		if (metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST)) {
-			patternsParameter.setSelfWeightFieldName(parameterSelfWeightFieldComboBox.getFieldName());
+		if (this.metaKeys.equals(MetaKeys.HOT_SPOT_ANALYST)) {
+			patternsParameter.setSelfWeightFieldName(this.parameterSelfWeightFieldComboBox.getFieldName());
 		} else {
-			patternsParameter.setStandardization(Boolean.valueOf((String) parameterCheckBoxStandardization.getSelectedItem()));
+			patternsParameter.setStandardization(Boolean.valueOf((String) this.parameterCheckBoxStandardization.getSelectedItem()));
 		}
 		return patternsParameter;
 	}
@@ -240,7 +240,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 	 * @return
 	 */
 	public ParameterComboBox getParameterComboBoxConceptModel() {
-		return parameterComboBoxConceptModel;
+		return this.parameterComboBoxConceptModel;
 	}
 
 }

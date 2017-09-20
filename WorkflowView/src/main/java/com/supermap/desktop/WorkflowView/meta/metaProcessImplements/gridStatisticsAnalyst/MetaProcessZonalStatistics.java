@@ -210,7 +210,8 @@ public class MetaProcessZonalStatistics extends MetaProcess {
 			this.getParameters().getOutputs().getData(OUTPUT_DATA_GRID).setValue(result.getResultDatasetGrid());
 			this.getParameters().getOutputs().getData(OUTPUT_DATA_TABLE).setValue(result.getResultTable());
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			StatisticsAnalyst.removeSteppedListener(steppedListener);
 		}

@@ -189,8 +189,9 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 	}
 
 	/**
-	 * 	缓冲类型面板是否可用
+	 * 缓冲类型面板是否可用
 	 * 只对线数据集有效
+	 *
 	 * @param bufferTypePanelEnabled
 	 */
 	private void setBufferTypePanelEnabled(Boolean bufferTypePanelEnabled) {
@@ -280,13 +281,14 @@ public class MetaProcessMultiBuffer extends MetaProcess {
 			}
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(resultDataset);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-			// 如果失败了，删除新建的数据集
-			if (resultDatasource != null && resultName != null) {
-				resultDatasource.getDatasets().delete(resultName);
-			}
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			BufferAnalyst.removeSteppedListener(this.steppedListener);
+			// 如果失败了，删除新建的数据集
+			if (!isSuccessful && resultDatasource != null && resultName != null) {
+				resultDatasource.getDatasets().delete(resultName);
+			}
 		}
 		return isSuccessful;
 	}

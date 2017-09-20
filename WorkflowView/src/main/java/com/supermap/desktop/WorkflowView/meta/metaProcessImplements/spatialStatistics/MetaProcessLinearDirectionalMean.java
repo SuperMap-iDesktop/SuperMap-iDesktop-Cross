@@ -40,6 +40,7 @@ public class MetaProcessLinearDirectionalMean extends MetaProcessSpatialMeasure 
 			isSuccessful = result != null;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			SpatialMeasure.removeSteppedListener(steppedListener);
 		}

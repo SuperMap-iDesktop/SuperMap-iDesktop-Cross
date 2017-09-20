@@ -55,6 +55,7 @@ public class MetaProcessAutoCorrelation extends MetaProcessAnalyzingPatterns {
 //				parameterResult.setSelectedItem(result);
 			}
 		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e.getMessage());
 			e.printStackTrace();
 		} finally {
 			AnalyzingPatterns.removeSteppedListener(steppedListener);

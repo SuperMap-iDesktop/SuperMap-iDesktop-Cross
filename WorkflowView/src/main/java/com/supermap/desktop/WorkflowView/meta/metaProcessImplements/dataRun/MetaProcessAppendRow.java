@@ -138,7 +138,8 @@ public class MetaProcessAppendRow extends MetaProcess {
 				}
 			}
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			datasetVector.removeSteppedListener(this.steppedListener);
 		}

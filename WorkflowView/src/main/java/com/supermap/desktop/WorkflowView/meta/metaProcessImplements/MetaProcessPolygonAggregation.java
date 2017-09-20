@@ -1,17 +1,13 @@
 package com.supermap.desktop.WorkflowView.meta.metaProcessImplements;
 
-import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.WorkflowView.ProcessOutputResultProperties;
 import com.supermap.desktop.WorkflowView.meta.MetaKeys;
 import com.supermap.desktop.WorkflowView.meta.MetaProcess;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.lbs.Interface.IServerService;
 import com.supermap.desktop.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.lbs.params.JobResultResponse;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -19,10 +15,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.parameter.ipls.*;
 import com.supermap.desktop.process.parameters.ParameterPanels.DefaultOpenServerMap;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.CursorUtilities;
-import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * Created by caolp on 2017-05-26.
@@ -85,7 +78,6 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 	}
 
 
-
 	@Override
 	public String getTitle() {
 		return ProcessProperties.getString("String_PolygonAggregation");
@@ -127,6 +119,7 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 		} catch (Exception e) {
 			isSuccessful = false;
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			CursorUtilities.setDefaultCursor();
 		}

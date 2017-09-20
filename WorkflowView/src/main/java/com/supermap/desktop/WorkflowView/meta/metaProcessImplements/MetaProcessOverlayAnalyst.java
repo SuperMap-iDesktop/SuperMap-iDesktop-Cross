@@ -28,7 +28,6 @@ import com.supermap.desktop.utilities.OverlayAnalystType;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
 /**
@@ -294,7 +293,8 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 			}
 			this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(targetDataset);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			OverlayAnalyst.removeSteppedListener(this.steppedListener);
 		}

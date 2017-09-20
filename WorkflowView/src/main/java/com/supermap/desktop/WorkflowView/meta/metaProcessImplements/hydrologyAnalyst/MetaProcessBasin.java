@@ -26,7 +26,7 @@ public class MetaProcessBasin extends MetaProcessHydrology {
 
 	@Override
 	protected void initParaComponent() {
-		parameters.setParameters(sourceCombine,resultCombine);
+		parameters.setParameters(sourceCombine, resultCombine);
 	}
 
 	@Override

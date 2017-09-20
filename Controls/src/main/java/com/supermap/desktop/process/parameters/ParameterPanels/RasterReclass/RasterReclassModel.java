@@ -117,7 +117,6 @@ public class RasterReclassModel extends DefaultTableModel {
 				this.tableDatas.get(row).segment.setNewValue(tempValue);
 			}
 			fireTableDataChanged();
-			//fireTableCellUpdated(row, column);
 		}
 	}
 

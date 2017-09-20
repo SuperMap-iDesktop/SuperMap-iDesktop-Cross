@@ -117,7 +117,8 @@ public class MetaProcessLinePolygonSmooth extends MetaProcess {
 			isSuccessful = datasetVector.smooth(smoothness, true);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(datasetVector);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			datasetVector.removeSteppedListener(this.steppedListener);
 		}

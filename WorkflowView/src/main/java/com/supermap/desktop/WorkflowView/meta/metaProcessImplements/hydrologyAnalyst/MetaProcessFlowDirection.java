@@ -62,7 +62,7 @@ public class MetaProcessFlowDirection extends MetaProcessGridAnalyst {
 
 		parameters.setParameters(sourceCombine, settingCombine, resultCombine);
 		parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceCombine);
-		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_DirectionGrid"),DatasetTypes.GRID,directionGrid);
+		parameters.addOutputParameters(OUTPUT_DATA, ProcessOutputResultProperties.getString("String_Result_DirectionGrid"), DatasetTypes.GRID, directionGrid);
 	}
 
 	private void initParameterConstraint() {
@@ -115,18 +115,19 @@ public class MetaProcessFlowDirection extends MetaProcessGridAnalyst {
 			boolean createDrop = Boolean.parseBoolean(checkBoxCreateDrop.getSelectedItem());
 			DatasetGrid resultDirection = null;
 			if (createDrop) {
-				resultDirection = HydrologyAnalyst.flowDirection(src,forceFlowAtEdge,resultDatasource.getSelectedItem(),
+				resultDirection = HydrologyAnalyst.flowDirection(src, forceFlowAtEdge, resultDatasource.getSelectedItem(),
 						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(directionGrid.getSelectedItem()),
 						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(dropGrid.getSelectedItem()));
 			} else {
-				resultDirection = HydrologyAnalyst.flowDirection(src,forceFlowAtEdge,resultDatasource.getSelectedItem(),
+				resultDirection = HydrologyAnalyst.flowDirection(src, forceFlowAtEdge, resultDatasource.getSelectedItem(),
 						resultDatasource.getSelectedItem().getDatasets().getAvailableDatasetName(directionGrid.getSelectedItem()));
 			}
 			isSuccessful = resultDirection != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDirection);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
+		} finally {
 			HydrologyAnalyst.removeSteppedListener(steppedListener);
 		}
 		return isSuccessful;

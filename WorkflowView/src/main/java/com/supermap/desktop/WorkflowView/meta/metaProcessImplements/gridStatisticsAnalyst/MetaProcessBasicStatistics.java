@@ -117,7 +117,8 @@ public class MetaProcessBasicStatistics extends MetaProcess {
 			}
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(statisticsCollection);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		}finally {
 			StatisticsAnalyst.removeSteppedListener(steppedListener);
 		}

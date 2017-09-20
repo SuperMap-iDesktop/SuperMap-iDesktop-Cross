@@ -1,9 +1,11 @@
 package com.supermap.desktop.process.ui;
 
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.tasks.IWorkerView;
 import com.supermap.desktop.process.tasks.ProcessWorker;
 import com.supermap.desktop.process.tasks.SingleProgress;
+import com.supermap.desktop.process.tasks.Worker;
 import com.supermap.desktop.ui.controls.progress.RoundProgressBar;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -19,7 +21,7 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 	private static final Color DEFAULT_FOREGROUNDCOLOR = new Color(39, 162, 223);
 	private static final Color CACEL_FOREGROUNDCOLOR = new Color(190, 190, 190);
 
-	private ProcessWorker worker;
+	private Worker worker;
 	private RoundProgressBar progressBar;
 	private JLabel labelTitle;
 	private JLabel labelMessage;
@@ -127,6 +129,10 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 
 	@Override
 	public void update(SingleProgress chunk) {
+
+		// 进入这个方法就表示已经开始运行，更新按钮状态
+		this.buttonRun.setProcedure(ButtonExecutor.RUNNING);
+
 		if (chunk.isIndeterminate()) {
 			this.progressBar.updateProgressIndeterminate();
 			this.labelMessage.setText(chunk.getMessage());
@@ -146,5 +152,10 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 	public void done() {
 		this.labelRemaintime.setVisible(false);
 		this.buttonRun.setProcedure(ButtonExecutor.READY);
+
+		if (this.worker.isCancelled()) {
+			this.labelMessage.setText(ProcessProperties.getString("String_Cancelled"));
+			this.progressBar.setProgress(0);
+		}
 	}
 }

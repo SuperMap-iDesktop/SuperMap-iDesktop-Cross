@@ -221,6 +221,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			SpatialRelModeling.removeSteppedListener(steppedListener);
 		}

@@ -177,7 +177,8 @@ public class MetaProcessTabularPointToRegion extends MetaProcessTypeConversion {
 			isSuccessful = targetDataset.updateFields(sourceRecordset, SpatialRelationType.WITHIN, newName, newName, AttributeStatisticsType.VALUE, true, stasticInfo, true);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(targetDataset);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			if (targetRecordset != null) {
 				targetRecordset.close();

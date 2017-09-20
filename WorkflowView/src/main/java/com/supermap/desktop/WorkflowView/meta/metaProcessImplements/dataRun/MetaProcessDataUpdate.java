@@ -129,7 +129,8 @@ public class MetaProcessDataUpdate extends MetaProcess {
 			isSuccessful = dataset != null;
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		}
 		return isSuccessful;
 	}

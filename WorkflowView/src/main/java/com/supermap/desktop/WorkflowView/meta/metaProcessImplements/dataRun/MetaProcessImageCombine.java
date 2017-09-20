@@ -134,7 +134,8 @@ public class MetaProcessImageCombine extends MetaProcess {
 			this.resultDataset.getResultDatasource().refresh();
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(resultDataset);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			return isSuccessful;
 		}

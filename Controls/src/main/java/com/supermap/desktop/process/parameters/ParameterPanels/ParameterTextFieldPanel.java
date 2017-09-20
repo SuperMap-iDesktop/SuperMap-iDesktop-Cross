@@ -77,7 +77,7 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 				if (!isSelectingItem && evt.getPropertyName().equals(AbstractParameter.PROPERTY_VALE)) {
 					try {
 						isSelectingItem = true;
-						ParameterTextFieldPanel.this.textField.setText(evt.getNewValue() == null ? null : evt.getNewValue().toString());
+						ParameterTextFieldPanel.this.textField.setText(evt.getNewValue() == null ? "" : evt.getNewValue().toString());
 						// 当值改变时，同时改变其值得单位-yuanR
 						if (!StringUtilities.isNullOrEmpty(parameterTextField.getUnit())) {
 							labelUnit.setText(parameterTextField.getUnit());
@@ -101,10 +101,12 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		textField.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				if (!isSelectingItem && (smTextFieldLegit == null || smTextFieldLegit.isTextFieldValueLegit(textFieldValue))) {
-					isSelectingItem = true;
-					parameterTextField.setSelectedItem(textFieldValue);
-					isSelectingItem = false;
+				if (smTextFieldLegit == null || smTextFieldLegit.isTextFieldValueLegit(textFieldValue)) {
+					if (!isSelectingItem) {
+						isSelectingItem = true;
+						parameterTextField.setSelectedItem(textFieldValue);
+						isSelectingItem = false;
+					}
 					return true;
 				}
 				return false;
