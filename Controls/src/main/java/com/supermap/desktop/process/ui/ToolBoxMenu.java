@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.ui;
 
 import com.supermap.desktop.process.ProcessManager;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.loader.IProcessGroup;
 import com.supermap.desktop.process.loader.IProcessLoader;
@@ -15,7 +16,7 @@ import java.awt.event.ActionListener;
 public class ToolBoxMenu extends JMenu {
 
 	public ToolBoxMenu() {
-		super("工具箱");
+		super(ProcessProperties.getString("String_ToolBox"));
 		load();
 	}
 
@@ -80,8 +81,7 @@ public class ToolBoxMenu extends JMenu {
 		public void actionPerformed(ActionEvent e) {
 			IProcess process = this.loader.loadProcess();
 			if (process != null) {
-				SmDialogProcess smDialogProcess = new SmDialogProcess(process);
-				smDialogProcess.showDialog();
+				ProcessUtil.showDialogProcess(process);
 			}
 		}
 	}
