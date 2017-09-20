@@ -39,13 +39,17 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 
 	@Override
 	public void setSelectedItem(Object value) {
-		Object oldValue = this.value;
-		if (value instanceof Double) {
-			this.value = DoubleUtilities.getFormatString(((Double) value));
-		} else {
-			this.value = String.valueOf(value);
+		if (value == null) {
+			value = "";
+		} else if (value instanceof Double) {
+			value = DoubleUtilities.getFormatString(((Double) value));
+		} else if (!(value instanceof String)) {
+			value = String.valueOf(value);
 		}
-		firePropertyChangeListener(new PropertyChangeEvent(this, PROPERTY_VALE, oldValue, value));
+		if (!value.equals(this.value)) {
+			Object oldValue = this.value;
+			firePropertyChangeListener(new PropertyChangeEvent(this, PROPERTY_VALE, oldValue, value));
+		}
 	}
 
 	@Override
