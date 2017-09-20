@@ -6,17 +6,21 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 
 /**
  * Created by highsad on 2017/3/22.
  */
 public class Outputs {
 	private IProcess process;
-	private ConcurrentHashMap<String, OutputData> datas = new ConcurrentHashMap<>();
+//	private ConcurrentHashMap<String, OutputData> datas = new ConcurrentHashMap<>();
+	private LinkedHashMap<String, OutputData> datas = new LinkedHashMap<>();
+	//  将ConcurrentHashMap改为LinkedHashMap，保存存入的OutputData拿出时顺序一致   ————李文发
 
 	public Outputs(IProcess process) {
 		this.process = process;
+		Collections.synchronizedMap(this.datas); //  LinkedHashMap由非线程安全改为线程安全的
 	}
 
 	public IProcess getProcess() {

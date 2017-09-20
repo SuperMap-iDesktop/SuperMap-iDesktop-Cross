@@ -53,7 +53,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 				new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1"));
 		parameterComboBoxMeshType.setRequisite(true);
 		//流程图中不支持在地图中绘制范围，范围表示与iServer的表示相同
-		parameterIndex.setToolTip(ProcessProperties.getString("String_WeightIndexTip"));
+		parameterIndex.setTipButtonMessage(ProcessProperties.getString("String_WeightIndexTip"));
 		parameterBounds.setDefaultWarningValue("-74.050,40.650,-73.850,40.850");
 		parameterMeshSize.setRequisite(true);
 		parameterMeshSize.setDefaultWarningValue("50");
@@ -120,10 +120,10 @@ public class MetaProcessKernelDensity extends MetaProcess {
 			CommonSettingCombine method = new CommonSettingCombine("method", (String) parameterComboBoxAnalyseType.getSelectedData());
 			CommonSettingCombine meshType = new CommonSettingCombine("meshType", (String) parameterComboBoxMeshType.getSelectedData());
 			CommonSettingCombine fields = new CommonSettingCombine("fields", (String) parameterIndex.getSelectedItem());
-			CommonSettingCombine query = new CommonSettingCombine("query", parameterBounds.getSelectedItem().toString());
-			CommonSettingCombine resolution = new CommonSettingCombine("resolution", parameterMeshSize.getSelectedItem().toString());
+			CommonSettingCombine query = new CommonSettingCombine("query", parameterBounds.getSelectedItem());
+			CommonSettingCombine resolution = new CommonSettingCombine("resolution", parameterMeshSize.getSelectedItem());
 			CommonSettingCombine meshSizeUnit = new CommonSettingCombine("meshSizeUnit", (String) parameterMeshSizeUnit.getSelectedData());
-			CommonSettingCombine radius = new CommonSettingCombine("radius", parameterRadius.getSelectedItem().toString());
+			CommonSettingCombine radius = new CommonSettingCombine("radius", parameterRadius.getSelectedItem());
 			CommonSettingCombine radiusUnit = new CommonSettingCombine("radiusUnit", (String) parameterRadiusUnit.getSelectedData());
 			CommonSettingCombine areaUnit = new CommonSettingCombine("areaUnit", (String) parameterAreaUnit.getSelectedData());
 			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");

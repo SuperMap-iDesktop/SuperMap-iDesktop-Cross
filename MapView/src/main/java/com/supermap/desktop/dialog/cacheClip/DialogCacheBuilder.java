@@ -213,7 +213,9 @@ public class DialogCacheBuilder extends JFrame {
 				scaleList.addAll(scales);
 				Collections.sort(scaleList);
 				for (double scale : scaleList) {
-					captions.add(String.valueOf(Math.round(1 / scale)));
+					if (!captions.contains(String.valueOf(Math.round(1 / scale)))) {
+						captions.add(String.valueOf(Math.round(1 / scale)));
+					}
 				}
 			}
 		}

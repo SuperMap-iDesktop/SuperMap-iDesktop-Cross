@@ -10,7 +10,13 @@ import com.supermap.desktop.process.parameter.interfaces.IMultiSelectionParamete
  */
 public class ParameterSolarRadiationAnalysisType extends AbstractParameter implements IMultiSelectionParameter {
 
+	private String describe="";
+
 	public ParameterSolarRadiationAnalysisType(){}
+
+	public ParameterSolarRadiationAnalysisType(String describe){
+		this.describe=describe;
+	}
 
 	private SolarRadiationParameter solarRadiationParameter;
 
@@ -31,7 +37,7 @@ public class ParameterSolarRadiationAnalysisType extends AbstractParameter imple
 
 	@Override
 	public String getDescribe() {
-		return "";
+		return this.describe;
 	}
 
 	public SolarRadiationParameter getSolarRadiationParameter() {

@@ -106,7 +106,7 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 		return fieldTypes;
 	}
 
-	public void setDataset(DatasetVector dataset) {
+	private void setDataset(DatasetVector dataset) {
 		DatasetVector oldValue = this.dataset;
 		this.dataset = dataset;
 		firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELD_NAME, oldValue, this.dataset));

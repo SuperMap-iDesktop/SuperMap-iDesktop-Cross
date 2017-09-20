@@ -28,15 +28,6 @@ public class LabelSettingDialog extends SmDialog {
 		initComponents();
 		removeEvents();
 		registerEvents();
-//		this.setLayout(new GridBagLayout());
-//		this.add(this.textStylePanel.getBasicsetPanel(), new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(2, 0).setInsets(2, 10, 2, 10).setFill(GridBagConstraints.HORIZONTAL));
-//		this.add(this.textStylePanel.getEffectPanel(), new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(2, 0).setInsets(2, 10, 2, 10).setFill(GridBagConstraints.HORIZONTAL));
-//		textStylePanel.addTextStyleChangeListener(new TextStyleChangeListener() {
-//			@Override
-//			public void modify(TextStyleType newValue) {
-//				resetTextStyle(newValue);
-//			}
-//		});
 	}
 
 	private void initComponents(){
@@ -51,10 +42,10 @@ public class LabelSettingDialog extends SmDialog {
 		this.textStylePanel.setUnityVisible(true);
 		this.textStylePanel.initTextBasicPanel();
 		this.textStylePanel.initCheckBoxState();
-		//this.textStylePanel.enabled(true);
 		this.textStylePanel.setAlign(false);
 		this.textStylePanel.setFontHeight(false);
 		this.textStylePanel.setRotationAngl(false);
+		this.textStylePanel.setFixedSize(false);
 		this.okSmButton.setText(ControlsProperties.getString("String_Button_Ok"));
 		this.cancelSmButton.setText(ControlsProperties.getString("String_BatchAddColorTableCancelButton"));
 		GroupLayout groupLayout = new GroupLayout(getContentPane());

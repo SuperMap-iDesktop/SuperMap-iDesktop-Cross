@@ -1,7 +1,5 @@
 package com.supermap.desktop.ui.controls.CollectionDataset;
 
-import com.supermap.data.Dataset;
-
 /**
  * Created by xie on 2017/7/19.
  * 数据集信息类
@@ -12,11 +10,20 @@ public class DatasetInfo {
 	private String state;
 	private String server;
 	private String engineType;
-	private String datasourceAlias;
+	private String dataBase;
 	private String user;
+	private String alias;
 
 	public DatasetInfo() {
 
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 
 	public String getServer() {
@@ -35,12 +42,12 @@ public class DatasetInfo {
 		this.engineType = engineType;
 	}
 
-	public String getDatasourceAlias() {
-		return datasourceAlias;
+	public String getDataBase() {
+		return dataBase;
 	}
 
-	public void setDatasourceAlias(String datasourceAlias) {
-		this.datasourceAlias = datasourceAlias;
+	public void setDataBase(String dataBase) {
+		this.dataBase = dataBase;
 	}
 
 	public String getUser() {
