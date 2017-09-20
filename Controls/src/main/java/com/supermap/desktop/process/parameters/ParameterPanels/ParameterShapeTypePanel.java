@@ -27,36 +27,36 @@ import java.beans.PropertyChangeListener;
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.SHAPE_TYPE)
 public class ParameterShapeTypePanel extends SwingPanel implements IParameterPanel {
-	JLabel labelShapeType;
-	JComboBox comboBoxShapeType;
-	JLabel labelUnitType;
-	JComboBox comboBoxUnitType;
-	JLabel labelWidth;
-	NumTextFieldLegit textFieldWidth;
-	JLabel labelHeight;
-	NumTextFieldLegit textFieldHeight;
-	JLabel labelRadius;
-	NumTextFieldLegit textFieldRadius;
-	JLabel labelInnerRadius;
-	NumTextFieldLegit textFieldInnerRadius;
-	JLabel labelOuterRadius;
-	NumTextFieldLegit textFieldOuterRadius;
-	JLabel labelStartAngle;
-	NumTextFieldLegit textFieldStartAngle;
-	JLabel labelEndAngle;
-	NumTextFieldLegit textFieldEndAngle;
+	private JLabel labelShapeType;
+	private JComboBox comboBoxShapeType;
+	private JLabel labelUnitType;
+	private JComboBox comboBoxUnitType;
+	private JLabel labelWidth;
+	private NumTextFieldLegit textFieldWidth;
+	private JLabel labelHeight;
+	private NumTextFieldLegit textFieldHeight;
+	private JLabel labelRadius;
+	private NumTextFieldLegit textFieldRadius;
+	private JLabel labelInnerRadius;
+	private NumTextFieldLegit textFieldInnerRadius;
+	private JLabel labelOuterRadius;
+	private NumTextFieldLegit textFieldOuterRadius;
+	private JLabel labelStartAngle;
+	private NumTextFieldLegit textFieldStartAngle;
+	private JLabel labelEndAngle;
+	private NumTextFieldLegit textFieldEndAngle;
 
 	private boolean isSelectingItem = false;
-	ParameterShapeType parameterShapeType;
-	NeighbourShape neighbourShape;
+	private ParameterShapeType parameterShapeType;
+	private NeighbourShape neighbourShape;
 	Dataset dataset;
 
-	static final String RECTANGLE = ProcessProperties.getString("String_Rectangle");
-	static final String CIRCLE = ProcessProperties.getString("String_Circle");
-	static final String ANNULUS = ProcessProperties.getString("String_Annulus");
-	static final String WEDGE = ProcessProperties.getString("String_Wedge");
-	static final String UNIT_TYPE_CELL = ProcessProperties.getString("String_NeighbourUnitType_Cell");
-	static final String UNIT_TYPE_MAP = ProcessProperties.getString("String_NeighbourUnitType_Map");
+	private static final String RECTANGLE = ProcessProperties.getString("String_Rectangle");
+	private static final String CIRCLE = ProcessProperties.getString("String_Circle");
+	private static final String ANNULUS = ProcessProperties.getString("String_Annulus");
+	private static final String WEDGE = ProcessProperties.getString("String_Wedge");
+	private static final String UNIT_TYPE_CELL = ProcessProperties.getString("String_NeighbourUnitType_Cell");
+	private static final String UNIT_TYPE_MAP = ProcessProperties.getString("String_NeighbourUnitType_Map");
 
 	public ParameterShapeTypePanel(IParameter parameterShapeType) {
 		super(parameterShapeType);
@@ -390,20 +390,20 @@ public class ParameterShapeTypePanel extends SwingPanel implements IParameterPan
 	private void resetNeighbourShape() {
 		if (comboBoxShapeType.getSelectedItem().equals(RECTANGLE)) {
 			neighbourShape = new NeighbourShapeRectangle();
-			((NeighbourShapeRectangle) neighbourShape).setWidth(Double.valueOf(textFieldWidth.getBackUpValue().toString()));
-			((NeighbourShapeRectangle) neighbourShape).setHeight(Double.valueOf(textFieldHeight.getBackUpValue().toString()));
+			((NeighbourShapeRectangle) neighbourShape).setWidth(Double.valueOf(textFieldWidth.getBackUpValue()));
+			((NeighbourShapeRectangle) neighbourShape).setHeight(Double.valueOf(textFieldHeight.getBackUpValue()));
 		} else if (comboBoxShapeType.getSelectedItem().equals(CIRCLE)) {
 			neighbourShape = new NeighbourShapeCircle();
-			((NeighbourShapeCircle) neighbourShape).setRadius(Double.valueOf(textFieldRadius.getBackUpValue().toString()));
+			((NeighbourShapeCircle) neighbourShape).setRadius(Double.valueOf(textFieldRadius.getBackUpValue()));
 		} else if (comboBoxShapeType.getSelectedItem().equals(ANNULUS)) {
 			neighbourShape = new NeighbourShapeAnnulus();
-			((NeighbourShapeAnnulus) neighbourShape).setInnerRadius(Double.valueOf(textFieldInnerRadius.getBackUpValue().toString()));
-			((NeighbourShapeAnnulus) neighbourShape).setOuterRadius(Double.valueOf(textFieldOuterRadius.getBackUpValue().toString()));
+			((NeighbourShapeAnnulus) neighbourShape).setInnerRadius(Double.valueOf(textFieldInnerRadius.getBackUpValue()));
+			((NeighbourShapeAnnulus) neighbourShape).setOuterRadius(Double.valueOf(textFieldOuterRadius.getBackUpValue()));
 		} else if (comboBoxShapeType.getSelectedItem().equals(WEDGE)) {
 			neighbourShape = new NeighbourShapeWedge();
-			((NeighbourShapeWedge) neighbourShape).setRadius(Double.valueOf(textFieldRadius.getBackUpValue().toString()));
-			((NeighbourShapeWedge) neighbourShape).setStartAngle(Double.valueOf(textFieldStartAngle.getBackUpValue().toString()));
-			((NeighbourShapeWedge) neighbourShape).setEndAngle(Double.valueOf(textFieldEndAngle.getBackUpValue().toString()));
+			((NeighbourShapeWedge) neighbourShape).setRadius(Double.valueOf(textFieldRadius.getBackUpValue()));
+			((NeighbourShapeWedge) neighbourShape).setStartAngle(Double.valueOf(textFieldStartAngle.getBackUpValue()));
+			((NeighbourShapeWedge) neighbourShape).setEndAngle(Double.valueOf(textFieldEndAngle.getBackUpValue()));
 		}
 		if (comboBoxUnitType.getSelectedItem().equals(UNIT_TYPE_CELL)) {
 			neighbourShape.setUnitType(NeighbourUnitType.CELL);
