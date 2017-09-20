@@ -7,6 +7,7 @@ import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.parameters.ParameterPanels.SwingPanel;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 /**
@@ -33,6 +34,7 @@ public class ParameterSolarRadiationAnalysisTypePanel extends SwingPanel {
 	private void initLayout(){
 		panel.setLayout(new GridBagLayout());
 		panel.add(this.analysisTypePanel, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(0, 0, 0, 0));
+		panel.setBorder(new TitledBorder(this.parameterSolarRadiationAnalysisType.getDescribe()));
 	}
 
 	private void initListener() {
