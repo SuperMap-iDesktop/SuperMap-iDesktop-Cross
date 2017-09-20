@@ -615,7 +615,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					int count = 0;
 					for (int i = 0; i < this.mapCacheBuilder.getMap().getVisibleScales().length; i++) {
 						for (int j = 0; j < firstStepPane.currentMapCacheScale.size(); j++) {
-							if (DoubleUtilities.equals(this.mapCacheBuilder.getMap().getVisibleScales()[i], firstStepPane.currentMapCacheScale.get(j))) {
+							if (this.mapCacheBuilder.getMap().getVisibleScales()[i] - firstStepPane.currentMapCacheScale.get(j) == 0.0) {
 								count++;
 								break;
 							}
