@@ -193,7 +193,7 @@ public class XlsUtilities {
 					row = sheet.getRow(j);
 					map.clear();
 					for (int k = 0; k < columnCount; k++) {
-						map.put(fieldNames.get(k), row.getCell(k).getStringCellValue());
+						map.put(fieldNames.get(k), row.getCell(k).getRawValue());
 					}
 					boolean importResult = recordset.addNew(null, map);
 					if (importResult && null != importSettingExcel) {
