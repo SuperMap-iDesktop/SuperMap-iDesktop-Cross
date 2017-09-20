@@ -42,6 +42,31 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 	private ParameterNumber numberLeft;
 	private ParameterNumber numberCellSize;
 
+	private PropertyChangeListener topListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			numberBottom.setMaxValue(Double.parseDouble(numberTop.getSelectedItem()));
+		}
+	};
+	private PropertyChangeListener bottomListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem()));
+		}
+	};
+	private PropertyChangeListener leftListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem()));
+		}
+	};
+	private PropertyChangeListener rightListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem()));
+		}
+	};
+
 	public MetaProcessSimpleDensityOffline() {
 		initParameters();
 		initParameterConstraint();
@@ -123,46 +148,39 @@ public class MetaProcessSimpleDensityOffline extends MetaProcess {
 				}
 			}
 		});
-		numberBottom.addPropertyListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				numberTop.setMinValue(Double.parseDouble(numberBottom.getSelectedItem()));
-			}
-		});
-		numberTop.addPropertyListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				numberBottom.setMaxValue(Double.parseDouble(numberTop.getSelectedItem()));
-			}
-		});
-		numberRight.addPropertyListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				numberLeft.setMaxValue(Double.parseDouble(numberRight.getSelectedItem()));
-			}
-		});
-		numberLeft.addPropertyListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				numberRight.setMinValue(Double.parseDouble(numberLeft.getSelectedItem()));
-			}
-		});
+		registerBTRLListener();
+	}
+
+	private void registerBTRLListener() {
+		numberBottom.addPropertyListener(bottomListener);
+		numberTop.addPropertyListener(topListener);
+		numberRight.addPropertyListener(rightListener);
+		numberLeft.addPropertyListener(leftListener);
+	}
+
+	private void removeBTRLListener() {
+		numberBottom.removePropertyListener(bottomListener);
+		numberTop.removePropertyListener(topListener);
+		numberRight.removePropertyListener(rightListener);
+		numberLeft.removePropertyListener(leftListener);
 	}
 
 	private void updateBound(Dataset dataset) {
+		removeBTRLListener();
 		Rectangle2D rectangle2D = dataset.getBounds();
-		numberBottom.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getBottom()));
-		numberLeft.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getLeft()));
-		numberRight.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getRight()));
-		numberTop.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getTop()));
 		numberTop.setMinValue(rectangle2D.getBottom());
 		numberBottom.setMaxValue(rectangle2D.getTop());
 		numberLeft.setMaxValue(rectangle2D.getRight());
 		numberRight.setMinValue(rectangle2D.getLeft());
+		numberBottom.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getBottom()));
+		numberLeft.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getLeft()));
+		numberRight.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getRight()));
+		numberTop.setSelectedItem(DoubleUtilities.getFormatString(rectangle2D.getTop()));
 		Double x = rectangle2D.getWidth() / 500;
 		Double y = rectangle2D.getHeight() / 500;
 		Double cellSize = x > y ? y : x;
 		numberCellSize.setSelectedItem(DoubleUtilities.getFormatString(cellSize));
+		registerBTRLListener();
 	}
 
 	@Override
