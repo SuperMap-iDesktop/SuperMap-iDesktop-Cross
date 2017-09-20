@@ -140,12 +140,13 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		formProgress.doWork(new CreateCollectionCallable(JDialogCreateCollectionDataset.this));
 	}
 
-	public boolean hasDataset(DatasetVector datasetVector, String name) {
+	public boolean hasDataset(DatasetVector datasetVector, String dataBase, String name) {
 
 		boolean result = false;
 		ArrayList<CollectionDatasetInfo> datasetInfos = datasetVector.getCollectionDatasetInfos();
 		for (int i = 0, size = datasetInfos.size(); i < size; i++) {
 			if (datasetInfos.get(i).getDatasetName().equals(name)
+					&& datasetInfos.get(i).getDatasourceConnectInfo().getDatabase().equals(dataBase)
 					&& null != DatasourceUtilities.getDatasource(datasetInfos.get(i).getDatasourceConnectInfo())) {
 				result = true;
 				break;
@@ -447,7 +448,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 		try {
 			java.util.List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
 			for (int i = 0; i < selectedDatasets.size(); i++) {
-				if (null != datasetVector && hasDataset(datasetVector, selectedDatasets.get(i).getName())) {
+				if (null != datasetVector && hasDataset(datasetVector, selectedDatasets.get(i).getDatasource().getConnectionInfo().getDatabase(), selectedDatasets.get(i).getName())) {
 					//需不需要添加已经存在的数据集？
 //					Application.getActiveApplication().getOutput().output(MessageFormat.format(CommonProperties.getString("String_DatasetExistInCollection"), selectedDatasets.get(i).getName(), this.datasetVector.getName()));
 					continue;
@@ -459,7 +460,7 @@ public class JDialogCreateCollectionDataset extends SmDialog {
 				datasetInfo.setName(selectDataset.getName());
 				datasetInfo.setServer(connectionInfo.getServer());
 				datasetInfo.setEngineType(connectionInfo.getEngineType().name());
-				datasetInfo.setDatasourceAlias(connectionInfo.getAlias());
+				datasetInfo.setDataBase(connectionInfo.getDatabase());
 				datasetInfo.setUser(connectionInfo.getUser());
 //				datasetInfo.setState(CommonProperties.getString("String_Append"));
 				tableModel.addRow(datasetInfo);

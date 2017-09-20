@@ -13,12 +13,19 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.ipls.EqualDatasourceConstraint;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.Workflow;
-import com.supermap.desktop.process.events.*;
+import com.supermap.desktop.process.events.RelationAddedEvent;
+import com.supermap.desktop.process.events.RelationAddedListener;
+import com.supermap.desktop.process.events.RelationRemovedEvent;
+import com.supermap.desktop.process.events.RelationRemovedListener;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.parameter.ipls.*;
+import com.supermap.desktop.process.parameter.ipls.ParameterCombine;
+import com.supermap.desktop.process.parameter.ipls.ParameterComboBox;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasource;
+import com.supermap.desktop.process.parameter.ipls.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.ipls.ParameterSingleDataset;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
@@ -130,6 +137,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 				items.add(new ParameterDataNode(SpatialIndexTypeUtilities.toString(spatialIndexType), spatialIndexType));
 			}
 			parameterComboBox.setItems(items.toArray(new ParameterDataNode[items.size()]));
+			parameterComboBox.setSelectedItem(allSpatialIndexType[0]);
 		} else {
 			SpatialIndexType[] allSpatialIndexType = SpatialIndexTypeUtilities.getDatasetSupportTypes(datasetVector);
 			ArrayList<ParameterDataNode> items = new ArrayList<>();
