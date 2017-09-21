@@ -160,12 +160,16 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		Dataset sourceDataset;
 		if ((this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE)) {
 			sourceDataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
-			parameterTolerance.setSelectedItem(DoubleUtilities.getFormatString(DatasetUtilities.getDefaultTolerance((DatasetVector) sourceDataset).getNodeSnap()));
-			parameterUnit.setDescribe(LengthUnit.convertForm(sourceDataset.getPrjCoordSys().getCoordUnit()).toString());
+			if (sourceDataset != null) {
+				parameterTolerance.setSelectedItem(DoubleUtilities.getFormatString(DatasetUtilities.getDefaultTolerance((DatasetVector) sourceDataset).getNodeSnap()));
+				parameterUnit.setDescribe(LengthUnit.convertForm(sourceDataset.getPrjCoordSys().getCoordUnit()).toString());
+			}
 		} else if (this.analystType == OverlayAnalystType.CLIP || this.analystType == OverlayAnalystType.ERASE || this.analystType == OverlayAnalystType.INTERSECT || this.analystType == OverlayAnalystType.IDENTITY) {
 			sourceDataset = DatasetUtilities.getDefaultDataset(DatasetType.REGION, DatasetType.LINE, DatasetType.POINT);
-			parameterTolerance.setSelectedItem(DoubleUtilities.getFormatString(DatasetUtilities.getDefaultTolerance((DatasetVector) sourceDataset).getNodeSnap()));
-			parameterUnit.setDescribe(LengthUnit.convertForm(sourceDataset.getPrjCoordSys().getCoordUnit()).toString());
+			if (sourceDataset != null) {
+				parameterTolerance.setSelectedItem(DoubleUtilities.getFormatString(DatasetUtilities.getDefaultTolerance((DatasetVector) sourceDataset).getNodeSnap()));
+				parameterUnit.setDescribe(LengthUnit.convertForm(sourceDataset.getPrjCoordSys().getCoordUnit()).toString());
+			}
 		} else {
 			sourceDataset = DatasetUtilities.getDefaultDataset();
 		}

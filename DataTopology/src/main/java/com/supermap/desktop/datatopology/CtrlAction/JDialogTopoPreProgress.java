@@ -5,6 +5,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.topology.TopologyPreprocessOptions;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -12,7 +13,6 @@ import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.Interface.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
@@ -119,7 +119,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 		buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 		buttonInvertSelect.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
 		buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
-		labelTolerance.setText(CommonProperties.getString("String_Label_Tolerance") + ":");
+		labelTolerance.setText(CommonProperties.getString("String_Label_Tolerance"));
 		labelConsultDataset.setText(DataTopologyProperties.getString("String_Label_ConsultDataset"));
 		table.getColumnModel().getColumn(COLUMN_INDEX_COUNT).setHeaderValue(CommonProperties.getString("String_ColumnHeader_Index"));
 		table.getColumnModel().getColumn(COLUMN_INDEX_DATASET).setHeaderValue(CommonProperties.getString("String_ColumnHeader_SourceDataset"));
@@ -158,7 +158,7 @@ public class JDialogTopoPreProgress extends SmDialog {
 						.addComponent(buttonSure)
 						.addPreferredGap(ComponentPlacement.RELATED)
 						.addComponent(buttonQuite))
-				);
+		);
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
 				.addComponent(toolBar)
 				.addComponent(scrollPane)
@@ -196,41 +196,41 @@ public class JDialogTopoPreProgress extends SmDialog {
 		//@formatter:off
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createSequentialGroup()
-								.addContainerGap()
-								.addGroup(gl_panel.createParallelGroup(Alignment.LEADING, false)
-										.addComponent(checkBoxVertexesSnapped)
-										.addGroup(gl_panel.createSequentialGroup()
-												.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-														.addComponent(labelConsultDataset)
-														.addComponent(labelTolerance))
-												.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-														.addComponent(textFieldTolerance, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
-														.addComponent(comboBoxConsultDataset))))
-								.addPreferredGap(ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-								.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-										.addComponent(checkBoxArcsInserted)
-										.addComponent(checkBoxVertexArcInserted)
-										.addComponent(checkBoxPolygonsChecked))
-								.addGap(15))
-				);
-		gl_panel.setVerticalGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createSequentialGroup()
-								.addContainerGap()
-								.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-										.addComponent(labelTolerance)
-										.addComponent(checkBoxVertexArcInserted)
-										.addComponent(textFieldTolerance, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE))
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-										.addComponent(checkBoxVertexesSnapped)
-										.addComponent(checkBoxArcsInserted))
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+				.addGroup(gl_panel.createSequentialGroup()
+						.addContainerGap()
+						.addGroup(gl_panel.createParallelGroup(Alignment.LEADING, false)
+								.addComponent(checkBoxVertexesSnapped)
+								.addGroup(gl_panel.createSequentialGroup()
+										.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 												.addComponent(labelConsultDataset)
-												.addComponent(comboBoxConsultDataset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
-												.addComponent(checkBoxPolygonsChecked))
-								.addContainerGap(10, Short.MAX_VALUE)));
+												.addComponent(labelTolerance))
+										.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+												.addComponent(textFieldTolerance, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+												.addComponent(comboBoxConsultDataset))))
+						.addPreferredGap(ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+						.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+								.addComponent(checkBoxArcsInserted)
+								.addComponent(checkBoxVertexArcInserted)
+								.addComponent(checkBoxPolygonsChecked))
+						.addGap(15))
+		);
+		gl_panel.setVerticalGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup()
+						.addContainerGap()
+						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(labelTolerance)
+								.addComponent(checkBoxVertexArcInserted)
+								.addComponent(textFieldTolerance, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(checkBoxVertexesSnapped)
+								.addComponent(checkBoxArcsInserted))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(labelConsultDataset)
+								.addComponent(comboBoxConsultDataset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(checkBoxPolygonsChecked))
+						.addContainerGap(10, Short.MAX_VALUE)));
 		panel.setLayout(gl_panel);
 		//@formatter:on
 		table = new MutiTable();
