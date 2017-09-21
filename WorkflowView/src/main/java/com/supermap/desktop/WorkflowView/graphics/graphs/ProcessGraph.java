@@ -68,7 +68,7 @@ public class ProcessGraph extends RectangleGraph {
 	public void onPaint(Graphics g) {
 		super.onPaint(g);
 
-		Font font = new Font(getCanvas().getFont().getName(), Font.PLAIN, 14);
+		Font font = new Font(g.getFont().getName(), Font.PLAIN, 14);
 		g.setFont(font);
 		g.setColor(Color.WHITE);
 
