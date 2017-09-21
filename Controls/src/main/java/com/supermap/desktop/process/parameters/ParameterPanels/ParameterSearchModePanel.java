@@ -281,7 +281,8 @@ public class ParameterSearchModePanel extends SwingPanel implements IParameterPa
             double height = dataset.getBounds().getHeight();
             textFieldMaxRadius.setText((int) ((width < height ? width : height) / 5) + "");
             textFieldSearchCount.setText("5");
-            textFieldSearchCount.setInterval(2,12);
+            textFieldSearchCount.setMinValue(2);
+            textFieldSearchCount.setMaxValue(12);
         } else if (mode == SearchMode.QUADTREE) {
             radioSearchModelQuadTree.setSelected(true);
             labelSearchCount.setText(CommonProperties.getString("String_InterpolationAnalyst_QuadTree_MaxPoint_InBlock"));

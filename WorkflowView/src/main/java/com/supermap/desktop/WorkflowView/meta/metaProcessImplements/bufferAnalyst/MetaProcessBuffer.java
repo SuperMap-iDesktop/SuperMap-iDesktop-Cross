@@ -145,8 +145,8 @@ public class MetaProcessBuffer extends MetaProcess {
 
 		ParameterCombine parameterCombineParameter = new ParameterCombine();
 		parameterCombineParameter.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		parameterCombineParameter.addParameters(
-				this.parameterUnionBuffer, this.parameterRetainAttribute, this.parameterTextFieldSemicircleLineSegment);
+		parameterCombineParameter.addParameters(new ParameterCombine().addParameters(this.parameterUnionBuffer, this.parameterRetainAttribute),
+				this.parameterTextFieldSemicircleLineSegment);
 
 		ParameterCombine parameterCombineResult = new ParameterCombine();
 		parameterCombineResult.addParameters(this.parameterSaveDataset);
@@ -272,7 +272,7 @@ public class MetaProcessBuffer extends MetaProcess {
 			return false;
 		}
 		// 当选择的是根据值生成，进行绝对值处理
-		if (((ParameterDataNode) this.radioButtonNumOrField.getSelectedItem()).getData().equals(VALUE_RELY)) {
+		if (((ParameterDataNode) this.radioButtonNumOrField.getSelectedItem()).getData().equals(VALUE_RELY)&&!datasetVector.getType().equals(DatasetType.REGION)) {
 			if (radiusRight != null) {
 				radiusRight = Math.abs((Double) radiusRight);
 			}
@@ -313,7 +313,7 @@ public class MetaProcessBuffer extends MetaProcess {
 		} finally {
 			BufferAnalyst.removeSteppedListener(this.steppedListener);
 			// 如果失败了，删除新建的数据集
-			if (!isSuccessful && resultDatasource != null && resultName != null) {
+			if (!isSuccessful && resultName != null) {
 				resultDatasource.getDatasets().delete(resultName);
 			}
 		}
@@ -324,9 +324,4 @@ public class MetaProcessBuffer extends MetaProcess {
 	public String getKey() {
 		return MetaKeys.BUFFER;
 	}
-
-//	public static void main(String[] args) {
-//		new MetaProcessBuffer();
-//	}
-
 }
