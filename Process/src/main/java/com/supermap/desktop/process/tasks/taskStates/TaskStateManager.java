@@ -215,10 +215,7 @@ public class TaskStateManager {
 			if (nextProcesses != null && nextProcesses.size() > 0) {
 				for (IProcess nextProcess :
 						nextProcesses) {
-					if (waiting.contain(process)) {
-						moveProcess(nextProcess, TasksManager.WORKER_STATE_EXCEPTION);
-					}
-
+					handleException(nextProcess);
 				}
 			}
 		}

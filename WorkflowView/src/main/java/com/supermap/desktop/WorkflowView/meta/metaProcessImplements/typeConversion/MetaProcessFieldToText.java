@@ -36,7 +36,6 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 		inputDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.MODEL);
 		outputData = new ParameterSaveDataset();
 		fieldComboBox = new ParameterFieldComboBox(ProcessProperties.getString("String_ExportField"));
-		fieldComboBox.setRequisite(true);
 
 		Dataset dataset = DatasetUtilities.getDefaultDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.MODEL);
 		if (dataset != null) {
@@ -99,8 +98,15 @@ public class MetaProcessFieldToText extends MetaProcessTypeConversion {
 			resultDataset.setPrjCoordSys(src.getPrjCoordSys());
 			for (int i = 0; i < src.getFieldInfos().getCount(); i++) {
 				FieldInfo fieldInfo = src.getFieldInfos().get(i);
-				if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().equals("smuserid")) {
-					resultDataset.getFieldInfos().add(fieldInfo);
+				if (!fieldInfo.isSystemField() && !fieldInfo.getName().toLowerCase().contains("smuserid")) {
+					try {
+						resultDataset.getFieldInfos().add(fieldInfo);
+					} catch (Exception e) {
+						Application.getActiveApplication().getOutput().output(e.getMessage());
+						e.printStackTrace();
+						outputData.getResultDatasource().getDatasets().delete(resultDataset.getName());
+						return false;
+					}
 				}
 			}
 			recordsetResult = resultDataset.getRecordset(false, CursorType.DYNAMIC);
