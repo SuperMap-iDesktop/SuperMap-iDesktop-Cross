@@ -55,6 +55,13 @@ public class LineArrowDecorator extends AbstractDecorator {
 		GeneralPath arrowPath = null;
 		LineGraph line = getDecoratedLine();
 		if (line != null && line.getPointCount() > 1) {
+			Point start = line.getPoint(line.getPointCount() - 2);
+			Point end = line.getPoint(line.getPointCount() - 1);
+
+			if (start == null || end == null || start.equals(end)) {
+				return null;
+			}
+
 			Point[] arrowVertexes = GraphicsUtil.computeArrow(line.getPoint(line.getPointCount() - 2), line.getPoint(line.getPointCount() - 1));
 
 			if (arrowVertexes != null && arrowVertexes.length != 0) {
