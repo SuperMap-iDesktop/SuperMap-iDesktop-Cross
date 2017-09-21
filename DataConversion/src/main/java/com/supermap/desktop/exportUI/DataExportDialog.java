@@ -491,9 +491,9 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 				Application.getActiveApplication().getOutput().output(CommonProperties.getString("String_ExportModelXError"));
 				return;
 			}
+			Object[] temp = new Object[6];
+			temp[COLUMN_DATASET] = new DataCell(dataset);
 			if (size > 0 || isGpx) {
-				Object[] temp = new Object[6];
-				temp[COLUMN_DATASET] = new DataCell(dataset);
 				if (isGpx) {
 					//GPS type
 					newExportSetting = exportSettingFactory.createExportSetting(UserDefineFileType.GPX);
@@ -510,19 +510,23 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 						break;
 					}
 				}
-				newExportSetting.setSourceData(dataset);
-				exportsFileInfo.setFilePath(System.getProperty("user.dir"));
-				String fileName = dataset.getName();
-				exportsFileInfo.setFileName(fileName);
-				exportsFileInfo.setExportSetting(newExportSetting);
-
-				temp[COLUMN_ISOVERWRITE] = newExportSetting.isOverwrite();
-				temp[COLUMN_STATE] = DataConversionProperties.getString("string_change");
-				temp[COLUMN_FILENAME] = fileName;
-				temp[COLUMN_FILEPATH] = exportsFileInfo.getFilePath();
-				this.panelExports.add(exportPanelFactory.createExportPanel(DataExportDialog.this, exportsFileInfo));
-				this.tableExport.addRow(temp);
+			} else if (size == 0 && dataset instanceof DatasetVector) {
+				newExportSetting = exportSettingFactory.createExportSetting(UserDefineFileType.EXCEL);
+				temp[COLUMN_EXPORTTYPE] = CommonUtilities.getDatasetName(UserDefineFileType.EXCEL.toString());
+				exportsFileInfo.setFileType(UserDefineFileType.EXCEL);
 			}
+			newExportSetting.setSourceData(dataset);
+			exportsFileInfo.setFilePath(System.getProperty("user.dir"));
+			String fileName = dataset.getName();
+			exportsFileInfo.setFileName(fileName);
+			exportsFileInfo.setExportSetting(newExportSetting);
+
+			temp[COLUMN_ISOVERWRITE] = newExportSetting.isOverwrite();
+			temp[COLUMN_STATE] = DataConversionProperties.getString("string_change");
+			temp[COLUMN_FILENAME] = fileName;
+			temp[COLUMN_FILEPATH] = exportsFileInfo.getFilePath();
+			this.panelExports.add(exportPanelFactory.createExportPanel(DataExportDialog.this, exportsFileInfo));
+			this.tableExport.addRow(temp);
 		}
 		if (panelExports.size() > 0) {
 			CommonUtilities.replace(panelExportInfo, panelExports.get(panelExports.size() - 1));

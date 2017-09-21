@@ -279,13 +279,13 @@ public class MetaProcessAbstractExport extends MetaProcess {
 			((ExportSettingGPX) exportSetting).addExportSteppedListener(exportListener);
 			UserDefineExportResult result = ((ExportSettingGPX) exportSetting).run();
 			time = String.valueOf((System.currentTimeMillis() - startTime) / 1000.0);
-			printExportInfo(result, time);
+			isSuccessful = printExportInfo(result, time);
 			((ExportSettingGPX) exportSetting).removeExportSteppedListener(exportListener);
 		} else if (exportSetting instanceof ExportSettingExcel) {
 			((ExportSettingExcel) exportSetting).addExportSteppedListener(exportListener);
 			UserDefineExportResult result = ((ExportSettingExcel) exportSetting).run();
 			time = String.valueOf((System.currentTimeMillis() - startTime) / 1000.0);
-			printExportInfo(result, time);
+			isSuccessful = printExportInfo(result, time);
 			((ExportSettingExcel) exportSetting).removeExportSteppedListener(exportListener);
 		} else {
 			DataExport dataExport = new DataExport();
@@ -317,12 +317,14 @@ public class MetaProcessAbstractExport extends MetaProcess {
 	 *
 	 * @param result
 	 */
-	private void printExportInfo(UserDefineExportResult result, String time) {
+	private boolean printExportInfo(UserDefineExportResult result, String time) {
+		boolean isSuccess = false;
 		try {
 			if (null != result) {
 				String successExportInfo = ProcessProperties.getString("String_FormExport_OutPutInfoTwo");
 				String failExportInfo = ProcessProperties.getString("String_FormExport_OutPutInfoOne");
 				if (null != result.getSuccess()) {
+					isSuccess = true;
 					String successDatasetAlis = getDatasetAlis(result.getSuccess());
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(successExportInfo, successDatasetAlis, result.getSuccess().getTargetFilePath(), time));
 				} else if (null != result.getFail()) {
@@ -333,6 +335,7 @@ public class MetaProcessAbstractExport extends MetaProcess {
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
+		return isSuccess;
 	}
 
 	private String getDatasetAlis(ExportSetting tempSetting) {
