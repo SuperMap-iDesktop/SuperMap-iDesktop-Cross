@@ -10,6 +10,7 @@ import com.supermap.desktop.process.events.StatusChangeEvent;
 import com.supermap.desktop.process.events.StatusChangeListener;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.FontUtilities;
 import sun.swing.SwingUtilities2;
 
 import javax.swing.*;
@@ -68,7 +69,7 @@ public class ProcessGraph extends RectangleGraph {
 	public void onPaint(Graphics g) {
 		super.onPaint(g);
 
-		Font font = new Font(CoreProperties.getString("String_Font_SimSun"), Font.PLAIN, 14);
+		Font font = new Font(FontUtilities.getMainFrameFontName(), Font.PLAIN, 14);
 		g.setFont(font);
 		g.setColor(Color.WHITE);
 

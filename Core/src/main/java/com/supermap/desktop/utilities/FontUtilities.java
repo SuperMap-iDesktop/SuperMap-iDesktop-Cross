@@ -2,9 +2,11 @@ package com.supermap.desktop.utilities;
 
 import com.supermap.data.Point2D;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.layout.MapLayout;
 import com.supermap.mapping.Map;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
@@ -116,14 +118,14 @@ public class FontUtilities {
 				Point2D logicalPntEnd = new Point2D();
 				Point2D logicalPntStart = new Point2D();
 
-				if (null!=mapObject&&mapObject instanceof Map) {
+				if (null != mapObject && mapObject instanceof Map) {
 					Map map = (Map) mapObject;
 					logicalPntEnd = map.mapToLogical(pointEnd);
 					logicalPntStart = map.mapToLogical(pointStart);
 					fontWidth = Math.abs(logicalPntEnd.getX() - logicalPntStart.getX());
 				}
 
-				if (null!=mapObject&&mapObject instanceof MapLayout) {
+				if (null != mapObject && mapObject instanceof MapLayout) {
 					MapLayout mapLayout = (MapLayout) mapObject;
 					logicalPntEnd = mapLayout.layoutToLogical(pointEnd);
 					logicalPntStart = mapLayout.layoutToLogical(pointStart);
@@ -183,10 +185,8 @@ public class FontUtilities {
 	/**
 	 * 获得字符串在指定字体下的高度
 	 *
-	 * @param str
-	 *            需要计算字符串
-	 * @param font
-	 *            字体
+	 * @param str  需要计算字符串
+	 * @param font 字体
 	 * @return 高度
 	 */
 	public static int getStringHeight(String str, Font font) {
@@ -200,10 +200,8 @@ public class FontUtilities {
 	/**
 	 * 获得字符串在指定字体下的宽度
 	 *
-	 * @param str
-	 *            需要计算字符串
-	 * @param font
-	 *            字体
+	 * @param str  需要计算字符串
+	 * @param font 字体
 	 * @return 宽度
 	 */
 	public static int getStringWidth(String str, Font font) {
@@ -216,10 +214,8 @@ public class FontUtilities {
 	/**
 	 * 获取字符串在指定字体下的 Bounds
 	 *
-	 * @param str
-	 *            需要计算字符串
-	 * @param font
-	 *            字体
+	 * @param str  需要计算字符串
+	 * @param font 字体
 	 * @return Bounds
 	 */
 	public static Rectangle2D getStringBounds(String str, Font font) {
@@ -227,5 +223,22 @@ public class FontUtilities {
 			return null;
 		}
 		return font.getStringBounds(str, frc);
+	}
+
+	/**
+	 * 获取主窗口字体名称，不存在则返回 SimSun
+	 *
+	 * @return
+	 */
+	public static String getMainFrameFontName() {
+		String fontName = "";
+		if (Application.getActiveApplication().getMainFrame() instanceof JFrame) {
+			JFrame mainFrame = (JFrame) Application.getActiveApplication().getMainFrame();
+
+			if (mainFrame.getFont() != null) {
+				fontName = mainFrame.getFont().getName();
+			}
+		}
+		return StringUtilities.isNullOrEmpty(fontName) ? CoreProperties.getString("String_Font_SimSun") : fontName;
 	}
 }
