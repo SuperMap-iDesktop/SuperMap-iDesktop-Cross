@@ -160,7 +160,6 @@ public class MetaProcessExportGrid extends MetaProcessAbstractExport {
 		} else if (!StringUtilities.isNullOrEmpty(targetPath)) {
 			setExportSettingInfo(isOverwrite);
 			isSuccessful = printResultInfo(isSuccessful, targetPath, this.exportListener);
-			removeEvents();
 		}
 		return isSuccessful;
 	}

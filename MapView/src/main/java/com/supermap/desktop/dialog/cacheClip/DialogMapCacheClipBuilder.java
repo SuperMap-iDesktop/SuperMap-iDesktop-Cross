@@ -659,6 +659,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			result = cacheProgressCallable.getResult();
 		} else {
 			this.mapCacheBuilder.setIsAppending(cmdType == SingleUpdateProcessClip);
+			this.mapCacheBuilder.setHashCodeEnabled(cmdType == SingleUpdateProcessClip ? false : true);
 			result = this.mapCacheBuilder.build();
 		}
 		printResultInfo(result, System.currentTimeMillis() - startTime);
