@@ -164,7 +164,7 @@ public class BuildCache {
 		long oneStart = System.currentTimeMillis();
 
 		boolean result;
-
+		builder.setHashCodeEnabled(false);
 		result = builder.buildWithoutConfigFile();
 
 		//释放锁

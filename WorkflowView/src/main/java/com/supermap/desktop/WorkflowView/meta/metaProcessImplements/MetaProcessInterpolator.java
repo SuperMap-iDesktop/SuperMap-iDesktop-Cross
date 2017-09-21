@@ -172,13 +172,15 @@ public class MetaProcessInterpolator extends MetaProcessGridAnalyst {
 
 		parameterPower = new ParameterNumber(CommonProperties.getString("String_Power"));
 		parameterPower.setSelectedItem(2);
-		parameterPower.setInterval(1, 100);
-		parameterTension = new ParameterNumber(CommonProperties.getString("String_Tension"));
+        parameterPower.setMinValue(1);
+        parameterPower.setMaxValue(100);
+        parameterTension = new ParameterNumber(CommonProperties.getString("String_Tension"));
 		parameterTension.setSelectedItem(40);
 		parameterTension.setMinValue(0);
 		parameterSmooth = new ParameterNumber(CommonProperties.getString("String_Smooth"));
 		parameterSmooth.setSelectedItem(0.1);
-		parameterSmooth.setInterval(0, 1);
+		parameterSmooth.setMinValue(0);
+		parameterSmooth.setMaxValue(1);
 		ParameterDataNode spherical = new ParameterDataNode(CommonProperties.getString("String_VariogramMode_Spherical"), VariogramMode.SPHERICAL);
 		parameterVariogramMode = new ParameterComboBox().setDescribe(CommonProperties.getString("String_VariogramMode"));
 		parameterVariogramMode.setItems(new ParameterDataNode(CommonProperties.getString("String_VariogramMode_Exponential"), VariogramMode.EXPONENTIAL),

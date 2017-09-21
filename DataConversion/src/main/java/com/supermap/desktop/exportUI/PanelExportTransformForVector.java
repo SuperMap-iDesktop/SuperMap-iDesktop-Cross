@@ -428,7 +428,8 @@ public class PanelExportTransformForVector extends PanelExportTransform {
 			//默认设置为导出表头
 			this.checkBoxExportFieldName.setSelected(true);
 			((ExportSettingCSV) tempExportSetting).setIsExportFieldName(true);
-			if (((Dataset) tempExportSetting.getSourceData()).getType().equals(DatasetType.POINT)) {
+			if (((Dataset) tempExportSetting.getSourceData()).getType().equals(DatasetType.POINT)
+					|| ((Dataset) tempExportSetting.getSourceData()).getType().equals(DatasetType.POINT3D)) {
 				this.checkBoxExportPointAsWKT.setEnabled(true);
 				this.checkBoxExportPointAsWKT.setSelected(((ExportSettingCSV) tempExportSetting).GetIsExportPointAsWKT());
 			}

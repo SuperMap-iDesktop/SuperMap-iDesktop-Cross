@@ -40,7 +40,8 @@ public class CacheProgressCallable extends UpdateProgressCallable {
 		this.result = true;
 		try {
 			this.mapCacheBuilder.addSteppedListener(this.steppedListener);
-//			this.mapCacheBuilder.setIsAppending(isAppending);
+			this.mapCacheBuilder.setHashCodeEnabled(isAppending ? false : true);
+			this.mapCacheBuilder.setIsAppending(isAppending);
 			this.result = this.mapCacheBuilder.build();
 		} catch (Exception ex) {
 			this.result = false;

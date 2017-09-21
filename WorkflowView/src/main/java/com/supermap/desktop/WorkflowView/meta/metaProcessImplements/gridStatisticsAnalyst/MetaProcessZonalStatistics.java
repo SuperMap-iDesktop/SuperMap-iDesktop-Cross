@@ -127,6 +127,7 @@ public class MetaProcessZonalStatistics extends MetaProcess {
 			}
 		}
 		comboBoxZonalField.setFieldType(new FieldType[]{FieldType.INT32});
+		comboBoxZonalField.setShowSystemField(true);
 		checkBoxIgnore.setSelectedItem(true);
 		resultDatasetGrid.setSelectedItem("result_ZonalStatisticsGrid");
 		resultTable.setSelectedItem("result_ZonalStatisticsTable");

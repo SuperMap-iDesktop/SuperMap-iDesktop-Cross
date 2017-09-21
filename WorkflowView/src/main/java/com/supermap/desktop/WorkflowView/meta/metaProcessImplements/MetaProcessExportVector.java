@@ -193,7 +193,6 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 		} else if (!StringUtilities.isNullOrEmpty(targetPath)) {
 			setExportSettingInfo(isOverwrite);
 			isSuccessful = printResultInfo(isSuccessful, targetPath, this.exportListener);
-			removeEvents();
 		}
 		return isSuccessful;
 	}
