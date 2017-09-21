@@ -24,12 +24,6 @@ public class ImportSettingCreator implements IImportSettingCreator {
 				return new ImportSettingExcel();
 			}
 
-			if ("AutoCADDXF".equalsIgnoreCase(type)) {
-				return new ImportSettingDXF();
-			}
-			if ("DXF".equalsIgnoreCase(type)) {
-				return new ImportSettingModelDXF();
-			}
 			if ("B".equalsIgnoreCase(type)) {
 				type = "TEMSClutter";
 			} else if ("DEM".equalsIgnoreCase(type)) {
