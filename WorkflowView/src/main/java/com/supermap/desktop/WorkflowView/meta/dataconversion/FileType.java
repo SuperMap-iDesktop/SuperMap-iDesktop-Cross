@@ -85,7 +85,7 @@ public class FileType {
 		} else {
 			String importModule = "MetaProcessImport" + importType;
 			if (!SmFileChoose.isModuleExist(importModule)) {
-				if("AutoCADDXF".equalsIgnoreCase(importType)){
+				if("ModelDXF".equalsIgnoreCase(importType)){
 					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "DXF", "dxf"), "dxf"));
 				}else if ("MapGIS".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.buildFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("String_filetype_mapgis"), "wat", "wan", "wal", "wap"));
