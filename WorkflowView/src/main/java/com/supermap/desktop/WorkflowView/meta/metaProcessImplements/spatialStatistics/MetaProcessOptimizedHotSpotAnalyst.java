@@ -3,6 +3,7 @@ package com.supermap.desktop.WorkflowView.meta.metaProcessImplements.spatialStat
 import com.supermap.analyst.spatialstatistics.AggregationMethod;
 import com.supermap.analyst.spatialstatistics.ClusteringDistributions;
 import com.supermap.analyst.spatialstatistics.OptimizedParameter;
+import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
@@ -148,14 +149,19 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 	private void initParameterState() {
 		parameterSaveDataset.setDefaultDatasetName("result_optimizedHotSpot");
 		DatasetVector defaultDatasetVector = DatasetUtilities.getDefaultDatasetVector();
+		Dataset defaultDatasetRegion = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
+		if (defaultDatasetRegion != null) {
+			parameterDatasourceAggregating.setSelectedItem(defaultDatasetRegion.getDatasource());
+			parameterSingleDatasetAggregating.setSelectedItem(defaultDatasetRegion);
+		}
+
 		if (defaultDatasetVector != null) {
 			parameterDatasource.setSelectedItem(defaultDatasetVector.getDatasource());
 			parameterSingleDataset.setSelectedItem(defaultDatasetVector);
 			parameterFieldComboBoxNotPoint.setFieldName(defaultDatasetVector);
 			parameterDatasourceBounding.setSelectedItem(defaultDatasetVector.getDatasource());
-			parameterDatasourceAggregating.setSelectedItem(defaultDatasetVector.getDatasource());
 			parameterSingleDatasetBounding.setSelectedItem(defaultDatasetVector);
-			parameterSingleDatasetAggregating.setSelectedItem(defaultDatasetVector);
+
 			if (defaultDatasetVector.getType().equals(DatasetType.POINT)) {
 				parameterSwitchDatasetType.switchParameter("PointType");
 			} else {
