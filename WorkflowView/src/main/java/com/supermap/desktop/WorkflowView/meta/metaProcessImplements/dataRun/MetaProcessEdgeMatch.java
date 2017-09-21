@@ -72,7 +72,8 @@ public class MetaProcessEdgeMatch extends MetaProcess {
 		edgeMatchMode.setRequisite(true);
 
 		edgeTolerance = new ParameterNumber(ProcessProperties.getString("String_EdgeMatchTolerance"));
-		edgeTolerance.setTipButtonMessage(ProcessProperties.getString("String_EdgeMatchToleranceTip"));
+		// 防止linux显示不全，先不添加提示图标-yuanR2017.9.21
+		//edgeTolerance.setTipButtonMessage(ProcessProperties.getString("String_EdgeMatchToleranceTip"));
 		edgeTolerance.setMaxBit(22);
 		edgeTolerance.setMinValue(0);
 		edgeTolerance.setIsIncludeMin(false);
