@@ -1312,7 +1312,8 @@ public class FirstStepPane extends JPanel implements IState {
 				if (oleFile.isFile() && oleFile.exists()) {
 					oleFile.delete();
 				}
-				this.mapCacheBuilder = parent.setMapCacheBuilderBasicInfo();
+				parent.setOutputScalesInfo(this.mapCacheBuilder);
+				parent.setMapCacheBuilderBasicInfo(this.mapCacheBuilder);
 				boolean result = mapCacheBuilder.toConfigFile(filePath);
 				if (result) {
 					Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_ToCacheConfigFileIsSuccessed") + filePath);

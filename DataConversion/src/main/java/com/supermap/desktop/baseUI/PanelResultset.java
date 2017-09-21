@@ -693,7 +693,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
 				|| importSetting instanceof ImportSettingModelFBX || importSetting instanceof ImportSettingModelOSG
 				|| importSetting instanceof ImportSettingModelX) {
 			this.removeAll();
-			this.comboBoxDatasetType = new DatasetTypeComboBox(new String[]{DataConversionProperties.getString("string_comboboxitem_model")});
+			this.comboBoxDatasetType = new DatasetTypeComboBox(new String[]{CommonProperties.getString("String_DatasetType_Model")});
 			this.add(this.labelDatasource, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 20).setFill(GridBagConstraints.NONE).setWeight(0, 0));
 			this.add(this.comboBoxDatasource, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
 			this.add(this.labelDatasetName, new GridBagConstraintsHelper(4, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));

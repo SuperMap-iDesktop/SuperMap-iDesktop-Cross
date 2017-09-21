@@ -527,8 +527,8 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			return;
 		}
 		if (validateFixedScales()) {
-			setOutputScalesInfo();
-			setMapCacheBuilderBasicInfo();
+			setOutputScalesInfo(this.mapCacheBuilder);
+			setMapCacheBuilderBasicInfo(this.mapCacheBuilder);
 			multiProcessSplit();
 		}
 	}
@@ -643,8 +643,8 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			}
 			mapCacheBuilder.setMap(map);
 		}
-		setOutputScalesInfo();
-		setMapCacheBuilderBasicInfo();
+		setOutputScalesInfo(this.mapCacheBuilder);
+		setMapCacheBuilderBasicInfo(this.mapCacheBuilder);
 		boolean result;
 		long startTime = System.currentTimeMillis();
 		Date currentTime = new Date();
@@ -676,22 +676,22 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		this.nextStepPane.dispose();
 	}
 
-	public MapCacheBuilder setMapCacheBuilderBasicInfo() {
+	public void setMapCacheBuilderBasicInfo(MapCacheBuilder mapCacheBuilder) {
 		try {
 			//为mapCacheBuilder设置除了缓存比例尺及比例尺对应信息以外的信息
-			this.mapCacheBuilder.setVersion(MapCacheVersion.VERSION_50);
-			this.mapCacheBuilder.setCacheName(firstStepPane.textFieldCacheName.getText());
-			this.mapCacheBuilder.setOutputFolder(firstStepPane.fileChooserControlFileCache.getPath());
-			this.mapCacheBuilder.setBounds(nextStepPane.panelCacheRange.getRangeBound());
-			this.mapCacheBuilder.setIsDeleteLogFile(false);
-			if (this.mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
-				this.mapCacheBuilder.setIndexBounds(nextStepPane.panelIndexRange.getRangeBound());
+			mapCacheBuilder.setVersion(MapCacheVersion.VERSION_50);
+			mapCacheBuilder.setCacheName(firstStepPane.textFieldCacheName.getText());
+			mapCacheBuilder.setOutputFolder(firstStepPane.fileChooserControlFileCache.getPath());
+			mapCacheBuilder.setBounds(nextStepPane.panelCacheRange.getRangeBound());
+			mapCacheBuilder.setIsDeleteLogFile(false);
+			if (mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
+				mapCacheBuilder.setIndexBounds(nextStepPane.panelIndexRange.getRangeBound());
 			}
 			if (nextStepPane.smSpinnerImageCompressionRatio.isEnabled()) {
 				//modify
-				this.mapCacheBuilder.setImageCompress(Integer.valueOf(nextStepPane.smSpinnerImageCompressionRatio.getValue().toString()));
+				mapCacheBuilder.setImageCompress(Integer.valueOf(nextStepPane.smSpinnerImageCompressionRatio.getValue().toString()));
 			}
-			this.mapCacheBuilder.setTransparent(nextStepPane.checkBoxBackgroundTransparency.isSelected());
+			mapCacheBuilder.setTransparent(nextStepPane.checkBoxBackgroundTransparency.isSelected());
 			if (firstStepPane.checkBoxFilterSelectionObjectInLayer.isEnabled() && firstStepPane.checkBoxFilterSelectionObjectInLayer.isSelected()) {
 				Layers layers = this.mapCacheBuilder.getMap().getLayers();
 				if (nextStepPane.selectedGeometryAndLayer != null && nextStepPane.selectedGeometryAndLayer.size() > 0) {
@@ -717,14 +717,14 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 						}
 					}
 				}
-				this.mapCacheBuilder.setFillMargin(nextStepPane.checkBoxFullFillCacheImage.isSelected());
+				mapCacheBuilder.setFillMargin(nextStepPane.checkBoxFullFillCacheImage.isSelected());
 				if (geoRegion != null) {
-					this.mapCacheBuilder.setClipRegion(geoRegion);
+					mapCacheBuilder.setClipRegion(geoRegion);
 				}
 			}
 			TileStorageConnection tileStorageConnection = null;
 			if (firstStepPane.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_Compact")) && !firstStepPane.textFieldUserPassword.getText().isEmpty()) {
-				this.mapCacheBuilder.setPassword(firstStepPane.textFieldUserPassword.getText());
+				mapCacheBuilder.setPassword(firstStepPane.textFieldUserPassword.getText());
 			} else if (firstStepPane.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDB")) || firstStepPane.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDBMuti"))) {
 				tileStorageConnection = new TileStorageConnection();
 				tileStorageConnection.setServer(firstStepPane.textFieldServerName.getText());
@@ -735,15 +735,14 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				tileStorageConnection.setPassword(firstStepPane.textFieldUserPassword.getText());
 			}
 			if (tileStorageConnection != null) {
-				this.mapCacheBuilder.setConnectionInfo(tileStorageConnection);
+				mapCacheBuilder.setConnectionInfo(tileStorageConnection);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex.toString());
 		}
-		return mapCacheBuilder;
 	}
 
-	private void setOutputScalesInfo() {
+	public void setOutputScalesInfo(MapCacheBuilder mapCacheBuilder) {
 		//设置缓存比例尺及比例尺对应信息
 		double[] outputScalevalues;
 		HashMap<Double, String> scaleNames = new HashMap<>();
@@ -768,8 +767,8 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				scaleNames.put(firstStepPane.globalScaleSortKeys[selectedIndex.get(i)], firstStepPane.globalSplitScale.get(firstStepPane.globalScaleSortKeys[selectedIndex.get(i)]));
 			}
 		}
-		this.mapCacheBuilder.setOutputScales(outputScalevalues);
-		this.mapCacheBuilder.setOutputScaleCaptions(scaleNames);
+		mapCacheBuilder.setOutputScales(outputScalevalues);
+		mapCacheBuilder.setOutputScaleCaptions(scaleNames);
 	}
 
 	public void setComponentsEnabled(boolean enabled) {
