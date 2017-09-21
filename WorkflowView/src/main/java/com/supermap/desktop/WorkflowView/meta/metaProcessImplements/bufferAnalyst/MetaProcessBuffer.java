@@ -116,7 +116,9 @@ public class MetaProcessBuffer extends MetaProcess {
 		this.parameterTextFieldLeftRadius = new ParameterTextField(ProcessProperties.getString("String_leftRadius"));
 		this.parameterTextFieldRightRadius = new ParameterTextField(ProcessProperties.getString("String_rightRadius"));
 		this.comboBoxFieldLeft = new ParameterFieldComboBox(ProcessProperties.getString("String_leftRadius"));
+		this.comboBoxFieldLeft.setShowNullValue(true);
 		this.comboBoxFieldRight = new ParameterFieldComboBox(ProcessProperties.getString("String_rightRadius"));
+		this.comboBoxFieldRight.setShowNullValue(true);
 		this.parameterUnionBuffer = new ParameterCheckBox(ProcessProperties.getString("String_UnionBufferItem"));
 		this.parameterRetainAttribute = new ParameterCheckBox(ProcessProperties.getString("String_RetainAttribute"));
 		this.parameterTextFieldSemicircleLineSegment = new ParameterNumber(ProcessProperties.getString("Label_SemicircleLineSegment"));
@@ -272,7 +274,7 @@ public class MetaProcessBuffer extends MetaProcess {
 			return false;
 		}
 		// 当选择的是根据值生成，进行绝对值处理
-		if (((ParameterDataNode) this.radioButtonNumOrField.getSelectedItem()).getData().equals(VALUE_RELY)&&!datasetVector.getType().equals(DatasetType.REGION)) {
+		if (((ParameterDataNode) this.radioButtonNumOrField.getSelectedItem()).getData().equals(VALUE_RELY) && !datasetVector.getType().equals(DatasetType.REGION)) {
 			if (radiusRight != null) {
 				radiusRight = Math.abs((Double) radiusRight);
 			}

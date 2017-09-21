@@ -59,7 +59,8 @@ public class MetaProcessAggregatePoints extends MetaProcess {
 		parameterNumberDistance.setRequisite(true);
 
 		parameterNumberMinPilePointCount = new ParameterNumber(ProcessProperties.getString("String_AggregatePoints_MinPilePointCount"));
-		parameterNumberMinPilePointCount.setTipButtonMessage(ProcessProperties.getString("String_AggregatePoints_MinPilePointCountTip"));
+		// 防止linux显示不全，先不添加提示图标-yuanR2017.9.21
+		//parameterNumberMinPilePointCount.setTipButtonMessage(ProcessProperties.getString("String_AggregatePoints_MinPilePointCountTip"));
 		parameterNumberMinPilePointCount.setMaxBit(0);
 		parameterNumberMinPilePointCount.setMinValue(2);
 		parameterNumberMinPilePointCount.setIsIncludeMin(true);
