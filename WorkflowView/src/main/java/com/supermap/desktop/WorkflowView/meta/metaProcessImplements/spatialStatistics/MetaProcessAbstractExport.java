@@ -139,6 +139,7 @@ public class MetaProcessAbstractExport extends MetaProcess {
 		this.targetName = new ParameterTextField(ProcessProperties.getString("String_TargetName"));
 		this.targetName.setEnabled(false);
 		this.exportPath = new ParameterFile(ProcessProperties.getString("String_ExportPath"));
+		this.exportPath.setRequisite(true);
 		this.exportPath.setEnabled(false);
 		this.cover = new ParameterCheckBox(ProcessProperties.getString("String_Cover"));
 		this.cover.setEnabled(false);

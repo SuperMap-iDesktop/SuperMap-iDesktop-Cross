@@ -482,6 +482,7 @@ public class ImportParameterCreator implements IParameterCreator {
 		ReflectInfo reflectInfoFilePath = new ReflectInfo();
 		reflectInfoFilePath.methodName = "setSourceFilePath";
 		parameterFile = FileType.createImportFileChooser(importType);
+		parameterFile.setRequisite(true);
 		parameterFile.setDescribe(ProcessProperties.getString("label_ChooseFile"));
 		reflectInfoFilePath.parameter = parameterFile;
 
