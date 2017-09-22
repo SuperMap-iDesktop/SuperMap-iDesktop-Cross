@@ -587,9 +587,11 @@ public class RasterReclassValuePanel extends JPanel {
 		this.textFieldLegitNoClass.setEnabled(false);
 		this.buttonSplit.setEnabled(false);
 		this.buttonCombine.setEnabled(false);
-		this.textFieldLegitNoValue.setText(String.valueOf(this.dataset.getNoValue()));
+		if (this.dataset != null) {
+			this.textFieldLegitNoValue.setText(String.valueOf(this.dataset.getNoValue()));
+			this.reclassMappingTable.setChangeNoValueTo(this.dataset.getNoValue());
+		}
 		this.textFieldLegitNoClass.setText("-9999");
-		this.reclassMappingTable.setChangeNoValueTo(this.dataset.getNoValue());
 		this.reclassMappingTable.setChangeMissingValueTo(-9999.0);
 		this.reclassMappingTable.setReclassType(ReclassType.RANGE);
 		this.reclassMappingTable.setRetainMissingValue(true);

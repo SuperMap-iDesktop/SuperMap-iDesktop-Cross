@@ -394,7 +394,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			}
 
 			String sciPath = getUpdateSci();
-
+			mapCacheBuilder.setHashCodeEnabled(false);
 			boolean result = mapCacheBuilder.toConfigFile(sciPath);
 
 			if (result) {
@@ -413,9 +413,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					String updateMongoSci = firstStepPane.fileChooserControlFileCache.getPath() + File.separator + cacheName + File.separator + cacheName + "_updated.sci";
 					new File(updateMongoSci).renameTo(new File(firstStepPane.getSciPath()));
 				} else {
+					mapCacheBuilder.setHashCodeEnabled(false);
 					mapCacheBuilder.toConfigFile(firstStepPane.getSciPath());
 				}
 			} else {
+				mapCacheBuilder.setHashCodeEnabled(false);
 				mapCacheBuilder.toConfigFile(firstStepPane.getSciPath());
 			}
 			if (this.checkBoxAutoClosed.isSelected()) {
@@ -563,6 +565,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				sciPath = CacheUtilities.replacePath(mongoSciFile.getParent(), mapCacheBuilder.getCacheName() + ".sci");
 			}
 		} else {
+			mapCacheBuilder.setHashCodeEnabled(false);
 			result = mapCacheBuilder.toConfigFile(sciPath);
 		}
 		if (result) {

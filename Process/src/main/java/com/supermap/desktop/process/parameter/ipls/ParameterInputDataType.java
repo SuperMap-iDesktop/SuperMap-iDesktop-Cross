@@ -221,7 +221,7 @@ public class ParameterInputDataType extends ParameterCombine {
 		parameterTextFieldUserName.setRequisite(true);
 //		parameterTextFieldUserName.setDefaultWarningValue("");
 		parameterTextFieldPassword.setRequisite(true);
-		parameterTextFieldPassword.setSelectedItem("supermap");
+//		parameterTextFieldPassword.setSelectedItem("supermap");
 		ParameterCombine parameterCombine2 = new ParameterCombine();
 		parameterCombine2.addParameters(
 				parameterTextFieldAddress,
