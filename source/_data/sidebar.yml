@@ -62,10 +62,27 @@ docs:
   SpatialStatisticalAnalysis:
     SpatialStatisticalAnalysisSummary: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/SpatialStatisticalAnalysisSummary.html
     BasicVocabulary: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/BasicVocabulary.html
-    MeasureGeographicDistributions: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/MeasureGeographicDistributions.html
-    Clusters: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/Clusters.html
-    SpatialRelationshipModeling: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/SpatialRelationshipModeling.html
-    AnalyzingPatterns: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/AnalyzingPatterns.html
+    MeasureGeographicDistr:
+      MeasureGeographicDistributions: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/MeasureGeographicDistributions.html
+      CentralFeature: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/CentralFeature.html
+      MeanCenter: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/MeanCenter.html
+      MeanCenterResult: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/MeanCenterResult.html
+      MeasureDirection: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/MeasureDirection.html
+      MeasureLinearDirectional: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/MeasureLinearDirectional.html
+      MeasureStandardDistance: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/MeasureStandardDistance.html
+    Clusters1:
+      Clusters: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/Clusters.html
+      HotSpotAnalyst: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/HotSpotAnalyst.html 
+      ClusterOutlierAnalyst: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/ClusterOutlierAnalyst.html
+    SpatialRelationshipModeling1:
+      SpatialRelationshipModeling: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/SpatialRelationshipModeling.html
+      GeographicWeightedRegression: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/GeographicWeightedRegression.html
+    AnalyzingPatterns1:
+      AnalyzingPatterns: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/AnalyzingPatterns.html
+      SpatialAutocorrelation: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/SpatialAutocorrelation.html
+      HighLowClustering: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/HighLowClustering.html
+      IncrementalSpatialAutocorrelation: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/IncrementalSpatialAutocorrelation.html
+      AverageNearestNeighbor: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/AverageNearestNeighbor.html
   BigData:
     BigDataAnalysisEnvironmentConfiguration: /SuperMap-iDesktop-Cross/docs/BigData/BigDataAnalysisEnvironmentConfiguration.html
     DataPreparation: /SuperMap-iDesktop-Cross/docs/BigData/DataPreparation.html

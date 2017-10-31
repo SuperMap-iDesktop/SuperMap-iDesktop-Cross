@@ -82,10 +82,27 @@ sidebar:
     SpatialStatisticalAnalysis: 空间统计分析
     SpatialStatisticalAnalysisSummary: 空间统计分析概述
     BasicVocabulary: 基础词汇
-    MeasureGeographicDistributions: 度量地理分析
-    Clusters: 聚类分析
-    SpatialRelationshipModeling: 空间关系建模
-    AnalyzingPatterns: 分析模式
+    MeasureGeographicDistr: 度量地理分析
+    MeasureGeographicDistributions: 度量地理分析概述
+    CentralFeature: 中心要素
+    MeanCenter: 平均中心
+    MeanCenterResult: 中位数中心
+    MeasureDirection: 方向分布
+    MeasureLinearDirectional: 线性方向平均值
+    MeasureStandardDistance: 标准距离
+    Clusters1: 聚类分析
+    Clusters: 聚类分析概述
+    HotSpotAnalyst: 热点分析
+    ClusterOutlierAnalyst: 聚类异常值分析
+    SpatialRelationshipModeling1: 空间关系建模
+    SpatialRelationshipModeling: 空间关系建模概述
+    GeographicWeightedRegression: 地理加权回归分析
+    AnalyzingPatterns1: 分析模式
+    AnalyzingPatterns: 分析模式概述
+    SpatialAutocorrelation: 空间自相关
+    HighLowClustering: 高低值聚类
+    IncrementalSpatialAutocorrelation: 增量空间自相关
+    AverageNearestNeighbor: 平均最近邻
     BigData: 大数据在线分析
     BigDataAnalysisEnvironmentConfiguration: 分析环境配置
     DataPreparation: 数据准备
