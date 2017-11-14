@@ -93,6 +93,7 @@ sidebar:
     Clusters1: 聚类分析
     Clusters: 聚类分析概述
     HotSpotAnalyst: 热点分析
+    OptimizedHotSpotAnalyst: 优化的热点分析
     ClusterOutlierAnalyst: 聚类异常值分析
     SpatialRelationshipModeling1: 空间关系建模
     SpatialRelationshipModeling: 空间关系建模概述

@@ -73,6 +73,7 @@ docs:
     Clusters1:
       Clusters: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/Clusters.html
       HotSpotAnalyst: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/HotSpotAnalyst.html 
+      OptimizedHotSpotAnalyst: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/OptimizedHotSpotAnalyst.html
       ClusterOutlierAnalyst: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/ClusterOutlierAnalyst.html
     SpatialRelationshipModeling1:
       SpatialRelationshipModeling: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/SpatialRelationshipModeling.html

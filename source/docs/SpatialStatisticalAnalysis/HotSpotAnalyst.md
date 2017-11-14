@@ -76,6 +76,7 @@ title: 热点分析
 
 　　![](../img/smalltitle.png)[聚类异常值分析](ClusterOutlierAnalyst.html)
 
+　　![](../img/smalltitle.png)[优化的热点分析](OptimizedHotSpotAnalyst.html)
 
 　　![](../img/smalltitle.png)[分析模式](AnalyzingPatterns.html)
 
