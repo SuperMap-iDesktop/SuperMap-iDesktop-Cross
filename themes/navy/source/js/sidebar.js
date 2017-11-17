@@ -115,9 +115,23 @@
 
 					return isDochref;
 				}
-
+				function Newhref(hrefpara) {
+				var serverletApp = 'SuperMap-iDesktop-Cross';
+				var hrefpara1 = hrefpara.substr(serverletApp.length+1,hrefpara.length-1);
+				return '/'+serverletApp+'/en'+hrefpara1;
+				}
+				var lang = '';
+				if(document.getElementById('lang-select')!=null){
+					lang = document.getElementById('lang-select').value;
+				}else if(document.getElementById('mobile-lang-select')!=null){
+					lang = document.getElementById('mobile-lang-select').value;
+				}
+				
 				var redhref = $(this).attr('href');
 				if (Dochref(redhref) == true) {
+				    if(lang=='en'){
+					 redhref = Newhref(redhref);
+				    }
 					redhref += '?' + OpenNode();
 					$(this).attr('href', redhref);
 				}
@@ -182,7 +196,14 @@
 						return isDochref;
 					}
 
-					var redhref = $(this).attr('href');
+					  var lang = this.value;
+					  var canonical = this.dataset.canonical;
+                      if (lang === 'zh') lang = '';
+                      if (lang){ 
+					lang = 'SuperMap-iDesktop-Cross/'+lang;
+					 }
+					location.href = '/' + lang +'/'+ canonical;
+					document.getElementById('lang-select')
 					if (Dochref(redhref) == true) {
 						redhref += '?' + OpenNode();
 						$(this).attr('href', redhref);

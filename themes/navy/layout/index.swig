@@ -3,17 +3,17 @@
 	<ul class="slides">
 		<li>
 			<a title="" target="_blank" href="/SuperMap-iDesktop-Cross/news/">
-				<img width="1920" height="482" alt="" style="background: url(/SuperMap-iDesktop-Cross/img/banner1.png) no-repeat center;" src="/SuperMap-iDesktop-Cross/img/alpha.png">
+				<img id="banner1" width="1920" height="482" alt="" style="background: url(/SuperMap-iDesktop-Cross/img/banner1.png) no-repeat center;" src="/SuperMap-iDesktop-Cross/img/alpha.png">
 			</a>
 		</li>
 		<li>
 			<a title="" href="/SuperMap-iDesktop-Cross/docs/index.html">
-				<img width="1920" height="482" alt="" style="background: url(/SuperMap-iDesktop-Cross/img/banner2.png) no-repeat center;" src="/SuperMap-iDesktop-Cross/img/alpha.png">
+				<img id="banner2" width="1920" height="482" alt="" style="background: url(/SuperMap-iDesktop-Cross/img/banner2.png) no-repeat center;" src="/SuperMap-iDesktop-Cross/img/alpha.png">
 			</a>
 		</li>
 		<li>
-			<a title="" target="_blank" href="https://www.supermap.com/xhtml/SuperMap-iObjects-8C-2017.html">
-				<img width="1920" height="482" alt="" style="background: url(/SuperMap-iDesktop-Cross/img/banner3.png) no-repeat center;" src="/SuperMap-iDesktop-Cross/img/alpha.png">
+			<a title="" target="_blank" href="https://www.supermap.com/cn/xhtml/SuperMap-iObjects-9D.html">
+				<img id="banner3" width="1920" height="482" alt="" style="background: url(/SuperMap-iDesktop-Cross/img/banner3.png) no-repeat center;" src="/SuperMap-iDesktop-Cross/img/alpha.png">
 			</a>
 		</li>
 	</ul>

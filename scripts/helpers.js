@@ -30,14 +30,16 @@ hexo.extend.helper.register('page_nav', function(){
   var keys = Object.keys(list);
   var index = keys.indexOf(path);
   var result = '';
-
+  var href = '';
   if (index > 0){
-    result += '<a href="' + keys[index - 1] + '" class="article-footer-prev" title="' + this.__(prefix + list[keys[index - 1]]) + '">' +
+	href = this.en_url(keys[index - 1]);
+    result += '<a href="' + href + '" class="article-footer-prev" title="' + this.__(prefix + list[keys[index - 1]]) + '">' +
       '<i class="fa fa-chevron-left"></i><span>' + this.__('page.prev') + '</span></a>';
   }
 
   if (index < keys.length - 1){
-    result += '<a href="' + keys[index + 1] + '" class="article-footer-next" title="' + this.__(prefix + list[keys[index + 1]]) + '">' +
+	href = this.en_url(keys[index + 1]);
+    result += '<a href="' + href + '" class="article-footer-next" title="' + this.__(prefix + list[keys[index + 1]]) + '">' +
       '<span>' + this.__('page.next') + '</span><i class="fa fa-chevron-right"></i></a>';
   }
   return result;
@@ -50,6 +52,8 @@ hexo.extend.helper.register('doc_sidebar', function(className){
   var result = '<ul class="topnav">';
   var self = this;
   var prefix = 'sidebar.' + type + '.';
+  var lang = this.page.lang;
+  
    
    _.each(sidebar, function(menu, title){
        result += '<li id="' + title + '"><strong class="' + className + '-title">' + self.__(prefix + title) + '</strong>';
@@ -65,6 +69,7 @@ hexo.extend.helper.register('doc_sidebar', function(className){
                _.each(submenu, function(link, text){
                    var itemClass = className + '-link';
                    if (link === path) itemClass += ' current';
+				   var href = link;
                    result += '<li id="' + text + '"><a href="' + link + '" class="' + itemClass + '">' + self.__(prefix + text) + '</a></li>';
            })
            result += '</ul></li>';
@@ -77,6 +82,19 @@ hexo.extend.helper.register('doc_sidebar', function(className){
   return result;
 });
 
+hexo.extend.helper.register("en_url",function Newhref(hrefpara) {
+	var lang = this.page.lang;
+	var href = '';
+	if(lang=='en'){
+		var serverletApp = 'SuperMap-iDesktop-Cross';
+		var hrefpara1 = hrefpara.substr(serverletApp.length+1,hrefpara.length-1);
+		href= '/'+serverletApp+'/en'+hrefpara1;
+	}else{
+		href = hrefpara;	
+	}
+	return href;
+ }
+);
 hexo.extend.helper.register('header_menu', function(className){
   var menu = this.site.data.menu;
   var result = '';
@@ -85,7 +103,7 @@ hexo.extend.helper.register('header_menu', function(className){
   var isChinese = lang === 'zh';
 
   _.each(menu, function(path, title){
-    if (!isChinese && ~localizedPath.indexOf(title)) path = lang + path;
+   if (!isChinese && ~localizedPath.indexOf(title)) path = lang + path;
 
     result += '<a href="' + self.url_for(path) + '" class="' + className + '-link">' + self.__('menu.' + title) + '</a>';
   });
@@ -104,7 +122,7 @@ hexo.extend.helper.register('url_for_lang', function(path){
   var lang = this.page.lang;
   var url = this.url_for(path);
 
-  if (lang !== 'zh' && url[0] === '/') url = '/' + lang + url;
+  if (lang !== 'zh' && url[0] === '/') url = url + '/' + lang; 
 
   return url;
 });
