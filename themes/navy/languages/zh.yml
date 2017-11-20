@@ -1,4 +1,5 @@
 menu:
+  home: 首页
   docs: 帮助文档
   api: API
   news: 新特性
@@ -79,6 +80,15 @@ sidebar:
     Measuregroup: 地图量算
     MapSetting_Basic: 地图属性-基本
     MapSetting_Range: 地图属性-范围
+    Cache: 地图缓存
+    SingleProcessCache: 单进程切图
+    MultiProcessesCache: 多进程切图
+    MultiProcessCache: 多进程切图
+    CreateMultiProcessCache: 新建地图缓存（多任务)
+    ExecuteMultiProcessCaching: 执行切图任务
+    CacheCheck: 缓存检查
+    UpdateCache: 更新缓存
+    RecoverCaching: 续传缓存
     SpatialStatisticalAnalysis: 空间统计分析
     SpatialStatisticalAnalysisSummary: 空间统计分析概述
     BasicVocabulary: 基础词汇

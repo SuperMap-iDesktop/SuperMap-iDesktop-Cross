@@ -59,6 +59,15 @@ docs:
     LayerSetting: /SuperMap-iDesktop-Cross/docs/Map/LayerSetting.html
     MapSetting_Basic: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Basic.html
     MapSetting_Range: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Range.html
+  Cache:
+    SingleProcessCache: /SuperMap-iDesktop-Cross/docs/Cache/SingleProcessCache.html
+    MultiProcessesCache: 
+      MultiProcessCache: /SuperMap-iDesktop-Cross/docs/Cache/MultiProcessCache.html
+      CreateMultiProcessCache: /SuperMap-iDesktop-Cross/docs/Cache/CreateMultiProcessCache.html
+      ExecuteMultiProcessCaching: /SuperMap-iDesktop-Cross/docs/Cache/ExecuteMultiProcessCaching.html
+    CacheCheck: /SuperMap-iDesktop-Cross/docs/Cache/CacheCheck.html
+    UpdateCache: /SuperMap-iDesktop-Cross/docs/Cache/UpdateCache.html
+    RecoverCaching: /SuperMap-iDesktop-Cross/docs/Cache/RecoverCaching.html
   SpatialStatisticalAnalysis:
     SpatialStatisticalAnalysisSummary: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/SpatialStatisticalAnalysisSummary.html
     BasicVocabulary: /SuperMap-iDesktop-Cross/docs/SpatialStatisticalAnalysis/BasicVocabulary.html
