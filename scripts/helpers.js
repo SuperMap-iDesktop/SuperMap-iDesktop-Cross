@@ -33,13 +33,13 @@ hexo.extend.helper.register('page_nav', function(){
   var href = '';
   if (index > 0){
 	href = this.en_url(keys[index - 1]);
-    result += '<a href="' + href + '" class="article-footer-prev" title="' + this.__(prefix + list[keys[index - 1]]) + '">' +
+    result += '<a href="' + href + '" class="article-footer-prev" title="' + this.__(prefix + list[href]) + '">' +
       '<i class="fa fa-chevron-left"></i><span>' + this.__('page.prev') + '</span></a>';
   }
 
   if (index < keys.length - 1){
 	href = this.en_url(keys[index + 1]);
-    result += '<a href="' + href + '" class="article-footer-next" title="' + this.__(prefix + list[keys[index + 1]]) + '">' +
+    result += '<a href="' + href + '" class="article-footer-next" title="' + this.__(prefix + list[href]) + '">' +
       '<span>' + this.__('page.next') + '</span><i class="fa fa-chevron-right"></i></a>';
   }
   return result;
@@ -103,7 +103,8 @@ hexo.extend.helper.register('header_menu', function(className){
   var isChinese = lang === 'zh';
 
   _.each(menu, function(path, title){
-   if (!isChinese && ~localizedPath.indexOf(title)) path = lang + path;
+  //&& ~localizedPath.indexOf(title)
+   if (!isChinese) path = lang + path;
 
     result += '<a href="' + self.url_for(path) + '" class="' + className + '-link">' + self.__('menu.' + title) + '</a>';
   });
@@ -113,7 +114,7 @@ hexo.extend.helper.register('header_menu', function(className){
 
 hexo.extend.helper.register('canonical_url', function(lang){
   var path = this.page.canonical_path;
-  if (lang && lang !== 'zh') path = lang + '/' + path;
+  if (lang && lang !== 'zh') path =  path + '/' + lang ;
 
   return this.config.url + '/' + path;
 });
