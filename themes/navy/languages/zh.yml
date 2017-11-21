@@ -1,8 +1,8 @@
 menu:
   home: 首页
   docs: 帮助文档
-  api: API
-  news: 新特性
+#  api: API
+#  news: 新特性
 #  plugins: Plugins
 #  themes: Themes
   search: Search
@@ -122,3 +122,6 @@ sidebar:
     SceneDia: 场景概述
     FAQAll: FAQ
     FAQ: 常见问题解答
+    News: 新特性
+    9DNews: Cross 9D 新特性
+    811News: Cross 8C(2017) 新特性

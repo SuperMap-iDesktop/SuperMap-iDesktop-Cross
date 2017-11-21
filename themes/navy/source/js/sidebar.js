@@ -128,13 +128,16 @@
 				}
 				
 				var redhref = $(this).attr('href');
-				if (Dochref(redhref) == true) {
+				//if (Dochref(redhref) == true) {
 				    if(lang=='en'){
 					 redhref = Newhref(redhref);
 				    }
 					redhref += '?' + OpenNode();
 					$(this).attr('href', redhref);
-				}
+				//}else if(lang=='en'){
+				//	redhref = Newhref(redhref);
+				//	$(this).attr('href', redhref);
+				//}
 			});
 		}
 		//刷新目录树，展开地址栏查询参数出记录的目录。

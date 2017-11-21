@@ -101,4 +101,7 @@ docs:
     SceneDia: /SuperMap-iDesktop-Cross/docs/Scene/SceneDia.html
   FAQAll:
     FAQ: /SuperMap-iDesktop-Cross/docs/FAQ.html
+  News:
+    9DNews: /SuperMap-iDesktop-Cross/docs/news/what's_new_in_900.html
+    811News: /SuperMap-iDesktop-Cross/docs/news/what's_new_in_811.html
 

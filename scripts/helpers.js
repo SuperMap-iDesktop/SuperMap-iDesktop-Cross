@@ -16,8 +16,13 @@ hexo.extend.helper.register('page_nav', function(){
   var type = this.page.canonical_path.split('/')[0];
   var sidebar = this.site.data.sidebar[type];
   // var path = pathFn.basename(this.path);
+  var lang = this.page.lang;
   var path = this.url_for(this.path);
-//  console.log(path); 
+  //console.log(path);
+  if(~path.indexOf('en')){
+	path = '/SuperMap-iDesktop-Cross/' + path.substr(path.indexOf('en')+3,path.length-1);
+  }
+  //console.log(path); 
   var list = {};
   var prefix = 'sidebar.' + type + '.';
 
@@ -86,9 +91,9 @@ hexo.extend.helper.register("en_url",function Newhref(hrefpara) {
 	var lang = this.page.lang;
 	var href = '';
 	if(lang=='en'){
-		var serverletApp = 'SuperMap-iDesktop-Cross';
-		var hrefpara1 = hrefpara.substr(serverletApp.length+1,hrefpara.length-1);
-		href= '/'+serverletApp+'/en'+hrefpara1;
+		var serverletApp = '/SuperMap-iDesktop-Cross';
+		var hrefpara1 = hrefpara.substr(serverletApp.length,hrefpara.length-1);
+		href= serverletApp+'/en'+hrefpara1;
 	}else{
 		href = hrefpara;	
 	}
