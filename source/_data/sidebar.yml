@@ -1,27 +1,27 @@
 docs:
   welcome:
     SuperMap Cross: /SuperMap-iDesktop-Cross/docs/index.html
-    License: /SuperMap-iDesktop-Cross/docs/Install/License.html
-  getting_started:
-    SuperMapDataStructure: /SuperMap-iDesktop-Cross/docs/Basic/SuperMapDataStructure.html
-    Pyramid: /SuperMap-iDesktop-Cross/docs/Basic/Pyramid.html
-    GeoFormates: /SuperMap-iDesktop-Cross/docs/Basic/GeoFormates.html
+    #License: /SuperMap-iDesktop-Cross/docs/Install/License.html
+  #getting_started:
+    #SuperMapDataStructure: /SuperMap-iDesktop-Cross/docs/Basic/SuperMapDataStructure.html
+    #Pyramid: /SuperMap-iDesktop-Cross/docs/Basic/Pyramid.html
+    #GeoFormates: /SuperMap-iDesktop-Cross/docs/Basic/GeoFormates.html
   DataProcess:
     Projection:
       AboutMapProjection: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/AboutMapProjection.html
       ProjectionUsed: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/ProjectionUsed.html
       PrjCoordSysType: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/PrjCoordSysType.html
       SetPrjCoordSys: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/SetPrjCoordSys.html
-    Topo:
-      TopoProcess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcess.html
-      TopoPreprocess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoPreprocess.html
-      TopoProcessLine: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcessLine.html
-      TopotoPolygon: /SuperMap-iDesktop-Cross/docs/DataProcess/TopotoPolygon.html
+    #Topo:
+      #TopoProcess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcess.html
+      #TopoPreprocess: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoPreprocess.html
+      #TopoProcessLine: /SuperMap-iDesktop-Cross/docs/DataProcess/TopoProcessLine.html
+      #TopotoPolygon: /SuperMap-iDesktop-Cross/docs/DataProcess/TopotoPolygon.html
     SQL:
       SQLQuery_Expression: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQuery_Expression.html
-      SQLQueryDia: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDia.html
-      SQLQueryDiaFuction: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDiaFuction.html
-      SQLSupporttedType: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLSupporttedType.html
+      #SQLQueryDia: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDia.html
+      #SQLQueryDiaFuction: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDiaFuction.html
+      #SQLSupporttedType: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLSupporttedType.html
   Objects:
     CreateGeometry:
       AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/AboutCreateGeometry.html
@@ -40,25 +40,25 @@ docs:
     SingleBuffer: /SuperMap-iDesktop-Cross/docs/DataAnalyst/SingleBuffer.html
     BufferAnalyst_Example: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferAnalyst_Example.html
     FindRasterVaule: /SuperMap-iDesktop-Cross/docs/DataAnalyst/FindRasterVaule.html
-  Map:
-    Thematic:
-      ThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap.html
-      CreatThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/CreatThematicMap.html
-    ModifyMap:
-      ModifyThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/ModifyThematicMap.html
-      UniqueValueProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/UniqueValueProperties.html
-      RangesMapGroupDia: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/RangesMapGroupDia.html
-      LabelProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/LabelProperties.html
-      GraphProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/GraphProperties.html
-      GraduatedSymbolProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/GraduatedSymbolProperties.html
-      DotDensityProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/DotDensityProperties.html
-      CustomizeProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/CustomizeProperties.html
-    Style: /SuperMap-iDesktop-Cross/docs/Map/Style.html
-    OverlapDisplayed: /SuperMap-iDesktop-Cross/docs/Map/OverlapDisplayed.html
-    Measuregroup: /SuperMap-iDesktop-Cross/docs/Map/Measuregroup.html
-    LayerSetting: /SuperMap-iDesktop-Cross/docs/Map/LayerSetting.html
-    MapSetting_Basic: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Basic.html
-    MapSetting_Range: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Range.html
+  #Map:
+    #Thematic:
+      #ThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap.html
+      #CreatThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/CreatThematicMap.html
+    #ModifyMap:
+      #ModifyThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/ModifyThematicMap.html
+      #UniqueValueProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/UniqueValueProperties.html
+      #RangesMapGroupDia: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/RangesMapGroupDia.html
+      #LabelProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/LabelProperties.html
+      #GraphProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/GraphProperties.html
+      #GraduatedSymbolProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/GraduatedSymbolProperties.html
+      #DotDensityProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/DotDensityProperties.html
+      #CustomizeProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/CustomizeProperties.html
+    #Style: /SuperMap-iDesktop-Cross/docs/Map/Style.html
+    #OverlapDisplayed: /SuperMap-iDesktop-Cross/docs/Map/OverlapDisplayed.html
+    #Measuregroup: /SuperMap-iDesktop-Cross/docs/Map/Measuregroup.html
+    #LayerSetting: /SuperMap-iDesktop-Cross/docs/Map/LayerSetting.html
+    #MapSetting_Basic: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Basic.html
+    #MapSetting_Range: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Range.html
   Cache:
     SingleProcessCache: /SuperMap-iDesktop-Cross/docs/Cache/SingleProcessCache.html
     MultiProcessesCache: 
@@ -97,11 +97,12 @@ docs:
     BigDataAnalysisEnvironmentConfiguration: /SuperMap-iDesktop-Cross/docs/BigData/BigDataAnalysisEnvironmentConfiguration.html
     DataPreparation: /SuperMap-iDesktop-Cross/docs/BigData/DataPreparation.html
     DensityAnalysis: /SuperMap-iDesktop-Cross/docs/BigData/DensityAnalysis.html
-  Scene:
-    SceneDia: /SuperMap-iDesktop-Cross/docs/Scene/SceneDia.html
+  #Scene:
+    #SceneDia: /SuperMap-iDesktop-Cross/docs/Scene/SceneDia.html
   FAQAll:
     FAQ: /SuperMap-iDesktop-Cross/docs/FAQ.html
   News:
+    901News: /SuperMap-iDesktop-Cross/docs/news/what's_new.html
     9DNews: /SuperMap-iDesktop-Cross/docs/news/what's_new_in_900.html
     811News: /SuperMap-iDesktop-Cross/docs/news/what's_new_in_811.html
 

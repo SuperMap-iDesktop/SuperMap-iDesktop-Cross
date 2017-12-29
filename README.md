@@ -1,88 +1,88 @@
 # SuperMap iDesktop Cross Docs
 
-　　SuperMap iDesktop Cross 是一款开源的 GIS 产品，是一款支持跨平台、全开源的桌面GIS应用与开发平台系统，可在 Windows 和 Linux 系统上运行，其源代码获取地址为：[http://git.oschina.net/supermap/SuperMap-iDesktop-Cross](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)。
+　　SuperMap iDesktop Cross a cross-platform and open source desktop GIS application and development platform system, which can be run on Windows and Linux, the address for accessing source code is: [http://git.oschina.net/supermap/SuperMap-iDesktop-Cross](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross).
 
-　　SuperMap iDesktop Cross 的帮助文档是基于 Hexo 生成的静态网站，文档的主要内容为 SuperMap iDesktop Cross 的产品介绍、功能描述、使用说明、新特性等。其源代码会实时更新至 OSChina 中，日常的文档更新会实时推送至 GitHub 的 gh-pages 服务上，可通过以下链接查看： [http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross/](http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross/)。同时，SuperMap iDesktop Cross 发布新版本时，相应的联机帮助也会更新部署到 SuperMap 官网的资源中心处，具体链接为 [http://support.supermap.com.cn/SuperMap-iDesktop-Cross/](http://support.supermap.com.cn/SuperMap-iDesktop-Cross/)。
+　　SuperMap iDesktop Cross Help Document is statistic site based on Hexo, the main contents are SuperMap iDesktop Cross product introduction, function description, instructions, new features and so on. Its source code will be updated to OSChina in real time, and the update of the document will be send to gh-pages service of GitHub, you can see the details by the link: [http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross/](http://supermap-idesktop.github.io/SuperMap-iDesktop-Cross/). At the same time, when  new version of SuperMap iDesktop Cross is published, the corresponding online help will be updated to Resource Center on SuperMap official website, detail link is: [http://support.supermap.com.cn/SuperMap-iDesktop-Cross/](http://support.supermap.com.cn/SuperMap-iDesktop-Cross/).
 
-## 简介
+## Introduction
 
-　　SuperMap iDesktop Cross 帮助文档是基于 Hexo 生成的静态网站，源文件为 Markdown 文件，使用主题为 navy。目前帮助文档主要分为 `Docs` 和 `News` 两大块内容，`Docs` 的主要内容为 SuperMap iDesktop Cross 的功能介绍和使用说明，`News` 为产品的新特性。
+　　The source file of SuperMap iDesktop Cross Help Document is Markdown file, the used theme is navy. The document is divided into two sections: "Docs" and "News" currently. "Docs" is about the function introduction and instructions, "News" is for the new features of product.
 
-## 环境配置
+## Environment Configuration
 
-* **配置 Node.js 环境**
+* **Configuring Node.js environment**
 
-通过 Hexo 编译文档需要提前配置好 Node.js 软件环境，Windows/Linux 系统可选择安装相应的 [Node.js](https://nodejs.org/en/) 版本。
+You need configure software environment "Node.js" in advance for compiling document by Hexo. For Windows/Linuxs system, you can install corresponding version [Node.js](https://nodejs.org/en/).
 
 
-* **安装Git**
+* **Installing Git**
 
-   - Windows：下载安装[Git](https://git-scm.com/downloads)
+   - Windows: Downloading and installing [Git](https://git-scm.com/downloads)
    - [Linux](https://git-scm.com/download/linux)
 
 
-* **配置 Hexo 环境**
+* **Configuring Hexo environment**
 
-安装 Hexo，打开命令行窗口，在命令行中执行：
+Installing Hexo. Opening command-line interface, and then performing:
 
      $ npm install -g hexo-cli
 
-抓取文档源代码之后，在源代码所在的目录处打开命令行窗口，并执行以下命令安装 Hexo 运行所需的依赖工具：
+After successfully getting the source code, open command-line interface at the directory of source code and install required dependent tools for running Hexo by executing following command:
 
     $ npm install
 
 
-## 生成网站
+## Generating website
 
-配置好环境之后可基于源代码编译生成静态网站，在命令行中输入：
+Based on source code to compile to generate statistic site after configuring environment, entering following command:
 
     $ hexo g
 
-编译之后通过以下命令启动本地服务，可在 `http://localhost:4000` 网站预览生成的博客：
+Start local service by following command after compiling, and then you can preview the generated blog on website "http://localhost:4000"
 
     $ hexo s
 
-通过键盘中的 `Ctrl+C` 即可停止本地服务。
+You can stop the local service by pressing "Ctrl+C".
 
-## 部署网站
+## Deploying website
 
-Hexo 提供了快速方便的部署功能，部署之前需要先安装 `hexo-deployer-git`，通过命令行 `npm install hexo-deployer-git --save` 进行安装，并在_config.yml 文件中将 deploy 的配置参数设置为：
+Hexo provides fast and convenient deployment functions. Before deploying, you need install "hexo-deployer-git" by the command line "npm install hexo-deployer-git --save" and set the configuration parameters in _config.yml as: 
 
     deploy:
     type: git
     repo: <repository url>
     branch: [branch]
 
-再通过以下命令将编译结果可部署至 GitHub 的指定分支中：
+ And then deploying the compiled result to specified branch of GitHub by following command:
 
     $ hexo d
 
-Hexo 的详细操作说明请参见[Hexo官方文档](https://hexo.io)。
+For detailed operation instruction about Hexo, please reference [Hexo official document](https://hexo.io).
 
-## 目录结构
+## Directory Structure
 
 - **_config.yml**
 
-　　网站的配置文件，网站的大部分全局配置信息都可在此设置，例如：title、author、root、theme、deploy等参数。
+　　Configuration file of website. Most of the site's global configuration information can be set here, such as parameter: title, author, root, theme, deploy, and so on.
 
 - **package.json**
 
-　　应用程序的相关信息，及其依赖工具。
+　　Related information and dependent tool of application program.
 
 - **scaffolds**
 
-　　模板文件夹，在新建文章时，Hexo 会根据 scaffolds 文件夹内相对应的文件来建立文件，例如：`$ hexo new photo "My Gallery"`在执行这行指令时，Hexo 会尝试在 scaffolds 文件夹中寻找 photo.md，并根据其内容建立文章。　
+Template folder. When build a new article, Hexo will build file according to the file corresponded with scaffolds folder, such as: when executing this command '$ hexo new photo "My Gallery"', Hexo will try to find photo.md in the folder "scaffolds" and build an article on the basis of its contents.
 
 - **script**
 
-　　存放网站的脚本文件。
+　　Store the script file for the site.
 
 - **source**
 
-　　用于存放用户资源，生成网站时，除 `_posts` 文件夹之外，开头命名为 `_` (下划线)的文件、文件夹和隐藏的文件将会被忽略，Markdown 和 HTML 文件会被解析并放到 `public` 文件夹，而其他文件会被拷贝过去。
+　　Used to store user resource, when generating site, these files or folders whose names start with "_" and the hidden files are ignored, except for folder "_posts". Markdown and HTML file will be parsed and put into folder "public", while other files will be copied to the folder.
 
 - **themes**
 
-　　主题文件夹，Hexo 会根据文件夹中的主题生成静态网站。
+　　Theme folder, Hexo can generate the statistic site according to theme in folder.
 
 　　

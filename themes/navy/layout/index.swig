@@ -32,7 +32,7 @@
   <div class="inner">
     <h2 id="banner-title"><b>{{ page.subtitle }}</b></h2>
     <!--div id="banner-start">
-      <span id="banner-start-command"><b>跨平台、全开源、可定制的 GIS 平台</b></span>
+      <span id="banner-start-command"><b>Gis platform with Cross-platform, Open-source, Customization</b></span>
     </div>
     <div id="intro-get-started-wrap">
       <a href="docs/" id="intro-get-started-link">{{ __('index.get_started') }}</a>

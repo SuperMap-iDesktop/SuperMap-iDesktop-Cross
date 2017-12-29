@@ -1,115 +1,128 @@
 menu:
   home: Home
-  docs: Docs
-#  api: API
-#  news: News
+  docs: Help
+  api: API
+  news: New Feature
 #  plugins: Plugins
 #  themes: Themes
   search: Search
 
 index:
-  get_started: Get started
+  get_started: Welcome
 
 page:
   contents: Contents
   back_to_top: Back to Top
-  improve: Improve this doc
-  prev: Prev
-  next: Next
+  improve: Get Page Source File
+  prev: Previous Page
+  next: Next Page
   last_updated: "Last updated: %s"
 
 sidebar:
   docs:
     welcome: Welcome
-    getting_started: Getting Started
-    License: License Configuration
-    SuperMap Cross: Product Introduction
-    SuperMapDataStructure: SuperMap Data Structure
-    Pyramid: Pyramid
-    GeoFormates: Geo Formates
-    DataProcess: Data Process
+    #getting_started: Getting started
+    #License: License configuration
+    SuperMap Cross: Product introduce
+    SuperMapDataStructure: Data organization structure
+    #Pyramid: Pyramiding
+    GeoFormates: Data conversion
+    DataProcess: Data processing
     Projection: Projection
-    AboutMapProjection: About Projection
-    ProjectionUsed: The Used Projection
-    PrjCoordSysType: PrjCoordSys Type
-    SetPrjCoordSys: SetPrjCoordSys
-    Topo: Topo
-    TopoProcess: Topo Process
-    TopoPreprocess: TopoPreprocess
-    TopoProcessLine: TopoProcess Line
-    TopotoPolygon: Topo To Polygon
-    SQL: SQLQuery
-    SQLQuery_Expression: SQLQuery_Expression
-    SQLQueryDia: SQL Query
-    SQLQueryDiaFuction: SQL Query Fuction
-    SQLSupporttedType: SQL Supportted Types
-    Objects: Objects
-    CreateGeometry: Create Geometry
-    AboutCreateGeometry: About Create Geometry
-    Point: Draw Point
-    DrawCurve: Draw Curve
-    DrawQuadRangle: Draw Quad Rangle
-    Text: Draw Text
-    EdittingGeometry: Edit Geometry
-    PolygonEdit: Polygon Edit
-    LineEdit: Line Edit
-    VertexEdit: VertexEdit
-    ObjectsConversion: Objects Conversion
-    OtherEdit: Other Edit
-    DataAnalyst: Data Analyst
-    BufferTheory: Buffer Theory
-    SingleBuffer: Single Buffer
-    BufferAnalyst_Example: BufferAnalyst_Example
-    FindRasterVaule: FindRasterVaule
-    Map: 地图制图
-    Thematic: 专题图
-    ThematicMap: 专题图概述
-    CreatThematicMap: 创建专题图
-    ModifyMap: 修改专题图
-    ModifyThematicMap: 公用属性
-    UniqueValueProperties: 单值专题图
-    RangesMapGroupDia: 分段专题图
-    LabelProperties: 标签专题图
-    GraphProperties: 统计专题图
-    GraduatedSymbolProperties: 等级符号专题图
-    DotDensityProperties: 点密度专题图
-    CustomizeProperties: 自定义专题图
-    Style: 设置图层风格
-    OverlapDisplayed: 自动避让与压盖
-    LayerSetting: 图层属性
-    Measuregroup: 地图量算
-    MapSetting_Basic: 地图属性-基本
-    MapSetting_Range: 地图属性-范围
-    SpatialStatisticalAnalysis: 空间统计分析
-    SpatialStatisticalAnalysisSummary: 空间统计分析概述
-    BasicVocabulary: 基础词汇
-    MeasureGeographicDistr: 度量地理分析
-    MeasureGeographicDistributions: 度量地理分析概述
-    CentralFeature: 中心要素
-    MeanCenter: 平均中心
-    MeanCenterResult: 中位数中心
-    MeasureDirection: 方向分布
-    MeasureLinearDirectional: 线性方向平均值
-    MeasureStandardDistance: 标准距离
-    Clusters1: 聚类分析
-    Clusters: 聚类分析概述
-    HotSpotAnalyst: 热点分析
-    OptimizedHotSpotAnalyst: 优化的热点分析
-    ClusterOutlierAnalyst: 聚类异常值分析
-    SpatialRelationshipModeling1: 空间关系建模
-    SpatialRelationshipModeling: 空间关系建模概述
-    GeographicWeightedRegression: 地理加权回归分析
-    AnalyzingPatterns1: 分析模式
-    AnalyzingPatterns: 分析模式概述
-    SpatialAutocorrelation: 空间自相关
-    HighLowClustering: 高低值聚类
-    IncrementalSpatialAutocorrelation: 增量空间自相关
-    AverageNearestNeighbor: 平均最近邻
-    BigData: 大数据在线分析
-    BigDataAnalysisEnvironmentConfiguration: 分析环境配置
-    DataPreparation: 数据准备
-    DensityAnalysis: 密度分析
-    Scene: 三维场景
-    SceneDia: 场景概述
-    FAQAll: FAQ
-    FAQ: 常见问题解答
+    AboutMapProjection: Projection Overview
+    ProjectionUsed: Common projection
+    PrjCoordSysType: Coordinate system type
+    SetPrjCoordSys: Projection settings
+    #Topo: Topology processing 
+    #TopoProcess: Rule of topology processing 
+    #TopoPreprocess: Topology preprocessing 
+    #TopoProcessLine: Validate line topology
+    #TopotoPolygon: Region by topology
+    SQL: SQL query
+    SQLQuery_Expression: Construct SQL expression
+    #SQLQueryDia: SQL query
+    #SQLQueryDiaFuction: SQL operators 
+    #SQLSupporttedType: SQL query engine
+    Objects: Object operation
+    CreateGeometry: Object drawing
+    AboutCreateGeometry: Object Drawing Overview
+    Point: Draw point
+    DrawCurve: Draw line
+    DrawQuadRangle: Draw region
+    Text: Draw text
+    EdittingGeometry: Object edit
+    PolygonEdit: Region object edit
+    LineEdit: Line object edit
+    VertexEdit: Vertex edit
+    ObjectsConversion: Conversion of object type
+    OtherEdit: Other edit
+    DataAnalyst: Data analysis
+    BufferTheory: Buffer analysis theory
+    SingleBuffer: Single buffer analysis
+    BufferAnalyst_Example: Example of buffer
+    FindRasterVaule: Raster query
+    #Map: Mapping
+    #Thematic: Thematic map
+    #ThematicMap: Thematic map overview
+    #CreatThematicMap: Create thematic map
+    #ModifyMap: Modify thematic map
+    #ModifyThematicMap: Public properties
+    #UniqueValueProperties: Unique thematic map
+    #RangesMapGroupDia: Range thematic map
+    #LabelProperties: Label thematic map
+    #GraphProperties: Statistics thematic map
+    #GraduatedSymbolProperties: Graduated symbol thematic map
+    #DotDensityProperties: Point density thematic map
+    #CustomizeProperties: Customize thematic map
+    #Style: Set layer style
+    #OverlapDisplayed: Auto-avoid and overlay
+    #LayerSetting: Layer property
+    #Measuregroup: Map measurement
+    #MapSetting_Basic: Map basic property
+    #MapSetting_Range: Map property "Range"
+    Cache: Map Cache
+    SingleProcessCache: Single process map cache
+    MultiProcessesCache: Multiple processes map cache
+    MultiProcessCache: Multi-process map cache
+    CreateMultiProcessCache: New map cache (multiple tasks)
+    ExecuteMultiProcessCaching: Execute caching task
+    CacheCheck: Check cache
+    UpdateCache: Update cache
+    RecoverCaching: Continue to pass cache
+    SpatialStatisticalAnalysis: Spatial statistics
+    SpatialStatisticalAnalysisSummary: Spatial statistics overview
+    BasicVocabulary: Basic words
+    MeasureGeographicDistr: Measuring geographic analysis
+    MeasureGeographicDistributions: Measuring geographic analysis overview
+    CentralFeature: Central feature
+    MeanCenter: Mean center
+    MeanCenterResult: Median center
+    MeasureDirection: Directional distribution
+    MeasureLinearDirectional: Linear directional mean
+    MeasureStandardDistance: Standard distance
+    Clusters1: Cluster analysis
+    Clusters: Cluster analysis overview
+    HotSpotAnalyst: Hot spot analysis
+    OptimizedHotSpotAnalyst: Optimized hot spot analysis
+    ClusterOutlierAnalyst: Cluster and outlier analysis
+    SpatialRelationshipModeling1: Modeling spatial relationships
+    SpatialRelationshipModeling: Modeling spatial relationships overview
+    GeographicWeightedRegression: Geographically weighted regression analysis  
+    AnalyzingPatterns1: Analyzing patterns
+    AnalyzingPatterns: Analyzing patterns overview
+    SpatialAutocorrelation: Spatial autocorrelation
+    HighLowClustering: High/Low clustering
+    IncrementalSpatialAutocorrelation: Incremental spatial autocorrelation
+    AverageNearestNeighbor: Average nearest neighbor
+    BigData: Big data online analysis
+    BigDataAnalysisEnvironmentConfiguration: Environment configuration
+    DataPreparation: Data preparation
+    DensityAnalysis: Density analysis
+    #Scene: 3D Scene
+    #SceneDia: Scene overview
+    #FAQAll: FAQ
+    #FAQ: FAQ
+    News: New Feature
+    901News: Cross 901 New Feature
+    9DNews: Cross 9D New Feature
+    811News: Cross 8C(2017) New Feature

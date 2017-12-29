@@ -6,7 +6,7 @@ title: Raster Query
 
 ### Basic Steps
 
-　　1.  Open raster data, and then click on "Analysis" > "Raster Query".
+　　1.  Open raster data, and then click on "Spatial Analysis" > "Raster Query".
 
 　　2.  View pixel information in the displayed message box by moving mouse to raster data. The information includes: the datasource and dataset where raster data is located, geographic coordinate of raster position, raster coordinate (column/row number) and raster value.
 
