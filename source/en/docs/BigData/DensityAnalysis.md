@@ -30,19 +30,19 @@ title: Density Analysis
 
 - **Input Data**
 
-　　Input method: supporting HDFS, BigDataStore, UDB. For data preparation, please reference: [Data Preparation](DataPreparation.html).
+　　Input method: supporting HDFS, iServer DataStore, UDB. For data preparation, please reference: [Data Preparation](DataPreparation.html).
 
 　　**HDFS**
 
 　　For using HDFS method, you can click "Browse" button on the right side of "Select File", input HDFS data address in the pop-up dialog box and select scv file. **Note**: there must be a meta file corresponding to scv data, if not, you only need to click "OK" button in the prompt box (the prompt content is: meta file doesn't exist, please set it), then set related parameters and click "Save", a meta file is created.
 
-　　**BigDataStore**
+　　**iServer DataStore**
 
-　　For using BigDataStore method, you need to open BigDataStore datasource first, at the same time, PostgreSQL datasource which stores the same data will be opened automatically. The detail operation is as follows:
+　　For using iServer DataStore method, you need to open iServer DataStore datasource first, at the same time, PostgreSQL datasource which stores the same data will be opened automatically. The detail operation is as follows:
 
 
-1. Open BigDataStore datasource in "Open Web datasource...", meanwhile PostgreSQL datasource is opened. The PostgreSQL datasource name is **BigDataStore_Database name**.
-2. Set related parameters including: server address, database name, username, password, you can view these parameters by right-clicking **BigDataStore** datasource and selecting "Property", as follows:
+1. Open iServer DataStore datasource in "Open Web datasource...", meanwhile PostgreSQL datasource is opened. The PostgreSQL datasource name is **iServerDataStore_Database name**.
+2. Set related parameters including: server address, database name, username, password, you can view these parameters by right-clicking **iServer DataStore** datasource and selecting "Property", as follows:
 　　![](img/BDSProperty.png)
 3. Set name of PostgreSQL database where dataset to be analyzed is located, and select the dataset and its type.
 

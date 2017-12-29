@@ -3,11 +3,11 @@ title: Data Preparation
 
 　　After big data is ready, iServer will list all datasets which meet the analysis condition when creating big data analysis tasks. All supported data sources are listed by big data online analysis service as follows.
 
-- Data stored in BigDataStore
+- Data stored in iServer DataStore
 - Data stored in HDFS
 - UDB data
 
-### BigDataStore
+### iServer DataStore
 
 　　New application program DataStore is provided, you can create data storage quickly through iServer DataStore, and associate data storage with iServer. When configuring relational data storage in DataStore, a PostgreSQL database will be created automatically which is used to store dataset. Through iServer big data service, you can download, upload data, and analyze data.
 
@@ -29,22 +29,22 @@ title: Data Preparation
 　　![](img/DataStore6.png) 
 8. After uploading data successfully, the only dataID will be returned, which is used to represent the uploaded data package. You can view the detailed description information of the data package by clicking the DataID. The uploaded dataset will be displayed in "Dataset List" of relationship/datasets resource.
 　　![](img/DataStore7.png) 
-9. Open the configured BigDataStore datasource in Cross to view the uploaded data.
+9. Open the configured iServer DataStore datasource in Cross to view the uploaded data.
 
 
 　　![](img/DataStore8.png) 
 
 
-- **Using BigDataStore Data**
+- **Using iServer DataStore Data**
 　　
 　　After configuring iServer DataStore successfully, the data can be opened by opening web datasource in Cross, at the same time, PostgreSQL datasource which saves the same data will be opened. The detail operations are shown as follow:
 
 
 1. Open SuperMap iDesktop Cross, right-click mouse in **Datasource** node of "Workspace Manager", and then select "Open Web datasource...".
-2. Select "BigDataStore" in the pop-up dialog box, and enter server IP and port number as follows, click "Open" to open datasource configured in the server.
+2. Select "iServer DataStore" in the pop-up dialog box, and enter server IP and port number as follows, click "Open" to open datasource configured in the server.
 　　![](img/OpenBDS.png)
-3. PostgreSQL datasource will be opened when opening BigDataStore datasource, the PostgreSQL datasource name is **BigDataStore_database name**, when performing big data online analysis, selecting data in PostgreSQL as source data.
-4. About the settings of parameter "Input Data" of big data online analysis, choose **BigDataStore** for "Data Input Mode", and set server address, database name, username, password, you can view these parameters settings by right-clicking dataset under **BigDataStore** datasource and selecting Property, as follows:
+3. PostgreSQL datasource will be opened when opening iServer DataStore datasource, the PostgreSQL datasource name is **iServerDataStore_database name**, when performing big data online analysis, selecting data in PostgreSQL as source data.
+4. About the settings of parameter "Input Data" of big data online analysis, choose **iServer DataStore** for "Data Input Mode", and set server address, database name, username, password, you can view these parameters settings by right-clicking dataset under **iServer DataStore** datasource and selecting Property, as follows:
 　　![](img/BDSProperty.png)
 5. Select dataset of corresponded PostgreSQL datasource for "Source Data" which will participate in analysis.
 

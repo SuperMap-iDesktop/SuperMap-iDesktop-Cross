@@ -99,8 +99,8 @@ docs:
     DensityAnalysis: /SuperMap-iDesktop-Cross/docs/BigData/DensityAnalysis.html
   #Scene:
     #SceneDia: /SuperMap-iDesktop-Cross/docs/Scene/SceneDia.html
-  FAQAll:
-    FAQ: /SuperMap-iDesktop-Cross/docs/FAQ.html
+  #FAQAll:
+    #FAQ: /SuperMap-iDesktop-Cross/docs/FAQ.html
   News:
     901News: /SuperMap-iDesktop-Cross/docs/news/what's_new.html
     9DNews: /SuperMap-iDesktop-Cross/docs/news/what's_new_in_900.html

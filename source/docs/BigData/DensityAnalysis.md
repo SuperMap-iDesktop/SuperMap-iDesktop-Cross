@@ -30,19 +30,19 @@ title: 密度分析
 
 - **输入数据**
 
-　　数据输入方式：支持HDFS、BigDataStore、UDB三种数据输入方式，数据的使用和准备请参见：[数据准备](DataPreparation.html)。
+　　数据输入方式：支持HDFS、iServer DataStore、UDB三种数据输入方式，数据的使用和准备请参见：[数据准备](DataPreparation.html)。
 
 　　**HDFS**
 
 　　使用HDFS的数据输入方式，单击“选择文件”右侧的“浏览”按钮，在弹出的对话框中输入HDFS的数据地址，并选择待分析的scv文件即可。**注意**：参与密度分析的scv数据需要有对应的meta文件，若未创建meta文件，单击“meta文件不存在，请设置后使用”提示框中的“确定”按钮，即可在随后弹出的对话框中设置相关参数，“保存”后即可为scv文件创建meta文件。
 
-　　**BigDataStore**
+　　**iServer DataStore**
 
-　　使用BigDataStore的数据输入方式，需要先打开BigDataStore数据源，打开 BigDataStore 的同时，会将存储了同样数据的 PostgreSQL 数据源打开，便于对数据进行分析。具体的使用方式如下：
+　　使用iServer DataStore的数据输入方式，需要先打开iServer DataStore数据源，打开 iServer DataStore 的同时，会将存储了同样数据的 PostgreSQL 数据源打开，便于对数据进行分析。具体的使用方式如下：
 
 
-1. 通过“打开Web型数据源...”的方式打开BigDataStore数据源，打开BigDataStore数据源的同时，会打开存储了同样数据的 PostgreSQL 数据源，该PostgreSQL 数据源的名称为**BigDataStore_数据库名**；
-2. 设置数据所在的服务器地址、数据库名称、用户名、密码，这些参数的设置可在**BigDataStore**数据源下，单击数据集右键，选择“属性”查看即可，如下图所示：
+1. 通过“打开Web型数据源...”的方式打开iServer DataStore数据源，打开iServer DataStore数据源的同时，会打开存储了同样数据的 PostgreSQL 数据源，该PostgreSQL 数据源的名称为**iServerDataStore_数据库名**；
+2. 设置数据所在的服务器地址、数据库名称、用户名、密码，这些参数的设置可在**iServer DataStore**数据源下，单击数据集右键，选择“属性”查看即可，如下图所示：
 　　![](img/BDSProperty.png)
 3. 设置待分析数据集所在的 PostgreSQL 数据名称，并选择待分析的数据集及其类型。
 

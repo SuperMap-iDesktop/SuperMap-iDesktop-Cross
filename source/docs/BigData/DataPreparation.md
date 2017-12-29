@@ -3,13 +3,13 @@ title: 数据准备
 
 　　大数据在线分析服务支持的输入数据来源有以下几种。当数据准备就绪后，在创建各类大数据分析任务时，iServer 会自动列出符合分析条件的数据集。
 
-- BigDataStore 中存储的数据集
+- iServer DataStore 中存储的数据集
 - 存储在HDFS的数据
 - UDB数据
 
-### BigDataStore
+### iServer DataStore
 
-　　BigDataStore 是一款应用程序，您可以通过 iServer DataStore 快速创建数据存储，并将数据存储与 iServer 关联起来。在 DataStore 中配置关系型数据存储时，将自动创建一个 PostgreSQL 数据库，可存储数据集。通过 iServer 大数据服务访问数据，进而可下载、上传数据，以及分析这些数据等。
+　　iServer DataStore 是一款应用程序，您可以通过 iServer DataStore 快速创建数据存储，并将数据存储与 iServer 关联起来。在 DataStore 中配置关系型数据存储时，将自动创建一个 PostgreSQL 数据库，可存储数据集。通过 iServer 大数据服务访问数据，进而可下载、上传数据，以及分析这些数据等。
 
 
 - **环境搭建**
@@ -29,22 +29,22 @@ title: 数据准备
 　　![](img/DataStore6.png) 
 8. 数据集上传成功后，会返回一个唯一的 dataID，如上图所示，用于代表该上传文件的数据包。单击该DataID，可查看该数据包的详细描述信息。上传成功的数据集，也会出现在 relationship/datasets 资源的“数据集列表”中。
 　　![](img/DataStore7.png) 
-9. 上传数据之后，在Cross中通过打开刚配置好的 BigDataStore 数据源，即可查看其中上传的数据
+9. 上传数据之后，在Cross中通过打开刚配置好的 iServer DataStore 数据源，即可查看其中上传的数据
 
 
 　　![](img/DataStore8.png) 
 
 
-- **使用BigDataStore数据**
+- **使用iServer DataStore数据**
 　　
-　　配置好iServer DataStore之后，可在Cross中通过打开Web数据源的方式打开该数据，打开 BigDataStore 的同时，会将存储了同样数据的 PostgreSQL 数据源打开，便于对数据进行分析。具体的使用方式如下：
+　　配置好iServer DataStore之后，可在Cross中通过打开Web数据源的方式打开该数据，打开 iServer DataStore 的同时，会将存储了同样数据的 PostgreSQL 数据源打开，便于对数据进行分析。具体的使用方式如下：
 
 
 1. 打开SuperMap iDesktop Cross，在**工作空间管理器**的**数据源**节点处单击鼠标右键，选择“打开Web型数据源...”；
-2. 在弹出的对话框中选择“BigDataStore”，并输入该数据源所在的服务器IP和端口号，如下图所示，单击打开即可打开该服务器中配置好的数据源。
+2. 在弹出的对话框中选择“iServer DataStore”，并输入该数据源所在的服务器IP和端口号，如下图所示，单击打开即可打开该服务器中配置好的数据源。
 　　![](img/OpenBDS.png)
-3. 打开BigDataStore数据源的同时，会打开存储了同样数据的 PostgreSQL 数据源，该PostgreSQL 数据源的名称为**BigDataStore_数据库名**，做大数据在线分析时，选择 PostgreSQL 中的数据做源数据即可。
-4. 设置大数据在线分析功能的“输入数据”参数时，“数据输入方式”选择**BigDataStore**，并设置数据所在的服务器地址、数据库名称、用户名、密码，这些参数的设置可在**BigDataStore**数据源下，单击数据集右键，选择“属性”查看即可，如下图所示：
+3. 打开iServer DataStore数据源的同时，会打开存储了同样数据的 PostgreSQL 数据源，该PostgreSQL 数据源的名称为**iServerDataStore_数据库名**，做大数据在线分析时，选择 PostgreSQL 中的数据做源数据即可。
+4. 设置大数据在线分析功能的“输入数据”参数时，“数据输入方式”选择**iServer DataStore**，并设置数据所在的服务器地址、数据库名称、用户名、密码，这些参数的设置可在**iServer DataStore**数据源下，单击数据集右键，选择“属性”查看即可，如下图所示：
 　　![](img/BDSProperty.png)
 5. 参与分析的**源数据**选择对应 PostgreSQL 数据源中的数据集，即可执行在线分析。
 
