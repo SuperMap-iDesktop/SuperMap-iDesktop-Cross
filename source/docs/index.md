@@ -3,14 +3,12 @@ title: SuperMap iDesktop Cross 9D 产品介绍
 
 　　
 
-　　SuperMap iDesktop Cross 9D 是基于 SuperMap iObjects Java 9D、OSGI 等平台，通过 Java 语言开发的插件式、跨平台GIS应用软件，提供了数据管理、数据处理、数据分析、地图制图出图、三维场景浏览（目前仅Windows平台支持）等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。SuperMap iDesktop Cross 9D的源代码分别开源在[OSChina](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)和[CSDN](https://code.csdn.net/SuperMapDesktop/supermap-idesktop-cross/tree/master)两大平台上。
+　　SuperMap iDesktop Cross 9D 是基于 SuperMap iObjects Java 9D、OSGI 等平台，通过 Java 语言开发的插件式、跨平台GIS应用软件，提供了数据管理、数据处理、数据分析、地图制图出图、可视化建模等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。
 
 ## 产品简介
 
 　　SuperMap iDesktop Cross 是一套运行在桌面端的专业GIS软件，是基于 SuperMap iObjects Java 组件，使用 OSGI 框架和 intellij idea 工具开发的跨平台 GIS 应用软件。SuperMap iDesktop Cross 提供了适用于不同平台的版本，分为 Windows 和 Linux 两个版本，其中，Windows包括 32 位和 64 位两个版本，分别提供了绿色包和安装包，Linux 版本提供了 64 位的绿色包。
-　　SuperMap iDesktop Cross 提供了适用于不同平台的版本，分为 Windows 和 Linux 两个版本，其中，Windows包括 32 位和 64 位两个版本，分别提供了绿色包和安装包，Linux 版本提供了 64 位的绿色包。
 
-　　SuperMap iDesktop Cross 是一款免许可的应用软件，只要有 SuperMap iObjects Java 的许可，即可使用 SuperMap iDesktop Cross 提供的相应模块的功能。
 
 ## 提供功能
 
@@ -19,7 +17,7 @@ title: SuperMap iDesktop Cross 9D 产品介绍
 　　提供了工作空间管理、数据源管理、数据集管理功能；支持文件型、数据库型、Web型数据引擎；提供对空间数据及其属性的全面操作和处理，包括创建、编辑、管理、访问等功能。
 
 
--   **数据引擎**：支持打开不同数据引擎，如 Oracle、SQLPlus、DB2、MySQL 等数据库，其中，Linux 版本不支持 SQLPlus 数据引擎；同时支持打开Web地图数据，即OGC服务、iServerREST服务、超图云服务、GoogleMaps、BaiduMap、OpenStreetMap、BigDataStore 等Web地图。
+-   **数据引擎**：支持打开不同数据引擎，如 Oracle、SQLPlus、DB2、MySQL 等数据库，其中，Linux 版本不支持 SQLPlus 数据引擎；同时支持打开Web地图数据，即OGC服务、iServerREST服务、超图云服务、GoogleMaps、OpenStreetMap、iServer DataStore 等Web地图。
 
 
 -   **工作空间管理**：支持打开、保存、另存、关闭、删除工作空间，支持打开的工作空间有文件型、Oracle、SQLServer 三种类型，Linux 版本不支持打开 SQL Server 工作空间；异常退出桌面时支持自动恢复工作空间。
@@ -111,7 +109,7 @@ title: SuperMap iDesktop Cross 9D 产品介绍
 
 ### 大数据
 
--   **BigDataStore数据源**：支持 BigDataStore 大数据 Web 引擎，便于用户直接使用 BigDataStore 数据源中的数据集执行数据处理与分析功能。 
+-   **iServer DataStore数据源**：支持 iServer DataStore 大数据 Web 引擎，便于用户直接使用 iServer DataStore 数据源中的数据集执行数据处理与分析功能。 
 
 -   **数据管理**：支持对大数据量的数据进行管理，通过一个部署好并可访问的 Hadoop 地址，即可对自己的数据进行管理，支持了数据上传、下载、文件夹管理、任务管理等功能。 
 
@@ -144,11 +142,11 @@ title: SuperMap iDesktop Cross 9D 产品介绍
 
 ## 主要特色
 
-### 跨平台、全开源、可定制
+### 跨平台、可定制
 
 -   基于 Java 组件采用 Java 语言开发，具有跨平台的特性，支持在 Windows 和 Linux 系统中运行。
 
--   采用 OSGI 新的实现框架——Felix，易扩展、框架配置灵活，实现了插件式桌面及源代码的开源。
+-   采用 OSGI 新的实现框架——Felix，易扩展、框架配置灵活，实现了插件式的桌面。
 -   遵循 OSGI 国际扩展标准，将应用程序分为多个模块单元，统一管理各模块单元及用户开发的模块单元之间的交叉依赖关系，实现GIS数据的展示。
 
 -   界面采用 Swing 图形风格，界面支持跨平台，安全性高，易于界面定制和二次开发。

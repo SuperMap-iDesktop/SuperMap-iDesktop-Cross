@@ -1,7 +1,7 @@
 title: Environment Configuration for Big Data Analysis
 ---
 
-　　New feature of big data analysis, performs online analysis effectively to data of great amount or multiple objects. Big data online analysis relies on iServer service. Based on Spark computing platform, distributed storage of data which is stored in HDFS, BigDataStore, or UDB can be analyzed. The features including big data of management, analysis, mapping and outputting map have been provided by Cross. For online analysis function, there are some features to be provided, including: simple point density analysis, kernel density analysis, vector clip analysis, single object query, mesh aggregation analysis, polygon aggregation analysis, range summary analysis.
+　　New feature of big data analysis, performs online analysis effectively to data of great amount or multiple objects. Big data online analysis relies on iServer service. Based on Spark computing platform, distributed storage of data which is stored in HDFS, iServer DataStore, or UDB can be analyzed. The features including big data of management, analysis, mapping and outputting map have been provided by Cross. For online analysis function, there are some features to be provided, including: simple point density analysis, kernel density analysis, vector clip analysis, single object query, mesh aggregation analysis, polygon aggregation analysis, range summary analysis.
  
 　　Follwing details environment configuration and operation of Big data online analysis.
 
@@ -22,7 +22,7 @@ title: Environment Configuration for Big Data Analysis
 6. Head to "Distributed analyst Service" panel, then check "Enable service" and click "Save" button.
 7. After completing the configuration, you can check whether the distributor analysis service has been added successfully by accessing [http://localhost:8090/iserver/services](http://localhost:8090/iserver/services).
 　　![](img/BDAnalysisiServer.png)
-8. Succeed to configure environment, then [prepare data](DataPreparation.html) (BigDataStore, HDFS or UDB) to execute the operation.
+8. Succeed to configure environment, then [prepare data](DataPreparation.html) ( iServer DataStore, HDFS or UDB) to execute the operation.
 
 
 ### ![](../img/seealso.png) Related topics

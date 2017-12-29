@@ -3,12 +3,11 @@ title: SuperMap iDesktop Cross 9D Introduction
 
 　　
 
-　　SuperMap iDesktop Cross 9D which is written in Java is a plug-in, cross-platform application software based on SuperMap iObjects Java 9D and OSGI. Cross provides various features, such as: data management, data processing, data analysis, and mapping (only supported on Windows), and provides a flexible development framework and auxiliary controls, user-friendly secondary development. The source codes of Cross is put on the platforms [OSChina](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross) and [CSDN](https://code.csdn.net/SuperMapDesktop/supermap-idesktop-cross/tree/master).
+　　SuperMap iDesktop Cross 9D which is written in Java is a plug-in, cross-platform application software based on SuperMap iObjects Java 9D and OSGI. Cross provides various features, such as: data management, data processing, data analysis, and mapping, modeling visually, and provides a flexible development framework and auxiliary controls, user-friendly secondary development.
 
 ## Product introduction
 
-　　SuperMap iDesktop Cross is a professional , cross-platform GIS software which is developed based on SuperMap iObjects Java. by using OSGI framework and intellij idea tool. 
-　　Multiple Cross versions are provided for Windows and Linux. For Windows, the provided versions include bin packages and installation package (both of them are in 32 bit and 64 bit), while the bin package in 64 bit is provided for Linux system.
+　　SuperMap iDesktop Cross is a professional , cross-platform GIS software which is developed based on SuperMap iObjects Java. by using OSGI framework and intellij idea tool. Multiple Cross versions are provided for Windows and Linux. For Windows, the provided versions include the bin packages in 32 bit and 64 bit, while only the bin package in 64 bit is provided for Linux system.
 
 ## Provided functions
 
@@ -142,7 +141,7 @@ title: SuperMap iDesktop Cross 9D Introduction
 -   Since adopting JAVA program language, the product (based on Java iObjects) has the ability of cross-platform which means the product can run on Windows or Linux system.
 
 -   The adoption of Felix makes the application easy to expand and flexible configuration framework and achieves a pluggable iDesktop.
--   The OSGI international standards is conformed. An application program can be devided into multiple units, so that relationships between each unit and these units developed by users can be managed to achieve the display for GIS data.
+-   The OSGI international standards is conformed. An application program can be divided into multiple units, so that relationships between each unit and these units developed by users can be managed to achieve the display for GIS data.
 
 -   The interface adopts Swing graphic styles, supports cross-platform. Also it is strong security and can be easy to customize and secondary development. 
 

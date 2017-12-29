@@ -1,7 +1,7 @@
 title: 大数据分析环境配置
 ---
 
-　　SuperMap iDesktop Cross 9D 提供了大数据在线分析的功能，可对数据量较大、对象个数较多的数据进行高效、稳定的在线分析功能。大数据在线分析依赖于iServer服务，基于Spark计算平台，可对分布式存储的数据进行分析，支持HDFS存储的数据、BigDataStore中存储的数据、UDB中存储的数据。Cross提供了大数据的管理、分析、地图制图、出图等功能，在线分析功能支持：简单点密度分析、核密度分析、矢量裁剪分析、单对象查询、网格面聚合分析、多边形聚合分析、范围汇总分析。
+　　SuperMap iDesktop Cross 9D 提供了大数据在线分析的功能，可对数据量较大、对象个数较多的数据进行高效、稳定的在线分析功能。大数据在线分析依赖于iServer服务，基于Spark计算平台，可对分布式存储的数据进行分析，支持HDFS存储的数据、iServer DataStore中存储的数据、UDB中存储的数据。Cross提供了大数据的管理、分析、地图制图、出图等功能，在线分析功能支持：简单点密度分析、核密度分析、矢量裁剪分析、单对象查询、网格面聚合分析、多边形聚合分析、范围汇总分析。
  
 　　大数据在线分析的环境配置和操作步骤如下：
 
@@ -22,7 +22,7 @@ title: 大数据分析环境配置
 6. 切换至“分布式分析服务”面板，勾选“是否启用”复选框，单击“保存”按钮即可；
 7. 完成上述集群配置之后，在浏览器中访问：[http://localhost:8090/iserver/services](http://localhost:8090/iserver/services)，查看服务列表中是否成功添加了分布式分析服务，如添加成功，则可基于该服务链接新建iServer任务，如下图所示：
 　　![](img/BDAnalysisiServer.png)
-8. 配置好分析环境后，[准备好数据](DataPreparation.html)（BigDataStore、HDFS 或 UDB）的即可执行大数据在线分析操作。
+8. 配置好分析环境后，[准备好数据](DataPreparation.html)（iServer DataStore、HDFS 或 UDB）的即可执行大数据在线分析操作。
 
 
 ### ![](../img/seealso.png) 相关主题
