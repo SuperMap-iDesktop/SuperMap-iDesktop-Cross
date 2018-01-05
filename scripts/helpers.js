@@ -52,14 +52,12 @@ hexo.extend.helper.register('page_nav', function(){
 
 hexo.extend.helper.register('doc_sidebar', function(className){
   var type = this.page.canonical_path.split('/')[0];
-  var sidebar = this.site.data.sidebar[type];
+  var lang = this.page.lang;
+  var sidebar = lang=='en'?this.site.data.sidebar_en[type]:this.site.data.sidebar[type];
   var path = pathFn.basename(this.path);
   var result = '<ul class="topnav">';
   var self = this;
   var prefix = 'sidebar.' + type + '.';
-  var lang = this.page.lang;
-  
-   
    _.each(sidebar, function(menu, title){
        result += '<li id="' + title + '"><strong class="' + className + '-title">' + self.__(prefix + title) + '</strong>';
        result += '<ul>'
