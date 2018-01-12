@@ -3,7 +3,7 @@ title: Modify Graph Maps
 ---
 
 
-Optimize display effect for a Graph Map through setting related parameters in the Properties and Advance panel, following are the paramters in details.
+Optimize display effect for a Graph Map through setting related parameters in the Properties and Advance panel, following are the parameters in details.
 
 ### Properties
 
@@ -19,7 +19,7 @@ Optimize display effect for a Graph Map through setting related parameters in th
 - Add fields: Click the Add image button on the toolbar to display the field list , check the box before a certain field (you can check more boxes), or click Expression... at the bottom to display the SQL Expression dialog box and construct a field expression, and then click OK to add to the fields or field expressions to the list as thematic variables.
 
 - Delete fields: Select the thematic variables you want to remove from the list and click the Remove image button on the toolbar to remove them.
-- Up and Down:  You can move the thematic variables up or down with the buttons. The position of variables will affect the result of grpah maps.
+- Up and Down:  You can move the thematic variables up or down with the buttons. The position of variables will affect the result of graph maps.
 
 **Style**: You can set styles for variables in the list by clicking "Style" image button in the toolbar. Or you can double click the style in every field to change the style.
 
@@ -37,8 +37,8 @@ Optimize display effect for a Graph Map through setting related parameters in th
 
  "**Visible Size Limited**" area: The maximum and minimum sizes of the graph symbols. The sizes of all symbols will vary during the maximum and minimum sizes. If "Scale with Map Zoom" is checked, the unit for Visible Size Range is map units, if not, the unit is 0.01mm. 
 
-- **Max Size**: The maximum size of the graph symbols. When the thematic maps are pie, 3D pie, rose, 3D rose and ring, the Graph diameter is the quarter of the max size. The height of other ThemeGraphs, such as the columnar and area, is the quarter of the maximum display. Other graph symbols are drawn according to the maixmum and minimum symbols.
-- **Min Size**: The Minimum size of the graph symbols. When the thematic maps are pie, 3D pie, rose, 3D rose and ring, the Graph diameter is the quarter of the min size. The height of other ThemeGraphs, such as the columnar and area, is the quarter of the maximum display. Other graph symbols are drawn according to the maixmum and minimum symbols.
+- **Max Size**: The maximum size of the graph symbols. When the thematic maps are pie, 3D pie, rose, 3D rose and ring, the Graph diameter is the quarter of the max size. The height of other ThemeGraphs, such as the columnar and area, is the quarter of the maximum display. Other graph symbols are drawn according to the maximum and minimum symbols.
+- **Min Size**: The Minimum size of the graph symbols. When the thematic maps are pie, 3D pie, rose, 3D rose and ring, the Graph diameter is the quarter of the min size. The height of other ThemeGraphs, such as the columnar and area, is the quarter of the maximum display. Other graph symbols are drawn according to the maximum and minimum symbols.
 
  "**Offset Settings**" area: Controls the distances the graph symbols are placed from the objects.
 
@@ -46,7 +46,7 @@ Optimize display effect for a Graph Map through setting related parameters in th
 - **False Northing**: The vertical graph symbol offset. You can directly type a value in the combo box or select a field from the list.
 - **Offset Unit**: Set the unit in which the offsets will be measured. The graph symbol offset distance can be measured in map units or 0.1 millimeters.
 
- "**Graph Labels**" area: Set whether to display texts in a graph map or not. If the checkbox is checked, Label Format and Label Style will be enabled for people to set the text format and the text style.
+ "**Graph Labels**" area: Set whether to display texts in a graph map or not. If the check-box is checked, Label Format and Label Style will be enabled for people to set the text format and the text style.
 
 - **Label Format**: The options provided include: Percent, Value, Caption, Label + Percentage, and Label + Value.
 - **Label Style**:  The style of the graph symbol labels. Click the button at right to display the label style settings dialog box and set the graph symbol label style in it.
@@ -60,11 +60,11 @@ Optimize display effect for a Graph Map through setting related parameters in th
 
 **Bar Styles**
 
-- **柱宽度**:  用于设置柱状统计图每一个柱的宽度，默认值为当前柱状图最大宽度的一半。用户可在该标签右侧的数字显示框中设置所需的柱状图宽度，数值可以在0与最大宽度之间进行，否则设置无效。单位与地图相同。该标签仅对柱状图、三维柱状图、堆叠柱状图、三维堆叠柱状图起效。
+- **Bar Width Factor**: The width of each bar. The default is half the max width for the graph map. You can specify a value ranging from 0 to the max width. The unit is map units. The Bar Settings are applicable to Bar, 3D Bar, Stacked Bar, and 3D Stacked Bar graphs.
 
-**玫瑰图、饼图风格**: 用来设置玫瑰图和饼图的起始角度，以及玫瑰图的角度。 
+**Rose and Pie Styles**: Set angles.
 
-- **起始角度**: 设置饼/玫瑰统计图的起始角度，默认为水平正向。该标签仅对饼图、三维饼图、玫瑰图、三维玫瑰图起效。 
-- **玫瑰角度**: 设置统计图中玫瑰图或三维玫瑰图分片的角度，默认为0。在角度为 0 或者大于 360 度的情况下均使用360度来等分制作统计图的字段数。 
-在 "统计专题图" 窗口中的各项参数设置都会实时反映到当前地图窗口中相应的专题图图层，即实现所见即所得。用户也可以通过取消勾选对话框底部的 "启用即时刷新" 复选框，不启用实时刷新。若不勾选 "启用即时刷新" 复选框，则用户完成各项参数设置后，可点击对话框底部的 "应用" 按钮，将对话框中的参数设置应用于当前专题图。
+- **Start Angle**: The start angel of the Pie/Rose graph. The default is 0, the positive direction of the X axis. The Start Angle setting is applicable to Pie, 3d Pie, Rose, and 3D Rose graphs. 
+- **Rose Angle**: The angle of each sector. The default is 0. If you set Rose Angle to 0 or greater than 360 degrees, the angle of each sector will be 360/Number of sectors.
+When changing the settings in the Thematic Mapping window, all changes for the thematic map are instantly shown on the map. To prevent instant refresh, uncheck the Enable Instant Refresh box. If the thematic map is not instantly refreshed during the modification, click Apply at the bottom to apply all changes to the thematic map when the modification is done.
 
