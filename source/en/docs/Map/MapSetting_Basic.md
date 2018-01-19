@@ -11,7 +11,7 @@ title: Maps Properties - Basic
 
 ### Color Mode
 
-　　The color modes of the vector datasets in the currently active map can be set by the color moded preset by the SuperMap Desktop. The provided color modes includes: Default, Black and White, Gray, Reverse Black and White, Reverse black and white with other colors un
+　　The color modes of the vector datasets in the currently active map can be set by the color moded preset by the SuperMap Desktop. The provided color modes includes: Default, Black and White, Gray, Reverse Black and White, Reverse black and white with other colors unchanged.
 
 　　![](img/ColorMode.png)
 
