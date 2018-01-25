@@ -63,7 +63,7 @@ sidebar:
     FindRasterVaule: Raster query
     Map: Mapping
     Thematic: Thematic map
-    #ThematicMap: Thematic map overview
+    ThematicMap: Thematic map overview
     CreatThematicMap: Create thematic map
     ModifyMap: Modify thematic map
     ModifyThematicMap: Public properties
@@ -74,12 +74,12 @@ sidebar:
     GraduatedSymbolProperties: Graduated symbol thematic map
     DotDensityProperties: Point density thematic map
     CustomizeProperties: Customize thematic map
-    #Style: Set layer style
-    #OverlapDisplayed: Auto-avoid and overlay
+    Style: Set layer style
+    OverlapDisplayed: Auto-avoid and overlay
     LayerSetting: Layer property
-    #Measuregroup: Map measurement
+    Measuregroup: Map measurement
     MapSetting_Basic: Map basic property
-    #MapSetting_Range: Map property "Range"
+    MapSetting_Range: Map property "Range"
     Cache: Map Cache
     SingleProcessCache: Single process map cache
     MultiProcessesCache: Multiple processes map cache
