@@ -189,55 +189,54 @@ title: Introductions of The Thematic Map Types
 
 ### Dot Density Map
 
-　　点密度专题图用一定大小、形状相同的点表示现象分布范围、数量特征和分布密度。点的多少和所代表的意义由地图的内容决定。点密度专题图利用图层的某一数值属性信息（专题值）映射为不同等级，每一级别使用不同数量或表现为密度的点符号来表示该专题值在各个分区内的分布情况，体现不同区域的相对数量差异。多用于具有数量特征的地图上，比如表示不同地区的粮食产量、GDP、人口等的分级，主要针对区域或面状的要素，因而，点密度专题图适用于面数据集。
+　　A dot density map is mostly used for representing distribution range, quantitative characteristic and distribution density of phenomenons by using dots or other symbols. The amount and represented meaning of dots rely on the map contents. In a dot density map, a numeric attribute information of a layer are mapped to different levels, and by using different amount of dots or symbols represents every level to present the differences between different areas. Dot density maps are usually used quantitative data, such as GDP, population, output of grain in different areas, and so on. A dot density map apply to region datasets.
 
   ![](img/DotDensityMap.png)
 
-**专题图中点的意义**: 
+**The meaning of dots in a dot density map**: 
 
--   点密度专题图使用点的数目或者密集程度来反映一个区域或范围所对应的专题值，其中一个点代表一定数量，则一个区域内的点的个数乘以点所表示的数量就是此区域对应的专题值。例如，一个城市共有 2000000 人口，点密度专题图中一个点代表 20000 人口，则在这个市的区域范围内将会分布有 100 个点。
--   在点密度专题图中，对于点的个数相同的两个区域，面积比较小的区域的点分布密集，因而点密度专题图的专题值（或制图对象）是数量，反映的却是密度。例如，对各区域的人口数制作点密度专题图，以图形的表现方式，即点的密集程度，反映了人口密度；当然，也可以以人口密度作为专题变量制作分段专题图，用颜色的差异来反映区域的人口密度的差异。点密度专题图中点的个数越多越密集，则说明数据反映的事物或现象在该区域的密度或浓度越大。
--   用户可以指定点密度专题图中单个点所代表的数值及其显示尺寸。当单个点所代表的数值太小，或设置的点符号显示尺寸过大时，都会使点相互堆叠成块，从而使得现象的分布不明显，因而设置合适的点所表示的数值以及点的显示尺寸是很重要的。当用来制作点密度专题图的专题值很大时，最好将点所代表的数值设置大一些，点符号的尺寸设置小一些。实际制图中，可能需要通过多次尝试来找到合适的点所代表的数值与点显示尺寸的组合。
--   对于一个点密度专题图，点的风格都是一致的。用户可以对数据的多个属性制作多个点密度专题图，使用不同的点风格来区分不同的点密度专题图，从而在一个地图上表现多种属性的分布密度特征。
--   点密度专题图中点的分布是随机的，并不代表实际的分布位置。即使在相关设置完全相同的情况下，每次制作出的专题图，点的数量相同，但点的位置都有差异。
+-   A dot density map reflects the thematic values corresponded with each area or range by using the amount or denseness of dots, each dot represents a certain phenomena, hence, the thematic value of an area can be got by the number of dots within the area times the amount represented by each dot. For example, the population of a city is 2000000, each dot represents 20000, so the number of dots within the region (the city) is 100.
+-   In a dot density map, for the regions that the number of dots are the same, the region with smaller area has denser dots, that's why a dot density map shows the density of phenomenon even though its thematic value is numeric.
+-   You can specify the value represented by each dot and its size in a dot density map. If the value is too small or the size is too large, the dots will overlap each other which leads to the distribution is not obvious. Hence, it is very important setting appropriate value representing by each dot and its size.
+-   The styles of dots in a dot density map are the same, so you can produce multiple dot density maps with different dot styles based on several attributes to show the distribution characteristics of multiple attributes on a map.
+-   The dot distributions are random, no practical significance.
 
 ### Graduated Symbols Map
 
-　　等级符号专题图根据各要素的某个数量特征，按照一定的分类方法用一组等级符号表示在地图上，以呈现要素间该数量特征的相对关系。等级符号专题图多用于具有数量特征的地图上，比如表示不同地区的粮食产量、GDP、人口等的分级，也就是说，用于制作等级符号专题图的专题变量类型为数值型。
+　　By using a group of graduated symbols shown on maps, in a certain way, graduated symbol maps present the relative relation between different features in a quantitative characteristic.  The thematic variable must be numeric when creating a graduated symbols map.
 
   ![](img/GraduatedSymbolMap.png)
 
-　　**如何确定等级符号显示的大小**
+　　**How to determine the display size of a graduated symbol**
 
-　　显示大小主要取决于以下因素: 点状符号（即等级符号专题图中的符号）的大小，等级符号专题图的基准值，按照分级模式运算后的统计值的大小。点状符号大小不是等级符号专题图中符号的显示大小。对于一幅等级符号专题图来说，点状符号的大小是统一的，由于每个要素的专题值不同，所以最终显示在专题图中的点状符号大小会有所不同。
+　　The main factors are: the point symbol size in a graduated symbols map, the datum value of a graduated symbols map, the scale of a statistical value. The point size is different from the display size. For a graduated symbols map, the sizes of all symbols are the same, the thematic values of features are different, hence the display sizes of symbols are different.
 
-　　统计指的分级模式有三种: 常数分级模式、对数分级模式和平方根分级模式。在等级符号专题图中，不同分级模式用于确定符号大小的数值是不相同的，常数分级模式按照字段的原始数据进行，对数分级模式是对每个要素对应的专题值取自然对数、平方根分级模式则是对其取平方根，用最终得到的结果来确定其等级符号的大小。基准值由用户设定，基准值越大，点状符号最终的显示大小越小。
+　　The graduated modes include: Constant, Square Root, Logarithm. In a graduated symbols map, when adopt different method to graduate attribute value, the values which are used to specify the display size of symbols are different. The datum value is specified by author.
 
 
-　　**等级符号显示效果设置**: 等级符号专题图也可以像标签专题图，统计专题图一样，设置是否流动显示，是否显示牵引线，是否进行偏移，偏移量是否固定，所不同的是标签专题图针对的是标签，统计专题图针对的是统计图，等级符号专题图针对的是符号。除了以上设置，用户还可以设置是否显示专题值为负值或者零值的要素，以及专题值为正值，负值，零值时等级符号的风格。
-
+　　**The settings of display effects**: For a graduated symbols map, the functions "Flow", "Show Leader Line", "Offset Setting" are also supported like a label map and a graph map, but the difference is the target object, for a label map. it is a label, for a graph map, it is a graph, but for a graduated symbols map, it is a symbol. Besides, you can set whether to display the objects whose thematic values are negative or 0, and respectively specify the styles of objects when the thematic values are negative, 0, positive.
 
 
 
 
 ### Grid Unique Values Map
 
-　　栅格单值专题图，是将属性值相同的像元归为一类，为每一类设定一种颜色，从而用来区分不同的类别。栅格单值专题图适用于离散栅格数据和部分连续栅格数据，对于单元格值各不相同的那些连续栅格数据，使用栅格单值专题图不具有任何意义。
+　　In a grid unique value map, the pixels with the same attribute values are taken as a class, and then different colors will be set for every class to distinguish different categories. Grid unique value maps apply for discrete  raster data and some continuous raster data. The usages of grid unique values maps are meaningless in the continuous data that the grid values are different form each other.
 
-　　用户在了解了单值专题图后，对栅格单值专题图的理解就比较容易了，因为这两类专题图除了操作对象的不同之外，只有一些细节上的不同。下面通过对比两类专题图的相异之处来帮助用户理解栅格单值专题图。
+　　A grid unique values map is similar with an unique values map, but the differences are:
 
-1.  单值专题图的操作对象是矢量数据，而栅格单值专题图的操作对象是栅格数据；
-2.  单值专题图的专题值为要素的字段值或字段表达式的值，而栅格单值专题图所使用的专题值为栅格数据集中像元的属性值；
-3.  单值专题图子项的风格设置包括颜色风格设置，填充风格设置，符号风格设置等，而栅格单值专题图子项的设置，只有颜色风格设置一种。
+1.  For the operation object, in an unique value map, it is vector data, but in a grid unique values map, it is raster data.
+2.  For the thematic values, in an unique values map, they are the features' field values or field expression values, but in a grid unique value map, they are the attribute values of pixels in a raster dataset.
+3.  For the style settings, in an unique values map, there are: color style settings, filling style settings, symbol style settings, but in a grid unique value map, there is color style settings only.
 
 ### Grid Ranges Map
 
-　　栅格分段专题图，是将所有像元的属性值按照某种分段方式分成多个范围段，属性值在同一个范围段中的像元使用相同的颜色进行显示。栅格分段专题图一般用来反映连续分布现象的数量或程度特征。比如某年的全国降水量分布图，将各气象站点的观测值经过内插之后生成的栅格数据进行分段显示。
+　　In a grid ranges map, all attribute values of pixels are divided into several ranges as a method, the pixels whose attribute values are within the same range are rendered with the same color. It is used to reflect quantity or degree characteristic of continuous distribution phenomena, such as precipitation distribution.
 
-　　用户在了解了分段专题图后，对栅格分段专题图的理解就比较容易了，因为这两类专题图除了操作对象的不同之外，只有一些细节上的不同。下面通过对比两类专题图的相异之处来帮助用户理解栅格分段专题图。
+　　A grid ranges map is similar with a ranges map, but the differences are:
 
-1.  分段专题图的操作对象是矢量数据，而栅格分段专题图的操作对象是栅格数据；
-2.  矢量数据集分段专题图支持所有的分段方法，而栅格分段专题图只支持其中的四种，即等距离分段法、平方根分段法、对数分段法以及自定义分段法；
-3.  分段专题图的专题值为要素的字段值或字段表达式的值，而栅格分段专题图所使用的专题值为栅格数据集中单元格的属性值；
-4.  分段专题图中每一段的风格设置包括颜色风格，填充风格，符号风格等，而栅格分段专题图中，只有颜色风格设置一种，各分段使用不同的颜色来进行区分。
+1.  For the operation object, in a ranges map, it is vector data, but in a grid ranges map, it is raster data.
+2.  For the dividing methods, in a ranges map, all of them are supported, but in a grid ranges map, only four methods are supported, they are: Equal Interval, Square Root Interval, Logarithmic Interval and Custom Interval.
+3.  For the thematic values, in a ranges map, they are the features' field values or field expression values, but in a grid ranges map, they are the attribute values of pixels in a raster dataset.
+4.  For the style settings, in a ranges map, there are: color style settings, filling style settings, symbol style settings, but in a grid ranges map, there is color style settings only.
 

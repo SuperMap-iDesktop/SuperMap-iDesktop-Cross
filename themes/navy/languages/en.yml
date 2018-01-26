@@ -79,7 +79,7 @@ sidebar:
     LayerSetting: Layer property
     Measuregroup: Map measurement
     MapSetting_Basic: Map basic property
-    MapSetting_Range: Map property "Range"
+    MapSetting_Range: Map property "Bounds"
     Cache: Map Cache
     SingleProcessCache: Single process map cache
     MultiProcessesCache: Multiple processes map cache
