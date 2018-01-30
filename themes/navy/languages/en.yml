@@ -21,7 +21,7 @@ page:
 sidebar:
   docs:
     welcome: Welcome
-    #getting_started: Getting started
+    getting_started: Getting started
     #License: License configuration
     SuperMap Cross: Product introduce
     SuperMapDataStructure: Data organization structure
@@ -33,16 +33,16 @@ sidebar:
     ProjectionUsed: Common projection
     PrjCoordSysType: Coordinate system type
     SetPrjCoordSys: Projection settings
-    #Topo: Topology processing 
-    #TopoProcess: Rule of topology processing 
-    #TopoPreprocess: Topology preprocessing 
-    #TopoProcessLine: Validate line topology
-    #TopotoPolygon: Region by topology
+    Topo: Topology processing 
+    TopoProcess: Rule of topology processing 
+    TopoPreprocess: Topology preprocessing 
+    TopoProcessLine: Validate line topology
+    TopotoPolygon: Region by topology
     SQL: SQL query
     SQLQuery_Expression: Construct SQL expression
-    #SQLQueryDia: SQL query
-    #SQLQueryDiaFuction: SQL operators 
-    #SQLSupporttedType: SQL query engine
+    SQLQueryDia: SQL query
+    SQLQueryDiaFuction: SQL operators 
+    SQLSupporttedType: SQL query engine
     Objects: Object operation
     CreateGeometry: Object drawing
     AboutCreateGeometry: Object Drawing Overview
@@ -61,25 +61,25 @@ sidebar:
     SingleBuffer: Single buffer analysis
     BufferAnalyst_Example: Example of buffer
     FindRasterVaule: Raster query
-    #Map: Mapping
-    #Thematic: Thematic map
-    #ThematicMap: Thematic map overview
-    #CreatThematicMap: Create thematic map
-    #ModifyMap: Modify thematic map
-    #ModifyThematicMap: Public properties
-    #UniqueValueProperties: Unique thematic map
-    #RangesMapGroupDia: Range thematic map
-    #LabelProperties: Label thematic map
-    #GraphProperties: Statistics thematic map
-    #GraduatedSymbolProperties: Graduated symbol thematic map
-    #DotDensityProperties: Point density thematic map
-    #CustomizeProperties: Customize thematic map
-    #Style: Set layer style
-    #OverlapDisplayed: Auto-avoid and overlay
-    #LayerSetting: Layer property
-    #Measuregroup: Map measurement
-    #MapSetting_Basic: Map basic property
-    #MapSetting_Range: Map property "Range"
+    Map: Mapping
+    Thematic: Thematic map
+    ThematicMap: Thematic map overview
+    CreatThematicMap: Create thematic map
+    ModifyMap: Modify thematic map
+    ModifyThematicMap: Public properties
+    UniqueValueProperties: Unique thematic map
+    RangesMapGroupDia: Range thematic map
+    LabelProperties: Label thematic map
+    GraphProperties: Statistics thematic map
+    GraduatedSymbolProperties: Graduated symbol thematic map
+    DotDensityProperties: Point density thematic map
+    CustomizeProperties: Customize thematic map
+    Style: Set layer style
+    OverlapDisplayed: Auto-avoid and overlay
+    LayerSetting: Layer property
+    Measuregroup: Map measurement
+    MapSetting_Basic: Map basic property
+    MapSetting_Range: Map property "Bounds"
     Cache: Map Cache
     SingleProcessCache: Single process map cache
     MultiProcessesCache: Multiple processes map cache
