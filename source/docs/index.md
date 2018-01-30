@@ -142,7 +142,7 @@ title: SuperMap iDesktop Cross 9D 产品介绍
 
 ## 主要特色
 
-### 跨平台、可定制
+### 跨平台、Ribbon界面、可定制
 
 -   基于 Java 组件采用 Java 语言开发，具有跨平台的特性，支持在 Windows 和 Linux 系统中运行。
 

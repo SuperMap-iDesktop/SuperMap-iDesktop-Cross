@@ -26,9 +26,10 @@ title: SuperMap iDesktop Cross 常见问题解答
 
 **Q5： 为什么在 SUSE Linux Enterprise 11 SP2 操作系统上无法启动Cross？**
 
-　　**答**：在 SUSE 上需要安装第三方数据库客户端才能正确加载sdx数据引擎。一个sdx加载失败会影响其他sdx数据引擎的加载，从而导致无法打开任何数据源或系统崩溃。需要依赖第三方数据库客户端的sdx数据引擎文件有：libSuEngineSRDB.sdx、libSuEngineOracle.sdx、libSuEngineDMCI.sdx、libSuEnginePG.sdx、libSuEngineOsp.sdx、libSuEngineAltibase.sdx、libSuEngineDB2.sdx、libSuEngineKDB.sdx。
-　　解决方法是：删除 SuperMap Objects Java_HOME\bin 中不需要的数据库引擎文件（上述列表中的*.sdx）。例如：需要使用 Oracle 数据源，则首先安装 Oracle 客户端，然后删除 libSuEngineOracle.sdx之外的上述所有*.sdx，再启动 iServer 服务。以此类推，如果需要使用其他数据库引擎，也进行相应的处理。 
+　　**答**：在 SUSE 上需要安装第三方数据库客户端才能正确加载sdx数据引擎。一个sdx加载失败会影响其他sdx数据引擎的加载，从而导致无法打开任何数据源或程序启动失败。需要依赖第三方数据库客户端的sdx数据引擎文件有：libSuEngineSRDB.sdx、libSuEngineOracle.sdx、libSuEngineDMCI.sdx、libSuEngineOsp.sdx、libSuEngineAltibase.sdx、libSuEngineDB2.sdx、libSuEngineKDB.sdx。
 
+解决方法是：删除产品包内 bin 目录中不需要的数据库引擎文件（上述列表中的*.sdx）。例如：如果需要使用 Oracle 数据源，则首先安装 Oracle 客户端，然后删除 libSuEngineOracle.sdx之外的上述所有*.sdx，再启动 Cross 桌面。以此类推，如果需要使用其他数据库引擎，也进行相应的处理。
+   
 **Q6：编译运行代码时抛异常了。**
 
 　　**答**：git上代码分为2个分支：master和develop。其中master分支为主版本分支，每次发布稳定版本时会推送到Master分支上。develop分支是开发分支，每天修改的代码都会推送，但不保证代码的稳定性。因此，develop版本可能会出现抛异常的情况。
