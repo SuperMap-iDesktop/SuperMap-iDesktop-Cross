@@ -24,11 +24,11 @@ title: SuperMap iDesktop Cross 常见问题解答
 
 　　**答**：出现该情况的原因有三个，一是没有配置许可，二是许可未配置成功，三是许可到期。若是前两个原因，则解决方案为重新配置许可，Windows和Linux操作系统的配置方式不同，具体操作请分别参见[Windows配置指南](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross/blob/develop/SuperMap%20iDesktop%20Cross%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97&lsaquo;Windows%20%E7%AF%87/&rsaquo;.md?dir=0&filepath=SuperMap+iDesktop+Cross+%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97%28Windows+%E7%AF%87%29.md&oid=3710b6285443d7fd579b3024005bd2ea00d766ab&sha=00f388ee9ca8db2d0fc01f935b1adae511a5a6aa)和[Linux配置指南](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross/blob/develop/SuperMap%20iDesktop%20Cross%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97&lsaquo;Linux%20%E7%AF%87&rsaquo;.md?dir=0&filepath=SuperMap+iDesktop+Cross+%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97%28Linux+%E7%AF%87%29.md&oid=8d10edcf1db38491ad05ec5925bfa17275194795&sha=00f388ee9ca8db2d0fc01f935b1adae511a5a6aa)中的许可配置.
 
-**Q5： 为什么在 SUSE Linux Enterprise 11 SP2 操作系统上无法启动Cross？**
+**Q5： 为什么在 SUSE Linux Enterprise 11 SP2 操作系统上启动 Cross 报“libSuGraphicsQT.uge:undefined sybol:_ZN40GDC170gdcUnicodeStringC1EPKw”的错误？**
 
-　　**答**：在 SUSE 上需要安装第三方数据库客户端才能正确加载sdx数据引擎。一个sdx加载失败会影响其他sdx数据引擎的加载，从而导致无法打开任何数据源或程序启动失败。需要依赖第三方数据库客户端的sdx数据引擎文件有：libSuEngineSRDB.sdx、libSuEngineOracle.sdx、libSuEngineDMCI.sdx、libSuEngineOsp.sdx、libSuEngineAltibase.sdx、libSuEngineDB2.sdx、libSuEngineKDB.sdx。
+　　**答**：在 SUSE 上需要安装第三方数据库客户端才能正确加载sdx数据引擎。一个sdx加载失败会影响其他sdx数据引擎的加载，从而导致无法打开任何数据源或程序启动失败。需要依赖第三方数据库客户端的sdx数据引擎文件有：libSuEngineSRDB.sdx、libSuEngineOracle.sdx、libSuEngineDMCI.sdx、libSuEngineOsp.sdx、libSuEngineAltibase.sdx、libSuEngineDB2.sdx、libSuEngineKDB.sdx。例如：如果需要使用 Oracle 数据源，则首先安装 Oracle 客户端，然后删除 libSuEngineOracle.sdx之外的上述所有*.sdx，再启动 Cross 桌面。以此类推，如果需要使用其他数据库引擎，也进行相应的处理。
 
-解决方法是：删除产品包内 bin 目录中不需要的数据库引擎文件（上述列表中的*.sdx）。例如：如果需要使用 Oracle 数据源，则首先安装 Oracle 客户端，然后删除 libSuEngineOracle.sdx之外的上述所有*.sdx，再启动 Cross 桌面。以此类推，如果需要使用其他数据库引擎，也进行相应的处理。
+解决方法是：保留产品包内 bin 目录下libSuEngineImagePlugin.sdx 和需要的数据库引擎文件，删除不需要的数据库引擎文件（上述列表中的*.sdx）。
    
 **Q6：编译运行代码时抛异常了。**
 
@@ -61,10 +61,9 @@ title: SuperMap iDesktop Cross 常见问题解答
 
 　　**答**：将桌面包的 support 文件夹中的 “libstdc++.so.6”文件拷贝到组件的Bin目录下即可解决该问题。
 
-**Q12:在centos5.7系统中，用SecureCRT.exe纯终端控制工具启动桌面报如下错误，建议解决方案如下：**
+**Q12:在centos5.7系统中，用SecureCRT.exe终端控制工具远程访问服务器时只出现命令行操作框不显示界面，无法启动桌面，建议解决方案如下：**
 
   ![](img/UIError.png)
-
-　　**答**：因为桌面依赖于组件，需要在图形化界面上进行启动和操作，建议换另一种远程控制工具vnc（用xmanager也可以，这两个工具都可以远程连接到UNIX或Linux并进行图形化操作，只是都需要进行相应配置）去连接虚拟机后，可以进行图形化操作，正常启动桌面。Vnc配置可以参见[centos 5.5如何配置vnc](http://www.jb51.net/LINUXjishu/44494.html)和[VNC的安装和配置](http://www.cnblogs.com/jyzhao/p/5615448.html)。
+　　**答**：桌面的启动需要依赖图形界面库，只能在图形化界面上进行启动，并进行图形化操作。因而需首先保证远程服务器上配置有图形界面库。其次，选择可视化远程连接工具，而 SecureCRT 是命令行远程连接工具，建议换另一种远程控制工具，如 vnc 或 xmanager ，这两个工具都可以远程连接到 UNIX 或 Linux 并进行图形化操作，但需要进行相应配置，有关 Vnc 配置可以参见[centos 5.5如何配置vnc](http://www.jb51.net/LINUXjishu/44494.html)和[VNC的安装和配置](http://www.cnblogs.com/jyzhao/p/5615448.html)。
 
 　　**备注**：若在其他Linux操作系统中遇到该问题，可采用相同的解决方案。
