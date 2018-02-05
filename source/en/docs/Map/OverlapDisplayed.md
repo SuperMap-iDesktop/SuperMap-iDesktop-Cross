@@ -8,7 +8,7 @@ title: No Overlap and Overlap
 
 ### Avoid and Overlap
 
-　　For instance a label thematic map which is created based on a point layer, when the map scale is small, the distribution of point features are dense, if labels of all point features are displayed on the map without enabling the "No Overlap" but opening the "Show Overlap", following effect will be shown.
+　　For instance a label thematic map which is created based on a point layer, when the map scale is small, the distribution of point features are dense, if labels of all point features are displayed on the map without enabling the "No Overlap" but opening the "Show Overlap", following effects are shown.
 
 　　![](img/OverlapDisplayed1.png)
 
@@ -35,7 +35,7 @@ title: No Overlap and Overlap
 　　![](ThematicMap/img/autoshrink1.png)
 
 
-　　When creating a label thematic map for point objects, the "Show Overlap" is unusable and "No Overlap" is enabled, the comparison of above two avoiding functions is shown as follows, by the function "Avoid at Two Directions" the map can include more labels and show more information.
+　　When creating a label thematic map for point objects, the "Show Overlap" is unusable and "No Overlap" is enabled, the comparison of above two avoiding functions is shown as follows, by the function "Avoid at Four Directions" the map can include more labels and show more information.
 
 　　![](img/TwoDirections.png)
 

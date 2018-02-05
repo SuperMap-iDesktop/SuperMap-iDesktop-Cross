@@ -26,7 +26,7 @@ title: Introductions of The Thematic Map Types
 
 　　How are the intensity levels of soil erosion presented intuitively on a map when you produce a soil erosion intensity map? The best answer is classifying the intensity of soil erosion, such as classify it into 6 ranges (range from: &lt;500; 500-2000; 2000-6000; 6000-10000; 10000-20000; &gt;20000),  and then give a different color for every range, for example, you can set the objects whose values are less than 200 are light red, and the features whose values are within 500-2000 are red, and so on.
 
-　　Following sketches is about precipitation distribution.
+　　Following sketch is about precipitation distribution.
 
   ![](img/RangesMap.png)
 
@@ -45,7 +45,7 @@ title: Introductions of The Thematic Map Types
 
 **1.Overview**
 
-　　Labels are indispensable on a map which not only helps you more distinguish objects, but also present some important attributes, such as the name of river, tourist sites, institutions and the altitude of contour line, etc. With SuperMap, you can add labels on a map easily.
+　　Labels are indispensable on a map which not only helps you better distinguish objects, but also presents some important attributes, such as the name of river, tourist sites, institutions and the altitude of contour line, etc. With SuperMap, you can add labels on a map easily.
 
 　　It mostly is used for labeling point, line or region objects, the thematic variable should be chart or numeric field (road names, address names, river levels, river width, etc.). But the drawing elements such as the legend, map name, scale and others will not be labeled.
 
@@ -175,7 +175,7 @@ title: Introductions of The Thematic Map Types
 
 　　(2). **Settings of a graph**
 
-   　　You can set whether to fix the graph size, and whether to display the text labels on graphs. If the labels are displayed, you can set the display format and text style of graphs. The display formats include: Percent, Value, Caption, Label + Percentage, Label + Value.
+   　　You can set whether to fix the graph size, and whether to display the text labels on graphs. If the labels are displayed, you can set the display format and text style of graphs. The display formats include: Percent, Value, Caption, Caption + Percent, Caption + Value.
 
    ![](img/GraphTextFormat.png)
 

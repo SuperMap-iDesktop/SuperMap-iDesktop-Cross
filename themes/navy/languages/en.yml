@@ -22,7 +22,7 @@ sidebar:
   docs:
     welcome: Welcome
     getting_started: Getting started
-    #License: License configuration
+    License: License configuration
     SuperMap Cross: Product introduce
     SuperMapDataStructure: Data organization structure
     #Pyramid: Pyramiding
@@ -120,8 +120,8 @@ sidebar:
     DensityAnalysis: Density analysis
     #Scene: 3D Scene
     #SceneDia: Scene overview
-    #FAQAll: FAQ
-    #FAQ: FAQ
+    FAQAll: FAQ
+    FAQ: FAQ
     News: New Feature
     901News: Cross 901 New Feature
     9DNews: Cross 9D New Feature

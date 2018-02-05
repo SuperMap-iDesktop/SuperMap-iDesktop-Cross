@@ -98,16 +98,16 @@ title: Set Styles of Layers
 
 
 - **Font**: Click the drop-down button and choose a font from the list as the text font. Note: By typing a letter from the keyboard to locate to the font quickly.
-- **Achor Alignment**: Alignment uses an anchor point as the base point. The text object will move relative to the anchor point when the alignment is changed. There are three kinds of base line alignments in the 12 kinds. Base line is mainly used for English character, it is the second line in the three-line writing, for instance, abcde, all the capital letters are on the base line and the lowercase letters like gypj have a part under the base line. 
+- **Anchor Alignment**: Alignment uses an anchor point as the base point. The text object will move relative to the anchor point when the alignment is changed. There are three kinds of base line alignments in the 12 kinds. Base line is mainly used for English character, it is the second line in the three-line writing, for instance, abcde, all the capital letters are on the base line and the lowercase letters like gypj have a part under the base line. 
 
 ![](img/TextStyle.png)
 
 <!--Font Size在组合控件中选择或直接输入字号大小，作为同类文本的标准。例如选择或输入字号为“10.5”且不改变字高和字宽值，则当前文本图层中同时满足其他标准的所有字号为10.5的文本为同类文本。-->
 <!--Alignment单击右侧下拉按钮，可从中选择某一种对齐方式作为同类文本的标准，例如选择“左上角”，则当前文本图层中所有满足其他条件的对齐方式为左上角的文本对象为同类文本。-->
-<!--Rotation从中选择或直接输入角度值作为旋转角度相同的标准，单位为度，例如选择或输入角度为“45”，则当前文本图层中符合其他标准且旋转角度为45°的所有文本为同类文本。应用程序提供了 0，45，90，135，180，225，270，315 共 8 种常用的角度值。也可以直接输入任意角度值，系统将会把输入值换算至0-360之间，如-180，720被换算为180和0。-->
+<!--Rotation从中选择或直接输入角度值作为旋转角度相同的标准，单位为度，例如选择或输入角度为“45”，则当前文本图层中符合其他标准且旋转角度为45°的所有文本为同类文本。应用程序提供了 0，45，90，135，180，225，270，315 共 8 种常用的角度值。也可以直接输入任意角度值，系统将会把输入值换算至0-360之间，如-180，720被换算为180和0。
 
 　　![](img/TextStyle1.png)
-
+-->
 - **Text Color**: Is used to set the text color. You can choose a color from the color panel shown by clicking the drop-down button, also you can use the function Pick Color to pick a color and then set it as the text color, or you can click "Other Color" to open the "Choose Color" dialog box where you can specify the text color.
 - **Background**: Is used to specify the text color (without checking the transparency) or the outline color (the transparency is checked). 
 

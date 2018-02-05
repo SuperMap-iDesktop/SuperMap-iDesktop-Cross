@@ -1,4 +1,4 @@
-title: 图层属性
+title: Layer Properties
 ---
 
 　　Choose one or more layers from the Layer Manager and them optimize the layers by settings.
@@ -66,7 +66,7 @@ title: 图层属性
 
 　　**Object Order Field**
 
-　　The drawing order of an object affects the position where the object is displayed on the map. Objects in the map are displayed in the order of the values in the set fields. If the field values for this field are the same or empty, then default display order is used, in general, take the field SmID ascending the rule display. Currently, only the single vector layer or a single thematic map layer are supported to set Object Order Field.
+　　The drawing order of an object affects the position where the object is displayed on the map. Objects in the map are displayed in the order of the values in the set fields. If the field values for this field are the same or empty, then default display order is used, in general, the field SmID is sorted in ascending order. Currently, only the single vector layer or a single thematic map layer are supported to set Object Order Field.
 
    ![](img/AscOrder.png)
 
