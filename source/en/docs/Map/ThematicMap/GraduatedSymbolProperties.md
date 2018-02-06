@@ -12,7 +12,7 @@ Optimize display effect for a Graduated Symbols Map through setting related para
 - **Square Root**: Graduates the symbol by the square root of the attribute value.
 - **Logarithm**: Graduates the symbol by the logarithm of the attribute value.
 
-**Dstum Value**:  The attribute value the default size of the specified symbol represents. The other sizes will be calculated with the specified method based on this value. The greater the value, the smaller the graduated symbols. The fiducial value has the same range with the thematic variable.
+**Datum Value**:  The attribute value the default size of the specified symbol represents. The other sizes will be calculated with the specified method based on this value. The greater the value, the smaller the graduated symbols. The datum value has the same range with the thematic variable.
 
 **Symbol Style Settings**: Set symbol styles for positive values, 0, and negative values. To set symbol style for 0 and negative values, you must check the boxes before Show Zero and Show Negative first. The symbols styles for the positive values, 0, and negative values are independent to each other.
 

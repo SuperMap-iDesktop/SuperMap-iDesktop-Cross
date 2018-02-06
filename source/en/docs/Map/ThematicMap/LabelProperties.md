@@ -130,9 +130,7 @@ Note
 　　**Note**: You are not allowed to set label direction if the Fixed Text Angle box is checked. If you have modified the label direction, or checked the fixed text angle, some labels will not show up because of overlap.
 
 - **Spacing**: The spacing between two neighboring words. The unit is a multiple of font height. The value range is from 1 to 8. The space is measured from the center of a word. Note: For letters and number, special operations will be done by the system. Whether it is a letter or number can be controlled by a space. Such as both  "SuperMapDesktop" and  "12325" are as a word. But "SuperMap Dekstop" and "123 25", since there are spaces, they will be separated at the spaces and displayed as the specified spacing. 
-- **Repeat Interval**: When the line object is overlong, you can label the line one time at each certain distance. You can set the repeat label distance here. The repeat length refers to the front of the former label to the front of the next one (or the back of the former label to the back of the next one). The unit of repeat interval is consistent with the unit of map.
-
-　　　![](img/LabelRepeatInterval.png)
+- **Repeat Interval**: When the line object is overlong, labeling can be repeated at each certain distance. You can set the repeat label distance here. The repeat length refers to the front of the former label to the front of the next one (or the back of the former label to the back of the next one). The unit of repeat interval is consistent with the unit of map.
 
 - **Fixed Repeat Interval**: Set whether the markers will be labeled repeatedly with a fixed interval. If it is checked, the interval will not change as the map zooms in or zoom out. At this time, the unit is pixel. But if it is not checked, the separation distance of markers is consistent with the map unit.
 

@@ -16,9 +16,9 @@ SuperMap iDesktop Cross provides the function of creating the thematic maps base
 
 ### Create a Thematic Map
 
-Open data to create a thematic map, then select a vector or raster layer from the Layer Manager, right-click the layer and click "Create Thematic Map...". Or users can click "Thematic Mapping" in the "Thematic Mapping" menu, the "Create Thematic Map" dialog box will appear, in which users can choose thematic maps they want to create.
+Open data to create a thematic map, then select a vector or raster layer from the Layer Manager, right-click the layer and click "Create Thematic Map...". Or you can click "Thematic Mapping" in the "Thematic Mapping" menu, the "Create Thematic Map" dialog box will appear, in which you can choose thematic maps they want to create.
 
 　　![](img/NewThematicMap.png)
 
-Choose the thematic map from the left of the dialog box, then select the corresponding template at right, finally click "OK" and a thematic map will be created. The created thematic map will be added into the current map window automatically, at the same time, the Thematic Mapping panel will pop up for user to set related properties.
+Choose the thematic map from the left of the dialog box, then select the corresponding template at right, finally click "OK" and a thematic map will be created. The created thematic map will be added into the current map window automatically, at the same time, the Thematic Mapping panel will pop up for you to set related properties.
 
