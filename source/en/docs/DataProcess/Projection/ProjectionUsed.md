@@ -2,7 +2,7 @@
 title: Common Map Projection
 ---
 
-　　Common projections includes: Mercator projection, Gauss-Krüger projection, UTM projection, Lambert projection and so on.
+　　Common projections include: Mercator projection, Gauss-Krüger projection, UTM projection, Lambert projection and so on.
 
 ### Mercator projection
 
