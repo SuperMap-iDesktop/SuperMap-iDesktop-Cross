@@ -30,7 +30,7 @@ sidebar:
     ManagingData: 创建和管理数据
     ManagingWorkspace: 管理工作空间
     ManagingDatasource: 管理数据源
-    ManagingDtasets: 管理数据集
+    ManagingDatasets: 管理数据集
     DataProcess: 数据处理
     Projection: 投影
     AboutMapProjection: 投影概述

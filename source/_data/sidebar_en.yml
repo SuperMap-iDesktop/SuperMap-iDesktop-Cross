@@ -6,10 +6,10 @@ docs:
     #SuperMapDataStructure: /SuperMap-iDesktop-Cross/docs/Basic/SuperMapDataStructure.html
     #Pyramid: /SuperMap-iDesktop-Cross/docs/Basic/Pyramid.html
     GeoFormates: /SuperMap-iDesktop-Cross/docs/Basic/GeoFormates.html
-  ManagingData：
-    ManagingWorkspace: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/WorkspaceManagent.html
-    ManagingDatasource: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/DatabaseManagement.html
-    ManagingDtasets: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/DatabaseManagement.html  
+  ManagingData:
+    ManagingWorkspace: /SuperMap-iDesktop-Cross/docs/DataManage/WorkspaceManagent.html
+    ManagingDatasource: /SuperMap-iDesktop-Cross/docs/DataManage/DatabaseManagement.html
+    ManagingDatasets: /SuperMap-iDesktop-Cross/docs/DataManage/DatasetManagement.html  
   DataProcess:
     Projection:
       AboutMapProjection: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/AboutMapProjection.html
