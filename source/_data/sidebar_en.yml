@@ -6,7 +6,7 @@ docs:
     #SuperMapDataStructure: /SuperMap-iDesktop-Cross/docs/Basic/SuperMapDataStructure.html
     #Pyramid: /SuperMap-iDesktop-Cross/docs/Basic/Pyramid.html
     GeoFormates: /SuperMap-iDesktop-Cross/docs/Basic/GeoFormates.html
-  ManagingData:
+  DataManage:
     ManagingWorkspace: /SuperMap-iDesktop-Cross/docs/DataManage/WorkspaceManagent.html
     ManagingDatasource: /SuperMap-iDesktop-Cross/docs/DataManage/DatabaseManagement.html
     ManagingDatasets: /SuperMap-iDesktop-Cross/docs/DataManage/DatasetManagement.html  
@@ -29,7 +29,7 @@ docs:
   Objects:
     CreateGeometry:
       AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/AboutCreateGeometry.html
-      Point: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Point.html
+      Point: /SuperMap-iDesktop-Chesoross/docs/DataProcess/DataEdit/Point.html
       DrawCurve: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawCurve.html
       DrawQuadRangle: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawQuadRangle.html
       Text: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Text.html

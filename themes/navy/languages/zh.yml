@@ -27,10 +27,47 @@ sidebar:
     SuperMapDataStructure: 数据组织结构
     Pyramid: 影像金字塔
     GeoFormates: 数据转换
-    ManagingData: 创建和管理数据
+    DataManage: 创建和管理数据
+    ManageData: 管理数据
     ManagingWorkspace: 管理工作空间
     ManagingDatasource: 管理数据源
     ManagingDatasets: 管理数据集
+    EncodeType: 数据集压缩编码方式
+    PyramidManage: 管理影像金字塔
+    SpatialIndexManage: 管理空间索引
+    Objects: 对象操作
+    BasicOpention: 基本操作
+    AboutCreateGeometry: 对象绘制概述
+    Point: 绘制点
+    DrawCurve: 绘制线
+    DrawQuadRangle: 绘制面
+    Text: 绘制文本
+    EdittingGeometry: 对象编辑
+    PolygonEdit: 面对象编辑
+    LineEdit: 线对象编辑
+    VertexEdit: 节点编辑
+    ObjectsConversion: 对象类型转换
+    OtherEdit: 其他编辑
+    Snappable: 捕捉
+    Visualization: 地图可视化
+    MapOperations: 地图操作
+    BasicOperation: 基本操作
+    MapPropertise: 设置地图属性
+    ManageMapLayer: 管理地图图层
+    LayerSetting: 图层属性
+    MapSetting_Basic: 地图属性-基本
+    MapSetting_Range: 地图属性-范围
+    MapBrowse: 地图浏览
+    Measuregroup: 地图量算
+    MapClip: 地图裁剪
+    GridCorlorBalance: 地图匀色
+    LayerSymbolize: 地图符号化表达
+    LayerStyle: 设置图层风格
+    ManageColor:管理颜色方案
+    ResourcesManager: 管理符号资源
+    MapSearch: 查找定位
+    MapTemple: 地图模板
+    OutputMap: 输出地图
     DataProcess: 数据处理
     Projection: 投影
     AboutMapProjection: 投影概述
@@ -47,19 +84,6 @@ sidebar:
     SQLQueryDia: SQL 查询
     SQLQueryDiaFuction: SQL函数运算符
     SQLSupporttedType: SQL查询引擎支持
-    Objects: 对象操作
-    CreateGeometry: 对象绘制
-    AboutCreateGeometry: 对象绘制概述
-    Point: 绘制点
-    DrawCurve: 绘制线
-    DrawQuadRangle: 绘制面
-    Text: 绘制文本
-    EdittingGeometry: 对象编辑
-    PolygonEdit: 面对象编辑
-    LineEdit: 线对象编辑
-    VertexEdit: 节点编辑
-    ObjectsConversion: 对象类型转换
-    OtherEdit: 其他编辑
     DataAnalyst: 数据分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析
