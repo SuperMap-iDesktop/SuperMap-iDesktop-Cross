@@ -11,9 +11,11 @@ docs:
       ManagingWorkspace: /SuperMap-iDesktop-Cross/docs/DataManage/WorkspaceManagent.html
       ManagingDatasource: /SuperMap-iDesktop-Cross/docs/DataManage/DatabaseManagement.html
       ManagingDatasets: /SuperMap-iDesktop-Cross/docs/DataManage/DatasetManagement.html
+      SupportEngineTpye: /SuperMap-iDesktop-Cross/docs/DataManage/EngineType.html
       EncodeType: /SuperMap-iDesktop-Cross/docs/DataManage/EncodeType.html
-      PyramidManage: /SuperMap-iDesktop-Cross/docs/DataManage/PyramidManage.html  
-      SpatialIndexManage: /SuperMap-iDesktop-Cross/docs/DataManage/SpatialIndexManage.html 
+      PyramidManage: /SuperMap-iDesktop-Cross/docs/DataManage/PyramidManage.html
+      SpatialIndexManage: /SuperMap-iDesktop-Cross/docs/DataManage/SpatialIndexManage.html
+      DatasetProperties: /SuperMap-iDesktop-Cross/docs/DataManage/DatasetProperties.html
     Objects:
       BasicOpention: /SuperMap-iDesktop-Cross/docs/DataManage/ObjectEdit.html
       AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/AboutCreateGeometry.html
@@ -29,17 +31,16 @@ docs:
       OtherEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/OtherEdit.html
       Snappable: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/Snappable.html
   Visualization:
-    MapOperations:
-      BasicOperation: /SuperMap-iDesktop-Cross/docs/Visualization/MapOperation.html
-      MapPropertise: /SuperMap-iDesktop-Cross/docs/Visualization/MapPropertise.html
-      ManageMapLayer: /SuperMap-iDesktop-Cross/docs/Visualization/ManagerLayer.html
-      LayerSetting: /SuperMap-iDesktop-Cross/docs/Visualization/LayerSetting.html
-      MapSetting_Basic: /SuperMap-iDesktop-Cross/docs/Visualization/MapSetting_Basic.html
-      MapSetting_Range: /SuperMap-iDesktop-Cross/docs/Visualization/MapSetting_Range.html
-      MapBrowse: /SuperMap-iDesktop-Cross/docs/Visualization/MapBrowse.html
-      Measuregroup: /SuperMap-iDesktop-Cross/docs/Visualization/Measuregroup.html
-      MapClip: /SuperMap-iDesktop-Cross/docs/Visualization/MapClip.html
-      GridCorlorBalance: /SuperMap-iDesktop-Cross/docs/Visualization/GridAggregationMap.html
+    BasicOperation: /SuperMap-iDesktop-Cross/docs/Visualization/MapOperation.html
+    MapPropertise: /SuperMap-iDesktop-Cross/docs/Visualization/MapPropertise.html
+    ManageMapLayer: /SuperMap-iDesktop-Cross/docs/Visualization/ManagerLayer.html
+    LayerSetting: /SuperMap-iDesktop-Cross/docs/Visualization/LayerSetting.html
+    MapSetting_Basic: /SuperMap-iDesktop-Cross/docs/Visualization/MapSetting_Basic.html
+    MapSetting_Range: /SuperMap-iDesktop-Cross/docs/Visualization/MapSetting_Range.html
+    MapBrowse: /SuperMap-iDesktop-Cross/docs/Visualization/MapBrowse.html
+    Measuregroup: /SuperMap-iDesktop-Cross/docs/Visualization/Measuregroup.html
+    MapClip: /SuperMap-iDesktop-Cross/docs/Visualization/MapClip.html
+    ColorBalance: /SuperMap-iDesktop-Cross/docs/Visualization/ColorBalance.html
     LayerSymbolize:
       LayerStyle: /SuperMap-iDesktop-Cross/docs/Visualization/LayerStyle.html
       ManageColor: /SuperMap-iDesktop-Cross/docs/Visualization/ManageColor.html
@@ -47,6 +48,10 @@ docs:
     MapSearch: /SuperMap-iDesktop-Cross/docs/Visualization/MapSearch.html
     MapTemple: /SuperMap-iDesktop-Cross/docs/Visualization/MapTemple.html
     OutputMap: /SuperMap-iDesktop-Cross/docs/Visualization/OutputMap.html
+  BigdataManagementDisplay:
+    BigDataDisplay:
+      HeatMap: /SuperMap-iDesktop-Cross/docs/Visualization/HeatMap.html
+      GridAggregationMap: /SuperMap-iDesktop-Cross/docs/Visualization/GridAggregationMap.html
   DataProcess:
     Projection:
       AboutMapProjection: /SuperMap-iDesktop-Cross/docs/DataProcess/Projection/AboutMapProjection.html
@@ -63,24 +68,16 @@ docs:
       SQLQueryDia: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDia.html
       SQLQueryDiaFuction: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLQueryDiaFuction.html
       SQLSupporttedType: /SuperMap-iDesktop-Cross/docs/DataProcess/SQLSupporttedType.html
-  Objects:
-    CreateGeometry:
-      AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/AboutCreateGeometry.html
-      Point: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Point.html
-      DrawCurve: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawCurve.html
-      DrawQuadRangle: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawQuadRangle.html
-      Text: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Text.html
-    EdittingGeometry:
-      PolygonEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/PolygonEdit.html
-      LineEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/LineEdit.html
-      VertexEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/VertexEdit.html
-      ObjectsConversion: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/ObjectsConversion.html
-      OtherEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/OtherEdit.html
-  DataAnalyst:
-    BufferTheory: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferTheory.html
-    SingleBuffer: /SuperMap-iDesktop-Cross/docs/DataAnalyst/SingleBuffer.html
-    BufferAnalyst_Example: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferAnalyst_Example.html
-    FindRasterVaule: /SuperMap-iDesktop-Cross/docs/DataAnalyst/FindRasterVaule.html
+    EditTabular: 
+      BrowseTabular: /SuperMap-iDesktop-Cross/docs/DataProcess/EditTabular/BrowseTabular.html
+      TabularEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditTabular/EditTabular.html
+      StatisticTabular: /SuperMap-iDesktop-Cross/docs/DataProcess/EditTabular/StatisticTabular.html
+      OutputDatase: /SuperMap-iDesktop-Cross/docs/DataProcess/EditTabular/OutputDatase.html
+    DataAnalyst:
+      BufferTheory: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferTheory.html
+      SingleBuffer: /SuperMap-iDesktop-Cross/docs/DataAnalyst/SingleBuffer.html
+      BufferAnalyst_Example: /SuperMap-iDesktop-Cross/docs/DataAnalyst/BufferAnalyst_Example.html
+      FindRasterVaule: /SuperMap-iDesktop-Cross/docs/DataAnalyst/FindRasterVaule.html
   Map:
     Thematic:
       ThematicMap: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap.html
@@ -96,10 +93,6 @@ docs:
       CustomizeProperties: /SuperMap-iDesktop-Cross/docs/Map/ThematicMap/CustomizeProperties.html
     Style: /SuperMap-iDesktop-Cross/docs/Map/Style.html
     OverlapDisplayed: /SuperMap-iDesktop-Cross/docs/Map/OverlapDisplayed.html
-    Measuregroup: /SuperMap-iDesktop-Cross/docs/Map/Measuregroup.html
-    LayerSetting: /SuperMap-iDesktop-Cross/docs/Map/LayerSetting.html
-    MapSetting_Basic: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Basic.html
-    MapSetting_Range: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Range.html
   Cache:
     SingleProcessCache: /SuperMap-iDesktop-Cross/docs/Cache/SingleProcessCache.html
     MultiProcessesCache: 
