@@ -30,11 +30,13 @@ sidebar:
     DataManage: 创建和管理数据
     ManageData: 管理数据
     ManagingWorkspace: 管理工作空间
+    SupportEngineTpye: 数据源及数据引擎类型
     ManagingDatasource: 管理数据源
     ManagingDatasets: 管理数据集
     EncodeType: 数据集压缩编码方式
     PyramidManage: 管理影像金字塔
     SpatialIndexManage: 管理空间索引
+    DatasetProperties: 查看数据集的属性信息
     Objects: 对象操作
     BasicOpention: 基本操作
     AboutCreateGeometry: 对象绘制概述
@@ -50,8 +52,7 @@ sidebar:
     OtherEdit: 其他编辑
     Snappable: 捕捉
     Visualization: 地图可视化
-    MapOperations: 地图操作
-    BasicOperation: 基本操作
+    BasicOperation: 地图操作
     MapPropertise: 设置地图属性
     ManageMapLayer: 管理地图图层
     LayerSetting: 图层属性
@@ -60,15 +61,19 @@ sidebar:
     MapBrowse: 地图浏览
     Measuregroup: 地图量算
     MapClip: 地图裁剪
-    GridCorlorBalance: 地图匀色
+    ColorBalance: 地图匀色
     LayerSymbolize: 地图符号化表达
     LayerStyle: 设置图层风格
-    ManageColor:管理颜色方案
+    ManageColor: 管理颜色方案
     ResourcesManager: 管理符号资源
     MapSearch: 查找定位
     MapTemple: 地图模板
     OutputMap: 输出地图
-    DataProcess: 数据处理
+    BigdataManagementDisplay: 大数据管理与显示
+    BigDataDisplay: 大数据显示
+    HeatMap: 热力图
+    GridAggregationMap: 网格图
+    DataProcess: 数据处理与分析
     Projection: 投影
     AboutMapProjection: 投影概述
     ProjectionUsed: 常用投影
@@ -84,6 +89,11 @@ sidebar:
     SQLQueryDia: SQL 查询
     SQLQueryDiaFuction: SQL函数运算符
     SQLSupporttedType: SQL查询引擎支持
+    EditTabular: 编辑属性表
+    BrowseTabular: 浏览属性表
+    TabularEdit: 属性表编辑
+    StatisticTabular: 统计属性表
+    OutputDatase: 输出属性表
     DataAnalyst: 数据分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析
@@ -104,10 +114,6 @@ sidebar:
     CustomizeProperties: 自定义专题图
     Style: 设置图层风格
     OverlapDisplayed: 自动避让与压盖
-    LayerSetting: 图层属性
-    Measuregroup: 地图量算
-    MapSetting_Basic: 地图属性-基本
-    MapSetting_Range: 地图属性-范围
     Cache: 地图缓存
     SingleProcessCache: 单进程切图
     MultiProcessesCache: 多进程切图
@@ -146,6 +152,15 @@ sidebar:
     BigDataAnalysisEnvironmentConfiguration: 分析环境配置
     DataPreparation: 数据准备
     DensityAnalysis: 密度分析
+    Layout: 布局
+    LayoutBasic: 布局操作
+    layoutSetting: 布局设置
+    DrawingLayoutElements: 绘制布局元素
+    DrawingMapElements: 绘制地图元素
+    DrawingObjects: 绘制文本、图片和几何对象
+    Arrangement: 调整布局元素的分布
+    LayoutInteraction: 布局交互
+    LayerTemplete: 布局模板
     Scene: 三维场景
     SceneDia: 场景概述
     FAQAll: FAQ
