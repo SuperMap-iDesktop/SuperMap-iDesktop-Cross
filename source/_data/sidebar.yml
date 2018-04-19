@@ -1,3 +1,11 @@
+getstarted:
+  welcome:
+    SuperMap Cross: /SuperMap-iDesktop-Cross/getstarted/index.html
+    License: /SuperMap-iDesktop-Cross/getstarted/Install/License.html
+  getting_started:
+    SuperMapDataStructure: /SuperMap-iDesktop-Cross/getstarted/Basic/SuperMapDataStructure.html
+    Pyramid: /SuperMap-iDesktop-Cross/getstarted/Basic/Pyramid.html
+    GeoFormates: /SuperMap-iDesktop-Cross/getstarted/Basic/GeoFormates.html
 docs:
   welcome:
     SuperMap Cross: /SuperMap-iDesktop-Cross/docs/index.html
@@ -148,4 +156,11 @@ docs:
     901News: /SuperMap-iDesktop-Cross/docs/news/what's_new.html
     9DNews: /SuperMap-iDesktop-Cross/docs/news/what's_new_in_900.html
     811News: /SuperMap-iDesktop-Cross/docs/news/what's_new_in_811.html
-
+tools:
+  ToolsBox:
+    Tool: /SuperMap-iDesktop-Cross/tools/index.html
+  DataAnalyst:
+    BufferTheory: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferTheory.html
+    SingleBuffer: /SuperMap-iDesktop-Cross/tools/DataAnalyst/SingleBuffer.html
+    BufferAnalyst_Example: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferAnalyst_Example.html
+    FindRasterVaule: /SuperMap-iDesktop-Cross/tools/DataAnalyst/FindRasterVaule.html
