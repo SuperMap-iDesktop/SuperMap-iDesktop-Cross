@@ -1,6 +1,8 @@
 menu:
   home: 首页
+  getstarted: 入门
   docs: 帮助文档
+  tools: 工具箱
 #  api: API
 #  news: 新特性
 #  plugins: Plugins
@@ -19,6 +21,14 @@ page:
   last_updated: "Last updated: %s"
 
 sidebar:
+  getstarted:
+    welcome: Welcome
+    getting_started: 产品入门
+    License: 许可配置
+    SuperMap Cross: 产品介绍
+    SuperMapDataStructure: 数据组织结构
+    Pyramid: 影像金字塔
+    GeoFormates: 数据转换
   docs:
     welcome: Welcome
     getting_started: 产品入门
@@ -169,3 +179,13 @@ sidebar:
     901News: Cross 901 新特性
     9DNews: Cross 9D 新特性
     811News: Cross 8C(2017) 新特性
+	
+	
+  tools:
+    ToolsBox: 工具箱
+    Tool: 工具箱概述
+    DataAnalyst: 数据分析
+    BufferTheory: 缓冲区分析原理
+    SingleBuffer: 单重缓冲区分析
+    BufferAnalyst_Example: 缓冲区应用实例
+    FindRasterVaule: 栅格查询

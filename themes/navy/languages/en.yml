@@ -1,8 +1,9 @@
 menu:
   home: Home
+  getstarted: GettingStarted
   docs: Help
-  api: API
-  news: New Feature
+  tools: ToolBoxes
+#  api: API
 #  plugins: Plugins
 #  themes: Themes
   search: Search
@@ -19,6 +20,8 @@ page:
   last_updated: "Last updated: %s"
 
 sidebar:
+  getstarted:
+    welcome: Welcome
   docs:
     welcome: Welcome
     getting_started: Getting started
@@ -126,3 +129,10 @@ sidebar:
     901News: Cross 901 New Feature
     9DNews: Cross 9D New Feature
     811News: Cross 8C(2017) New Feature
+  tools:
+    ToolsBox: ToolsBox
+    Tool: Tools
+    BufferTheory: Buffer analysis theory
+    SingleBuffer: Single buffer analysis
+    BufferAnalyst_Example: Example of buffer
+    FindRasterVaule: Raster query
