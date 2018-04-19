@@ -66,4 +66,7 @@ title: SuperMap iDesktop Cross 常见问题解答
   ![](img/UIError.png)
 　　**答**：桌面的启动需要依赖图形界面库，只能在图形化界面上进行启动，并进行图形化操作。因而需首先保证远程服务器上配置有图形界面库。其次，选择可视化远程连接工具，而 SecureCRT 是命令行远程连接工具，建议换另一种远程控制工具，如 vnc 或 xmanager ，这两个工具都可以远程连接到 UNIX 或 Linux 并进行图形化操作，但需要进行相应配置，有关 Vnc 配置可以参见[centos 5.5如何配置vnc](http://www.jb51.net/LINUXjishu/44494.html)和[VNC的安装和配置](http://www.cnblogs.com/jyzhao/p/5615448.html)。
 
-　　**备注**：若在其他Linux操作系统中遇到该问题，可采用相同的解决方案。
+　　**备注**：若在其他Linux操作系统中遇到该问题，可采用相同的解决方案。  
+**Q13:当 Windows 操作系统的用户为非管理员启动桌面时，需要注意什么问题？**  
+  
+ 　　**答**：当以非管理员身份启动桌面时，请使用安装路径\SuperMap\SuperMap iDesktop Cross 9D\support\StartupWithNonAdmin”下的 SuperMap iDesktop Cross.exe 文件。需将该 exe 文件，拷贝到产品包所在路径的 Bin 目录中，覆盖同名 exe 文件，再在该路径下启动。具体操作步骤和注意事项，请参考 “StartupWithNonAdmin”下的使用说明。
