@@ -140,14 +140,16 @@ docs:
     DataPreparation: /SuperMap-iDesktop-Cross/docs/BigData/DataPreparation.html
     DensityAnalysis: /SuperMap-iDesktop-Cross/docs/BigData/DensityAnalysis.html
   Layout:
-    LayoutBasic: /SuperMap-iDesktop-Cross/docs/Layout/layout.html
+    LayoutOverview: /SuperMap-iDesktop-Cross/docs/Layout/layout.html
+    LayoutBasic: /SuperMap-iDesktop-Cross/docs/Layout/layoutOpention.html
     layoutSetting: /SuperMap-iDesktop-Cross/docs/Layout/layoutSetting.html
     DrawingLayoutElements:
       DrawingMapElements: /SuperMap-iDesktop-Cross/docs/Layout/DrawingMapElements.html
       DrawingObjects: /SuperMap-iDesktop-Cross/docs/Layout/DrawingObjects.html
     Arrangement: /SuperMap-iDesktop-Cross/docs/Layout/Arrangement.html
     LayoutInteraction: /SuperMap-iDesktop-Cross/docs/Layout/LayoutInteraction.html
-    LayerTemplete: /SuperMap-iDesktop-Cross/docs/Layout/LayerTemplete.html
+    LayerTemplete: /SuperMap-iDesktop-Cross/docs/Layout/LayerTemplete.html  
+    LayoutShortcutKey: /SuperMap-iDesktop-Cross/docs/Layout/LayoutShortcutKey.html 
   Scene:
     SceneDia: /SuperMap-iDesktop-Cross/docs/Scene/SceneDia.html
   FAQAll:
