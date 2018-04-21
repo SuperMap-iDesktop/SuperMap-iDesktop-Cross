@@ -19,7 +19,7 @@ title: Line Operation
 **Basic Steps**
 
 1.  Select one or more line objects to explode in editable layer.
-2.  Click on "Object Operation" > "Line Operation" > "Explode" to perform the operation.
+2.  Click on "Object Operation" > "Object Editing" gallery > "Conversion" group > "Explode" to perform the operation.
 3.  A prompt is shown about how many objects are generated after completing the operation.
 
 **Note**: For those objects who have many nodes, after exploding them, the generated objects are too small and can't be displayed at a little scale, so the application program filters and displays the objects whose length is greater than 0.4mm.
@@ -40,7 +40,7 @@ title: Line Operation
 
 **Basic Steps**
 
-1. Click on "Object Operation" > "Line Operation" > "Extend".
+1. Click on "Object Operation" > "Object Editing" gallery > "Edit Node" group > "Extend".
 2. Moving mouse to the map window and a prompt will pop up: Please select a base line. After selecting a line object as the base line, another prompt will show: Please click line object to be extended.
 3. Click the line object to be extended, and be sure to select a position on the line object that close to the baseline; the endpoint that near the baseline will be extended to the baseline automatically by the application. If you click the endpoint that away from the baseline, it will not be extended.
 4. If other line objects need to be extended to the baseline, continue to click the line object to be extended. Click ESC key or right-click to finish the operation.
@@ -63,7 +63,7 @@ title: Line Operation
  
 **Basic Steps**
 
-1. Click on "Object Operation" > "Line Operation" > "Trim".
+1. Click on "Object Operation" > "Object Editing" gallery >  "Edit Node" group > "Trim".
 2. Select one line object as a baseline, and then a prompt will be shown: Please select a segment to be trimmed.
 3. Select the part of the line object that you want to trim off. After trimming, the baseline is still retained, and the part of the line segment that was clicked by the mouse will be deleted. **Note**: The system field (except SmUserID) values of the new object are assigned by the system, and values of non-system fields and the SmUserID field will keep that of the trimmed object.
 
@@ -88,5 +88,5 @@ title: Line Operation
 **Basic Steps**
 
 1. Select two or more line objects to be connected in an editable layer.
-2. Click on "Object Operation" > "Line Operation" >"End to End" or "Connect Adjacent Points"
+2. Click on "Object Operation" > "Object Editing" gallery > "Edit Node" group > "Joint End to End" or "Adjacent Point Connection Line".
 3. Set an attribute reserved mode for result object in the pop-up dialog box, for details, please reference union in [Region Operation](PolygonEdit.html)

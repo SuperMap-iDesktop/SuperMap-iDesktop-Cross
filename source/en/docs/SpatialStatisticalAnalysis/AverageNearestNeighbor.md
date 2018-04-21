@@ -16,19 +16,19 @@ title: Average Nearest Neighbor
 
 　　Cross provides two functional entrances, as follows:
 
-- Click "Toolbox" - "Spatial Statistical Analysis" - "Analyzing Patterns" - "Average Nearest Neighbor" in the menu bar, and the "Average Nearest Neighbor" dialog box will pop up.
-- In the "Visual Modeling" panel, double-click the "Spatial Statistical Analysis"-"Analyzing Patterns"-"Average Nearest Neighbor", and the "Average Nearest Neighbor" dialog box will pop up.
+- Click "Spatial Analysis" tab > "Spatial Statistical Analysis" group > "Analyzing Mode" drop-down button > "Average Nearest Neighbor" to open the "Average Nearest Neighbor" dialog box.
+- Click "Model Builder" tab > "New" to open the "Toolbox" panel, then double-click the "Spatial Statistical Analysis" > "Analyzing Mode" > "Average Nearest Neighbor", and the "Average Nearest Neighbor" dialog box will pop up.
 
 ##### 　　Main Parameters
-- **Input Feature**: Set up the vector data sets to be analyzed, supports points, lines, and regions three types of datasets. 
-- **Study area area**: Set up the size of the area of study area, the unit is square meter, the area value is greater than or equal to 0;If the area of the study area is 0, the minimum external rectangular area of the source data set will be automatically calculated as the area of study area.
-- **Distance Method**: Currently, only Euclidean distance calculation is supported, namely the linear distance between two elements.
+- **Source Dataset**: Set up the vector datasets to be analyzed, supports points, lines, and regions three types of datasets. 
+- **Research Area**: Set up the area of the research region, the unit is square meter, the area value is greater than or equal 0;If the area of the study area is 0, the minimum external rectangular area of the source dataset will be automatically calculated as the area of research region.
+- **Measure Distance Method**: Currently, only Euclidean distance calculation is supported, namely the linear distance between two elements.
 
 ##### 　　Results Output
 
-　　After setting up the above parameters, click the "Run" button in the dialog box to perform the Average Nearest Neighbor Analysis. The results of the analysis include the following five parameters: the nearest neighbor index, the expected mean distance, the average observation distance, z-score and P-value, as shown in the figure below.
+　　After setting up the above parameters, click the "Run" image button in the dialog box to perform the Average Nearest Neighbor Analysis. The analysis results include the following five parameters: the nearest neighbor index, the expected mean distance, the average observation distance, z-score and P-value, as shown in the figure below.
 
-　　The nearest neighbor index is the ratio of average observation distance to the expected average distance.  If the nearest neighbor index is less than 1, the mode of expression is clustering. If the nearest neighbor index is greater than 1, the pattern of performance tends to spread. 
+　　The nearest neighbor index is the ratio of average observation distance to the expected average distance. If the nearest neighbor index is less than 1, the mode of expression is clustering. If the nearest neighbor index is greater than 1, the pattern of performance tends to spread. 
 
 
 

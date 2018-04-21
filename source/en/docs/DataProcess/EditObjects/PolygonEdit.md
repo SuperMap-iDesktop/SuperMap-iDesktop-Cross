@@ -5,9 +5,9 @@ title: Region Operation
 
 　　Edit operation includes: group, union, Xor, erase, donut, Object Split, Ungroup, etc.
 
-### Group
+### Combination
 
-　　Group objects of the same type or multiple types in the current layer as a compound object.
+　　Combine objects in the current layer as a compound object.
 
 
 -   It groups objects with the same or different types together to generate a new compound object. For line and region layers, objects of the same type can be grouped together. For CAD compound layers, different types of objects can be grouped together. 
@@ -16,7 +16,7 @@ title: Region Operation
 -   It doesn't support to group points.
 -   When the number of overlayed regions is even, the overlapped area after being grouped will be white, and is a part of the result.
 
-　　The detail steps are: select one or more objects in an editable layer, group it or them by clicking on "Object Operation" > "Region Operation" > "Group", also you can select "Group" on the context-menu.
+　　The detail steps are: select one or more objects in an editable layer, group it or them by clicking on "Object Operations" > "Object Editing" > "Object Operation" > "Combination", also you can select "Group" on the context-menu.
 
 **Difference Between Group and Union**
 
@@ -60,17 +60,17 @@ title: Region Operation
  
 **Basic Steps**
 
-1. Select one or more objects in an editable layer, then click on "Object Operation" > "Region Operation" > "Union", and Union dialog box pops up.
+1. Select one or more objects in an editable layer, then click on "Object Operation" > "Object Editing" gallery > "Object Operation" group > "Union", and the Union dialog box pops up.
 2. Set how to assign value to attribute of result object, there are four methods:
 - Null: means the value of this field is Null in the result union object.
 - Sum: means the value of this field in the result union object is the sum of corresponding fields of all union objects. Numeric fields are directly summed. For text fields, the text of multiple objects is automatically connected by SmID order.
 - Weighted Mean: means the value (must be a numeric field) of this field in the result union object is the average of corresponding fields of all union objects. It can calculate the simple average or weighted average. The default mode is calculating simple average. 
 
-　　Select the Weighted Mean radio button, click the right drop-down button and select the No Weighted Field (Mean) item. It means that when weighted fields are not used, a simple average would be calculated, i.e. sum all selected fields of original objects and then divide by the total number of original objects.
+　　Select the Weighted Mean radio button, click the right drop-down button and select the No Weighted Field (Mean) item. It means that when weighted fields are not used, a simple average value would be calculated, i.e. sum all selected fields of original objects and then divide by the total number of original objects.
 
 　　If a field is selected in the drop-down menu on the right side of the Weighted Mean radio button, it means this field is used to calculate weighted averaged with the selected filed in the list box.
 
-- Save Geometry: indicates which selected object has the same value in this field as that of the result object.
+- Save Geometry: specify the field value for the result object which is the same with the field value of a selected object.
 
 3. After finishing to set the parameters, click OK button to complete the operation.
 
@@ -88,7 +88,7 @@ title: Region Operation
 
 **Basic Steps**
 
-1. Select one or more objects in an editable layer, then click on "Object Operation" > "Region Operation" > "Intersect", and Intersect dialog box pops up.
+1. Select objects in an editable layer, then click on "Object Operations" > "Object Editing" > "Object Operation" > "Intersect", and Intersect dialog box pops up.
 2. Set how to assign value to attribute of result object, and then click OK.
 
 ### XOR
@@ -115,7 +115,7 @@ title: Region Operation
 
 Basic Steps:
 
-1. Select one or more objects in an editable layer, then click on "Object Operation" > "Region Operation" > "XOr", and XOr dialog box pops up.
+1. Select one or more objects in an editable layer, then click on "Object Operations" > "Object Editing" > "Object Operation" > "XOr", and XOr dialog box pops up.
 2. Set how to assign value to attribute of result object, and then click OK.
 
 
@@ -135,8 +135,8 @@ Basic Steps:
 
 　　Basic Steps:
 
-1. Make the layer where target object locates editable, the "Erase" option will be available when a region object is selected.
-2. On the "Object Operation" menu, selecting "Erase" in "Region Operation".
+1. Select a object as the erasing object.
+2. Click "Object Operations" > "Object Editing" gallery > "Object Operation" > "Erase".
 3. Moving mouse into map window and selecting the target object to perform Erase operation, the switch of erasing sections can be achieved by pressing Ctrl.
 4. Multiple selected objects can be erased at the same time, then right-click to complete the operation.
 
@@ -153,7 +153,7 @@ Basic Steps:
 　　Basic Steps:
 
 1. Select one or more objects to split in an editable layer.
-2. On the "Object Operation" menu, selecting "Object Split" in "Region Operation".
+2. Click "Object Operations" > "Object Editing" gallery > "Object Operation" > "Object Split".
 3. When moving the mouse to the current map window, it prompts &quot;Please select split object&quot;, select a line or region object, according to the intersection of two objects, the object will be segmented.
 
 　　![](img/CutByChoosePolygon.png)
@@ -177,25 +177,25 @@ Basic Steps:
 **Basic Steps**
 
 
-1. Select one or more region objects in an editable layer, and then select "Donut and Island Polygon" on "Region Operation" of "Object Operation" menu.
+1. Select one or more region objects in an editable layer, and then select click "Object Operations" > "Object Editing" gallery > "Object Operation" group > "Donut and Island Polygons".
 2. Set property information of result object in the pop-up dialog box, you can reference "**Union**" for detail instruction.
 3. Click OK button to perform the operation.
 
 　　![](img/Hole.png)
 
-### Ungroup
+### Split
 
-　　Ungroup one or more compound objects into simple or compound objects.
+　　Split one or more compound objects into simple or compound objects.
 
-- The ungroup function applies to line layers, region layers and CAD layers.
-- It can only be performed for complex or compound objects; simple objects cannot be ungrouped.
+- The Split function applies to line layers, region layers and CAD layers.
+- It can only be performed for complex or compound objects; simple objects cannot be split.
 - For complex objects (the object that contains multiple sub objects) ungrouping, all generated single objects are simple objects. For compound objects, after multiple single objects are generated, if there is still any compound object exists among these result single objects, you can continue perform the ungroup operation until all result objects become simple objects. The figure below shows a hole polygon. After performing the ungroup operation two single objects are generated:
 - In the attribute information of the newly generated object, values of the SmUserID field and non-system field will keep that of the original object, and the other system field values are assigned by the system. 
 
 Basic Steps:
 
 1. In an editable layer, select one or more complex objects or compound objects.
-2. Select "Ungroup" on "Region Operation" of "Object Operation" menu or right-click and select "Ungroup" to perform the operation.
+2. Click "Object Operations" > "Object Editing" gallery > "Object Operation" group > "Ungroup" to perform the operation.
 3. If there is still any compound object exists among the ungrouped resulting objects, you can continue perform the ungroup operation until all result objects become simple objects. As shown below:
 
 　　![](img/Apart.png)
@@ -209,3 +209,64 @@ Basic Steps:
 - For complex objects (objects that contain multiple sub objects), the generated objects are single objects (except the island hole region); for the compound object, firstly it is decomposed into multiple objects, if the object is still a compound object, it will be decomposed again into simple objects. As shown in the following diagram it is a combination of an island hole object with another object, after the protection decomposition, the new objects are obtained as a island hole object and a single object:
 
 　　![](img/ProtectedDecompose.png)
+### Fill Gap    
+
+  Fill gaps between two objects and the gaps will be merged into one of the two objects.
+  
++  To perform the operation, you need to select a basic region.
++  You must set your layer editable where the filled object is located in. The operation supports cross-layers.
+
+Basic Steps
+
+1. Set your layer editable. In the "Object Operations" tab, in the "Object Editing" Gallery control, click "Fill Gap" button .
+2. Select a base region object as the filled object.
+3. Draw the filling range. Please note:
+
+ + The polygon drawing region must be intersected with the filled region object. Otherwise, you need to redraw the range.
+ + When the range is intersected with other objects, the overlayed parts in the range will be deleted and other parts in the range will be retained as the filling range.
+
+4. Right click your mouse to finilize the operation. Then the filling range and the base region will be merged into an object.
+
+　![](img/FillGap.png)  
+
+### Split lines or regions with lines  
+
+Draw a temporary polyline to split region objects. The Line Split command is only active if there is an editable layer in the current map window. 
+
+Basic Steps
+
+1. Set the layer in which the region objects to be split editable. 
+2. Select the region objects to be split by clicking the objects while holding down the Shift or Ctrl key, or by dragging a box. When there are region objects selected, only the selected objects will be split when implementing the split operation. However, all objects crossed by the temporary line you draw will be split if no objects are selected. 
+3. Click "Object Operations" > "Object Editing" gallery > "Object Operation" group > "Line Split".
+4. Draw a temporary polyline on the map. 
+5. Right click to finish the polyline and implement the split operation. 
+6. The selected region objects are split if you have selected region objects select before drawing the polyline to split; all region objects crossed by the temporary polyline are split if you didn't select region objects before.
+7. Repeat step 4 for another split operation. If you want to split data in another dataset, add the dataset to the map, set the relative layer editable, and then repeat the step 4.
+
+ ![](img/LineCutRegion.png)  
+  
+### Split lines or regions with regions    
+  
+Draw a temporary region to split regions or lines crossed by the region. The Region Split button is available only when there is an editable layer in the current map window.
+  
+Basic Steps:   
+  
+1. Set the layer in which you want to split line or region objects editable.
+2. Click "Object Operations" > "Object Editing" gallery > "Object Operation" group > "Region Split".
+3. Draw a temporary region that is used to split region objects.</li>
+4. Right-click the mouse to end the drawing. At this time, the split operation will be performed while the temporary split region disappears.</li>
+5. To continue a next split operation, repeat the step 4; If you want to split line or region objects from other dataset, add the data and set corresponding layers editable, and then repeat step 4.</li>
+6. To end the region split operation state, simply click the Region Split button to make it in an unclicked state. </li>
+  
+ ![](img/CutByPolygon1.png)  ![](img/CutByPolygon2.png) ![](img/CutByPolygon3.png) 
+
+
+
+  
+ 
+
+
+  
+
+
+

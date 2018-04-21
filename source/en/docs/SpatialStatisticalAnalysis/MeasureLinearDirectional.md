@@ -15,17 +15,17 @@ title: Linear Directional Mean
 
 　　Cross provides two functional entrances, as follows:
 
-- Click "Toolbox" - "Spatial Statistical Analysis" - "Measuring Geographic Analysis" - "Linear Directional Mean" in the menu bar, and the "Linear Directional Mean" dialog box will pop up.
-- In the "Visual Modeling" panel, double-click the "Spatial Statistical Analysis"-"Measuring Geographic Analysis"-"Linear Directional Mean", and the "Linear Directional Mean" dialog box will pop up.
+- Click "Spatial Analysis" tab > "Spatial Statistical Analysis" > "Measuring Geographic Distributions" > "Linear Directional Mean".
+- Click the "Model Builder" tab > "New" button to open the "Toolbox" panel, then double-click the "Spatial Statistical Analysis"-"Measuring Geographic Distributions" > "Directional Distribution" to open the "Linear Directional Mean" dialog box.
 
 ##### 　　Main Parameters
 
-- **Input Feature**:Set up the vector data sets to be analyzed, supports points, lines, and regions three types of datasets.
+- **Source Dataset**:Set up the vector data sets to be analyzed, supports points, lines, and regions three types of datasets.
 
 - **Group Field**:Refers to a field that divides the analysis elements into categories. After classification, each group of objects has a central element. The Group Field can be of integer, date, or string type. Records with NULL values for the Group Field will be excluded from the analysis.
 - **Weight Field**:Set up a numeric field for weight, for example: rank as weight field with a traffic accident, the results ellipse can not only reflect the spatial distribution of the accident can also reflect the severity of the traffic accident.
-- **Retention Statistics Fields**:Refers to the retention field that sets the result data in the field list box, and the calculation of the field value.The fields shown in the list are the fields that are reserved for the resulting data, and the fields can be used to remove, add, select, and reverse, and select the field to set the statistical type of its retention value.
-- **Result Setting**:Set up the datasource for the result data and the dataset name.
+- **Keep Statistics Field**:Refers to the retention field that sets the result data in the field list box, and the calculation of the field value.The fields shown in the list are the fields that are reserved for the resulting data, and the fields can be used to remove, add, select, and reverse, and select the field to set the statistical type of its retention value.
+- **Result Settings**:Set up the datasource for the result data and the dataset name.
 
 ##### 　　Results Output
 

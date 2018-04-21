@@ -19,7 +19,7 @@ title: Other Object Edit
 **Precise Rotation**
 
 1.  In an editable layer, select one or more objects.
-2.  Click on "Object Operation" > "Rotation", and "Rotation Settings" dialog box is shown.
+2.  Click "Object Operations" tab > "Object Editing" gallery > "Object Operations" group > "Rotation" and the "Rotation Settings" dialog box is shown.
 3.  The rotation center shows its (X, Y) coordinates. The default rotation center is the anchor on the upper left corner of the bounding box of the geometric object. Users can reset the rotation center by modifying the (X, Y) coordinates.
 4.  Entering a positive angle value rotates the objects counterclockwise, whereas entering a negative angle value rotates the objects clockwise.
 5.  Click OK to rotate.
@@ -31,7 +31,7 @@ title: Other Object Edit
 
 1.  Select one or more objects (non text objects) in an editable layer.
 2.  You can select multiple objects by pressing Shift or Ctrl.
-3.  Select "Mirror" option in "Object Operation" menu. Move the mouse to map window, then click mouse at an appropriate position for confirming starting point of a temporary mirror line. After that, you will find out with the movement of mouse, the line also changes, you can determine another point of the mirror line by clicking mouse to finish current operation.
+3.  Click "Object Operations" tab > "Object Editing" gallery > "Object Operations" group > "Mirror". Move the mouse to map window, then click mouse at an appropriate position for confirming starting point of a temporary mirror line. After that, you will find out with the movement of mouse, the line also changes, you can determine another point of the mirror line by clicking mouse to finish current operation.
 
 
 　　![](img/Mirror1.png)
@@ -49,7 +49,7 @@ title: Other Object Edit
 
 **Basic Steps**
 
-1.  Enable layer editable, select "Zoom" in the "Object Operation" menu.
+1.  Enable layer editable, click "Object Operations" > "Object Editing" gallery > "Object Operations" group > "Zoom"
 2.  Select an object (line or region object) as a zoom object.
 3.  Drag the cursor and you can see a temporary object whose shape is the same as the selected object moving as you move the cursor.
 4.  Move the cursor to the right position and left-click the mouse to complete the zoom operation. Pressing ESC or right-clicking mouse to finish the operation. The figure below shows an object before zooming and after zooming. The blue one is the source object and the red one is the object after zoom. 
@@ -81,22 +81,22 @@ title: Other Object Edit
 **Basic Steps**
 
 1.  Make the layer editable, and then select one line or region object also you can select more objects by pressing Shift or Ctrl.
-2.  Select "Smooth" in "Object Operation" menu, and enter the value of smooth coefficient (default is 4) in the pop-up dialog box.
+2.  Click "Object Operations" > "Object Editing" > "Object Operation" group > "Smooth" and enter the value of smooth coefficient (default is 4) in the pop-up dialog box.
 3.  Click "OK" button to complete the operation. Following pictures illustrates different result on different coefficient values.
 
 　　![](img/Smooth.png)
 
 ### Resample
 
-　　Remove some nodes from the line or the boundary of the region while trying to keep the original shape.
+　　Remove some nodes from line objects or boundaries of region objects while trying to keep their original shapes.
 
-　　SuperMap provides two resampling algorithm: Blend and Ramer–Douglas–Peucker.
+　　SuperMap provides two resampling algorithm: Blend and Douglas–Peucker.
 
 
 **Basic Steps**
 
-1.  Select a geometry object, or you select multiple objects by pressing Shift or Ctrl in current editable layer. 
-2.  Select "Resample" option on "Object Operation" menu, and pop up "Resample Settings" dialog box.
+1.  Select one geometry object, or you can select multiple objects by pressing Shift or Ctrl in current editable layer. 
+2.  Click "Object Operations" > "Object Editing" > "Object Operation" group > "Resample" and pop up "Resampling Settings" dialog box.
 3.  Select an appropriate algorithm at the drop-down box, and enter distance dimension, default is 0.4
 4.  Click "OK" button to perform the operation.
 
@@ -124,7 +124,7 @@ title: Other Object Edit
 Copy is used to copy the selected object(s) to the specified location.
 
 1.  Select one or more objects to be copied.
-2.  Click on "Object Operation" > "Copy".
+2.  Click on "Object Operations" > "Object Editing" > "Move Object" group > "Copy".
 3.  At an appropriate position click mouse or enter coordinate value to determine coordinate for basic point. 
 4.  Move the cursor in the map window, the previews of the object to copy will be shown in real time (dotted line), input the coordinate value or click at the proper location to identify the location of the object.
 5.  Click to finish the operation; or repeat the last step to continue.

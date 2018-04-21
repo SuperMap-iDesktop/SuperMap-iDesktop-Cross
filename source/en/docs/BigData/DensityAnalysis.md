@@ -11,8 +11,8 @@ title: Density Analysis
 
 　　There are two functional entries.
 
-- Click on "Tool Box" > "Online Analysis" > "Simple Density Analysis" or "Kernel Density Analysis", and corresponded dialog box for parameter settings will be shown.
-- Open or new "Visual Modeling", in the pop-up panel "Tool Box" click "Simple Density Analysis" or "Kernel Density Analysis", or drag them to the "Visual Modeling" window. Double click corresponded function and "Parameter Settings" panel will be displayed.
+- In the "Online" tab and "Online Analysis" group, select "Simple Point Density" or "Kernel Density Analysis".
+- In the "Model Builder" tab click "New" and the "Tollbox" panel will pop-up, then click "Simple Density Analysis" or "Kernel Density Analysis" under the "Online Analysis", or drag them to the "Model Builder" window. Double click corresponded functions and "Parameter Settings" panel will be displayed.
 
 ##### 　　Parameter Description
 

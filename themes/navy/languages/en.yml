@@ -1,9 +1,8 @@
 menu:
   home: Home
-  getstarted: GettingStarted
   docs: Help
-  tools: ToolBoxes
-#  api: API
+  api: API
+  news: New Feature
 #  plugins: Plugins
 #  themes: Themes
   search: Search
@@ -20,8 +19,6 @@ page:
   last_updated: "Last updated: %s"
 
 sidebar:
-  getstarted:
-    welcome: Welcome
   docs:
     welcome: Welcome
     getting_started: Getting started
@@ -30,7 +27,53 @@ sidebar:
     SuperMapDataStructure: Data organization structure
     #Pyramid: Pyramiding
     GeoFormates: Data conversion
-    DataProcess: Data processing
+    DataManage: Create and manage data
+    ManageData: Manage data
+    ManagingWorkspace: Manage workspaces
+    SupportEngineTpye: Data engine types
+    ManagingDatasource: Manage datasources
+    ManagingDatasets: Manage datasets
+    EncodeType: Encoding of datasets
+    PyramidManage: Manage image pyramids
+    SpatialIndexManage: Manage spatial indexes
+    DatasetProperties: View attribute infromation of datasets
+    Objects: Object operation
+    BasicOpention: Object drawing
+    AboutCreateGeometry: Object Drawing Overview
+    Point: Draw point
+    DrawCurve: Draw line
+    DrawQuadRangle: Draw region
+    Text: Draw text
+    EdittingGeometry: Object edit
+    PolygonEdit: Region object edit
+    LineEdit: Line object edit
+    VertexEdit: Vertex edit
+    ObjectsConversion: Conversion of object type
+    OtherEdit: Other edit
+    Snappable: Snap
+    Visualization: Map visualization
+    BasicOperation: Operate on maps
+    MapPropertise: Set properties of maps
+    ManageMapLayer: Manage layers
+    LayerSetting: Layer properties
+    MapSetting_Basic: Map properties - Basic
+    MapSetting_Range: Map properties- Bounds
+    MapBrowse: Browse Map
+    Measuregroup: Map measurement
+    MapClip: Clip maps
+    ColorBalance: Color balance
+    LayerSymbolize: Symbolization expressions
+    LayerStyle: Set layer style
+    ManageColor: Manage color scheme
+    ResourcesManager: Manage symbols
+    MapSearch: Query-Location
+    MapTemple: Map templates
+    OutputMap: Output maps
+    BigdataManagementDisplay: Management and display of big data
+    BigDataDisplay: Dispaly of management
+    HeatMap: Heat maps
+    GridAggregationMap: Grid aggregation maps
+    DataProcess: Process and analysis of data
     Projection: Projection
     AboutMapProjection: Projection Overview
     ProjectionUsed: Common projection
@@ -45,20 +88,12 @@ sidebar:
     SQLQuery_Expression: Construct SQL expression
     SQLQueryDia: SQL query
     SQLQueryDiaFuction: SQL operators 
-    SQLSupporttedType: SQL query engine
-    Objects: Object operation
-    CreateGeometry: Object drawing
-    AboutCreateGeometry: Object Drawing Overview
-    Point: Draw point
-    DrawCurve: Draw line
-    DrawQuadRangle: Draw region
-    Text: Draw text
-    EdittingGeometry: Object edit
-    PolygonEdit: Region object edit
-    LineEdit: Line object edit
-    VertexEdit: Vertex edit
-    ObjectsConversion: Conversion of object type
-    OtherEdit: Other edit
+    SQLSupporttedType: Supportive of SQL query engines
+    EditTabular: Edit attribute tables
+    BrowseTabular: Browse attribute tables
+    TabularEdit: Edit attribute tables
+    StatisticTabular: Sum up attribute tables
+    OutputDatase: Output attribute tables
     DataAnalyst: Data analysis
     BufferTheory: Buffer analysis theory
     SingleBuffer: Single buffer analysis
@@ -79,10 +114,10 @@ sidebar:
     CustomizeProperties: Customize thematic map
     Style: Set layer style
     OverlapDisplayed: Auto-avoid and overlay
-    LayerSetting: Layer property
-    Measuregroup: Map measurement
-    MapSetting_Basic: Map basic property
-    MapSetting_Range: Map property "Bounds"
+    #LayerSetting: Layer property
+    #Measuregroup: Map measurement
+    #MapSetting_Basic: Map basic property
+    #MapSetting_Range: Map property "Bounds"
     Cache: Map Cache
     SingleProcessCache: Single process map cache
     MultiProcessesCache: Multiple processes map cache
@@ -129,10 +164,3 @@ sidebar:
     901News: Cross 901 New Feature
     9DNews: Cross 9D New Feature
     811News: Cross 8C(2017) New Feature
-  tools:
-    ToolsBox: ToolsBox
-    Tool: Tools
-    BufferTheory: Buffer analysis theory
-    SingleBuffer: Single buffer analysis
-    BufferAnalyst_Example: Example of buffer
-    FindRasterVaule: Raster query

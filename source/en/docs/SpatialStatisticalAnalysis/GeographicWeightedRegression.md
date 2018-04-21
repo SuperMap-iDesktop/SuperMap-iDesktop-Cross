@@ -33,27 +33,27 @@ title: Geographically Weighted Regression Analysis
 
 　　Cross provides two functional entrances, as follows:
 
-- Click "Toolbox" - "Spatial Statistical Analysis" - "Modeling Spatial Relationships" - "Geographically Weighted Regression Analysis" in the menu bar, and the "Geographically Weighted Regression Analysis" dialog box will pop up.
+- Click "Spatial Analysis" tab > "Spatial Statistical Analysis" group > "Modeling Spatial Relationship" - "Geographically Weighted Regression Analysis".
 - In the "Visual Modeling" panel, double-click the "Spatial Statistical Analysis"-"Modeling Spatial Relationships"-"Geographically Weighted Regression Analysis", and the "Geographically Weighted Regression Analysis" dialog box will pop up.
 
 ##### 　　Main Parameters
 
-- **Input Feature**:Set up the vector data sets to be analyzed, supports points, lines, and regions three types of datasets. Note: the number of objects in the source data is greater than 20.
-- **Explain Field**:The explanatory variable is the independent variable, which is the X in the regression equation, which is used to model or predict the value of the dependent variable. For example, we want to study a number of reasons for obesity, to find out whether obesity is related to income, healthy food intake, or education levels. In this example, obesity is the dependent variable (Y), income, healthy food intake, education level and some other factors are the explanatory variables (X).
-- **Kernel Type**:The kernel type is the calculation function type that sets the distance between two points. The following five kernel function types are supported: W_ij is the weight between point I and point j. D_ij is the distance between point I and point j, and b is the bandwidth range.
-  - Secondary Kernel Function:if d_ij≤b，W_ij=(1-(d_ij/b)^2))^2； Otherwise W_ij = 0.
-  - Box Kernel Function:if d_ij≤b， W_ij=1；Otherwise W_ij=0。
-  - Gaussian Kernel Function:calculation formula is W_ij=e^(-((d_ij/b)^2)/2).
-  - Cube Kernel Function:if d_ij≤b, W_ij=(1-(d_ij/b)^3))^3;Otherwise W_ij=0.
-- **Modeling Field**:Dependent variables, which are variables to be studied and predicted, only support numeric fields.
-- **Bandwidth Method**:Sets the way to determine the scope of the analysis bandwidth. Supports the following three types of determination:
-  - Akaike Information Criterion(AICC):The use of the Akaike information criterion (AICc) determines the bandwidth range for use in cases where the number of parameters is not determined or adjacent.
-  - Cross Validation:Cross validation is used to determine the bandwidth scope, and cross-validation does not include the regression point itself when the regression coefficients are estimated, namely, the regression calculation is performed based on the data points around the regression point. This value is the difference between the estimated value and the actual value of each regression point in the cross validation, and their sum of squares is the CV value.Applies to the number of parameters that are not specified distance or adjacent elements.
-  - Fixed Distance or Adjacent Number:To determine the bandwidth range based on fixed distance or fixed adjacent number, the number of distance or adjacent features must be set.
-- **Bandwidth Type**:There are two types of fixed bandwidth and variable bandwidth:
-  - Fixed Bandwidth:If the user chooses bandwidth type is fixed distance or number of neighbors, then a "bandwidth range" is required to specify a fixed distance. If the user chooses the bandwidth method as AICC or cross validation, the user does not need to specify the distance, and the program can calculate a fixed distance value according to the data.
-  - Variable Bandwidth:If the user chooses bandwidth is fixed distance or number of neighbors, the number of neighbors is set. The application will be the range of the bandwidth between the return point and the nearest neighbors point.I f the user selected bandwidth is AICC or cross validation, the user does not need to specify the number of neighbors, the program can find neighbors points according to the data and calculate a fixed distance value.
-- **Result Setting**:Set up the datasource for the result data and the dataset name.
+- **Source Dataset**: Set up the vector data sets to be analyzed, supports points, lines, and regions three types of datasets. Note: the number of objects in the source data is greater than 20.
+- **Explanatory Field**:The explanatory variable is the independent variable, which is the X in the regression equation, which is used to model or predict the value of the dependent variable. For example, we want to study a number of reasons for obesity, to find out whether obesity is related to income, healthy food intake, or education levels. In this example, obesity is the dependent variable (Y), income, healthy food intake, education level and some other factors are the explanatory variables (X).
+- **Kernel Function Type**:The kernel type is the calculation function type that sets the distance between two points. The following five kernel function types are supported: W_ij is the weight between point I and point j. D_ij is the distance between point I and point j, and b is the bandwidth range.
+  - Quadratic Kernel: if d_ij<=b, W_ij=(1-(d_ij/b)^2))^2; Otherwise W_ij = 0.
+  - Boxcar Kernel: if d_ij<=b, W_ij=1; Otherwise W_ij=0.
+  - Gaussian Kernel: calculation formula is W_ij=e^(-((d_ij/b)^2)/2).
+  - Triube Kernel: if d_ij<=b, W_ij=(1-(d_ij/b)^3))^3; Otherwise W_ij=0.
+- **Model Field**: Dependent variables, which are variables to be studied and predicted, only support numeric fields.
+- **Bandwidth Type**: Sets the way to determine the scope of the analysis bandwidth. Supports the following three types of determination:
+  - Akaike Information Criterion(AICC): The use of the Akaike information criterion (AICc) determines the bandwidth range for use in cases where the number of parameters is not determined or adjacent.
+  - Cross Validation: Cross validation is used to determine the bandwidth scope, and cross-validation does not include the regression point itself when the regression coefficients are estimated, namely, the regression calculation is performed based on the data points around the regression point. This value is the difference between the estimated value and the actual value of each regression point in the cross validation, and their sum of squares is the CV value.Applies to the number of parameters that are not specified distance or adjacent elements.
+  - Fixed Distance or Adjacent Number: To determine the bandwidth range based on fixed distance or fixed adjacent number, the number of distance or adjacent features must be set.
+- **Kernel Type**: Served both fixed and variable bandwidth:
+  - Fixed Bandwidth: If the bandwidth type you chosed is Fixed Distance or Adjacent Number, You need to specify a bandwidth-bound. If you choose the other two types, the program will calculate a fixed distance value according to your data.
+  - Variable Bandwidth: If the bandwidth type you chosed is Fixed Distance or Adjacent Number, you need to specify an adjacent number. The application will take the distance between the regression point and the nearest adjacent point as the range of the bandwidth. If you choose the other two types, the program will find out the nearest point and calculate a fixed distance value according to your data.
+- **Result Settings**: Set up the datasource for saving the result data.
 
 ##### 　　Results Output
 
