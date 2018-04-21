@@ -9,7 +9,7 @@ title: Topology Preprocessing
 
 ### ![](img/read.gif)Baisc Steps
 
-1.  On the main menu, click "Data" > "Topology" > "Topology Preprocessing", and then click "Add" image button to add the datasets needed.
+1.  Click "Data" > "Topology" > "Topology Preprocessing", and then click "Add" image button to add the datasets needed.
 
 2.  Following parameter settings are required.
   -   **Tolerance**: The tolerance value for the topology preprocessing, which is a distance value, it means that in the range of the value, all the nodes or (and) lines are considered to be identical. For example, if the distance between a line's node and another line's node is within the tolerance range, it is considered that the two nodes coincide; if the distance between a line's node and a point object is in the tolerance range, it is considered that the point is on the line. When the distance between the nodes and (or) lines is less than the tolerance value, the topology preprocessing is performed.

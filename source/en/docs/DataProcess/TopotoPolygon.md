@@ -7,7 +7,7 @@ title: Construct Region by Topology
 　　Builds the region dataset with line dataset or network dataset by the topology processing.
 
 ### ![](img/read.gif)Basic Steps
-1\.  On the main menu, click "Data" > "Topology" > "Region by Topology", and set related parameters in the pop-up dialog box.
+1\.  Click "Data" > "Topology" > "Region by Topology", and set related parameters in the pop-up dialog box.
 
 2\.  In the Source Data area, select a line dataset or a network dataset which needs processing in topology.
 

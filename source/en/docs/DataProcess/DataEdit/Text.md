@@ -3,7 +3,7 @@ title: Drawing Text
 ---
 
 
-　　There are two methods for drawing text object: Drawing normal text and Drawing alongline text. The function applies to editable text layer or CAD layer.
+　　There are two methods for drawing text objects: Drawing normal text and Drawing alongline text. The function applies to editable text layers or CAD layers.
 
 
 ### Drawing Common Text

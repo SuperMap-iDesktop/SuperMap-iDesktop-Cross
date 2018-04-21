@@ -8,7 +8,7 @@ title: Validate Line Topology
 
 ### ![](img/read.gif)Basic Steps
 
-1\.  On the main menu, click "Data" > "Topology" > "Validate Line Topology", and then set related parameters in the pop-up dialog box.
+1\.  Click "Data" > "Topology" > "Validate Line Topology", and then set related parameters in the pop-up dialog box.
 
 2\.  Select the needed line dataset or network dataset.
 

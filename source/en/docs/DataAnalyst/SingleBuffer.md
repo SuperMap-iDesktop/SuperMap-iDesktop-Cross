@@ -13,7 +13,7 @@ title: Generating a Single Buffer
 
 ### Basic Steps
 
-1. Click on "Buffer Zone" in drop-down menu of "Spatial Analysis" menu bar, and "Create Buffer Zone" dialog box pop-up.
+1. Click the "Buffer Zone" in "Spatial Analysis" tab on the "Vector Analysis" group, and "Create Buffer Zone" dialog box pop-up.
 
   ![](img/BufferDia.png)
 
