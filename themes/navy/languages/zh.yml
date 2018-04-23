@@ -46,7 +46,6 @@ sidebar:
     EncodeType: 数据集压缩编码方式
     PyramidManage: 管理影像金字塔
     SpatialIndexManage: 管理空间索引
-    DatasetProperties: 查看数据集的属性信息
     Objects: 对象操作
     BasicOpention: 基本操作
     AboutCreateGeometry: 对象绘制概述
