@@ -197,6 +197,8 @@ sidebar:
     ImportModel: 导入三维模型数据
     ImportKML: 导入Lidar数据
     ImportLidar: 导入Google数据
+    ImportVectorFiles: 导入矢量文件
+    ImportFolder: 导入文件夹
     DataAnalyst: 数据分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析

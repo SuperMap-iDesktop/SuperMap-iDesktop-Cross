@@ -172,6 +172,8 @@ tools:
     ImportModel: /SuperMap-iDesktop-Cross/tools/ImportData/ImportModel.html
     ImportKML: /SuperMap-iDesktop-Cross/tools/ImportData/ImportKML.html
     ImportLidar: /SuperMap-iDesktop-Cross/tools/ImportData/ImportLidar.html
+    ImportVectorFiles: /SuperMap-iDesktop-Cross/tools/ImportData/ImportVectorFiles.html
+    ImportFolder: /SuperMap-iDesktop-Cross/tools/ImportData/ImportFolder.html
   DataAnalyst:
     BufferTheory: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferTheory.html
     SingleBuffer: /SuperMap-iDesktop-Cross/tools/DataAnalyst/SingleBuffer.html
