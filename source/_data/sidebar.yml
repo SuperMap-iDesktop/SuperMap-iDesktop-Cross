@@ -160,6 +160,20 @@ docs:
 tools:
   ToolsBox:
     Tool: /SuperMap-iDesktop-Cross/tools/index.html
+  Import:
+    ImportData: /SuperMap-iDesktop-Cross/tools/ImportData/ImportData.html
+    GeneraParameters: /SuperMap-iDesktop-Cross/tools/ImportData/GeneraParameters.html
+    ImportAutoCAD: /SuperMap-iDesktop-Cross/tools/ImportData/ImportAutoCAD.html
+    ImportArcGIS: /SuperMap-iDesktop-Cross/tools/ImportData/ImportArcGIS.html
+    ImportMapGIS: /SuperMap-iDesktop-Cross/tools/ImportData/ImportMapGIS.html
+    ImportMapInfo: /SuperMap-iDesktop-Cross/tools/ImportData/ImportMapInfo.html
+    ImportTable: /SuperMap-iDesktop-Cross/tools/ImportData/ImportTable.html
+    ImportIMG: /SuperMap-iDesktop-Cross/tools/ImportData/ImportIMG.html
+    ImportModel: /SuperMap-iDesktop-Cross/tools/ImportData/ImportModel.html
+    ImportKML: /SuperMap-iDesktop-Cross/tools/ImportData/ImportKML.html
+    ImportLidar: /SuperMap-iDesktop-Cross/tools/ImportData/ImportLidar.html
+    ImportVectorFiles: /SuperMap-iDesktop-Cross/tools/ImportData/ImportVectorFiles.html
+    ImportFolder: /SuperMap-iDesktop-Cross/tools/ImportData/ImportFolder.html
   DataAnalyst:
     BufferTheory: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferTheory.html
     SingleBuffer: /SuperMap-iDesktop-Cross/tools/DataAnalyst/SingleBuffer.html

@@ -1,36 +1,36 @@
 ---
-title: 类型转换支持的数据格式
+title: Supported Data Formats 
 ---
 
-　　我们在进行 GIS 处理时，除了使用 SuperMap 自己的数据格式外，还需要对多种外部的数据格式进行操作。数据转换功能提供了不同数据格式之间的互转，很好地支持了多种数据格式。
+　　We may deal with SuperMap formats and external data formats during GIS processing. The conversion function provides the converting ability among different file formats.
 
-　　下表为数据导入支持的数据格式，方便用户的查看和使用：
+　　Following table lists the supported files formats for importing data.
 
 
-### ![](../img/read.gif)支持导入的矢量文件格式
+### ![](../img/read.gif)Format of supported vector file 
 
- 支持导入文件  |文件格式     | 导入后的数据集类型 
+ File  |Format     |Imported Dataset Type 
  :----------- | :--------- | :------------
- AutoCAD 文件 | \*.dwg、\*.dxf、\*.dgn      | CAD、简单数据集 
- ArcGIS 数据   | \*.e00 、\*.shp、\*.grd、\*.txt、\*.dbf     | 简单数据集 
- MapInfo 数据 | \*.tab、\*.mif、\*.wor | CAD、简单数据集 
- MapGIS 数据 | \*.wat、\*.wal、\*.wap、\*.wan | CAD、简单数据集 
- Microsoft 文件| \*.csv | 属性表数据集
- 影像位图文件 | \*.sit、\*.img、\*.tif、\*.tiff、\*.bmp、\*.png、\*.gif、\*.jpg、\*.jpeg | 影像、栅格数据集 
- 栅格数据 | \*.dem、\*.bil、\*.raw、\*.bsq、\*.bip、\*.sid、\*.b | 栅格数据集
- Google KML 文件 | \*.kml、\*.kmz | CAD、简单数据集    
- Lidar 数据 | \*.txt | 二、三维点数据集 
- 矢量文件 | \*.vct、\*.json、\*.gpx | 矢量数据集 
- dBasseFoxPro数据库文件 | \*.dbf | 属性表数据集 
- 三维模型数据 | \*.scv、\*.osgb 、\*.3ds、\*.x、\*.dxf | CAD、模型数据集 
+ AutoCAD File | \*.dwg, \*.dxf, \*.dgn      | CAD, simple dataset 
+ ArcGis Data   | \*.e00 , \*.shp, \*.grd, \*.txt, \*.dbf     | simple dataset 
+ MapInfo Data | \*.tab, \*.mif, \*.wor | CAD, simple dataset 
+ MapGIS Data | \*.wat, \*.wal, \*.wap, \*.wan | CAD, simple dataset 
+ Microsoft File| \*.csv | attribute table dataset
+ Image Bitmap | \*.sit, \*.img, \*.tif, \*.tiff, \*.bmp, \*.png, \*.gif, \*.jpg, \*.jpeg | image, raster dataset 
+ Raster Data | \*.dem, \*.bil, \*.raw, \*.bsq, \*.bip, \*.sid, \*.b | raster dataset
+ Google KML File | \*.kml, \*.kmz | CAD, simple dataset    
+ Lidar Data | \*.txt | 2D, 3D dataset 
+ Vector tiles | \*.vct, \*.json, \*.gpx | vector dataset 
+ dBasseFoxPro database file | \*.dbf | attribute table dataset 
+ 3D model data | \*.scv, \*.osgb , \*.3ds, \*.x, \*.dxf | CAD, model dataset 
 
 
-### ![](../img/read.gif)导入数据操作说明
-　　导入数据的功能入口有两个，可在“开始”选项卡的“数据处理”组中，选择“数据导入”项，或在工作空间管理器中数据源节点处右键，选择右键菜单中的“导入数据集...”项，在弹出的“数据导入”对话框中添加需导入的文件，并设置相关的参数即可。但是不同类似的数据可设置的参数不一样，公共参数说明如下：
+### ![](../img/read.gif)Instruction about importing data
+　　There are two function entrances for importing data, one is the "Data Import" button in the "Start" tab on the "Data Processing" group ; for another one, you can right-click your datasource in the Workspace Manager, and then select "Import Dataset...". In the pop-up dialog box "Data Import", add the file you want to import, and set related parameters. Parameters set for different data could not be the same. The common parameters are described below:
 
-* **目标数据源**：可设置导入后数据集保存在的数据源，可选择项为当前工作空间所打开的数据源。
-* **结果数据集**：用于设置源数据导入的结果数据集名称，默认与源数据名称一致。
-* **编码类型**：指定是否使用压缩的方式保存数据，可以节省磁盘空间，对于不同类型的数据集，系统会自动判断其合适的编码方式，并在下拉菜单显示。
-* **导入模式**：导入模式提供了无、强制覆盖、追加三种，强制覆盖会将已有的同名数据集覆盖，追加导入则将数据追加导入到已有的同名数据集中。
-* **源文件路径**：显示要导入的原始数据所在的路径，可以进行复制，方便用户复制路径，查看原始数据。
+* **Target Datasource**: Used to set datasource where the imported dataset will be saved in.
+* **Target Dataset**: Used to set name for the imported dataset, the name is the same with source dataset name by default. 
+* **Encode Type**: Specifies whether to compress data when saving it, which can save disk space. For different datasets, the system will determine appropriate encode mode automatically and display it in drop-down menu.
+* **Import Mode**: The import modes are: None, Force to Cover, Append. If selecting Force to Cover, the existed dataset which has the same name with imported data will be covered, however, for the function Append, imported data will be appended to the existed data.
+* **Source File Path**: Displays original data path which can be copied.
 

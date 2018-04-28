@@ -1,8 +1,10 @@
 menu:
   home: Home
+  getstarted: Getting start
   docs: Help
-  api: API
-  news: New Feature
+  tools: Tool box
+# api: API
+# news: New Feature
 #  plugins: Plugins
 #  themes: Themes
   search: Search
@@ -19,9 +21,17 @@ page:
   last_updated: "Last updated: %s"
 
 sidebar:
+  getstarted:
+    welcome: Welcome
+    getting_started: Getting start
+    License: License Configuration
+    SuperMap Cross: Product introductions
+    SuperMapDataStructure: Data structures
+    Pyramid: Image pyramids
+    GeoFormates: Data conversions
   docs:
     welcome: Welcome
-    getting_started: Getting started
+    getting_started: Getting start
     License: License configuration
     SuperMap Cross: Product introduce
     SuperMapDataStructure: Data organization structure
@@ -114,10 +124,6 @@ sidebar:
     CustomizeProperties: Customize thematic map
     Style: Set layer style
     OverlapDisplayed: Auto-avoid and overlay
-    #LayerSetting: Layer property
-    #Measuregroup: Map measurement
-    #MapSetting_Basic: Map basic property
-    #MapSetting_Range: Map property "Bounds"
     Cache: Map Cache
     SingleProcessCache: Single process map cache
     MultiProcessesCache: Multiple processes map cache
@@ -125,8 +131,8 @@ sidebar:
     CreateMultiProcessCache: New map cache (multiple tasks)
     ExecuteMultiProcessCaching: Execute caching task
     CacheCheck: Check cache
-    UpdateCache: Update cache
-    RecoverCaching: Continue to pass cache
+    UpdateCache: Update cache  
+    RecoverCaching: Continue to pass cache 
     SpatialStatisticalAnalysis: Spatial statistics
     SpatialStatisticalAnalysisSummary: Spatial statistics overview
     BasicVocabulary: Basic words
@@ -156,6 +162,17 @@ sidebar:
     BigDataAnalysisEnvironmentConfiguration: Environment configuration
     DataPreparation: Data preparation
     DensityAnalysis: Density analysis
+    Layout: Layouts
+    LayoutOverview: Layout overview
+    LayoutBasic: Layout operations
+    layoutSetting: Layout settings
+    DrawingLayoutElements: Draw layout elements
+    DrawingMapElements: Draw map elements
+    DrawingObjects: Draw geometrical objects
+    Arrangement: Adjust layout elements
+    LayoutInteraction: Layout interactions
+    LayerTemplete: Layout templates  
+    LayoutShortcutKey: Layout shortcut key
     #Scene: 3D Scene
     #SceneDia: Scene overview
     FAQAll: FAQ
@@ -164,3 +181,11 @@ sidebar:
     901News: Cross 901 New Feature
     9DNews: Cross 9D New Feature
     811News: Cross 8C(2017) New Feature
+  tools:
+    ToolsBox: Tool box
+    Tool: Overview
+    DataAnalyst: Data analysis
+    BufferTheory: Theory of buffer analysis
+    SingleBuffer: Single-buffer analysis
+    BufferAnalyst_Example: Instance on buffer analysis
+    FindRasterVaule: Raster query

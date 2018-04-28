@@ -185,6 +185,20 @@ sidebar:
   tools:
     ToolsBox: 工具箱
     Tool: 工具箱概述
+    Import: 数据导入
+    ImportData: 数据导入概述
+    GeneraParameters: 通用参数说明
+    ImportAutoCAD: 导入CAD数据
+    ImportArcGIS: 导入ArcGIS数据
+    ImportMapGIS: 导入MapGIS数据
+    ImportMapInfo: 导入MapInfo数据
+    ImportTable: 导入表格数据
+    ImportIMG: 导入影像栅格数据
+    ImportModel: 导入三维模型数据
+    ImportKML: 导入Lidar数据
+    ImportLidar: 导入Google数据
+    ImportVectorFiles: 导入矢量文件
+    ImportFolder: 导入文件夹
     DataAnalyst: 数据分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析
