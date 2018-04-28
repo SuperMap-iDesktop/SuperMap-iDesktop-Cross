@@ -25,11 +25,11 @@ docs:
       SpatialIndexManage: /SuperMap-iDesktop-Cross/docs/DataManage/SpatialIndexManage.html
     Objects:
       BasicOpention: /SuperMap-iDesktop-Cross/docs/DataManage/ObjectEdit.html
-      AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/AboutCreateGeometry.html
-      Point: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Point.html
-      DrawCurve: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawCurve.html
-      DrawQuadRangle: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawQuadRangle.html
-      Text: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Text.html
+      AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataManage/ObjectDraw.html
+      Point: /SuperMap-iDesktop-Cross/docs/DataManage/Point.html
+      DrawCurve: /SuperMap-iDesktop-Cross/docs/DataManage/DrawCurve.html
+      DrawQuadRangle: /SuperMap-iDesktop-Cross/docs/DataManage//DrawQuadRangle.html
+      Text: /SuperMap-iDesktop-Cross/docs/DataManage/Text.html
     EdittingGeometry:
       PolygonEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/PolygonEdit.html
       LineEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/LineEdit.html
