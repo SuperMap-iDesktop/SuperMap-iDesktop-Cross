@@ -25,7 +25,7 @@ docs:
       SpatialIndexManage: /SuperMap-iDesktop-Cross/docs/DataManage/SpatialIndexManage.html
     Objects:
       BasicOpention: /SuperMap-iDesktop-Cross/docs/DataManage/ObjectEdit.html
-      AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataManage/DataEdit/ObjectDraw.html
+      AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataManage/ObjectDraw.html
       Point: /SuperMap-iDesktop-Cross/docs/DataManage/Point.html
       DrawCurve: /SuperMap-iDesktop-Cross/docs/DataManage/DrawCurve.html
       DrawQuadRangle: /SuperMap-iDesktop-Cross/docs/DataManage//DrawQuadRangle.html
