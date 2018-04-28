@@ -1,162 +1,156 @@
-title: SuperMap iDesktop Cross 9D 产品介绍
+title: SuperMap iDesktop Cross 9D Introduction
 ---
 
 　　
 
-　　SuperMap iDesktop Cross 9D 是基于 SuperMap iObjects Java 9D、OSGI 等平台，通过 Java 语言开发的插件式、跨平台GIS应用软件，提供了数据管理、数据处理、数据分析、地图制图出图、可视化建模等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。
+　　SuperMap iDesktop Cross 9D which is written in Java is a plug-in, cross-platform application software based on SuperMap iObjects Java 9D and OSGI. Cross provides various features, such as: data management, data processing, data analysis, and mapping, modeling visually, and provides a flexible development framework and auxiliary controls, user-friendly secondary development.
 
-## 产品简介
+## Product introduction
 
-　　SuperMap iDesktop Cross 是一套运行在桌面端的专业GIS软件，是基于 SuperMap iObjects Java 组件，使用 OSGI 框架和 intellij idea 工具开发的跨平台 GIS 应用软件。SuperMap iDesktop Cross 提供了适用于不同平台的版本，分为 Windows 和 Linux 两个版本，其中，Windows包括 32 位和 64 位两个版本，分别提供了绿色包和安装包，Linux 版本提供了 64 位的绿色包。
+　　SuperMap iDesktop Cross is a professional , cross-platform GIS software which is developed based on SuperMap iObjects Java. by using OSGI framework and intellij idea tool. Multiple Cross versions are provided for Windows and Linux. For Windows, the provided versions include the bin packages in 32 bit and 64 bit, while only the bin package in 64 bit is provided for Linux system.
 
+## Provided functions
 
-## 提供功能
+### Data management
 
-### 数据管理
-
-　　提供了工作空间管理、数据源管理、数据集管理功能；支持文件型、数据库型、Web型数据引擎；提供对空间数据及其属性的全面操作和处理，包括创建、编辑、管理、访问等功能。
-
-
--   **数据引擎**：支持打开不同数据引擎，如 Oracle、SQLPlus、DB2、MySQL 等数据库，其中，Linux 版本不支持 SQLPlus 数据引擎；同时支持打开Web地图数据，即OGC服务、iServerREST服务、超图云服务、GoogleMaps、OpenStreetMap、iServer DataStore 等Web地图。
+　　Provided the workspace manager, datasource manager, and dataset manager; Supports various kinds of engines including file type, database type and web type; the operation and process in spatial data and its properties have been provided with the featuers of creating, editing, managing, accessing, and so on.
 
 
--   **工作空间管理**：支持打开、保存、另存、关闭、删除工作空间，支持打开的工作空间有文件型、Oracle、SQLServer 三种类型，Linux 版本不支持打开 SQL Server 工作空间；异常退出桌面时支持自动恢复工作空间。
+-   **Data engine**: Different data engines can be opened, such as: Oracle, SQLPlus (can't be opened in Linux system), DB2 and MySQL, etc. At the same time, Web map data can be opened from OGC service, iServerRest service, SuperMapClound service, GoogleMaps, OpenStreetMap, iServer DataStore and so on.
 
--   **数据源管理**：支持打开文件型、数据库型、Web型数据源，同时支持新建文件型、数据库型和内存数据源。
 
--   **数据集管理**：支持数据集进行新建、复制、关闭、删除等操作。
+-   **Workspace manager**: You can open, save, close, delete a workspace, also you can save a workspace under other folders. The supported workspaces include file workspace, Oracle workspace, SQLServer workspace (can't be applied for Linux version), MySQL, PostgreSQL, DM, MongoDB. The workspace can be restored automatically if the product exited abnormally.
+
+-   **Datasource manager**: You can open a file datasource, a database datasource or a Web datasource, also creating a file datasource, a database datasource or a memory datasource is supported.
+
+-   **Dataset manager**: A variety of operations are supported, such as the tasks of creating, copying, closing, deleting, etc.
 
  ![](img/Product1.png)
 
 
-### 数据转换
+### Data conversion
 
-　　SuperMap iDesktop Cross 支持导入其他格式的数据，并将其他格式数据转为 SuperMap 可操作的数据格式，同时也可以将SuperMap格式的数据导出为其他数据格式。
+　　The data in another format can be converted to an available format by SuperMap iDesktop Cross, also the data in SuperMap format can be exported in other data formats.
 
--   **数据导入**：支持将其他格式的数据导入到应用程序中，包括多种矢量、栅格、模型数据格式，如\*.dwg、\*.e00、\*.shp、\*.mif、\*.csv、\*.tif、\*.img、\*.dem、\*.gpx 等。
+-   **Import data**: Data in other formats can be imported into the application, including vector, raster and model data formats, such as: \*.dwg, \*.e00, \*.shp, \*.mif, \*.csv, \*.tif, \*.img, \*.dem, \*.gpx, etc.
 
--   **数据导出**：支持将数据集导出为兼容其他软件的数据格式，可导出为以下格式的数据\*.dwg、\*.e00、\*.shp、\*.mif、\*.csv、\*.tif、\*.img、\*.sit、\*.kml、\*.gpx 等。
+-   **Export data**: A dataset can exported in other data formats. The formats of data can be exported include: \*.dwg、\*.e00、\*.shp、\*.mif、\*.csv、\*.tif、\*.img、\*.sit、\*.kml、\*.gpx and so on.
 
-### 数据处理
+### Data process
 
-　　数据处理是GIS的基础功能，SuperMap iDesktop Cross 目前提供的数据处理功能有：投影设置、数据配准、数据编辑、SQL 查询、拓扑处理等。
--   **投影设置**：支持对矢量、栅格、模型等数据集进行投影转换。
+　　The data process is a basic feature, the data process features provided by SuperMap iDesktop Cross include: projection setting, data registration, data edit, SQL Query, topology process, etc.
+-   **Projection setting**: Supports to convert projection in a vector, raster or model dataset.
 
--   **数据配准**：支持对单个或多个数据集进行配准，根据参考数据对配准数据进行空间位置纠正和变换。
+-   **Data registration**: The data registration can be performed on one or more dataset with correcting and changing the spatial position of data according to the reference data.
 
--   **数据编辑**：提供了丰富、全面的对象绘制和对象编辑功能，便于对数据进行编辑调整。
+-   **Data edit**: Abundant, comprehensive object drawing and object edit are provided, which is convenient to edit and adjust data.
 
--   **空间索引**：支持对矢量数据创建空间索引，对栅格数据创建影像金字塔，以提高数据的浏览效率。
+-   **Spatial index**: Creating spatial index for vector data is supported, creating image pyramid for raster data enhances the efficiency of browsing data.
 
--   **矢量数据处理**：提供丰富的矢量数据处理功能，如：数据融合、拓扑检查、拓扑处理、SQL 查询、属性更新等。
+-   **Vector data process**: A lot of features for processing vector data are provided, such as: Dissolve, Topology Check, Topology Preprocessing, SQL Query, Attribute Update.
 
--   **SQL查询**：SQL查询是指根据指定的 SQL 语句，从已有的数据中查询出满足特定条件的数据，同时还支持添加外部连接表字段信息构建 SQL 语句 。
+-   **SQL query**: Based on the specified SQL expression, the system will find out data meeting specified condition from existed data, a SQL expression also can be constructed by adding an external table field.
 
--   **空间查询**：通过几何对象之间的空间位置关系 ，查询出符合过滤条件的对象 。
-  ![](img/Product3.png)
+-   **Spatial query**: Based on the spatial position relation, to query objects meeting certain conditions.
 
-### 地图制图
 
-**地图相关功能**：提供地图显示、渲染、编辑等功能；提供了二三维点、线、面图层风格设置功能；支持制作及修改单值、分段、标签、统计专题图。
+### Mapping
 
--   **地图选择**：支持地图对象选择操作，支持点选和框选两种方式。
+**Related features on map**: Map display, rendering, edit are provided, settings of 2D or 3D point, line, region layer style are offered, also the creating and modifying of unique, range, label, or statistic thematic map are supported.
 
--   **地图浏览**：支持在地图窗口中，通过漫游、放大、缩小、全副显示等操作来浏览地图。
+-   **Map selecting**: Supporting two ways to select objects (Tapping or frame selection).
 
--   **风格设置**：提供了丰富的符号资源，支持设置二三维点、线、面图层风格，可设置点、线、面符号、颜色、透明度等属性，增强地图的美观性。
+-   **Browsing a map**: You can browse a map by these operations: pan, zoom in, zoom out, full extent, and so on.
 
--   **地图编辑**：提供了地图编辑功能，支持地图复制、粘贴、剪切、删除等操作。
+-   **Style setting**: Providing abundant symbol resource, supporting to set layer style for 2D or 3D point, line, region, and supporting to set properties including point symbols, line symbols, region symbols, color, transparency to enhance the beauty of the map.
 
--   **图层可见性**：支持对图层设置可见比例尺，控制图层在不同比例尺下显示，提供地图的美观性和显示效率。
+-   **Map edit**: Supporting these operations on map, including: copy, paste, cut, delete.
 
--   **制作专题图**：支持矢量和栅格图层专题图的制作与修改，矢量图层支持单值、分段、标签、统计、点密度、等级符号、自定义７种类型专题图，栅格图层支持单值和分段两种专题图。
+-   **Layer visibility**: The setting of layer scale is supported, a layer can be shown under different scales to improve the display efficiency and beauty.
 
--   **颜色方案** ：根据专题图的适用性提供了丰富的颜色方案，提高了地图的美观性，同时支持颜色方案自定义 。
+-   **Thematic map**: The creation and modification for vector and raster layer thematic maps are supported, among them, 7 kinds of thematic map (unique, range, label, statistic, point density, graduated symbols, user-defined) are supported for vector layer, but only unique thematic maps and range thematic maps are supported for raster layers.
 
--   **地图量算**：支持距离、面积、角度三种量算类型。
+-   **Color scheme** : The application provides rich color schemes to improve the beauty of a map, also you can customize a color scheme.
 
--   **地图裁剪**：可根据需要裁剪指定区域的数据，并支持对地图中的多个图层进行批量裁剪。
+-   **Map measure**: Three measure types are provided: distance, area and angle.
+
+-   **Map clip**: Clipping data within a specified region according to needs, and multiple layers can be clipped in bulk.
 
   ![](img/Product2.png)
 
 
-### 数据分析
+### Data Analysis
 
--   **缓冲区分析**：可根据指定的距离，在点、线、面几何对象周围建立一定宽度的区域的分析方法。缓冲区分析在 GIS 空间分析中经常用到，且往往结合叠加分析来共同解决实际问题。缓冲区分析在农业、城市规划、生态保护、防洪抗灾、军事、地质、环境等诸多领域都有应用。
+-   **Buffer analysis**: The principle is that building area with certain width around point, line or region objects according to a specified distance. Many reality problems are resolved by combining buffer analysis and overlay analysis.
 
--   **叠加分析**：通过对空间数据的加工或分析，提取用户需要的新的空间几何信息，例如裁剪、合并求 交、擦除等。叠加分析广泛应用于资源管理、城市建设评估、国土管理、农林牧业、统计等领域。
+-   **Overlay analysis**: New spatial geometric information required by users can be extracted by analyzing spatial data, such as: clip, union, intersect, erase, etc.
 
--   **空间统计分析**：分析和预测与空间或时空现象相关的统计值，包括度量地理分析、模型分析、聚类分布、空间关系建模等，可用于分析数据的要素间的聚合、离散关系、结构和趋势等。
+-   **Spatial statistic analysis**: Analyzing and forecasting the statistic value which is associated with spatial and time-space phenomenon, including: measure geography analysis, model analysis, cluster distribution, build model. The feature can be used to analyze the data elements of aggregation, discrete relationships, structure and trends.
 
-### 可视化建模
+### Model Builder
 
-　　可视化建模支持对数据导入、处理、分析等功能进行建模，用户可根据需要设计可连续执行数据处理的工作流模型，实现了一键化连续操作。
+　　Building a model for importing data, processing data, and analyzing data, etc., you can design a workflow which can execute many operations to data continuously.
 
--   **画布**：实现了画布功能，支持在画布上方便的对可视化模型进行增加、删除、修改等操作。 
+-   **Canvas**: You can add, delete, modify a model in a canvas conveniently.
 
--   **提供功能**：可视化建模中支持了上百种功能，其中包括核密度分析、热度图等大数据分析功能，度量地理分析、模型分析等地统计分析功能，以及插值分析、表面分析等多种空间分析功能。 
+-   **Provide functions**: Hundreds of features are provided in Model Builder, including: kernel density analysis, big data analysis, measuring geographic analysis, and so on.
 
--   **运行**：支持运行单个节点，也支持执行整个可视化模型，并可对执行过程进行控制和管理。 
+-   **Play**: One node or whole model can be run, you can control and manage the process.
 
--   **保存**：支持将构建好的可视化模型保存到工作空间中，便于后续使用或修改工作流中的操作步骤及参数等。 
+-   **Save**: The constructed model can be save into a workspace for further usage or modification.
 
--   **管理**：在工作空间管理器中，新增可视化模型二级节点，支持对已有工作流进行重命名、删除、打开等操作。 
+-   **Manage**: In the workspace manager, the Model Builder node has been added for renaming, deleting, opening an existed workflow.
 
--   **模板**：支持将已构建可视化模型输出为模板，可通过加载模板便捷的创建可视化模型。 
+-   **Model**: The created model can be exported as a template, you can create a new model easily by loading a template.
 
--   **检查**：支持检查创建的可视化模型是否存在错误，如是否存在游离节点、死循环、功能无数据输入等情况。
+-   **Check**: Supporting to check whether a created model exists some errors, such as: a free node, endless loop, no data imported and so on.
 
 
-### 大数据
+### Big Data
 
--   **iServer DataStore数据源**：支持 iServer DataStore 大数据 Web 引擎，便于用户直接使用 iServer DataStore 数据源中的数据集执行数据处理与分析功能。 
+-   **iServer DataStore**: Supporting big data Web engine iServer DataStore, users can use the dataset from iServer DataStore datasource directly to processing and analyzing data.
 
--   **数据管理**：支持对大数据量的数据进行管理，通过一个部署好并可访问的 Hadoop 地址，即可对自己的数据进行管理，支持了数据上传、下载、文件夹管理、任务管理等功能。 
+-   **Data management**: Through an accessible Hadoop address to manage big amount of data. The supported features include uploading data, downloading data, folders management, tasks management, etc.
 
--   **数据分析处理**：基于 Spark 计算平台，提供了大数据的分析处理能力，并且可以快速制图，例如制作热度图和核密度分析图。 
+-   **Data analysis process**: The ability of analyzing and processing big data based on Spark is provided, users can make a map quickly, such as a heat map and a kernel density analysis map.
 
--   **属性汇总**：支持大数据量的属性汇总功能，针对数据集中的字段计算汇总统计数据。
+-   **Summary Region**: Within a specified range, the count of points, the length of lines, and the area of regions can be summarized, and the statistic data of property fields of objects can be computed.
 
--   **范围内汇总**：支持范围内汇总操作，可汇总指定面范围内点的数量、线的长度或面的面积，并计算指定范围内对象的属性字段统计数据，适用于汇总各县内各种道路类型的道路总里程等。 
 
--   **热点分析**：根据数据集中对象的空间分布关系，统计具体有显著性的热点和冷点的空间聚类。
+### Map Cache
 
--   **连接要素**：可根据空间、时间或属性的关系，将一个数据集的属性连接到另一个数据集中。
+-   **Multi-process map caching**: Multiple processes can be run in one or more computers to execute the map cache task, which uses the resource of computers reasonably and shortens time of generating map cache effectively.
 
-### 地图缓存
+-   **Control the count of processes**: Users can add or reduce the number of processes during caching.
 
--   **多进程切图**：可在单个或者多个机器上启多条进程，执行地图切缓存任务，合理的利用计算机资源，有效地缩短了生成地图缓存的时间。
+-   **Updata Cache**: Cache within a specified area and scale can be updated based on specified range.
 
--   **控制进程数**：切图过程中支持随时增加、减少进程数，便于合理利用计算机资源。
-
--   **缓存更新**：可以根据指定的缓存范围，更新指定区域和比例尺的缓存。
-
--   **缓存检查、补切**：可以检查切好的缓存是否存在错误的瓦片，根据检查结果，可以对存在错误的瓦片进行补切。
+-   **Check cache, regenerating cache**: Whether there are error tiles in the generated cache, if yes, these tiles with errors can be regenerated.
 
 
 
-### 发布服务
+### Publish Service
 
-　　支持发布 iServer 服务 ，可将工作空间中的数据资源发布到本地或远程服务器上，以 Web 形式实现资源共享 。
+　　A datasource in a workspace can be published to iServer (local or remote server) to share resource in Web.
 
 
-## 主要特色
+## Key Features
 
-### 跨平台、Ribbon界面、可定制
+### Cross-platform,  customizable
 
--   基于 Java 组件采用 Java 语言开发，具有跨平台的特性，支持在 Windows 和 Linux 系统中运行。
+-   Since adopting JAVA program language, the product (based on Java iObjects) has the ability of cross-platform which means the product can run on Windows or Linux system.
 
--   采用 OSGI 新的实现框架——Felix，易扩展、框架配置灵活，实现了插件式的桌面。
--   遵循 OSGI 国际扩展标准，将应用程序分为多个模块单元，统一管理各模块单元及用户开发的模块单元之间的交叉依赖关系，实现GIS数据的展示。
+-   The adoption of Felix makes the application easy to expand and flexible configuration framework and achieves a pluggable iDesktop.
+-   The OSGI international standards is conformed. An application program can be divided into multiple units, so that relationships between each unit and these units developed by users can be managed to achieve the display for GIS data.
 
--   界面采用 Swing 图形风格，界面支持跨平台，安全性高，易于界面定制和二次开发。
+-   The interface adopts Swing graphic styles, supports cross-platform. Also it is strong security and can be easy to customize and secondary development. 
 
-### 稳定、易用、高效、美观
+### Stable, easy to use, efficient, beautiful
 
--   基于Java语言，采用 Felix 框架，极大地提高了应用系统的通用性、高效性和稳定性。
+-   Universality, efficiency and stability of the system Java-based are significantly improved by adopting Felix framework.
 
--   使用 Swing 图形界面风格，利用 Swing 丰富、灵活的功能和模块化组件，来创建美观、易用的菜单和工具条界面。
+-   The application uses Swing of graphic style, rich features and modularized components to create beautiful, easy-to-use menu and toolbar interface.
 
--   “功能就在您手边”的设计理念，提供了丰富的右键菜单和鼠标动作的响应功能，提高了软件的易用性。“所见即所得”的呈现方式，用户的操作会实时地应用，保证用户在第一时间看到操作的工作成果，方便设计和修改。
+-   The design concept "Functions on your hands" provides abundant response functions of right-click context menus and mouse activities to improve the usability of the software. The presentation "WYSWYG" makes sure that users can see the result of operations in the first place, so that users can design and modify the operation.
 
--   模板化的应用，支持将配置好的地图导出为模板文件，并通过使用地图模板提高工作成果的重用性和工作效率。
+-   The application of templates can improve reusability and efficiency of work by using a map template which is formed by exporting a configured map as a template file.

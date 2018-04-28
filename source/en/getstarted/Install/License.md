@@ -1,209 +1,214 @@
-title: SuperMap iDesktop Cross 许可配置(Linux)
+title: SuperMap iDesktop Cross License Configuration (Linux)
 ---
 
-　　在启动SuperMap iDesktop Cross之前，需要进行许可配置，在 Linux 操作系统下，支持软许可和硬件许可，但都必须安装驱动程序，所有的许可验证都是通过驱动的方式进行通信。
+　　For running SuperMap iDesktop Cross normally, the license configuration is required. Both file license and hardware license are supported in Linux OS, but you must install the related driver first. All the verifications of licenses are executed by the driver.
 
-### 1 安装许可驱动
+### 1 Install license driver
 
 
-　　安装许可驱动需要以　root 身份进行，解压　Cross　的　tar　包之后，在根目录的　support\SuperMap_License\support\aksusbd-2.4.1-i386　目录下进行安装即可。
+　　After unzipping the tar packet of Cross, execute the installation under the directory support\SuperMap_License\support\aksusbd-2.4.1-i386 of the root directory. Please note: You must be root to install the license driver.
 
-　　进入上述目录后，通过以下命令即可执行许可驱动的安装：
+　　After going into above directory, the installation can be performed by following commands.
 
     $ ./dinst
 
-　　或者
+　　or
 
     $ sh dinst
 
-　　安装完许可驱动后就可获得90天的试用许可，即可使用 SuperMap GIS 系列产品。如果 通过dinst命令没有可执行权限，请授予执行权限，执行如下命令：
+　　You can get a 90-day trial license to use SuperMap GIS 9D after installing the driver. If dinst has no executable permissions, please grant permissions to execute the following commands:
 
     $ chmod +x dinst
 
-　　在 Linux 64位操作系统上安装 SuperMap License Center 许可驱动程序时，有的会出现：“The 32bit support is missing…”错误，是因为该 Linux 64 位操作系统缺少 32bit 支持库，所以运行会出错。解决方法是需要手动安装支持32位的支持库，缺少的支持库如下所述。您可以加载系统盘的补充安装相关库，也可以到相应系统的官网上获取相关库来安装。
+　　When an "The 32bit support is missing ..." error happens on a Linux 64-bit OS, you need to reload the installation disc to manually install a support library of 32-bit OS or download it from official website. Refer to the following list of support libraries that need to be installed.
 
--   libc6-i386 和 ia32-libs（Ubuntu）
+-   libc6-i386 and ia32-libs (Ubuntu) 
 
--   libstdc++-devel.i686、glibc.i686、libgcc.i686、libstdc++.i686、glibc-devel.i686（RHEL、CentOS、OpenSUSE、SLES 和 OES）
+-   libstdc++-devel.i686, glibc.i686, libgcc.i686, libstdc++.i686, glibc-devel.i686 (RHEL, CentOS, OpenSUSE, SLES and OES) 
 
--   glibc-32bit（OpenSUSE、SLES 和 OES） <span id="获取"class="anchor"></span>
+-   glibc-32bit (OpenSUSE, SLES and OES)  <span id="Get"class="anchor"></span>
 
-### ２  配置许可信息
+### ２  Configure licenses
 
 
-#### 2.1  配置软许可
+#### 2.1  Configure a file license
 
-　　SuperMap 许可中心目前提供的软许可配置方式为软件激活，不同于 Windows 操作系统下的界面化配置，在 Linux 操作系统下是通过./licensetool.sh 命令，来完成软许可配置。
+　　Unlike GUI configuration on Windows, the file license are configured in Linux platform in the way of commands with /licensetool.sh command.
 
-　　进入软件包的根目录，执行如下命令，可以查看配置软许可的相关命令：
+　　Enter the root directory of the package, execute the following command, you can view the command to configure the file license:
 
     $ ./licensetool.sh
 
-　　进入软件包的根目录，使用“软件激活”的方式配置许可，步骤如下：
+　　Go into the root directory of the application packet, configure the license in "software activation", the detail steps are:
 
-　　(1)获取本机信息，执行如下命令，并指定生成的本机信息文件所存放的路径，再指定的路径下生成\*.c2v 文件。
+　　(1)Get local machine information, execute following commands and specify the path of the file restoring the information, under the specified path, there is a \*.c2v file to be created.
 
-    $ ./licensetool.sh -create /路径名称/\*.c2v
+    $ ./licensetool.sh -create /path/\*.c2v
 
-　　(2) 将本机信息提交给“北京超图软件股份有限公司”。
+　　(2) Submit your machine information to "SuperMap Software Co., Ltd".
 
-　　将上一步骤生成的本机信息文件（\*.c2v）提交给北京超图软件股份有限公司，我们将根据您的申请生成\*.v2c许可文件并返回给您，您通过该文件配置正式许可。
+　　Submit the file (\*.c2v) produced in last step to "SuperMap Software Co., Ltd", and a created license file (\*.v2c) will be returned back to you for configuring the file license.
 
-　　(3)将您获得的\*.v2c 正式许可文件指定到文件位置，执行如下命令：
+　　(3)Place your *. V2c official license file into a specified location, execute the following order:
 
-    $ ./licensetool.sh -update /路径名称/\*.v2c
+    $ ./licensetool.sh -update /path/\*.v2c
 
-#### 2.2 配置硬件许可
+#### 2.2 Configure a hardware license
 
 
-　　在您进行许可配置之前，请确保已经获得北京超图软件股份有限公司的授权许可。如果在同一网段内已经配置了许可服务器，则许可会自动配置，不需要再进行手工配置；如果当前网络环境中（其他网段）存在可用的硬件锁许可，请按照以下步骤进行许可配置：
+　　Before configuring the license, please make sure you have the authorization permission of SuperMap Software Co., Ltd. If there is a configured license server on the same network segment, the license will be configured automatically; If there is a hardware key available in the current network environment (other network segments), follow the steps below to configure the license:
 
-　　(1) 打开浏览器，访问 http://localhost:1947 或 http://本地 IP:1947。
+　　(1) Access http://localhost:1947 or http://local IP:1947 in a browser.
 
-　　(2) 在左侧 Options 中选择 Configuration。
+　　(2) Select Configuration in Options at left.
 
-　　(3) 在右侧选择 Access to Remote License Managers 选项卡。
+　　(3) Select "Access to Remote License Managers" at right.
 
-　　(4) 在 Specify Search Parameters 填入其他网段的许可服务器 IP，点击 Submit。
+　　(4) On Specify Search Parameters fill in license server IP of other network segment, click Submit.
 
-　　(5) 稍等几分钟就可以在左侧 Options 中的 Sentinel Keys 选项下看到该服务器的加密锁了。
+　　(5) Wait for a few minutes, under Sentinel Keys on the left side of the Options you can see sentinel keys of this server.
 
-　　许可状态的查询也可以通过在SuperMap iDesktop Cross包的根目录下，执行如下命令进行查看：
+　　You also can view the license status by executing the following command in the SuperMap iDesktop Cross root directory:
 
     $ ./licensetool.sh -s
 
-#### 2.3 申请试用许可
+#### 2.3 Apply for a trial license
 
 
-　　(1) 生成运行报告
+　　(1) Generate an operation report
 
-　　在包的根目录下执行如下命令，并指定运行报告的存放路径：
+　　Execute the following command, and specify the path for saving the report:
 
-    $ ./licensetool.sh -report /路径名/\*.report
+    $ ./licensetool.sh -report /path/\*.report
 
-　　命令运行后将在指定的路径下生成 \*.report 文件。
+　　And then a \*.report file is generated under the specified folder.
 
-　　(2)申请试用许可
+　　(2)Applying for a trial license
 
-　　您可以直接在北京超图软件股份有限公司官网上的“SuperMap技术资源中心”申请试用许可，申请后您将获得：
+　　You can directly apply for a trial license in the Beijing SuperMap Software Co., Ltd. official website , "SuperMap Technology Resource Center" section. After the application you will receive a trial license:
 
--   如果申请的是 SuperMap GIS 7C 系列产品的许可，您将获得 一个\*.lic7c 格式的许可文件；
+-   If you apply for SuperMap GIS 7C series, you will receive a  license file in \*.lic7c format 
 
--   如果申请的是 SuperMap GIS 8C 系列产品的许可，您将获得 一个\*.lic 格式的许可文件。
+-   If you apply for the SuperMap GIS 8C series, you will receive a license file in \*.lic format.
 
-　　(3) 试用许可生效
+-   If you apply for the SuperMap GIS 9D series, you will receive a license file in \*.lic9d format.
 
-　　您可以通过以下两种方式使申请的试用许可生效：
+　　(3) Make the trial license work
 
-　　方式一：将获得的试用许可文件放在操作系统的opt目录下，具体为：/opt/SuperMap/License/。请注意为该目录授予读写权限。系统会自动使用该目录的许可文件，无须其他配置。
+　　You can make the trial license effective by one of two ways:
 
-　　方式二：进入SuperMap iDesktop Cross包的根目录，将您获得的 \*.lic 或 \*.lic7c 试用许可文件指定到文件位置，执行以下命令：
+　　Method 1: Place the trial license file under the opt directory of your OS, specifically: /opt/SuperMap/License/. Please note that the directory is granted read and write access. System will automatically use the license file of the directory without other configuration. 
 
-    $ ./licensetool.sh -update /路径名/\*.lic
+　　Method 2: Enter the SuperMap iDesktop Cross root directory, place your trial license file to the specified location, and then execute the following command:
 
-　　或
+    $ ./licensetool.sh -update /path/\*.lic
 
-    $ ./licensetool.sh -update /路径名/\*.lic7c
+　　or
 
-### 3 管理许可信息
+    $ ./licensetool.sh -update /path/\*.lic7c
+
+### 3 Manage license information
 
 
-  通过许可管理，您可以查看许可状态，更新许可，许可借入/借出，许可归还等。
+  You can view license status, update license, borrow/lend license, return back license and so on by managing license.
 
-#### 3.1 查看许可状态
+#### 3.1 View license status
 
-　　许可状态的查询可以通过在产品根目录下执行如下命令进行查看：
+　　Execute the following command under the root directory to view status of your license.
 
     $ ./licensetool.sh  -s
 
-　　许可状态信息依次为产品ID、模块ID、产品名称、许可类型（包括正式版和试用版）、许可个数，以及许可过期时间。
+　　The status information includes: product ID, the module ID, the product name, the license type (both the official version and the trial version), the number of licenses, and the license expiration time.
 
-#### 3.2 许可更新
+#### 3.2 Update license
 
-　　将您获得的\*.v2c正式许可文件指定到文件位置，执行如下命令：
+　　Specify the obtained official *.v2c license file to the file location, execute the following command:
 
-    $ ./licensetool.sh  -update /路径名/\*.v2c
+    $ ./licensetool.sh  -update /path/\*.v2c
 
-　　许可更新可以接受以下几种文件，用于不同的目的：
+　　Following kinds of files are acceptable to update your license for different purposes.
 
--   许可激活文件(\*.v2c)，用于在当前计算机激活购买的正式许可，需要先获取本机信息以生成许可激活文件。
+-   License activation file (\*.v2c), used to activate the official license you purchased on your computer. You need to acquire the local information to generate the license activation file firstly. 
 
--   7C文件许可(\*.lic7c)，用于更新当前计算机中7C系列产品的试用许可，需要先生成当前计算机的运行报告。
+-   File license for 7C (*.lic7c), used to update the trial license of 7C series products on the current computer. You need to generate the running report of the computer firstly. 
 
--   文件许可(\*.lic)，用于更新当前计算机中8C、9D系列产品的试用许可，需要先生成当前计算机的运行报告。
+-   File license for 8C (*.lic), used to update the trial license of 8C series products on the current computer. You need to generate the running report of the computer firstly. 
 
--   许可借出凭证(\*.h2r)，用于将网络软许可中的一个许可借出到当前计算机。
+-   File license for 9D (*.lic9d), used to update the trial license of 9D series products on the current computer. You need to generate the running report of the computer firstly. 
 
--   许可归还凭证(\*.r2h)，用于将借出的许可提前归还到当前的许可服务器，由借入许可的计算机生成。
+-   Certificate for lending license (*.h2r), used to lend a license of the network file license to the current computer. 
 
-#### 3.2  许可借入/借出
+-   Certificate for returning license (*.r2h), used to return a lent license to the license server, which is generated by the computer who borrows the license. 
 
-　　1.  生成借入信息文件(\*.id)
+#### 3.2  Borrow/Lend license
 
-　　在需要借入许可的服务器上运行如下命令，生成本机的借入信息文件(\*.id)：
+　　1.  Generate a borrowed information file (* .id) 
+(\*.id)
+
+　　Run the following command on the server that needs to borrow the license to generate the borrow information file (* .id) for the machine:
 
      $ ./licensetool.sh –id \*.id
 
-　　2.  设置允许许可借出
+　　2.  Set lending license are allowed.
 
-　　在许可借出的服务器上设置允许许可借出：
+　　On the server set it is allowed to lend license:
 
--   打开浏览器，访问 http://localhost:1947 或 http://本地 IP:1947；
+-   Open a browser, enter http://localhost:1947 or http://local IP:1947 in the address bar;
 
--   在左侧 Options 中点击 Configuration，进入配置页面；
+-   click on Configuration in the Options panel at left to head to the configuration page 
 
--   在页面右上方点击 Detachable License，打开借出许可的配置页面；
+-   Click Detachable License at the top right of the page to open the lend configuration page.
 
--   勾选 Enable Detaching of Licenses，即可允许许可借出；
+-   Check Enable Detaching of Licenses to allow to lend license;
 
--   您还可以根据实际情况设置许可借出的限制，如最长借出时间（Max. Detach Duration）等。
+-   You can also set the lending restrictions according to the actual situation, such as Max. Detach Duration, etc. 
 
 
-　　3.  生成许可借出文件
+　　3.  Generate license file for lending 
 
-　　在借出许可的服务器上运行如下命令，生成借出凭证文件：
+　　Run the following command on the server that lends the license to generate the loan document:
 
         $ ./licensetool.sh -detach  \[daycount\] \[productid\] \[idfile\] \[h2rfile\]
 
-　　示例：（借出2天，产品ID为1，借入许可的服务器信息文件server1.id，生成借出凭证文件 mylicense.h2r）
+　　For example: (lend for 2 days, product ID is 1, server1.id that is the information file of server which will borrow license, mylicense.h2r that is the loan document generated) 
 
         $ ./licensetool.sh -detach 2 1 server1.id mylicense.h2r
 
-　　其中:
+　　Among them:
 
--   daycount 为需要借出许可的天数，不能超出最长借出时间；
+-   daycount, the number of maximum days that the license will be lent for.
 
--   productid 为借出的产品ID，您可以通过 http://localhost:1947，在 Products 页面将鼠标放在想要借出的产品上查看产品ID；
+-   productid, the ID of the lent product, you can view the product ID by http://localhost:1947 on the Products page. 
 
 　　![](img/ProductsLicense.png)
 
--   idfile为需要借入许可的服务器的信息文件（\*.id）
+-   idfile, the information file (\*.id) of the server that needs to borrow the license. 
 
--   h2rfile为生成借出凭证文件（\*.h2r）
+-   h2rfile, the lent certificate file(* .h2r) generated.
 
-　　4.  配置使用借到的许可
+　　4.  Configure the borrowed license
 
-　　借入许可的服务器获取到借出凭证文件（\*.h2r）后，需要执行更新许可命令：
+　　After the server acquired the lent certificate file (\*.h2r), execute following command:
 
     $ ./licensetool.sh –u \*.h2r
 
-#### 3.4 许可归还
+#### 3.4 Return back license
 
 
-　　在借入许可的服务器上运行如下命令，获取归还凭证文件（\*.r2h）：
+　　Run the following command on the borrowed server to get the returned certificate file (*.r2h):
 
     $ ./licensetool.sh –cd KeyID canceldetachfile
 
-　　KeyID 可用 infofile 命令获取许可信息文件，在 infofile 命令后指定信息文件生成的目录位置：
+　　First check the KeyID which is used to get the returned certificate file. The KeyID can be viewed from the license information file of the local machine, which can be generated by executing infofile command as follows, where pathname shows the output path for the license information file.
 
-    $ ./licensetool.sh –infofile /路径名/
+    $ ./licensetool.sh –infofile /path/
 
-　　执行上述命令后，在指定的目录下会生成后缀为 .xml 的许可信息文件，其中参数为&lt;attached&gt;true&lt;/attached&gt;为可归 keyID。
+　　After the above command was executed, a license information file ending in .xml are generated under the specified directory, of which, &lt;attached&gt;true&lt;/attached&gt; indicates that the value of <KeyID> is available.
 
-　　在许可服务器上面运行许可更新命令，完成许可归还。
+　　Run the update command to finalize the returning of license.
 
     $ ./licensetool.sh –update \*.r2h
 
-　　通过查看许可状态命令可看到许可总数自动加1。
+　　You can find that the total number of licenses is automatically incremented by checking the license status command.
 
     $ ./licensetool.sh –status
