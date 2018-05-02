@@ -7,9 +7,7 @@ title: 数据导入
 　　我们在进行 GIS 处理时，除了使用 SuperMap 自己的数据格式外，还需要对多种外部的数据格式进行操作。数据转换功能提供了不同数据格式之间的互转，很好地支持了多种数据格式。
 
 　　数据导入工具箱提供了应用程序支持的所有格式数据的导入功能，支持导入的数据格式有40多种，支持导入的数据类型丰富，便于用户将其他软件的GIS或非GIS数据导入到桌面中应用。支持的数据类型有：[AutoCAD数据](ImportAutoCAD.html)、[ArcGis数据](ImportArcGIS.html)、[MapGIS数据](ImportMapGIS.html)、[MapInfo数据](ImportMapInfo.html)、[电子表格](ImportTable.html)、[影像栅格数据](ImportIMG.html)、[三维模型数据](ImportModel.html)、[Lidar数据](ImportLidar.html)、[Google数据](ImportKML.html)、[矢量文件](ImportVectorFiles.html)、[GeoJson](ImportFolder.html)、[SimpleJson](ImportFolder.html)、[GJB](ImportFolder.html)、[电信数据](ImportFolder.html)等。
- 运算符           | 含义             |  示例           
- :-------------- | :--------------- | :---------------
- ＋ | 加法 | RENT + UTILITIES &lt;= 800
+
 
 ### 备注
 

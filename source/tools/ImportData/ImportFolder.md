@@ -21,11 +21,6 @@ title: 导入文件夹
 　　2. SimpleJson文件有两种导入方式，一种是导入单个\*.json文件，一种是导入指定文件夹中的所有\*.json文件，单个文件导入的操作可参见[导入矢量文件](ImportVectorFiles.html)页面。
 
 
-### 注意
-
-
-
-
 ### 相关主题
 
 ![](img/smalltitle.png) [AutoCAD数据](ImportAutoCAD.html)
