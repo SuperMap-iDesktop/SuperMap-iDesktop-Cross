@@ -175,6 +175,9 @@ tools:
     ImportVectorFiles: /SuperMap-iDesktop-Cross/tools/ImportData/ImportVectorFiles.html
     ImportFolder: /SuperMap-iDesktop-Cross/tools/ImportData/ImportFolder.html
   DataConvert:
+    ConvertPointLinePolygon: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertPointLinePolygon.html
+    ConvertAttributeSpatial: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertAttributeSpatial.html
+    ConvertNetworkData: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertNetworkData.html
     ConvertCADSimple: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertCADSimple.html
     Convert2D3D: /SuperMap-iDesktop-Cross/tools/ConvertDataType/Convert2D3D.html
   DataAnalyst:
