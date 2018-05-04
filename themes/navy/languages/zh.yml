@@ -199,6 +199,12 @@ sidebar:
     ImportLidar: 导入Google数据
     ImportVectorFiles: 导入矢量文件
     ImportFolder: 导入文件夹
+    DataConvert: 类型转换
+    ConvertPointLinePolygon: 点线面类型互转
+    ConvertAttributeSpatial: 属性数据与空间数据互转
+    ConvertNetworkData: 网络数据转换
+    ConvertCADSimple: 复合数据与简单数据互转
+    Convert2D3D: 二维数据与三维数据互转
     DataAnalyst: 数据分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析

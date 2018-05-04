@@ -17,17 +17,28 @@ title: 导入ArcGIS数据
 
 　　执行导入ArcGIS数据时，大部分参数可参考[通用数据](GeneraParameters.html)页面，不同格式的ArcGIS数据需设置的个别参数不同，具体说明如下：
 
- - \*.shp数据
-    - 导入空数据：勾选该复选框，若导入数据集为空数据集时，默认导入一个无对象的空数据集。否则，程序会提示导入失败。
- - \*.e00、\*.shp数据
-    - 忽略属性信息：勾选该参数，表示导入空间数据的同时，不导入属性信息，只导入数据的空间信息。
- - \*.grd、\*.txt、\*.dem 数据
-    - 建立影像金字塔：勾选该复选框，在导入影像数据时，将对导入数据创建影像金字塔。
 
 ### 相关主题
 
-![](img/smalltitle.png) [关于缓冲区分析](BufferTheory.html)
+![](img/smalltitle.png) [AutoCAD数据](ImportAutoCAD.html)
 
-![](img/smalltitle.png) [缓冲区分析应用实例](BufferAnalyst_Example.html)
+![](img/smalltitle.png) [MapGIS数据](ImportMapGIS.html)
+
+![](img/smalltitle.png) [MapInfo数据](ImportMapInfo.html)
+
+![](img/smalltitle.png) [电子表格](ImportTable.html)
+
+![](img/smalltitle.png) [影像栅格数据](ImportIMG.html)
+
+![](img/smalltitle.png) [三维模型数据](ImportModel.html)
+
+![](img/smalltitle.png) [Lidar数据](ImportLidar.html)
+
+![](img/smalltitle.png) [Google数据](ImportKML.html)
+
+![](img/smalltitle.png) [矢量文件](ImportVectorFiles.html)
+
+![](img/smalltitle.png) [导入文件夹](ImportFolder.html)
+
 
 

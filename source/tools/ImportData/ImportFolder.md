@@ -21,15 +21,28 @@ title: 导入文件夹
 　　2. SimpleJson文件有两种导入方式，一种是导入单个\*.json文件，一种是导入指定文件夹中的所有\*.json文件，单个文件导入的操作可参见[导入矢量文件](ImportVectorFiles.html)页面。
 
 
-### 注意
-
-
-
-
 ### 相关主题
 
-![](img/smalltitle.png) [关于缓冲区分析](BufferTheory.html)
+![](img/smalltitle.png) [AutoCAD数据](ImportAutoCAD.html)
 
-![](img/smalltitle.png) [缓冲区分析应用实例](BufferAnalyst_Example.html)
+![](img/smalltitle.png) [ArcGis数据](ImportArcGIS.html)
+
+![](img/smalltitle.png) [MapGIS数据](ImportMapGIS.html)
+
+![](img/smalltitle.png) [MapInfo数据](ImportMapInfo.html)
+
+![](img/smalltitle.png) [电子表格](ImportTable.html)
+
+![](img/smalltitle.png) [影像栅格数据](ImportIMG.html)
+
+![](img/smalltitle.png) [三维模型数据](ImportModel.html)
+
+![](img/smalltitle.png) [Lidar数据](ImportLidar.html)
+
+![](img/smalltitle.png) [Google数据](ImportKML.html)
+
+![](img/smalltitle.png) [矢量文件](ImportVectorFiles.html)
+
+
 
 
