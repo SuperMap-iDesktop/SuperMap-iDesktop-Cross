@@ -205,6 +205,9 @@ sidebar:
     ConvertNetworkData: 网络数据转换
     ConvertCADSimple: 复合数据与简单数据互转
     Convert2D3D: 二维数据与三维数据互转
+    DataProcessing: 数据处理
+    Datafuse: 融合
+    Integrate: 整合
     DataAnalyst: 数据分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析
