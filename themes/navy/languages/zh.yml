@@ -199,6 +199,9 @@ sidebar:
     ImportLidar: 导入Google数据
     ImportVectorFiles: 导入矢量文件
     ImportFolder: 导入文件夹
+    Output: 数据导出 
+    OutputVector: 导出矢量数据集
+    OutputRaster: 导出栅格数据集
     DataConvert: 数据转换
     ConvertCADSimple: 复合数据与简单数据互转
     Convert2D3D: 二维数据与三维数据互转
