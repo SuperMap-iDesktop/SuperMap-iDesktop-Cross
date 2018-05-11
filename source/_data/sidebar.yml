@@ -174,12 +174,16 @@ tools:
     ImportLidar: /SuperMap-iDesktop-Cross/tools/ImportData/ImportLidar.html
     ImportVectorFiles: /SuperMap-iDesktop-Cross/tools/ImportData/ImportVectorFiles.html
     ImportFolder: /SuperMap-iDesktop-Cross/tools/ImportData/ImportFolder.html
-  Output:
-    OutputVector: /SuperMap-iDesktop-Cross/tools/ExportData/ExportVectorData.html
-    OutputRaster: /SuperMap-iDesktop-Cross/tools/ExportData/ExportRasterData.html
   DataConvert:
+    ConvertPointLinePolygon: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertPointLinePolygon.html
+    ConvertAttributeSpatial: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertAttributeSpatial.html
+    ConvertNetworkData: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertNetworkData.html
     ConvertCADSimple: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertCADSimple.html
     Convert2D3D: /SuperMap-iDesktop-Cross/tools/ConvertDataType/Convert2D3D.html
+  DataProcessing:
+    Datafuse: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Datafuse.html
+    Integrate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Integrate.html
+    Attributeupdate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Attributeupdate.html
   DataAnalyst:
     BufferTheory: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferTheory.html
     SingleBuffer: /SuperMap-iDesktop-Cross/tools/DataAnalyst/SingleBuffer.html
