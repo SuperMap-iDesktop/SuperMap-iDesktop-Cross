@@ -181,11 +181,33 @@ tools:
     ConvertCADSimple: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertCADSimple.html
     Convert2D3D: /SuperMap-iDesktop-Cross/tools/ConvertDataType/Convert2D3D.html
   DataProcessing:
-    Datafuse: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Datafuse.html
-    Integrate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Integrate.html
-    Attributeupdate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Attributeupdate.html
+    VectorProcessing:
+      Datafuse: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Datafuse.html
+      Integrate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Integrate.html
+      Attributeupdate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Attributeupdate.html
+    RasterProcessing:
+      RasterResample: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/RasterResample.html
+      CombineBand: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/CombineBand.html
+      RasterMathAnalyst: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/RasterMathAnalyst.html
+      DataUpdate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/DataUpdate.html
+      RasterReclass: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/RasterReclass.html
+      RasterSlice: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/RasterSlice.html
   DataAnalyst:
-    BufferTheory: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferTheory.html
-    SingleBuffer: /SuperMap-iDesktop-Cross/tools/DataAnalyst/SingleBuffer.html
-    BufferAnalyst_Example: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferAnalyst_Example.html
-    FindRasterVaule: /SuperMap-iDesktop-Cross/tools/DataAnalyst/FindRasterVaule.html
+    Overlayanalyst:
+      OverlapClip: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapClip.html
+      OverlapuUnion: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapuUnion.html
+      OverlapuErase: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapuErase.html
+      OverlapuIdentity: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapuIdentity.html
+      OverlapIntersect: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapIntersect.html
+      OverlapuUpdate: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapuUpdate.html
+      OverlapXOR: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapXOR.html
+    ProximityAnalyst:
+      AboutThiessenPolygon: /SuperMap-iDesktop-Cross/tools/DataAnalyst/AboutThiessenPolygon.html
+      ThiessenPolygonOperation: /SuperMap-iDesktop-Cross/tools/DataAnalyst/ThiessenPolygonOperation.html
+      AboutDistanceMeasure: /SuperMap-iDesktop-Cross/tools/DataAnalyst/AboutDistanceMeasure.html
+      DistanceMeasureOperation: /SuperMap-iDesktop-Cross/tools/DataAnalyst/DistanceMeasureOperation.html
+    BufferAnalyst:
+      BufferTheory: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferTheory.html
+      SingleBuffer: /SuperMap-iDesktop-Cross/tools/DataAnalyst/SingleBuffer.html
+      BufferAnalyst_Example: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferAnalyst_Example.html
+      FindRasterVaule: /SuperMap-iDesktop-Cross/tools/DataAnalyst/FindRasterVaule.html
