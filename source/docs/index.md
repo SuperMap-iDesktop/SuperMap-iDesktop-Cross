@@ -26,8 +26,6 @@ title: SuperMap iDesktop Cross 9D 产品介绍
 
 -   **数据集管理**：支持数据集进行新建、复制、关闭、删除等操作。
 
- ![](img/Product1.png)
-
 
 ### 数据转换
 

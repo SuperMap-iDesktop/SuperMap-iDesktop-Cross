@@ -23,13 +23,14 @@ docs:
       EncodeType: /SuperMap-iDesktop-Cross/docs/DataManage/EncodeType.html
       PyramidManage: /SuperMap-iDesktop-Cross/docs/DataManage/PyramidManage.html
       SpatialIndexManage: /SuperMap-iDesktop-Cross/docs/DataManage/SpatialIndexManage.html
+      DatasetProperties: /SuperMap-iDesktop-Cross/docs/DataManage/DatasetProperties.html
     Objects:
       BasicOpention: /SuperMap-iDesktop-Cross/docs/DataManage/ObjectEdit.html
-      AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataManage/ObjectDraw.html
-      Point: /SuperMap-iDesktop-Cross/docs/DataManage/Point.html
-      DrawCurve: /SuperMap-iDesktop-Cross/docs/DataManage/DrawCurve.html
-      DrawQuadRangle: /SuperMap-iDesktop-Cross/docs/DataManage//DrawQuadRangle.html
-      Text: /SuperMap-iDesktop-Cross/docs/DataManage/Text.html
+      AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/AboutCreateGeometry.html
+      Point: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Point.html
+      DrawCurve: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawCurve.html
+      DrawQuadRangle: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawQuadRangle.html
+      Text: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Text.html
     EdittingGeometry:
       PolygonEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/PolygonEdit.html
       LineEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/LineEdit.html
@@ -160,20 +161,6 @@ docs:
 tools:
   ToolsBox:
     Tool: /SuperMap-iDesktop-Cross/tools/index.html
-  Import:
-    ImportData: /SuperMap-iDesktop-Cross/tools/ImportData/ImportData.html
-    GeneraParameters: /SuperMap-iDesktop-Cross/tools/ImportData/GeneraParameters.html
-    ImportAutoCAD: /SuperMap-iDesktop-Cross/tools/ImportData/ImportAutoCAD.html
-    ImportArcGIS: /SuperMap-iDesktop-Cross/tools/ImportData/ImportArcGIS.html
-    ImportMapGIS: /SuperMap-iDesktop-Cross/tools/ImportData/ImportMapGIS.html
-    ImportMapInfo: /SuperMap-iDesktop-Cross/tools/ImportData/ImportMapInfo.html
-    ImportTable: /SuperMap-iDesktop-Cross/tools/ImportData/ImportTable.html
-    ImportIMG: /SuperMap-iDesktop-Cross/tools/ImportData/ImportIMG.html
-    ImportModel: /SuperMap-iDesktop-Cross/tools/ImportData/ImportModel.html
-    ImportKML: /SuperMap-iDesktop-Cross/tools/ImportData/ImportKML.html
-    ImportLidar: /SuperMap-iDesktop-Cross/tools/ImportData/ImportLidar.html
-    ImportVectorFiles: /SuperMap-iDesktop-Cross/tools/ImportData/ImportVectorFiles.html
-    ImportFolder: /SuperMap-iDesktop-Cross/tools/ImportData/ImportFolder.html
   DataAnalyst:
     BufferTheory: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferTheory.html
     SingleBuffer: /SuperMap-iDesktop-Cross/tools/DataAnalyst/SingleBuffer.html
