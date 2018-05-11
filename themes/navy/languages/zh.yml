@@ -208,6 +208,7 @@ sidebar:
     DataProcessing: 数据处理
     Datafuse: 融合
     Integrate: 整合
+    Attributeupdate: 属性更新
     DataAnalyst: 数据分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析

@@ -183,6 +183,7 @@ tools:
   DataProcessing:
     Datafuse: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Datafuse.html
     Integrate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Integrate.html
+    Attributeupdate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Attributeupdate.html
   DataAnalyst:
     BufferTheory: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferTheory.html
     SingleBuffer: /SuperMap-iDesktop-Cross/tools/DataAnalyst/SingleBuffer.html
