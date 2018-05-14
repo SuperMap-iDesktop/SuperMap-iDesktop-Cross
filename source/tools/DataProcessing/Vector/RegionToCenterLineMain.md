@@ -12,7 +12,7 @@ title: 面主干中心线
  2. 在源数据处设置需提取主干中心线的面数据集，并设置结果数据集。
  3. 单击“执行”按钮，即可提取面数据的主干中心线，结果如下图所示：  
 
-  ![](img/RegionToCenterLine.png)
+  ![](img/RegionToCenterLineMain.png)
 
 
 ### 相关主题
