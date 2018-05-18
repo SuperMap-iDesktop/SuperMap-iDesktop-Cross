@@ -22,7 +22,7 @@ title: 提取指定等值线
  4. 设置提取等值线的公共参数，包括基准值、等值距、重采样系数、光滑方法、光滑系数，公共参数的设置请参见[提取等值线/面](DriveContour.html)页面。
  5. 设置好结果数据集之后，单击“执行”按钮，即可执行提取指定等值线操作，结果如下图所示：  
 
-  ![](img/DriveContourAll.png)
+  ![](img/DriveContourSpecific.png)
 
 ### 相关主题
 
