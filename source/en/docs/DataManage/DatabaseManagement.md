@@ -15,8 +15,8 @@ Three ways are provided for opening a datasource:
 2. Navigate to the datasource you want to open then select it and Click "Open".
   
 -  **Note**: The opened datasource could be either a *.udb or a image file or an external vector file.
--  The supportive image formats are *sit, *.bmp, *.jpg, *.jpeg, *.*.png, *.tif, *.tiff, *.img, *.sci, *.gif, *.gci, *.sct, *.xml, *.ecw, *.sid, *.bil, *.jp2, *.j2k, etc.. When you open an image data file, a datasource node with the same name with the image data file will be added to the Datasource node in Workspace Manager and the image data file will be added to the newly created datasource as an image dataset.  
--  The supportive formats of external vector files are *.shp, *.mif, *.tab, *.dwg, *.dxf, *.dgn, *.kml, *.kmz, *.gml, *.wal, *.wan, *.wap, *.wat, *.csv, *.e00, etc.. When opening an external vector file, a datasource with the same name with the vector file will be built in your workspace, and the file will be added into the datasource as a CAD dataset.
+-  The supportive image formats are *sit, *.bmp, *.jpg, *.jpeg, *.*.png, *.tif, *.tiff, *.img, *.sci, *.gif, *.gci, *.sct, *.xml, *.ecw, *.sid, *.bil, *.jp2, *.j2k, *.egc, etc.. When you open an image data file, a datasource node with the same name with the image data file will be added to the Datasource node in Workspace Manager and the image data file will be added to the newly created datasource as an image dataset.  
+-  The supportive formats of external vector files are *.shp, *.sde, *.mif, *.tab, *.dwg, *.dxf, *.dcf, *.dgn, *.kml, *.kmz, *.gml, *.wal, *.wan, *.wap, *.wat, *.csv, *.e00, *.xlsx, etc.. When opening an external vector file, a datasource with the same name with the vector file will be built in your workspace, and the file will be added into the datasource as a CAD dataset.
  
 
    

@@ -184,7 +184,19 @@ tools:
     VectorProcessing:
       Datafuse: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Datafuse.html
       Integrate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Integrate.html
+      AggregatePoints: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/AggregatePoints.html
+      RarefyPoints: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/RarefyPoints.html
+      VectorResample: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/VectorResample.html
+      DatasetSmooth: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/DatasetSmooth.html
+      EdgeMatch: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/EdgeMatch.html
       Attributeupdate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Attributeupdate.html
+      ExtractBorderLine: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/ExtractBorderLine.html
+      DualLineToCenterLine: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/DualLineToCenterLine.html
+      RegionToCenterLine: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/RegionToCenterLine.html
+      RegionToCenterLineMain: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/RegionToCenterLineMain.html
+      AddtoList: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/AddtoList.html
+      AddtoRow: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/AddtoRow.html
+      UnionPieces: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/UnionPieces.html
     RasterProcessing:
       RasterResample: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/RasterResample.html
       CombineBand: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/CombineBand.html
@@ -192,6 +204,16 @@ tools:
       DataUpdate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/DataUpdate.html
       RasterReclass: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/RasterReclass.html
       RasterSlice: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/RasterSlice.html
+  SurfaceAnalyst:
+    DriveContourRegion:
+      DriveContour: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/DriveContour.html
+      DriveContourAll: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/DriveContourAll.html
+      DriveContourSpecific: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/DriveContourSpecific.html
+      ExtractIsoline: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/ExtractIsoline.html
+      DriveRegionAll: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/DriveRegionAll.html
+      DriveRegionSpecific: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/DriveRegionSpecific.html
+    TerrainCalculation:
+      CutFill: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/CutFill.html
   DataAnalyst:
     Overlayanalyst:
       OverlapClip: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapClip.html
