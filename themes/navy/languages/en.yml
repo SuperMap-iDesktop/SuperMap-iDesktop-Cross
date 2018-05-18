@@ -79,7 +79,7 @@ sidebar:
     MapSearch: Query-Location
     MapTemple: Map templates
     OutputMap: Output maps
-    BigdataManagementDisplay: Management and display of big data
+    BigdataManagementDisplay: Manage and display big data
     BigDataDisplay: Dispaly of management
     HeatMap: Heat maps
     GridAggregationMap: Grid aggregation maps
