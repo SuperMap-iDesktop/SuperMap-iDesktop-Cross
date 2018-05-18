@@ -209,6 +209,19 @@ sidebar:
     VectorProcessing: 矢量数据集
     Datafuse: 融合
     Integrate: 整合
+    AggregatePoints: 点聚类
+    RarefyPoints: 点抽稀
+    VectorResample: 矢量重采样
+    DatasetSmooth: 线面光滑
+    EdgeMatch: 图幅接边
+    Attributeupdate: 属性更新
+    ExtractBorderLine: 提取边界线
+    DualLineToCenterLine: 双线提取中心线
+    RegionToCenterLine: 面提取中心线
+    RegionToCenterLineMain: 面主干中心线
+    AddtoList: 数据集追加列
+    AddtoRow: 数据集追加行
+    UnionPieces: 碎多边形合并
     RasterProcessing: 栅格数据集
     RasterResample: 重采样
     CombineBand: 影像合成
@@ -217,6 +230,16 @@ sidebar:
     RasterReclass: 重分级
     RasterSlice: 分割
     Attributeupdate: 属性更新
+    SurfaceAnalyst: 表面分析
+    DriveContourRegion: 提取等值线/面
+    DriveContour: 提取等值线/面概述
+    DriveContourAll:  提取所有等值线
+    DriveContourSpecific: 提取指定等值线
+    ExtractIsoline: 点数据提取等值线
+    DriveRegionAll: 提取所有等值面
+    DriveRegionSpecific: 提取指定等值面
+    TerrainCalculation: 地形计算
+    CutFill: 填挖方
     DataAnalyst: 数据分析
     Overlayanalyst: 叠加分析
     OverlapClip: 裁剪
