@@ -253,6 +253,8 @@ sidebar:
     ThiessenPolygonOperation: 泰森多边形
     AboutDistanceMeasure: 距离计算原理
     DistanceMeasureOperation: 距离计算
+    VectortoRasterConvert: 矢栅转换
+    VectortoRaster: 矢量栅格化
     BufferAnalyst: 缓冲区分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析

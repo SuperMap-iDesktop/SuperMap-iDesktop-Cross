@@ -214,6 +214,8 @@ tools:
       DriveRegionSpecific: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/DriveRegionSpecific.html
     TerrainCalculation:
       CutFill: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/CutFill.html
+    VectortoRasterConvert:
+      VectortoRaster: /SuperMap-iDesktop-Cross/tools/VectorRasterConvert/VectortoRaster.html
   DataAnalyst:
     Overlayanalyst:
       OverlapClip: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapClip.html
