@@ -216,6 +216,12 @@ tools:
       CutFill: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/CutFill.html
     VectortoRasterConvert:
       VectortoRaster: /SuperMap-iDesktop-Cross/tools/VectorRasterConvert/VectortoRaster.html
+  RasterStatistic:
+    BasicStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/BasicStatistic.html
+    CommonStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/CommonStatistic.html
+    NeighbourStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/NeighbourStatistic.html
+    ZonalStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/ZonalStatistic.html
+    AltitudeStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/AltitudeStatistic.html
   DataAnalyst:
     Overlayanalyst:
       OverlapClip: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapClip.html

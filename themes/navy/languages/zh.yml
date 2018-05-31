@@ -239,6 +239,12 @@ sidebar:
     DriveRegionSpecific: 提取指定等值面
     TerrainCalculation: 地形计算
     CutFill: 填挖方
+    RasterStatistic: 栅格统计
+    BasicStatistic: 基本统计
+    CommonStatistic: 常用统计
+    NeighbourStatistic: 邻域统计
+    ZonalStatistic: 区域统计
+    AltitudeStatistic: 高程统计
     DataAnalyst: 数据分析
     Overlayanalyst: 叠加分析
     OverlapClip: 裁剪
