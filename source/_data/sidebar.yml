@@ -214,8 +214,23 @@ tools:
       DriveRegionSpecific: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/DriveRegionSpecific.html
     TerrainCalculation:
       CutFill: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/CutFill.html
-    VectortoRasterConvert:
-      VectortoRaster: /SuperMap-iDesktop-Cross/tools/VectorRasterConvert/VectortoRaster.html
+      CutFillRegion: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/CutFillRegion.html
+      InverseCutFill: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/InverseCutFill.html
+      FindExtreme: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/FindExtreme.html
+      CalculateCurvature: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/CalculateCurvature.html
+      Slope: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/Slope.html
+      Aspect: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/Aspect.html
+      Profile: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/Profile.html
+      OrthoImage: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/OrthoImage.html
+      HillShade: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/HillShade.html 
+  TerrainBuilders:
+    AboutTerrainBuilder: /SuperMap-iDesktop-Cross/tools/TerrainBuilder/AboutTerrainBuilder.html 
+    TerrainBuilder: /SuperMap-iDesktop-Cross/tools/TerrainBuilder/TerrainBuilder.html
+    TerrainBuilderLake: /SuperMap-iDesktop-Cross/tools/TerrainBuilder/TerrainBuilderLake.html
+  VectortoRasterConvert:
+    VectortoRaster: /SuperMap-iDesktop-Cross/tools/VectorRasterConvert/VectortoRaster.html
+    RasterToVector: /SuperMap-iDesktop-Cross/tools/VectorRasterConvert/RasterToVector.html
+    ThinRaster: /SuperMap-iDesktop-Cross/tools/VectorRasterConvert/ThinRaster.html
   RasterStatistic:
     BasicStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/BasicStatistic.html
     CommonStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/CommonStatistic.html

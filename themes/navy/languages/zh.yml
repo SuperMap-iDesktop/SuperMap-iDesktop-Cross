@@ -180,8 +180,8 @@ sidebar:
     901News: Cross 901 新特性
     9DNews: Cross 9D 新特性
     811News: Cross 8C(2017) 新特性
-	
-	
+    
+    
   tools:
     ToolsBox: 工具箱
     Tool: 工具箱概述
@@ -229,6 +229,8 @@ sidebar:
     DataUpdate: 数据更新
     RasterReclass: 重分级
     RasterSlice: 分割
+    RasterAnalyst: 栅格分析
+    AnalystEnvironment: 分析环境设置
     SurfaceAnalyst: 表面分析
     DriveContourRegion: 提取等值线/面
     DriveContour: 提取等值线/面概述
@@ -239,6 +241,23 @@ sidebar:
     DriveRegionSpecific: 提取指定等值面
     TerrainCalculation: 地形计算
     CutFill: 填挖方
+    CutFillRegion: 面填挖方
+    InverseCutFill: 反算填挖方
+    FindExtreme: 查找极值
+    CalculateCurvature: DEM曲率计算
+    Slope: 坡度分析
+    Aspect: 坡向分析
+    Profile: 剖面分析
+    OrthoImage: 正射三维影像
+    HillShade: 三维晕渲图
+    TerrainBuilders: 构建DEM
+    AboutTerrainBuilder: 构建DEM概述
+    TerrainBuilder: 构建DEM
+    TerrainBuilderLake: DEM挖湖
+    VectortoRasterConvert: 矢栅转换
+    VectortoRaster: 矢量栅格化
+    RasterToVector: 栅格矢量化
+    ThinRaster: 栅格细化
     RasterStatistic: 栅格统计
     BasicStatistic: 基本统计
     CommonStatistic: 常用统计
@@ -259,8 +278,6 @@ sidebar:
     ThiessenPolygonOperation: 泰森多边形
     AboutDistanceMeasure: 距离计算原理
     DistanceMeasureOperation: 距离计算
-    VectortoRasterConvert: 矢栅转换
-    VectortoRaster: 矢量栅格化
     BufferAnalyst: 缓冲区分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析
