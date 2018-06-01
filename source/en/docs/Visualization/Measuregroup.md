@@ -8,7 +8,7 @@ title: Map Measure
 
 ### Distance Measure
 
-　　1.  Click "Map" and on the group "Operations" click "Map Measure", then select "Distance Measure" from the list.
+　　1.  Click "Maps" and on the group "Operations" click "Map Measure", then select "Distance" from the list.
 
 　　2.  When the shape of the mouse pointer turn to a cross wire, click the left key of it at the starting point and then move the mouse, meanwhile there is a constantly changing line appearing in the screen with the distance value.
 
@@ -22,6 +22,13 @@ title: Map Measure
 
 　　![](img/distanceMeasure.png)
 
+　**Geodesic Distance**  
+  
+　　Geodesic Distance is the shortest curve between two points on the Earth's surface. A geodesic can be used to measure the distances of airlines. The measurements cross the eastern and the western hemispheres are allowed.
+　　When the distance between two points on Earth's surface is small, the geodesic curve distance is close to the straight line distance, when the distance between two points on the Earth's surface is great, the results of two measurements are different. 
+　　Basic Step: The steps of performing Geodesic Distance and performing Distance measure are the same.
+   
+　　![](img/GeodesicMeasure.png)
 
 ### Area Measure
 
@@ -39,7 +46,7 @@ title: Map Measure
 
 ### Angle Measurement
 
-　　1.  In the "Map" menu and on the group "Operations" click "Map Measure", then select "Angle Measure" from the list.
+　　1.  In the "Maps" menu and on the group "Operation" click "Map Measure", then select "Angle Measure" from the list.
 
 　　2.  When the shape of the mouse pointer turn to a cross wire, click to specify the start point of one edge, a dotted line pointing to true north shows up. Move the mouse pointer to form the edge, the included angle between the dotted line pointing to true north and the edge, also called the azimuth of the edge, is displayed.
 
@@ -53,48 +60,48 @@ title: Map Measure
 
 　　![](img/angleMeasure.png)
   
-### 地表距离   
+### Surface Distance	   
   
-地表距离量算是用来量算栅格数据中的表面距离，即量算在栅格数据集拟合的三维曲面上沿指定的线段或折线段的曲面距离。地表距离所量算的距离是曲面上的，因而要比平面上的值要大。
+Calculate the surface distances on raster data, that is to calculate the curved surface distance on the fitting 3D curved surface along the given line segment or polyline. The distance measured is on the curved surface, so the value is larger than that on the plane.
 
-操作步骤  
-1. 在地图窗口中打开要进行地表距离量算的栅格数据集。注意：当前工作空间中，如果不存在打开的栅格数据时，该功能不能使用。   
-2. 在“**地图**”选项卡的“**操作**”组中，单击“**地图量算**”下拉按钮选择“**地表距离**”，则当前地图窗口的操作状态变为地表距离量算状态。  
-3. 在地图窗口中待量算距离的起点位置单击鼠标左键，确定量算距离的起点；移动鼠标，屏幕上会出现连接鼠标当前点和起点的一条长度不断变化的临时线段，同时还显示了这条线段的距离值。  
-4. 量算过程中，地图窗口会同时显示两个结果数值：当前鼠标点与前一点之间的线段长度和当前鼠标点与量算距离的起点间折线段的总长度。在鼠标单击第二个点之前，地图窗口中显示的这两个数值相等；当鼠标单击第二个点后，移动鼠标，地图窗口中显示的两个数值发生变化，当前鼠标点与前一点之间的线段长度始终小于当前鼠标点与起点间折线段的总长度。  
-5. 用户可以单击一系列的点来连续进行距离量算，不仅可以获得当前两点间的距离，还可以获得总距离。   
-6. 单击鼠标右键即可结束地表距离量算，同时整条折线段的相应位置出现各条线段的数值注记，输出窗口中也显示出整条折线段的总距离值。  
-7. 单击“**操作**”组中的“**清除**”项，即可清除当前地图窗口中临时折线和长度量算的数值注记。此外，按 `Esc` 键也可实现“清除”功能。  
-8. 应用程序会在地图窗口和输出窗口显示分析的表面距离大小。 
+Basic Steps  
+1. Open your raster dataset. Note: The function is not available unless there is raster data opened in the current workspace.
+2. In the "Maps" menu and on the group "Operation" click "Map Measure", then select "Surface Distance" from the list.
+3. Left click your mouse in an appropriate position then move your mouse, and you will see a temporary line with its length.
+4. During the procedure of measurement, there are two result numbers in the window: One is the distance between the last point and the point where your mouse is at, and another one is the distance between the original point and the point where your mouse is at. 
+5. You can click a series of points to measure the distances between them and the sum distance.
+6. Right click your mouse to complete the operation, at the same time the sum distance of whole polyline are output in the Output Window.
+7. Click "Clear" in the Operation group to clear all temporary lines and lengths in the current window. Also you can click "Esc" to perform the "Clear" feature.
+8. You can view the surface distances in the Output Window.
  
   
 　![](img/SurfaceDistance.png)  
   
-### 地表面积  
+### Surface Area  
   
-地表面积用来量算栅格表面面积，即量算所绘临时多边形区域内的栅格数据集拟合的曲面的总的表面面积。  
+Calculate the surface area of raster data. It calculates the total surface area of the simulated curved surface drawn in a raster dataset.
     
-操作步骤  
-1. 在地图窗口中打开要进行地表面积量算的栅格数据集。注意：当前工作空间中，如果不存在打开的栅格数据时，该功能不能使用。   
-2. 在“**地图**”选项卡的“**操作**”组中，单击“**地图量算**”下拉按钮选择“**地表面积**”，则当前地图窗口的操作状态变为地表距离量算状态。  
-3. 在当前地图窗口中绘制一个多边形，单击鼠标右键，完成操作。应用程序会在地图窗口以及输出窗口显示分析的临时多边形栅格表面的面积大小。默认的面积单位为平方米。按住 Esc 键可以清除地图窗口中绘制的临时多边形。   
-4. 应用程序会在地图窗口和输出窗口显示分析的地表面积大小。 
+Basic Steps  
+1. Open your raster dataset. Note: The function is not available unless there is raster data opened in the current workspace.
+2. In the "Maps" menu and on the group "Operation" click "Map Measure", then select "Surface Area" from the list.
+3. Draw a temporary polygon then right click your mouse to finish the drawing operation. Meanwhile, the area of polygon you drew is shown in the map window and Output Window. The default area unit is square meter. You can press Esc to clear all results in the map window.
+4. You can view the surface areas in the Output Window.
 
   
 　![](img/SurfaceArea.png)    
   
-### 地表体积  
+### Surface Volume  
   
-地表体积用来量算栅格地表体积，即量算所选多边形区域内的栅格数据集拟合的三维曲面与一个基准平面之间的空间上的体积。
+Calculate the surface volume of space corresponding to a selected polygon region. The space is between a 3D curved surface simulated by grid dataset and a base plane.
   
     
-操作步骤  
-1. 在地图窗口中打开要进行地表距离量算的栅格数据集。注意：当前工作空间中，如果不存在打开的栅格数据时，该功能不能使用。   
-2. 在“**地图**”选项卡的“**操作**”组中，单击“**地图量算**”下拉按钮选择“**地表体积**”，则当前地图窗口的操作状态变为地表距离量算状态。  
-3. 在当前地图窗口中绘制一个多边形，单击鼠标右键，此时弹出“表面体积参数设置”对话框。 在对话框中输入基准高程。其中基准高程为量算表面体积的起始高度。 单击“计算”按钮，计算临时绘制的多边形覆盖的体积。 
+Basic Steps  
+1. Open your raster dataset. Note: The function is not available unless there is raster data opened in the current workspace.  
+2. In the "Maps" menu and on the group "Operation" click "Map Measure", then select "Surface Volume" from the list.
+3. Draw a polygon in the map window then right click your mouse, and the dialog box "Surface Volume Parameter Settings" appears. Enter the height datum as the original height of the volume you want to measure, and click "Calculate" button.
     
 　![](img/SurfaceVolume.png)      
-4. 应用程序会在地图窗口和输出窗口显示分析的地表体积大小，默认的体积单位为立方米。
+4. The result will be output in the map window and output window, and the default unit is cubic meter.
 
 
 

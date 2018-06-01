@@ -1,57 +1,57 @@
 ---
-title: 缓冲区分析应用实例
+title: Sample Application on Buffer Analysis
 ---
 
 
-### 主题：青岛某区域大型商场选址
+### Theme: Select site for a shopping mall
 
-　　在城市中，如何为大型商场找到一个交通便利、停车方便、人员密集的商业地段是开发商最为关注的问题。因此，商场选址需对多方面因素进行分析，选出最适宜地址，获得最大的经济效益。本实例选址的目标和标准如下：
+　　Traffic, parking, guests, etc are concerned factors for selecting an optimal site for a shopping mall. In this sample, multiple factors are considered in using buffer analysis for site selection. Site selection criterion:
 
--   保证商场在居民区100m范围内，便于居民步行能达到商场；
--   离城市交通线路50m以内，保证商场的通达性；
--   距停车场100m范围内，便于顾客停车；
--   距离已存在商场500m范围外，减少竞争压力。
+-   100m within residences; 
+-   50m within main roads;
+-   100m within the parking lots; 
+-   No other shopping mall within 500m.
 
-### 数据准备
+### Data Preparation
 
--   主要居民区面数据集；
--   主要交通道路线数据；
--   停车场点数据集；
--   已有大型商场点数据集。
+-   Region dataset for residence; 
+-   Line dataset for transportation;
+-   Point dataset for parking lots;
+-   Point dataset for shopping malls.
 
-### 操作步骤
+### Basic Steps
 
-1\.  以居民区数据为中心，建立距离为100m的缓冲区，如下图所示：
+1\.  Create a buffer for the residences with a 100m distance, as shown below: 
 
    ![](img/BufferApplication1.png)
 
-   图1：居民区缓冲分析
+   Figure 1: Buffer for Residences
 
 
-2\.  以主要交通道路为中心，建立50m的缓冲区，如下图所示：
+2\.  Create a buffer for the main roads with a 50m distance, as shown below: 
 
   ![](img/BufferApplication2.png)
 
-  图2：主要道路缓冲分析
+  Figure 2: Buffer for Main Roads.
 
 
-3\.  以停车场和已存在的大型商场点数据为中心，分别建立100m和500m缓冲区，得到结果如下图所示：
+3\.  Create buffers for the parking lots with a 100m distance and the shopping malls with a 500m distance, as shown below: 
   
   ![](img/BufferApplication3.png)
 
-  图3：停车场和已有商场缓冲分析
+  Figure 3: Buffer for Parking Lots and Shopping Malls
 
 
-4\.  将居民区缓冲区、道路缓冲区、停车场缓冲区进行叠加分析求交，再将求交的结果与已存在商场缓冲区做擦除，满足以上条件的区域即适合建大型商场，下图中的绿色区域适宜建造大型商场。
+4\.  Overlay the buffers for residences, main roads and parking lots created above and get an intersection. Perform Erase on the intersection and the buffer for shopping malls, and the result area is the target area fit for building a shopping mall, as is highlighted in green. 
 
    ![](img/BufferApplication4.png)
 
-   图4：适宜建造商城区域
+   Figure 4: Result Area for New Shopping Mall
 
 
-### ![](img/seealso.png) 相关主题
+### ![](img/seealso.png) Related Topics
 
-![](img/smalltitle.png) [缓冲区分析原理](BufferTheory.html)
+![](img/smalltitle.png) [Theory on buffer analysis](BufferTheory.html)
 
-![](img/smalltitle.png) [生成单重缓冲区](SingleBuffer.html)
+![](img/smalltitle.png) [Generate single buffer](SingleBuffer.html)
 

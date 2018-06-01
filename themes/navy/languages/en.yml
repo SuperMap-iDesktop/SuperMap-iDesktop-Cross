@@ -35,7 +35,7 @@ sidebar:
     License: License configuration
     SuperMap Cross: Product introduce
     SuperMapDataStructure: Data organization structure
-    #Pyramid: Pyramiding
+    Pyramid: Pyramiding
     GeoFormates: Data conversion
     DataManage: Create and manage data
     ManageData: Manage data
@@ -46,7 +46,7 @@ sidebar:
     EncodeType: Encoding of datasets
     PyramidManage: Manage image pyramids
     SpatialIndexManage: Manage spatial indexes
-    DatasetProperties: View attribute infromation of datasets
+    #DatasetProperties: View attribute infromation of datasets
     Objects: Object operation
     BasicOpention: Object drawing
     AboutCreateGeometry: Object Drawing Overview
@@ -184,8 +184,84 @@ sidebar:
   tools:
     ToolsBox: Tool box
     Tool: Overview
+    Import: 数据导入
+    ImportData: 数据导入概述
+    GeneraParameters: 通用参数说明
+    ImportAutoCAD: 导入CAD数据
+    ImportArcGIS: 导入ArcGIS数据
+    ImportMapGIS: 导入MapGIS数据
+    ImportMapInfo: 导入MapInfo数据
+    ImportTable: 导入表格数据
+    ImportIMG: 导入影像栅格数据
+    ImportModel: 导入三维模型数据
+    ImportKML: 导入Lidar数据
+    ImportLidar: 导入Google数据
+    ImportVectorFiles: 导入矢量文件
+    ImportFolder: 导入文件夹
+    DataConvert: 类型转换
+    ConvertPointLinePolygon: 点线面类型互转
+    ConvertAttributeSpatial: 属性数据与空间数据互转
+    ConvertNetworkData: 网络数据转换
+    ConvertCADSimple: 复合数据与简单数据互转
+    Convert2D3D: 二维数据与三维数据互转
+    DataProcessing: 数据处理
+    VectorProcessing: 矢量数据集
+    Datafuse: 融合
+    Integrate: 整合
+    AggregatePoints: 点聚类
+    RarefyPoints: 点抽稀
+    VectorResample: 矢量重采样
+    DatasetSmooth: 线面光滑
+    EdgeMatch: 图幅接边
+    Attributeupdate: 属性更新
+    ExtractBorderLine: 提取边界线
+    DualLineToCenterLine: 双线提取中心线
+    RegionToCenterLine: 面提取中心线
+    RegionToCenterLineMain: 面主干中心线
+    AddtoList: 数据集追加列
+    AddtoRow: 数据集追加行
+    UnionPieces: 碎多边形合并
+    RasterProcessing: 栅格数据集
+    RasterResample: 重采样
+    CombineBand: 影像合成
+    RasterMathAnalyst: 代数运算
+    DataUpdate: 数据更新
+    RasterReclass: 重分级
+    RasterSlice: 分割
+    SurfaceAnalyst: 表面分析
+    DriveContourRegion: 提取等值线/面
+    DriveContour: 提取等值线/面概述
+    DriveContourAll:  提取所有等值线
+    DriveContourSpecific: 提取指定等值线
+    ExtractIsoline: 点数据提取等值线
+    DriveRegionAll: 提取所有等值面
+    DriveRegionSpecific: 提取指定等值面
+    TerrainCalculation: 地形计算
+    CutFill: 填挖方
+    RasterStatistic: 栅格统计
+    BasicStatistic: 基本统计
+    CommonStatistic: 常用统计
+    NeighbourStatistic: 邻域统计
+    ZonalStatistic: 区域统计
+    AltitudeStatistic: 高程统计
     DataAnalyst: Data analysis
+    Overlayanalyst: 叠加分析
+    OverlapClip: 裁剪
+    OverlapuUnion: 合并
+    OverlapuErase: 擦除
+    OverlapuIdentity: 同一
+    OverlapIntersect: 求交
+    OverlapuUpdate: 更新
+    OverlapXOR: 对称差
+    ProximityAnalyst: Proximity analysis
+    AboutThiessenPolygon: Thiessen Polygon Theory
+    ThiessenPolygonOperation: 泰森多边形
+    AboutDistanceMeasure: Theory on Distance Calculation
+    DistanceMeasureOperation: Distance Calculation
+    VectortoRasterConvert: 矢栅转换
+    VectortoRaster: 矢量栅格化
+    BufferAnalyst: Buffer analysis
     BufferTheory: Theory of buffer analysis
-    SingleBuffer: Single-buffer analysis
+    SingleBuffer: 单重缓冲区分析
     BufferAnalyst_Example: Instance on buffer analysis
-    FindRasterVaule: Raster query
+    FindRasterVaule: 栅格查询
