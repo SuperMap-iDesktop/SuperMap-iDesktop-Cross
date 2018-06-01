@@ -11,8 +11,8 @@ docs:
     SuperMap Cross: /SuperMap-iDesktop-Cross/docs/index.html
     License: /SuperMap-iDesktop-Cross/docs/Install/License.html
   getting_started:
-    #SuperMapDataStructure: /SuperMap-iDesktop-Cross/docs/Basic/SuperMapDataStructure.html
-    #Pyramid: /SuperMap-iDesktop-Cross/docs/Basic/Pyramid.html
+    SuperMapDataStructure: /SuperMap-iDesktop-Cross/docs/Basic/SuperMapDataStructure.html
+    Pyramid: /SuperMap-iDesktop-Cross/docs/Basic/Pyramid.html
     GeoFormates: /SuperMap-iDesktop-Cross/docs/Basic/GeoFormates.html
   DataManage:
     ManageData:
@@ -23,14 +23,13 @@ docs:
       EncodeType: /SuperMap-iDesktop-Cross/docs/DataManage/EncodeType.html
       PyramidManage: /SuperMap-iDesktop-Cross/docs/DataManage/PyramidManage.html
       SpatialIndexManage: /SuperMap-iDesktop-Cross/docs/DataManage/SpatialIndexManage.html
-      DatasetProperties: /SuperMap-iDesktop-Cross/docs/DataManage/DatasetProperties.html
     Objects:
       BasicOpention: /SuperMap-iDesktop-Cross/docs/DataManage/ObjectEdit.html
-      AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/AboutCreateGeometry.html
-      Point: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Point.html
-      DrawCurve: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawCurve.html
-      DrawQuadRangle: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/DrawQuadRangle.html
-      Text: /SuperMap-iDesktop-Cross/docs/DataProcess/DataEdit/Text.html
+      AboutCreateGeometry: /SuperMap-iDesktop-Cross/docs/DataManage/ObjectDraw.html
+      Point: /SuperMap-iDesktop-Cross/docs/DataManage/Point.html
+      DrawCurve: /SuperMap-iDesktop-Cross/docs/DataManage/DrawCurve.html
+      DrawQuadRangle: /SuperMap-iDesktop-Cross/docs/DataManage//DrawQuadRangle.html
+      Text: /SuperMap-iDesktop-Cross/docs/DataManage/Text.html
     EdittingGeometry:
       PolygonEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/PolygonEdit.html
       LineEdit: /SuperMap-iDesktop-Cross/docs/DataProcess/EditObjects/LineEdit.html
@@ -161,7 +160,83 @@ docs:
 tools:
   ToolsBox:
     Tool: /SuperMap-iDesktop-Cross/tools/index.html
+  Import:
+    ImportData: /SuperMap-iDesktop-Cross/tools/ImportData/ImportData.html
+    GeneraParameters: /SuperMap-iDesktop-Cross/tools/ImportData/GeneraParameters.html
+    ImportAutoCAD: /SuperMap-iDesktop-Cross/tools/ImportData/ImportAutoCAD.html
+    ImportArcGIS: /SuperMap-iDesktop-Cross/tools/ImportData/ImportArcGIS.html
+    ImportMapGIS: /SuperMap-iDesktop-Cross/tools/ImportData/ImportMapGIS.html
+    ImportMapInfo: /SuperMap-iDesktop-Cross/tools/ImportData/ImportMapInfo.html
+    ImportTable: /SuperMap-iDesktop-Cross/tools/ImportData/ImportTable.html
+    ImportIMG: /SuperMap-iDesktop-Cross/tools/ImportData/ImportIMG.html
+    ImportModel: /SuperMap-iDesktop-Cross/tools/ImportData/ImportModel.html
+    ImportKML: /SuperMap-iDesktop-Cross/tools/ImportData/ImportKML.html
+    ImportLidar: /SuperMap-iDesktop-Cross/tools/ImportData/ImportLidar.html
+    ImportVectorFiles: /SuperMap-iDesktop-Cross/tools/ImportData/ImportVectorFiles.html
+    ImportFolder: /SuperMap-iDesktop-Cross/tools/ImportData/ImportFolder.html
+  DataConvert:
+    ConvertPointLinePolygon: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertPointLinePolygon.html
+    ConvertAttributeSpatial: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertAttributeSpatial.html
+    ConvertNetworkData: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertNetworkData.html
+    ConvertCADSimple: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertCADSimple.html
+    Convert2D3D: /SuperMap-iDesktop-Cross/tools/ConvertDataType/Convert2D3D.html
+  DataProcessing:
+    VectorProcessing:
+      Datafuse: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Datafuse.html
+      Integrate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Integrate.html
+      AggregatePoints: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/AggregatePoints.html
+      RarefyPoints: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/RarefyPoints.html
+      VectorResample: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/VectorResample.html
+      DatasetSmooth: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/DatasetSmooth.html
+      EdgeMatch: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/EdgeMatch.html
+      Attributeupdate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/Attributeupdate.html
+      ExtractBorderLine: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/ExtractBorderLine.html
+      DualLineToCenterLine: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/DualLineToCenterLine.html
+      RegionToCenterLine: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/RegionToCenterLine.html
+      RegionToCenterLineMain: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/RegionToCenterLineMain.html
+      AddtoList: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/AddtoList.html
+      AddtoRow: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/AddtoRow.html
+      UnionPieces: /SuperMap-iDesktop-Cross/tools/DataProcessing/Vector/UnionPieces.html
+    RasterProcessing:
+      RasterResample: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/RasterResample.html
+      CombineBand: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/CombineBand.html
+      RasterMathAnalyst: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/RasterMathAnalyst.html
+      DataUpdate: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/DataUpdate.html
+      RasterReclass: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/RasterReclass.html
+      RasterSlice: /SuperMap-iDesktop-Cross/tools/DataProcessing/Raster/RasterSlice.html
+  SurfaceAnalyst:
+    DriveContourRegion:
+      DriveContour: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/DriveContour.html
+      DriveContourAll: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/DriveContourAll.html
+      DriveContourSpecific: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/DriveContourSpecific.html
+      ExtractIsoline: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/ExtractIsoline.html
+      DriveRegionAll: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/DriveRegionAll.html
+      DriveRegionSpecific: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/DriveRegionSpecific.html
+    TerrainCalculation:
+      CutFill: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/CutFill.html
+    VectortoRasterConvert:
+      VectortoRaster: /SuperMap-iDesktop-Cross/tools/VectorRasterConvert/VectortoRaster.html
+  RasterStatistic:
+    BasicStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/BasicStatistic.html
+    CommonStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/CommonStatistic.html
+    NeighbourStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/NeighbourStatistic.html
+    ZonalStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/ZonalStatistic.html
+    AltitudeStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/AltitudeStatistic.html
   DataAnalyst:
+    Overlayanalyst:
+      OverlapClip: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapClip.html
+      OverlapuUnion: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapuUnion.html
+      OverlapuErase: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapuErase.html
+      OverlapuIdentity: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapuIdentity.html
+      OverlapIntersect: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapIntersect.html
+      OverlapuUpdate: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapuUpdate.html
+      OverlapXOR: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapXOR.html
+    ProximityAnalyst:
+      AboutThiessenPolygon: /SuperMap-iDesktop-Cross/tools/DataAnalyst/AboutThiessenPolygon.html
+      ThiessenPolygonOperation: /SuperMap-iDesktop-Cross/tools/DataAnalyst/ThiessenPolygonOperation.html
+      AboutDistanceMeasure: /SuperMap-iDesktop-Cross/tools/DataAnalyst/AboutDistanceMeasure.html
+      DistanceMeasureOperation: /SuperMap-iDesktop-Cross/tools/DataAnalyst/DistanceMeasureOperation.html
+    BufferAnalyst:
     BufferTheory: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferTheory.html
     SingleBuffer: /SuperMap-iDesktop-Cross/tools/DataAnalyst/SingleBuffer.html
     BufferAnalyst_Example: /SuperMap-iDesktop-Cross/tools/DataAnalyst/BufferAnalyst_Example.html
