@@ -6,7 +6,7 @@ title: Manage Datasources
 
 Three ways are provided for opening a datasource: 
   
-+   Click Cross icon and select "Open", then you can open a file datasource,a database datasource or a web datasource. 
++   Click File and select "Open", then you can open a file datasource,a database datasource or a web datasource. 
 +   In the "Start" tab, on the "Datasource" group, you can click the "file", "Database" or "Web" to open different kind of datasource.
 +    Right-click the "Datasource" node in your workspace and then you can select relative buttons to open different datasources.
    
@@ -41,7 +41,6 @@ No.|Database type|Instance name|Server name|Database name|Account|Max pool size|
 13|MongoDB|x|v|v|v|x|2.4 and above|Supported dataset types include: point, line, region, 3D point, 3D line, 3D region and tabular datasets.  
 14|DMPlus|x|Optional|v|v|x|DM7|A client is required with correct configurations of environment parameters. 
  
- 
 -  **Max Pool Size**: When opening an OraclePlus or PostgreSQL datasource, you can set the max pool size. A pool is used for assigning, managing and releasing connections of databases. Setting max pool size means you can specify how many connections at most can be requested by database, if the real number of requesting is greater than it, the latter requests will be added into a waiting queue. 
 -  **Load data link info**: Provides a load and save the database data source link information to facilitate the user to save and load the open database-type data source information. 
 
@@ -60,7 +59,7 @@ No.|Database type|Instance name|Server name|Database name|Account|Max pool size|
   
 Three kinds of datasources can be produced through three ways:
   
-+   Click Cross icon > "New" and then you can select one kind of datasources you want to create.	
++   Click File > "New" and then you can select one kind of datasources you want to create.	
 +   In the "Start" tab, on the "Datasource" group, you can click "File" drop-down button or "Database" drop-down button to select relative button to create datasources you need.
 +   Right click "Datasource" in the Workspace Manager, then select relative buttons to create datasources you want.
   
@@ -81,7 +80,6 @@ The datasource newly created will be opened in the current workspace.
  ### View properties of your datasource 
 
 Select a datasource then right click, and select "Properties" to open the "Properties" dialog box. Three kinds of property information you can view: "Datasource", "Statistic", "Coordinate System".   
-
     
 +   **Datasource**: Connection path, Engine type, open mode on your datasource are shown, also you can add and modify description of your datasource and change its password.
 +   **Statistic**: All statistics of datasets included in your datasource are shown. Such as "Sum" is total number of datasets. Besides, all supportive types of datasets and corresponding number are listed in the table.

@@ -3,9 +3,7 @@ title: Manage datasets
 ---
 
 　　As a basic unit for geospatial data organization, a dataset is used to store data of the same theme. Currently, SuperMap supports point, line, region, tabular, network, CAD, text, LineM, image/grid datasets.
- 
 　　Manging datasets includes creating, copying, deleting, closing, renaming datasets, as well as sorting datasets, viewing dataset properties, setting encoding for datasets, etc.
-　
 
 ### New a dataset
 
@@ -83,9 +81,7 @@ Use to modify your dataset's name.
 +   **Dataset**: Shows some basic information (name, type, etc.), bound information and detail descriptions of your dataset.
 +   **Coordinate System**: Shows the coordinate system, geographic unit and descriptions of the coordinate system adopted by your dataset. Also, you can re-specify a coordinate system or perform the projection transform. For detail operations, please refer to "Projection Settings" and "Projection Transform".
   
-    
 ### Property parameters of a vector dataset
-
 +   **Vector**: Shows the number of objects, the index type, the charset and some tolerances relative to your dataset. All information is detailed in following contents.
      
 	 **Vector dataset**  

@@ -1,61 +1,61 @@
 ---
-title: SuperMap 数据组织结构
+title: Data Organization Structure in SuperMap
 ---
 
-　　SuperMap iDesktop Cross 的数据组织结构，主要包括工作空间、数据源、数据集、地图和场景。数据组织形式为类似于树状层次结构，一个工作空间包含的数据源集合、地图集合、场景集合和符号资源集合。
+　　SuperMap GIS organizes data through workspace, datasources, datasets, maps, scenes and layouts. SuperMap GIS manages data through a hierarchical tree in the Workspace Manager. A workspace consists of the datasource collection, the map collection, the scene collection, the symbol resource collection.
 
-## 工作空间
+## Workspace
 
-　　工作空间是用户进行地理操作的工作环境，用户在进行数据操作时，都需要先创建一个工作空间。应用程序启动时，默认为用户建立了一个空的工作空间，用户可以在此基础上进行数据操作，或者打开已有工作空间进行操作。工作空间会保存用户在该工作环境中的操作结果，包括用户在该工作空间中打开的数据源、保存的地图、布局和三维场景等，当用户打开工作空间时可以基于上一次的工作成果继续工作。
+　　A workspace is where you work with your data. A workspace must be created first before any operations. Once you start the application, the system will create an empty workspace and you can perform any operations based on it, also you can open an existed workspace. All results in the work environment will be saved in the opened workspace.
 
 
 
-### 工作空间类型
+### Workspace types
 
-　　按照工作空间的存储形式，工作空间可以分为文件型、数据库型两类。文件型工作空间以 *.smwu 或*.sxwu 两种格式进行存储；数据库型工作空间，是将工作空间保存在数据库中，目前仅支持存储在 Oracle 和 SQL Server 数据库中（Linux平台中不支持SQL Server类型的工作空间）。
+　　Workspaces in SuperMap fall into two categories: file-based workspace and database-based datasource. A file-based workspace can be saved in *.smwu or *.sxwu. For a database-based workspace, it means the workspace will be saved into a database, (only Oracle and SQL Server are supported, but in Linux OS, only Oracle is supported.)
 
-### 工作空间管理
+### Managements of Workspaces
 
-　　工作空间中的地图、三维场景和资源都是保存在工作空间中，删除工作空间时，其中的地图、三维场景和符号库资源也相应的随之删除；而数据源是独立存储的，与工作空间只是关联关系，并没有保存在工作空间中，当删除工作空间时，只是删除了工作空间与数据源的关联关系，并不能删除数据源。工作空间的管理包括工作空间的打开、保存、另存、关闭和删除等内容。
+　　All of maps, 3D scenes and symbol resources in a workspace are saved in the workspace, so when you delete it, maps, 3D scenes and symbol resources will be deleted too. However, datasources in the workspace can not be deleted and only the relevant relationships between them are deleted. The managements of workspaces contain: Open, Save as, Save, Close and Delete workspaces.
 
-* **打开**：若打开的工作空间为文件型工作空间，在工具栏中单击“打开工作空间”下拉菜单中的“文件型...”选项，选择需打开的文件型工作空间即可；若需打开数据库型工作空间，则选择“Oracle...”（或“SQL Server...”）选项，在弹出的对话框中设置服务器地址、数据库名称、用户名信息、工作空间名称等参数，即可打开指定的工作空间。
+* **Open**: In the Start tab on the Workspace group, if you want to open a file-based workspace, you can click File and then choose the file you want to open; but if you want to open a database-based workspace, you can click "Database" drop-down button and then select the Database type you want to open, and then in the pop-up dialog box, enter required information to open it.
 
-* **保存、另存**：用于保存工作空间中的工作环境及操作结果，同时可选择是否保存工作空间中的地图和场景。另存工作空间可将工作空间保存为文件型、Oracle 型或 SQL Server型。
+* **Save/Save as**: Save the work environment and results, meanwhile, you can set whether to save maps or scenes in the workspace. The "Save as" command allows you to save your workspace as a file-based or database-based workspace.
 
-* **关闭**：工作空间节点右键菜单中，提供了“关闭工作空间”功能，若应用程序中当前打开的工作空间没有未被保存的内容，则直接关闭当前的工作空间；如果当前打开的工作空间存在未被保存的内容，则会弹出对话框，提示用户在关闭当前打开的工作空间时是否保存这些内容。
+* **Close**: If you want to close your workspace, you can right-click your workspace node and then select "Close Workspace" in the context menu. 
 
-## 数据源
+## Datasource
 
-　　SuperMap iDesktop Cross 的空间数据可以存储在文件中和数据库中，即数据源可以保存在文件中或者数据库中。数据源可以分为：文件型数据源、数据库型数据源、 Web 数据源、内存数据源四种。
+　　Spatial data from SuperMap iDesktop Cross can be saved in files or databases, namely datasources can be saved in files or databases. Datasources fall into 4 categories: file-based datasources, database-based datasources, Web datasources and memory datasources.
 
-### 数据源类型
+### Datasource types
 
-* **文件型数据源**：即 UDB 类型数据源，存储于扩展名为 *.udb/*.udd 的文件中。新建 UDB 数据源时，会同时产生两个文件，*.udb 文件和与之相对应的 *.udd 文件，且这两个文件名除后缀名部分相同。 GIS 空间数据除了包含空间几何对象外，还包含对象的属性信息，在文件型数据源中， *.udb 文件主要存储空间数据的空间几何信息，*.udd 文件存储属性信息。UDB 数据源，是一个跨平台、支持海量数据高效存取的文件型数据源，UDB 可以存储的数据上限达到 128TB 大小。
+* **File-based datasource**: namely, the UDB datasources. They are stored in *.udb or *.udd files. When creating an UDB datasource, an .udb file and a corresponding .udd file are generated with the same name but the suffix. GIS spatial data contains not only geometric objects (in *.udb files), but also their properties (in *.udd files). The UDB datasource has features of cross platform and accessing big data efficiently. A UDB datasource can save up to 128T data.
 
-* **数据库型数据源**：存储于数据库中，如 Oracle Plus 数据库、SQL Server Plus 数据库等（Linux平台中不支持SQL Server类型的数据源）。对应数据库型数据源，其空间数据的空间几何信息和属性信息都存储在数据库中。要对数据源中的空间数据操作，必须先通过工作空间中的数据源集合打开数据源，并且对数据源及其中的空间数据的所有操作将直接保存在数据源中而不是保存在工作空间中。数据源是独立于工作空间存储的，删除工作空间本身，工作空间中的数据源不会随之删除和变化。
+* **Database-based datasource**: Save your workspace into a database. Such as Oracle Plus database, SQL Server Plus database and so on. Both sptial geometry information and properties are saved in a database, if you want do some operations on spatial data, you must open datasources first, and all results will be saved in the datasources but workspaces. Since datasources are saved independently, when you delete workspaces, datasources in these workspaces will not be deleted.
 
-* **Web 数据源**：存储于网络服务器上的数据源，如 OGC 数据源、iServerREST 数据源、超图云服务数据源、GoogleMaps 数据源、百度地图数据源、天地图服务数据源。在使用该类型的数据源时，通过 URL 地址来获取相应的数据源。
+* **Web Datasource**: Datasources saved in web servers, such as OGC datasources, iServerRest datasources, SuperMap Clound datasources, GoogleMaps datasources, BaiduMap datasources, MapWorld datasources. You can access datasources through URL.
 
-* **内存数据源**：内存数据源为临时数据源，只支持新建不支持保存，但是在内存数据源中进行数据处理效率较高。
+* **Memory datasource**: The memory datasource belongs to one kind of temporary datasoures, that means you can not save it. But the efficiency of processing data is higher.
 
-### 数据源管理
+### Managemnet of datasources
 
-　　数据源用于存储空间数据，独立于工作空间，用户可根据数据的用途，将不同的空间数据保存于数据源中，对这些数据统一进行管理和操作。SuperMap iDesktop Cross 提供的数据源管理有打开、新建、查看属性、重命名、关闭等操作。
+　　YOu can save different kinds of spatial data into different datasources to manage and process data uniformly. Managements of data provided by SuperMap iDesktop Cross contain: Open, New, View Properties, Rename, Close, etc..
 
-* **新建数据源**：数据源结点右键菜单和工具栏中提供了新建数据源功能，支持新建文件型、数据库型、内存数据源三种类型，其中数据库型数据源支持SQLPlus（Linux平台中不支持）、OraclePlus、OracleSpatial、PostgreSQL、DB2、MySQL 等数据引擎。
+* **New a datasource**: The feature of creating a new datasource is provided both in ribbon and in the context menu of datasource node.
 
-* **打开数据源**：数据源结点右键菜单和工具栏中提供了打开数据源功能，支持打开的数据源类型有文件型、数据库型、Web型三种类型数据源，同时支持将外部矢量和影像文件以数据源形式打开。若打开的是文件型数据源，则选择指定的UDB文件或影像、矢量文件即可打开；若打开的是数据库型数据源，则需设置数据源所在的服务器地址、数据库名称、用户信息等参数，即可打开指定的数据库型数据源；若打开的是Web型数据源，则输入Web数据源路径即可打开。
+* **Open a datasoure**: The feature of opening a new datasource is provided both in ribbon and in the context menu of datasource node. You are allowed to open file-based datasources, database-based datasources or web datasources.
 
-* **数据源属性**：数据源右键菜单中提供了数据源属性功能，可通过“属性”对话框查看数据源的属性信息和投影信息。
+* **Datasource properties**: You can view your datasource's properties information and projection information in the "Properties" panel through clicking "Properties" in the context menu of you datasource's node.
 
-## 数据集
+## Dataset
 
-　　数据集用于存储地理空间对象，是 SuperMap GIS 空间数据的基本组织单位之一。数据集的管理包括数据集的新建、复制、导入、导出、删除、关闭、重命名等操作，也包括查看数据的属性、设置数据集的投影等。目前支持二三维点、线、面数据集、纯属性数据集、网络数据集、复合数据集、文本数据集、路由数据集、影像/栅格数据集、模型数据集等多种类型。
+　　The dataset is used to save geometric spatial objects. The managements of datasets contain New, Copy, Import, Export, Delete, Close, Rename, View properties, Set projections for datasources and so on. Now dataset types supported by SuperMap contain: 2D&3D point, line, region, tabular, network, CAD, text, route, image/raster, mosaic datasets etc..  
 
-* **新建数据集**：数据源支持新建的数据集类型有：二三维点、线、面数据集、文本、CAD、属性表等多种类型的数据集，在“新建数据集”对话框中设置目标数据源、创建类型、数据集名称、编码类型等参数后，即可创建用户所需的数据集。
+* **New a dataset**: In the "New Dataset" dialog box, you are required to set a series of parameters to create a new dataset such as: the target datasource, dataset type, dataset name, encode type, and so on.
 
-* **复制数据集**：即将一个或者多个数据集复制到目标数据源中，可通过右键菜单功能复制，也可将选中数据集直接拖拽到目标数据源实现复制。
+* **Copy datasets**: Copy one or more datasets then paste them to target datasources.
 
-* **导入导出数据集**：SuperMap 除了支持自己的数据类型外，还支持多种外部的数据的导入；也支持将数据导出为其他软件支持的数据格式，具体说明请参见数据导入和数据导出页面。
-* **影像金字塔**：影像金字塔技术是处理海量影像常常采用的技术，对栅格、影像数据集创建影像金字塔后，可提高数据的浏览速度。关于影像金字塔的具体说明请参见[影像金字塔](Pyramid.html)页面。
+* **Import&Export datasets**: Besides data types of SuperMap, external data also can be imported and data in SuperMap can be exported in other formats. 
+* **Image Pyramid**: After creating image pyramids for raster or image datasets, the speed of browsing data is improved greatly. For more details, please refer to [Image Pyramid](Pyramid.html).
 

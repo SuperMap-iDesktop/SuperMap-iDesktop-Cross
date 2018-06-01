@@ -74,13 +74,13 @@ title: Set Styles of Layers
 　　Set the transparency effect of the filled content. You can enter a value into the text box directly, also you can adjust the transparency by clicking the up/down arrows at right. The value is an integer from 0 to 100, 0 means opaque, 100 represents completely transparent.
  
 - **Gradient Fill**
-　　Check the checkbox to take a color gradient (gradiently changing from the foreground color to the background color) as the filled content, at the same time, the parameters under the checkbox are available, including: 
+　　Check the checkbox to take a color gradient (changing from the foreground color to the background color) as the filled content, at the same time, the parameters under the checkbox are available, including: 
   - Type: The ways of how to produce a color gradient. 
 
-　　1. Linear: The type of gradient is a linear gridient.
+　　1. Linear: The type of gradient is a linear gradient.
 　　2. Radial: The type of gradient is a radial gradient, the change in the colors radiating outwards from the center.
 
-　　3. Square: The shape of the gridient is square.
+　　3. Square: The shape of the gradient is square.
 
 　　![](img/GraduatedMode.png)
 
