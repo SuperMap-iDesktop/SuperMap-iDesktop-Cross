@@ -239,6 +239,12 @@ sidebar:
     DriveRegionSpecific: 提取指定等值面
     TerrainCalculation: 地形计算
     CutFill: 填挖方
+    RasterStatistic: 栅格统计
+    BasicStatistic: 基本统计
+    CommonStatistic: 常用统计
+    NeighbourStatistic: 邻域统计
+    ZonalStatistic: 区域统计
+    AltitudeStatistic: 高程统计
     DataAnalyst: 数据分析
     Overlayanalyst: 叠加分析
     OverlapClip: 裁剪
@@ -253,6 +259,8 @@ sidebar:
     ThiessenPolygonOperation: 泰森多边形
     AboutDistanceMeasure: 距离计算原理
     DistanceMeasureOperation: 距离计算
+    VectortoRasterConvert: 矢栅转换
+    VectortoRaster: 矢量栅格化
     BufferAnalyst: 缓冲区分析
     BufferTheory: 缓冲区分析原理
     SingleBuffer: 单重缓冲区分析
