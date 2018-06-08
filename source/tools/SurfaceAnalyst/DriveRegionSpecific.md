@@ -26,12 +26,13 @@ title: 提取指定等值面
 ### 相关主题
 
 
-![](img/smalltitle.png) [提取等值线/面](DriveContour.html)
+![](../img/smalltitle.png) [提取等值线/面](DriveContour.html)
 
-![](img/smalltitle.png) [提取所有等值线](DriveContourAll.html)
+![](../img/smalltitle.png) [提取所有等值线](DriveContourAll.html)
 
-![](img/smalltitle.png) [提取指定等值线](DriveContourSpecific.html)
+![](../img/smalltitle.png) [提取指定等值线](DriveContourSpecific.html)
 
-![](img/smalltitle.png) [点数据提取等值线](ExtractIsoline.html)
+![](../img/smalltitle.png) [点数据提取等值线](ExtractIsoline.html)
 
-![](img/smalltitle.png) [提取所有等值面](DriveRegionAll.html)
+![](../img/smalltitle.png) [提取所有等值面](DriveRegionAll.html)
+

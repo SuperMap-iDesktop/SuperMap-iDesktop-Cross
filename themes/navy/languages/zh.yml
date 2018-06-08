@@ -48,7 +48,7 @@ sidebar:
     SpatialIndexManage: 管理空间索引
     Objects: 对象操作
     BasicOpention: 基本操作
-   AboutCreateGeometry: 对象绘制概述
+    AboutCreateGeometry: 对象绘制概述
     Point: 绘制点
     DrawCurve: 绘制线
     DrawQuadRangle: 绘制面
@@ -250,6 +250,7 @@ sidebar:
     Profile: 剖面分析
     OrthoImage: 正射三维影像
     HillShade: 三维晕渲图
+    TerrainBuilderClip: DEM切割
     TerrainBuilders: 构建DEM
     AboutTerrainBuilder: 构建DEM概述
     TerrainBuilder: 构建DEM
@@ -264,6 +265,12 @@ sidebar:
     NeighbourStatistic: 邻域统计
     ZonalStatistic: 区域统计
     AltitudeStatistic: 高程统计
+    RasterDistance: 距离栅格
+    AboutRasterDistance: 距离栅格概述
+    CreateRasterDistance: 生成距离栅格
+    ShortPath: 计算最短路径
+    TwoPointDis: 两点最短地表路径
+    TwoPointCostDis: 两点最短耗费路径
     DataAnalyst: 数据分析
     Overlayanalyst: 叠加分析
     OverlapClip: 裁剪

@@ -223,6 +223,7 @@ tools:
       Profile: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/Profile.html
       OrthoImage: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/OrthoImage.html
       HillShade: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/HillShade.html 
+      TerrainBuilderClip: /SuperMap-iDesktop-Cross/tools/SurfaceAnalyst/TerrainBuilderClip.html 
   TerrainBuilders:
     AboutTerrainBuilder: /SuperMap-iDesktop-Cross/tools/TerrainBuilder/AboutTerrainBuilder.html 
     TerrainBuilder: /SuperMap-iDesktop-Cross/tools/TerrainBuilder/TerrainBuilder.html
@@ -237,6 +238,12 @@ tools:
     NeighbourStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/NeighbourStatistic.html
     ZonalStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/ZonalStatistic.html
     AltitudeStatistic: /SuperMap-iDesktop-Cross/tools/RasterStatistic/AltitudeStatistic.html
+  RasterDistance:
+    AboutRasterDistance: /SuperMap-iDesktop-Cross/tools/RasterDistance/AboutRasterDistance.html
+    CreateRasterDistance: /SuperMap-iDesktop-Cross/tools/RasterDistance/CreateRasterDistance.html
+    ShortPath: /SuperMap-iDesktop-Cross/tools/RasterDistance/ShortPath.html
+    TwoPointDis: /SuperMap-iDesktop-Cross/tools/RasterDistance/TwoPointDis.html
+    TwoPointCostDis: /SuperMap-iDesktop-Cross/tools/RasterDistance/TwoPointCostDis.html
   DataAnalyst:
     Overlayanalyst:
       OverlapClip: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapClip.html

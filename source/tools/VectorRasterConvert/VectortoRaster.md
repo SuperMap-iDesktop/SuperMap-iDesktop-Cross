@@ -41,7 +41,8 @@ title: 矢量栅格化
 
 ### 相关主题
 
-![](img/smalltitle.png) [融合](Datafuse.html)
+　　![](../img/smalltitle.png) [栅格矢量化](RasterToVector.html)
 
+　　![](../img/smalltitle.png) [栅格细化](ThinRaster.html)
 
 

@@ -1,5 +1,5 @@
 ---
-title: DEM构建
+title: DEM挖湖
 ---
 
 　　DEM 挖湖具有十分重要的应用意义。传统构建 DEM 的方法通过点数据或者线数据，只能构建出区域内的大地形，对于局部地区的微地形，如湖泊、洼地、冰川等无法展现。DEM 挖湖功能可以帮助用户在构建的 DEM 中很好的体现这些地形特征。在 DEM 挖湖过程中，获取类似于湖泊、洼地等面数据的高程信息，将面数据的高程值赋给 DEM 数据中相应位置的像元，重新得到一个 DEM 数据。
@@ -25,7 +25,9 @@ title: DEM构建
 
 ### 相关主题
 
-![](img/smalltitle.png) [融合](Datafuse.html)
 
+　　![](img/smalltitle.png) [DEM构建概述](AboutTerrainBuilder.html)
+
+　　![](img/smalltitle.png) [DEM构建](TerrainBuilder.html)
 
 

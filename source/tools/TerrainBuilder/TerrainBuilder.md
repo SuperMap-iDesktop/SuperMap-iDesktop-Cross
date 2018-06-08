@@ -47,7 +47,9 @@ title: DEM构建
 
 ### 相关主题
 
-![](img/smalltitle.png) [融合](Datafuse.html)
 
+　　![](../img/smalltitle.png) [DEM构建概述](AboutTerrainBuilder.html)
+
+　　![](img/smalltitle.png) [DEM挖湖](Datafuse.html)
 
 
