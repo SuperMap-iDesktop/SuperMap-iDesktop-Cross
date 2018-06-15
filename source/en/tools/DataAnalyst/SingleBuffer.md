@@ -1,65 +1,65 @@
 ---
-title: 生成单重缓冲区
+title: Generating a Single Buffer
 ---
 
-### 使用说明
+### Instructions
 
-　　单重缓冲区是指在点、线、面实体周围自动建立的一定宽度的多边形。生成的缓冲区结果可以继续参与后面的分析操作。
+　　A single-buffer is a polygon with a certain width automatically created around a point, line, or region entity. The resulted buffer can be utilized in further analyses.
 
--   目前，只支持对点、线、面数据集生成缓冲区，不支持对 CAD 数据集、网络数据集和路由数据集生成缓冲区。
--   由于数据类型的不同，在生成缓冲区时的参数设置也完全不相同。对线数据生成缓冲区，可以选择圆头缓冲或平头缓冲两种缓冲类型；而对点、面数据只能生成圆头缓冲。在缓冲类型为平头缓冲时，可以对线数据集生成左右半径不等或者只有左缓冲或者右缓冲的缓冲区。
--   缓冲半径为**数值型**时，面数据集允许使用负值，点、线数据集只能为正值，但是点、线、面数据集都不允许缓冲距离为0。
--   缓冲半径为**字段型**时，只能选择当前数据集中的非系统数值型字段。如果对象指定的字段值为空或者0时，不会对该对象生成缓冲区；当指定的字段为负值时，点、线数据集按照正值处理；对线数据生成平头缓冲时，如果线数据左（右）半径字段为负值，则按该数值的绝对值作为右（左）半径进行处理。
+-   Currently, buffer analysis can be applied to only point, line, and region datasets. Buffers cannot be created for CAD datasets, network datasets, or route datasets.
+-   Parameter settings for buffer analysis on different types of data are different. When generating buffers for line data, either the round or the flat type can be chosen; when creating buffers for point or region data, only the round type can be chosen. A flat buffer can be unsymmetrical, with its right radius and left radius unequal, or with only one side.
+-   When specifying the buffer radius is numeric values, negative values can be applied only to region datasets, and positive values must be assigned for point or line datasets.  A buffer distance of 0 is not valid for any types of datasets.
+-   When specifying the buffer radius is a field (non system field), if a field value is null or 0, no buffer will be generated for the corresponding object. Negative values in the specified field will be taken as positive values when dataset in the analysis is a point or line dataset. When generating flat buffers for line data, if a negative value is assigned to the left (right) radius, the absolute value will be used. When buffers are generated for a region dataset, a negative distance value will be used as it is.
 
-### 操作步骤
+### Basic Steps
 
-1.在“空间分析”选项卡的“矢量分析”组中选择“**缓冲区**”项，弹出“生成缓冲区”对话框。
+1. Click the "Buffer Zone" in "Spatial Analysis" tab on the "Vector Analysis" group, and "Create Buffer Zone" dialog box pop-up.
 
   ![](img/BufferDia.png)
 
 
-2.选择需要生成缓冲区的数据的类型，可以对点/面数据集或者线数据集生成缓冲区。对线数据生成缓冲区时需要设置缓冲类型，可以是圆头缓冲或者平头缓冲，而对点/面数据生成缓冲区时则不需要。所以，在对线数据生成缓冲区时，“生成缓冲区”对话框中会多出一些选项。下面以对线数据生成缓冲区为例，对“生成缓冲区”对话框中的参数予以说明。
+2. Select the type of the data which needs to generate buffer. Buffers can be created for point/line/region datasets. The buffer type, either round or flat, must be set when generating buffers for line data, whereas it does not need to be set for point or region data. That is why more options are there in the Create Buffer dialog box when the buffer is created for a line dataset. Below are the explanations about parameters in the dialog box when generating buffers for line data.
 
-3.设置要生成缓冲区的数据集，系统根据生成缓冲区的数据类型，自动过滤选中的数据源下的数据集，只显示该数据源下的线数据集。如果是对点/面数据生成缓冲区，则只会显示相应的数据源下面的点或者面数据集。
+3. Set the dataset which will generate buffer. The system will automatically pick out the corresponding datasets and filter other datasets contained in the selected datasource according to the type of the data for the buffer analysis.
 
-  * **只针对被选中对象进行缓冲操作：**在选中某一数据集中的对象情况下，“只针对被选中对象进行缓冲操作”前面的复选框可用。勾选该项，表示只对选中的对象生成缓冲区，同时不能设置数据源和数据集；取消勾选该项，表示对该数据集下的所有对象进行生成缓冲区的操作，可以更改生成缓冲区的数据源和数据集。
+  * **Selected objects only:** If there are objects selected in a dataset, the "Selected objects only" check box can be checked, checking it means buffers will be created only for the selected objects, in which case the datasource and the dataset for the buffer analysis cannot be specified; if it is unchecked, buffers will be created for all the objects in the dataset, and the datasource and the dataset for the analysis can be changed.
 
-4.设置缓冲类型，缓冲类型的不同，需要设置的参数也不大相同。
+4. Set the buffer type. Different parameters need to be set for different buffer types.
 
-  * **圆头缓冲：**在线的两边按照缓冲距离绘制平行线，并在线的端点处以缓冲距离为半径绘制半圆，连接生成缓冲区域。默认缓冲类型为圆头缓冲。
+  * **Round:** Two parallel lines are drawn at a certain distance of a line object, one on each side. A half-circle, with the buffer distance as its radius, is drawn to connect the same-side ends of the two parallel lines to form a buffer. Round is the default buffer type.
 
-  * **平头缓冲：**生成缓冲区时，以线数据的相邻节点间的线段为一个矩形边，以左半径或者右半径为矩形的另外一边，生成形状为矩形的缓冲区域。
+  * **Flat:** When generating a buffer, a rectangular buffer is formed by taking the line segment connecting adjacent nodes of a line object as one side and the left or right radius as the other.
 
-5.线数据在生成平头缓冲的时候，可以生成左右缓冲距离不等的缓冲区，或者生成单边的缓冲区。只有同时勾选“左缓冲”和“右缓冲”两项，才会对线数据生成两边缓冲区。默认为同时生成左缓冲和右缓冲。
+5. When generating a flat buffer for a line object, the left and right buffer distance can be different. It can also be a one-sided buffer. Two-sided buffers will be generated only when "Left" and "Right" are both checked. By default, both left buffers and right buffers are generated.
 
 
-6.设置缓冲单位：缓冲距离的单位，可以为毫米、厘米、分米、米、千米、英寸、英尺、英里、度、码等。
+6. Set the buffer unit: Units of the buffer distance can be one of the following: Millimeters, Centimeters, Decimeters, Meters, Kilometers, Inches, Feet, Miles, Degrees, and Yards.
 
-7.选择缓冲距离的指定方式。
+7. Set the mode for specifying the buffer distance.
 
--   **数值型：**勾选“数值型”，表示通过输入数值的方式设置缓冲距离大小，输入的数值为双精度型数字。
--   **字段型：**勾选“字段型”，表示通过数值型字段或者表达式设置缓冲距离大小，只能选择当前数据集中的非系统数值型字段。
+-   **Numeric: **If "Numeric" is checked, the buffer distance is set by inputting a number. The input value is a double precision number.
+-   **Field: **If "Field" is checked, the buffer distance will be specified using a numeric field or expression, only non system field from current dataset can be selected.
 
-8.设置结果选项。需要对生成缓冲区后是否合并、是否保留原对象字段属性、是否添加到当前地图窗口以及半圆弧线段数值大小等项进行设置。
+8. Set the result options. It can be set whether to merge the generated multiple buffers, whether to retain the field attributes of the original objects, whether to add the buffers into the current window, and the number of semicircle segments.
 
-  * **合并缓冲区：**勾选该项，表示对多个对象的缓冲区进行合并运算。取消勾选该项，表示保留生成的缓冲区结果，不进行合并操作。如下图所示，对两个圆（蓝色）生成多缓冲区。生成的缓冲区结果如图1所示，将生成的结果移动，发现两个缓冲区合并为一个复杂对象，图2为合并后的缓冲区。注意：在不勾选合并缓冲区的情况下，不同对象的缓冲区不会进行合并，为单独的两个简单对象。
+  * **Union buffer zones: **If this option is checked, a Union operation will be performed on the generated buffers. If it is unchecked, generated buffers will remain unchanged in the result and no union operation is to be performed. Note: If the option is not checked, the Union operation will not be performed for the buffer of different objects.
 
 ![](img/SigBuf1.png)
 
 
--   **保留原对象字段属性：**勾选该项，表示生成的每一个缓冲区会保留相应的原对象的非系统属性字段信息。取消勾选该项将会丢失原对象的非系统字段属性信息。默认为勾选该项。注意：当勾选“合并缓冲区”时，该项不可用。
+-   **Keep attributes: **If this option is checked, the non-system field information of the original object will be reserved for the corresponding buffers. If it is unchecked, the non-system field information of the original objects will be lost. The option is checked by default. Note: When "Union buffer zones" is checked, this option is not applicable.
 
--   **在地图窗口中显示结果：**勾选该项，表示在生成缓冲区后，会将其生成的结果添加到当前地图窗口中。取消勾选该项，则不会自动将结果添加到当前地图窗口中。默认为勾选该项。
+-   **Show result in map: **If this option is checked, the generated buffers will be added in the current map window. If it is not checked, the buffer analysis result will not be added in the window. It is checked by default.
 
--   **半圆弧线段数(4-200)：**用于设置生成的缓冲区边界的平滑度。数值越大，圆弧/弧段均分数目越多，缓冲区边界越平滑。取值范围为4-200。默认的数值大小为100。
+-   **Semicircle Segments(4-200):**This parameter is used to set the smoothness of the buffer boundaries in the result. The greater this value is, the more circle segments there will be, and the smoother the buffer boundaries will be. The value range is from 4 to 200. The default value is 100.
 
-9.设置结果数据要保存的数据源及数据集名称，点击“确定”按钮，即可执行生成缓冲区的操作。
+9. Set the result dataset name and the result datasource name. Click on "OK" button to perform the operation of generating buffer.
 
 
-### 相关主题
+### Related Topics
 
-![](img/smalltitle.png) [关于缓冲区分析](BufferTheory.html)
+![](img/smalltitle.png) [About Buffer Analysis](BufferTheory.html)
 
-![](img/smalltitle.png) [缓冲区分析应用实例](BufferAnalyst_Example.html)
+![](img/smalltitle.png) [Sample Application for Buffer Analysis](BufferAnalyst_Example.html)
 
 

@@ -253,10 +253,10 @@ Basic Steps:
   
 1. Set the layer in which you want to split line or region objects editable.
 2. Click "Object Operations" > "Object Editing" gallery > "Object Operation" group > "Region Split".
-3. Draw a temporary region that is used to split region objects.</li>
-4. Right-click the mouse to end the drawing. At this time, the split operation will be performed while the temporary split region disappears.</li>
-5. To continue a next split operation, repeat the step 4; If you want to split line or region objects from other dataset, add the data and set corresponding layers editable, and then repeat step 4.</li>
-6. To end the region split operation state, simply click the Region Split button to make it in an unclicked state. </li>
+3. Draw a temporary region that is used to split region objects.
+4. Right-click the mouse to end the drawing. At this time, the split operation will be performed while the temporary split region disappears.
+5. To continue a next split operation, repeat the step 4; If you want to split line or region objects from other dataset, add the data and set corresponding layers editable, and then repeat step 4.
+6. To end the region split operation state, simply click the Region Split button to make it in an unclicked state.
   
  ![](img/CutByPolygon1.png)  ![](img/CutByPolygon2.png) ![](img/CutByPolygon3.png) 
 
