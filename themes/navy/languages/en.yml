@@ -197,36 +197,36 @@ sidebar:
     ImportLidar: 导入Google数据
     ImportVectorFiles: 导入矢量文件
     ImportFolder: 导入文件夹
-    DataConvert: 类型转换
+    DataConvert: Type conversion
     ConvertPointLinePolygon: 点线面类型互转
     ConvertAttributeSpatial: 属性数据与空间数据互转
     ConvertNetworkData: 网络数据转换
-    ConvertCADSimple: 复合数据与简单数据互转
-    Convert2D3D: 二维数据与三维数据互转
-    DataProcessing: 数据处理
-    VectorProcessing: 矢量数据集
-    Datafuse: 融合
+    ConvertCADSimple: Conversions between CAD and simple data
+    Convert2D3D: Conversion between 2D and 3D data
+    DataProcessing: Data process
+    VectorProcessing: Vector dataset
+    Datafuse: Dissolve
     Integrate: 整合
-    AggregatePoints: 点聚类
+    AggregatePoints: Points Aggregate
     RarefyPoints: 点抽稀
     VectorResample: 矢量重采样
     DatasetSmooth: 线面光滑
     EdgeMatch: 图幅接边
-    Attributeupdate: 属性更新
+    Attributeupdate: Property Update
     ExtractBorderLine: 提取边界线
     DualLineToCenterLine: 双线提取中心线
     RegionToCenterLine: 面提取中心线
     RegionToCenterLineMain: 面主干中心线
-    AddtoList: 数据集追加列
-    AddtoRow: 数据集追加行
+    AddtoList: Append column
+    AddtoRow: Append row
     UnionPieces: 碎多边形合并
-    RasterProcessing: 栅格数据集
-    RasterResample: 重采样
-    CombineBand: 影像合成
-    RasterMathAnalyst: 代数运算
-    DataUpdate: 数据更新
-    RasterReclass: 重分级
-    RasterSlice: 分割
+    RasterProcessing: Raster dataset
+    RasterResample: Resample
+    CombineBand: Image composite
+    RasterMathAnalyst: Algebraic operation
+    DataUpdate: Data update
+    RasterReclass: Raster reclassify
+    RasterSlice: Split raster
     RasterAnalyst: 栅格分析
     AnalystEnvironment: 分析环境设置
     SurfaceAnalyst: 表面分析
