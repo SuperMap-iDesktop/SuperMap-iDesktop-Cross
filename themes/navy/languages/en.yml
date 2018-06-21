@@ -1,6 +1,6 @@
 menu:
   home: Home
-  getstarted: Getting start
+  getstarted: Getting started
   docs: Help
   tools: Tool box
 # api: API
@@ -46,7 +46,6 @@ sidebar:
     EncodeType: Encoding of datasets
     PyramidManage: Manage image pyramids
     SpatialIndexManage: Manage spatial indexes
-    #DatasetProperties: View attribute infromation of datasets
     Objects: Object operation
     BasicOpention: Object drawing
     AboutCreateGeometry: Object Drawing Overview
@@ -198,36 +197,38 @@ sidebar:
     ImportLidar: 导入Google数据
     ImportVectorFiles: 导入矢量文件
     ImportFolder: 导入文件夹
-    DataConvert: 类型转换
+    DataConvert: Type conversion
     ConvertPointLinePolygon: 点线面类型互转
     ConvertAttributeSpatial: 属性数据与空间数据互转
     ConvertNetworkData: 网络数据转换
-    ConvertCADSimple: 复合数据与简单数据互转
-    Convert2D3D: 二维数据与三维数据互转
-    DataProcessing: 数据处理
-    VectorProcessing: 矢量数据集
-    Datafuse: 融合
+    ConvertCADSimple: Conversions between CAD and simple data
+    Convert2D3D: Conversion between 2D and 3D data
+    DataProcessing: Data process
+    VectorProcessing: Vector dataset
+    Datafuse: Dissolve
     Integrate: 整合
-    AggregatePoints: 点聚类
+    AggregatePoints: Points Aggregate
     RarefyPoints: 点抽稀
     VectorResample: 矢量重采样
     DatasetSmooth: 线面光滑
     EdgeMatch: 图幅接边
-    Attributeupdate: 属性更新
+    Attributeupdate: Property Update
     ExtractBorderLine: 提取边界线
     DualLineToCenterLine: 双线提取中心线
     RegionToCenterLine: 面提取中心线
     RegionToCenterLineMain: 面主干中心线
-    AddtoList: 数据集追加列
-    AddtoRow: 数据集追加行
+    AddtoList: Append column
+    AddtoRow: Append row
     UnionPieces: 碎多边形合并
-    RasterProcessing: 栅格数据集
-    RasterResample: 重采样
-    CombineBand: 影像合成
-    RasterMathAnalyst: 代数运算
-    DataUpdate: 数据更新
-    RasterReclass: 重分级
-    RasterSlice: 分割
+    RasterProcessing: Raster dataset
+    RasterResample: Resample
+    CombineBand: Image composite
+    RasterMathAnalyst: Algebraic operation
+    DataUpdate: Data update
+    RasterReclass: Raster reclassify
+    RasterSlice: Split raster
+    RasterAnalyst: 栅格分析
+    AnalystEnvironment: 分析环境设置
     SurfaceAnalyst: 表面分析
     DriveContourRegion: 提取等值线/面
     DriveContour: 提取等值线/面概述
@@ -238,30 +239,52 @@ sidebar:
     DriveRegionSpecific: 提取指定等值面
     TerrainCalculation: 地形计算
     CutFill: 填挖方
+    CutFillRegion: 面填挖方
+    InverseCutFill: 反算填挖方
+    FindExtreme: 查找极值
+    CalculateCurvature: DEM曲率计算
+    Slope: 坡度分析
+    Aspect: 坡向分析
+    Profile: 剖面分析
+    OrthoImage: 正射三维影像
+    HillShade: 三维晕渲图
+    TerrainBuilderClip: DEM切割
+    TerrainBuilders: 构建DEM
+    AboutTerrainBuilder: 构建DEM概述
+    TerrainBuilder: 构建DEM
+    TerrainBuilderLake: DEM挖湖
+    VectortoRasterConvert: 矢栅转换
+    VectortoRaster: 矢量栅格化
+    RasterToVector: 栅格矢量化
+    ThinRaster: 栅格细化
     RasterStatistic: 栅格统计
     BasicStatistic: 基本统计
     CommonStatistic: 常用统计
     NeighbourStatistic: 邻域统计
     ZonalStatistic: 区域统计
     AltitudeStatistic: 高程统计
+    RasterDistance: 距离栅格
+    AboutRasterDistance: 距离栅格概述
+    CreateRasterDistance: 生成距离栅格
+    ShortPath: 计算最短路径
+    TwoPointDis: 两点最短地表路径
+    TwoPointCostDis: 两点最短耗费路径
     DataAnalyst: Data analysis
-    Overlayanalyst: 叠加分析
-    OverlapClip: 裁剪
-    OverlapuUnion: 合并
-    OverlapuErase: 擦除
-    OverlapuIdentity: 同一
-    OverlapIntersect: 求交
-    OverlapuUpdate: 更新
-    OverlapXOR: 对称差
+    Overlayanalyst: Overlay analysis
+    OverlapClip: Clip
+    OverlapuUnion: Union
+    OverlapuErase: Erase
+    OverlapuIdentity: Identity
+    OverlapIntersect: Intersect
+    OverlapuUpdate: Update
+    OverlapXOR: XOR
     ProximityAnalyst: Proximity analysis
-    AboutThiessenPolygon: Thiessen Polygon Theory
-    ThiessenPolygonOperation: 泰森多边形
-    AboutDistanceMeasure: Theory on Distance Calculation
-    DistanceMeasureOperation: Distance Calculation
-    VectortoRasterConvert: 矢栅转换
-    VectortoRaster: 矢量栅格化
+    AboutThiessenPolygon: Thiessen polygon theory
+    ThiessenPolygonOperation: Thiessen polygon
+    AboutDistanceMeasure: Theory on distance calculation
+    DistanceMeasureOperation: Distance calculation
     BufferAnalyst: Buffer analysis
     BufferTheory: Theory of buffer analysis
-    SingleBuffer: 单重缓冲区分析
+    SingleBuffer: Single-buffer analysis
     BufferAnalyst_Example: Instance on buffer analysis
-    FindRasterVaule: 栅格查询
+    FindRasterVaule: Raster query

@@ -83,7 +83,6 @@ Operator Type|Description
 10.  Expression: Used to display and edit the expression to be constructed. Click the button on the right side of the combo box to bring up the SQL Expression dialog box. You can either construct a field expression in the dialog box that pops up or enter a field expression directly in the Expression text box.   
 11.  Click Apply to update the attribute table.    
   
-### Undo/Redo 
   
 
 

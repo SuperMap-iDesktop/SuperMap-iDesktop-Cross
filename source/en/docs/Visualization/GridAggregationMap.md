@@ -47,7 +47,7 @@ Grid Type: Two types of grids are provided: quadrilateral and hexagonal.
 + Grid border: A): line types of borders of grids. You can choose: Null, Solid Line, Dotted Line. B) Set the line width. C) Set the line color. The settings of translucent color are supported.
 + Grid Label: Set the style of lables of statistics values.
   
-5.After all the settings mentioned above, a grid map is produced.
+6.After all the settings mentioned above, a grid map is produced.
   
 ### Instance   
   

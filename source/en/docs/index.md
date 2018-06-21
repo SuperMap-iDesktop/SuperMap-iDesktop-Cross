@@ -25,7 +25,6 @@ title: SuperMap iDesktop Cross 9D Introduction
 
 -   **Dataset manager**: A variety of operations are supported, such as the tasks of creating, copying, closing, deleting, etc.
 
- ![](img/Product1.png)
 
 
 ### Data conversion
