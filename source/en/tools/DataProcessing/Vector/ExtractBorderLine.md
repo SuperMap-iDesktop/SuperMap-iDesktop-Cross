@@ -1,5 +1,5 @@
 ---
-title: Extract Border Line
+title: Extract Border Lines
 ---
 
 　　Extract all boundaries of regions into a result dataset. The common boundary of two regions will be extracted only once. if a border line has either left or right region polygon, then the border line will be the outline of the region outline.

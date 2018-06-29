@@ -1,5 +1,5 @@
 ---
-title: Extract Center Line from Region
+title: Extract Center Lines from Regions
 ---
 
 　　Extract the center line for each polygon in a region dataset and save results in a line dataset. In general, the function is used for extracting center lines for street polygons.
