@@ -16,7 +16,7 @@ title: 导入文件夹
 
 ### 操作说明
 
-　　1. 在数据导入对话框中，单击工具栏中的![](img/AddFolder.png)按钮，在下拉选项中选择待导入的数据类型。
+　　1. 添加数据：不同的功能入口，添加待导入数据的方式不同，可参考[通用参数](GeneraParameters.html)页面。
 　　2. 导入矢量文件对话框中的结果设置和源文件信息可参考[通用参数](GeneraParameters.html)页面。
 　　2. SimpleJson文件有两种导入方式，一种是导入单个\*.json文件，一种是导入指定文件夹中的所有\*.json文件，单个文件导入的操作可参见[导入矢量文件](ImportVectorFiles.html)页面。
 

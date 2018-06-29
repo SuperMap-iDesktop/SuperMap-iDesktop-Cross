@@ -12,7 +12,7 @@ title: 导入AutoCAD数据
 
 ### 操作说明
 
-1. 通过“数据导入”对话框中的添加按钮，添加待导入的CAD数据；
+1. 添加CAD数据：不同的功能入口，添加待导入数据的方式不同，可参考[通用参数](GeneraParameters.html)页面。
 2. 导入AutoCAD对话框中的结果设置和源文件信息可参考[通用参数](GeneraParameters.html)页面。
 3. 设置AutoCAD DXF(*.dxf)文件和 ArtoCAD Drawing(*.dwg) 文件的转换参数，具体说明如下：
   - 曲线拟合精度：用来设置导入数据时的线对象或面对象的边线精度，系统默认为73。 

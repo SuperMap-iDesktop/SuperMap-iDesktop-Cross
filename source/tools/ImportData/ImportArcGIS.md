@@ -15,8 +15,10 @@ title: 导入ArcGIS数据
 
 ### 操作说明
 
-　　执行导入ArcGIS数据时，大部分参数可参考[通用数据](GeneraParameters.html)页面，不同格式的ArcGIS数据需设置的个别参数不同，具体说明如下：
-
+1. 添加ArcGIS数据：不同的功能入口，添加待导入数据的方式不同，可参考[通用参数](GeneraParameters.html)页面。
+2. 执行导入ArcGIS数据时，大部分参数可参考[通用数据](GeneraParameters.html)页面，不同格式的ArcGIS数据需设置的个别参数不同，具体说明如下：
+  - 忽略属性数据：导入SHP和E00数据时支持选择是否忽略属性数据。
+  - 创建金字塔：导入GRD、TXT、DEM、ASC数据时，支持设置是否创建金字塔。
 
 ### 相关主题
 

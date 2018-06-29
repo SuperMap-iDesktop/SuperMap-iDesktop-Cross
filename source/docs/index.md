@@ -1,9 +1,9 @@
-title: SuperMap iDesktop Cross 9D 产品介绍
+title: SuperMap iDesktop Cross 9D(2019) 产品介绍
 ---
 
 　　
 
-　　SuperMap iDesktop Cross 9D 是基于 SuperMap iObjects Java 9D、OSGI 等平台，通过 Java 语言开发的插件式、跨平台GIS应用软件，提供了数据管理、数据处理、数据分析、地图制图出图、可视化建模等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。
+　　SuperMap iDesktop Cross 9D(2019) 是基于 SuperMap iObjects Java 9D(2019)、OSGI 等平台，通过 Java 语言开发的插件式、跨平台GIS应用软件，提供了数据管理、数据处理、数据分析、地图制图出图、可视化建模等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。
 
 ## 产品简介
 
