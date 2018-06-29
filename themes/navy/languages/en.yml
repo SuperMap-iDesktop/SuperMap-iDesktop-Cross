@@ -183,20 +183,23 @@ sidebar:
   tools:
     ToolsBox: Tool box
     Tool: Overview
-    Import: 数据导入
-    ImportData: 数据导入概述
-    GeneraParameters: 通用参数说明
-    ImportAutoCAD: 导入CAD数据
-    ImportArcGIS: 导入ArcGIS数据
-    ImportMapGIS: 导入MapGIS数据
-    ImportMapInfo: 导入MapInfo数据
-    ImportTable: 导入表格数据
-    ImportIMG: 导入影像栅格数据
-    ImportModel: 导入三维模型数据
-    ImportKML: 导入Lidar数据
-    ImportLidar: 导入Google数据
-    ImportVectorFiles: 导入矢量文件
-    ImportFolder: 导入文件夹
+    Import: Data import
+    ImportData: Data import overview
+    GeneraParameters: About common parameters
+    ImportAutoCAD: Import CAD data
+    ImportArcGIS: Import ArcGIS data
+    ImportMapGIS: Import MapGIS data
+    ImportMapInfo: Import MapInfo data
+    ImportTable: Import tables
+    ImportIMG: Import image/raster data
+    ImportModel: Import 3D model data
+    ImportKML: Import Lidar data
+    ImportLidar: Import Google data
+    ImportVectorFiles: Import vector files
+    ImportFolder: Import folders
+    Export: Export data
+    ExportVector: Export the vector dataset
+    ExportRaster: Export the raster dataset
     DataConvert: Type conversion
     ConvertPointLinePolygon: 点线面类型互转
     ConvertAttributeSpatial: 属性数据与空间数据互转
@@ -206,20 +209,20 @@ sidebar:
     DataProcessing: Data process
     VectorProcessing: Vector dataset
     Datafuse: Dissolve
-    Integrate: 整合
-    AggregatePoints: Points Aggregate
-    RarefyPoints: 点抽稀
-    VectorResample: 矢量重采样
-    DatasetSmooth: 线面光滑
-    EdgeMatch: 图幅接边
-    Attributeupdate: Property Update
-    ExtractBorderLine: 提取边界线
-    DualLineToCenterLine: 双线提取中心线
-    RegionToCenterLine: 面提取中心线
-    RegionToCenterLineMain: 面主干中心线
+    Integrate: Integrate
+    AggregatePoints: Points aggregate
+    RarefyPoints: Rarefy points
+    VectorResample: Vector resample
+    DatasetSmooth: Smooth lines or regions
+    EdgeMatch: Edge match
+    Attributeupdate: Property update
+    ExtractBorderLine: Extract border lines
+    DualLineToCenterLine: Extract center lines from dual lines
+    RegionToCenterLine: Extract center Lines from regions
+    RegionToCenterLineMain: Main center lines of regions
     AddtoList: Append column
     AddtoRow: Append row
-    UnionPieces: 碎多边形合并
+    UnionPieces: Eliminate tiny polygons
     RasterProcessing: Raster dataset
     RasterResample: Resample
     CombineBand: Image composite
@@ -257,18 +260,18 @@ sidebar:
     VectortoRaster: 矢量栅格化
     RasterToVector: 栅格矢量化
     ThinRaster: 栅格细化
-    RasterStatistic: 栅格统计
-    BasicStatistic: 基本统计
-    CommonStatistic: 常用统计
+    RasterStatistic: Raster statistics
+    BasicStatistic: Basic statistics
+    CommonStatistic: Common statistics
     NeighbourStatistic: 邻域统计
     ZonalStatistic: 区域统计
-    AltitudeStatistic: 高程统计
-    RasterDistance: 距离栅格
-    AboutRasterDistance: 距离栅格概述
-    CreateRasterDistance: 生成距离栅格
-    ShortPath: 计算最短路径
-    TwoPointDis: 两点最短地表路径
-    TwoPointCostDis: 两点最短耗费路径
+    AltitudeStatistic: Elevation statistics
+    RasterDistance: Distance Raster
+    AboutRasterDistance: Distance raster overview
+    CreateRasterDistance: Generate distance raster
+    ShortPath: Calculate the shortest path
+    TwoPointDis: The shortest surface path
+    TwoPointCostDis: The least cost path
     DataAnalyst: Data analysis
     Overlayanalyst: Overlay analysis
     OverlapClip: Clip

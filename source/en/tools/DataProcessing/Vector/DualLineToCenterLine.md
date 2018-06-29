@@ -1,8 +1,8 @@
 ---
-title: Extract Center Line from Double Line
+title: Extract Center Lines from Dual Lines
 ---
 
-　　Generates center lines from non-closed double lines and save them as a line dataset. This function is usually used to get center lines for streets comprising of two lines. The function works better for parallel lines. 
+　　Generates center lines from non-closed dual lines and save them as a line dataset. This function is usually used to get center lines for streets comprising of two lines. The function works better for parallel lines. 
 
 
 ### Basic steps

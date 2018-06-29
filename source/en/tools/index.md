@@ -1,17 +1,17 @@
 ---
-title: 工具箱
+title: Toolbox
 ---
 
-### 使用说明
+### Instruction
 
-　　工具箱集成了丰富的数据处理和数据分析功能。
+　　Integrates abundant functions of processing data and analyzing data.
 
 
 
-### 相关主题
+### Related topics
 
-![](img/smalltitle.png) [关于缓冲区分析](BufferTheory.html)
+![](img/smalltitle.png) [Buffer analysis](BufferTheory.html)
 
-![](img/smalltitle.png) [缓冲区分析应用实例](BufferAnalyst_Example.html)
+![](img/smalltitle.png) [Instances on buffer analysis](BufferAnalyst_Example.html)
 
 
