@@ -244,6 +244,14 @@ tools:
     ShortPath: /SuperMap-iDesktop-Cross/tools/RasterDistance/ShortPath.html
     TwoPointDis: /SuperMap-iDesktop-Cross/tools/RasterDistance/TwoPointDis.html
     TwoPointCostDis: /SuperMap-iDesktop-Cross/tools/RasterDistance/TwoPointCostDis.html
+  SurfaceMeasure:
+    SurfaceDistance: /SuperMap-iDesktop-Cross/tools/SurfaceMeasure/SurfaceDistance.html
+    SurfaceArea: /SuperMap-iDesktop-Cross/tools/SurfaceMeasure/SurfaceArea.html
+    SurfaceVolume: /SuperMap-iDesktop-Cross/tools/SurfaceMeasure/SurfaceVolume.html
+  ViewAnalyst:
+    ViewShedAnalyst: /SuperMap-iDesktop-Cross/tools/ViewAnalyst/ViewShedAnalyst.html
+    TwoObserverVisibility: /SuperMap-iDesktop-Cross/tools/ViewAnalyst/TwoObserverVisibility.html
+    MutilObserverVisibility: /SuperMap-iDesktop-Cross/tools/ViewAnalyst/MutilObserverVisibility.html
   DataAnalyst:
     Overlayanalyst:
       OverlapClip: /SuperMap-iDesktop-Cross/tools/DataAnalyst/OverlapClip.html

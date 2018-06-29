@@ -271,6 +271,14 @@ sidebar:
     ShortPath: 计算最短路径
     TwoPointDis: 两点最短地表路径
     TwoPointCostDis: 两点最短耗费路径
+    SurfaceMeasure: 表面量算
+    SurfaceDistance: 距离量算
+    SurfaceArea: 面积量算
+    SurfaceVolume: 体积量算
+    ViewAnalyst: 可视性分析
+    ViewShedAnalyst: 可视域分析
+    TwoObserverVisibility: 两点可视性分析
+    MutilObserverVisibility: 多点可视性分析
     DataAnalyst: 数据分析
     Overlayanalyst: 叠加分析
     OverlapClip: 裁剪
