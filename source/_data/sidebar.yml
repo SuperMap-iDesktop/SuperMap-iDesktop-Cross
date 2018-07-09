@@ -154,7 +154,8 @@ docs:
   FAQAll:
     FAQ: /SuperMap-iDesktop-Cross/docs/FAQ.html
   News:
-    901News: /SuperMap-iDesktop-Cross/docs/news/what's_new.html
+    910News: /SuperMap-iDesktop-Cross/docs/news/what's_new.html
+    901News: /SuperMap-iDesktop-Cross/docs/news/what's_new_901.html
     9DNews: /SuperMap-iDesktop-Cross/docs/news/what's_new_in_900.html
     811News: /SuperMap-iDesktop-Cross/docs/news/what's_new_in_811.html
 tools:
@@ -174,9 +175,6 @@ tools:
     ImportLidar: /SuperMap-iDesktop-Cross/tools/ImportData/ImportLidar.html
     ImportVectorFiles: /SuperMap-iDesktop-Cross/tools/ImportData/ImportVectorFiles.html
     ImportFolder: /SuperMap-iDesktop-Cross/tools/ImportData/ImportFolder.html
-  Export:
-    ExportVector: /SuperMap-iDesktop-Cross/tools/ExportData/ExportVectorData.html
-    ExportRaster: /SuperMap-iDesktop-Cross/tools/ExportData/ExportRasterData.html
   DataConvert:
     ConvertPointLinePolygon: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertPointLinePolygon.html
     ConvertAttributeSpatial: /SuperMap-iDesktop-Cross/tools/ConvertDataType/ConvertAttributeSpatial.html

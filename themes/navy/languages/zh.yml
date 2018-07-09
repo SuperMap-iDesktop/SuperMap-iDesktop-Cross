@@ -177,6 +177,7 @@ sidebar:
     FAQAll: FAQ
     FAQ: 常见问题解答
     News: 新特性
+    910News: Cross 9D(2019)新特性
     901News: Cross 901 新特性
     9DNews: Cross 9D 新特性
     811News: Cross 8C(2017) 新特性
@@ -199,9 +200,6 @@ sidebar:
     ImportLidar: 导入Google数据
     ImportVectorFiles: 导入矢量文件
     ImportFolder: 导入文件夹
-    Export: 数据导出
-    ExportVector: 导出矢量数据集
-    ExportRaster: 导出栅格数据集
     DataConvert: 类型转换
     ConvertPointLinePolygon: 点线面类型互转
     ConvertAttributeSpatial: 属性数据与空间数据互转
